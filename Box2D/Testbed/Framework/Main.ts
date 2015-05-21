@@ -108,7 +108,7 @@ export class Main
 		window.addEventListener('orientationchange', function (e) { resize_canvas(); }, false);
 		resize_canvas();
 
-		this.m_ctx = this.m_canvas.getContext("2d");
+		this.m_ctx = <CanvasRenderingContext2D> this.m_canvas.getContext("2d");
 
 		var controls_div: any = view_div.appendChild(document.createElement('div'));
 		controls_div.style.position = 'absolute'; // relative to view_div

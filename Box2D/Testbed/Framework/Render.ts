@@ -33,7 +33,7 @@ export class DebugDraw extends b2Draw
 		super(); // base class constructor
 
 		this.m_canvas = canvas;
-		this.m_ctx = this.m_canvas.getContext("2d");
+		this.m_ctx = <CanvasRenderingContext2D> this.m_canvas.getContext("2d");
 		this.m_settings = settings;
 	}
 
