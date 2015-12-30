@@ -2,6 +2,8 @@
 # Copyright (c) Flyover Games, LLC
 #
 
+SHELL := /usr/bin/env bash
+
 ANSI_NONE    = "\e[1;0m"
 ANSI_BLACK   = "\e[1;30m"
 ANSI_RED     = "\e[1;31m"
@@ -12,11 +14,14 @@ ANSI_MAGENTA = "\e[1;35m"
 ANSI_CYAN    = "\e[1;36m"
 ANSI_WHITE   = "\e[1;37m"
 
+PATH := $(shell npm bin):$(PATH)
+
 DONE = @printf "done: "$(ANSI_GREEN)"%s"$(ANSI_NONE)"\n" $@
 
 all: help
 
 help:
+	echo $(PATH)
 	@printf "usage:\n"
 	@printf "$$ make <"$(ANSI_YELLOW)"target"$(ANSI_NONE)">\n"
 	@printf "target:\n"
