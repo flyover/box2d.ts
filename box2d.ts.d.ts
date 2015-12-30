@@ -1215,7 +1215,7 @@ declare module box2d {
         solvePosition: number;
         broadphase: number;
         solveTOI: number;
-        Reset(): b2Profile;
+        Reset(): this;
     }
     class b2TimeStep {
         dt: number;
@@ -1317,7 +1317,7 @@ declare module box2d {
         m_velocityConstraints: b2ContactVelocityConstraint[];
         m_contacts: b2Contact[];
         m_count: number;
-        Initialize(def: any): b2ContactSolver;
+        Initialize(def: any): this;
         private static InitializeVelocityConstraints_s_xfA;
         private static InitializeVelocityConstraints_s_xfB;
         private static InitializeVelocityConstraints_s_worldManifold;
