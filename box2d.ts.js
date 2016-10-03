@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
 *
@@ -134,7 +139,7 @@ var box2d;
             return this.major + "." + this.minor + "." + this.revision;
         };
         return b2Version;
-    })();
+    }());
     box2d.b2Version = b2Version;
     /// Current version.
     box2d.b2_version = new b2Version(2, 3, 0);
@@ -434,7 +439,7 @@ var box2d;
         b2Vec2.s_t2 = new b2Vec2();
         b2Vec2.s_t3 = new b2Vec2();
         return b2Vec2;
-    })();
+    }());
     box2d.b2Vec2 = b2Vec2;
     box2d.b2Vec2_zero = new b2Vec2(0, 0);
     function b2AbsV(v, out) {
@@ -616,7 +621,7 @@ var box2d;
         b2Vec3.ZERO = new b2Vec3(0, 0, 0);
         b2Vec3.s_t0 = new b2Vec3();
         return b2Vec3;
-    })();
+    }());
     box2d.b2Vec3 = b2Vec3;
     function b2DotV3V3(a, b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
@@ -731,7 +736,7 @@ var box2d;
         };
         b2Mat22.IDENTITY = new b2Mat22();
         return b2Mat22;
-    })();
+    }());
     box2d.b2Mat22 = b2Mat22;
     function b2AbsM(M, out) {
         var M_ex = M.ex, M_ey = M.ey;
@@ -893,7 +898,7 @@ var box2d;
         };
         b2Mat33.IDENTITY = new b2Mat33();
         return b2Mat33;
-    })();
+    }());
     box2d.b2Mat33 = b2Mat33;
     function b2MulM33V3(A, v, out) {
         var v_x = v.x, v_y = v.y, v_z = v.z;
@@ -967,7 +972,7 @@ var box2d;
         };
         b2Rot.IDENTITY = new b2Rot();
         return b2Rot;
-    })();
+    }());
     box2d.b2Rot = b2Rot;
     function b2MulRR(q, r, out) {
         // [qc -qs] * [rc -rs] = [qc*rc-qs*rs -qc*rs-qs*rc]
@@ -1070,7 +1075,7 @@ var box2d;
         };
         b2Transform.IDENTITY = new b2Transform();
         return b2Transform;
-    })();
+    }());
     box2d.b2Transform = b2Transform;
     function b2MulXV(T, v, out) {
         //	float32 x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
@@ -1163,7 +1168,7 @@ var box2d;
             this.a -= d;
         };
         return b2Sweep;
-    })();
+    }());
     box2d.b2Sweep = b2Sweep;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -1219,7 +1224,7 @@ var box2d;
         b2Color.GREEN = new b2Color(0, 1, 0);
         b2Color.BLUE = new b2Color(0, 0, 1);
         return b2Color;
-    })();
+    }());
     box2d.b2Color = b2Color;
     (function (b2DrawFlags) {
         b2DrawFlags[b2DrawFlags["e_none"] = 0] = "e_none";
@@ -1267,7 +1272,7 @@ var box2d;
         b2Draw.prototype.DrawTransform = function (xf) {
         };
         return b2Draw;
-    })();
+    }());
     box2d.b2Draw = b2Draw;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -1306,7 +1311,7 @@ var box2d;
             return new Date().getTime() - this.m_start;
         };
         return b2Timer;
-    })();
+    }());
     box2d.b2Timer = b2Timer;
     var b2Counter = (function () {
         function b2Counter() {
@@ -1347,7 +1352,7 @@ var box2d;
             }
         };
         return b2Counter;
-    })();
+    }());
     box2d.b2Counter = b2Counter;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -1399,7 +1404,7 @@ var box2d;
             return this.m_count;
         };
         return b2GrowableStack;
-    })();
+    }());
     box2d.b2GrowableStack = b2GrowableStack;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -1536,7 +1541,7 @@ var box2d;
             return this.m_vertices[index];
         };
         return b2DistanceProxy;
-    })();
+    }());
     box2d.b2DistanceProxy = b2DistanceProxy;
     var b2SimplexCache = (function () {
         function b2SimplexCache() {
@@ -1551,7 +1556,7 @@ var box2d;
             return this;
         };
         return b2SimplexCache;
-    })();
+    }());
     box2d.b2SimplexCache = b2SimplexCache;
     var b2DistanceInput = (function () {
         function b2DistanceInput() {
@@ -1570,7 +1575,7 @@ var box2d;
             return this;
         };
         return b2DistanceInput;
-    })();
+    }());
     box2d.b2DistanceInput = b2DistanceInput;
     var b2DistanceOutput = (function () {
         function b2DistanceOutput() {
@@ -1587,7 +1592,7 @@ var box2d;
             return this;
         };
         return b2DistanceOutput;
-    })();
+    }());
     box2d.b2DistanceOutput = b2DistanceOutput;
     box2d.b2_gjkCalls = 0;
     box2d.b2_gjkIters = 0;
@@ -1611,7 +1616,7 @@ var box2d;
             return this;
         };
         return b2SimplexVertex;
-    })();
+    }());
     box2d.b2SimplexVertex = b2SimplexVertex;
     var b2Simplex = (function () {
         function b2Simplex() {
@@ -1887,7 +1892,7 @@ var box2d;
         b2Simplex.s_e13 = new box2d.b2Vec2();
         b2Simplex.s_e23 = new box2d.b2Vec2();
         return b2Simplex;
-    })();
+    }());
     box2d.b2Simplex = b2Simplex;
     var b2Distance_s_simplex = new b2Simplex();
     var b2Distance_s_saveA = box2d.b2MakeNumberArray(3);
@@ -2114,7 +2119,7 @@ var box2d;
             configurable: true
         });
         return b2ContactFeature;
-    })();
+    }());
     box2d.b2ContactFeature = b2ContactFeature;
     /// Contact ids to facilitate warm starting.
     var b2ContactID = (function () {
@@ -2146,7 +2151,7 @@ var box2d;
             configurable: true
         });
         return b2ContactID;
-    })();
+    }());
     box2d.b2ContactID = b2ContactID;
     /// A manifold point is a contact point belonging to a contact
     /// manifold. It holds details related to the geometry and dynamics
@@ -2182,7 +2187,7 @@ var box2d;
             return this;
         };
         return b2ManifoldPoint;
-    })();
+    }());
     box2d.b2ManifoldPoint = b2ManifoldPoint;
     (function (b2ManifoldType) {
         b2ManifoldType[b2ManifoldType["e_unknown"] = -1] = "e_unknown";
@@ -2244,7 +2249,7 @@ var box2d;
             return new b2Manifold().Copy(this);
         };
         return b2Manifold;
-    })();
+    }());
     box2d.b2Manifold = b2Manifold;
     var b2WorldManifold = (function () {
         function b2WorldManifold() {
@@ -2306,7 +2311,7 @@ var box2d;
         b2WorldManifold.Initialize_s_planePoint = new box2d.b2Vec2();
         b2WorldManifold.Initialize_s_clipPoint = new box2d.b2Vec2();
         return b2WorldManifold;
-    })();
+    }());
     box2d.b2WorldManifold = b2WorldManifold;
     /// This is used for determining the state of contact points.
     (function (b2PointState) {
@@ -2366,7 +2371,7 @@ var box2d;
             return this;
         };
         return b2ClipVertex;
-    })();
+    }());
     box2d.b2ClipVertex = b2ClipVertex;
     /// Ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
     var b2RayCastInput = (function () {
@@ -2382,7 +2387,7 @@ var box2d;
             return this;
         };
         return b2RayCastInput;
-    })();
+    }());
     box2d.b2RayCastInput = b2RayCastInput;
     /// Ray-cast output data. The ray hits at p1 + fraction * (p2 - p1), where p1 and p2
     /// come from b2RayCastInput.
@@ -2397,7 +2402,7 @@ var box2d;
             return this;
         };
         return b2RayCastOutput;
-    })();
+    }());
     box2d.b2RayCastOutput = b2RayCastOutput;
     /// An axis aligned bounding box.
     var b2AABB = (function () {
@@ -2555,7 +2560,7 @@ var box2d;
             return true;
         };
         return b2AABB;
-    })();
+    }());
     box2d.b2AABB = b2AABB;
     function b2TestOverlapAABB(a, b) {
         var d1_x = b.lowerBound.x - a.upperBound.x;
@@ -2653,7 +2658,7 @@ var box2d;
             this.I = 0;
         }
         return b2MassData;
-    })();
+    }());
     box2d.b2MassData = b2MassData;
     (function (b2ShapeType) {
         b2ShapeType[b2ShapeType["e_unknown"] = -1] = "e_unknown";
@@ -2753,7 +2758,7 @@ var box2d;
         b2Shape.prototype.Dump = function () {
         };
         return b2Shape;
-    })();
+    }());
     box2d.b2Shape = b2Shape;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -2773,11 +2778,6 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 ///<reference path='../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts' />
 var box2d;
 (function (box2d) {
@@ -2893,7 +2893,7 @@ var box2d;
         /// @see b2Shape::ComputeAABB
         b2CircleShape.ComputeAABB_s_p = new box2d.b2Vec2();
         return b2CircleShape;
-    })(box2d.b2Shape);
+    }(box2d.b2Shape));
     box2d.b2CircleShape = b2CircleShape;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -3053,7 +3053,7 @@ var box2d;
         b2EdgeShape.ComputeAABB_s_v1 = new box2d.b2Vec2();
         b2EdgeShape.ComputeAABB_s_v2 = new box2d.b2Vec2();
         return b2EdgeShape;
-    })(box2d.b2Shape);
+    }(box2d.b2Shape));
     box2d.b2EdgeShape = b2EdgeShape;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -3285,7 +3285,7 @@ var box2d;
         b2ChainShape.ComputeAABB_s_v1 = new box2d.b2Vec2();
         b2ChainShape.ComputeAABB_s_v2 = new box2d.b2Vec2();
         return b2ChainShape;
-    })(box2d.b2Shape);
+    }(box2d.b2Shape));
     box2d.b2ChainShape = b2ChainShape;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -3670,7 +3670,6 @@ var box2d;
                         //Completely dry
                         return 0;
                     }
-                    break;
                 case 1:
                     if (intoIndex == (-1)) {
                         intoIndex = this.m_count - 1;
@@ -3795,7 +3794,7 @@ var box2d;
         b2PolygonShape.ComputeCentroid_s_e1 = new box2d.b2Vec2();
         b2PolygonShape.ComputeCentroid_s_e2 = new box2d.b2Vec2();
         return b2PolygonShape;
-    })(box2d.b2Shape);
+    }(box2d.b2Shape));
     box2d.b2PolygonShape = b2PolygonShape;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -3838,7 +3837,7 @@ var box2d;
             return this.child1 == null;
         };
         return b2TreeNode;
-    })();
+    }());
     box2d.b2TreeNode = b2TreeNode;
     var b2DynamicTree = (function () {
         function b2DynamicTree() {
@@ -4552,7 +4551,7 @@ var box2d;
         b2DynamicTree.s_aabb = new box2d.b2AABB();
         b2DynamicTree.s_node_id = 0;
         return b2DynamicTree;
-    })();
+    }());
     box2d.b2DynamicTree = b2DynamicTree;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -4584,7 +4583,7 @@ var box2d;
             this.proxyB = null;
         }
         return b2Pair;
-    })();
+    }());
     box2d.b2Pair = b2Pair;
     /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
     /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
@@ -4754,7 +4753,7 @@ var box2d;
             this.m_moveBuffer[i] = null;
         };
         return b2BroadPhase;
-    })();
+    }());
     box2d.b2BroadPhase = b2BroadPhase;
     /// This is used to sort pairs.
     function b2PairLessThan(pair1, pair2) {
@@ -4814,7 +4813,7 @@ var box2d;
             this.tMax = 0; // defines sweep interval [0, tMax]
         }
         return b2TOIInput;
-    })();
+    }());
     box2d.b2TOIInput = b2TOIInput;
     (function (b2TOIOutputState) {
         b2TOIOutputState[b2TOIOutputState["e_unknown"] = 0] = "e_unknown";
@@ -4830,7 +4829,7 @@ var box2d;
             this.t = 0;
         }
         return b2TOIOutput;
-    })();
+    }());
     box2d.b2TOIOutput = b2TOIOutput;
     (function (b2SeparationFunctionType) {
         b2SeparationFunctionType[b2SeparationFunctionType["e_unknown"] = -1] = "e_unknown";
@@ -5002,7 +5001,7 @@ var box2d;
             }
         };
         return b2SeparationFunction;
-    })();
+    }());
     box2d.b2SeparationFunction = b2SeparationFunction;
     var b2TimeOfImpact_s_timer = new box2d.b2Timer();
     var b2TimeOfImpact_s_cache = new box2d.b2SimplexCache();
@@ -5255,7 +5254,7 @@ var box2d;
             return this;
         };
         return b2Filter;
-    })();
+    }());
     box2d.b2Filter = b2Filter;
     /// A fixture definition is used to create a fixture. This class defines an
     /// abstract fixture definition. You can reuse fixture definitions safely.
@@ -5279,7 +5278,7 @@ var box2d;
             this.filter = new b2Filter();
         }
         return b2FixtureDef;
-    })();
+    }());
     box2d.b2FixtureDef = b2FixtureDef;
     /// This proxy is used internally to connect fixtures to the broad-phase.
     var b2FixtureProxy = (function () {
@@ -5293,7 +5292,7 @@ var box2d;
             return box2d.b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
         };
         return b2FixtureProxy;
-    })();
+    }());
     box2d.b2FixtureProxy = b2FixtureProxy;
     /// A fixture is used to attach a shape to a body for collision detection. A fixture
     /// inherits its transform from its parent. Fixtures hold additional non-geometric data
@@ -5602,7 +5601,7 @@ var box2d;
         b2Fixture.Synchronize_s_aabb2 = new box2d.b2AABB();
         b2Fixture.Synchronize_s_displacement = new box2d.b2Vec2();
         return b2Fixture;
-    })();
+    }());
     box2d.b2Fixture = b2Fixture;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -5707,7 +5706,7 @@ var box2d;
             return this;
         };
         return b2Jacobian;
-    })();
+    }());
     box2d.b2Jacobian = b2Jacobian;
     /// A joint edge is used to connect bodies and joints together
     /// in a joint graph where each body is a node and each joint
@@ -5722,7 +5721,7 @@ var box2d;
             this.next = null; ///< the next joint edge in the body's joint list
         }
         return b2JointEdge;
-    })();
+    }());
     box2d.b2JointEdge = b2JointEdge;
     /// Joint definitions are used to construct joints.
     var b2JointDef = (function () {
@@ -5740,7 +5739,7 @@ var box2d;
             this.type = type;
         }
         return b2JointDef;
-    })();
+    }());
     box2d.b2JointDef = b2JointDef;
     /// The base joint class. Joints are used to constraint two bodies together in
     /// various fashions. Some joints also feature limits and motors.
@@ -5834,7 +5833,7 @@ var box2d;
             return false;
         };
         return b2Joint;
-    })();
+    }());
     box2d.b2Joint = b2Joint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -5874,7 +5873,7 @@ var box2d;
         b2DestructionListener.prototype.SayGoodbyeFixture = function (fixture) {
         };
         return b2DestructionListener;
-    })();
+    }());
     box2d.b2DestructionListener = b2DestructionListener;
     /// Implement this class to provide collision filtering. In other words, you can implement
     /// this class if you want finer control over contact creation.
@@ -5894,7 +5893,7 @@ var box2d;
         };
         b2ContactFilter.b2_defaultFilter = new b2ContactFilter();
         return b2ContactFilter;
-    })();
+    }());
     box2d.b2ContactFilter = b2ContactFilter;
     /// Contact impulses for reporting. Impulses are used instead of forces because
     /// sub-step forces may approach infinity for rigid body collisions. These
@@ -5906,7 +5905,7 @@ var box2d;
             this.count = 0;
         }
         return b2ContactImpulse;
-    })();
+    }());
     box2d.b2ContactImpulse = b2ContactImpulse;
     /// Implement this class to get contact information. You can use these results for
     /// things like sounds and game logic. You can also get contact results by
@@ -5948,7 +5947,7 @@ var box2d;
         };
         b2ContactListener.b2_defaultListener = new b2ContactListener();
         return b2ContactListener;
-    })();
+    }());
     box2d.b2ContactListener = b2ContactListener;
     /// Callback class for AABB queries.
     /// See b2World::Query
@@ -5961,7 +5960,7 @@ var box2d;
             return true;
         };
         return b2QueryCallback;
-    })();
+    }());
     box2d.b2QueryCallback = b2QueryCallback;
     /// Callback class for ray casts.
     /// See b2World::RayCast
@@ -5983,7 +5982,7 @@ var box2d;
             return fraction;
         };
         return b2RayCastCallback;
-    })();
+    }());
     box2d.b2RayCastCallback = b2RayCastCallback;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -6035,7 +6034,7 @@ var box2d;
             this.next = null; ///< the next contact edge in the body's contact list
         }
         return b2ContactEdge;
-    })();
+    }());
     box2d.b2ContactEdge = b2ContactEdge;
     (function (b2ContactFlag) {
         b2ContactFlag[b2ContactFlag["e_none"] = 0] = "e_none";
@@ -6243,7 +6242,7 @@ var box2d;
         b2Contact.ComputeTOI_s_input = new box2d.b2TOIInput();
         b2Contact.ComputeTOI_s_output = new box2d.b2TOIOutput();
         return b2Contact;
-    })();
+    }());
     box2d.b2Contact = b2Contact;
 })(box2d || (box2d = {})); // module box2d
 ///<reference path='../../../Box2D/Box2D/Collision/b2Collision.ts' />
@@ -6403,7 +6402,7 @@ var box2d;
             box2d.b2CollideCircles(manifold, shapeA, xfA, shapeB, xfB);
         };
         return b2CircleContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2CircleContact = b2CircleContact;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -6460,7 +6459,7 @@ var box2d;
             box2d.b2CollidePolygonAndCircle(manifold, shapeA, xfA, shapeB, xfB);
         };
         return b2PolygonAndCircleContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2PolygonAndCircleContact = b2PolygonAndCircleContact;
 })(box2d || (box2d = {})); // module box2d
 ///<reference path='../../../Box2D/Box2D/Collision/b2Collision.ts' />
@@ -6766,7 +6765,7 @@ var box2d;
             box2d.b2CollidePolygons(manifold, shapeA, xfA, shapeB, xfB);
         };
         return b2PolygonContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2PolygonContact = b2PolygonContact;
 })(box2d || (box2d = {})); // module box2d
 ///<reference path='../../../Box2D/Box2D/Collision/b2Collision.ts' />
@@ -6903,7 +6902,7 @@ var box2d;
             this.separation = 0;
         }
         return b2EPAxis;
-    })();
+    }());
     box2d.b2EPAxis = b2EPAxis;
     var b2TempPolygon = (function () {
         function b2TempPolygon() {
@@ -6912,7 +6911,7 @@ var box2d;
             this.count = 0;
         }
         return b2TempPolygon;
-    })();
+    }());
     box2d.b2TempPolygon = b2TempPolygon;
     var b2ReferenceFace = (function () {
         function b2ReferenceFace() {
@@ -6927,7 +6926,7 @@ var box2d;
             this.sideOffset2 = 0;
         }
         return b2ReferenceFace;
-    })();
+    }());
     box2d.b2ReferenceFace = b2ReferenceFace;
     (function (b2EPColliderVertexType) {
         b2EPColliderVertexType[b2EPColliderVertexType["e_isolated"] = 0] = "e_isolated";
@@ -7319,7 +7318,7 @@ var box2d;
         b2EPCollider.s_n = new box2d.b2Vec2();
         b2EPCollider.s_perp = new box2d.b2Vec2();
         return b2EPCollider;
-    })();
+    }());
     box2d.b2EPCollider = b2EPCollider;
     var b2CollideEdgeAndPolygon_s_collider = new b2EPCollider();
     function b2CollideEdgeAndPolygon(manifold, edgeA, xfA, polygonB, xfB) {
@@ -7382,7 +7381,7 @@ var box2d;
             box2d.b2CollideEdgeAndCircle(manifold, shapeA, xfA, shapeB, xfB);
         };
         return b2EdgeAndCircleContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2EdgeAndCircleContact = b2EdgeAndCircleContact;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -7438,7 +7437,7 @@ var box2d;
             box2d.b2CollideEdgeAndPolygon(manifold, shapeA, xfA, shapeB, xfB);
         };
         return b2EdgeAndPolygonContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2EdgeAndPolygonContact = b2EdgeAndPolygonContact;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -7500,7 +7499,7 @@ var box2d;
         };
         b2ChainAndCircleContact.Evaluate_s_edge = new box2d.b2EdgeShape();
         return b2ChainAndCircleContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2ChainAndCircleContact = b2ChainAndCircleContact;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -7562,7 +7561,7 @@ var box2d;
         };
         b2ChainAndPolygonContact.Evaluate_s_edge = new box2d.b2EdgeShape();
         return b2ChainAndPolygonContact;
-    })(box2d.b2Contact);
+    }(box2d.b2Contact));
     box2d.b2ChainAndPolygonContact = b2ChainAndPolygonContact;
 })(box2d || (box2d = {})); // module box2d
 //<reference path='../../../../Box2D/Box2D/Common/b2Math.ts' />
@@ -7594,7 +7593,7 @@ var box2d;
             this.primary = false;
         }
         return b2ContactRegister;
-    })();
+    }());
     box2d.b2ContactRegister = b2ContactRegister;
     var b2ContactFactory = (function () {
         function b2ContactFactory(allocator) {
@@ -7697,7 +7696,7 @@ var box2d;
             reg.destroyFcn(contact, this.m_allocator);
         };
         return b2ContactFactory;
-    })();
+    }());
     box2d.b2ContactFactory = b2ContactFactory;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -7931,7 +7930,7 @@ var box2d;
             }
         };
         return b2ContactManager;
-    })();
+    }());
     box2d.b2ContactManager = b2ContactManager;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -7978,7 +7977,7 @@ var box2d;
             return this;
         };
         return b2Profile;
-    })();
+    }());
     box2d.b2Profile = b2Profile;
     /// This is an internal structure.
     var b2TimeStep = (function () {
@@ -8000,7 +7999,7 @@ var box2d;
             return this;
         };
         return b2TimeStep;
-    })();
+    }());
     box2d.b2TimeStep = b2TimeStep;
     var b2Position = (function () {
         function b2Position() {
@@ -8011,7 +8010,7 @@ var box2d;
             return box2d.b2MakeArray(length, function (i) { return new b2Position(); });
         };
         return b2Position;
-    })();
+    }());
     box2d.b2Position = b2Position;
     var b2Velocity = (function () {
         function b2Velocity() {
@@ -8022,7 +8021,7 @@ var box2d;
             return box2d.b2MakeArray(length, function (i) { return new b2Velocity(); });
         };
         return b2Velocity;
-    })();
+    }());
     box2d.b2Velocity = b2Velocity;
     var b2SolverData = (function () {
         function b2SolverData() {
@@ -8031,7 +8030,7 @@ var box2d;
             this.velocities = null;
         }
         return b2SolverData;
-    })();
+    }());
     box2d.b2SolverData = b2SolverData;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -8075,7 +8074,7 @@ var box2d;
             return box2d.b2MakeArray(length, function (i) { return new b2VelocityConstraintPoint(); });
         };
         return b2VelocityConstraintPoint;
-    })();
+    }());
     box2d.b2VelocityConstraintPoint = b2VelocityConstraintPoint;
     var b2ContactVelocityConstraint = (function () {
         function b2ContactVelocityConstraint() {
@@ -8100,7 +8099,7 @@ var box2d;
             return box2d.b2MakeArray(length, function (i) { return new b2ContactVelocityConstraint(); });
         };
         return b2ContactVelocityConstraint;
-    })();
+    }());
     box2d.b2ContactVelocityConstraint = b2ContactVelocityConstraint;
     var b2ContactPositionConstraint = (function () {
         function b2ContactPositionConstraint() {
@@ -8124,7 +8123,7 @@ var box2d;
             return box2d.b2MakeArray(length, function (i) { return new b2ContactPositionConstraint(); });
         };
         return b2ContactPositionConstraint;
-    })();
+    }());
     box2d.b2ContactPositionConstraint = b2ContactPositionConstraint;
     var b2ContactSolverDef = (function () {
         function b2ContactSolverDef() {
@@ -8136,7 +8135,7 @@ var box2d;
             this.allocator = null;
         }
         return b2ContactSolverDef;
-    })();
+    }());
     box2d.b2ContactSolverDef = b2ContactSolverDef;
     var b2PositionSolverManifold = (function () {
         function b2PositionSolverManifold() {
@@ -8206,7 +8205,7 @@ var box2d;
         b2PositionSolverManifold.Initialize_s_planePoint = new box2d.b2Vec2();
         b2PositionSolverManifold.Initialize_s_clipPoint = new box2d.b2Vec2();
         return b2PositionSolverManifold;
-    })();
+    }());
     box2d.b2PositionSolverManifold = b2PositionSolverManifold;
     var b2ContactSolver = (function () {
         function b2ContactSolver() {
@@ -9122,7 +9121,7 @@ var box2d;
         b2ContactSolver.SolveTOIPositionConstraints_s_rB = new box2d.b2Vec2();
         b2ContactSolver.SolveTOIPositionConstraints_s_P = new box2d.b2Vec2();
         return b2ContactSolver;
-    })();
+    }());
     box2d.b2ContactSolver = b2ContactSolver;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -9641,7 +9640,7 @@ var box2d;
         b2Island.s_translation = new box2d.b2Vec2();
         b2Island.s_impulse = new box2d.b2ContactImpulse();
         return b2Island;
-    })();
+    }());
     box2d.b2Island = b2Island;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -9692,7 +9691,7 @@ var box2d;
             this.dampingRatio = 0;
         };
         return b2DistanceJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2DistanceJointDef = b2DistanceJointDef;
     var b2DistanceJoint = (function (_super) {
         __extends(b2DistanceJoint, _super);
@@ -9948,7 +9947,7 @@ var box2d;
         b2DistanceJoint.SolveVelocityConstraints_s_P = new box2d.b2Vec2();
         b2DistanceJoint.SolvePositionConstraints_s_P = new box2d.b2Vec2();
         return b2DistanceJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2DistanceJoint = b2DistanceJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -10000,7 +9999,7 @@ var box2d;
             this.bodyA.GetLocalVector(axis, this.localAxisA);
         };
         return b2WheelJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2WheelJointDef = b2WheelJointDef;
     var b2WheelJoint = (function (_super) {
         __extends(b2WheelJoint, _super);
@@ -10379,7 +10378,7 @@ var box2d;
         b2WheelJoint.SolvePositionConstraints_s_d = new box2d.b2Vec2();
         b2WheelJoint.SolvePositionConstraints_s_P = new box2d.b2Vec2();
         return b2WheelJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2WheelJoint = b2WheelJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -10416,7 +10415,7 @@ var box2d;
             this.dampingRatio = 0.7;
         }
         return b2MouseJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2MouseJointDef = b2MouseJointDef;
     var b2MouseJoint = (function (_super) {
         __extends(b2MouseJoint, _super);
@@ -10613,7 +10612,7 @@ var box2d;
         b2MouseJoint.SolveVelocityConstraints_s_impulse = new box2d.b2Vec2();
         b2MouseJoint.SolveVelocityConstraints_s_oldImpulse = new box2d.b2Vec2();
         return b2MouseJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2MouseJoint = b2MouseJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -10671,7 +10670,7 @@ var box2d;
             this.referenceAngle = this.bodyB.GetAngleRadians() - this.bodyA.GetAngleRadians();
         };
         return b2RevoluteJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2RevoluteJointDef = b2RevoluteJointDef;
     var b2RevoluteJoint = (function (_super) {
         __extends(b2RevoluteJoint, _super);
@@ -11097,7 +11096,7 @@ var box2d;
         b2RevoluteJoint.SolvePositionConstraints_s_C_v2 = new box2d.b2Vec2();
         b2RevoluteJoint.SolvePositionConstraints_s_impulse = new box2d.b2Vec2();
         return b2RevoluteJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2RevoluteJoint = b2RevoluteJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -11155,7 +11154,7 @@ var box2d;
             this.referenceAngle = this.bodyB.GetAngleRadians() - this.bodyA.GetAngleRadians();
         };
         return b2PrismaticJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2PrismaticJointDef = b2PrismaticJointDef;
     var b2PrismaticJoint = (function (_super) {
         __extends(b2PrismaticJoint, _super);
@@ -11733,7 +11732,7 @@ var box2d;
         b2PrismaticJoint.GetJointTranslation_s_d = new box2d.b2Vec2();
         b2PrismaticJoint.GetJointTranslation_s_axis = new box2d.b2Vec2();
         return b2PrismaticJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2PrismaticJoint = b2PrismaticJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -11789,7 +11788,7 @@ var box2d;
             }
         };
         return b2PulleyJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2PulleyJointDef = b2PulleyJointDef;
     var b2PulleyJoint = (function (_super) {
         __extends(b2PulleyJoint, _super);
@@ -12079,7 +12078,7 @@ var box2d;
         b2PulleyJoint.GetCurrentLengthA_s_p = new box2d.b2Vec2();
         b2PulleyJoint.GetCurrentLengthB_s_p = new box2d.b2Vec2();
         return b2PulleyJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2PulleyJoint = b2PulleyJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -12117,7 +12116,7 @@ var box2d;
             this.ratio = 1;
         }
         return b2GearJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2GearJointDef = b2GearJointDef;
     var b2GearJoint = (function (_super) {
         __extends(b2GearJoint, _super);
@@ -12543,7 +12542,7 @@ var box2d;
         b2GearJoint.SolvePositionConstraints_s_rC = new box2d.b2Vec2();
         b2GearJoint.SolvePositionConstraints_s_rD = new box2d.b2Vec2();
         return b2GearJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2GearJoint = b2GearJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -12589,7 +12588,7 @@ var box2d;
             this.referenceAngle = this.bodyB.GetAngleRadians() - this.bodyA.GetAngleRadians();
         };
         return b2WeldJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2WeldJointDef = b2WeldJointDef;
     var b2WeldJoint = (function (_super) {
         __extends(b2WeldJoint, _super);
@@ -12874,7 +12873,7 @@ var box2d;
         b2WeldJoint.SolvePositionConstraints_s_P = new box2d.b2Vec2();
         b2WeldJoint.SolvePositionConstraints_s_impulse = new box2d.b2Vec3();
         return b2WeldJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2WeldJoint = b2WeldJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -12916,7 +12915,7 @@ var box2d;
             this.bodyB.GetLocalPoint(anchor, this.localAnchorB);
         };
         return b2FrictionJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2FrictionJointDef = b2FrictionJointDef;
     var b2FrictionJoint = (function (_super) {
         __extends(b2FrictionJoint, _super);
@@ -13122,7 +13121,7 @@ var box2d;
         b2FrictionJoint.SolveVelocityConstraints_s_impulseV = new box2d.b2Vec2();
         b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV = new box2d.b2Vec2();
         return b2FrictionJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2FrictionJoint = b2FrictionJoint;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -13160,7 +13159,7 @@ var box2d;
             this.maxLength = 0;
         }
         return b2RopeJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2RopeJointDef = b2RopeJointDef;
     var b2RopeJoint = (function (_super) {
         __extends(b2RopeJoint, _super);
@@ -13372,7 +13371,7 @@ var box2d;
         b2RopeJoint.SolveVelocityConstraints_s_P = new box2d.b2Vec2();
         b2RopeJoint.SolvePositionConstraints_s_P = new box2d.b2Vec2();
         return b2RopeJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2RopeJoint = b2RopeJoint;
 })(box2d || (box2d = {})); // module box2d
 ///<reference path='../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts' />
@@ -13401,7 +13400,7 @@ var box2d;
             this.angularOffset = angleB - angleA;
         };
         return b2MotorJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2MotorJointDef = b2MotorJointDef;
     var b2MotorJoint = (function (_super) {
         __extends(b2MotorJoint, _super);
@@ -13636,7 +13635,7 @@ var box2d;
         b2MotorJoint.SolveVelocityConstraints_s_impulse_v2 = new box2d.b2Vec2();
         b2MotorJoint.SolveVelocityConstraints_s_oldImpulse_v2 = new box2d.b2Vec2();
         return b2MotorJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2MotorJoint = b2MotorJoint;
 })(box2d || (box2d = {})); // module box2d
 //<reference path='../../../Box2D/Common/b2Settings.ts' />
@@ -13664,7 +13663,7 @@ var box2d;
             }
         };
         return b2AreaJointDef;
-    })(box2d.b2JointDef);
+    }(box2d.b2JointDef));
     box2d.b2AreaJointDef = b2AreaJointDef;
     var b2AreaJoint = (function (_super) {
         __extends(b2AreaJoint, _super);
@@ -13829,7 +13828,7 @@ var box2d;
             return done;
         };
         return b2AreaJoint;
-    })(box2d.b2Joint);
+    }(box2d.b2Joint));
     box2d.b2AreaJoint = b2AreaJoint;
 })(box2d || (box2d = {})); // module box2d
 //<reference path='../../../../Box2D/Box2D/Common/b2Math.ts' />
@@ -13904,7 +13903,7 @@ var box2d;
         b2JointFactory.Destroy = function (joint, allocator) {
         };
         return b2JointFactory;
-    })();
+    }());
     box2d.b2JointFactory = b2JointFactory;
 })(box2d || (box2d = {})); // module box2d
 // b2Controller.ts
@@ -13916,7 +13915,7 @@ var box2d;
             box2d.b2Assert(true);
         }
         return b2Controller;
-    })();
+    }());
     box2d.b2Controller = b2Controller;
 })(box2d || (box2d = {}));
 /*
@@ -15193,7 +15192,7 @@ var box2d;
         b2World.SolveTOI_s_toi_input = new box2d.b2TOIInput();
         b2World.SolveTOI_s_toi_output = new box2d.b2TOIOutput();
         return b2World;
-    })();
+    }());
     box2d.b2World = b2World;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -15277,7 +15276,7 @@ var box2d;
             this.gravityScale = 1;
         }
         return b2BodyDef;
-    })();
+    }());
     box2d.b2BodyDef = b2BodyDef;
     (function (b2BodyFlag) {
         b2BodyFlag[b2BodyFlag["e_none"] = 0] = "e_none";
@@ -16175,7 +16174,7 @@ var box2d;
         b2Body.ResetMassData_s_massData = new box2d.b2MassData();
         b2Body.SynchronizeFixtures_s_xf1 = new box2d.b2Transform();
         return b2Body;
-    })();
+    }());
     box2d.b2Body = b2Body;
 })(box2d || (box2d = {})); // module box2d
 /*
@@ -16354,7 +16353,7 @@ var box2d;
             DebugDraw.DrawStringWorld_s_cc = new box2d.b2Vec2();
             DebugDraw.DrawStringWorld_s_color = new box2d.b2Color(0.5, 0.9, 0.5);
             return DebugDraw;
-        })(box2d.b2Draw);
+        }(box2d.b2Draw));
         Testbed.DebugDraw = DebugDraw;
     })(Testbed = box2d.Testbed || (box2d.Testbed = {}));
 })(box2d || (box2d = {})); // module box2d.Testbed
@@ -16515,7 +16514,7 @@ var box2d;
                 this.singleStep = false;
             }
             return Settings;
-        })();
+        }());
         Testbed.Settings = Settings;
         var TestEntry = (function () {
             function TestEntry(name, createFcn) {
@@ -16525,7 +16524,7 @@ var box2d;
                 this.createFcn = createFcn;
             }
             return TestEntry;
-        })();
+        }());
         Testbed.TestEntry = TestEntry;
         var DestructionListener = (function (_super) {
             __extends(DestructionListener, _super);
@@ -16545,7 +16544,7 @@ var box2d;
             DestructionListener.prototype.SayGoodbyeFixture = function (fixture) {
             };
             return DestructionListener;
-        })(box2d.b2DestructionListener);
+        }(box2d.b2DestructionListener));
         Testbed.DestructionListener = DestructionListener;
         var ContactPoint = (function () {
             function ContactPoint() {
@@ -16558,7 +16557,7 @@ var box2d;
                 this.tangentImpulse = 0;
             }
             return ContactPoint;
-        })();
+        }());
         Testbed.ContactPoint = ContactPoint;
         var Test = (function (_super) {
             __extends(Test, _super);
@@ -16908,7 +16907,7 @@ var box2d;
             Test.PreSolve_s_state2 = new Array(box2d.b2_maxManifoldPoints);
             Test.PreSolve_s_worldManifold = new box2d.b2WorldManifold();
             return Test;
-        })(box2d.b2ContactListener);
+        }(box2d.b2ContactListener));
         Testbed.Test = Test;
     })(Testbed = box2d.Testbed || (box2d.Testbed = {}));
 })(box2d || (box2d = {})); // module Testbed
@@ -17141,7 +17140,7 @@ var box2d;
                 return new Car(canvas, settings);
             };
             return Car;
-        })(Testbed.Test);
+        }(Testbed.Test));
         Testbed.Car = Car;
     })(Testbed = box2d.Testbed || (box2d.Testbed = {}));
 })(box2d || (box2d = {})); // module box2d.Testbed
@@ -17211,7 +17210,7 @@ var box2d;
             };
             SphereStack.e_count = 10;
             return SphereStack;
-        })(Testbed.Test);
+        }(Testbed.Test));
         Testbed.SphereStack = SphereStack;
     })(Testbed = box2d.Testbed || (box2d.Testbed = {}));
 })(box2d || (box2d = {})); // module box2d.Testbed
@@ -17891,7 +17890,7 @@ var box2d;
                 }
             };
             return Main;
-        })();
+        }());
         Testbed.Main = Main;
     })(Testbed = box2d.Testbed || (box2d.Testbed = {}));
 })(box2d || (box2d = {})); // module box2d.Testbed
