@@ -163,6 +163,5 @@ build: $(BOX2D_OUTPUT_JS_FILE)
 	$(DONE)
 
 $(BOX2D_OUTPUT_JS_FILE): $(BOX2D_SOURCE_TS_FILES)
-	@tsc --declaration --sourcemap --target ES5 -out $@ $<
+	@$$(npm bin)/tsc --declaration --sourcemap --target ES5 -out $@ $<
 	$(DONE)
-
