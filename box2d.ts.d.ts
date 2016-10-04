@@ -1,32 +1,32 @@
-declare module box2d {
-    var DEBUG: boolean;
-    var ENABLE_ASSERTS: boolean;
+declare namespace box2d {
+    const DEBUG: boolean;
+    const ENABLE_ASSERTS: boolean;
     function b2Assert(condition: boolean, ...args: any[]): void;
-    var b2_maxFloat: number;
-    var b2_epsilon: number;
-    var b2_epsilon_sq: number;
-    var b2_pi: number;
-    var b2_maxManifoldPoints: number;
-    var b2_maxPolygonVertices: number;
-    var b2_aabbExtension: number;
-    var b2_aabbMultiplier: number;
-    var b2_linearSlop: number;
-    var b2_angularSlop: number;
-    var b2_polygonRadius: number;
-    var b2_maxSubSteps: number;
-    var b2_maxTOIContacts: number;
-    var b2_velocityThreshold: number;
-    var b2_maxLinearCorrection: number;
-    var b2_maxAngularCorrection: number;
-    var b2_maxTranslation: number;
-    var b2_maxTranslationSquared: number;
-    var b2_maxRotation: number;
-    var b2_maxRotationSquared: number;
-    var b2_baumgarte: number;
-    var b2_toiBaumgarte: number;
-    var b2_timeToSleep: number;
-    var b2_linearSleepTolerance: number;
-    var b2_angularSleepTolerance: number;
+    const b2_maxFloat: number;
+    const b2_epsilon: number;
+    const b2_epsilon_sq: number;
+    const b2_pi: number;
+    const b2_maxManifoldPoints: number;
+    const b2_maxPolygonVertices: number;
+    const b2_aabbExtension: number;
+    const b2_aabbMultiplier: number;
+    const b2_linearSlop: number;
+    const b2_angularSlop: number;
+    const b2_polygonRadius: number;
+    const b2_maxSubSteps: number;
+    const b2_maxTOIContacts: number;
+    const b2_velocityThreshold: number;
+    const b2_maxLinearCorrection: number;
+    const b2_maxAngularCorrection: number;
+    const b2_maxTranslation: number;
+    const b2_maxTranslationSquared: number;
+    const b2_maxRotation: number;
+    const b2_maxRotationSquared: number;
+    const b2_baumgarte: number;
+    const b2_toiBaumgarte: number;
+    const b2_timeToSleep: number;
+    const b2_linearSleepTolerance: number;
+    const b2_angularSleepTolerance: number;
     function b2Alloc(size: number): any;
     function b2Free(mem: any): void;
     function b2Log(message: string, ...args: any[]): void;
@@ -37,8 +37,8 @@ declare module box2d {
         constructor(major?: number, minor?: number, revision?: number);
         toString(): string;
     }
-    var b2_version: b2Version;
-    var b2_changelist: number;
+    const b2_version: b2Version;
+    const b2_changelist: number;
     function b2ParseInt(v: string): number;
     function b2ParseUInt(v: string): number;
     function b2MakeArray(length: number, init: {
@@ -46,10 +46,10 @@ declare module box2d {
     }): any[];
     function b2MakeNumberArray(length: number): number[];
 }
-declare module box2d {
-    var b2_pi_over_180: number;
-    var b2_180_over_pi: number;
-    var b2_two_pi: number;
+declare namespace box2d {
+    const b2_pi_over_180: number;
+    const b2_180_over_pi: number;
+    const b2_two_pi: number;
     function b2Abs(n: number): number;
     function b2Min(a: number, b: number): number;
     function b2Max(a: number, b: number): number;
@@ -110,7 +110,7 @@ declare module box2d {
         SelfSkew(): b2Vec2;
         static MakeArray(length: number): b2Vec2[];
     }
-    var b2Vec2_zero: b2Vec2;
+    const b2Vec2_zero: b2Vec2;
     function b2AbsV(v: b2Vec2, out: b2Vec2): b2Vec2;
     function b2MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
     function b2MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
@@ -255,7 +255,7 @@ declare module box2d {
         Normalize(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2Color {
         static RED: b2Color;
         static GREEN: b2Color;
@@ -294,7 +294,7 @@ declare module box2d {
         DrawTransform(xf: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2Timer {
         m_start: number;
         Reset(): b2Timer;
@@ -314,7 +314,7 @@ declare module box2d {
         Decrement(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2GrowableStack {
         m_stack: any[];
         m_count: number;
@@ -325,7 +325,7 @@ declare module box2d {
         GetCount(): number;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2DistanceProxy {
         m_buffer: b2Vec2[];
         m_vertices: b2Vec2[];
@@ -360,9 +360,9 @@ declare module box2d {
         iterations: number;
         Reset(): b2DistanceOutput;
     }
-    var b2_gjkCalls: number;
-    var b2_gjkIters: number;
-    var b2_gjkMaxIters: number;
+    let b2_gjkCalls: number;
+    let b2_gjkIters: number;
+    let b2_gjkMaxIters: number;
     class b2SimplexVertex {
         wA: b2Vec2;
         wB: b2Vec2;
@@ -393,7 +393,7 @@ declare module box2d {
     }
     function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
 }
-declare module box2d {
+declare namespace box2d {
     enum b2ContactFeatureType {
         e_vertex = 0,
         e_face = 1,
@@ -499,7 +499,7 @@ declare module box2d {
     function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number;
     function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean;
 }
-declare module box2d {
+declare namespace box2d {
     class b2MassData {
         mass: number;
         center: b2Vec2;
@@ -530,7 +530,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2CircleShape extends b2Shape {
         m_p: b2Vec2;
         constructor(radius?: number);
@@ -552,7 +552,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2EdgeShape extends b2Shape {
         m_vertex1: b2Vec2;
         m_vertex2: b2Vec2;
@@ -582,7 +582,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2ChainShape extends b2Shape {
         m_vertices: b2Vec2[];
         m_count: number;
@@ -611,7 +611,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2PolygonShape extends b2Shape {
         m_centroid: b2Vec2;
         m_vertices: b2Vec2[];
@@ -660,7 +660,7 @@ declare module box2d {
         static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2TreeNode {
         m_id: number;
         aabb: b2AABB;
@@ -710,7 +710,7 @@ declare module box2d {
         ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2Pair {
         proxyA: b2TreeNode;
         proxyB: b2TreeNode;
@@ -742,14 +742,14 @@ declare module box2d {
     }
     function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
 }
-declare module box2d {
-    var b2_toiTime: number;
-    var b2_toiMaxTime: number;
-    var b2_toiCalls: number;
-    var b2_toiIters: number;
-    var b2_toiMaxIters: number;
-    var b2_toiRootIters: number;
-    var b2_toiMaxRootIters: number;
+declare namespace box2d {
+    let b2_toiTime: number;
+    let b2_toiMaxTime: number;
+    let b2_toiCalls: number;
+    let b2_toiIters: number;
+    let b2_toiMaxIters: number;
+    let b2_toiRootIters: number;
+    let b2_toiMaxRootIters: number;
     class b2TOIInput {
         proxyA: b2DistanceProxy;
         proxyB: b2DistanceProxy;
@@ -788,7 +788,7 @@ declare module box2d {
     }
     function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void;
 }
-declare module box2d {
+declare namespace box2d {
     class b2Filter {
         categoryBits: number;
         maskBits: number;
@@ -856,11 +856,11 @@ declare module box2d {
         Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
 }
-declare module box2d {
+declare namespace box2d {
 }
-declare module box2d {
+declare namespace box2d {
     enum b2JointType {
         e_unknownJoint = 0,
         e_revoluteJoint = 1,
@@ -935,7 +935,7 @@ declare module box2d {
         SolvePositionConstraints(data: b2SolverData): boolean;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2DestructionListener {
         SayGoodbyeJoint(joint: b2Joint): void;
         SayGoodbyeFixture(fixture: b2Fixture): void;
@@ -963,7 +963,7 @@ declare module box2d {
         ReportFixture(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
     }
 }
-declare module box2d {
+declare namespace box2d {
     function b2MixFriction(friction1: number, friction2: number): number;
     function b2MixRestitution(restitution1: number, restitution2: number): number;
     class b2ContactEdge {
@@ -1025,11 +1025,11 @@ declare module box2d {
         ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
     }
 }
-declare module box2d {
+declare namespace box2d {
     function b2CollideCircles(manifold: any, circleA: any, xfA: any, circleB: any, xfB: any): void;
     function b2CollidePolygonAndCircle(manifold: any, polygonA: any, xfA: any, circleB: any, xfB: any): void;
 }
-declare module box2d {
+declare namespace box2d {
     class b2CircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1038,7 +1038,7 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2PolygonAndCircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1047,13 +1047,13 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     function b2EdgeSeparation(poly1: any, xf1: any, edge1: any, poly2: any, xf2: any): number;
     function b2FindMaxSeparation(edgeIndex: any, poly1: any, xf1: any, poly2: any, xf2: any): number;
     function b2FindIncidentEdge(c: any, poly1: any, xf1: any, edge1: any, poly2: any, xf2: any): void;
     function b2CollidePolygons(manifold: any, polyA: any, xfA: any, polyB: any, xfB: any): void;
 }
-declare module box2d {
+declare namespace box2d {
     class b2PolygonContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1062,7 +1062,7 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     function b2CollideEdgeAndCircle(manifold: any, edgeA: any, xfA: any, circleB: any, xfB: any): void;
     enum b2EPAxisType {
         e_unknown = 0,
@@ -1130,7 +1130,7 @@ declare module box2d {
     }
     function b2CollideEdgeAndPolygon(manifold: any, edgeA: any, xfA: any, polygonB: any, xfB: any): void;
 }
-declare module box2d {
+declare namespace box2d {
     class b2EdgeAndCircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1139,7 +1139,7 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2EdgeAndPolygonContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1148,7 +1148,7 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2ChainAndCircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1158,7 +1158,7 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2ChainAndPolygonContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -1168,7 +1168,7 @@ declare module box2d {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2ContactRegister {
         pool: b2Contact[];
         createFcn: {
@@ -1189,7 +1189,7 @@ declare module box2d {
         Destroy(contact: b2Contact): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2ContactManager {
         m_broadPhase: b2BroadPhase;
         m_contactList: b2Contact;
@@ -1205,7 +1205,7 @@ declare module box2d {
         Collide(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2Profile {
         step: number;
         collide: number;
@@ -1242,7 +1242,7 @@ declare module box2d {
         velocities: b2Velocity[];
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2VelocityConstraintPoint {
         rA: b2Vec2;
         rB: b2Vec2;
@@ -1353,7 +1353,7 @@ declare module box2d {
         SolveTOIPositionConstraints(toiIndexA: any, toiIndexB: any): boolean;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2Island {
         m_allocator: any;
         m_listener: b2ContactListener;
@@ -1384,7 +1384,7 @@ declare module box2d {
         Report(constraints: any): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2DistanceJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1443,7 +1443,7 @@ declare module box2d {
         SolvePositionConstraints(data: any): boolean;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2WheelJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1527,7 +1527,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2MouseJointDef extends b2JointDef {
         target: b2Vec2;
         maxForce: number;
@@ -1578,7 +1578,7 @@ declare module box2d {
         ShiftOrigin(newOrigin: any): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2RevoluteJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1659,7 +1659,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2PrismaticJointDef extends b2JointDef {
         localAnchorA: any;
         localAnchorB: any;
@@ -1757,8 +1757,8 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
-    var b2_minPulleyLength: number;
+declare namespace box2d {
+    const b2_minPulleyLength: number;
     class b2PulleyJointDef extends b2JointDef {
         groundAnchorA: b2Vec2;
         groundAnchorB: b2Vec2;
@@ -1826,7 +1826,7 @@ declare module box2d {
         ShiftOrigin(newOrigin: any): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2GearJointDef extends b2JointDef {
         joint1: b2Joint;
         joint2: b2Joint;
@@ -1907,7 +1907,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2WeldJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1968,7 +1968,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2FrictionJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -2021,7 +2021,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2RopeJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -2072,7 +2072,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2MotorJointDef extends b2JointDef {
         linearOffset: b2Vec2;
         angularOffset: number;
@@ -2129,7 +2129,7 @@ declare module box2d {
         Dump(): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2AreaJointDef extends b2JointDef {
         world: b2World;
         bodies: b2Body[];
@@ -2164,19 +2164,19 @@ declare module box2d {
         SolvePositionConstraints(data: any): boolean;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2JointFactory {
         static Create(def: b2JointDef, allocator: any): b2Joint;
         static Destroy(joint: b2Joint, allocator: any): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     class b2Controller {
         type: string;
         constructor();
     }
 }
-declare module box2d {
+declare namespace box2d {
     enum b2WorldFlag {
         e_none = 0,
         e_newFixture = 1,
@@ -2271,7 +2271,7 @@ declare module box2d {
         SolveTOI(step: b2TimeStep): void;
     }
 }
-declare module box2d {
+declare namespace box2d {
     enum b2BodyType {
         b2_unknown = -1,
         b2_staticBody = 0,
@@ -2404,7 +2404,7 @@ declare module box2d {
         Advance(alpha: number): void;
     }
 }
-declare module box2d.Testbed {
+declare namespace box2d.Testbed {
     class DebugDraw extends b2Draw {
         m_canvas: HTMLCanvasElement;
         m_ctx: CanvasRenderingContext2D;
@@ -2428,8 +2428,8 @@ declare module box2d.Testbed {
         DrawAABB(aabb: any, color: any): void;
     }
 }
-declare module box2d.Testbed {
-    var DRAW_STRING_NEW_LINE: number;
+declare namespace box2d.Testbed {
+    const DRAW_STRING_NEW_LINE: number;
     enum KeyCode {
         WIN_KEY_FF_LINUX = 0,
         MAC_ENTER = 3,
@@ -2633,7 +2633,7 @@ declare module box2d.Testbed {
         ShiftOrigin(newOrigin: any): void;
     }
 }
-declare module box2d.Testbed {
+declare namespace box2d.Testbed {
     class Car extends Test {
         m_car: b2Body;
         m_wheel1: b2Body;
@@ -2649,7 +2649,7 @@ declare module box2d.Testbed {
         static Create(canvas: HTMLCanvasElement, settings: Settings): Test;
     }
 }
-declare module box2d.Testbed {
+declare namespace box2d.Testbed {
     class SphereStack extends Test {
         static e_count: number;
         m_bodies: b2Body[];
@@ -2658,10 +2658,10 @@ declare module box2d.Testbed {
         static Create(canvas: HTMLCanvasElement, settings: Settings): Test;
     }
 }
-declare module box2d.Testbed {
+declare namespace box2d.Testbed {
     function GetTestEntries(entries: TestEntry[]): TestEntry[];
 }
-declare module box2d.Testbed {
+declare namespace box2d.Testbed {
     class Main {
         m_time_last: number;
         m_fps_time: number;
@@ -2718,7 +2718,7 @@ declare module box2d.Testbed {
     }
 }
 declare function requestAnimFrame(callback: any): number;
-declare module main {
+declare namespace main {
     function start(): void;
 }
 /**
@@ -2730,5 +2730,5 @@ For documentation please see http://box2d.org/documentation.html
 
 For discussion please visit http://box2d.org/forum
 */
-declare module box2d {
+declare namespace box2d {
 }
