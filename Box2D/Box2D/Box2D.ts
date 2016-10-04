@@ -28,45 +28,44 @@ For discussion please visit http://box2d.org/forum
 
 // These include files constitute the main Box2D API
 
-///<reference path='../../Box2D/Box2D/Common/b2Settings.ts' />
-///<reference path='../../Box2D/Box2D/Common/b2Draw.ts' />
-///<reference path='../../Box2D/Box2D/Common/b2Timer.ts' />
-///<reference path='../../Box2D/Box2D/Common/b2GrowableStack.ts' />
+/// <reference path="../../Box2D/Box2D/Common/b2Settings.ts"/>
+/// <reference path="../../Box2D/Box2D/Common/b2Draw.ts"/>
+/// <reference path="../../Box2D/Box2D/Common/b2Timer.ts"/>
+/// <reference path="../../Box2D/Box2D/Common/b2GrowableStack.ts"/>
 
-///<reference path='../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts' />
-///<reference path='../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts' />
-///<reference path='../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts' />
-///<reference path='../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts' />
+/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
+/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
 
-///<reference path='../../Box2D/Box2D/Collision/b2BroadPhase.ts' />
-///<reference path='../../Box2D/Box2D/Collision/b2Distance.ts' />
-///<reference path='../../Box2D/Box2D/Collision/b2DynamicTree.ts' />
-///<reference path='../../Box2D/Box2D/Collision/b2TimeOfImpact.ts' />
+/// <reference path="../../Box2D/Box2D/Collision/b2BroadPhase.ts"/>
+/// <reference path="../../Box2D/Box2D/Collision/b2Distance.ts"/>
+/// <reference path="../../Box2D/Box2D/Collision/b2DynamicTree.ts"/>
+/// <reference path="../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
 
-///<reference path='../../Box2D/Box2D/Dynamics/b2Body.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/b2Fixture.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/b2TimeStep.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/b2World.ts' />
+/// <reference path="../../Box2D/Box2D/Dynamics/b2Body.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/b2World.ts"/>
 
-///<reference path='../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts' />
+/// <reference path="../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
 
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2DistanceJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2FrictionJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2GearJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2MotorJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2MouseJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2RopeJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2WeldJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts' />
-///<reference path='../../Box2D/Box2D/Dynamics/Joints/b2AreaJoint.ts' />
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2DistanceJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2FrictionJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2GearJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2MotorJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2MouseJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2RopeJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2WeldJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts"/>
+/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2AreaJoint.ts"/>
 
-///<reference path='../../Box2D/Build/Testbed/main.ts' />
+/// <reference path="../../Box2D/Build/Testbed/main.ts"/>
 
-module box2d {
+namespace box2d {
 
-} // module box2d
-
+} // namespace box2d

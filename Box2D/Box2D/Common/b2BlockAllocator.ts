@@ -16,9 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../Box2D/Box2D/Common/b2Settings.ts' />
+/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
 
-module box2d {
+namespace box2d {
 
-} // module box2d
-
+} // namespace box2d

@@ -16,209 +16,192 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../Box2D/Box2D/Box2D.ts' />
+/// <reference path="../../../Box2D/Box2D/Box2D.ts"/>
 
-module box2d.Testbed {
+namespace box2d.Testbed {
 
 // This class implements debug drawing callbacks that are invoked
 // inside b2World::Step.
-export class DebugDraw extends b2Draw
-{
-	public m_canvas: HTMLCanvasElement = null;
-	public m_ctx: CanvasRenderingContext2D = null;
-	public m_settings: Settings = null;
+export class DebugDraw extends b2Draw {
+  public m_canvas: HTMLCanvasElement = null;
+  public m_ctx: CanvasRenderingContext2D = null;
+  public m_settings: Settings = null;
 
-	constructor(canvas, settings)
-	{
-		super(); // base class constructor
+  constructor(canvas, settings) {
+    super(); // base class constructor
 
-		this.m_canvas = canvas;
-		this.m_ctx = <CanvasRenderingContext2D> this.m_canvas.getContext("2d");
-		this.m_settings = settings;
-	}
+    this.m_canvas = canvas;
+    this.m_ctx = <CanvasRenderingContext2D> this.m_canvas.getContext("2d");
+    this.m_settings = settings;
+  }
 
-	public PushTransform(xf)
-	{
-		var ctx = this.m_ctx;
-		ctx.save();
-		ctx.translate(xf.p.x, xf.p.y);
-		ctx.rotate(xf.q.GetAngleRadians());
-	}
+  public PushTransform(xf) {
+    const ctx = this.m_ctx;
+    ctx.save();
+    ctx.translate(xf.p.x, xf.p.y);
+    ctx.rotate(xf.q.GetAngleRadians());
+  }
 
-	public PopTransform(xf)
-	{
-		var ctx = this.m_ctx;
-		ctx.restore();
-	}
+  public PopTransform(xf) {
+    const ctx = this.m_ctx;
+    ctx.restore();
+  }
 
-	public DrawPolygon(vertices, vertexCount, color)
-	{
-		if (!vertexCount) return;
+  public DrawPolygon(vertices, vertexCount, color) {
+    if (!vertexCount) return;
 
-		var ctx = this.m_ctx;
+    const ctx = this.m_ctx;
 
-		ctx.beginPath();
-		ctx.moveTo(vertices[0].x, vertices[0].y);
-		for (var i: number = 1; i < vertexCount; i++)
-		{
-			ctx.lineTo(vertices[i].x, vertices[i].y);
-		}
-		ctx.closePath();
-		ctx.strokeStyle = color.MakeStyleString(1);
-		ctx.stroke();
-	}
+    ctx.beginPath();
+    ctx.moveTo(vertices[0].x, vertices[0].y);
+    for (let i: number = 1; i < vertexCount; i++) {
+      ctx.lineTo(vertices[i].x, vertices[i].y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = color.MakeStyleString(1);
+    ctx.stroke();
+  }
 
-	public DrawSolidPolygon(vertices, vertexCount, color)
-	{
-		if (!vertexCount) return;
+  public DrawSolidPolygon(vertices, vertexCount, color) {
+    if (!vertexCount) return;
 
-		var ctx = this.m_ctx;
+    const ctx = this.m_ctx;
 
-		ctx.beginPath();
-		ctx.moveTo(vertices[0].x, vertices[0].y);
-		for (var i: number = 1; i < vertexCount; i++)
-		{
-			ctx.lineTo(vertices[i].x, vertices[i].y);
-		}
-		ctx.closePath();
-		ctx.fillStyle = color.MakeStyleString(0.5);
-		ctx.fill();
-		ctx.strokeStyle = color.MakeStyleString(1);
-		ctx.stroke();
-	}
+    ctx.beginPath();
+    ctx.moveTo(vertices[0].x, vertices[0].y);
+    for (let i: number = 1; i < vertexCount; i++) {
+      ctx.lineTo(vertices[i].x, vertices[i].y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color.MakeStyleString(0.5);
+    ctx.fill();
+    ctx.strokeStyle = color.MakeStyleString(1);
+    ctx.stroke();
+  }
 
-	public DrawCircle(center, radius, color)
-	{
-		if (!radius) return;
+  public DrawCircle(center, radius, color) {
+    if (!radius) return;
 
-		var ctx = this.m_ctx;
+    const ctx = this.m_ctx;
 
-		ctx.beginPath();
-		ctx.arc(center.x, center.y, radius, 0, b2_pi * 2, true);
-		ctx.strokeStyle = color.MakeStyleString(1);
-		ctx.stroke();
-	}
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, b2_pi * 2, true);
+    ctx.strokeStyle = color.MakeStyleString(1);
+    ctx.stroke();
+  }
 
-	public DrawSolidCircle(center, radius, axis, color)
-	{
-		if (!radius) return;
+  public DrawSolidCircle(center, radius, axis, color) {
+    if (!radius) return;
 
-		var ctx = this.m_ctx;
+    const ctx = this.m_ctx;
 
-		var cx = center.x;
-		var cy = center.y;
-		ctx.beginPath();
-		ctx.arc(cx, cy, radius, 0, b2_pi * 2, true);
-		ctx.moveTo(cx, cy);
-		ctx.lineTo((cx + axis.x * radius), (cy + axis.y * radius));
-		ctx.fillStyle = color.MakeStyleString(0.5);
-		ctx.fill();
-		ctx.strokeStyle = color.MakeStyleString(1);
-		ctx.stroke();
-	}
+    const cx = center.x;
+    const cy = center.y;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, b2_pi * 2, true);
+    ctx.moveTo(cx, cy);
+    ctx.lineTo((cx + axis.x * radius), (cy + axis.y * radius));
+    ctx.fillStyle = color.MakeStyleString(0.5);
+    ctx.fill();
+    ctx.strokeStyle = color.MakeStyleString(1);
+    ctx.stroke();
+  }
 
-	public DrawSegment(p1, p2, color)
-	{
-		var ctx = this.m_ctx;
+  public DrawSegment(p1, p2, color) {
+    const ctx = this.m_ctx;
 
-		ctx.beginPath();
-		ctx.moveTo(p1.x, p1.y);
-		ctx.lineTo(p2.x, p2.y);
-		ctx.strokeStyle = color.MakeStyleString(1);
-		ctx.stroke();
-	}
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.strokeStyle = color.MakeStyleString(1);
+    ctx.stroke();
+  }
 
-	public DrawTransform(xf)
-	{
-		var ctx = this.m_ctx;
+  public DrawTransform(xf) {
+    const ctx = this.m_ctx;
 
-		this.PushTransform(xf);
+    this.PushTransform(xf);
 
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(1, 0);
-		ctx.strokeStyle = b2Color.RED.MakeStyleString(1);
-		ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(1, 0);
+    ctx.strokeStyle = b2Color.RED.MakeStyleString(1);
+    ctx.stroke();
 
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(0, 1);
-		ctx.strokeStyle = b2Color.GREEN.MakeStyleString(1);
-		ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, 1);
+    ctx.strokeStyle = b2Color.GREEN.MakeStyleString(1);
+    ctx.stroke();
 
-		this.PopTransform(xf);
-	}
+    this.PopTransform(xf);
+  }
 
-	public DrawPoint(p, size, color)
-	{
-		var ctx = this.m_ctx;
+  public DrawPoint(p, size, color) {
+    const ctx = this.m_ctx;
 
-		ctx.fillStyle = color.MakeStyleString();
-		size /= this.m_settings.viewZoom;
-		size /= this.m_settings.canvasScale;
-		var hsize = size / 2;
-		ctx.fillRect(p.x - hsize, p.y - hsize, size, size);
-	}
+    ctx.fillStyle = color.MakeStyleString();
+    size /= this.m_settings.viewZoom;
+    size /= this.m_settings.canvasScale;
+    const hsize = size / 2;
+    ctx.fillRect(p.x - hsize, p.y - hsize, size, size);
+  }
 
-	private static DrawString_s_color = new b2Color(0.9, 0.6, 0.6);
-	public DrawString(x: number, y: number, message: string): void
-	{
-		var ctx = this.m_ctx;
+  private static DrawString_s_color = new b2Color(0.9, 0.6, 0.6);
+  public DrawString(x: number, y: number, message: string): void {
+    const ctx = this.m_ctx;
 
-		ctx.save();
-			ctx.setTransform(1, 0, 0, 1, 0, 0);
-			ctx.font = '18pt helvetica';//'9pt lucida console';
-			var color = DebugDraw.DrawString_s_color;
-			ctx.fillStyle = color.MakeStyleString();
-			ctx.fillText(message, x, y);
-		ctx.restore();
-	}
+    ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.font = "18pt helvetica"; // "9pt lucida console";
+      const color = DebugDraw.DrawString_s_color;
+      ctx.fillStyle = color.MakeStyleString();
+      ctx.fillText(message, x, y);
+    ctx.restore();
+  }
 
-	private static DrawStringWorld_s_p = new b2Vec2();
-	private static DrawStringWorld_s_cc = new b2Vec2();
-	private static DrawStringWorld_s_color = new b2Color(0.5, 0.9, 0.5);
-	public DrawStringWorld(x: number, y: number, message: string)
-	{
-		var p = DebugDraw.DrawStringWorld_s_p.SetXY(x, y);
+  private static DrawStringWorld_s_p = new b2Vec2();
+  private static DrawStringWorld_s_cc = new b2Vec2();
+  private static DrawStringWorld_s_color = new b2Color(0.5, 0.9, 0.5);
+  public DrawStringWorld(x: number, y: number, message: string) {
+    const p = DebugDraw.DrawStringWorld_s_p.SetXY(x, y);
 
-		// world -> viewport
-		var vt = this.m_settings.viewCenter;
-		b2SubVV(p, vt, p);
-		var vr = this.m_settings.viewRotation;
-		b2MulTRV(vr, p, p);
-		var vs = this.m_settings.viewZoom;
-		b2MulSV(vs, p, p);
+    // world -> viewport
+    const vt = this.m_settings.viewCenter;
+    b2SubVV(p, vt, p);
+    const vr = this.m_settings.viewRotation;
+    b2MulTRV(vr, p, p);
+    const vs = this.m_settings.viewZoom;
+    b2MulSV(vs, p, p);
 
-		// viewport -> canvas
-		var cs = this.m_settings.canvasScale;
-		b2MulSV(cs, p, p);
-		p.y *= -1;
-		var cc = DebugDraw.DrawStringWorld_s_cc.SetXY(0.5 * this.m_canvas.width, 0.5 * this.m_canvas.height);
-		b2AddVV(p, cc, p);
+    // viewport -> canvas
+    const cs = this.m_settings.canvasScale;
+    b2MulSV(cs, p, p);
+    p.y *= -1;
+    const cc = DebugDraw.DrawStringWorld_s_cc.SetXY(0.5 * this.m_canvas.width, 0.5 * this.m_canvas.height);
+    b2AddVV(p, cc, p);
 
-		var ctx = this.m_ctx;
+    const ctx = this.m_ctx;
 
-		ctx.save();
-			ctx.setTransform(1, 0, 0, 1, 0, 0);
-			ctx.font = '18pt helvetica';//'9pt lucida console';
-			var color = DebugDraw.DrawStringWorld_s_color;
-			ctx.fillStyle = color.MakeStyleString();
-			ctx.fillText(message, p.x, p.y);
-		ctx.restore();
-	}
+    ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.font = "18pt helvetica"; // "9pt lucida console";
+      const color = DebugDraw.DrawStringWorld_s_color;
+      ctx.fillStyle = color.MakeStyleString();
+      ctx.fillText(message, p.x, p.y);
+    ctx.restore();
+  }
 
-	public DrawAABB(aabb, color)
-	{
-		var ctx = this.m_ctx;
+  public DrawAABB(aabb, color) {
+    const ctx = this.m_ctx;
 
-		ctx.strokeStyle = color.MakeStyleString();
-		var x = aabb.lowerBound.x;
-		var y = aabb.lowerBound.y;
-		var w = aabb.upperBound.x - aabb.lowerBound.x;
-		var h = aabb.upperBound.y - aabb.lowerBound.y;
-		ctx.strokeRect(x, y, w, h);
-	}
+    ctx.strokeStyle = color.MakeStyleString();
+    const x = aabb.lowerBound.x;
+    const y = aabb.lowerBound.y;
+    const w = aabb.upperBound.x - aabb.lowerBound.x;
+    const h = aabb.upperBound.y - aabb.lowerBound.y;
+    ctx.strokeRect(x, y, w, h);
+  }
 }
 
-} // module box2d.Testbed
-
+} // namespace box2d.Testbed

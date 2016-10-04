@@ -1,24 +1,19 @@
-///<reference path='../../../Box2D/Testbed/Framework/Main.ts' />
+/// <reference path="../../../Box2D/Testbed/Framework/Main.ts"/>
 
 declare function requestAnimFrame(callback: any): number;
 
-module main {
+namespace main {
 
-var m_app = null;
+let m_app = null;
 
-export function start()
-{
-	m_app = new box2d.Testbed.Main();
-
-	loop();
+export function start() {
+  m_app = new box2d.Testbed.Main();
+  loop();
 }
 
-function loop()
-{
-	requestAnimFrame(loop);
-
-	m_app.SimulationLoop();
+function loop() {
+  requestAnimFrame(loop);
+  m_app.SimulationLoop();
 }
 
-} // module main
-
+} // namespace main

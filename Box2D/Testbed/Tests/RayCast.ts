@@ -16,27 +16,27 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../Box2D/Box2D/Box2D.ts' />
-///<reference path='../../../Box2D/Testbed/Framework/Render.ts' />
+/// <reference path="../../../Box2D/Box2D/Box2D.ts"/>
+/// <reference path="../../../Box2D/Testbed/Framework/Render.ts"/>
 
-module box2d.Testbed {
+namespace box2d.Testbed {
 
 export class RayCast extends Test
 {
-	constructor(canvas: HTMLCanvasElement, settings: Settings)
-	{
-		super(canvas, settings); // base class constructor
-	}
+  constructor(canvas: HTMLCanvasElement, settings: Settings)
+  {
+    super(canvas, settings); // base class constructor
+  }
 
-	public Step(settings: Settings): void
-	{
-		super.Step(settings);
-	}
+  public Step(settings: Settings): void
+  {
+    super.Step(settings);
+  }
 
-	public static Create(canvas: HTMLCanvasElement, settings: Settings): Test
-	{
-		return new RayCast(canvas, settings);
-	}
+  public static Create(canvas: HTMLCanvasElement, settings: Settings): Test
+  {
+    return new RayCast(canvas, settings);
+  }
 }
 
-} // module box2d.Testbed
+} // namespace box2d.Testbed

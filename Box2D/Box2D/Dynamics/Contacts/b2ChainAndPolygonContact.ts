@@ -16,53 +16,46 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts' />
-///<reference path='../../../../Box2D/Box2D/Common/b2BlockAllocator.ts' />
-///<reference path='../../../../Box2D/Box2D/Dynamics/b2Fixture.ts' />
-///<reference path='../../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts' />
-///<reference path='../../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts' />
+/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
+/// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
+/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
+/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
 
-module box2d {
+namespace box2d {
 
-export class b2ChainAndPolygonContact extends b2Contact
-{
-	constructor()
-	{
-		super(); // base class constructor
-	}
+export class b2ChainAndPolygonContact extends b2Contact {
+  constructor() {
+    super(); // base class constructor
+  }
 
-	public static Create(allocator: any): b2Contact
-	{
-		return new b2ChainAndPolygonContact();
-	}
+  public static Create(allocator: any): b2Contact {
+    return new b2ChainAndPolygonContact();
+  }
 
-	public static Destroy(contact: b2Contact, allocator: any): void
-	{
-	}
+  public static Destroy(contact: b2Contact, allocator: any): void {
+  }
 
-	public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void
-	{
-		super.Reset(fixtureA, indexA, fixtureB, indexB);
-		if (ENABLE_ASSERTS) { b2Assert(fixtureA.GetType() == b2ShapeType.e_chainShape); }
-		if (ENABLE_ASSERTS) { b2Assert(fixtureB.GetType() == b2ShapeType.e_polygonShape); }
-	}
+  public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
+    super.Reset(fixtureA, indexA, fixtureB, indexB);
+    if (ENABLE_ASSERTS) { b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape); }
+    if (ENABLE_ASSERTS) { b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape); }
+  }
 
-	private static Evaluate_s_edge = new b2EdgeShape();
-	public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void
-	{
-		var shapeA = this.m_fixtureA.GetShape();
-		var shapeB = this.m_fixtureB.GetShape();
-		if (ENABLE_ASSERTS) { b2Assert(shapeA instanceof b2ChainShape); }
-		if (ENABLE_ASSERTS) { b2Assert(shapeB instanceof b2PolygonShape); }
-		var chain = <b2ChainShape> shapeA;
-		var edge = b2ChainAndPolygonContact.Evaluate_s_edge;
-		chain.GetChildEdge(edge, this.m_indexA);
-		b2CollideEdgeAndPolygon(
-			manifold, 
-			edge, xfA, 
-			<b2PolygonShape> shapeB, xfB);
-	}
+  private static Evaluate_s_edge = new b2EdgeShape();
+  public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
+    const shapeA = this.m_fixtureA.GetShape();
+    const shapeB = this.m_fixtureB.GetShape();
+    if (ENABLE_ASSERTS) { b2Assert(shapeA instanceof b2ChainShape); }
+    if (ENABLE_ASSERTS) { b2Assert(shapeB instanceof b2PolygonShape); }
+    const chain = <b2ChainShape> shapeA;
+    const edge = b2ChainAndPolygonContact.Evaluate_s_edge;
+    chain.GetChildEdge(edge, this.m_indexA);
+    b2CollideEdgeAndPolygon(
+      manifold,
+      edge, xfA,
+      <b2PolygonShape> shapeB, xfB);
+  }
 }
 
-} // module box2d
-
+} // namespace box2d

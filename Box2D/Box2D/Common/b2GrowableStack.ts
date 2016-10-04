@@ -16,51 +16,44 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../Box2D/Box2D/Common/b2Settings.ts' />
+/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
 
-module box2d {
+namespace box2d {
 
 /// This is a growable LIFO stack with an initial capacity of N.
 /// If the stack size exceeds the initial capacity, the heap is used
 /// to increase the size of the stack.
 
-export class b2GrowableStack
-{
-	public m_stack: any[] = [];
-	public m_count: number = 0;
+export class b2GrowableStack {
+  public m_stack: any[] = [];
+  public m_count: number = 0;
 
-	constructor(N: number)
-	{
-		this.m_stack = new Array(N);
-		this.m_count = 0;
-	}
+  constructor(N: number) {
+    this.m_stack = new Array(N);
+    this.m_count = 0;
+  }
 
-	public Reset(): b2GrowableStack
-	{
-		this.m_count = 0;
-		return this;
-	}
+  public Reset(): b2GrowableStack {
+    this.m_count = 0;
+    return this;
+  }
 
-	public Push(element: any): void
-	{
-		this.m_stack[this.m_count] = element;
-		this.m_count++;
-	}
+  public Push(element: any): void {
+    this.m_stack[this.m_count] = element;
+    this.m_count++;
+  }
 
-	public Pop(): any
-	{
-		//if (box2d.ENABLE_ASSERTS) { box2d.b2Assert(this.m_count > 0); }
-		this.m_count--;
-		var element: any = this.m_stack[this.m_count];
-		this.m_stack[this.m_count] = null;
-		return element;
-	}
+  public Pop(): any {
+    // if (box2d.ENABLE_ASSERTS) { box2d.b2Assert(this.m_count > 0); }
+    this.m_count--;
+    const element: any = this.m_stack[this.m_count];
+    this.m_stack[this.m_count] = null;
+    return element;
+  }
 
-	public GetCount(): number
-	{
-		return this.m_count;
-	}
+  public GetCount(): number {
+    return this.m_count;
+  }
 }
 
-} // module box2d
-
+} // namespace box2d

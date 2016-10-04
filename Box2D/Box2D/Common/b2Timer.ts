@@ -16,88 +16,73 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../Box2D/Box2D/Common/b2Settings.ts' />
+/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
 
-module box2d {
+namespace box2d {
 
 /// Timer for profiling. This has platform specific code and may
 /// not work on every platform.
-export class b2Timer
-{
-	public m_start: number = new Date().getTime();
+export class b2Timer {
+  public m_start: number = new Date().getTime();
 
-	/// Reset the timer.
-	public Reset(): b2Timer
-	{
-		this.m_start = new Date().getTime();
-		return this;
-	}
+  /// Reset the timer.
+  public Reset(): b2Timer {
+    this.m_start = new Date().getTime();
+    return this;
+  }
 
-	/// Get the time since construction or the last reset.
-	public GetMilliseconds(): number
-	{
-		return new Date().getTime() - this.m_start;
-	}
+  /// Get the time since construction or the last reset.
+  public GetMilliseconds(): number {
+    return new Date().getTime() - this.m_start;
+  }
 }
 
-export class b2Counter
-{
-	public m_count: number = 0;
-	public m_min_count: number = 0;
-	public m_max_count: number = 0;
+export class b2Counter {
+  public m_count: number = 0;
+  public m_min_count: number = 0;
+  public m_max_count: number = 0;
 
-	public GetCount(): number
-	{
-		return this.m_count;
-	}
+  public GetCount(): number {
+    return this.m_count;
+  }
 
-	public GetMinCount(): number
-	{
-		return this.m_min_count;
-	}
+  public GetMinCount(): number {
+    return this.m_min_count;
+  }
 
-	public GetMaxCount(): number
-	{
-		return this.m_max_count;
-	}
+  public GetMaxCount(): number {
+    return this.m_max_count;
+  }
 
-	public ResetCount(): number
-	{
-		var count: number = this.m_count;
-		this.m_count = 0;
-		return count;
-	}
+  public ResetCount(): number {
+    const count: number = this.m_count;
+    this.m_count = 0;
+    return count;
+  }
 
-	public ResetMinCount(): void
-	{
-		this.m_min_count = 0;
-	}
+  public ResetMinCount(): void {
+    this.m_min_count = 0;
+  }
 
-	public ResetMaxCount(): void
-	{
-		this.m_max_count = 0;
-	}
+  public ResetMaxCount(): void {
+    this.m_max_count = 0;
+  }
 
-	public Increment(): void
-	{
-		this.m_count++;
+  public Increment(): void {
+    this.m_count++;
 
-		if (this.m_max_count < this.m_count)
-		{
-			this.m_max_count = this.m_count;
-		}
-	}
+    if (this.m_max_count < this.m_count) {
+      this.m_max_count = this.m_count;
+    }
+  }
 
-	public Decrement(): void
-	{
-		this.m_count--;
+  public Decrement(): void {
+    this.m_count--;
 
-		if (this.m_min_count > this.m_count)
-		{
-			this.m_min_count = this.m_count;
-		}
-	}
+    if (this.m_min_count > this.m_count) {
+      this.m_min_count = this.m_count;
+    }
+  }
 }
 
-} // module box2d
-
+} // namespace box2d

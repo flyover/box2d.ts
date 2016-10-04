@@ -16,73 +16,63 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///<reference path='../../../Box2D/Box2D/Box2D.ts' />
-///<reference path='../../../Box2D/Testbed/Framework/Render.ts' />
+/// <reference path="../../../Box2D/Box2D/Box2D.ts"/>
+/// <reference path="../../../Box2D/Testbed/Framework/Render.ts"/>
 
-module box2d.Testbed {
+namespace box2d.Testbed {
 
-export class SphereStack extends Test
-{
-	public static e_count: number = 10;
+export class SphereStack extends Test {
+  public static e_count: number = 10;
 
-	public m_bodies: b2Body[] = null;
+  public m_bodies: b2Body[] = null;
 
-	constructor(canvas: HTMLCanvasElement, settings: Settings)
-	{
-		super(canvas, settings); // base class constructor
+  constructor(canvas: HTMLCanvasElement, settings: Settings) {
+    super(canvas, settings); // base class constructor
 
-		this.m_bodies = new Array(SphereStack.e_count);
+    this.m_bodies = new Array(SphereStack.e_count); {
+      const bd: b2BodyDef = new box2d.b2BodyDef();
+      const ground: b2Body = this.m_world.CreateBody(bd);
 
-		{
-			var bd: b2BodyDef = new box2d.b2BodyDef();
-			var ground: b2Body = this.m_world.CreateBody(bd);
+      const edge_shape: b2EdgeShape = new box2d.b2EdgeShape();
+      edge_shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      ground.CreateFixture2(edge_shape, 0.0);
+    } {
+      const circle_shape: b2CircleShape = new box2d.b2CircleShape();
+      circle_shape.m_radius = 1.0;
 
-			var edge_shape: b2EdgeShape = new box2d.b2EdgeShape();
-			edge_shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
-			ground.CreateFixture2(edge_shape, 0.0);
-		}
+      for (let i: number = 0; i < SphereStack.e_count; ++i) {
+        const bd: b2BodyDef = new box2d.b2BodyDef();
+        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        bd.position.SetXY(0.0, 4.0 + 3.0 * i);
 
-		{
-			var circle_shape: b2CircleShape = new box2d.b2CircleShape();
-			circle_shape.m_radius = 1.0;
+        this.m_bodies[i] = this.m_world.CreateBody(bd);
 
-			for (var i: number = 0; i < SphereStack.e_count; ++i)
-			{
-				var bd: b2BodyDef = new box2d.b2BodyDef();
-				bd.type = box2d.b2BodyType.b2_dynamicBody;
-				bd.position.SetXY(0.0, 4.0 + 3.0 * i);
+        this.m_bodies[i].CreateFixture2(circle_shape, 1.0);
 
-				this.m_bodies[i] = this.m_world.CreateBody(bd);
+        this.m_bodies[i].SetLinearVelocity(new box2d.b2Vec2(0.0, -50.0));
+      }
+    }
+  }
 
-				this.m_bodies[i].CreateFixture2(circle_shape, 1.0);
+  public Step(settings: Settings): void {
+    super.Step(settings);
 
-				this.m_bodies[i].SetLinearVelocity(new box2d.b2Vec2(0.0, -50.0));
-			}
-		}
-	}
+    // for (const i: number = 0; i < SphereStack.e_count; ++i)
+    // {
+    //   printf("%g ", this.m_bodies[i].GetWorldCenter().y);
+    // }
 
-	public Step(settings: Settings): void
-	{
-		super.Step(settings);
+    // for (const i: number = 0; i < SphereStack.e_count; ++i)
+    // {
+    //   printf("%g ", this.m_bodies[i].GetLinearVelocity().y);
+    // }
 
-		//for (var i: number = 0; i < SphereStack.e_count; ++i)
-		//{
-		//	printf("%g ", this.m_bodies[i].GetWorldCenter().y);
-		//}
+    // printf("\n");
+  }
 
-		//for (var i: number = 0; i < SphereStack.e_count; ++i)
-		//{
-		//	printf("%g ", this.m_bodies[i].GetLinearVelocity().y);
-		//}
-
-		//printf("\n");
-	}
-
-	public static Create(canvas: HTMLCanvasElement, settings: Settings): Test
-	{
-		return new SphereStack(canvas, settings);
-	}
+  public static Create(canvas: HTMLCanvasElement, settings: Settings): Test {
+    return new SphereStack(canvas, settings);
+  }
 }
 
-} // module box2d.Testbed
-
+} // namespace box2d.Testbed

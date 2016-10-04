@@ -7,11 +7,9 @@
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	<script type="text/javascript" src="../../../box2d.ts.js"></script>
 	<script type="text/javascript">
-	function load()
-	{
-		var app = new box2d.Testbed.Main();
-		var loop = function ()
-		{
+	function load() {
+		const app = new box2d.Testbed.Main();
+		const loop = function () {
 			window.requestAnimationFrame(loop);
 			app.SimulationLoop();
 		}
@@ -24,4 +22,3 @@
 </body>
 
 </html>
-
