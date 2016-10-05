@@ -139,8 +139,7 @@ export class Main {
       number_input_td0.appendChild(document.createTextNode(label));
       const number_input_td1: any = number_input_tr.appendChild(document.createElement("td"));
       const number_input: any = document.createElement("input");
-//      if (!goog.userAgent.IE)
-//      {
+//      if (!goog.userAgent.IE) {
 //        number_input.type = "number";
 //      }
       number_input.size = 8;
@@ -271,6 +270,7 @@ export class Main {
     b2MulTRV(this.m_settings.viewRotation, projection, projection);
     return projection;
   }
+
   public ConvertProjectionToWorld(projection: b2Vec2, out: b2Vec2): b2Vec2 {
     const world = out.Copy(projection);
     b2MulRV(this.m_settings.viewRotation, world, world);

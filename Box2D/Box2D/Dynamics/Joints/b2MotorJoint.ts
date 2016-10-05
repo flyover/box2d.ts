@@ -193,7 +193,7 @@ export class b2MotorJoint extends b2Joint {
     this.m_angularError = aB - aA - this.m_angularOffset;
 
     if (data.step.warmStarting) {
-      // Scale impulses to support a constiable time step.
+      // Scale impulses to support a variable time step.
       // this.m_linearImpulse *= data.step.dtRatio;
       this.m_linearImpulse.SelfMul(data.step.dtRatio);
       this.m_angularImpulse *= data.step.dtRatio;

@@ -25,8 +25,8 @@ namespace box2d.HelloWorld {
 // box.
 // There are no graphics for this example. Box2D is meant to be used
 // with your rendering engine in your game engine.
-export function main() {
-//  const pre = document.body.appendChild(document.createElement('pre'));
+export function main(): number {
+  // const pre = document.body.appendChild(document.createElement('pre'));
 
   // Define the gravity vector.
   const gravity: b2Vec2 = new b2Vec2(0, -10);
@@ -93,9 +93,9 @@ export function main() {
     const angle: number = body.GetAngleRadians();
 
     console.log(position.x.toFixed(2), position.y.toFixed(2), angle.toFixed(2));
-//    const s = goog.string.format("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-//    console.log(s);
-//    pre.innerHTML += s;
+    // const s = goog.string.format("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+    // console.log(s);
+    // pre.innerHTML += s;
   }
 
   // When the world destructor is called, all bodies and joints are freed. This can

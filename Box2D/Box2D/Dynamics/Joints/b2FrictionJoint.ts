@@ -144,7 +144,7 @@ export class b2FrictionJoint extends b2Joint {
     }
 
     if (data.step.warmStarting) {
-      // Scale impulses to support a constiable time step.
+      // Scale impulses to support a variable time step.
       // m_linearImpulse *= data.step.dtRatio;
       this.m_linearImpulse.SelfMul(data.step.dtRatio);
       this.m_angularImpulse *= data.step.dtRatio;

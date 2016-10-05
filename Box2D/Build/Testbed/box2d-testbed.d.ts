@@ -1048,9 +1048,6 @@ declare namespace box2d {
     }
 }
 declare namespace box2d {
-    function b2EdgeSeparation(poly1: any, xf1: any, edge1: any, poly2: any, xf2: any): number;
-    function b2FindMaxSeparation(edgeIndex: any, poly1: any, xf1: any, poly2: any, xf2: any): number;
-    function b2FindIncidentEdge(c: any, poly1: any, xf1: any, edge1: any, poly2: any, xf2: any): void;
     function b2CollidePolygons(manifold: any, polyA: any, xfA: any, polyB: any, xfB: any): void;
 }
 declare namespace box2d {
@@ -1064,70 +1061,6 @@ declare namespace box2d {
 }
 declare namespace box2d {
     function b2CollideEdgeAndCircle(manifold: any, edgeA: any, xfA: any, circleB: any, xfB: any): void;
-    enum b2EPAxisType {
-        e_unknown = 0,
-        e_edgeA = 1,
-        e_edgeB = 2,
-    }
-    class b2EPAxis {
-        type: b2EPAxisType;
-        index: number;
-        separation: number;
-    }
-    class b2TempPolygon {
-        vertices: b2Vec2[];
-        normals: b2Vec2[];
-        count: number;
-    }
-    class b2ReferenceFace {
-        i1: number;
-        i2: number;
-        v1: b2Vec2;
-        v2: b2Vec2;
-        normal: b2Vec2;
-        sideNormal1: b2Vec2;
-        sideOffset1: number;
-        sideNormal2: b2Vec2;
-        sideOffset2: number;
-    }
-    enum b2EPColliderVertexType {
-        e_isolated = 0,
-        e_concave = 1,
-        e_convex = 2,
-    }
-    class b2EPCollider {
-        m_polygonB: b2TempPolygon;
-        m_xf: b2Transform;
-        m_centroidB: b2Vec2;
-        m_v0: b2Vec2;
-        m_v1: b2Vec2;
-        m_v2: b2Vec2;
-        m_v3: b2Vec2;
-        m_normal0: b2Vec2;
-        m_normal1: b2Vec2;
-        m_normal2: b2Vec2;
-        m_normal: b2Vec2;
-        m_type1: b2EPColliderVertexType;
-        m_type2: b2EPColliderVertexType;
-        m_lowerLimit: b2Vec2;
-        m_upperLimit: b2Vec2;
-        m_radius: number;
-        m_front: boolean;
-        private static s_edge1;
-        private static s_edge0;
-        private static s_edge2;
-        private static s_ie;
-        private static s_rf;
-        private static s_clipPoints1;
-        private static s_clipPoints2;
-        private static s_edgeAxis;
-        private static s_polygonAxis;
-        Collide(manifold: any, edgeA: any, xfA: any, polygonB: any, xfB: any): void;
-        ComputeEdgeSeparation(out: any): b2EPAxis;
-        private static s_n;
-        private static s_perp;
-        ComputePolygonSeparation(out: any): b2EPAxis;
-    }
     function b2CollideEdgeAndPolygon(manifold: any, edgeA: any, xfA: any, polygonB: any, xfB: any): void;
 }
 declare namespace box2d {
@@ -2420,23 +2353,23 @@ declare namespace box2d.Testbed {
         m_canvas: HTMLCanvasElement;
         m_ctx: CanvasRenderingContext2D;
         m_settings: Settings;
-        constructor(canvas: any, settings: any);
-        PushTransform(xf: any): void;
-        PopTransform(xf: any): void;
-        DrawPolygon(vertices: any, vertexCount: any, color: any): void;
-        DrawSolidPolygon(vertices: any, vertexCount: any, color: any): void;
-        DrawCircle(center: any, radius: any, color: any): void;
-        DrawSolidCircle(center: any, radius: any, axis: any, color: any): void;
-        DrawSegment(p1: any, p2: any, color: any): void;
-        DrawTransform(xf: any): void;
-        DrawPoint(p: any, size: any, color: any): void;
+        constructor(canvas: HTMLCanvasElement, settings: Settings);
+        PushTransform(xf: b2Transform): void;
+        PopTransform(xf: b2Transform): void;
+        DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
+        DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
+        DrawCircle(center: b2Vec2, radius: number, color: b2Color): void;
+        DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void;
+        DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void;
+        DrawTransform(xf: b2Transform): void;
+        DrawPoint(p: b2Vec2, size: number, color: b2Color): void;
         private static DrawString_s_color;
         DrawString(x: number, y: number, message: string): void;
         private static DrawStringWorld_s_p;
         private static DrawStringWorld_s_cc;
         private static DrawStringWorld_s_color;
         DrawStringWorld(x: number, y: number, message: string): void;
-        DrawAABB(aabb: any, color: any): void;
+        DrawAABB(aabb: b2AABB, color: b2Color): void;
     }
 }
 declare namespace box2d.Testbed {
@@ -2590,12 +2523,12 @@ declare namespace box2d.Testbed {
     class DestructionListener extends b2DestructionListener {
         test: Test;
         constructor(test: any);
-        SayGoodbyeJoint(joint: any): void;
-        SayGoodbyeFixture(fixture: any): void;
+        SayGoodbyeJoint(joint: b2Joint): void;
+        SayGoodbyeFixture(fixture: b2Fixture): void;
     }
     class ContactPoint {
-        fixtureA: any;
-        fixtureB: any;
+        fixtureA: b2Fixture;
+        fixtureB: b2Fixture;
         normal: b2Vec2;
         position: b2Vec2;
         state: b2PointState;
@@ -2620,28 +2553,28 @@ declare namespace box2d.Testbed {
         m_totalProfile: b2Profile;
         m_groundBody: b2Body;
         constructor(canvas: HTMLCanvasElement, settings: Settings);
-        JointDestroyed(joint: any): void;
-        BeginContact(contact: any): void;
-        EndContact(contact: any): void;
+        JointDestroyed(joint: b2Joint): void;
+        BeginContact(contact: b2Contact): void;
+        EndContact(contact: b2Contact): void;
         private static PreSolve_s_state1;
         private static PreSolve_s_state2;
         private static PreSolve_s_worldManifold;
-        PreSolve(contact: any, oldManifold: any): void;
-        PostSolve(contact: any, impulse: any): void;
+        PreSolve(contact: b2Contact, oldManifold: b2Manifold): void;
+        PostSolve(contact: b2Contact, impulse: b2ContactImpulse): void;
         Keyboard(key: KeyCode): void;
         KeyboardUp(key: KeyCode): void;
-        SetTextLine(line: any): void;
+        SetTextLine(line: number): void;
         DrawTitle(title: string): void;
-        MouseDown(p: any): void;
-        SpawnBomb(worldPt: any): void;
-        CompleteBombSpawn(p: any): void;
-        ShiftMouseDown(p: any): void;
-        MouseUp(p: any): void;
-        MouseMove(p: any): void;
+        MouseDown(p: b2Vec2): void;
+        SpawnBomb(worldPt: b2Vec2): void;
+        CompleteBombSpawn(p: b2Vec2): void;
+        ShiftMouseDown(p: b2Vec2): void;
+        MouseUp(p: b2Vec2): void;
+        MouseMove(p: b2Vec2): void;
         LaunchBomb(): void;
-        LaunchBombAt(position: any, velocity: any): void;
+        LaunchBombAt(position: b2Vec2, velocity: b2Vec2): void;
         Step(settings: Settings): void;
-        ShiftOrigin(newOrigin: any): void;
+        ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
 declare namespace box2d.Testbed {

@@ -315,7 +315,7 @@ export class b2PolygonShape extends b2Shape {
     //
     // We can compute these integrals by summing all the integrals
     // for each triangle of the polygon. To evaluate the integral
-    // for a single triangle, we make a change of constiables to
+    // for a single triangle, we make a change of variables to
     // the (u,v) coordinates of the triangle:
     // x = x0 + e1x * u + e2x * v
     // y = y0 + e1y * u + e2y * v
@@ -539,7 +539,7 @@ export class b2PolygonShape extends b2Shape {
     /*
 #if 0
     // This code would put the reference point inside the polygon.
-    for (const i: number = 0; i < count; ++i) {
+    for (let i: number = 0; i < count; ++i) {
       pRef.SelfAdd(vs[i]);
     }
     pRef.SelfMul(1 / count);
@@ -595,7 +595,7 @@ export class b2PolygonShape extends b2Shape {
       const lowerY = b2_maxFloat;
       const upperX = (-b2_maxFloat);
       const upperY = (-b2_maxFloat);
-      for (const j: number = 0; j < count; ++j) {
+      for (let j: number = 0; j < count; ++j) {
         const dX = p[j].x - root.x;
         const dY = p[j].y - root.y;
         const rX = (uxX * dX + uxY * dY);

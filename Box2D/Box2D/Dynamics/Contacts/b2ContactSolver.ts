@@ -344,7 +344,7 @@ export class b2ContactSolver {
     const xfA: b2Transform = b2ContactSolver.InitializeVelocityConstraints_s_xfA;
     const xfB: b2Transform = b2ContactSolver.InitializeVelocityConstraints_s_xfB;
 
-    let worldManifold: b2WorldManifold = b2ContactSolver.InitializeVelocityConstraints_s_worldManifold;
+    const worldManifold: b2WorldManifold = b2ContactSolver.InitializeVelocityConstraints_s_worldManifold;
 
     let pointCount: number;
 
@@ -734,7 +734,7 @@ export class b2ContactSolver {
         // solution that satisfies the problem is chosen.
         //
         // In order to account of the accumulated impulse 'a' (because of the iterative nature of the solver which only requires
-        // that the accumulated impulse is clamped and not the incremental impulse) we change the impulse constiable (x_i).
+        // that the accumulated impulse is clamped and not the incremental impulse) we change the impulse variable (x_i).
         //
         // Substitute:
         //

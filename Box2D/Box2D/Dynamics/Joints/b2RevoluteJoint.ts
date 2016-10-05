@@ -207,7 +207,7 @@ export class b2RevoluteJoint extends b2Joint {
     }
 
     if (data.step.warmStarting) {
-      // Scale impulses to support a constiable time step.
+      // Scale impulses to support a variable time step.
       this.m_impulse.SelfMul(data.step.dtRatio);
       this.m_motorImpulse *= data.step.dtRatio;
 

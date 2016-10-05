@@ -182,7 +182,7 @@ export class b2PulleyJoint extends b2Joint {
     }
 
     if (data.step.warmStarting) {
-      // Scale impulses to support constiable time steps.
+      // Scale impulses to support variable time steps.
       this.m_impulse *= data.step.dtRatio;
 
       // Warm starting.

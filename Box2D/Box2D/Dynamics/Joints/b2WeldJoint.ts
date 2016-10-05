@@ -175,7 +175,7 @@ export class b2WeldJoint extends b2Joint {
     }
 
     if (data.step.warmStarting) {
-      // Scale impulses to support a constiable time step.
+      // Scale impulses to support a variable time step.
       this.m_impulse.SelfMul(data.step.dtRatio);
 
       // b2Vec2 P(m_impulse.x, m_impulse.y);

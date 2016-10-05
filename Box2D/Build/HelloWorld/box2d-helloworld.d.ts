@@ -1048,9 +1048,6 @@ declare namespace box2d {
     }
 }
 declare namespace box2d {
-    function b2EdgeSeparation(poly1: any, xf1: any, edge1: any, poly2: any, xf2: any): number;
-    function b2FindMaxSeparation(edgeIndex: any, poly1: any, xf1: any, poly2: any, xf2: any): number;
-    function b2FindIncidentEdge(c: any, poly1: any, xf1: any, edge1: any, poly2: any, xf2: any): void;
     function b2CollidePolygons(manifold: any, polyA: any, xfA: any, polyB: any, xfB: any): void;
 }
 declare namespace box2d {
@@ -1064,70 +1061,6 @@ declare namespace box2d {
 }
 declare namespace box2d {
     function b2CollideEdgeAndCircle(manifold: any, edgeA: any, xfA: any, circleB: any, xfB: any): void;
-    enum b2EPAxisType {
-        e_unknown = 0,
-        e_edgeA = 1,
-        e_edgeB = 2,
-    }
-    class b2EPAxis {
-        type: b2EPAxisType;
-        index: number;
-        separation: number;
-    }
-    class b2TempPolygon {
-        vertices: b2Vec2[];
-        normals: b2Vec2[];
-        count: number;
-    }
-    class b2ReferenceFace {
-        i1: number;
-        i2: number;
-        v1: b2Vec2;
-        v2: b2Vec2;
-        normal: b2Vec2;
-        sideNormal1: b2Vec2;
-        sideOffset1: number;
-        sideNormal2: b2Vec2;
-        sideOffset2: number;
-    }
-    enum b2EPColliderVertexType {
-        e_isolated = 0,
-        e_concave = 1,
-        e_convex = 2,
-    }
-    class b2EPCollider {
-        m_polygonB: b2TempPolygon;
-        m_xf: b2Transform;
-        m_centroidB: b2Vec2;
-        m_v0: b2Vec2;
-        m_v1: b2Vec2;
-        m_v2: b2Vec2;
-        m_v3: b2Vec2;
-        m_normal0: b2Vec2;
-        m_normal1: b2Vec2;
-        m_normal2: b2Vec2;
-        m_normal: b2Vec2;
-        m_type1: b2EPColliderVertexType;
-        m_type2: b2EPColliderVertexType;
-        m_lowerLimit: b2Vec2;
-        m_upperLimit: b2Vec2;
-        m_radius: number;
-        m_front: boolean;
-        private static s_edge1;
-        private static s_edge0;
-        private static s_edge2;
-        private static s_ie;
-        private static s_rf;
-        private static s_clipPoints1;
-        private static s_clipPoints2;
-        private static s_edgeAxis;
-        private static s_polygonAxis;
-        Collide(manifold: any, edgeA: any, xfA: any, polygonB: any, xfB: any): void;
-        ComputeEdgeSeparation(out: any): b2EPAxis;
-        private static s_n;
-        private static s_perp;
-        ComputePolygonSeparation(out: any): b2EPAxis;
-    }
     function b2CollideEdgeAndPolygon(manifold: any, edgeA: any, xfA: any, polygonB: any, xfB: any): void;
 }
 declare namespace box2d {

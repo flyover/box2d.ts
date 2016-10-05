@@ -44,7 +44,7 @@ export class b2ChainShape extends b2Shape {
   /// @param count the vertex count
   public CreateLoop(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
     count = count || vertices.length;
-    if (ENABLE_ASSERTS) { b2Assert(this.m_vertices == null && this.m_count === 0); }
+    if (ENABLE_ASSERTS) { b2Assert(this.m_vertices === null && this.m_count === 0); }
     if (ENABLE_ASSERTS) { b2Assert(count >= 3); }
     if (ENABLE_ASSERTS) {
       for (let i: number = 1; i < count; ++i) {
@@ -73,7 +73,7 @@ export class b2ChainShape extends b2Shape {
   /// @param count the vertex count
   public CreateChain(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
     count = count || vertices.length;
-    if (ENABLE_ASSERTS) { b2Assert(this.m_vertices == null && this.m_count === 0); }
+    if (ENABLE_ASSERTS) { b2Assert(this.m_vertices === null && this.m_count === 0); }
     if (ENABLE_ASSERTS) { b2Assert(count >= 2); }
     if (ENABLE_ASSERTS) {
       for (let i: number = 1; i < count; ++i) {

@@ -86,7 +86,7 @@ export class b2BroadPhase {
   public TestOverlap(proxyA: b2TreeNode, proxyB: b2TreeNode): boolean {
     const aabbA = this.m_tree.GetFatAABB(proxyA);
     const aabbB = this.m_tree.GetFatAABB(proxyB);
-    return box2d.b2TestOverlapAABB(aabbA, aabbB);
+    return b2TestOverlapAABB(aabbA, aabbB);
   }
 
   /// Get the number of proxies.
@@ -102,7 +102,7 @@ export class b2BroadPhase {
     // Perform tree queries for all moving proxies.
     for (let i: number = 0; i < this.m_moveCount; ++i) {
       const queryProxy = this.m_moveBuffer[i];
-      if (queryProxy == null) {
+      if (queryProxy === null) {
         continue;
       }
 
@@ -118,7 +118,7 @@ export class b2BroadPhase {
 
         // Grow the pair buffer as needed.
         if (that.m_pairCount === that.m_pairBuffer.length) {
-          that.m_pairBuffer[that.m_pairCount] = new box2d.b2Pair();
+          that.m_pairBuffer[that.m_pairCount] = new b2Pair();
         }
 
         const pair = that.m_pairBuffer[that.m_pairCount];
@@ -149,7 +149,7 @@ export class b2BroadPhase {
 
     // Sort the pair buffer to expose duplicates.
     this.m_pairBuffer.length = this.m_pairCount;
-    this.m_pairBuffer.sort(box2d.b2PairLessThan);
+    this.m_pairBuffer.sort(b2PairLessThan);
 
     // Send the pairs back to the client.
     let i: number = 0;

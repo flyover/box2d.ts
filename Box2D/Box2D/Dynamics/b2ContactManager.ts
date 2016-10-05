@@ -98,7 +98,7 @@ export class b2ContactManager {
 
     // Call the factory.
     const c: b2Contact = this.m_contactFactory.Create(fixtureA, indexA, fixtureB, indexB);
-    if (c == null) {
+    if (c === null) {
       return;
     }
 
@@ -126,7 +126,7 @@ export class b2ContactManager {
 
     c.m_nodeA.prev = null;
     c.m_nodeA.next = bodyA.m_contactList;
-    if (bodyA.m_contactList != null) {
+    if (bodyA.m_contactList !== null) {
       bodyA.m_contactList.prev = c.m_nodeA;
     }
     bodyA.m_contactList = c.m_nodeA;
@@ -137,7 +137,7 @@ export class b2ContactManager {
 
     c.m_nodeB.prev = null;
     c.m_nodeB.next = bodyB.m_contactList;
-    if (bodyB.m_contactList != null) {
+    if (bodyB.m_contactList !== null) {
       bodyB.m_contactList.prev = c.m_nodeB;
     }
     bodyB.m_contactList = c.m_nodeB;

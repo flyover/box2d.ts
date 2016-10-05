@@ -176,7 +176,7 @@ export class DestructionListener extends b2DestructionListener {
     this.test = test;
   }
 
-  public SayGoodbyeJoint(joint) {
+  public SayGoodbyeJoint(joint: b2Joint): void {
     if (this.test.m_mouseJoint === joint) {
       this.test.m_mouseJoint = null;
     } else {
@@ -184,16 +184,15 @@ export class DestructionListener extends b2DestructionListener {
     }
   }
 
-  public SayGoodbyeFixture(fixture) {
-  }
+  public SayGoodbyeFixture(fixture: b2Fixture): void {}
 }
 
 export class ContactPoint {
-  public fixtureA = null;
-  public fixtureB = null;
+  public fixtureA: b2Fixture = null;
+  public fixtureB: b2Fixture = null;
   public normal: b2Vec2 = new b2Vec2();
   public position: b2Vec2 = new b2Vec2();
-  public state = b2PointState.b2_nullState;
+  public state: b2PointState = b2PointState.b2_nullState;
   public normalImpulse: number = 0;
   public tangentImpulse: number = 0;
 }
@@ -250,37 +249,34 @@ export class Test extends b2ContactListener {
     this.m_groundBody = this.m_world.CreateBody(bodyDef);
   }
 
-  public JointDestroyed(joint) {
-  }
+  public JointDestroyed(joint: b2Joint): void {}
 
-  public BeginContact(contact) {
-  }
+  public BeginContact(contact: b2Contact): void {}
 
-  public EndContact(contact) {
-  }
+  public EndContact(contact: b2Contact): void {}
 
-  private static PreSolve_s_state1 = new Array(b2_maxManifoldPoints);
-  private static PreSolve_s_state2 = new Array(b2_maxManifoldPoints);
-  private static PreSolve_s_worldManifold = new b2WorldManifold();
-  public PreSolve(contact, oldManifold) {
+  private static PreSolve_s_state1: b2PointState[] = new Array(b2_maxManifoldPoints);
+  private static PreSolve_s_state2: b2PointState[] = new Array(b2_maxManifoldPoints);
+  private static PreSolve_s_worldManifold: b2WorldManifold = new b2WorldManifold();
+  public PreSolve(contact: b2Contact, oldManifold: b2Manifold): void {
     const manifold = contact.GetManifold();
 
     if (manifold.pointCount === 0) {
       return;
     }
 
-    const fixtureA = contact.GetFixtureA();
-    const fixtureB = contact.GetFixtureB();
+    const fixtureA: b2Fixture = contact.GetFixtureA();
+    const fixtureB: b2Fixture = contact.GetFixtureB();
 
-    const state1 = Test.PreSolve_s_state1;
-    const state2 = Test.PreSolve_s_state2;
+    const state1: b2PointState[] = Test.PreSolve_s_state1;
+    const state2: b2PointState[] = Test.PreSolve_s_state2;
     b2GetPointStates(state1, state2, oldManifold, manifold);
 
-    const worldManifold = Test.PreSolve_s_worldManifold;
+    const worldManifold: b2WorldManifold = Test.PreSolve_s_worldManifold;
     contact.GetWorldManifold(worldManifold);
 
     for (let i: number = 0; i < manifold.pointCount && this.m_pointCount < Test.k_maxContactPoints; ++i) {
-      const cp = this.m_points[this.m_pointCount];
+      const cp: ContactPoint = this.m_points[this.m_pointCount];
       cp.fixtureA = fixtureA;
       cp.fixtureB = fixtureB;
       cp.position.Copy(worldManifold.points[i]);
@@ -292,16 +288,13 @@ export class Test extends b2ContactListener {
     }
   }
 
-  public PostSolve(contact, impulse) {
-  }
+  public PostSolve(contact: b2Contact, impulse: b2ContactImpulse): void {}
 
-  public Keyboard(key: KeyCode): void {
-  }
+  public Keyboard(key: KeyCode): void {}
 
-  public KeyboardUp(key: KeyCode): void {
-  }
+  public KeyboardUp(key: KeyCode): void {}
 
-  public SetTextLine(line) {
+  public SetTextLine(line: number): void {
     this.m_textLine = line;
   }
 
@@ -310,7 +303,7 @@ export class Test extends b2ContactListener {
     this.m_textLine = 2 * DRAW_STRING_NEW_LINE;
   }
 
-  public MouseDown(p) {
+  public MouseDown(p: b2Vec2): void {
     this.m_mouseWorld.Copy(p);
 
     if (this.m_mouseJoint !== null) {
@@ -358,12 +351,12 @@ export class Test extends b2ContactListener {
     }
   }
 
-  public SpawnBomb(worldPt) {
+  public SpawnBomb(worldPt: b2Vec2): void {
     this.m_bombSpawnPoint.Copy(worldPt);
     this.m_bombSpawning = true;
   }
 
-  public CompleteBombSpawn(p) {
+  public CompleteBombSpawn(p: b2Vec2): void {
     if (this.m_bombSpawning === false) {
       return;
     }
@@ -375,17 +368,17 @@ export class Test extends b2ContactListener {
     this.m_bombSpawning = false;
   }
 
-  public ShiftMouseDown(p) {
+  public ShiftMouseDown(p: b2Vec2): void {
     this.m_mouseWorld.Copy(p);
 
-    if (this.m_mouseJoint != null) {
+    if (this.m_mouseJoint !== null) {
       return;
     }
 
     this.SpawnBomb(p);
   }
 
-  public MouseUp(p) {
+  public MouseUp(p: b2Vec2): void {
     if (this.m_mouseJoint) {
       this.m_world.DestroyJoint(this.m_mouseJoint);
       this.m_mouseJoint = null;
@@ -396,7 +389,7 @@ export class Test extends b2ContactListener {
     }
   }
 
-  public MouseMove(p) {
+  public MouseMove(p: b2Vec2): void {
     this.m_mouseWorld.Copy(p);
 
     if (this.m_mouseJoint) {
@@ -404,13 +397,13 @@ export class Test extends b2ContactListener {
     }
   }
 
-  public LaunchBomb() {
+  public LaunchBomb(): void {
     const p: b2Vec2 = new b2Vec2(b2RandomRange(-15, 15), 30);
     const v: b2Vec2 = b2MulSV(-5, p, new b2Vec2());
     this.LaunchBombAt(p, v);
   }
 
-  public LaunchBombAt(position, velocity) {
+  public LaunchBombAt(position: b2Vec2, velocity: b2Vec2): void {
     if (this.m_bomb) {
       this.m_world.DestroyBody(this.m_bomb);
       this.m_bomb = null;
@@ -604,7 +597,7 @@ export class Test extends b2ContactListener {
     }
   }
 
-  public ShiftOrigin(newOrigin) {
+  public ShiftOrigin(newOrigin: b2Vec2): void {
     this.m_world.ShiftOrigin(newOrigin);
   }
 }

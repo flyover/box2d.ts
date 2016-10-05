@@ -483,7 +483,7 @@ export class b2Island {
       cache.count = 0;
       b2Distance(&output, &cache, &input);
 
-      if (output.distance == 0 || cache.count == 3) {
+      if (output.distance === 0 || cache.count === 3) {
         cache.count += 0;
       }
     }
@@ -553,7 +553,7 @@ export class b2Island {
 
   private static s_impulse = new b2ContactImpulse();
   public Report(constraints) {
-    if (this.m_listener == null) {
+    if (this.m_listener === null) {
       return;
     }
 

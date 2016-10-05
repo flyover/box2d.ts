@@ -27,7 +27,7 @@ export class DebugDraw extends b2Draw {
   public m_ctx: CanvasRenderingContext2D = null;
   public m_settings: Settings = null;
 
-  constructor(canvas, settings) {
+  constructor(canvas: HTMLCanvasElement, settings: Settings) {
     super(); // base class constructor
 
     this.m_canvas = canvas;
@@ -35,19 +35,19 @@ export class DebugDraw extends b2Draw {
     this.m_settings = settings;
   }
 
-  public PushTransform(xf) {
+  public PushTransform(xf: b2Transform): void {
     const ctx = this.m_ctx;
     ctx.save();
     ctx.translate(xf.p.x, xf.p.y);
     ctx.rotate(xf.q.GetAngleRadians());
   }
 
-  public PopTransform(xf) {
+  public PopTransform(xf: b2Transform): void {
     const ctx = this.m_ctx;
     ctx.restore();
   }
 
-  public DrawPolygon(vertices, vertexCount, color) {
+  public DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
     if (!vertexCount) return;
 
     const ctx = this.m_ctx;
@@ -62,7 +62,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawSolidPolygon(vertices, vertexCount, color) {
+  public DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
     if (!vertexCount) return;
 
     const ctx = this.m_ctx;
@@ -79,7 +79,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawCircle(center, radius, color) {
+  public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {
     if (!radius) return;
 
     const ctx = this.m_ctx;
@@ -90,7 +90,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawSolidCircle(center, radius, axis, color) {
+  public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {
     if (!radius) return;
 
     const ctx = this.m_ctx;
@@ -107,7 +107,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawSegment(p1, p2, color) {
+  public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {
     const ctx = this.m_ctx;
 
     ctx.beginPath();
@@ -117,7 +117,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawTransform(xf) {
+  public DrawTransform(xf: b2Transform): void {
     const ctx = this.m_ctx;
 
     this.PushTransform(xf);
@@ -137,7 +137,7 @@ export class DebugDraw extends b2Draw {
     this.PopTransform(xf);
   }
 
-  public DrawPoint(p, size, color) {
+  public DrawPoint(p: b2Vec2, size: number, color: b2Color): void {
     const ctx = this.m_ctx;
 
     ctx.fillStyle = color.MakeStyleString();
@@ -147,7 +147,7 @@ export class DebugDraw extends b2Draw {
     ctx.fillRect(p.x - hsize, p.y - hsize, size, size);
   }
 
-  private static DrawString_s_color = new b2Color(0.9, 0.6, 0.6);
+  private static DrawString_s_color: b2Color = new b2Color(0.9, 0.6, 0.6);
   public DrawString(x: number, y: number, message: string): void {
     const ctx = this.m_ctx;
 
@@ -160,10 +160,10 @@ export class DebugDraw extends b2Draw {
     ctx.restore();
   }
 
-  private static DrawStringWorld_s_p = new b2Vec2();
-  private static DrawStringWorld_s_cc = new b2Vec2();
-  private static DrawStringWorld_s_color = new b2Color(0.5, 0.9, 0.5);
-  public DrawStringWorld(x: number, y: number, message: string) {
+  private static DrawStringWorld_s_p: b2Vec2 = new b2Vec2();
+  private static DrawStringWorld_s_cc: b2Vec2 = new b2Vec2();
+  private static DrawStringWorld_s_color: b2Color = new b2Color(0.5, 0.9, 0.5);
+  public DrawStringWorld(x: number, y: number, message: string): void {
     const p = DebugDraw.DrawStringWorld_s_p.SetXY(x, y);
 
     // world -> viewport
@@ -192,7 +192,7 @@ export class DebugDraw extends b2Draw {
     ctx.restore();
   }
 
-  public DrawAABB(aabb, color) {
+  public DrawAABB(aabb: b2AABB, color: b2Color): void {
     const ctx = this.m_ctx;
 
     ctx.strokeStyle = color.MakeStyleString();

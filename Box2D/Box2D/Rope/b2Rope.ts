@@ -84,7 +84,7 @@ export class b2Rope {
     // this.m_ims = (float32*)b2Alloc(this.m_count * sizeof(float32));
     this.m_ims = b2MakeNumberArray(this.m_count);
 
-    for (const i: number = 0; i < this.m_count; ++i) {
+    for (let i: number = 0; i < this.m_count; ++i) {
       this.m_ps[i].Copy(def.vertices[i]);
       this.m_p0s[i].Copy(def.vertices[i]);
       this.m_vs[i].SetZero();
@@ -104,13 +104,13 @@ export class b2Rope {
     // this.m_as = (float32*)b2Alloc(count3 * sizeof(float32));
     this.m_as = b2MakeNumberArray(count3);
 
-    for (const i: number = 0; i < count2; ++i) {
+    for (let i: number = 0; i < count2; ++i) {
       const p1: b2Vec2 = this.m_ps[i];
       const p2: b2Vec2 = this.m_ps[i + 1];
       this.m_Ls[i] = b2DistanceVV(p1, p2);
     }
 
-    for (const i: number = 0; i < count3; ++i) {
+    for (let i: number = 0; i < count3; ++i) {
       const p1: b2Vec2 = this.m_ps[i];
       const p2: b2Vec2 = this.m_ps[i + 1];
       const p3: b2Vec2 = this.m_ps[i + 2];
@@ -138,24 +138,23 @@ export class b2Rope {
 
     const d: number = Math.exp(- h * this.m_damping);
 
-    for (const i: number = 0; i < this.m_count; ++i) {
+    for (let i: number = 0; i < this.m_count; ++i) {
       this.m_p0s[i].Copy(this.m_ps[i]);
       if (this.m_ims[i] > 0) {
         this.m_vs[i].SelfMulAdd(h, this.m_gravity);
       }
       this.m_vs[i].SelfMul(d);
       this.m_ps[i].SelfMulAdd(h, this.m_vs[i]);
-
     }
 
-    for (const i: number = 0; i < iterations; ++i) {
+    for (let i: number = 0; i < iterations; ++i) {
       this.SolveC2();
       this.SolveC3();
       this.SolveC2();
     }
 
     const inv_h: number = 1 / h;
-    for (const i: number = 0; i < this.m_count; ++i) {
+    for (let i: number = 0; i < this.m_count; ++i) {
       b2MulSV(inv_h, b2SubVV(this.m_ps[i], this.m_p0s[i], b2Vec2.s_t0), this.m_vs[i]);
     }
   }
@@ -165,7 +164,7 @@ export class b2Rope {
   public SolveC2(): void {
     const count2: number = this.m_count - 1;
 
-    for (const i: number = 0; i < count2; ++i) {
+    for (let i: number = 0; i < count2; ++i) {
       const p1: b2Vec2 = this.m_ps[i];
       const p2: b2Vec2 = this.m_ps[i + 1];
 
@@ -192,7 +191,7 @@ export class b2Rope {
 
   public SetAngleRadians(angle: number): void {
     const count3: number = this.m_count - 2;
-    for (const i: number = 0; i < count3; ++i) {
+    for (let i: number = 0; i < count3; ++i) {
       this.m_as[i] = angle;
     }
   }
@@ -206,7 +205,7 @@ export class b2Rope {
   public SolveC3(): void {
     const count3: number = this.m_count - 2;
 
-    for (const i: number = 0; i < count3; ++i) {
+    for (let i: number = 0; i < count3; ++i) {
       const p1: b2Vec2 = this.m_ps[i];
       const p2: b2Vec2 = this.m_ps[i + 1];
       const p3: b2Vec2 = this.m_ps[i + 2];
@@ -228,7 +227,7 @@ export class b2Rope {
       const a: number = b2CrossVV(d1, d2);
       const b: number = b2DotVV(d1, d2);
 
-      const angle: number = b2Atan2(a, b);
+      let angle: number = b2Atan2(a, b);
 
       const Jd1: b2Vec2 = b2MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
       const Jd2: b2Vec2 = b2MulSV(( 1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
@@ -237,14 +236,14 @@ export class b2Rope {
       const J2: b2Vec2 = b2SubVV(Jd1, Jd2, b2Rope.s_J2);
       const J3: b2Vec2 = Jd2;
 
-      const mass: number = m1 * b2DotVV(J1, J1) + m2 * b2DotVV(J2, J2) + m3 * b2DotVV(J3, J3);
+      let mass: number = m1 * b2DotVV(J1, J1) + m2 * b2DotVV(J2, J2) + m3 * b2DotVV(J3, J3);
       if (mass === 0) {
         continue;
       }
 
       mass = 1 / mass;
 
-      const C: number = angle - this.m_as[i];
+      let C: number = angle - this.m_as[i];
 
       while (C > b2_pi) {
         angle -= 2 * b2_pi;
@@ -271,7 +270,7 @@ export class b2Rope {
   public Draw(draw: b2Draw): void {
     const c: b2Color = new b2Color(0.4, 0.5, 0.7);
 
-    for (const i: number = 0; i < this.m_count - 1; ++i) {
+    for (let i: number = 0; i < this.m_count - 1; ++i) {
       draw.DrawSegment(this.m_ps[i], this.m_ps[i + 1], c);
     }
   }

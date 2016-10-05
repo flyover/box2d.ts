@@ -264,7 +264,7 @@ export class b2WheelJoint extends b2Joint {
     }
 
     if (data.step.warmStarting) {
-      // Account for constiable time step.
+      // Account for variable time step.
       this.m_impulse *= data.step.dtRatio;
       this.m_springImpulse *= data.step.dtRatio;
       this.m_motorImpulse *= data.step.dtRatio;

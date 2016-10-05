@@ -76,7 +76,7 @@ export class b2World {
   public m_debugDraw: b2Draw = null;
 
   // This is used to compute the time step ratio to
-  // support a constiable time step.
+  // support a variable time step.
   public m_inv_dt0: number = 0;
 
   // These are for debugging the solver.
@@ -179,8 +179,7 @@ export class b2World {
 
     /// @see b2Controller list
 //    const coe: b2ControllerEdge = b.m_controllerList;
-//    while (coe)
-//    {
+//    while (coe) {
 //      const coe0: b2ControllerEdge = coe;
 //      coe = coe.nextController;
 //      coe0.controller.RemoveBody(b);
@@ -373,7 +372,7 @@ export class b2World {
 
   /// Take a time step. This performs collision detection, integration,
   /// and constraint solution.
-  /// @param timeStep the amount of time to simulate, this should not consty.
+  /// @param timeStep the amount of time to simulate, this should not vary.
   /// @param velocityIterations for the velocity constraint solver.
   /// @param positionIterations for the position constraint solver.
   private static Step_s_step = new b2TimeStep();
@@ -403,11 +402,9 @@ export class b2World {
     step.warmStarting = this.m_warmStarting;
 
     // Update contacts. This is where some contacts are destroyed.
-    {
-      const timer: b2Timer = new b2Timer();
-      this.m_contactManager.Collide();
-      this.m_profile.collide = timer.GetMilliseconds();
-    }
+    const timer: b2Timer = new b2Timer();
+    this.m_contactManager.Collide();
+    this.m_profile.collide = timer.GetMilliseconds();
 
     // Integrate velocities, solve velocity constraints, and integrate positions.
     if (this.m_stepComplete && step.dt > 0) {
@@ -439,7 +436,7 @@ export class b2World {
   /// Manually clear the force buffer on all bodies. By default, forces are cleared automatically
   /// after each call to Step. The default behavior is modified by calling SetAutoClearForces.
   /// The purpose of this function is to support sub-stepping. Sub-stepping is often used to maintain
-  /// a fixed sized time step under a constiable frame-rate.
+  /// a fixed sized time step under a variable frame-rate.
   /// When you perform sub-stepping you will disable auto clearing of forces and instead call
   /// ClearForces after all sub-steps are complete in one pass of your game loop.
   /// @see SetAutoClearForces
@@ -500,7 +497,7 @@ export class b2World {
     /*
     if (flags & b2DrawFlags.e_pairBit) {
       color.SetRGB(0.3, 0.9, 0.9);
-      for (const contact = this.m_contactManager.m_contactList; contact; contact = contact.m_next) {
+      for (let contact = this.m_contactManager.m_contactList; contact; contact = contact.m_next) {
         const fixtureA = contact.GetFixtureA();
         const fixtureB = contact.GetFixtureB();
 
@@ -548,10 +545,8 @@ export class b2World {
     }
 
     /// @see b2Controller list
-//    if (flags & b2DrawFlags.e_controllerBit)
-//    {
-//      for (const c = this.m_controllerList; c; c = c.m_next)
-//      {
+//    if (flags & b2DrawFlags.e_controllerBit) {
+//      for (let c = this.m_controllerList; c; c = c.m_next) {
 //        c.Draw(this.m_debugDraw);
 //      }
 //    }
@@ -905,9 +900,9 @@ export class b2World {
           continue;
         }
 
-        box2d.b2Log("{\n");
+        b2Log("{\n");
         j.Dump();
-        box2d.b2Log("}\n");
+        b2Log("}\n");
       }
 
       // Second pass on joints, only gear joints.
@@ -916,9 +911,9 @@ export class b2World {
           continue;
         }
 
-        box2d.b2Log("{\n");
+        b2Log("{\n");
         j.Dump();
-        box2d.b2Log("}\n");
+        b2Log("}\n");
       }
     }
   }
@@ -970,7 +965,7 @@ export class b2World {
 
     switch (shape.m_type) {
     case b2ShapeType.e_circleShape: {
-        const circle: b2CircleShape = <b2CircleShape> shape; // ((shape instanceof b2CircleShape ? shape : null));
+        const circle: b2CircleShape = <b2CircleShape> shape;
 
         const center: b2Vec2 = circle.m_p;
         const radius: number = circle.m_radius;
@@ -981,7 +976,7 @@ export class b2World {
       break;
 
     case b2ShapeType.e_edgeShape: {
-        const edge: b2EdgeShape = <b2EdgeShape> shape; // ((shape instanceof b2EdgeShape ? shape : null));
+        const edge: b2EdgeShape = <b2EdgeShape> shape;
         const v1: b2Vec2 = edge.m_vertex1;
         const v2: b2Vec2 = edge.m_vertex2;
         this.m_debugDraw.DrawSegment(v1, v2, color);
@@ -989,7 +984,7 @@ export class b2World {
       break;
 
     case b2ShapeType.e_chainShape: {
-        const chain: b2ChainShape = <b2ChainShape> shape; // ((shape instanceof b2ChainShape ? shape : null));
+        const chain: b2ChainShape = <b2ChainShape> shape;
         const count: number = chain.m_count;
         const vertices: b2Vec2[] = chain.m_vertices;
 
@@ -1005,7 +1000,7 @@ export class b2World {
       break;
 
     case b2ShapeType.e_polygonShape: {
-        const poly: b2PolygonShape = <b2PolygonShape> shape; // ((shape instanceof b2PolygonShape ? shape : null));
+        const poly: b2PolygonShape = <b2PolygonShape> shape;
         const vertexCount: number = poly.m_count;
         const vertices: b2Vec2[] = poly.m_vertices;
 
@@ -1017,8 +1012,7 @@ export class b2World {
 
   public Solve(step: b2TimeStep): void {
     /// @see b2Controller list
-//    for (const controller = this.m_controllerList; controller; controller = controller.m_next)
-//    {
+//    for (let controller = this.m_controllerList; controller; controller = controller.m_next) {
 //      controller.Step(step);
 //    }
 
@@ -1167,28 +1161,27 @@ export class b2World {
       if (!stack[i]) break;
       stack[i] = null;
     }
-    {
-      const timer: b2Timer = new b2Timer();
 
-      // Synchronize fixtures, check for out of range bodies.
-      for (let b = this.m_bodyList; b; b = b.m_next) {
-        // If a body was not in an island then it did not move.
-        if ((b.m_flags & b2BodyFlag.e_islandFlag) === 0) {
-          continue;
-        }
+    const timer: b2Timer = new b2Timer();
 
-        if (b.GetType() === b2BodyType.b2_staticBody) {
-          continue;
-        }
-
-        // Update fixtures (for broad-phase).
-        b.SynchronizeFixtures();
+    // Synchronize fixtures, check for out of range bodies.
+    for (let b = this.m_bodyList; b; b = b.m_next) {
+      // If a body was not in an island then it did not move.
+      if ((b.m_flags & b2BodyFlag.e_islandFlag) === 0) {
+        continue;
       }
 
-      // Look for new contacts.
-      this.m_contactManager.FindNewContacts();
-      this.m_profile.broadphase = timer.GetMilliseconds();
+      if (b.GetType() === b2BodyType.b2_staticBody) {
+        continue;
+      }
+
+      // Update fixtures (for broad-phase).
+      b.SynchronizeFixtures();
     }
+
+    // Look for new contacts.
+    this.m_contactManager.FindNewContacts();
+    this.m_profile.broadphase = timer.GetMilliseconds();
   }
 
   private static SolveTOI_s_subStep = new b2TimeStep();
@@ -1479,8 +1472,7 @@ export class b2World {
     }
   }
 
-//  public AddController(controller: b2Controller): b2Controller
-//  {
+//  public AddController(controller: b2Controller): b2Controller {
 //    if (ENABLE_ASSERTS) { b2Assert(controller.m_world === null, "Controller can only be a member of one world"); }
 //    controller.m_world = this;
 //    controller.m_next = this.m_controllerList;
@@ -1492,8 +1484,7 @@ export class b2World {
 //    return controller;
 //  }
 
-//  public RemoveController(controller: b2Controller): b2Controller
-//  {
+//  public RemoveController(controller: b2Controller): b2Controller {
 //    if (ENABLE_ASSERTS) { b2Assert(controller.m_world === this, "Controller is not a member of this world"); }
 //    if (controller.m_prev)
 //      controller.m_prev.m_next = controller.m_next;

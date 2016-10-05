@@ -132,7 +132,7 @@ export class b2RopeJoint extends b2Joint {
     this.m_mass = invMass !== 0 ? 1 / invMass : 0;
 
     if (data.step.warmStarting) {
-      // Scale the impulse to support a constiable time step.
+      // Scale the impulse to support a variable time step.
       this.m_impulse *= data.step.dtRatio;
 
       // b2Vec2 P = m_impulse * m_u;

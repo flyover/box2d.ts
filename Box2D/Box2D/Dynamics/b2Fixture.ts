@@ -322,7 +322,7 @@ export class b2Fixture {
 //          const polygon: b2PolygonShape = <b2PolygonShape> this.m_shape;
 //          b2Log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
 //          b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
-//          for (const i: number = 0; i < polygon.m_count; ++i)
+//          for (let i: number = 0; i < polygon.m_count; ++i)
 //          {
 //            b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, polygon.m_vertices[i].x, polygon.m_vertices[i].y);
 //          }
@@ -335,7 +335,7 @@ export class b2Fixture {
 //          const chain: b2ChainShape = <b2ChainShape> this.m_shape;
 //          b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
 //          b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
-//          for (const i: number = 0; i < chain.m_count; ++i)
+//          for (let i: number = 0; i < chain.m_count; ++i)
 //          {
 //            b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, chain.m_vertices[i].x, chain.m_vertices[i].y);
 //          }

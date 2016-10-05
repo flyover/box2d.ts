@@ -140,9 +140,9 @@ export function b2Log(message: string, ...args: any[]): void {
 /// Version numbering scheme.
 /// See http://en.wikipedia.org/wiki/Software_versioning
 export class b2Version {
-  public major: number = 0;   ///< significant changes
-  public minor: number = 0;       ///< incremental changes
-  public revision: number = 0;    ///< bug fixes
+  public major: number = 0; ///< significant changes
+  public minor: number = 0; ///< incremental changes
+  public revision: number = 0; ///< bug fixes
 
   constructor(major: number = 0, minor: number = 0, revision: number = 0) {
     this.major = major;

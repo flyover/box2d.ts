@@ -134,25 +134,25 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
   manifold.points[0].localPoint.Copy(circleB.m_p);
 }
 
-export enum b2EPAxisType {
+enum b2EPAxisType {
   e_unknown = 0,
   e_edgeA = 1,
   e_edgeB = 2
 }
 
-export class b2EPAxis {
+class b2EPAxis {
   public type = b2EPAxisType.e_unknown;
   public index: number = 0;
   public separation: number = 0;
 }
 
-export class b2TempPolygon {
+class b2TempPolygon {
   public vertices = b2Vec2.MakeArray(b2_maxPolygonVertices);
   public normals = b2Vec2.MakeArray(b2_maxPolygonVertices);
   public count: number = 0;
 }
 
-export class b2ReferenceFace {
+class b2ReferenceFace {
   public i1: number = 0;
   public i2: number = 0;
   public v1: b2Vec2 = new b2Vec2();
@@ -164,13 +164,13 @@ export class b2ReferenceFace {
   public sideOffset2: number = 0;
 }
 
-export enum b2EPColliderVertexType {
+enum b2EPColliderVertexType {
   e_isolated = 0,
   e_concave = 1,
   e_convex = 2
 }
 
-export class b2EPCollider {
+class b2EPCollider {
   public m_polygonB: b2TempPolygon = new b2TempPolygon();
   public m_xf: b2Transform = new b2Transform();
   public m_centroidB: b2Vec2 = new b2Vec2();
@@ -214,7 +214,7 @@ export class b2EPCollider {
     const edge1: b2Vec2 = b2SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
     edge1.Normalize();
     this.m_normal1.SetXY(edge1.y, -edge1.x);
-    let offset1: number = b2DotVV(this.m_normal1, b2SubVV(this.m_centroidB, this.m_v1, b2Vec2.s_t0));
+    const offset1: number = b2DotVV(this.m_normal1, b2SubVV(this.m_centroidB, this.m_v1, b2Vec2.s_t0));
     let offset0: number = 0;
     let offset2: number = 0;
     let convex1: boolean = false;

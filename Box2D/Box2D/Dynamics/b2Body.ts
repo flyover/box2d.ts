@@ -299,7 +299,7 @@ export class b2Body {
     let node: b2Fixture = this.m_fixtureList;
     let ppF: b2Fixture = null;
     let found: boolean = false;
-    while (node != null) {
+    while (node !== null) {
       if (node === fixture) {
         if (ppF)
           ppF.m_next = fixture.m_next;

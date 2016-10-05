@@ -101,7 +101,7 @@ export class b2JointDef {
 }
 
 /// The base joint class. Joints are used to constraint two bodies together in
-/// constious fashions. Some joints also feature limits and motors.
+/// various fashions. Some joints also feature limits and motors.
 export class b2Joint {
   public m_type: b2JointType = b2JointType.e_unknownJoint;
   public m_prev: b2Joint = null;

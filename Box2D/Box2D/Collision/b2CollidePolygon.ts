@@ -7,7 +7,7 @@ const b2EdgeSeparation_s_normal1World: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_normal1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v2: b2Vec2 = new b2Vec2();
-export function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
+function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
   const count1 = poly1.m_count;
   const vertices1 = poly1.m_vertices;
   const normals1 = poly1.m_normals;
@@ -41,7 +41,7 @@ export function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
 
 const b2FindMaxSeparation_s_d: b2Vec2 = new b2Vec2();
 const b2FindMaxSeparation_s_dLocal1: b2Vec2 = new b2Vec2();
-export function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
+function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
   const count1 = poly1.m_count;
   const normals1 = poly1.m_normals;
 
@@ -110,7 +110,7 @@ export function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
 }
 
 const b2FindIncidentEdge_s_normal1: b2Vec2 = new b2Vec2();
-export function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
+function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
   const count1 = poly1.m_count;
   const normals1 = poly1.m_normals;
 

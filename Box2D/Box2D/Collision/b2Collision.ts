@@ -286,8 +286,8 @@ export enum b2PointState {
 /// Compute the point states given two manifolds. The states pertain to the transition from manifold1
 /// to manifold2. So state1 is either persist or remove while state2 is either add or persist.
 export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[], manifold1: b2Manifold, manifold2: b2Manifold): void {
-  let i: number;
   // Detect persists and removes.
+  let i: number;
   for (i = 0; i < manifold1.pointCount; ++i) {
     const id = manifold1.points[i].id;
     const key = id.key;
@@ -301,7 +301,7 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
       }
     }
   }
-  for (const ict = b2_maxManifoldPoints; i < ict; ++i) {
+  for (; i < b2_maxManifoldPoints; ++i) {
     state1[i] = b2PointState.b2_nullState;
   }
 
@@ -319,7 +319,7 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
       }
     }
   }
-  for (const ict = b2_maxManifoldPoints; i < ict; ++i) {
+  for (; i < b2_maxManifoldPoints; ++i) {
     state2[i] = b2PointState.b2_nullState;
   }
 }

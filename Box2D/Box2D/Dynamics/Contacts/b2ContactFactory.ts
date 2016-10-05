@@ -36,34 +36,33 @@ export class b2ContactFactory {
     this.InitializeRegisters();
   }
 
-  private AddType(createFcn, destroyFcn, type1: b2ShapeType, type2: b2ShapeType): void { {
-      const that = this;
+  private AddType(createFcn, destroyFcn, type1: b2ShapeType, type2: b2ShapeType): void {
+    const that = this;
 
-      const pool = b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
+    const pool = b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
 
-      const poolCreateFcn = function (allocator) {
-        if (pool.length > 0) {
-          return pool.pop();
-        }
-
-        return createFcn(allocator);
-      };
-
-      const poolDestroyFcn = function (contact, allocator) {
-        pool.push(contact);
-      };
-
-      this.m_registers[type1][type2].pool = pool;
-      this.m_registers[type1][type2].createFcn = poolCreateFcn;
-      this.m_registers[type1][type2].destroyFcn = poolDestroyFcn;
-      this.m_registers[type1][type2].primary = true;
-
-      if (type1 !== type2) {
-        this.m_registers[type2][type1].pool = pool;
-        this.m_registers[type2][type1].createFcn = poolCreateFcn;
-        this.m_registers[type2][type1].destroyFcn = poolDestroyFcn;
-        this.m_registers[type2][type1].primary = false;
+    const poolCreateFcn = function (allocator) {
+      if (pool.length > 0) {
+        return pool.pop();
       }
+
+      return createFcn(allocator);
+    };
+
+    const poolDestroyFcn = function (contact, allocator) {
+      pool.push(contact);
+    };
+
+    this.m_registers[type1][type2].pool = pool;
+    this.m_registers[type1][type2].createFcn = poolCreateFcn;
+    this.m_registers[type1][type2].destroyFcn = poolDestroyFcn;
+    this.m_registers[type1][type2].primary = true;
+
+    if (type1 !== type2) {
+      this.m_registers[type2][type1].pool = pool;
+      this.m_registers[type2][type1].createFcn = poolCreateFcn;
+      this.m_registers[type2][type1].destroyFcn = poolDestroyFcn;
+      this.m_registers[type2][type1].primary = false;
     }
 
     /*
@@ -71,7 +70,7 @@ export class b2ContactFactory {
     this.m_registers[type1][type2].destroyFcn = destroyFcn;
     this.m_registers[type1][type2].primary = true;
 
-    if (type1 != type2) {
+    if (type1 !== type2) {
       this.m_registers[type2][type1].createFcn = createFcn;
       this.m_registers[type2][type1].destroyFcn = destroyFcn;
       this.m_registers[type2][type1].primary = false;

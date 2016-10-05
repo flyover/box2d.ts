@@ -29,14 +29,17 @@ export class SphereStack extends Test {
   constructor(canvas: HTMLCanvasElement, settings: Settings) {
     super(canvas, settings); // base class constructor
 
-    this.m_bodies = new Array(SphereStack.e_count); {
+    this.m_bodies = new Array(SphereStack.e_count);
+    {
       const bd: b2BodyDef = new box2d.b2BodyDef();
       const ground: b2Body = this.m_world.CreateBody(bd);
 
       const edge_shape: b2EdgeShape = new box2d.b2EdgeShape();
       edge_shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture2(edge_shape, 0.0);
-    } {
+    }
+
+    {
       const circle_shape: b2CircleShape = new box2d.b2CircleShape();
       circle_shape.m_radius = 1.0;
 
@@ -57,12 +60,12 @@ export class SphereStack extends Test {
   public Step(settings: Settings): void {
     super.Step(settings);
 
-    // for (const i: number = 0; i < SphereStack.e_count; ++i)
+    // for (let i: number = 0; i < SphereStack.e_count; ++i)
     // {
     //   printf("%g ", this.m_bodies[i].GetWorldCenter().y);
     // }
 
-    // for (const i: number = 0; i < SphereStack.e_count; ++i)
+    // for (let i: number = 0; i < SphereStack.e_count; ++i)
     // {
     //   printf("%g ", this.m_bodies[i].GetLinearVelocity().y);
     // }

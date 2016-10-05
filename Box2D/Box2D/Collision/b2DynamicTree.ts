@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace box2d {
-
 /// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
 /// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
 /// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
 /// <reference path="../../../Box2D/Box2D/Common/b2GrowableStack.ts"/>
+
+namespace box2d {
 
 /// A node in the dynamic tree. The client does not interact with this directly.
 export class b2TreeNode {
@@ -38,7 +38,7 @@ export class b2TreeNode {
   }
 
   public IsLeaf(): boolean {
-    return this.child1 == null;
+    return this.child1 === null;
   }
 }
 
@@ -65,24 +65,24 @@ export class b2DynamicTree {
   public static s_aabb = new b2AABB();
 
   public GetUserData(proxy: b2TreeNode): any {
-    if (ENABLE_ASSERTS) { b2Assert(proxy != null); }
+    if (ENABLE_ASSERTS) { b2Assert(proxy !== null); }
     return proxy.userData;
   }
 
   public GetFatAABB(proxy: b2TreeNode): b2AABB {
-    if (ENABLE_ASSERTS) { b2Assert(proxy != null); }
+    if (ENABLE_ASSERTS) { b2Assert(proxy !== null); }
     return proxy.aabb;
   }
 
   public Query(callback, aabb) {
-    if (this.m_root == null) return;
+    if (this.m_root === null) return;
 
     const stack: b2GrowableStack = b2DynamicTree.s_stack.Reset();
     stack.Push(this.m_root);
 
     while (stack.GetCount() > 0) {
       const node: b2TreeNode = stack.Pop();
-      if (node == null) {
+      if (node === null) {
         continue;
       }
 
@@ -101,7 +101,7 @@ export class b2DynamicTree {
   }
 
   public RayCast(callback, input) {
-    if (this.m_root == null) return;
+    if (this.m_root === null) return;
 
     const p1: b2Vec2 = input.p1;
     const p2: b2Vec2 = input.p2;
@@ -132,7 +132,7 @@ export class b2DynamicTree {
 
     while (stack.GetCount() > 0) {
       const node: b2TreeNode = stack.Pop();
-      if (node == null) {
+      if (node === null) {
         continue;
       }
 
@@ -253,7 +253,7 @@ export class b2DynamicTree {
   public InsertLeaf(leaf: b2TreeNode): void {
     ++this.m_insertionCount;
 
-    if (this.m_root == null) {
+    if (this.m_root === null) {
       this.m_root = leaf;
       this.m_root.parent = null;
       return;
@@ -354,14 +354,14 @@ export class b2DynamicTree {
 
     // Walk back up the tree fixing heights and AABBs
     index = leaf.parent;
-    while (index != null) {
+    while (index !== null) {
       index = this.Balance(index);
 
       child1 = index.child1;
       child2 = index.child2;
 
-      if (ENABLE_ASSERTS) { b2Assert(child1 != null); }
-      if (ENABLE_ASSERTS) { b2Assert(child2 != null); }
+      if (ENABLE_ASSERTS) { b2Assert(child1 !== null); }
+      if (ENABLE_ASSERTS) { b2Assert(child2 !== null); }
 
       index.height = 1 + b2Max(child1.height, child2.height);
       index.aabb.Combine2(child1.aabb, child2.aabb);
@@ -420,7 +420,7 @@ export class b2DynamicTree {
   }
 
   public Balance(A: b2TreeNode): b2TreeNode {
-    if (ENABLE_ASSERTS) { b2Assert(A != null); }
+    if (ENABLE_ASSERTS) { b2Assert(A !== null); }
 
     if (A.IsLeaf() || A.height < 2) {
       return A;
@@ -442,7 +442,7 @@ export class b2DynamicTree {
       A.parent = C;
 
       // A's old parent should point to C
-      if (C.parent != null) {
+      if (C.parent !== null) {
         if (C.parent.child1 === A) {
           C.parent.child1 = C;
         } else {
@@ -488,7 +488,7 @@ export class b2DynamicTree {
       A.parent = B;
 
       // A's old parent should point to B
-      if (B.parent != null) {
+      if (B.parent !== null) {
         if (B.parent.child1 === A) {
           B.parent.child1 = B;
         } else {
@@ -527,7 +527,7 @@ export class b2DynamicTree {
   }
 
   public GetHeight(): number {
-    if (this.m_root == null) {
+    if (this.m_root === null) {
       return 0;
     }
 
@@ -535,7 +535,7 @@ export class b2DynamicTree {
   }
 
   public GetAreaRatio(): number {
-    if (this.m_root == null) {
+    if (this.m_root === null) {
       return 0;
     }
 
@@ -543,7 +543,7 @@ export class b2DynamicTree {
     const rootArea: number = root.aabb.GetPerimeter();
 
     const GetAreaNode = function (node) {
-      if (node == null) {
+      if (node === null) {
         return 0;
       }
 
@@ -590,12 +590,12 @@ export class b2DynamicTree {
   }
 
   public ValidateStructure(index: b2TreeNode): void {
-    if (index == null) {
+    if (index === null) {
       return;
     }
 
     if (index === this.m_root) {
-      if (ENABLE_ASSERTS) { b2Assert(index.parent == null); }
+      if (ENABLE_ASSERTS) { b2Assert(index.parent === null); }
     }
 
     const node: b2TreeNode = index;
@@ -604,8 +604,8 @@ export class b2DynamicTree {
     const child2: b2TreeNode = node.child2;
 
     if (node.IsLeaf()) {
-      if (ENABLE_ASSERTS) { b2Assert(child1 == null); }
-      if (ENABLE_ASSERTS) { b2Assert(child2 == null); }
+      if (ENABLE_ASSERTS) { b2Assert(child1 === null); }
+      if (ENABLE_ASSERTS) { b2Assert(child2 === null); }
       if (ENABLE_ASSERTS) { b2Assert(node.height === 0); }
       return;
     }
@@ -618,7 +618,7 @@ export class b2DynamicTree {
   }
 
   public ValidateMetrics(index: b2TreeNode): void {
-    if (index == null) {
+    if (index === null) {
       return;
     }
 
@@ -628,8 +628,8 @@ export class b2DynamicTree {
     const child2: b2TreeNode = node.child2;
 
     if (node.IsLeaf()) {
-      if (ENABLE_ASSERTS) { b2Assert(child1 == null); }
-      if (ENABLE_ASSERTS) { b2Assert(child2 == null); }
+      if (ENABLE_ASSERTS) { b2Assert(child1 === null); }
+      if (ENABLE_ASSERTS) { b2Assert(child2 === null); }
       if (ENABLE_ASSERTS) { b2Assert(node.height === 0); }
       return;
     }
@@ -655,7 +655,7 @@ export class b2DynamicTree {
 
     let freeCount: number = 0;
     let freeIndex: b2TreeNode = this.m_freeList;
-    while (freeIndex != null) {
+    while (freeIndex !== null) {
       freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
       ++freeCount;
     }
@@ -665,7 +665,7 @@ export class b2DynamicTree {
 
   public GetMaxBalance(): number {
     const GetMaxBalanceNode = function (node, maxBalance) {
-      if (node == null) {
+      if (node === null) {
         return maxBalance;
       }
 
@@ -691,7 +691,7 @@ export class b2DynamicTree {
         continue;
       }
 
-      b2Assert(node.IsLeaf() == false);
+      b2Assert(node.IsLeaf() === false);
 
       int32 child1 = node.child1;
       int32 child2 = node.child2;
@@ -773,7 +773,7 @@ export class b2DynamicTree {
 
   public ShiftOrigin(newOrigin: b2Vec2): void {
     const ShiftOriginNode = function (node, newOrigin) {
-      if (node == null) {
+      if (node === null) {
         return;
       }
 

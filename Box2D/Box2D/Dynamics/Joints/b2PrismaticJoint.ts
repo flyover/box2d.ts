@@ -263,7 +263,7 @@ export class b2PrismaticJoint extends b2Joint {
     }
 
     if (data.step.warmStarting) {
-      // Account for constiable time step.
+      // Account for variable time step.
       // m_impulse *= data.step.dtRatio;
       this.m_impulse.SelfMul(data.step.dtRatio);
       this.m_motorImpulse *= data.step.dtRatio;
@@ -472,7 +472,7 @@ export class b2PrismaticJoint extends b2Joint {
     const C1_y = aB - aA - this.m_referenceAngle;
 
     let linearError = b2Abs(C1_x);
-    const angularError = b2Abs(C1_y);
+    let angularError = b2Abs(C1_y);
 
     let active = false;
     let C2: number = 0;
