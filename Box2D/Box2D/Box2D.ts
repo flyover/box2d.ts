@@ -64,8 +64,6 @@ For discussion please visit http://box2d.org/forum
 /// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts"/>
 /// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2AreaJoint.ts"/>
 
-/// <reference path="../../Box2D/Build/Testbed/main.ts"/>
-
 namespace box2d {
 
 } // namespace box2d

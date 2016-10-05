@@ -83,7 +83,7 @@ export function main() {
   const positionIterations: number = 2;
 
   // This is our little game loop.
-  for (const i: number = 0; i < 60; ++i) {
+  for (let i: number = 0; i < 60; ++i) {
     // Instruct the world to perform a single step of simulation.
     // It is generally best to keep the time step and iterations fixed.
     world.Step(timeStep, velocityIterations, positionIterations);

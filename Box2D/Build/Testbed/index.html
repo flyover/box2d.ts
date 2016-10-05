@@ -1,11 +1,7 @@
 <html>
-
 <head>
 	<title>Box2D Testbed</title>
-	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-	<meta http-equiv="X-UA-Compatible" content="IE=9">
-	<meta http-equiv="X-UA-Compatible" content="chrome=1">
-	<script type="text/javascript" src="../../../box2d.ts.js"></script>
+	<script type="text/javascript" src="box2d-testbed.js"></script>
 	<script type="text/javascript">
 	function load() {
 		const app = new box2d.Testbed.Main();
@@ -15,10 +11,7 @@
 		}
 		loop();
 	}
+	window.addEventListener('load', load, false);
 	</script>
 </head>
-
-<body onload="load();">
-</body>
-
 </html>

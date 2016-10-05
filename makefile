@@ -81,87 +81,129 @@ BOX2D_SOURCE_TS_FILES += Box2D/Box2D/Dynamics/Joints/b2RopeJoint.ts
 BOX2D_SOURCE_TS_FILES += Box2D/Box2D/Dynamics/Joints/b2WeldJoint.ts
 BOX2D_SOURCE_TS_FILES += Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts
 BOX2D_SOURCE_TS_FILES += Box2D/Box2D/Rope/b2Rope.ts
-BOX2D_SOURCE_TS_FILES += Box2D/HelloWorld/HelloWorld.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Framework/Main.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Framework/Render.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Framework/Test.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Testbed.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/AddPair.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/ApplyForce.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/BlobTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/BodyTypes.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Breakable.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Bridge.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/BulletTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/BuoyancyTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Cantilever.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Car.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Chain.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/CharacterCollision.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/CollisionFiltering.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/CollisionProcessing.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/CompoundShapes.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Confined.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/ContinuousTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/ConvexHull.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/ConveyorBelt.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/DistanceTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Dominos.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/DumpShell.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/DynamicTreeTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/EdgeShapes.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/EdgeTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Gears.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Mobile.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/MobileBalanced.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/MotorJoint.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/OneSidedPlatform.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pinball.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/PolyCollision.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/PolyShapes.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Prismatic.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pulleys.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pyramid.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/RayCast.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Revolute.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Rope.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/RopeJoint.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/SensorTest.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/ShapeEditing.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/SliderCrank.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/SphereStack.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestCCD.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestEntries.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestRagdoll.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestStack.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/TheoJansen.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Tiles.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/TimeOfImpact.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Tumbler.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/VaryingFriction.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/VaryingRestitution.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/VerticalStack.ts
-BOX2D_SOURCE_TS_FILES += Box2D/Testbed/Tests/Web.ts
-BOX2D_SOURCE_TS_FILES += Contributions/Enhancements/Controllers/b2BuoyancyController.ts
-BOX2D_SOURCE_TS_FILES += Contributions/Enhancements/Controllers/b2ConstantAccelController.ts
-BOX2D_SOURCE_TS_FILES += Contributions/Enhancements/Controllers/b2ConstantForceController.ts
-BOX2D_SOURCE_TS_FILES += Contributions/Enhancements/Controllers/b2Controller.ts
-BOX2D_SOURCE_TS_FILES += Contributions/Enhancements/Controllers/b2GravityController.ts
-BOX2D_SOURCE_TS_FILES += Contributions/Enhancements/Controllers/b2TensorDampingController.ts
 
-BOX2D_OUTPUT_JS_FILE     = box2d.ts.js
-BOX2D_OUTPUT_JS_MAP_FILE = box2d.ts.js.map
-BOX2D_OUTPUT_D_TS_FILE   = box2d.d.ts
+BOX2D_OUTPUT_JS_FILE     = Box2D/Build/Box2D/box2d.js
+BOX2D_OUTPUT_D_TS_FILE   = Box2D/Build/Box2D/box2d.d.ts
+BOX2D_OUTPUT_JS_MAP_FILE = Box2D/Build/Box2D/box2d.js.map
 
-clean:
+clean: clean-box2d
+clean: clean-box2d-helloworld
+clean: clean-box2d-testbed
+
+build: build-box2d
+build: build-box2d-helloworld
+build: build-box2d-testbed
+
+clean-box2d:
 	@rm -f $(BOX2D_OUTPUT_JS_FILE)
 	@rm -f $(BOX2D_OUTPUT_D_TS_FILE)
 	@rm -f $(BOX2D_OUTPUT_JS_MAP_FILE)
 	$(DONE)
 
-build: $(BOX2D_OUTPUT_JS_FILE)
+build-box2d: $(BOX2D_OUTPUT_JS_FILE)
 	$(DONE)
 
 $(BOX2D_OUTPUT_JS_FILE): $(BOX2D_SOURCE_TS_FILES)
-	@$$(npm bin)/tsc --declaration --sourcemap --target ES5 -out $@ $<
+	@$$(npm bin)/tsc --declaration --sourcemap --target ES5 --outFile $@ $<
+	$(DONE)
+
+# box2d-helloworld
+
+BOX2D_HELLOWORLD_SOURCE_TS_FILES += Box2D/HelloWorld/HelloWorld.ts
+
+BOX2D_HELLOWORLD_OUTPUT_JS_FILE     = Box2D/Build/HelloWorld/box2d-helloworld.js
+BOX2D_HELLOWORLD_OUTPUT_D_TS_FILE   = Box2D/Build/HelloWorld/box2d-helloworld.d.ts
+BOX2D_HELLOWORLD_OUTPUT_JS_MAP_FILE = Box2D/Build/HelloWorld/box2d-helloworld.js.map
+
+clean-box2d-helloworld:
+	@rm -f $(BOX2D_HELLOWORLD_OUTPUT_JS_FILE)
+	@rm -f $(BOX2D_HELLOWORLD_OUTPUT_D_TS_FILE)
+	@rm -f $(BOX2D_HELLOWORLD_OUTPUT_JS_MAP_FILE)
+	$(DONE)
+
+build-box2d-helloworld: $(BOX2D_HELLOWORLD_OUTPUT_JS_FILE)
+	$(DONE)
+
+$(BOX2D_HELLOWORLD_OUTPUT_JS_FILE): $(BOX2D_HELLOWORLD_SOURCE_TS_FILES)
+	@$$(npm bin)/tsc --declaration --sourcemap --target ES5 --outFile $@ $<
+	$(DONE)
+
+# box2d-testbed
+
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Framework/Main.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Framework/Render.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Framework/Test.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Testbed.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/AddPair.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/ApplyForce.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/BlobTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/BodyTypes.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Breakable.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Bridge.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/BulletTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/BuoyancyTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Cantilever.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Car.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Chain.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/CharacterCollision.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/CollisionFiltering.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/CollisionProcessing.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/CompoundShapes.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Confined.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/ContinuousTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/ConvexHull.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/ConveyorBelt.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/DistanceTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Dominos.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/DumpShell.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/DynamicTreeTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/EdgeShapes.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/EdgeTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Gears.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Mobile.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/MobileBalanced.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/MotorJoint.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/OneSidedPlatform.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pinball.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/PolyCollision.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/PolyShapes.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Prismatic.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pulleys.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pyramid.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/RayCast.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Revolute.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Rope.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/RopeJoint.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/SensorTest.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/ShapeEditing.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/SliderCrank.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/SphereStack.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestCCD.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestEntries.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestRagdoll.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestStack.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TheoJansen.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Tiles.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TimeOfImpact.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Tumbler.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/VaryingFriction.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/VaryingRestitution.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/VerticalStack.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Web.ts
+
+BOX2D_TESTBED_OUTPUT_JS_FILE     = Box2D/Build/Testbed/box2d-testbed.js
+BOX2D_TESTBED_OUTPUT_D_TS_FILE   = Box2D/Build/Testbed/box2d-testbed.d.ts
+BOX2D_TESTBED_OUTPUT_JS_MAP_FILE = Box2D/Build/Testbed/box2d-testbed.js.map
+
+clean-box2d-testbed:
+	@rm -f $(BOX2D_TESTBED_OUTPUT_JS_FILE)
+	@rm -f $(BOX2D_TESTBED_OUTPUT_D_TS_FILE)
+	@rm -f $(BOX2D_TESTBED_OUTPUT_JS_MAP_FILE)
+	$(DONE)
+
+build-box2d-testbed: $(BOX2D_TESTBED_OUTPUT_JS_FILE)
+	$(DONE)
+
+$(BOX2D_TESTBED_OUTPUT_JS_FILE): $(BOX2D_TESTBED_SOURCE_TS_FILES)
+	@$$(npm bin)/tsc --declaration --sourcemap --target ES5 --outFile $@ $<
 	$(DONE)
