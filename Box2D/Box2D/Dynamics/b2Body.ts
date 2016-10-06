@@ -30,7 +30,7 @@ namespace box2d {
 /// static: zero mass, zero velocity, may be manually moved
 /// kinematic: zero mass, non-zero velocity set by user, moved by solver
 /// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
-export enum b2BodyType {
+export const enum b2BodyType {
   b2_unknown = -1,
   b2_staticBody = 0,
   b2_kinematicBody = 1,
@@ -96,7 +96,7 @@ export class b2BodyDef {
   public gravityScale: number = 1;
 }
 
-export enum b2BodyFlag {
+export const enum b2BodyFlag {
   e_none = 0,
   e_islandFlag = 0x0001,
   e_awakeFlag = 0x0002,

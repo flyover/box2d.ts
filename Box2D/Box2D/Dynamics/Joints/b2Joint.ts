@@ -23,7 +23,7 @@
 
 namespace box2d {
 
-export enum b2JointType {
+export const enum b2JointType {
   e_unknownJoint = 0,
   e_revoluteJoint = 1,
   e_prismaticJoint = 2,
@@ -39,7 +39,7 @@ export enum b2JointType {
   e_areaJoint = 12
 }
 
-export enum b2LimitState {
+export const enum b2LimitState {
   e_inactiveLimit = 0,
   e_atLowerLimit = 1,
   e_atUpperLimit = 2,

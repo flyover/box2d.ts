@@ -134,7 +134,7 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
   manifold.points[0].localPoint.Copy(circleB.m_p);
 }
 
-enum b2EPAxisType {
+const enum b2EPAxisType {
   e_unknown = 0,
   e_edgeA = 1,
   e_edgeB = 2
@@ -164,7 +164,7 @@ class b2ReferenceFace {
   public sideOffset2: number = 0;
 }
 
-enum b2EPColliderVertexType {
+const enum b2EPColliderVertexType {
   e_isolated = 0,
   e_concave = 1,
   e_convex = 2

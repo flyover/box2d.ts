@@ -45,7 +45,7 @@
 
 namespace box2d {
 
-export enum b2WorldFlag {
+export const enum b2WorldFlag {
   e_none = 0,
   e_newFixture = 0x1,
   e_locked = 0x2,

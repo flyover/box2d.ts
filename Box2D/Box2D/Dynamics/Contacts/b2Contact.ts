@@ -48,7 +48,7 @@ export class b2ContactEdge {
   public next: b2ContactEdge = null; ///< the next contact edge in the body's contact list
 }
 
-export enum b2ContactFlag {
+export const enum b2ContactFlag {
   e_none = 0,
   e_islandFlag = 0x0001, /// Used when crawling contact graph when forming islands.
   e_touchingFlag = 0x0002, /// Set when the shapes are touching.

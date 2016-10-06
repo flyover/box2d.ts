@@ -5,7 +5,7 @@ namespace box2d.Testbed {
 
 export const DRAW_STRING_NEW_LINE: number = 25;
 
-export enum KeyCode {
+export const enum KeyCode {
   WIN_KEY_FF_LINUX = 0,
   MAC_ENTER = 3,
   BACKSPACE = 8,

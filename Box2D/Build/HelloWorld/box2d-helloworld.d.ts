@@ -268,7 +268,7 @@ declare namespace box2d {
         MakeStyleString(alpha?: number): string;
         static MakeStyleString(r: number, g: number, b: number, a?: number): string;
     }
-    enum b2DrawFlags {
+    const enum b2DrawFlags {
         e_none = 0,
         e_shapeBit = 1,
         e_jointBit = 2,
@@ -394,7 +394,7 @@ declare namespace box2d {
     function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
 }
 declare namespace box2d {
-    enum b2ContactFeatureType {
+    const enum b2ContactFeatureType {
         e_vertex = 0,
         e_face = 1,
     }
@@ -427,7 +427,7 @@ declare namespace box2d {
         Reset(): void;
         Copy(o: b2ManifoldPoint): b2ManifoldPoint;
     }
-    enum b2ManifoldType {
+    const enum b2ManifoldType {
         e_unknown = -1,
         e_circles = 0,
         e_faceA = 1,
@@ -454,7 +454,7 @@ declare namespace box2d {
         private static Initialize_s_clipPoint;
         Initialize(manifold: b2Manifold, xfA: b2Transform, radiusA: number, xfB: b2Transform, radiusB: number): void;
     }
-    enum b2PointState {
+    const enum b2PointState {
         b2_nullState = 0,
         b2_addState = 1,
         b2_persistState = 2,
@@ -505,7 +505,7 @@ declare namespace box2d {
         center: b2Vec2;
         I: number;
     }
-    enum b2ShapeType {
+    const enum b2ShapeType {
         e_unknown = -1,
         e_circleShape = 0,
         e_edgeShape = 1,
@@ -757,7 +757,7 @@ declare namespace box2d {
         sweepB: b2Sweep;
         tMax: number;
     }
-    enum b2TOIOutputState {
+    const enum b2TOIOutputState {
         e_unknown = 0,
         e_failed = 1,
         e_overlapped = 2,
@@ -768,7 +768,7 @@ declare namespace box2d {
         state: b2TOIOutputState;
         t: number;
     }
-    enum b2SeparationFunctionType {
+    const enum b2SeparationFunctionType {
         e_unknown = -1,
         e_points = 0,
         e_faceA = 1,
@@ -861,7 +861,7 @@ declare namespace box2d {
 declare namespace box2d {
 }
 declare namespace box2d {
-    enum b2JointType {
+    const enum b2JointType {
         e_unknownJoint = 0,
         e_revoluteJoint = 1,
         e_prismaticJoint = 2,
@@ -876,7 +876,7 @@ declare namespace box2d {
         e_motorJoint = 11,
         e_areaJoint = 12,
     }
-    enum b2LimitState {
+    const enum b2LimitState {
         e_inactiveLimit = 0,
         e_atLowerLimit = 1,
         e_atUpperLimit = 2,
@@ -972,7 +972,7 @@ declare namespace box2d {
         prev: b2ContactEdge;
         next: b2ContactEdge;
     }
-    enum b2ContactFlag {
+    const enum b2ContactFlag {
         e_none = 0,
         e_islandFlag = 1,
         e_touchingFlag = 2,
@@ -2104,7 +2104,7 @@ declare namespace box2d {
     }
 }
 declare namespace box2d {
-    enum b2WorldFlag {
+    const enum b2WorldFlag {
         e_none = 0,
         e_newFixture = 1,
         e_locked = 2,
@@ -2199,7 +2199,7 @@ declare namespace box2d {
     }
 }
 declare namespace box2d {
-    enum b2BodyType {
+    const enum b2BodyType {
         b2_unknown = -1,
         b2_staticBody = 0,
         b2_kinematicBody = 1,
@@ -2221,7 +2221,7 @@ declare namespace box2d {
         userData: any;
         gravityScale: number;
     }
-    enum b2BodyFlag {
+    const enum b2BodyFlag {
         e_none = 0,
         e_islandFlag = 1,
         e_awakeFlag = 2,

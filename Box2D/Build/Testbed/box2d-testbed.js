@@ -1226,17 +1226,6 @@ var box2d;
         return b2Color;
     }());
     box2d.b2Color = b2Color;
-    (function (b2DrawFlags) {
-        b2DrawFlags[b2DrawFlags["e_none"] = 0] = "e_none";
-        b2DrawFlags[b2DrawFlags["e_shapeBit"] = 1] = "e_shapeBit";
-        b2DrawFlags[b2DrawFlags["e_jointBit"] = 2] = "e_jointBit";
-        b2DrawFlags[b2DrawFlags["e_aabbBit"] = 4] = "e_aabbBit";
-        b2DrawFlags[b2DrawFlags["e_pairBit"] = 8] = "e_pairBit";
-        b2DrawFlags[b2DrawFlags["e_centerOfMassBit"] = 16] = "e_centerOfMassBit";
-        b2DrawFlags[b2DrawFlags["e_controllerBit"] = 32] = "e_controllerBit";
-        b2DrawFlags[b2DrawFlags["e_all"] = 63] = "e_all";
-    })(box2d.b2DrawFlags || (box2d.b2DrawFlags = {}));
-    var b2DrawFlags = box2d.b2DrawFlags;
     /// Implement and register this class with a b2World to provide debug drawing of physics
     /// entities in your game.
     var b2Draw = (function () {
@@ -2052,11 +2041,6 @@ var box2d;
 /// queries, and TOI queries.
 var box2d;
 (function (box2d) {
-    (function (b2ContactFeatureType) {
-        b2ContactFeatureType[b2ContactFeatureType["e_vertex"] = 0] = "e_vertex";
-        b2ContactFeatureType[b2ContactFeatureType["e_face"] = 1] = "e_face";
-    })(box2d.b2ContactFeatureType || (box2d.b2ContactFeatureType = {}));
-    var b2ContactFeatureType = box2d.b2ContactFeatureType;
     /// The features that intersect to form the contact point
     /// This must be 4 bytes or less.
     var b2ContactFeature = (function () {
@@ -2187,13 +2171,6 @@ var box2d;
         return b2ManifoldPoint;
     }());
     box2d.b2ManifoldPoint = b2ManifoldPoint;
-    (function (b2ManifoldType) {
-        b2ManifoldType[b2ManifoldType["e_unknown"] = -1] = "e_unknown";
-        b2ManifoldType[b2ManifoldType["e_circles"] = 0] = "e_circles";
-        b2ManifoldType[b2ManifoldType["e_faceA"] = 1] = "e_faceA";
-        b2ManifoldType[b2ManifoldType["e_faceB"] = 2] = "e_faceB";
-    })(box2d.b2ManifoldType || (box2d.b2ManifoldType = {}));
-    var b2ManifoldType = box2d.b2ManifoldType;
     /// A manifold for two touching convex shapes.
     /// Box2D supports multiple types of contact:
     /// - clip point versus plane with radius
@@ -2215,7 +2192,7 @@ var box2d;
             this.points = b2ManifoldPoint.MakeArray(box2d.b2_maxManifoldPoints);
             this.localNormal = new box2d.b2Vec2();
             this.localPoint = new box2d.b2Vec2();
-            this.type = b2ManifoldType.e_unknown;
+            this.type = -1 /* e_unknown */;
             this.pointCount = 0;
         }
         b2Manifold.prototype.Reset = function () {
@@ -2227,7 +2204,7 @@ var box2d;
             }
             this.localNormal.SetZero();
             this.localPoint.SetZero();
-            this.type = b2ManifoldType.e_unknown;
+            this.type = -1 /* e_unknown */;
             this.pointCount = 0;
         };
         b2Manifold.prototype.Copy = function (o) {
@@ -2259,7 +2236,7 @@ var box2d;
                 return;
             }
             switch (manifold.type) {
-                case b2ManifoldType.e_circles:
+                case 0 /* e_circles */:
                     {
                         this.normal.SetXY(1, 0);
                         var pointA = box2d.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
@@ -2272,7 +2249,7 @@ var box2d;
                         box2d.b2MidVV(cA, cB, this.points[0]);
                     }
                     break;
-                case b2ManifoldType.e_faceA:
+                case 1 /* e_faceA */:
                     {
                         box2d.b2MulRV(xfA.q, manifold.localNormal, this.normal);
                         var planePoint = box2d.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
@@ -2285,7 +2262,7 @@ var box2d;
                         }
                     }
                     break;
-                case b2ManifoldType.e_faceB:
+                case 2 /* e_faceB */:
                     {
                         box2d.b2MulRV(xfB.q, manifold.localNormal, this.normal);
                         var planePoint = box2d.b2MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
@@ -2311,14 +2288,6 @@ var box2d;
         return b2WorldManifold;
     }());
     box2d.b2WorldManifold = b2WorldManifold;
-    /// This is used for determining the state of contact points.
-    (function (b2PointState) {
-        b2PointState[b2PointState["b2_nullState"] = 0] = "b2_nullState";
-        b2PointState[b2PointState["b2_addState"] = 1] = "b2_addState";
-        b2PointState[b2PointState["b2_persistState"] = 2] = "b2_persistState";
-        b2PointState[b2PointState["b2_removeState"] = 3] = "b2_removeState"; ///< point was removed in the update
-    })(box2d.b2PointState || (box2d.b2PointState = {}));
-    var b2PointState = box2d.b2PointState;
     /// Compute the point states given two manifolds. The states pertain to the transition from manifold1
     /// to manifold2. So state1 is either persist or remove while state2 is either add or persist.
     function b2GetPointStates(state1, state2, manifold1, manifold2) {
@@ -2327,31 +2296,31 @@ var box2d;
         for (i = 0; i < manifold1.pointCount; ++i) {
             var id = manifold1.points[i].id;
             var key = id.key;
-            state1[i] = b2PointState.b2_removeState;
+            state1[i] = 3 /* b2_removeState */;
             for (var j = 0, jct = manifold2.pointCount; j < jct; ++j) {
                 if (manifold2.points[j].id.key === key) {
-                    state1[i] = b2PointState.b2_persistState;
+                    state1[i] = 2 /* b2_persistState */;
                     break;
                 }
             }
         }
         for (; i < box2d.b2_maxManifoldPoints; ++i) {
-            state1[i] = b2PointState.b2_nullState;
+            state1[i] = 0 /* b2_nullState */;
         }
         // Detect persists and adds.
         for (i = 0; i < manifold2.pointCount; ++i) {
             var id = manifold2.points[i].id;
             var key = id.key;
-            state2[i] = b2PointState.b2_addState;
+            state2[i] = 1 /* b2_addState */;
             for (var j = 0, jct = manifold1.pointCount; j < jct; ++j) {
                 if (manifold1.points[j].id.key === key) {
-                    state2[i] = b2PointState.b2_persistState;
+                    state2[i] = 2 /* b2_persistState */;
                     break;
                 }
             }
         }
         for (; i < box2d.b2_maxManifoldPoints; ++i) {
-            state2[i] = b2PointState.b2_nullState;
+            state2[i] = 0 /* b2_nullState */;
         }
     }
     box2d.b2GetPointStates = b2GetPointStates;
@@ -2598,8 +2567,8 @@ var box2d;
             var id = vOut[numOut].id;
             id.cf.indexA = vertexIndexA;
             id.cf.indexB = vIn0.id.cf.indexB;
-            id.cf.typeA = b2ContactFeatureType.e_vertex;
-            id.cf.typeB = b2ContactFeatureType.e_face;
+            id.cf.typeA = 0 /* e_vertex */;
+            id.cf.typeB = 1 /* e_face */;
             ++numOut;
         }
         return numOut;
@@ -2659,21 +2628,12 @@ var box2d;
         return b2MassData;
     }());
     box2d.b2MassData = b2MassData;
-    (function (b2ShapeType) {
-        b2ShapeType[b2ShapeType["e_unknown"] = -1] = "e_unknown";
-        b2ShapeType[b2ShapeType["e_circleShape"] = 0] = "e_circleShape";
-        b2ShapeType[b2ShapeType["e_edgeShape"] = 1] = "e_edgeShape";
-        b2ShapeType[b2ShapeType["e_polygonShape"] = 2] = "e_polygonShape";
-        b2ShapeType[b2ShapeType["e_chainShape"] = 3] = "e_chainShape";
-        b2ShapeType[b2ShapeType["e_shapeTypeCount"] = 4] = "e_shapeTypeCount";
-    })(box2d.b2ShapeType || (box2d.b2ShapeType = {}));
-    var b2ShapeType = box2d.b2ShapeType;
     /// A shape is used for collision detection. You can create a shape however you like.
     /// Shapes used for simulation in b2World are created automatically when a b2Fixture
     /// is created. Shapes may encapsulate a one or more child shapes.
     var b2Shape = (function () {
         function b2Shape(type, radius) {
-            this.m_type = b2ShapeType.e_unknown;
+            this.m_type = -1 /* e_unknown */;
             this.m_radius = 0;
             this.m_type = type;
             this.m_radius = radius;
@@ -2785,7 +2745,7 @@ var box2d;
         __extends(b2CircleShape, _super);
         function b2CircleShape(radius) {
             if (radius === void 0) { radius = 0; }
-            _super.call(this, box2d.b2ShapeType.e_circleShape, radius);
+            _super.call(this, 0 /* e_circleShape */, radius);
             this.m_p = new box2d.b2Vec2();
         }
         /// Implement b2Shape.
@@ -2921,7 +2881,7 @@ var box2d;
     var b2EdgeShape = (function (_super) {
         __extends(b2EdgeShape, _super);
         function b2EdgeShape() {
-            _super.call(this, box2d.b2ShapeType.e_edgeShape, box2d.b2_polygonRadius);
+            _super.call(this, 1 /* e_edgeShape */, box2d.b2_polygonRadius);
             this.m_vertex1 = new box2d.b2Vec2();
             this.m_vertex2 = new box2d.b2Vec2();
             this.m_vertex0 = new box2d.b2Vec2();
@@ -3085,7 +3045,7 @@ var box2d;
     var b2ChainShape = (function (_super) {
         __extends(b2ChainShape, _super);
         function b2ChainShape() {
-            _super.call(this, box2d.b2ShapeType.e_chainShape, box2d.b2_polygonRadius);
+            _super.call(this, 3 /* e_chainShape */, box2d.b2_polygonRadius);
             this.m_vertices = null;
             this.m_count = 0;
             this.m_prevVertex = new box2d.b2Vec2();
@@ -3194,7 +3154,7 @@ var box2d;
             if (box2d.ENABLE_ASSERTS) {
                 box2d.b2Assert(0 <= index && index < this.m_count - 1);
             }
-            edge.m_type = box2d.b2ShapeType.e_edgeShape;
+            edge.m_type = 1 /* e_edgeShape */;
             edge.m_radius = this.m_radius;
             edge.m_vertex1.Copy(this.m_vertices[index]);
             edge.m_vertex2.Copy(this.m_vertices[index + 1]);
@@ -3314,7 +3274,7 @@ var box2d;
     var b2PolygonShape = (function (_super) {
         __extends(b2PolygonShape, _super);
         function b2PolygonShape() {
-            _super.call(this, box2d.b2ShapeType.e_polygonShape, box2d.b2_polygonRadius);
+            _super.call(this, 2 /* e_polygonShape */, box2d.b2_polygonRadius);
             this.m_centroid = new box2d.b2Vec2(0, 0);
             this.m_vertices = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
             this.m_normals = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
@@ -4802,36 +4762,21 @@ var box2d;
         return b2TOIInput;
     }());
     box2d.b2TOIInput = b2TOIInput;
-    (function (b2TOIOutputState) {
-        b2TOIOutputState[b2TOIOutputState["e_unknown"] = 0] = "e_unknown";
-        b2TOIOutputState[b2TOIOutputState["e_failed"] = 1] = "e_failed";
-        b2TOIOutputState[b2TOIOutputState["e_overlapped"] = 2] = "e_overlapped";
-        b2TOIOutputState[b2TOIOutputState["e_touching"] = 3] = "e_touching";
-        b2TOIOutputState[b2TOIOutputState["e_separated"] = 4] = "e_separated";
-    })(box2d.b2TOIOutputState || (box2d.b2TOIOutputState = {}));
-    var b2TOIOutputState = box2d.b2TOIOutputState;
     var b2TOIOutput = (function () {
         function b2TOIOutput() {
-            this.state = b2TOIOutputState.e_unknown;
+            this.state = 0 /* e_unknown */;
             this.t = 0;
         }
         return b2TOIOutput;
     }());
     box2d.b2TOIOutput = b2TOIOutput;
-    (function (b2SeparationFunctionType) {
-        b2SeparationFunctionType[b2SeparationFunctionType["e_unknown"] = -1] = "e_unknown";
-        b2SeparationFunctionType[b2SeparationFunctionType["e_points"] = 0] = "e_points";
-        b2SeparationFunctionType[b2SeparationFunctionType["e_faceA"] = 1] = "e_faceA";
-        b2SeparationFunctionType[b2SeparationFunctionType["e_faceB"] = 2] = "e_faceB";
-    })(box2d.b2SeparationFunctionType || (box2d.b2SeparationFunctionType = {}));
-    var b2SeparationFunctionType = box2d.b2SeparationFunctionType;
     var b2SeparationFunction = (function () {
         function b2SeparationFunction() {
             this.m_proxyA = null;
             this.m_proxyB = null;
             this.m_sweepA = new box2d.b2Sweep();
             this.m_sweepB = new box2d.b2Sweep();
-            this.m_type = b2SeparationFunctionType.e_unknown;
+            this.m_type = -1 /* e_unknown */;
             this.m_localPoint = new box2d.b2Vec2();
             this.m_axis = new box2d.b2Vec2();
         }
@@ -4849,7 +4794,7 @@ var box2d;
             this.m_sweepA.GetTransform(xfA, t1);
             this.m_sweepB.GetTransform(xfB, t1);
             if (count === 1) {
-                this.m_type = b2SeparationFunctionType.e_points;
+                this.m_type = 0 /* e_points */;
                 var localPointA = this.m_proxyA.GetVertex(cache.indexA[0]);
                 var localPointB = this.m_proxyB.GetVertex(cache.indexB[0]);
                 var pointA = box2d.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
@@ -4860,7 +4805,7 @@ var box2d;
             }
             else if (cache.indexA[0] === cache.indexA[1]) {
                 // Two points on B and one on A.
-                this.m_type = b2SeparationFunctionType.e_faceB;
+                this.m_type = 2 /* e_faceB */;
                 var localPointB1 = this.m_proxyB.GetVertex(cache.indexB[0]);
                 var localPointB2 = this.m_proxyB.GetVertex(cache.indexB[1]);
                 box2d.b2CrossVOne(box2d.b2SubVV(localPointB2, localPointB1, box2d.b2Vec2.s_t0), this.m_axis).SelfNormalize();
@@ -4878,7 +4823,7 @@ var box2d;
             }
             else {
                 // Two points on A and one or two points on B.
-                this.m_type = b2SeparationFunctionType.e_faceA;
+                this.m_type = 1 /* e_faceA */;
                 var localPointA1 = this.m_proxyA.GetVertex(cache.indexA[0]);
                 var localPointA2 = this.m_proxyA.GetVertex(cache.indexA[1]);
                 box2d.b2CrossVOne(box2d.b2SubVV(localPointA2, localPointA1, box2d.b2Vec2.s_t0), this.m_axis).SelfNormalize();
@@ -4901,7 +4846,7 @@ var box2d;
             this.m_sweepA.GetTransform(xfA, t);
             this.m_sweepB.GetTransform(xfB, t);
             switch (this.m_type) {
-                case b2SeparationFunctionType.e_points: {
+                case 0 /* e_points */: {
                     var axisA = box2d.b2MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
                     var axisB = box2d.b2MulTRV(xfB.q, box2d.b2NegV(this.m_axis, box2d.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
                     indexA[0] = this.m_proxyA.GetSupport(axisA);
@@ -4913,7 +4858,7 @@ var box2d;
                     var separation = box2d.b2DotVV(box2d.b2SubVV(pointB, pointA, box2d.b2Vec2.s_t0), this.m_axis);
                     return separation;
                 }
-                case b2SeparationFunctionType.e_faceA: {
+                case 1 /* e_faceA */: {
                     var normal = box2d.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
                     var pointA = box2d.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
                     var axisB = box2d.b2MulTRV(xfB.q, box2d.b2NegV(normal, box2d.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
@@ -4924,7 +4869,7 @@ var box2d;
                     var separation = box2d.b2DotVV(box2d.b2SubVV(pointB, pointA, box2d.b2Vec2.s_t0), normal);
                     return separation;
                 }
-                case b2SeparationFunctionType.e_faceB: {
+                case 2 /* e_faceB */: {
                     var normal = box2d.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
                     var pointB = box2d.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
                     var axisA = box2d.b2MulTRV(xfA.q, box2d.b2NegV(normal, box2d.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
@@ -4950,7 +4895,7 @@ var box2d;
             this.m_sweepA.GetTransform(xfA, t);
             this.m_sweepB.GetTransform(xfB, t);
             switch (this.m_type) {
-                case b2SeparationFunctionType.e_points: {
+                case 0 /* e_points */: {
                     var localPointA = this.m_proxyA.GetVertex(indexA);
                     var localPointB = this.m_proxyB.GetVertex(indexB);
                     var pointA = box2d.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
@@ -4958,7 +4903,7 @@ var box2d;
                     var separation = box2d.b2DotVV(box2d.b2SubVV(pointB, pointA, box2d.b2Vec2.s_t0), this.m_axis);
                     return separation;
                 }
-                case b2SeparationFunctionType.e_faceA: {
+                case 1 /* e_faceA */: {
                     var normal = box2d.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
                     var pointA = box2d.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
                     var localPointB = this.m_proxyB.GetVertex(indexB);
@@ -4966,7 +4911,7 @@ var box2d;
                     var separation = box2d.b2DotVV(box2d.b2SubVV(pointB, pointA, box2d.b2Vec2.s_t0), normal);
                     return separation;
                 }
-                case b2SeparationFunctionType.e_faceB: {
+                case 2 /* e_faceB */: {
                     var normal = box2d.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
                     var pointB = box2d.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
                     var localPointA = this.m_proxyA.GetVertex(indexA);
@@ -4996,7 +4941,7 @@ var box2d;
     function b2TimeOfImpact(output, input) {
         var timer = b2TimeOfImpact_s_timer.Reset();
         ++box2d.b2_toiCalls;
-        output.state = b2TOIOutputState.e_unknown;
+        output.state = 0 /* e_unknown */;
         output.t = input.tMax;
         var proxyA = input.proxyA;
         var proxyB = input.proxyB;
@@ -5039,13 +4984,13 @@ var box2d;
             // If the shapes are overlapped, we give up on continuous collision.
             if (distanceOutput.distance <= 0) {
                 // Failure!
-                output.state = b2TOIOutputState.e_overlapped;
+                output.state = 2 /* e_overlapped */;
                 output.t = 0;
                 break;
             }
             if (distanceOutput.distance < target + tolerance) {
                 // Victory!
-                output.state = b2TOIOutputState.e_touching;
+                output.state = 3 /* e_touching */;
                 output.t = t1;
                 break;
             }
@@ -5090,7 +5035,7 @@ var box2d;
                 // Is the final configuration separated?
                 if (s2 > (target + tolerance)) {
                     // Victory!
-                    output.state = b2TOIOutputState.e_separated;
+                    output.state = 4 /* e_separated */;
                     output.t = tMax;
                     done = true;
                     break;
@@ -5106,7 +5051,7 @@ var box2d;
                 // Check for initial overlap. This might happen if the root finder
                 // runs out of iterations.
                 if (s1 < (target - tolerance)) {
-                    output.state = b2TOIOutputState.e_failed;
+                    output.state = 1 /* e_failed */;
                     output.t = t1;
                     done = true;
                     break;
@@ -5114,7 +5059,7 @@ var box2d;
                 // Check for touching
                 if (s1 <= (target + tolerance)) {
                     // Victory! t1 should hold the TOI (could be 0.0).
-                    output.state = b2TOIOutputState.e_touching;
+                    output.state = 3 /* e_touching */;
                     output.t = t1;
                     done = true;
                     break;
@@ -5168,7 +5113,7 @@ var box2d;
             }
             if (iter === k_maxIterations) {
                 // Root finder got stuck. Semi-victory.
-                output.state = b2TOIOutputState.e_failed;
+                output.state = 1 /* e_failed */;
                 output.t = t1;
                 break;
             }
@@ -5643,29 +5588,6 @@ var box2d;
 // <reference path="../../Common/b2BlockAllocator.ts"/>
 var box2d;
 (function (box2d) {
-    (function (b2JointType) {
-        b2JointType[b2JointType["e_unknownJoint"] = 0] = "e_unknownJoint";
-        b2JointType[b2JointType["e_revoluteJoint"] = 1] = "e_revoluteJoint";
-        b2JointType[b2JointType["e_prismaticJoint"] = 2] = "e_prismaticJoint";
-        b2JointType[b2JointType["e_distanceJoint"] = 3] = "e_distanceJoint";
-        b2JointType[b2JointType["e_pulleyJoint"] = 4] = "e_pulleyJoint";
-        b2JointType[b2JointType["e_mouseJoint"] = 5] = "e_mouseJoint";
-        b2JointType[b2JointType["e_gearJoint"] = 6] = "e_gearJoint";
-        b2JointType[b2JointType["e_wheelJoint"] = 7] = "e_wheelJoint";
-        b2JointType[b2JointType["e_weldJoint"] = 8] = "e_weldJoint";
-        b2JointType[b2JointType["e_frictionJoint"] = 9] = "e_frictionJoint";
-        b2JointType[b2JointType["e_ropeJoint"] = 10] = "e_ropeJoint";
-        b2JointType[b2JointType["e_motorJoint"] = 11] = "e_motorJoint";
-        b2JointType[b2JointType["e_areaJoint"] = 12] = "e_areaJoint";
-    })(box2d.b2JointType || (box2d.b2JointType = {}));
-    var b2JointType = box2d.b2JointType;
-    (function (b2LimitState) {
-        b2LimitState[b2LimitState["e_inactiveLimit"] = 0] = "e_inactiveLimit";
-        b2LimitState[b2LimitState["e_atLowerLimit"] = 1] = "e_atLowerLimit";
-        b2LimitState[b2LimitState["e_atUpperLimit"] = 2] = "e_atUpperLimit";
-        b2LimitState[b2LimitState["e_equalLimits"] = 3] = "e_equalLimits";
-    })(box2d.b2LimitState || (box2d.b2LimitState = {}));
-    var b2LimitState = box2d.b2LimitState;
     var b2Jacobian = (function () {
         function b2Jacobian() {
             this.linear = new box2d.b2Vec2();
@@ -5706,7 +5628,7 @@ var box2d;
     var b2JointDef = (function () {
         function b2JointDef(type) {
             /// The joint type is set automatically for concrete joint types.
-            this.type = b2JointType.e_unknownJoint;
+            this.type = 0 /* e_unknownJoint */;
             /// Use this to attach application specific data to your joints.
             this.userData = null;
             /// The first attached body.
@@ -5724,7 +5646,7 @@ var box2d;
     /// various fashions. Some joints also feature limits and motors.
     var b2Joint = (function () {
         function b2Joint(def) {
-            this.m_type = b2JointType.e_unknownJoint;
+            this.m_type = 0 /* e_unknownJoint */;
             this.m_prev = null;
             this.m_next = null;
             this.m_edgeA = new b2JointEdge();
@@ -6015,19 +5937,9 @@ var box2d;
         return b2ContactEdge;
     }());
     box2d.b2ContactEdge = b2ContactEdge;
-    (function (b2ContactFlag) {
-        b2ContactFlag[b2ContactFlag["e_none"] = 0] = "e_none";
-        b2ContactFlag[b2ContactFlag["e_islandFlag"] = 1] = "e_islandFlag";
-        b2ContactFlag[b2ContactFlag["e_touchingFlag"] = 2] = "e_touchingFlag";
-        b2ContactFlag[b2ContactFlag["e_enabledFlag"] = 4] = "e_enabledFlag";
-        b2ContactFlag[b2ContactFlag["e_filterFlag"] = 8] = "e_filterFlag";
-        b2ContactFlag[b2ContactFlag["e_bulletHitFlag"] = 16] = "e_bulletHitFlag";
-        b2ContactFlag[b2ContactFlag["e_toiFlag"] = 32] = "e_toiFlag"; /// This contact has a valid TOI in m_toi
-    })(box2d.b2ContactFlag || (box2d.b2ContactFlag = {}));
-    var b2ContactFlag = box2d.b2ContactFlag;
     var b2Contact = (function () {
         function b2Contact() {
-            this.m_flags = b2ContactFlag.e_none;
+            this.m_flags = 0 /* e_none */;
             this.m_prev = null;
             this.m_next = null;
             this.m_nodeA = new b2ContactEdge();
@@ -6055,18 +5967,18 @@ var box2d;
             worldManifold.Initialize(this.m_manifold, bodyA.GetTransform(), shapeA.m_radius, bodyB.GetTransform(), shapeB.m_radius);
         };
         b2Contact.prototype.IsTouching = function () {
-            return (this.m_flags & b2ContactFlag.e_touchingFlag) === b2ContactFlag.e_touchingFlag;
+            return (this.m_flags & 2 /* e_touchingFlag */) === 2 /* e_touchingFlag */;
         };
         b2Contact.prototype.SetEnabled = function (flag) {
             if (flag) {
-                this.m_flags |= b2ContactFlag.e_enabledFlag;
+                this.m_flags |= 4 /* e_enabledFlag */;
             }
             else {
-                this.m_flags &= ~b2ContactFlag.e_enabledFlag;
+                this.m_flags &= ~4 /* e_enabledFlag */;
             }
         };
         b2Contact.prototype.IsEnabled = function () {
-            return (this.m_flags & b2ContactFlag.e_enabledFlag) === b2ContactFlag.e_enabledFlag;
+            return (this.m_flags & 4 /* e_enabledFlag */) === 4 /* e_enabledFlag */;
         };
         b2Contact.prototype.GetNext = function () {
             return this.m_next;
@@ -6086,7 +5998,7 @@ var box2d;
         b2Contact.prototype.Evaluate = function (manifold, xfA, xfB) {
         };
         b2Contact.prototype.FlagForFiltering = function () {
-            this.m_flags |= b2ContactFlag.e_filterFlag;
+            this.m_flags |= 8 /* e_filterFlag */;
         };
         b2Contact.prototype.SetFriction = function (friction) {
             this.m_friction = friction;
@@ -6113,7 +6025,7 @@ var box2d;
             return this.m_tangentSpeed;
         };
         b2Contact.prototype.Reset = function (fixtureA, indexA, fixtureB, indexB) {
-            this.m_flags = b2ContactFlag.e_enabledFlag;
+            this.m_flags = 4 /* e_enabledFlag */;
             this.m_fixtureA = fixtureA;
             this.m_fixtureB = fixtureB;
             this.m_indexA = indexA;
@@ -6138,9 +6050,9 @@ var box2d;
             this.m_oldManifold = this.m_manifold;
             this.m_manifold = tManifold;
             // Re-enable this contact.
-            this.m_flags |= b2ContactFlag.e_enabledFlag;
+            this.m_flags |= 4 /* e_enabledFlag */;
             var touching = false;
-            var wasTouching = (this.m_flags & b2ContactFlag.e_touchingFlag) === b2ContactFlag.e_touchingFlag;
+            var wasTouching = (this.m_flags & 2 /* e_touchingFlag */) === 2 /* e_touchingFlag */;
             var sensorA = this.m_fixtureA.IsSensor();
             var sensorB = this.m_fixtureB.IsSensor();
             var sensor = sensorA || sensorB;
@@ -6192,10 +6104,10 @@ var box2d;
                 }
             }
             if (touching) {
-                this.m_flags |= b2ContactFlag.e_touchingFlag;
+                this.m_flags |= 2 /* e_touchingFlag */;
             }
             else {
-                this.m_flags &= ~b2ContactFlag.e_touchingFlag;
+                this.m_flags &= ~2 /* e_touchingFlag */;
             }
             if (wasTouching === false && touching === true && listener) {
                 listener.BeginContact(this);
@@ -6240,7 +6152,7 @@ var box2d;
         if (distSqr > radius * radius) {
             return;
         }
-        manifold.type = box2d.b2ManifoldType.e_circles;
+        manifold.type = 0 /* e_circles */;
         manifold.localPoint.Copy(circleA.m_p);
         manifold.localNormal.SetZero();
         manifold.pointCount = 1;
@@ -6282,7 +6194,7 @@ var box2d;
         // If the center is inside the polygon ...
         if (separation < box2d.b2_epsilon) {
             manifold.pointCount = 1;
-            manifold.type = box2d.b2ManifoldType.e_faceA;
+            manifold.type = 1 /* e_faceA */;
             manifold.localNormal.Copy(normals[normalIndex]);
             box2d.b2MidVV(v1, v2, manifold.localPoint);
             manifold.points[0].localPoint.Copy(circleB.m_p);
@@ -6297,7 +6209,7 @@ var box2d;
                 return;
             }
             manifold.pointCount = 1;
-            manifold.type = box2d.b2ManifoldType.e_faceA;
+            manifold.type = 1 /* e_faceA */;
             box2d.b2SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
             manifold.localPoint.Copy(v1);
             manifold.points[0].localPoint.Copy(circleB.m_p);
@@ -6308,7 +6220,7 @@ var box2d;
                 return;
             }
             manifold.pointCount = 1;
-            manifold.type = box2d.b2ManifoldType.e_faceA;
+            manifold.type = 1 /* e_faceA */;
             box2d.b2SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
             manifold.localPoint.Copy(v2);
             manifold.points[0].localPoint.Copy(circleB.m_p);
@@ -6321,7 +6233,7 @@ var box2d;
                 return;
             }
             manifold.pointCount = 1;
-            manifold.type = box2d.b2ManifoldType.e_faceA;
+            manifold.type = 1 /* e_faceA */;
             manifold.localNormal.Copy(normals[vertIndex1]).SelfNormalize();
             manifold.localPoint.Copy(faceCenter);
             manifold.points[0].localPoint.Copy(circleB.m_p);
@@ -6420,10 +6332,10 @@ var box2d;
         b2PolygonAndCircleContact.prototype.Reset = function (fixtureA, indexA, fixtureB, indexB) {
             _super.prototype.Reset.call(this, fixtureA, indexA, fixtureB, indexB);
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureA.GetType() === box2d.b2ShapeType.e_polygonShape);
+                box2d.b2Assert(fixtureA.GetType() === 2 /* e_polygonShape */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureB.GetType() === box2d.b2ShapeType.e_circleShape);
+                box2d.b2Assert(fixtureB.GetType() === 0 /* e_circleShape */);
             }
         };
         b2PolygonAndCircleContact.prototype.Evaluate = function (manifold, xfA, xfB) {
@@ -6568,15 +6480,15 @@ var box2d;
         var cf0 = c0.id.cf;
         cf0.indexA = edge1;
         cf0.indexB = i1;
-        cf0.typeA = box2d.b2ContactFeatureType.e_face;
-        cf0.typeB = box2d.b2ContactFeatureType.e_vertex;
+        cf0.typeA = 1 /* e_face */;
+        cf0.typeB = 0 /* e_vertex */;
         var c1 = c[1];
         box2d.b2MulXV(xf2, vertices2[i2], c1.v);
         var cf1 = c1.id.cf;
         cf1.indexA = edge1;
         cf1.indexB = i2;
-        cf1.typeA = box2d.b2ContactFeatureType.e_face;
-        cf1.typeB = box2d.b2ContactFeatureType.e_vertex;
+        cf1.typeA = 1 /* e_face */;
+        cf1.typeB = 0 /* e_vertex */;
     }
     var b2CollidePolygons_s_incidentEdge = box2d.b2ClipVertex.MakeArray(2);
     var b2CollidePolygons_s_clipPoints1 = box2d.b2ClipVertex.MakeArray(2);
@@ -6617,7 +6529,7 @@ var box2d;
             xf1 = xfB;
             xf2 = xfA;
             edge1 = edgeB[0];
-            manifold.type = box2d.b2ManifoldType.e_faceB;
+            manifold.type = 2 /* e_faceB */;
             flip = 1;
         }
         else {
@@ -6626,7 +6538,7 @@ var box2d;
             xf1 = xfA;
             xf2 = xfB;
             edge1 = edgeA[0];
-            manifold.type = box2d.b2ManifoldType.e_faceA;
+            manifold.type = 1 /* e_faceA */;
             flip = 0;
         }
         var incidentEdge = b2CollidePolygons_s_incidentEdge;
@@ -6772,7 +6684,7 @@ var box2d;
         // const cf: b2ContactFeature = new b2ContactFeature();
         var id = b2CollideEdgeAndCircle_s_id;
         id.cf.indexB = 0;
-        id.cf.typeB = box2d.b2ContactFeatureType.e_vertex;
+        id.cf.typeB = 0 /* e_vertex */;
         // Region A
         if (v <= 0) {
             var P_1 = A;
@@ -6793,9 +6705,9 @@ var box2d;
                 }
             }
             id.cf.indexA = 0;
-            id.cf.typeA = box2d.b2ContactFeatureType.e_vertex;
+            id.cf.typeA = 0 /* e_vertex */;
             manifold.pointCount = 1;
-            manifold.type = box2d.b2ManifoldType.e_circles;
+            manifold.type = 0 /* e_circles */;
             manifold.localNormal.SetZero();
             manifold.localPoint.Copy(P_1);
             manifold.points[0].id.Copy(id);
@@ -6824,9 +6736,9 @@ var box2d;
                 }
             }
             id.cf.indexA = 1;
-            id.cf.typeA = box2d.b2ContactFeatureType.e_vertex;
+            id.cf.typeA = 0 /* e_vertex */;
             manifold.pointCount = 1;
-            manifold.type = box2d.b2ManifoldType.e_circles;
+            manifold.type = 0 /* e_circles */;
             manifold.localNormal.SetZero();
             manifold.localPoint.Copy(P_2);
             manifold.points[0].id.Copy(id);
@@ -6854,9 +6766,9 @@ var box2d;
         }
         n.Normalize();
         id.cf.indexA = 0;
-        id.cf.typeA = box2d.b2ContactFeatureType.e_face;
+        id.cf.typeA = 1 /* e_face */;
         manifold.pointCount = 1;
-        manifold.type = box2d.b2ManifoldType.e_faceA;
+        manifold.type = 1 /* e_faceA */;
         manifold.localNormal.Copy(n);
         manifold.localPoint.Copy(A);
         manifold.points[0].id.Copy(id);
@@ -6865,15 +6777,9 @@ var box2d;
         manifold.points[0].localPoint.Copy(circleB.m_p);
     }
     box2d.b2CollideEdgeAndCircle = b2CollideEdgeAndCircle;
-    var b2EPAxisType;
-    (function (b2EPAxisType) {
-        b2EPAxisType[b2EPAxisType["e_unknown"] = 0] = "e_unknown";
-        b2EPAxisType[b2EPAxisType["e_edgeA"] = 1] = "e_edgeA";
-        b2EPAxisType[b2EPAxisType["e_edgeB"] = 2] = "e_edgeB";
-    })(b2EPAxisType || (b2EPAxisType = {}));
     var b2EPAxis = (function () {
         function b2EPAxis() {
-            this.type = b2EPAxisType.e_unknown;
+            this.type = 0 /* e_unknown */;
             this.index = 0;
             this.separation = 0;
         }
@@ -6901,12 +6807,6 @@ var box2d;
         }
         return b2ReferenceFace;
     }());
-    var b2EPColliderVertexType;
-    (function (b2EPColliderVertexType) {
-        b2EPColliderVertexType[b2EPColliderVertexType["e_isolated"] = 0] = "e_isolated";
-        b2EPColliderVertexType[b2EPColliderVertexType["e_concave"] = 1] = "e_concave";
-        b2EPColliderVertexType[b2EPColliderVertexType["e_convex"] = 2] = "e_convex";
-    })(b2EPColliderVertexType || (b2EPColliderVertexType = {}));
     var b2EPCollider = (function () {
         function b2EPCollider() {
             this.m_polygonB = new b2TempPolygon();
@@ -6920,8 +6820,8 @@ var box2d;
             this.m_normal1 = new box2d.b2Vec2();
             this.m_normal2 = new box2d.b2Vec2();
             this.m_normal = new box2d.b2Vec2();
-            this.m_type1 = b2EPColliderVertexType.e_isolated;
-            this.m_type2 = b2EPColliderVertexType.e_isolated;
+            this.m_type1 = 0 /* e_isolated */;
+            this.m_type2 = 0 /* e_isolated */;
             this.m_lowerLimit = new box2d.b2Vec2();
             this.m_upperLimit = new box2d.b2Vec2();
             this.m_radius = 0;
@@ -7094,21 +6994,21 @@ var box2d;
             manifold.pointCount = 0;
             var edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
             // If no valid normal can be found than this edge should not collide.
-            if (edgeAxis.type === b2EPAxisType.e_unknown) {
+            if (edgeAxis.type === 0 /* e_unknown */) {
                 return;
             }
             if (edgeAxis.separation > this.m_radius) {
                 return;
             }
             var polygonAxis = this.ComputePolygonSeparation(b2EPCollider.s_polygonAxis);
-            if (polygonAxis.type !== b2EPAxisType.e_unknown && polygonAxis.separation > this.m_radius) {
+            if (polygonAxis.type !== 0 /* e_unknown */ && polygonAxis.separation > this.m_radius) {
                 return;
             }
             // Use hysteresis for jitter reduction.
             var k_relativeTol = 0.98;
             var k_absoluteTol = 0.001;
             var primaryAxis;
-            if (polygonAxis.type === b2EPAxisType.e_unknown) {
+            if (polygonAxis.type === 0 /* e_unknown */) {
                 primaryAxis = edgeAxis;
             }
             else if (polygonAxis.separation > k_relativeTol * edgeAxis.separation + k_absoluteTol) {
@@ -7119,8 +7019,8 @@ var box2d;
             }
             var ie = b2EPCollider.s_ie;
             var rf = b2EPCollider.s_rf;
-            if (primaryAxis.type === b2EPAxisType.e_edgeA) {
-                manifold.type = box2d.b2ManifoldType.e_faceA;
+            if (primaryAxis.type === 1 /* e_edgeA */) {
+                manifold.type = 1 /* e_faceA */;
                 // Search for the polygon normal that is most anti-parallel to the edge normal.
                 var bestIndex = 0;
                 var bestValue = box2d.b2DotVV(this.m_normal, this.m_polygonB.normals[0]);
@@ -7137,14 +7037,14 @@ var box2d;
                 ie0.v.Copy(this.m_polygonB.vertices[i1]);
                 ie0.id.cf.indexA = 0;
                 ie0.id.cf.indexB = i1;
-                ie0.id.cf.typeA = box2d.b2ContactFeatureType.e_face;
-                ie0.id.cf.typeB = box2d.b2ContactFeatureType.e_vertex;
+                ie0.id.cf.typeA = 1 /* e_face */;
+                ie0.id.cf.typeB = 0 /* e_vertex */;
                 var ie1 = ie[1];
                 ie1.v.Copy(this.m_polygonB.vertices[i2]);
                 ie1.id.cf.indexA = 0;
                 ie1.id.cf.indexB = i2;
-                ie1.id.cf.typeA = box2d.b2ContactFeatureType.e_face;
-                ie1.id.cf.typeB = box2d.b2ContactFeatureType.e_vertex;
+                ie1.id.cf.typeA = 1 /* e_face */;
+                ie1.id.cf.typeB = 0 /* e_vertex */;
                 if (this.m_front) {
                     rf.i1 = 0;
                     rf.i2 = 1;
@@ -7161,19 +7061,19 @@ var box2d;
                 }
             }
             else {
-                manifold.type = box2d.b2ManifoldType.e_faceB;
+                manifold.type = 2 /* e_faceB */;
                 var ie0 = ie[0];
                 ie0.v.Copy(this.m_v1);
                 ie0.id.cf.indexA = 0;
                 ie0.id.cf.indexB = primaryAxis.index;
-                ie0.id.cf.typeA = box2d.b2ContactFeatureType.e_vertex;
-                ie0.id.cf.typeB = box2d.b2ContactFeatureType.e_face;
+                ie0.id.cf.typeA = 0 /* e_vertex */;
+                ie0.id.cf.typeB = 1 /* e_face */;
                 var ie1 = ie[1];
                 ie1.v.Copy(this.m_v2);
                 ie1.id.cf.indexA = 0;
                 ie1.id.cf.indexB = primaryAxis.index;
-                ie1.id.cf.typeA = box2d.b2ContactFeatureType.e_vertex;
-                ie1.id.cf.typeB = box2d.b2ContactFeatureType.e_face;
+                ie1.id.cf.typeA = 0 /* e_vertex */;
+                ie1.id.cf.typeB = 1 /* e_face */;
                 rf.i1 = primaryAxis.index;
                 rf.i2 = (rf.i1 + 1) % this.m_polygonB.count;
                 rf.v1.Copy(this.m_polygonB.vertices[rf.i1]);
@@ -7199,7 +7099,7 @@ var box2d;
                 return;
             }
             // Now clipPoints2 contains the clipped points.
-            if (primaryAxis.type === b2EPAxisType.e_edgeA) {
+            if (primaryAxis.type === 1 /* e_edgeA */) {
                 manifold.localNormal.Copy(rf.normal);
                 manifold.localPoint.Copy(rf.v1);
             }
@@ -7213,7 +7113,7 @@ var box2d;
                 separation = box2d.b2DotVV(rf.normal, box2d.b2SubVV(clipPoints2[i].v, rf.v1, box2d.b2Vec2.s_t0));
                 if (separation <= this.m_radius) {
                     var cp = manifold.points[pointCount];
-                    if (primaryAxis.type === b2EPAxisType.e_edgeA) {
+                    if (primaryAxis.type === 1 /* e_edgeA */) {
                         box2d.b2MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
                         cp.id = clipPoints2[i].id;
                     }
@@ -7231,7 +7131,7 @@ var box2d;
         };
         b2EPCollider.prototype.ComputeEdgeSeparation = function (out) {
             var axis = out;
-            axis.type = b2EPAxisType.e_edgeA;
+            axis.type = 1 /* e_edgeA */;
             axis.index = this.m_front ? 0 : 1;
             axis.separation = box2d.b2_maxFloat;
             for (var i = 0, ict = this.m_polygonB.count; i < ict; ++i) {
@@ -7244,7 +7144,7 @@ var box2d;
         };
         b2EPCollider.prototype.ComputePolygonSeparation = function (out) {
             var axis = out;
-            axis.type = b2EPAxisType.e_unknown;
+            axis.type = 0 /* e_unknown */;
             axis.index = -1;
             axis.separation = -box2d.b2_maxFloat;
             var perp = b2EPCollider.s_perp.SetXY(-this.m_normal.y, this.m_normal.x);
@@ -7255,7 +7155,7 @@ var box2d;
                 var s = box2d.b2Min(s1, s2);
                 if (s > this.m_radius) {
                     // No collision
-                    axis.type = b2EPAxisType.e_edgeB;
+                    axis.type = 2 /* e_edgeB */;
                     axis.index = i;
                     axis.separation = s;
                     return axis;
@@ -7272,7 +7172,7 @@ var box2d;
                     }
                 }
                 if (s > axis.separation) {
-                    axis.type = b2EPAxisType.e_edgeB;
+                    axis.type = 2 /* e_edgeB */;
                     axis.index = i;
                     axis.separation = s;
                 }
@@ -7335,10 +7235,10 @@ var box2d;
         b2EdgeAndCircleContact.prototype.Reset = function (fixtureA, indexA, fixtureB, indexB) {
             _super.prototype.Reset.call(this, fixtureA, indexA, fixtureB, indexB);
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureA.GetType() === box2d.b2ShapeType.e_edgeShape);
+                box2d.b2Assert(fixtureA.GetType() === 1 /* e_edgeShape */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureB.GetType() === box2d.b2ShapeType.e_circleShape);
+                box2d.b2Assert(fixtureB.GetType() === 0 /* e_circleShape */);
             }
         };
         b2EdgeAndCircleContact.prototype.Evaluate = function (manifold, xfA, xfB) {
@@ -7391,10 +7291,10 @@ var box2d;
         b2EdgeAndPolygonContact.prototype.Reset = function (fixtureA, indexA, fixtureB, indexB) {
             _super.prototype.Reset.call(this, fixtureA, indexA, fixtureB, indexB);
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureA.GetType() === box2d.b2ShapeType.e_edgeShape);
+                box2d.b2Assert(fixtureA.GetType() === 1 /* e_edgeShape */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureB.GetType() === box2d.b2ShapeType.e_polygonShape);
+                box2d.b2Assert(fixtureB.GetType() === 2 /* e_polygonShape */);
             }
         };
         b2EdgeAndPolygonContact.prototype.Evaluate = function (manifold, xfA, xfB) {
@@ -7449,10 +7349,10 @@ var box2d;
         b2ChainAndCircleContact.prototype.Reset = function (fixtureA, indexA, fixtureB, indexB) {
             _super.prototype.Reset.call(this, fixtureA, indexA, fixtureB, indexB);
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureA.GetType() === box2d.b2ShapeType.e_chainShape);
+                box2d.b2Assert(fixtureA.GetType() === 3 /* e_chainShape */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureB.GetType() === box2d.b2ShapeType.e_circleShape);
+                box2d.b2Assert(fixtureB.GetType() === 0 /* e_circleShape */);
             }
         };
         b2ChainAndCircleContact.prototype.Evaluate = function (manifold, xfA, xfB) {
@@ -7511,10 +7411,10 @@ var box2d;
         b2ChainAndPolygonContact.prototype.Reset = function (fixtureA, indexA, fixtureB, indexB) {
             _super.prototype.Reset.call(this, fixtureA, indexA, fixtureB, indexB);
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureA.GetType() === box2d.b2ShapeType.e_chainShape);
+                box2d.b2Assert(fixtureA.GetType() === 3 /* e_chainShape */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(fixtureB.GetType() === box2d.b2ShapeType.e_polygonShape);
+                box2d.b2Assert(fixtureB.GetType() === 2 /* e_polygonShape */);
             }
         };
         b2ChainAndPolygonContact.prototype.Evaluate = function (manifold, xfA, xfB) {
@@ -7608,29 +7508,29 @@ var box2d;
             */
         };
         b2ContactFactory.prototype.InitializeRegisters = function () {
-            this.m_registers = new Array(box2d.b2ShapeType.e_shapeTypeCount);
-            for (var i = 0; i < box2d.b2ShapeType.e_shapeTypeCount; i++) {
-                this.m_registers[i] = new Array(box2d.b2ShapeType.e_shapeTypeCount);
-                for (var j = 0; j < box2d.b2ShapeType.e_shapeTypeCount; j++) {
+            this.m_registers = new Array(4 /* e_shapeTypeCount */);
+            for (var i = 0; i < 4 /* e_shapeTypeCount */; i++) {
+                this.m_registers[i] = new Array(4 /* e_shapeTypeCount */);
+                for (var j = 0; j < 4 /* e_shapeTypeCount */; j++) {
                     this.m_registers[i][j] = new b2ContactRegister();
                 }
             }
-            this.AddType(box2d.b2CircleContact.Create, box2d.b2CircleContact.Destroy, box2d.b2ShapeType.e_circleShape, box2d.b2ShapeType.e_circleShape);
-            this.AddType(box2d.b2PolygonAndCircleContact.Create, box2d.b2PolygonAndCircleContact.Destroy, box2d.b2ShapeType.e_polygonShape, box2d.b2ShapeType.e_circleShape);
-            this.AddType(box2d.b2PolygonContact.Create, box2d.b2PolygonContact.Destroy, box2d.b2ShapeType.e_polygonShape, box2d.b2ShapeType.e_polygonShape);
-            this.AddType(box2d.b2EdgeAndCircleContact.Create, box2d.b2EdgeAndCircleContact.Destroy, box2d.b2ShapeType.e_edgeShape, box2d.b2ShapeType.e_circleShape);
-            this.AddType(box2d.b2EdgeAndPolygonContact.Create, box2d.b2EdgeAndPolygonContact.Destroy, box2d.b2ShapeType.e_edgeShape, box2d.b2ShapeType.e_polygonShape);
-            this.AddType(box2d.b2ChainAndCircleContact.Create, box2d.b2ChainAndCircleContact.Destroy, box2d.b2ShapeType.e_chainShape, box2d.b2ShapeType.e_circleShape);
-            this.AddType(box2d.b2ChainAndPolygonContact.Create, box2d.b2ChainAndPolygonContact.Destroy, box2d.b2ShapeType.e_chainShape, box2d.b2ShapeType.e_polygonShape);
+            this.AddType(box2d.b2CircleContact.Create, box2d.b2CircleContact.Destroy, 0 /* e_circleShape */, 0 /* e_circleShape */);
+            this.AddType(box2d.b2PolygonAndCircleContact.Create, box2d.b2PolygonAndCircleContact.Destroy, 2 /* e_polygonShape */, 0 /* e_circleShape */);
+            this.AddType(box2d.b2PolygonContact.Create, box2d.b2PolygonContact.Destroy, 2 /* e_polygonShape */, 2 /* e_polygonShape */);
+            this.AddType(box2d.b2EdgeAndCircleContact.Create, box2d.b2EdgeAndCircleContact.Destroy, 1 /* e_edgeShape */, 0 /* e_circleShape */);
+            this.AddType(box2d.b2EdgeAndPolygonContact.Create, box2d.b2EdgeAndPolygonContact.Destroy, 1 /* e_edgeShape */, 2 /* e_polygonShape */);
+            this.AddType(box2d.b2ChainAndCircleContact.Create, box2d.b2ChainAndCircleContact.Destroy, 3 /* e_chainShape */, 0 /* e_circleShape */);
+            this.AddType(box2d.b2ChainAndPolygonContact.Create, box2d.b2ChainAndPolygonContact.Destroy, 3 /* e_chainShape */, 2 /* e_polygonShape */);
         };
         b2ContactFactory.prototype.Create = function (fixtureA, indexA, fixtureB, indexB) {
             var type1 = fixtureA.GetType();
             var type2 = fixtureB.GetType();
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(0 <= type1 && type1 < box2d.b2ShapeType.e_shapeTypeCount);
+                box2d.b2Assert(0 <= type1 && type1 < 4 /* e_shapeTypeCount */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(0 <= type2 && type2 < box2d.b2ShapeType.e_shapeTypeCount);
+                box2d.b2Assert(0 <= type2 && type2 < 4 /* e_shapeTypeCount */);
             }
             var reg = this.m_registers[type1][type2];
             if (reg.primary) {
@@ -7656,10 +7556,10 @@ var box2d;
             var typeA = fixtureA.GetType();
             var typeB = fixtureB.GetType();
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(0 <= typeA && typeB < box2d.b2ShapeType.e_shapeTypeCount);
+                box2d.b2Assert(0 <= typeA && typeB < 4 /* e_shapeTypeCount */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(0 <= typeA && typeB < box2d.b2ShapeType.e_shapeTypeCount);
+                box2d.b2Assert(0 <= typeA && typeB < 4 /* e_shapeTypeCount */);
             }
             var reg = this.m_registers[typeA][typeB];
             reg.destroyFcn(contact, this.m_allocator);
@@ -7858,7 +7758,7 @@ var box2d;
                 var bodyA = fixtureA.GetBody();
                 var bodyB = fixtureB.GetBody();
                 // Is this contact flagged for filtering?
-                if (c.m_flags & box2d.b2ContactFlag.e_filterFlag) {
+                if (c.m_flags & 8 /* e_filterFlag */) {
                     // Should these bodies collide?
                     if (bodyB.ShouldCollide(bodyA) === false) {
                         var cNuke = c;
@@ -7874,10 +7774,10 @@ var box2d;
                         continue;
                     }
                     // Clear the filtering flag.
-                    c.m_flags &= ~box2d.b2ContactFlag.e_filterFlag;
+                    c.m_flags &= ~8 /* e_filterFlag */;
                 }
-                var activeA = bodyA.IsAwake() && bodyA.m_type !== box2d.b2BodyType.b2_staticBody;
-                var activeB = bodyB.IsAwake() && bodyB.m_type !== box2d.b2BodyType.b2_staticBody;
+                var activeA = bodyA.IsAwake() && bodyA.m_type !== 0 /* b2_staticBody */;
+                var activeB = bodyB.IsAwake() && bodyB.m_type !== 0 /* b2_staticBody */;
                 // At least one body must be awake and it must be dynamic or kinematic.
                 if (activeA === false && activeB === false) {
                     c = c.m_next;
@@ -8083,7 +7983,7 @@ var box2d;
             this.localCenterB = new box2d.b2Vec2();
             this.invIA = 0;
             this.invIB = 0;
-            this.type = box2d.b2ManifoldType.e_unknown;
+            this.type = -1 /* e_unknown */;
             this.radiusA = 0;
             this.radiusB = 0;
             this.pointCount = 0;
@@ -8121,7 +8021,7 @@ var box2d;
                 box2d.b2Assert(pc.pointCount > 0);
             }
             switch (pc.type) {
-                case box2d.b2ManifoldType.e_circles:
+                case 0 /* e_circles */:
                     {
                         // b2Vec2 pointA = b2Mul(xfA, pc->localPoint);
                         box2d.b2MulXV(xfA, pc.localPoint, pointA);
@@ -8136,7 +8036,7 @@ var box2d;
                         this.separation = box2d.b2DotVV(box2d.b2SubVV(pointB, pointA, box2d.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                     }
                     break;
-                case box2d.b2ManifoldType.e_faceA:
+                case 1 /* e_faceA */:
                     {
                         // normal = b2Mul(xfA.q, pc->localNormal);
                         box2d.b2MulRV(xfA.q, pc.localNormal, this.normal);
@@ -8150,7 +8050,7 @@ var box2d;
                         this.point.Copy(clipPoint);
                     }
                     break;
-                case box2d.b2ManifoldType.e_faceB:
+                case 2 /* e_faceB */:
                     {
                         // normal = b2Mul(xfB.q, pc->localNormal);
                         box2d.b2MulRV(xfB.q, pc.localNormal, this.normal);
@@ -9335,7 +9235,7 @@ var box2d;
                 // Store positions for continuous collision.
                 b.m_sweep.c0.Copy(b.m_sweep.c);
                 b.m_sweep.a0 = b.m_sweep.a;
-                if (b.m_type === box2d.b2BodyType.b2_dynamicBody) {
+                if (b.m_type === 2 /* b2_dynamicBody */) {
                     // Integrate velocities.
                     v.x += h * (b.m_gravityScale * gravity.x + b.m_invMass * b.m_force.x);
                     v.y += h * (b.m_gravityScale * gravity.y + b.m_invMass * b.m_force.y);
@@ -9448,10 +9348,10 @@ var box2d;
                 var angTolSqr = box2d.b2_angularSleepTolerance * box2d.b2_angularSleepTolerance;
                 for (var i = 0; i < this.m_bodyCount; ++i) {
                     var b = this.m_bodies[i];
-                    if (b.GetType() === box2d.b2BodyType.b2_staticBody) {
+                    if (b.GetType() === 0 /* b2_staticBody */) {
                         continue;
                     }
-                    if ((b.m_flags & box2d.b2BodyFlag.e_autoSleepFlag) === 0 ||
+                    if ((b.m_flags & 4 /* e_autoSleepFlag */) === 0 ||
                         b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
                         box2d.b2DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
                         b.m_sleepTime = 0;
@@ -9641,7 +9541,7 @@ var box2d;
     var b2DistanceJointDef = (function (_super) {
         __extends(b2DistanceJointDef, _super);
         function b2DistanceJointDef() {
-            _super.call(this, box2d.b2JointType.e_distanceJoint); // base class constructor
+            _super.call(this, 3 /* e_distanceJoint */); // base class constructor
             this.localAnchorA = new box2d.b2Vec2();
             this.localAnchorB = new box2d.b2Vec2();
             this.length = 1;
@@ -9948,7 +9848,7 @@ var box2d;
     var b2WheelJointDef = (function (_super) {
         __extends(b2WheelJointDef, _super);
         function b2WheelJointDef() {
-            _super.call(this, box2d.b2JointType.e_wheelJoint); // base class constructor
+            _super.call(this, 7 /* e_wheelJoint */); // base class constructor
             this.localAnchorA = new box2d.b2Vec2(0, 0);
             this.localAnchorB = new box2d.b2Vec2(0, 0);
             this.localAxisA = new box2d.b2Vec2(1, 0);
@@ -10375,7 +10275,7 @@ var box2d;
     var b2MouseJointDef = (function (_super) {
         __extends(b2MouseJointDef, _super);
         function b2MouseJointDef() {
-            _super.call(this, box2d.b2JointType.e_mouseJoint); // base class constructor
+            _super.call(this, 5 /* e_mouseJoint */); // base class constructor
             this.target = new box2d.b2Vec2();
             this.maxForce = 0;
             this.frequencyHz = 5;
@@ -10618,7 +10518,7 @@ var box2d;
     var b2RevoluteJointDef = (function (_super) {
         __extends(b2RevoluteJointDef, _super);
         function b2RevoluteJointDef() {
-            _super.call(this, box2d.b2JointType.e_revoluteJoint); // base class constructor
+            _super.call(this, 1 /* e_revoluteJoint */); // base class constructor
             this.localAnchorA = new box2d.b2Vec2(0, 0);
             this.localAnchorB = new box2d.b2Vec2(0, 0);
             this.referenceAngle = 0;
@@ -10668,7 +10568,7 @@ var box2d;
             this.m_invIB = 0;
             this.m_mass = new box2d.b2Mat33(); // effective mass for point-to-point constraint.
             this.m_motorMass = 0; // effective mass for motor/limit angular constraint.
-            this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+            this.m_limitState = 0 /* e_inactiveLimit */;
             this.m_qA = new box2d.b2Rot();
             this.m_qB = new box2d.b2Rot();
             this.m_lalcA = new box2d.b2Vec2();
@@ -10685,7 +10585,7 @@ var box2d;
             this.m_motorSpeed = def.motorSpeed;
             this.m_enableLimit = def.enableLimit;
             this.m_enableMotor = def.enableMotor;
-            this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+            this.m_limitState = 0 /* e_inactiveLimit */;
         }
         b2RevoluteJoint.prototype.InitVelocityConstraints = function (data) {
             this.m_indexA = this.m_bodyA.m_islandIndex;
@@ -10739,27 +10639,27 @@ var box2d;
             if (this.m_enableLimit && fixedRotation === false) {
                 var jointAngle = aB - aA - this.m_referenceAngle;
                 if (box2d.b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2 * box2d.b2_angularSlop) {
-                    this.m_limitState = box2d.b2LimitState.e_equalLimits;
+                    this.m_limitState = 3 /* e_equalLimits */;
                 }
                 else if (jointAngle <= this.m_lowerAngle) {
-                    if (this.m_limitState !== box2d.b2LimitState.e_atLowerLimit) {
+                    if (this.m_limitState !== 1 /* e_atLowerLimit */) {
                         this.m_impulse.z = 0;
                     }
-                    this.m_limitState = box2d.b2LimitState.e_atLowerLimit;
+                    this.m_limitState = 1 /* e_atLowerLimit */;
                 }
                 else if (jointAngle >= this.m_upperAngle) {
-                    if (this.m_limitState !== box2d.b2LimitState.e_atUpperLimit) {
+                    if (this.m_limitState !== 2 /* e_atUpperLimit */) {
                         this.m_impulse.z = 0;
                     }
-                    this.m_limitState = box2d.b2LimitState.e_atUpperLimit;
+                    this.m_limitState = 2 /* e_atUpperLimit */;
                 }
                 else {
-                    this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+                    this.m_limitState = 0 /* e_inactiveLimit */;
                     this.m_impulse.z = 0;
                 }
             }
             else {
-                this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+                this.m_limitState = 0 /* e_inactiveLimit */;
             }
             if (data.step.warmStarting) {
                 // Scale impulses to support a variable time step.
@@ -10792,7 +10692,7 @@ var box2d;
             var iA = this.m_invIA, iB = this.m_invIB;
             var fixedRotation = (iA + iB === 0);
             // Solve motor constraint.
-            if (this.m_enableMotor && this.m_limitState !== box2d.b2LimitState.e_equalLimits && fixedRotation === false) {
+            if (this.m_enableMotor && this.m_limitState !== 3 /* e_equalLimits */ && fixedRotation === false) {
                 var Cdot = wB - wA - this.m_motorSpeed;
                 var impulse = -this.m_motorMass * Cdot;
                 var oldImpulse = this.m_motorImpulse;
@@ -10803,17 +10703,17 @@ var box2d;
                 wB += iB * impulse;
             }
             // Solve limit constraint.
-            if (this.m_enableLimit && this.m_limitState !== box2d.b2LimitState.e_inactiveLimit && fixedRotation === false) {
+            if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */ && fixedRotation === false) {
                 // b2Vec2 Cdot1 = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
                 var Cdot1 = box2d.b2SubVV(box2d.b2AddVCrossSV(vB, wB, this.m_rB, box2d.b2Vec2.s_t0), box2d.b2AddVCrossSV(vA, wA, this.m_rA, box2d.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1);
                 var Cdot2 = wB - wA;
                 // b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
                 // b2Vec3 impulse = -this.m_mass.Solve33(Cdot);
                 var impulse_v3 = this.m_mass.Solve33(Cdot1.x, Cdot1.y, Cdot2, b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v3).SelfNeg();
-                if (this.m_limitState === box2d.b2LimitState.e_equalLimits) {
+                if (this.m_limitState === 3 /* e_equalLimits */) {
                     this.m_impulse.SelfAdd(impulse_v3);
                 }
-                else if (this.m_limitState === box2d.b2LimitState.e_atLowerLimit) {
+                else if (this.m_limitState === 1 /* e_atLowerLimit */) {
                     var newImpulse = this.m_impulse.z + impulse_v3.z;
                     if (newImpulse < 0) {
                         // b2Vec2 rhs = -Cdot1 + m_impulse.z * b2Vec2(m_mass.ez.x, m_mass.ez.y);
@@ -10831,7 +10731,7 @@ var box2d;
                         this.m_impulse.SelfAdd(impulse_v3);
                     }
                 }
-                else if (this.m_limitState === box2d.b2LimitState.e_atUpperLimit) {
+                else if (this.m_limitState === 2 /* e_atUpperLimit */) {
                     var newImpulse = this.m_impulse.z + impulse_v3.z;
                     if (newImpulse > 0) {
                         // b2Vec2 rhs = -Cdot1 + m_impulse.z * b2Vec2(m_mass.ez.x, m_mass.ez.y);
@@ -10889,23 +10789,23 @@ var box2d;
             var positionError = 0;
             var fixedRotation = (this.m_invIA + this.m_invIB === 0);
             // Solve angular limit constraint.
-            if (this.m_enableLimit && this.m_limitState !== box2d.b2LimitState.e_inactiveLimit && fixedRotation === false) {
+            if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */ && fixedRotation === false) {
                 var angle = aB - aA - this.m_referenceAngle;
                 var limitImpulse = 0;
-                if (this.m_limitState === box2d.b2LimitState.e_equalLimits) {
+                if (this.m_limitState === 3 /* e_equalLimits */) {
                     // Prevent large angular corrections
                     var C = box2d.b2Clamp(angle - this.m_lowerAngle, -box2d.b2_maxAngularCorrection, box2d.b2_maxAngularCorrection);
                     limitImpulse = -this.m_motorMass * C;
                     angularError = box2d.b2Abs(C);
                 }
-                else if (this.m_limitState === box2d.b2LimitState.e_atLowerLimit) {
+                else if (this.m_limitState === 1 /* e_atLowerLimit */) {
                     var C = angle - this.m_lowerAngle;
                     angularError = -C;
                     // Prevent large angular corrections and allow some slop.
                     C = box2d.b2Clamp(C + box2d.b2_angularSlop, -box2d.b2_maxAngularCorrection, 0);
                     limitImpulse = -this.m_motorMass * C;
                 }
-                else if (this.m_limitState === box2d.b2LimitState.e_atUpperLimit) {
+                else if (this.m_limitState === 2 /* e_atUpperLimit */) {
                     var C = angle - this.m_upperAngle;
                     angularError = C;
                     // Prevent large angular corrections and allow some slop.
@@ -11097,7 +10997,7 @@ var box2d;
     var b2PrismaticJointDef = (function (_super) {
         __extends(b2PrismaticJointDef, _super);
         function b2PrismaticJointDef() {
-            _super.call(this, box2d.b2JointType.e_prismaticJoint); // base class constructor
+            _super.call(this, 2 /* e_prismaticJoint */); // base class constructor
             this.localAnchorA = null;
             this.localAnchorB = null;
             this.localAxisA = null;
@@ -11141,7 +11041,7 @@ var box2d;
             this.m_motorSpeed = 0;
             this.m_enableLimit = false;
             this.m_enableMotor = false;
-            this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+            this.m_limitState = 0 /* e_inactiveLimit */;
             // Solver temp
             this.m_indexA = 0;
             this.m_indexB = 0;
@@ -11268,27 +11168,27 @@ var box2d;
                 // float32 jointTranslation = b2Dot(m_axis, d);
                 var jointTranslation = box2d.b2DotVV(this.m_axis, d);
                 if (box2d.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * box2d.b2_linearSlop) {
-                    this.m_limitState = box2d.b2LimitState.e_equalLimits;
+                    this.m_limitState = 3 /* e_equalLimits */;
                 }
                 else if (jointTranslation <= this.m_lowerTranslation) {
-                    if (this.m_limitState !== box2d.b2LimitState.e_atLowerLimit) {
-                        this.m_limitState = box2d.b2LimitState.e_atLowerLimit;
+                    if (this.m_limitState !== 1 /* e_atLowerLimit */) {
+                        this.m_limitState = 1 /* e_atLowerLimit */;
                         this.m_impulse.z = 0;
                     }
                 }
                 else if (jointTranslation >= this.m_upperTranslation) {
-                    if (this.m_limitState !== box2d.b2LimitState.e_atUpperLimit) {
-                        this.m_limitState = box2d.b2LimitState.e_atUpperLimit;
+                    if (this.m_limitState !== 2 /* e_atUpperLimit */) {
+                        this.m_limitState = 2 /* e_atUpperLimit */;
                         this.m_impulse.z = 0;
                     }
                 }
                 else {
-                    this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+                    this.m_limitState = 0 /* e_inactiveLimit */;
                     this.m_impulse.z = 0;
                 }
             }
             else {
-                this.m_limitState = box2d.b2LimitState.e_inactiveLimit;
+                this.m_limitState = 0 /* e_inactiveLimit */;
                 this.m_impulse.z = 0;
             }
             if (this.m_enableMotor === false) {
@@ -11329,7 +11229,7 @@ var box2d;
             var mA = this.m_invMassA, mB = this.m_invMassB;
             var iA = this.m_invIA, iB = this.m_invIB;
             // Solve linear motor constraint.
-            if (this.m_enableMotor && this.m_limitState !== box2d.b2LimitState.e_equalLimits) {
+            if (this.m_enableMotor && this.m_limitState !== 3 /* e_equalLimits */) {
                 // float32 Cdot = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
                 var Cdot = box2d.b2DotVV(this.m_axis, box2d.b2SubVV(vB, vA, box2d.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
                 var impulse = this.m_motorMass * (this.m_motorSpeed - Cdot);
@@ -11353,7 +11253,7 @@ var box2d;
             var Cdot1_x = box2d.b2DotVV(this.m_perp, box2d.b2SubVV(vB, vA, box2d.b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
             // Cdot1.y = wB - wA;
             var Cdot1_y = wB - wA;
-            if (this.m_enableLimit && this.m_limitState !== box2d.b2LimitState.e_inactiveLimit) {
+            if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */) {
                 // Solve prismatic and limit constraint in block form.
                 // float32 Cdot2;
                 // Cdot2 = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
@@ -11365,10 +11265,10 @@ var box2d;
                 var df3 = this.m_K.Solve33((-Cdot1_x), (-Cdot1_y), (-Cdot2), b2PrismaticJoint.SolveVelocityConstraints_s_df3);
                 // m_impulse += df;
                 this.m_impulse.SelfAdd(df3);
-                if (this.m_limitState === box2d.b2LimitState.e_atLowerLimit) {
+                if (this.m_limitState === 1 /* e_atLowerLimit */) {
                     this.m_impulse.z = box2d.b2Max(this.m_impulse.z, 0);
                 }
-                else if (this.m_limitState === box2d.b2LimitState.e_atUpperLimit) {
+                else if (this.m_limitState === 2 /* e_atUpperLimit */) {
                     this.m_impulse.z = box2d.b2Min(this.m_impulse.z, 0);
                 }
                 // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) + f1(1:2)
@@ -11730,7 +11630,7 @@ var box2d;
     var b2PulleyJointDef = (function (_super) {
         __extends(b2PulleyJointDef, _super);
         function b2PulleyJointDef() {
-            _super.call(this, box2d.b2JointType.e_pulleyJoint); // base class constructor
+            _super.call(this, 4 /* e_pulleyJoint */); // base class constructor
             this.groundAnchorA = new box2d.b2Vec2(-1, 1);
             this.groundAnchorB = new box2d.b2Vec2(1, 1);
             this.localAnchorA = new box2d.b2Vec2(-1, 0);
@@ -12077,7 +11977,7 @@ var box2d;
     var b2GearJointDef = (function (_super) {
         __extends(b2GearJointDef, _super);
         function b2GearJointDef() {
-            _super.call(this, box2d.b2JointType.e_gearJoint); // base class constructor
+            _super.call(this, 6 /* e_gearJoint */); // base class constructor
             this.joint1 = null;
             this.joint2 = null;
             this.ratio = 1;
@@ -12091,8 +11991,8 @@ var box2d;
             _super.call(this, def); // base class constructor
             this.m_joint1 = null;
             this.m_joint2 = null;
-            this.m_typeA = box2d.b2JointType.e_unknownJoint;
-            this.m_typeB = box2d.b2JointType.e_unknownJoint;
+            this.m_typeA = 0 /* e_unknownJoint */;
+            this.m_typeB = 0 /* e_unknownJoint */;
             // Body A is connected to body C
             // Body B is connected to body D
             this.m_bodyC = null;
@@ -12146,10 +12046,10 @@ var box2d;
             this.m_typeA = this.m_joint1.GetType();
             this.m_typeB = this.m_joint2.GetType();
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(this.m_typeA === box2d.b2JointType.e_revoluteJoint || this.m_typeA === box2d.b2JointType.e_prismaticJoint);
+                box2d.b2Assert(this.m_typeA === 1 /* e_revoluteJoint */ || this.m_typeA === 2 /* e_prismaticJoint */);
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(this.m_typeB === box2d.b2JointType.e_revoluteJoint || this.m_typeB === box2d.b2JointType.e_prismaticJoint);
+                box2d.b2Assert(this.m_typeB === 1 /* e_revoluteJoint */ || this.m_typeB === 2 /* e_prismaticJoint */);
             }
             var coordinateA, coordinateB;
             // TODO_ERIN there might be some problem with the joint edges in b2Joint.
@@ -12160,7 +12060,7 @@ var box2d;
             var aA = this.m_bodyA.m_sweep.a;
             var xfC = this.m_bodyC.m_xf;
             var aC = this.m_bodyC.m_sweep.a;
-            if (this.m_typeA === box2d.b2JointType.e_revoluteJoint) {
+            if (this.m_typeA === 1 /* e_revoluteJoint */) {
                 var revolute = def.joint1;
                 this.m_localAnchorC.Copy(revolute.m_localAnchorA);
                 this.m_localAnchorA.Copy(revolute.m_localAnchorB);
@@ -12188,7 +12088,7 @@ var box2d;
             var aB = this.m_bodyB.m_sweep.a;
             var xfD = this.m_bodyD.m_xf;
             var aD = this.m_bodyD.m_sweep.a;
-            if (this.m_typeB === box2d.b2JointType.e_revoluteJoint) {
+            if (this.m_typeB === 1 /* e_revoluteJoint */) {
                 var revolute = def.joint2;
                 this.m_localAnchorD.Copy(revolute.m_localAnchorA);
                 this.m_localAnchorB.Copy(revolute.m_localAnchorB);
@@ -12245,7 +12145,7 @@ var box2d;
             // b2Rot qA(aA), qB(aB), qC(aC), qD(aD);
             var qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB), qC = this.m_qC.SetAngleRadians(aC), qD = this.m_qD.SetAngleRadians(aD);
             this.m_mass = 0;
-            if (this.m_typeA === box2d.b2JointType.e_revoluteJoint) {
+            if (this.m_typeA === 1 /* e_revoluteJoint */) {
                 this.m_JvAC.SetZero();
                 this.m_JwA = 1;
                 this.m_JwC = 1;
@@ -12268,7 +12168,7 @@ var box2d;
                 this.m_JwA = box2d.b2CrossVV(rA, u);
                 this.m_mass += this.m_mC + this.m_mA + this.m_iC * this.m_JwC * this.m_JwC + this.m_iA * this.m_JwA * this.m_JwA;
             }
-            if (this.m_typeB === box2d.b2JointType.e_revoluteJoint) {
+            if (this.m_typeB === 1 /* e_revoluteJoint */) {
                 this.m_JvBD.SetZero();
                 this.m_JwB = this.m_ratio;
                 this.m_JwD = this.m_ratio;
@@ -12371,7 +12271,7 @@ var box2d;
             var JvAC = this.m_JvAC, JvBD = this.m_JvBD;
             var JwA, JwB, JwC, JwD;
             var mass = 0;
-            if (this.m_typeA === box2d.b2JointType.e_revoluteJoint) {
+            if (this.m_typeA === 1 /* e_revoluteJoint */) {
                 JvAC.SetZero();
                 JwA = 1;
                 JwC = 1;
@@ -12399,7 +12299,7 @@ var box2d;
                 // coordinateA = b2Dot(pA - pC, m_localAxisC);
                 coordinateA = box2d.b2DotVV(box2d.b2SubVV(pA, pC, box2d.b2Vec2.s_t0), this.m_localAxisC);
             }
-            if (this.m_typeB === box2d.b2JointType.e_revoluteJoint) {
+            if (this.m_typeB === 1 /* e_revoluteJoint */) {
                 JvBD.SetZero();
                 JwB = this.m_ratio;
                 JwD = this.m_ratio;
@@ -12540,7 +12440,7 @@ var box2d;
     var b2WeldJointDef = (function (_super) {
         __extends(b2WeldJointDef, _super);
         function b2WeldJointDef() {
-            _super.call(this, box2d.b2JointType.e_weldJoint); // base class constructor
+            _super.call(this, 8 /* e_weldJoint */); // base class constructor
             this.localAnchorA = new box2d.b2Vec2();
             this.localAnchorB = new box2d.b2Vec2();
             this.referenceAngle = 0;
@@ -12869,7 +12769,7 @@ var box2d;
     var b2FrictionJointDef = (function (_super) {
         __extends(b2FrictionJointDef, _super);
         function b2FrictionJointDef() {
-            _super.call(this, box2d.b2JointType.e_frictionJoint); // base class constructor
+            _super.call(this, 9 /* e_frictionJoint */); // base class constructor
             this.localAnchorA = new box2d.b2Vec2();
             this.localAnchorB = new box2d.b2Vec2();
             this.maxForce = 0;
@@ -13120,7 +13020,7 @@ var box2d;
     var b2RopeJointDef = (function (_super) {
         __extends(b2RopeJointDef, _super);
         function b2RopeJointDef() {
-            _super.call(this, box2d.b2JointType.e_ropeJoint); // base class constructor
+            _super.call(this, 10 /* e_ropeJoint */); // base class constructor
             this.localAnchorA = new box2d.b2Vec2(-1, 0);
             this.localAnchorB = new box2d.b2Vec2(1, 0);
             this.maxLength = 0;
@@ -13151,7 +13051,7 @@ var box2d;
             this.m_invIA = 0;
             this.m_invIB = 0;
             this.m_mass = 0;
-            this.m_state = box2d.b2LimitState.e_inactiveLimit;
+            this.m_state = 0 /* e_inactiveLimit */;
             this.m_qA = new box2d.b2Rot();
             this.m_qB = new box2d.b2Rot();
             this.m_lalcA = new box2d.b2Vec2();
@@ -13189,10 +13089,10 @@ var box2d;
             this.m_length = this.m_u.GetLength();
             var C = this.m_length - this.m_maxLength;
             if (C > 0) {
-                this.m_state = box2d.b2LimitState.e_atUpperLimit;
+                this.m_state = 2 /* e_atUpperLimit */;
             }
             else {
-                this.m_state = box2d.b2LimitState.e_inactiveLimit;
+                this.m_state = 0 /* e_inactiveLimit */;
             }
             if (this.m_length > box2d.b2_linearSlop) {
                 this.m_u.SelfMul(1 / this.m_length);
@@ -13349,7 +13249,7 @@ var box2d;
     var b2MotorJointDef = (function (_super) {
         __extends(b2MotorJointDef, _super);
         function b2MotorJointDef() {
-            _super.call(this, box2d.b2JointType.e_motorJoint); // base class constructor
+            _super.call(this, 11 /* e_motorJoint */); // base class constructor
             this.linearOffset = new box2d.b2Vec2(0, 0);
             this.angularOffset = 0;
             this.maxForce = 1;
@@ -13614,7 +13514,7 @@ var box2d;
     var b2AreaJointDef = (function (_super) {
         __extends(b2AreaJointDef, _super);
         function b2AreaJointDef() {
-            _super.call(this, box2d.b2JointType.e_areaJoint); // base class constructor
+            _super.call(this, 12 /* e_areaJoint */); // base class constructor
             this.world = null;
             this.bodies = new Array();
             this.frequencyHz = 0;
@@ -13823,40 +13723,40 @@ var box2d;
         b2JointFactory.Create = function (def, allocator) {
             var joint = null;
             switch (def.type) {
-                case box2d.b2JointType.e_distanceJoint:
+                case 3 /* e_distanceJoint */:
                     joint = new box2d.b2DistanceJoint(def);
                     break;
-                case box2d.b2JointType.e_mouseJoint:
+                case 5 /* e_mouseJoint */:
                     joint = new box2d.b2MouseJoint(def);
                     break;
-                case box2d.b2JointType.e_prismaticJoint:
+                case 2 /* e_prismaticJoint */:
                     joint = new box2d.b2PrismaticJoint(def);
                     break;
-                case box2d.b2JointType.e_revoluteJoint:
+                case 1 /* e_revoluteJoint */:
                     joint = new box2d.b2RevoluteJoint(def);
                     break;
-                case box2d.b2JointType.e_pulleyJoint:
+                case 4 /* e_pulleyJoint */:
                     joint = new box2d.b2PulleyJoint(def);
                     break;
-                case box2d.b2JointType.e_gearJoint:
+                case 6 /* e_gearJoint */:
                     joint = new box2d.b2GearJoint(def);
                     break;
-                case box2d.b2JointType.e_wheelJoint:
+                case 7 /* e_wheelJoint */:
                     joint = new box2d.b2WheelJoint(def);
                     break;
-                case box2d.b2JointType.e_weldJoint:
+                case 8 /* e_weldJoint */:
                     joint = new box2d.b2WeldJoint(def);
                     break;
-                case box2d.b2JointType.e_frictionJoint:
+                case 9 /* e_frictionJoint */:
                     joint = new box2d.b2FrictionJoint(def);
                     break;
-                case box2d.b2JointType.e_ropeJoint:
+                case 10 /* e_ropeJoint */:
                     joint = new box2d.b2RopeJoint(def);
                     break;
-                case box2d.b2JointType.e_motorJoint:
+                case 11 /* e_motorJoint */:
                     joint = new box2d.b2MotorJoint(def);
                     break;
-                case box2d.b2JointType.e_areaJoint:
+                case 12 /* e_areaJoint */:
                     joint = new box2d.b2AreaJoint(def);
                     break;
                 default:
@@ -13917,13 +13817,6 @@ var box2d;
 // <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
 var box2d;
 (function (box2d) {
-    (function (b2WorldFlag) {
-        b2WorldFlag[b2WorldFlag["e_none"] = 0] = "e_none";
-        b2WorldFlag[b2WorldFlag["e_newFixture"] = 1] = "e_newFixture";
-        b2WorldFlag[b2WorldFlag["e_locked"] = 2] = "e_locked";
-        b2WorldFlag[b2WorldFlag["e_clearForces"] = 4] = "e_clearForces";
-    })(box2d.b2WorldFlag || (box2d.b2WorldFlag = {}));
-    var b2WorldFlag = box2d.b2WorldFlag;
     /// The world class manages all physics entities, dynamic simulation,
     /// and asynchronous queries. The world also contains efficient memory
     /// management facilities.
@@ -13935,7 +13828,7 @@ var box2d;
         function b2World(gravity) {
             // b2BlockAllocator m_blockAllocator;
             // b2StackAllocator m_stackAllocator;
-            this.m_flags = b2WorldFlag.e_clearForces;
+            this.m_flags = 4 /* e_clearForces */;
             this.m_contactManager = new box2d.b2ContactManager();
             this.m_bodyList = null;
             this.m_jointList = null;
@@ -14191,11 +14084,11 @@ var box2d;
         b2World.prototype.Step = function (dt, velocityIterations, positionIterations) {
             var stepTimer = new box2d.b2Timer();
             // If new fixtures were added, we need to find the new contacts.
-            if (this.m_flags & b2WorldFlag.e_newFixture) {
+            if (this.m_flags & 1 /* e_newFixture */) {
                 this.m_contactManager.FindNewContacts();
-                this.m_flags &= ~b2WorldFlag.e_newFixture;
+                this.m_flags &= ~1 /* e_newFixture */;
             }
-            this.m_flags |= b2WorldFlag.e_locked;
+            this.m_flags |= 2 /* e_locked */;
             var step = b2World.Step_s_step;
             step.dt = dt;
             step.velocityIterations = velocityIterations;
@@ -14227,10 +14120,10 @@ var box2d;
             if (step.dt > 0) {
                 this.m_inv_dt0 = step.inv_dt;
             }
-            if (this.m_flags & b2WorldFlag.e_clearForces) {
+            if (this.m_flags & 4 /* e_clearForces */) {
                 this.ClearForces();
             }
-            this.m_flags &= ~b2WorldFlag.e_locked;
+            this.m_flags &= ~2 /* e_locked */;
             this.m_profile.step = stepTimer.GetMilliseconds();
         };
         /// Manually clear the force buffer on all bodies. By default, forces are cleared automatically
@@ -14252,7 +14145,7 @@ var box2d;
             }
             var flags = this.m_debugDraw.GetFlags();
             var color = b2World.DrawDebugData_s_color.SetRGB(0, 0, 0);
-            if (flags & box2d.b2DrawFlags.e_shapeBit) {
+            if (flags & 1 /* e_shapeBit */) {
                 for (var b = this.m_bodyList; b; b = b.m_next) {
                     var xf = b.m_xf;
                     this.m_debugDraw.PushTransform(xf);
@@ -14261,11 +14154,11 @@ var box2d;
                             color.SetRGB(0.5, 0.5, 0.3);
                             this.DrawShape(f, color);
                         }
-                        else if (b.GetType() === box2d.b2BodyType.b2_staticBody) {
+                        else if (b.GetType() === 0 /* b2_staticBody */) {
                             color.SetRGB(0.5, 0.9, 0.5);
                             this.DrawShape(f, color);
                         }
-                        else if (b.GetType() === box2d.b2BodyType.b2_kinematicBody) {
+                        else if (b.GetType() === 1 /* b2_kinematicBody */) {
                             color.SetRGB(0.5, 0.5, 0.9);
                             this.DrawShape(f, color);
                         }
@@ -14281,7 +14174,7 @@ var box2d;
                     this.m_debugDraw.PopTransform(xf);
                 }
             }
-            if (flags & box2d.b2DrawFlags.e_jointBit) {
+            if (flags & 2 /* e_jointBit */) {
                 for (var j = this.m_jointList; j; j = j.m_next) {
                     this.DrawJoint(j);
                 }
@@ -14300,7 +14193,7 @@ var box2d;
               }
             }
             */
-            if (flags & box2d.b2DrawFlags.e_aabbBit) {
+            if (flags & 4 /* e_aabbBit */) {
                 color.SetRGB(0.9, 0.3, 0.9);
                 var bp = this.m_contactManager.m_broadPhase;
                 var vs = b2World.DrawDebugData_s_vs;
@@ -14321,7 +14214,7 @@ var box2d;
                     }
                 }
             }
-            if (flags & box2d.b2DrawFlags.e_centerOfMassBit) {
+            if (flags & 16 /* e_centerOfMassBit */) {
                 for (var b = this.m_bodyList; b; b = b.m_next) {
                     var xf = b2World.DrawDebugData_s_xf;
                     xf.q.Copy(b.m_xf.q);
@@ -14562,20 +14455,20 @@ var box2d;
         };
         /// Is the world locked (in the middle of a time step).
         b2World.prototype.IsLocked = function () {
-            return (this.m_flags & b2WorldFlag.e_locked) > 0;
+            return (this.m_flags & 2 /* e_locked */) > 0;
         };
         /// Set flag to control automatic clearing of forces after each time step.
         b2World.prototype.SetAutoClearForces = function (flag) {
             if (flag) {
-                this.m_flags |= b2WorldFlag.e_clearForces;
+                this.m_flags |= 4 /* e_clearForces */;
             }
             else {
-                this.m_flags &= ~b2WorldFlag.e_clearForces;
+                this.m_flags &= ~4 /* e_clearForces */;
             }
         };
         /// Get the flag that controls automatic clearing of forces after each time step.
         b2World.prototype.GetAutoClearForces = function () {
-            return (this.m_flags & b2WorldFlag.e_clearForces) === b2WorldFlag.e_clearForces;
+            return (this.m_flags & 4 /* e_clearForces */) === 4 /* e_clearForces */;
         };
         /// Shift the world origin. Useful for large worlds.
         /// The body shift formula is: position -= newOrigin
@@ -14609,7 +14502,7 @@ var box2d;
         /// @warning this should be called outside of a time step.
         b2World.prototype.Dump = function () {
             if (box2d.DEBUG) {
-                if ((this.m_flags & b2WorldFlag.e_locked) === b2WorldFlag.e_locked) {
+                if ((this.m_flags & 2 /* e_locked */) === 2 /* e_locked */) {
                     return;
                 }
                 box2d.b2Log("const g: b2Vec2 = new b2Vec2(%.15f, %.15f);\n", this.m_gravity.x, this.m_gravity.y);
@@ -14629,7 +14522,7 @@ var box2d;
                 }
                 // First pass on joints, skip gear joints.
                 for (var j = this.m_jointList; j; j = j.m_next) {
-                    if (j.m_type === box2d.b2JointType.e_gearJoint) {
+                    if (j.m_type === 6 /* e_gearJoint */) {
                         continue;
                     }
                     box2d.b2Log("{\n");
@@ -14638,7 +14531,7 @@ var box2d;
                 }
                 // Second pass on joints, only gear joints.
                 for (var j = this.m_jointList; j; j = j.m_next) {
-                    if (j.m_type !== box2d.b2JointType.e_gearJoint) {
+                    if (j.m_type !== 6 /* e_gearJoint */) {
                         continue;
                     }
                     box2d.b2Log("{\n");
@@ -14658,10 +14551,10 @@ var box2d;
             var p2 = joint.GetAnchorB(b2World.DrawJoint_s_p2);
             var color = b2World.DrawJoint_s_color.SetRGB(0.5, 0.8, 0.8);
             switch (joint.m_type) {
-                case box2d.b2JointType.e_distanceJoint:
+                case 3 /* e_distanceJoint */:
                     this.m_debugDraw.DrawSegment(p1, p2, color);
                     break;
-                case box2d.b2JointType.e_pulleyJoint:
+                case 4 /* e_pulleyJoint */:
                     {
                         var pulley = joint;
                         var s1 = pulley.GetGroundAnchorA();
@@ -14671,7 +14564,7 @@ var box2d;
                         this.m_debugDraw.DrawSegment(s1, s2, color);
                     }
                     break;
-                case box2d.b2JointType.e_mouseJoint:
+                case 5 /* e_mouseJoint */:
                     // don't draw this
                     this.m_debugDraw.DrawSegment(p1, p2, color);
                     break;
@@ -14684,7 +14577,7 @@ var box2d;
         b2World.prototype.DrawShape = function (fixture, color) {
             var shape = fixture.GetShape();
             switch (shape.m_type) {
-                case box2d.b2ShapeType.e_circleShape:
+                case 0 /* e_circleShape */:
                     {
                         var circle = shape;
                         var center = circle.m_p;
@@ -14693,7 +14586,7 @@ var box2d;
                         this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
                     }
                     break;
-                case box2d.b2ShapeType.e_edgeShape:
+                case 1 /* e_edgeShape */:
                     {
                         var edge = shape;
                         var v1 = edge.m_vertex1;
@@ -14701,7 +14594,7 @@ var box2d;
                         this.m_debugDraw.DrawSegment(v1, v2, color);
                     }
                     break;
-                case box2d.b2ShapeType.e_chainShape:
+                case 3 /* e_chainShape */:
                     {
                         var chain = shape;
                         var count = chain.m_count;
@@ -14716,7 +14609,7 @@ var box2d;
                         }
                     }
                     break;
-                case box2d.b2ShapeType.e_polygonShape:
+                case 2 /* e_polygonShape */:
                     {
                         var poly = shape;
                         var vertexCount = poly.m_count;
@@ -14740,10 +14633,10 @@ var box2d;
             this.m_contactManager.m_contactListener);
             // Clear all the island flags.
             for (var b = this.m_bodyList; b; b = b.m_next) {
-                b.m_flags &= ~box2d.b2BodyFlag.e_islandFlag;
+                b.m_flags &= ~1 /* e_islandFlag */;
             }
             for (var c = this.m_contactManager.m_contactList; c; c = c.m_next) {
-                c.m_flags &= ~box2d.b2ContactFlag.e_islandFlag;
+                c.m_flags &= ~1 /* e_islandFlag */;
             }
             for (var j = this.m_jointList; j; j = j.m_next) {
                 j.m_islandFlag = false;
@@ -14752,21 +14645,21 @@ var box2d;
             var stackSize = this.m_bodyCount;
             var stack = this.s_stack;
             for (var seed = this.m_bodyList; seed; seed = seed.m_next) {
-                if (seed.m_flags & box2d.b2BodyFlag.e_islandFlag) {
+                if (seed.m_flags & 1 /* e_islandFlag */) {
                     continue;
                 }
                 if (seed.IsAwake() === false || seed.IsActive() === false) {
                     continue;
                 }
                 // The seed can be dynamic or kinematic.
-                if (seed.GetType() === box2d.b2BodyType.b2_staticBody) {
+                if (seed.GetType() === 0 /* b2_staticBody */) {
                     continue;
                 }
                 // Reset island and stack.
                 island.Clear();
                 var stackCount = 0;
                 stack[stackCount++] = seed;
-                seed.m_flags |= box2d.b2BodyFlag.e_islandFlag;
+                seed.m_flags |= 1 /* e_islandFlag */;
                 // Perform a depth first search (DFS) on the constraint graph.
                 while (stackCount > 0) {
                     // Grab the next body off the stack and add it to the island.
@@ -14779,14 +14672,14 @@ var box2d;
                     b.SetAwake(true);
                     // To keep islands as small as possible, we don't
                     // propagate islands across static bodies.
-                    if (b.GetType() === box2d.b2BodyType.b2_staticBody) {
+                    if (b.GetType() === 0 /* b2_staticBody */) {
                         continue;
                     }
                     // Search all contacts connected to this body.
                     for (var ce = b.m_contactList; ce; ce = ce.next) {
                         var contact = ce.contact;
                         // Has this contact already been added to an island?
-                        if (contact.m_flags & box2d.b2ContactFlag.e_islandFlag) {
+                        if (contact.m_flags & 1 /* e_islandFlag */) {
                             continue;
                         }
                         // Is this contact solid and touching?
@@ -14801,17 +14694,17 @@ var box2d;
                             continue;
                         }
                         island.AddContact(contact);
-                        contact.m_flags |= box2d.b2ContactFlag.e_islandFlag;
+                        contact.m_flags |= 1 /* e_islandFlag */;
                         var other = ce.other;
                         // Was the other body already added to this island?
-                        if (other.m_flags & box2d.b2BodyFlag.e_islandFlag) {
+                        if (other.m_flags & 1 /* e_islandFlag */) {
                             continue;
                         }
                         if (box2d.ENABLE_ASSERTS) {
                             box2d.b2Assert(stackCount < stackSize);
                         }
                         stack[stackCount++] = other;
-                        other.m_flags |= box2d.b2BodyFlag.e_islandFlag;
+                        other.m_flags |= 1 /* e_islandFlag */;
                     }
                     // Search all joints connect to this body.
                     for (var je = b.m_jointList; je; je = je.next) {
@@ -14825,14 +14718,14 @@ var box2d;
                         }
                         island.AddJoint(je.joint);
                         je.joint.m_islandFlag = true;
-                        if (other.m_flags & box2d.b2BodyFlag.e_islandFlag) {
+                        if (other.m_flags & 1 /* e_islandFlag */) {
                             continue;
                         }
                         if (box2d.ENABLE_ASSERTS) {
                             box2d.b2Assert(stackCount < stackSize);
                         }
                         stack[stackCount++] = other;
-                        other.m_flags |= box2d.b2BodyFlag.e_islandFlag;
+                        other.m_flags |= 1 /* e_islandFlag */;
                     }
                 }
                 var profile = new box2d.b2Profile();
@@ -14844,8 +14737,8 @@ var box2d;
                 for (var i = 0; i < island.m_bodyCount; ++i) {
                     // Allow static bodies to participate in other islands.
                     var b = island.m_bodies[i];
-                    if (b.GetType() === box2d.b2BodyType.b2_staticBody) {
-                        b.m_flags &= ~box2d.b2BodyFlag.e_islandFlag;
+                    if (b.GetType() === 0 /* b2_staticBody */) {
+                        b.m_flags &= ~1 /* e_islandFlag */;
                     }
                 }
             }
@@ -14858,10 +14751,10 @@ var box2d;
             // Synchronize fixtures, check for out of range bodies.
             for (var b = this.m_bodyList; b; b = b.m_next) {
                 // If a body was not in an island then it did not move.
-                if ((b.m_flags & box2d.b2BodyFlag.e_islandFlag) === 0) {
+                if ((b.m_flags & 1 /* e_islandFlag */) === 0) {
                     continue;
                 }
-                if (b.GetType() === box2d.b2BodyType.b2_staticBody) {
+                if (b.GetType() === 0 /* b2_staticBody */) {
                     continue;
                 }
                 // Update fixtures (for broad-phase).
@@ -14877,12 +14770,12 @@ var box2d;
             island.Initialize(2 * box2d.b2_maxTOIContacts, box2d.b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
             if (this.m_stepComplete) {
                 for (var b = this.m_bodyList; b; b = b.m_next) {
-                    b.m_flags &= ~box2d.b2BodyFlag.e_islandFlag;
+                    b.m_flags &= ~1 /* e_islandFlag */;
                     b.m_sweep.alpha0 = 0;
                 }
                 for (var c = this.m_contactManager.m_contactList; c; c = c.m_next) {
                     // Invalidate TOI
-                    c.m_flags &= ~(box2d.b2ContactFlag.e_toiFlag | box2d.b2ContactFlag.e_islandFlag);
+                    c.m_flags &= ~(32 /* e_toiFlag */ | 1 /* e_islandFlag */);
                     c.m_toiCount = 0;
                     c.m_toi = 1;
                 }
@@ -14902,7 +14795,7 @@ var box2d;
                         continue;
                     }
                     var alpha = 1;
-                    if (c.m_flags & box2d.b2ContactFlag.e_toiFlag) {
+                    if (c.m_flags & 32 /* e_toiFlag */) {
                         // This contact has a valid cached TOI.
                         alpha = c.m_toi;
                     }
@@ -14918,16 +14811,16 @@ var box2d;
                         var typeA = bA_1.m_type;
                         var typeB = bB_1.m_type;
                         if (box2d.ENABLE_ASSERTS) {
-                            box2d.b2Assert(typeA === box2d.b2BodyType.b2_dynamicBody || typeB === box2d.b2BodyType.b2_dynamicBody);
+                            box2d.b2Assert(typeA === 2 /* b2_dynamicBody */ || typeB === 2 /* b2_dynamicBody */);
                         }
-                        var activeA = bA_1.IsAwake() && typeA !== box2d.b2BodyType.b2_staticBody;
-                        var activeB = bB_1.IsAwake() && typeB !== box2d.b2BodyType.b2_staticBody;
+                        var activeA = bA_1.IsAwake() && typeA !== 0 /* b2_staticBody */;
+                        var activeB = bB_1.IsAwake() && typeB !== 0 /* b2_staticBody */;
                         // Is at least one body active (awake and dynamic or kinematic)?
                         if (activeA === false && activeB === false) {
                             continue;
                         }
-                        var collideA = bA_1.IsBullet() || typeA !== box2d.b2BodyType.b2_dynamicBody;
-                        var collideB = bB_1.IsBullet() || typeB !== box2d.b2BodyType.b2_dynamicBody;
+                        var collideA = bA_1.IsBullet() || typeA !== 2 /* b2_dynamicBody */;
+                        var collideB = bB_1.IsBullet() || typeB !== 2 /* b2_dynamicBody */;
                         // Are these two non-bullet dynamic bodies?
                         if (collideA === false && collideB === false) {
                             continue;
@@ -14959,14 +14852,14 @@ var box2d;
                         box2d.b2TimeOfImpact(output, input);
                         // Beta is the fraction of the remaining portion of the .
                         var beta = output.t;
-                        if (output.state === box2d.b2TOIOutputState.e_touching) {
+                        if (output.state === 3 /* e_touching */) {
                             alpha = box2d.b2Min(alpha0 + (1 - alpha0) * beta, 1);
                         }
                         else {
                             alpha = 1;
                         }
                         c.m_toi = alpha;
-                        c.m_flags |= box2d.b2ContactFlag.e_toiFlag;
+                        c.m_flags |= 32 /* e_toiFlag */;
                     }
                     if (alpha < minAlpha) {
                         // This is the minimum TOI found so far.
@@ -14990,7 +14883,7 @@ var box2d;
                 bB.Advance(minAlpha);
                 // The TOI contact likely has some new contact points.
                 minContact.Update(this.m_contactManager.m_contactListener);
-                minContact.m_flags &= ~box2d.b2ContactFlag.e_toiFlag;
+                minContact.m_flags &= ~32 /* e_toiFlag */;
                 ++minContact.m_toiCount;
                 // Is the contact solid?
                 if (minContact.IsEnabled() === false || minContact.IsTouching() === false) {
@@ -15009,14 +14902,14 @@ var box2d;
                 island.AddBody(bA);
                 island.AddBody(bB);
                 island.AddContact(minContact);
-                bA.m_flags |= box2d.b2BodyFlag.e_islandFlag;
-                bB.m_flags |= box2d.b2BodyFlag.e_islandFlag;
-                minContact.m_flags |= box2d.b2ContactFlag.e_islandFlag;
+                bA.m_flags |= 1 /* e_islandFlag */;
+                bB.m_flags |= 1 /* e_islandFlag */;
+                minContact.m_flags |= 1 /* e_islandFlag */;
                 // Get contacts on bodyA and bodyB.
                 // const bodies: b2Body[] = [bA, bB];
                 for (var i = 0; i < 2; ++i) {
                     var body = (i === 0) ? (bA) : (bB); // bodies[i];
-                    if (body.m_type === box2d.b2BodyType.b2_dynamicBody) {
+                    if (body.m_type === 2 /* b2_dynamicBody */) {
                         for (var ce = body.m_contactList; ce; ce = ce.next) {
                             if (island.m_bodyCount === island.m_bodyCapacity) {
                                 break;
@@ -15026,12 +14919,12 @@ var box2d;
                             }
                             var contact = ce.contact;
                             // Has this contact already been added to the island?
-                            if (contact.m_flags & box2d.b2ContactFlag.e_islandFlag) {
+                            if (contact.m_flags & 1 /* e_islandFlag */) {
                                 continue;
                             }
                             // Only add static, kinematic, or bullet bodies.
                             var other = ce.other;
-                            if (other.m_type === box2d.b2BodyType.b2_dynamicBody &&
+                            if (other.m_type === 2 /* b2_dynamicBody */ &&
                                 body.IsBullet() === false && other.IsBullet() === false) {
                                 continue;
                             }
@@ -15043,7 +14936,7 @@ var box2d;
                             }
                             // Tentatively advance the body to the TOI.
                             var backup = b2World.SolveTOI_s_backup.Copy(other.m_sweep);
-                            if ((other.m_flags & box2d.b2BodyFlag.e_islandFlag) === 0) {
+                            if ((other.m_flags & 1 /* e_islandFlag */) === 0) {
                                 other.Advance(minAlpha);
                             }
                             // Update the contact points
@@ -15061,15 +14954,15 @@ var box2d;
                                 continue;
                             }
                             // Add the contact to the island
-                            contact.m_flags |= box2d.b2ContactFlag.e_islandFlag;
+                            contact.m_flags |= 1 /* e_islandFlag */;
                             island.AddContact(contact);
                             // Has the other body already been added to the island?
-                            if (other.m_flags & box2d.b2BodyFlag.e_islandFlag) {
+                            if (other.m_flags & 1 /* e_islandFlag */) {
                                 continue;
                             }
                             // Add the other body to the island.
-                            other.m_flags |= box2d.b2BodyFlag.e_islandFlag;
-                            if (other.m_type !== box2d.b2BodyType.b2_staticBody) {
+                            other.m_flags |= 1 /* e_islandFlag */;
+                            if (other.m_type !== 0 /* b2_staticBody */) {
                                 other.SetAwake(true);
                             }
                             island.AddBody(other);
@@ -15087,14 +14980,14 @@ var box2d;
                 // Reset island flags and synchronize broad-phase proxies.
                 for (var i = 0; i < island.m_bodyCount; ++i) {
                     var body = island.m_bodies[i];
-                    body.m_flags &= ~box2d.b2BodyFlag.e_islandFlag;
-                    if (body.m_type !== box2d.b2BodyType.b2_dynamicBody) {
+                    body.m_flags &= ~1 /* e_islandFlag */;
+                    if (body.m_type !== 2 /* b2_dynamicBody */) {
                         continue;
                     }
                     body.SynchronizeFixtures();
                     // Invalidate all contact TOIs on this displaced body.
                     for (var ce = body.m_contactList; ce; ce = ce.next) {
-                        ce.contact.m_flags &= ~(box2d.b2ContactFlag.e_toiFlag | box2d.b2ContactFlag.e_islandFlag);
+                        ce.contact.m_flags &= ~(32 /* e_toiFlag */ | 1 /* e_islandFlag */);
                     }
                 }
                 // Commit fixture proxy movements to the broad-phase so that new contacts are created.
@@ -15166,24 +15059,13 @@ var box2d;
 /// <reference path="./Joints/b2Joint.ts"/>
 var box2d;
 (function (box2d) {
-    /// The body type.
-    /// static: zero mass, zero velocity, may be manually moved
-    /// kinematic: zero mass, non-zero velocity set by user, moved by solver
-    /// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
-    (function (b2BodyType) {
-        b2BodyType[b2BodyType["b2_unknown"] = -1] = "b2_unknown";
-        b2BodyType[b2BodyType["b2_staticBody"] = 0] = "b2_staticBody";
-        b2BodyType[b2BodyType["b2_kinematicBody"] = 1] = "b2_kinematicBody";
-        b2BodyType[b2BodyType["b2_dynamicBody"] = 2] = "b2_dynamicBody";
-    })(box2d.b2BodyType || (box2d.b2BodyType = {}));
-    var b2BodyType = box2d.b2BodyType;
     /// A body definition holds all the data needed to construct a rigid body.
     /// You can safely re-use body definitions. Shapes are added to a body after construction.
     var b2BodyDef = (function () {
         function b2BodyDef() {
             /// The body type: static, kinematic, or dynamic.
             /// Note: if a dynamic body would have zero mass, the mass is set to one.
-            this.type = b2BodyType.b2_staticBody;
+            this.type = 0 /* b2_staticBody */;
             /// The world position of the body. Avoid creating bodies at the origin
             /// since this can lead to many overlapping shapes.
             this.position = new box2d.b2Vec2(0, 0);
@@ -15223,24 +15105,13 @@ var box2d;
         return b2BodyDef;
     }());
     box2d.b2BodyDef = b2BodyDef;
-    (function (b2BodyFlag) {
-        b2BodyFlag[b2BodyFlag["e_none"] = 0] = "e_none";
-        b2BodyFlag[b2BodyFlag["e_islandFlag"] = 1] = "e_islandFlag";
-        b2BodyFlag[b2BodyFlag["e_awakeFlag"] = 2] = "e_awakeFlag";
-        b2BodyFlag[b2BodyFlag["e_autoSleepFlag"] = 4] = "e_autoSleepFlag";
-        b2BodyFlag[b2BodyFlag["e_bulletFlag"] = 8] = "e_bulletFlag";
-        b2BodyFlag[b2BodyFlag["e_fixedRotationFlag"] = 16] = "e_fixedRotationFlag";
-        b2BodyFlag[b2BodyFlag["e_activeFlag"] = 32] = "e_activeFlag";
-        b2BodyFlag[b2BodyFlag["e_toiFlag"] = 64] = "e_toiFlag";
-    })(box2d.b2BodyFlag || (box2d.b2BodyFlag = {}));
-    var b2BodyFlag = box2d.b2BodyFlag;
     /// A rigid body. These are created via b2World::CreateBody.
     var b2Body = (function () {
         // public m_controllerList: b2ControllerEdge = null;
         // public m_controllerCount: number = 0;
         function b2Body(bd, world) {
-            this.m_type = b2BodyType.b2_staticBody;
-            this.m_flags = b2BodyFlag.e_none;
+            this.m_type = 0 /* b2_staticBody */;
+            this.m_flags = 0 /* e_none */;
             this.m_islandIndex = 0;
             this.m_xf = new box2d.b2Transform(); // the body origin transform
             this.m_sweep = new box2d.b2Sweep(); // the swept motion for CCD
@@ -15286,21 +15157,21 @@ var box2d;
             if (box2d.ENABLE_ASSERTS) {
                 box2d.b2Assert(box2d.b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
             }
-            this.m_flags = b2BodyFlag.e_none;
+            this.m_flags = 0 /* e_none */;
             if (bd.bullet) {
-                this.m_flags |= b2BodyFlag.e_bulletFlag;
+                this.m_flags |= 8 /* e_bulletFlag */;
             }
             if (bd.fixedRotation) {
-                this.m_flags |= b2BodyFlag.e_fixedRotationFlag;
+                this.m_flags |= 16 /* e_fixedRotationFlag */;
             }
             if (bd.allowSleep) {
-                this.m_flags |= b2BodyFlag.e_autoSleepFlag;
+                this.m_flags |= 4 /* e_autoSleepFlag */;
             }
             if (bd.awake) {
-                this.m_flags |= b2BodyFlag.e_awakeFlag;
+                this.m_flags |= 2 /* e_awakeFlag */;
             }
             if (bd.active) {
-                this.m_flags |= b2BodyFlag.e_activeFlag;
+                this.m_flags |= 32 /* e_activeFlag */;
             }
             this.m_world = world;
             this.m_xf.p.Copy(bd.position);
@@ -15320,7 +15191,7 @@ var box2d;
             this.m_torque = 0;
             this.m_sleepTime = 0;
             this.m_type = bd.type;
-            if (bd.type === b2BodyType.b2_dynamicBody) {
+            if (bd.type === 2 /* b2_dynamicBody */) {
                 this.m_mass = 1;
                 this.m_invMass = 1;
             }
@@ -15352,7 +15223,7 @@ var box2d;
             }
             var fixture = new box2d.b2Fixture();
             fixture.Create(this, def);
-            if (this.m_flags & b2BodyFlag.e_activeFlag) {
+            if (this.m_flags & 32 /* e_activeFlag */) {
                 var broadPhase = this.m_world.m_contactManager.m_broadPhase;
                 fixture.CreateProxies(broadPhase, this.m_xf);
             }
@@ -15366,7 +15237,7 @@ var box2d;
             }
             // Let the world know we have a new fixture. This will cause new contacts
             // to be created at the beginning of the next time step.
-            this.m_world.m_flags |= box2d.b2WorldFlag.e_newFixture;
+            this.m_world.m_flags |= 1 /* e_newFixture */;
             return fixture;
         };
         b2Body.prototype.CreateFixture2 = function (shape, density) {
@@ -15429,7 +15300,7 @@ var box2d;
                     this.m_world.m_contactManager.Destroy(c);
                 }
             }
-            if (this.m_flags & b2BodyFlag.e_activeFlag) {
+            if (this.m_flags & 32 /* e_activeFlag */) {
                 var broadPhase = this.m_world.m_contactManager.m_broadPhase;
                 fixture.DestroyProxies(broadPhase);
             }
@@ -15505,7 +15376,7 @@ var box2d;
         /// Set the linear velocity of the center of mass.
         /// @param v the new linear velocity of the center of mass.
         b2Body.prototype.SetLinearVelocity = function (v) {
-            if (this.m_type === b2BodyType.b2_staticBody) {
+            if (this.m_type === 0 /* b2_staticBody */) {
                 return;
             }
             if (box2d.b2DotVV(v, v) > 0) {
@@ -15521,7 +15392,7 @@ var box2d;
         /// Set the angular velocity.
         /// @param omega the new angular velocity in radians/second.
         b2Body.prototype.SetAngularVelocity = function (w) {
-            if (this.m_type === b2BodyType.b2_staticBody) {
+            if (this.m_type === 0 /* b2_staticBody */) {
                 return;
             }
             if (w * w > 0) {
@@ -15536,14 +15407,14 @@ var box2d;
         };
         b2Body.prototype.GetDefinition = function (bd) {
             bd.type = this.GetType();
-            bd.allowSleep = (this.m_flags & b2BodyFlag.e_autoSleepFlag) === b2BodyFlag.e_autoSleepFlag;
+            bd.allowSleep = (this.m_flags & 4 /* e_autoSleepFlag */) === 4 /* e_autoSleepFlag */;
             bd.angle = this.GetAngleRadians();
             bd.angularDamping = this.m_angularDamping;
             bd.gravityScale = this.m_gravityScale;
             bd.angularVelocity = this.m_angularVelocity;
-            bd.fixedRotation = (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === b2BodyFlag.e_fixedRotationFlag;
-            bd.bullet = (this.m_flags & b2BodyFlag.e_bulletFlag) === b2BodyFlag.e_bulletFlag;
-            bd.awake = (this.m_flags & b2BodyFlag.e_awakeFlag) === b2BodyFlag.e_awakeFlag;
+            bd.fixedRotation = (this.m_flags & 16 /* e_fixedRotationFlag */) === 16 /* e_fixedRotationFlag */;
+            bd.bullet = (this.m_flags & 8 /* e_bulletFlag */) === 8 /* e_bulletFlag */;
+            bd.awake = (this.m_flags & 2 /* e_awakeFlag */) === 2 /* e_awakeFlag */;
             bd.linearDamping = this.m_linearDamping;
             bd.linearVelocity.Copy(this.GetLinearVelocity());
             bd.position.Copy(this.GetPosition());
@@ -15558,14 +15429,14 @@ var box2d;
         /// @param wake also wake up the body
         b2Body.prototype.ApplyForce = function (force, point, wake) {
             if (wake === void 0) { wake = true; }
-            if (this.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */) {
                 return;
             }
-            if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+            if (wake && (this.m_flags & 2 /* e_awakeFlag */) === 0) {
                 this.SetAwake(true);
             }
             // Don't accumulate a force if the body is sleeping.
-            if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+            if (this.m_flags & 2 /* e_awakeFlag */) {
                 this.m_force.x += force.x;
                 this.m_force.y += force.y;
                 this.m_torque += ((point.x - this.m_sweep.c.x) * force.y - (point.y - this.m_sweep.c.y) * force.x);
@@ -15576,14 +15447,14 @@ var box2d;
         /// @param wake also wake up the body
         b2Body.prototype.ApplyForceToCenter = function (force, wake) {
             if (wake === void 0) { wake = true; }
-            if (this.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */) {
                 return;
             }
-            if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+            if (wake && (this.m_flags & 2 /* e_awakeFlag */) === 0) {
                 this.SetAwake(true);
             }
             // Don't accumulate a force if the body is sleeping.
-            if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+            if (this.m_flags & 2 /* e_awakeFlag */) {
                 this.m_force.x += force.x;
                 this.m_force.y += force.y;
             }
@@ -15595,14 +15466,14 @@ var box2d;
         /// @param wake also wake up the body
         b2Body.prototype.ApplyTorque = function (torque, wake) {
             if (wake === void 0) { wake = true; }
-            if (this.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */) {
                 return;
             }
-            if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+            if (wake && (this.m_flags & 2 /* e_awakeFlag */) === 0) {
                 this.SetAwake(true);
             }
             // Don't accumulate a force if the body is sleeping.
-            if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+            if (this.m_flags & 2 /* e_awakeFlag */) {
                 this.m_torque += torque;
             }
         };
@@ -15614,14 +15485,14 @@ var box2d;
         /// @param wake also wake up the body
         b2Body.prototype.ApplyLinearImpulse = function (impulse, point, wake) {
             if (wake === void 0) { wake = true; }
-            if (this.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */) {
                 return;
             }
-            if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+            if (wake && (this.m_flags & 2 /* e_awakeFlag */) === 0) {
                 this.SetAwake(true);
             }
             // Don't accumulate a force if the body is sleeping.
-            if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+            if (this.m_flags & 2 /* e_awakeFlag */) {
                 this.m_linearVelocity.x += this.m_invMass * impulse.x;
                 this.m_linearVelocity.y += this.m_invMass * impulse.y;
                 this.m_angularVelocity += this.m_invI * ((point.x - this.m_sweep.c.x) * impulse.y - (point.y - this.m_sweep.c.y) * impulse.x);
@@ -15632,14 +15503,14 @@ var box2d;
         /// @param wake also wake up the body
         b2Body.prototype.ApplyAngularImpulse = function (impulse, wake) {
             if (wake === void 0) { wake = true; }
-            if (this.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */) {
                 return;
             }
-            if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+            if (wake && (this.m_flags & 2 /* e_awakeFlag */) === 0) {
                 this.SetAwake(true);
             }
             // Don't accumulate a force if the body is sleeping.
-            if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+            if (this.m_flags & 2 /* e_awakeFlag */) {
                 this.m_angularVelocity += this.m_invI * impulse;
             }
         };
@@ -15668,7 +15539,7 @@ var box2d;
             if (this.m_world.IsLocked() === true) {
                 return;
             }
-            if (this.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */) {
                 return;
             }
             this.m_invMass = 0;
@@ -15679,7 +15550,7 @@ var box2d;
                 this.m_mass = 1;
             }
             this.m_invMass = 1 / this.m_mass;
-            if (massData.I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
+            if (massData.I > 0 && (this.m_flags & 16 /* e_fixedRotationFlag */) === 0) {
                 this.m_I = massData.I - this.m_mass * box2d.b2DotVV(massData.center, massData.center);
                 if (box2d.ENABLE_ASSERTS) {
                     box2d.b2Assert(this.m_I > 0);
@@ -15702,14 +15573,14 @@ var box2d;
             this.m_invI = 0;
             this.m_sweep.localCenter.SetZero();
             // Static and kinematic bodies have zero mass.
-            if (this.m_type === b2BodyType.b2_staticBody || this.m_type === b2BodyType.b2_kinematicBody) {
+            if (this.m_type === 0 /* b2_staticBody */ || this.m_type === 1 /* b2_kinematicBody */) {
                 this.m_sweep.c0.Copy(this.m_xf.p);
                 this.m_sweep.c.Copy(this.m_xf.p);
                 this.m_sweep.a0 = this.m_sweep.a;
                 return;
             }
             if (box2d.ENABLE_ASSERTS) {
-                box2d.b2Assert(this.m_type === b2BodyType.b2_dynamicBody);
+                box2d.b2Assert(this.m_type === 2 /* b2_dynamicBody */);
             }
             // Accumulate mass over all fixtures.
             var localCenter = b2Body.ResetMassData_s_localCenter.SetZero();
@@ -15734,7 +15605,7 @@ var box2d;
                 this.m_mass = 1;
                 this.m_invMass = 1;
             }
-            if (this.m_I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
+            if (this.m_I > 0 && (this.m_flags & 16 /* e_fixedRotationFlag */) === 0) {
                 // Center the inertia about the center of mass.
                 this.m_I -= this.m_mass * box2d.b2DotVV(localCenter, localCenter);
                 if (box2d.ENABLE_ASSERTS) {
@@ -15827,7 +15698,7 @@ var box2d;
             }
             this.m_type = type;
             this.ResetMassData();
-            if (this.m_type === b2BodyType.b2_staticBody) {
+            if (this.m_type === 0 /* b2_staticBody */) {
                 this.m_linearVelocity.SetZero();
                 this.m_angularVelocity = 0;
                 this.m_sweep.a0 = this.m_sweep.a;
@@ -15861,43 +15732,43 @@ var box2d;
         /// Should this body be treated like a bullet for continuous collision detection?
         b2Body.prototype.SetBullet = function (flag) {
             if (flag) {
-                this.m_flags |= b2BodyFlag.e_bulletFlag;
+                this.m_flags |= 8 /* e_bulletFlag */;
             }
             else {
-                this.m_flags &= ~b2BodyFlag.e_bulletFlag;
+                this.m_flags &= ~8 /* e_bulletFlag */;
             }
         };
         /// Is this body treated like a bullet for continuous collision detection?
         b2Body.prototype.IsBullet = function () {
-            return (this.m_flags & b2BodyFlag.e_bulletFlag) === b2BodyFlag.e_bulletFlag;
+            return (this.m_flags & 8 /* e_bulletFlag */) === 8 /* e_bulletFlag */;
         };
         /// You can disable sleeping on this body. If you disable sleeping, the
         /// body will be woken.
         b2Body.prototype.SetSleepingAllowed = function (flag) {
             if (flag) {
-                this.m_flags |= b2BodyFlag.e_autoSleepFlag;
+                this.m_flags |= 4 /* e_autoSleepFlag */;
             }
             else {
-                this.m_flags &= ~b2BodyFlag.e_autoSleepFlag;
+                this.m_flags &= ~4 /* e_autoSleepFlag */;
                 this.SetAwake(true);
             }
         };
         /// Is this body allowed to sleep
         b2Body.prototype.IsSleepingAllowed = function () {
-            return (this.m_flags & b2BodyFlag.e_autoSleepFlag) === b2BodyFlag.e_autoSleepFlag;
+            return (this.m_flags & 4 /* e_autoSleepFlag */) === 4 /* e_autoSleepFlag */;
         };
         /// Set the sleep state of the body. A sleeping body has very
         /// low CPU cost.
         /// @param flag set to true to wake the body, false to put it to sleep.
         b2Body.prototype.SetAwake = function (flag) {
             if (flag) {
-                if ((this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
-                    this.m_flags |= b2BodyFlag.e_awakeFlag;
+                if ((this.m_flags & 2 /* e_awakeFlag */) === 0) {
+                    this.m_flags |= 2 /* e_awakeFlag */;
                     this.m_sleepTime = 0;
                 }
             }
             else {
-                this.m_flags &= ~b2BodyFlag.e_awakeFlag;
+                this.m_flags &= ~2 /* e_awakeFlag */;
                 this.m_sleepTime = 0;
                 this.m_linearVelocity.SetZero();
                 this.m_angularVelocity = 0;
@@ -15908,7 +15779,7 @@ var box2d;
         /// Get the sleeping state of this body.
         /// @return true if the body is sleeping.
         b2Body.prototype.IsAwake = function () {
-            return (this.m_flags & b2BodyFlag.e_awakeFlag) === b2BodyFlag.e_awakeFlag;
+            return (this.m_flags & 2 /* e_awakeFlag */) === 2 /* e_awakeFlag */;
         };
         /// Set the active state of the body. An inactive body is not
         /// simulated and cannot be collided with or woken up.
@@ -15931,7 +15802,7 @@ var box2d;
                 return;
             }
             if (flag) {
-                this.m_flags |= b2BodyFlag.e_activeFlag;
+                this.m_flags |= 32 /* e_activeFlag */;
                 // Create all proxies.
                 var broadPhase = this.m_world.m_contactManager.m_broadPhase;
                 for (var f = this.m_fixtureList; f; f = f.m_next) {
@@ -15939,7 +15810,7 @@ var box2d;
                 }
             }
             else {
-                this.m_flags &= ~b2BodyFlag.e_activeFlag;
+                this.m_flags &= ~32 /* e_activeFlag */;
                 // Destroy all proxies.
                 var broadPhase = this.m_world.m_contactManager.m_broadPhase;
                 for (var f = this.m_fixtureList; f; f = f.m_next) {
@@ -15957,27 +15828,27 @@ var box2d;
         };
         /// Get the active state of the body.
         b2Body.prototype.IsActive = function () {
-            return (this.m_flags & b2BodyFlag.e_activeFlag) === b2BodyFlag.e_activeFlag;
+            return (this.m_flags & 32 /* e_activeFlag */) === 32 /* e_activeFlag */;
         };
         /// Set this body to have fixed rotation. This causes the mass
         /// to be reset.
         b2Body.prototype.SetFixedRotation = function (flag) {
-            var status = (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === b2BodyFlag.e_fixedRotationFlag;
+            var status = (this.m_flags & 16 /* e_fixedRotationFlag */) === 16 /* e_fixedRotationFlag */;
             if (status === flag) {
                 return;
             }
             if (flag) {
-                this.m_flags |= b2BodyFlag.e_fixedRotationFlag;
+                this.m_flags |= 16 /* e_fixedRotationFlag */;
             }
             else {
-                this.m_flags &= ~b2BodyFlag.e_fixedRotationFlag;
+                this.m_flags &= ~16 /* e_fixedRotationFlag */;
             }
             this.m_angularVelocity = 0;
             this.ResetMassData();
         };
         /// Does this body have fixed rotation?
         b2Body.prototype.IsFixedRotation = function () {
-            return (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === b2BodyFlag.e_fixedRotationFlag;
+            return (this.m_flags & 16 /* e_fixedRotationFlag */) === 16 /* e_fixedRotationFlag */;
         };
         /// Get the list of all fixtures attached to this body.
         b2Body.prototype.GetFixtureList = function () {
@@ -16017,13 +15888,13 @@ var box2d;
                 box2d.b2Log("  const bd: b2BodyDef = new b2BodyDef();\n");
                 var type_str = "";
                 switch (this.m_type) {
-                    case b2BodyType.b2_staticBody:
+                    case 0 /* b2_staticBody */:
                         type_str = "b2BodyType.b2_staticBody";
                         break;
-                    case b2BodyType.b2_kinematicBody:
+                    case 1 /* b2_kinematicBody */:
                         type_str = "b2BodyType.b2_kinematicBody";
                         break;
-                    case b2BodyType.b2_dynamicBody:
+                    case 2 /* b2_dynamicBody */:
                         type_str = "b2BodyType.b2_dynamicBody";
                         break;
                     default:
@@ -16039,11 +15910,11 @@ var box2d;
                 box2d.b2Log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
                 box2d.b2Log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
                 box2d.b2Log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
-                box2d.b2Log("  bd.allowSleep = %s;\n", (this.m_flags & b2BodyFlag.e_autoSleepFlag) ? ("true") : ("false"));
-                box2d.b2Log("  bd.awake = %s;\n", (this.m_flags & b2BodyFlag.e_awakeFlag) ? ("true") : ("false"));
-                box2d.b2Log("  bd.fixedRotation = %s;\n", (this.m_flags & b2BodyFlag.e_fixedRotationFlag) ? ("true") : ("false"));
-                box2d.b2Log("  bd.bullet = %s;\n", (this.m_flags & b2BodyFlag.e_bulletFlag) ? ("true") : ("false"));
-                box2d.b2Log("  bd.active = %s;\n", (this.m_flags & b2BodyFlag.e_activeFlag) ? ("true") : ("false"));
+                box2d.b2Log("  bd.allowSleep = %s;\n", (this.m_flags & 4 /* e_autoSleepFlag */) ? ("true") : ("false"));
+                box2d.b2Log("  bd.awake = %s;\n", (this.m_flags & 2 /* e_awakeFlag */) ? ("true") : ("false"));
+                box2d.b2Log("  bd.fixedRotation = %s;\n", (this.m_flags & 16 /* e_fixedRotationFlag */) ? ("true") : ("false"));
+                box2d.b2Log("  bd.bullet = %s;\n", (this.m_flags & 8 /* e_bulletFlag */) ? ("true") : ("false"));
+                box2d.b2Log("  bd.active = %s;\n", (this.m_flags & 32 /* e_activeFlag */) ? ("true") : ("false"));
                 box2d.b2Log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
                 box2d.b2Log("\n");
                 box2d.b2Log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
@@ -16075,7 +15946,7 @@ var box2d;
         // It may lie, depending on the collideConnected flag.
         b2Body.prototype.ShouldCollide = function (other) {
             // At least one body should be dynamic.
-            if (this.m_type !== b2BodyType.b2_dynamicBody && other.m_type !== b2BodyType.b2_dynamicBody) {
+            if (this.m_type !== 2 /* b2_dynamicBody */ && other.m_type !== 2 /* b2_dynamicBody */) {
                 return false;
             }
             // Does a joint prevent collision?
@@ -16356,128 +16227,6 @@ var box2d;
     var Testbed;
     (function (Testbed) {
         Testbed.DRAW_STRING_NEW_LINE = 25;
-        (function (KeyCode) {
-            KeyCode[KeyCode["WIN_KEY_FF_LINUX"] = 0] = "WIN_KEY_FF_LINUX";
-            KeyCode[KeyCode["MAC_ENTER"] = 3] = "MAC_ENTER";
-            KeyCode[KeyCode["BACKSPACE"] = 8] = "BACKSPACE";
-            KeyCode[KeyCode["TAB"] = 9] = "TAB";
-            KeyCode[KeyCode["NUM_CENTER"] = 12] = "NUM_CENTER";
-            KeyCode[KeyCode["ENTER"] = 13] = "ENTER";
-            KeyCode[KeyCode["SHIFT"] = 16] = "SHIFT";
-            KeyCode[KeyCode["CTRL"] = 17] = "CTRL";
-            KeyCode[KeyCode["ALT"] = 18] = "ALT";
-            KeyCode[KeyCode["PAUSE"] = 19] = "PAUSE";
-            KeyCode[KeyCode["CAPS_LOCK"] = 20] = "CAPS_LOCK";
-            KeyCode[KeyCode["ESC"] = 27] = "ESC";
-            KeyCode[KeyCode["SPACE"] = 32] = "SPACE";
-            KeyCode[KeyCode["PAGE_UP"] = 33] = "PAGE_UP";
-            KeyCode[KeyCode["PAGE_DOWN"] = 34] = "PAGE_DOWN";
-            KeyCode[KeyCode["END"] = 35] = "END";
-            KeyCode[KeyCode["HOME"] = 36] = "HOME";
-            KeyCode[KeyCode["LEFT"] = 37] = "LEFT";
-            KeyCode[KeyCode["UP"] = 38] = "UP";
-            KeyCode[KeyCode["RIGHT"] = 39] = "RIGHT";
-            KeyCode[KeyCode["DOWN"] = 40] = "DOWN";
-            KeyCode[KeyCode["PRINT_SCREEN"] = 44] = "PRINT_SCREEN";
-            KeyCode[KeyCode["INSERT"] = 45] = "INSERT";
-            KeyCode[KeyCode["DELETE"] = 46] = "DELETE";
-            KeyCode[KeyCode["ZERO"] = 48] = "ZERO";
-            KeyCode[KeyCode["ONE"] = 49] = "ONE";
-            KeyCode[KeyCode["TWO"] = 50] = "TWO";
-            KeyCode[KeyCode["THREE"] = 51] = "THREE";
-            KeyCode[KeyCode["FOUR"] = 52] = "FOUR";
-            KeyCode[KeyCode["FIVE"] = 53] = "FIVE";
-            KeyCode[KeyCode["SIX"] = 54] = "SIX";
-            KeyCode[KeyCode["SEVEN"] = 55] = "SEVEN";
-            KeyCode[KeyCode["EIGHT"] = 56] = "EIGHT";
-            KeyCode[KeyCode["NINE"] = 57] = "NINE";
-            KeyCode[KeyCode["FF_SEMICOLON"] = 59] = "FF_SEMICOLON";
-            KeyCode[KeyCode["FF_EQUALS"] = 61] = "FF_EQUALS";
-            KeyCode[KeyCode["QUESTION_MARK"] = 63] = "QUESTION_MARK";
-            KeyCode[KeyCode["A"] = 65] = "A";
-            KeyCode[KeyCode["B"] = 66] = "B";
-            KeyCode[KeyCode["C"] = 67] = "C";
-            KeyCode[KeyCode["D"] = 68] = "D";
-            KeyCode[KeyCode["E"] = 69] = "E";
-            KeyCode[KeyCode["F"] = 70] = "F";
-            KeyCode[KeyCode["G"] = 71] = "G";
-            KeyCode[KeyCode["H"] = 72] = "H";
-            KeyCode[KeyCode["I"] = 73] = "I";
-            KeyCode[KeyCode["J"] = 74] = "J";
-            KeyCode[KeyCode["K"] = 75] = "K";
-            KeyCode[KeyCode["L"] = 76] = "L";
-            KeyCode[KeyCode["M"] = 77] = "M";
-            KeyCode[KeyCode["N"] = 78] = "N";
-            KeyCode[KeyCode["O"] = 79] = "O";
-            KeyCode[KeyCode["P"] = 80] = "P";
-            KeyCode[KeyCode["Q"] = 81] = "Q";
-            KeyCode[KeyCode["R"] = 82] = "R";
-            KeyCode[KeyCode["S"] = 83] = "S";
-            KeyCode[KeyCode["T"] = 84] = "T";
-            KeyCode[KeyCode["U"] = 85] = "U";
-            KeyCode[KeyCode["V"] = 86] = "V";
-            KeyCode[KeyCode["W"] = 87] = "W";
-            KeyCode[KeyCode["X"] = 88] = "X";
-            KeyCode[KeyCode["Y"] = 89] = "Y";
-            KeyCode[KeyCode["Z"] = 90] = "Z";
-            KeyCode[KeyCode["META"] = 91] = "META";
-            KeyCode[KeyCode["WIN_KEY_RIGHT"] = 92] = "WIN_KEY_RIGHT";
-            KeyCode[KeyCode["CONTEXT_MENU"] = 93] = "CONTEXT_MENU";
-            KeyCode[KeyCode["NUM_ZERO"] = 96] = "NUM_ZERO";
-            KeyCode[KeyCode["NUM_ONE"] = 97] = "NUM_ONE";
-            KeyCode[KeyCode["NUM_TWO"] = 98] = "NUM_TWO";
-            KeyCode[KeyCode["NUM_THREE"] = 99] = "NUM_THREE";
-            KeyCode[KeyCode["NUM_FOUR"] = 100] = "NUM_FOUR";
-            KeyCode[KeyCode["NUM_FIVE"] = 101] = "NUM_FIVE";
-            KeyCode[KeyCode["NUM_SIX"] = 102] = "NUM_SIX";
-            KeyCode[KeyCode["NUM_SEVEN"] = 103] = "NUM_SEVEN";
-            KeyCode[KeyCode["NUM_EIGHT"] = 104] = "NUM_EIGHT";
-            KeyCode[KeyCode["NUM_NINE"] = 105] = "NUM_NINE";
-            KeyCode[KeyCode["NUM_MULTIPLY"] = 106] = "NUM_MULTIPLY";
-            KeyCode[KeyCode["NUM_PLUS"] = 107] = "NUM_PLUS";
-            KeyCode[KeyCode["NUM_MINUS"] = 109] = "NUM_MINUS";
-            KeyCode[KeyCode["NUM_PERIOD"] = 110] = "NUM_PERIOD";
-            KeyCode[KeyCode["NUM_DIVISION"] = 111] = "NUM_DIVISION";
-            KeyCode[KeyCode["F1"] = 112] = "F1";
-            KeyCode[KeyCode["F2"] = 113] = "F2";
-            KeyCode[KeyCode["F3"] = 114] = "F3";
-            KeyCode[KeyCode["F4"] = 115] = "F4";
-            KeyCode[KeyCode["F5"] = 116] = "F5";
-            KeyCode[KeyCode["F6"] = 117] = "F6";
-            KeyCode[KeyCode["F7"] = 118] = "F7";
-            KeyCode[KeyCode["F8"] = 119] = "F8";
-            KeyCode[KeyCode["F9"] = 120] = "F9";
-            KeyCode[KeyCode["F10"] = 121] = "F10";
-            KeyCode[KeyCode["F11"] = 122] = "F11";
-            KeyCode[KeyCode["F12"] = 123] = "F12";
-            KeyCode[KeyCode["NUMLOCK"] = 144] = "NUMLOCK";
-            KeyCode[KeyCode["SCROLL_LOCK"] = 145] = "SCROLL_LOCK";
-            // OS-specific media keys like volume controls and browser controls.
-            KeyCode[KeyCode["FIRST_MEDIA_KEY"] = 166] = "FIRST_MEDIA_KEY";
-            KeyCode[KeyCode["LAST_MEDIA_KEY"] = 183] = "LAST_MEDIA_KEY";
-            KeyCode[KeyCode["SEMICOLON"] = 186] = "SEMICOLON";
-            KeyCode[KeyCode["DASH"] = 189] = "DASH";
-            KeyCode[KeyCode["EQUALS"] = 187] = "EQUALS";
-            KeyCode[KeyCode["COMMA"] = 188] = "COMMA";
-            KeyCode[KeyCode["PERIOD"] = 190] = "PERIOD";
-            KeyCode[KeyCode["SLASH"] = 191] = "SLASH";
-            KeyCode[KeyCode["APOSTROPHE"] = 192] = "APOSTROPHE";
-            KeyCode[KeyCode["TILDE"] = 192] = "TILDE";
-            KeyCode[KeyCode["SINGLE_QUOTE"] = 222] = "SINGLE_QUOTE";
-            KeyCode[KeyCode["OPEN_SQUARE_BRACKET"] = 219] = "OPEN_SQUARE_BRACKET";
-            KeyCode[KeyCode["BACKSLASH"] = 220] = "BACKSLASH";
-            KeyCode[KeyCode["CLOSE_SQUARE_BRACKET"] = 221] = "CLOSE_SQUARE_BRACKET";
-            KeyCode[KeyCode["WIN_KEY"] = 224] = "WIN_KEY";
-            KeyCode[KeyCode["MAC_FF_META"] = 224] = "MAC_FF_META";
-            KeyCode[KeyCode["WIN_IME"] = 229] = "WIN_IME";
-            // We've seen users whose machines fire this keycode at regular one
-            // second intervals. The common thread among these users is that
-            // they're all using Dell Inspiron laptops, so we suspect that this
-            // indicates a hardware/bios problem.
-            // http://en.community.dell.com/support-forums/laptop/f/3518/p/19285957/19523128.aspx
-            KeyCode[KeyCode["PHANTOM"] = 255] = "PHANTOM";
-        })(Testbed.KeyCode || (Testbed.KeyCode = {}));
-        var KeyCode = Testbed.KeyCode;
         var Settings = (function () {
             function Settings() {
                 this.canvasScale = 10;
@@ -16543,7 +16292,7 @@ var box2d;
                 this.fixtureB = null;
                 this.normal = new box2d.b2Vec2();
                 this.position = new box2d.b2Vec2();
-                this.state = box2d.b2PointState.b2_nullState;
+                this.state = 0 /* b2_nullState */;
                 this.normalImpulse = 0;
                 this.tangentImpulse = 0;
             }
@@ -16646,7 +16395,7 @@ var box2d;
                 // Query the world for overlapping shapes.
                 var callback = function (fixture) {
                     var body = fixture.GetBody();
-                    if (body.GetType() === box2d.b2BodyType.b2_dynamicBody) {
+                    if (body.GetType() === 2 /* b2_dynamicBody */) {
                         var inside = fixture.TestPoint(that.m_mouseWorld);
                         if (inside) {
                             hit_fixture = fixture;
@@ -16716,7 +16465,7 @@ var box2d;
                     this.m_bomb = null;
                 }
                 var bd = new box2d.b2BodyDef();
-                bd.type = box2d.b2BodyType.b2_dynamicBody;
+                bd.type = 2 /* b2_dynamicBody */;
                 bd.position.Copy(position);
                 bd.bullet = true;
                 this.m_bomb = this.m_world.CreateBody(bd);
@@ -16746,21 +16495,21 @@ var box2d;
                     this.m_debugDraw.DrawString(5, this.m_textLine, "****PAUSED****");
                     this.m_textLine += Testbed.DRAW_STRING_NEW_LINE;
                 }
-                var flags = box2d.b2DrawFlags.e_none;
+                var flags = 0 /* e_none */;
                 if (settings.drawShapes) {
-                    flags |= box2d.b2DrawFlags.e_shapeBit;
+                    flags |= 1 /* e_shapeBit */;
                 }
                 if (settings.drawJoints) {
-                    flags |= box2d.b2DrawFlags.e_jointBit;
+                    flags |= 2 /* e_jointBit */;
                 }
                 if (settings.drawAABBs) {
-                    flags |= box2d.b2DrawFlags.e_aabbBit;
+                    flags |= 4 /* e_aabbBit */;
                 }
                 if (settings.drawCOMs) {
-                    flags |= box2d.b2DrawFlags.e_centerOfMassBit;
+                    flags |= 16 /* e_centerOfMassBit */;
                 }
                 if (settings.drawControllers) {
-                    flags |= box2d.b2DrawFlags.e_controllerBit;
+                    flags |= 32 /* e_controllerBit */;
                 }
                 this.m_debugDraw.SetFlags(flags);
                 this.m_world.SetAllowSleeping(settings.enableSleep);
@@ -16857,11 +16606,11 @@ var box2d;
                     var k_axisScale = 0.3;
                     for (var i = 0; i < this.m_pointCount; ++i) {
                         var point = this.m_points[i];
-                        if (point.state === box2d.b2PointState.b2_addState) {
+                        if (point.state === 1 /* b2_addState */) {
                             // Add
                             this.m_debugDraw.DrawPoint(point.position, 10, new box2d.b2Color(0.3, 0.95, 0.3));
                         }
-                        else if (point.state === box2d.b2PointState.b2_persistState) {
+                        else if (point.state === 2 /* b2_persistState */) {
                             // Persist
                             this.m_debugDraw.DrawPoint(point.position, 5, new box2d.b2Color(0.3, 0.3, 0.95));
                         }
@@ -16982,7 +16731,7 @@ var box2d;
                 if (true) {
                     var bd = new box2d.b2BodyDef();
                     bd.position.SetXY(140.0, 1.0);
-                    bd.type = box2d.b2BodyType.b2_dynamicBody;
+                    bd.type = 2 /* b2_dynamicBody */;
                     var body = this.m_world.CreateBody(bd);
                     var box = new box2d.b2PolygonShape();
                     box.SetAsBox(10.0, 0.25);
@@ -17008,7 +16757,7 @@ var box2d;
                     var prevBody = ground;
                     for (var i = 0; i < N; ++i) {
                         var bd = new box2d.b2BodyDef();
-                        bd.type = box2d.b2BodyType.b2_dynamicBody;
+                        bd.type = 2 /* b2_dynamicBody */;
                         bd.position.SetXY(161.0 + 2.0 * i, -0.125);
                         var body = this.m_world.CreateBody(bd);
                         body.CreateFixture(fd);
@@ -17027,7 +16776,7 @@ var box2d;
                     box.SetAsBox(0.5, 0.5);
                     var body = null;
                     var bd = new box2d.b2BodyDef();
-                    bd.type = box2d.b2BodyType.b2_dynamicBody;
+                    bd.type = 2 /* b2_dynamicBody */;
                     bd.position.SetXY(230.0, 0.5);
                     body = this.m_world.CreateBody(bd);
                     body.CreateFixture2(box, 0.5);
@@ -17058,7 +16807,7 @@ var box2d;
                     var circle = new box2d.b2CircleShape();
                     circle.m_radius = 0.4;
                     var bd = new box2d.b2BodyDef();
-                    bd.type = box2d.b2BodyType.b2_dynamicBody;
+                    bd.type = 2 /* b2_dynamicBody */;
                     bd.position.SetXY(0.0, 1.0);
                     this.m_car = this.m_world.CreateBody(bd);
                     this.m_car.CreateFixture2(chassis, 1.0);
@@ -17092,21 +16841,21 @@ var box2d;
             }
             Car.prototype.Keyboard = function (key) {
                 switch (key) {
-                    case Testbed.KeyCode.A:
+                    case 65 /* A */:
                         this.m_spring1.SetMotorSpeed(this.m_speed);
                         break;
-                    case Testbed.KeyCode.S:
+                    case 83 /* S */:
                         this.m_spring1.SetMotorSpeed(0.0);
                         break;
-                    case Testbed.KeyCode.D:
+                    case 68 /* D */:
                         this.m_spring1.SetMotorSpeed(-this.m_speed);
                         break;
-                    case Testbed.KeyCode.Q:
+                    case 81 /* Q */:
                         this.m_hz = box2d.b2Max(0.0, this.m_hz - 1.0);
                         this.m_spring1.SetSpringFrequencyHz(this.m_hz);
                         this.m_spring2.SetSpringFrequencyHz(this.m_hz);
                         break;
-                    case Testbed.KeyCode.E:
+                    case 69 /* E */:
                         this.m_hz += 1.0;
                         this.m_spring1.SetSpringFrequencyHz(this.m_hz);
                         this.m_spring2.SetSpringFrequencyHz(this.m_hz);
@@ -17170,7 +16919,7 @@ var box2d;
                     circle_shape.m_radius = 1.0;
                     for (var i = 0; i < SphereStack.e_count; ++i) {
                         var bd = new box2d.b2BodyDef();
-                        bd.type = box2d.b2BodyType.b2_dynamicBody;
+                        bd.type = 2 /* b2_dynamicBody */;
                         bd.position.SetXY(0.0, 4.0 + 3.0 * i);
                         this.m_bodies[i] = this.m_world.CreateBody(bd);
                         this.m_bodies[i].CreateFixture2(circle_shape, 1.0);
@@ -17681,13 +17430,13 @@ var box2d;
             };
             Main.prototype.HandleKeyDown = function (e) {
                 switch (e.keyCode) {
-                    case Testbed.KeyCode.CTRL:
+                    case 17 /* CTRL */:
                         this.m_ctrl = 1;
                         break;
-                    case Testbed.KeyCode.SHIFT:
+                    case 16 /* SHIFT */:
                         this.m_shift = 1;
                         break;
-                    case Testbed.KeyCode.LEFT:
+                    case 37 /* LEFT */:
                         if (this.m_ctrl) {
                             if (this.m_test) {
                                 this.m_test.ShiftOrigin(new box2d.b2Vec2(2, 0));
@@ -17697,7 +17446,7 @@ var box2d;
                             this.MoveCamera(new box2d.b2Vec2(-0.5, 0));
                         }
                         break;
-                    case Testbed.KeyCode.RIGHT:
+                    case 39 /* RIGHT */:
                         if (this.m_ctrl) {
                             if (this.m_test) {
                                 this.m_test.ShiftOrigin(new box2d.b2Vec2(-2, 0));
@@ -17707,7 +17456,7 @@ var box2d;
                             this.MoveCamera(new box2d.b2Vec2(0.5, 0));
                         }
                         break;
-                    case Testbed.KeyCode.DOWN:
+                    case 40 /* DOWN */:
                         if (this.m_ctrl) {
                             if (this.m_test) {
                                 this.m_test.ShiftOrigin(new box2d.b2Vec2(0, 2));
@@ -17717,7 +17466,7 @@ var box2d;
                             this.MoveCamera(new box2d.b2Vec2(0, -0.5));
                         }
                         break;
-                    case Testbed.KeyCode.UP:
+                    case 38 /* UP */:
                         if (this.m_ctrl) {
                             if (this.m_test) {
                                 this.m_test.ShiftOrigin(new box2d.b2Vec2(0, -2));
@@ -17727,39 +17476,39 @@ var box2d;
                             this.MoveCamera(new box2d.b2Vec2(0, 0.5));
                         }
                         break;
-                    case Testbed.KeyCode.PAGE_DOWN:
+                    case 34 /* PAGE_DOWN */:
                         this.RollCamera(box2d.b2DegToRad(-1));
                         break;
-                    case Testbed.KeyCode.PAGE_UP:
+                    case 33 /* PAGE_UP */:
                         this.RollCamera(box2d.b2DegToRad(1));
                         break;
-                    case Testbed.KeyCode.Z:
+                    case 90 /* Z */:
                         this.ZoomCamera(1.1);
                         break;
-                    case Testbed.KeyCode.X:
+                    case 88 /* X */:
                         this.ZoomCamera(1 / 1.1);
                         break;
-                    case Testbed.KeyCode.HOME:
+                    case 36 /* HOME */:
                         this.HomeCamera();
                         break;
-                    case Testbed.KeyCode.R:
+                    case 82 /* R */:
                         this.LoadTest();
                         break;
-                    case Testbed.KeyCode.SPACE:
+                    case 32 /* SPACE */:
                         if (this.m_test) {
                             this.m_test.LaunchBomb();
                         }
                         break;
-                    case Testbed.KeyCode.P:
+                    case 80 /* P */:
                         this.Pause();
                         break;
-                    case Testbed.KeyCode.PERIOD:
+                    case 190 /* PERIOD */:
                         this.SingleStep();
                         break;
-                    case Testbed.KeyCode.OPEN_SQUARE_BRACKET:
+                    case 219 /* OPEN_SQUARE_BRACKET */:
                         this.DecrementTest();
                         break;
-                    case Testbed.KeyCode.CLOSE_SQUARE_BRACKET:
+                    case 221 /* CLOSE_SQUARE_BRACKET */:
                         this.IncrementTest();
                         break;
                     default:
@@ -17772,10 +17521,10 @@ var box2d;
             };
             Main.prototype.HandleKeyUp = function (e) {
                 switch (e.keyCode) {
-                    case Testbed.KeyCode.CTRL:
+                    case 17 /* CTRL */:
                         this.m_ctrl = 0;
                         break;
-                    case Testbed.KeyCode.SHIFT:
+                    case 16 /* SHIFT */:
                         this.m_shift = 0;
                         break;
                     default:
