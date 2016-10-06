@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
+/// <reference path="./b2Shape.ts"/>
 
 namespace box2d {
 

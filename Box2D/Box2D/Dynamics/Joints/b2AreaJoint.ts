@@ -1,7 +1,7 @@
-// <reference path="../../../Box2D/Common/b2Settings.ts"/>
-// <reference path="../../../Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Dynamics/Joints/b2DistanceJoint.ts"/>
+// <reference path="../../Common/b2Settings.ts"/>
+// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="./b2DistanceJoint.ts"/>
 
 namespace box2d {
 

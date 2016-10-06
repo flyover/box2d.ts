@@ -1,6 +1,6 @@
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="./Shapes/b2CircleShape.ts"/>
+/// <reference path="./Shapes/b2PolygonShape.ts"/>
 
 namespace box2d {
 

@@ -16,30 +16,30 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2StackAllocator.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2ContactManager.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Island.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2JointFactory.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2BroadPhase.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Draw.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Timer.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="../Common/b2BlockAllocator.ts"/>
+/// <reference path="../Common/b2StackAllocator.ts"/>
+/// <reference path="./b2ContactManager.ts"/>
+/// <reference path="./b2WorldCallbacks.ts"/>
+/// <reference path="./b2TimeStep.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2Fixture.ts"/>
+/// <reference path="./b2Island.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
+/// <reference path="./Joints/b2JointFactory.ts"/>
+/// <reference path="./Joints/b2PulleyJoint.ts"/>
+/// <reference path="./Contacts/b2Contact.ts"/>
+/// <reference path="./Contacts/b2ContactSolver.ts"/>
+/// <reference path="../Collision/b2Collision.ts"/>
+/// <reference path="../Collision/b2BroadPhase.ts"/>
+/// <reference path="../Collision/Shapes/b2CircleShape.ts"/>
+/// <reference path="../Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="../Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="../Collision/b2TimeOfImpact.ts"/>
+/// <reference path="../Common/b2Draw.ts"/>
+/// <reference path="../Common/b2Timer.ts"/>
 
 /// <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
 

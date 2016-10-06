@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
+/// <reference path="./b2Fixture.ts"/>
 
 namespace box2d {
 

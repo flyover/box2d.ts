@@ -1,20 +1,20 @@
-// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2DistanceJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2MouseJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2GearJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2WeldJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2FrictionJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2RopeJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2MotorJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2AreaJoint.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
+// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="./b2DistanceJoint.ts"/>
+/// <reference path="./b2WheelJoint.ts"/>
+/// <reference path="./b2MouseJoint.ts"/>
+/// <reference path="./b2RevoluteJoint.ts"/>
+/// <reference path="./b2PrismaticJoint.ts"/>
+/// <reference path="./b2PulleyJoint.ts"/>
+/// <reference path="./b2GearJoint.ts"/>
+/// <reference path="./b2WeldJoint.ts"/>
+/// <reference path="./b2FrictionJoint.ts"/>
+/// <reference path="./b2RopeJoint.ts"/>
+/// <reference path="./b2MotorJoint.ts"/>
+/// <reference path="./b2AreaJoint.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2World.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
 
 namespace box2d {
 

@@ -16,16 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
+/// <reference path="../../Common/b2Settings.ts"/>
+/// <reference path="../../Common/b2Math.ts"/>
+// <reference path="../../Collision/b2Collision.ts"/>
+// <reference path="../../Collision/Shapes/b2Shape.ts"/>
+/// <reference path="../b2Fixture.ts"/>
+// <reference path="./b2ContactSolver.ts"/>
+/// <reference path="../../Collision/b2TimeOfImpact.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+/// <reference path="../b2Body.ts"/>
+// <reference path="../b2World.ts"/>
 
 namespace box2d {
 

@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+// <reference path="./Shapes/b2CircleShape.ts"/>
+// <reference path="./Shapes/b2EdgeShape.ts"/>
+// <reference path="./Shapes/b2ChainShape.ts"/>
+// <reference path="./Shapes/b2PolygonShape.ts"/>
 
 namespace box2d {
 

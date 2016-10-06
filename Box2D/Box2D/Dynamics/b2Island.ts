@@ -16,19 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Distance.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2StackAllocator.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Timer.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2TimeStep.ts"/>
+/// <reference path="../Collision/b2Distance.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2Fixture.ts"/>
+/// <reference path="./b2World.ts"/>
+/// <reference path="./Contacts/b2Contact.ts"/>
+/// <reference path="./Contacts/b2ContactSolver.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
+/// <reference path="../Common/b2StackAllocator.ts"/>
+/// <reference path="../Common/b2Timer.ts"/>
 
 namespace box2d {
 

@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Testbed/Framework/Test.ts"/>
+/// <reference path="../Framework/Test.ts"/>
 
 // goog.require('box2d.Testbed.AddPair');
 // goog.require('box2d.Testbed.ApplyForce');
@@ -25,7 +25,7 @@
 // goog.require('box2d.Testbed.Bridge');
 // goog.require('box2d.Testbed.BulletTest');
 // goog.require('box2d.Testbed.Cantilever');
-/// <reference path="../../../Box2D/Testbed/Tests/Car.ts"/>
+/// <reference path="./Car.ts"/>
 // goog.require('box2d.Testbed.ContinuousTest');
 // goog.require('box2d.Testbed.Chain');
 // goog.require('box2d.Testbed.CharacterCollision');
@@ -59,7 +59,7 @@
 // goog.require('box2d.Testbed.SensorTest');
 // goog.require('box2d.Testbed.ShapeEditing');
 // goog.require('box2d.Testbed.SliderCrank');
-/// <reference path="../../../Box2D/Testbed/Tests/SphereStack.ts"/>
+/// <reference path="./SphereStack.ts"/>
 // goog.require('box2d.Testbed.TheoJansen');
 // goog.require('box2d.Testbed.Tiles');
 // goog.require('box2d.Testbed.TimeOfImpact');

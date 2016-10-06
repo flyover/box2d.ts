@@ -1,6 +1,6 @@
-/// <reference path="../../../Box2D/Testbed/Framework/Render.ts"/>
-/// <reference path="../../../Box2D/Testbed/Framework/Test.ts"/>
-/// <reference path="../../../Box2D/Testbed/Tests/TestEntries.ts"/>
+/// <reference path="./Render.ts"/>
+/// <reference path="./Test.ts"/>
+/// <reference path="../Tests/TestEntries.ts"/>
 
 namespace box2d.Testbed {
 

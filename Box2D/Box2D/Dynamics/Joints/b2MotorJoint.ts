@@ -1,6 +1,6 @@
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 
 namespace box2d {
 

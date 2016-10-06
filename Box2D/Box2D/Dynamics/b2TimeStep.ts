@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
 
 namespace box2d {
 

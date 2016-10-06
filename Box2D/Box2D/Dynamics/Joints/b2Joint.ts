@@ -16,10 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
+/// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="../b2Body.ts"/>
+// <reference path="../b2World.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
 
 namespace box2d {
 

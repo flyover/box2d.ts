@@ -16,10 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2DynamicTree.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="./b2DynamicTree.ts"/>
 
 namespace box2d {
 

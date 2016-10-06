@@ -16,9 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Box2D/Testbed/Framework/Main.ts"/>
+/// <reference path="./Framework/Main.ts"/>
 
 namespace box2d.Testbed {
 
 } // namespace box2d.Testbed
-
