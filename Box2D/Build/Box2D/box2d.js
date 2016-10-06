@@ -182,7 +182,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
+/// <reference path="./b2Settings.ts"/>
 var box2d;
 (function (box2d) {
     box2d.b2_pi_over_180 = box2d.b2_pi / 180;
@@ -1188,7 +1188,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
+/// <reference path="./b2Math.ts"/>
 var box2d;
 (function (box2d) {
     /// Color for debug drawing. Each value has the range [0,1].
@@ -1292,7 +1292,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
+/// <reference path="./b2Settings.ts"/>
 var box2d;
 (function (box2d) {
     /// Timer for profiling. This has platform specific code and may
@@ -1372,7 +1372,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
+/// <reference path="./b2Settings.ts"/>
 var box2d;
 (function (box2d) {
     /// This is a growable LIFO stack with an initial capacity of N.
@@ -1424,12 +1424,12 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+// <reference path="./Shapes/b2CircleShape.ts"/>
+// <reference path="./Shapes/b2EdgeShape.ts"/>
+// <reference path="./Shapes/b2ChainShape.ts"/>
+// <reference path="./Shapes/b2PolygonShape.ts"/>
 var box2d;
 (function (box2d) {
     /// A distance proxy is used by the GJK algorithm.
@@ -2044,9 +2044,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Distance.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="./b2Distance.ts"/>
 /// @file
 /// Structures and functions used for computing contact points, distance
 /// queries, and TOI queries.
@@ -2641,9 +2641,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2Collision.ts"/>
+/// <reference path="../../Common/b2Settings.ts"/>
+/// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="../b2Collision.ts"/>
 var box2d;
 (function (box2d) {
     /// This holds the mass data computed for a shape.
@@ -2777,7 +2777,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
+/// <reference path="./b2Shape.ts"/>
 var box2d;
 (function (box2d) {
     /// A circle shape.
@@ -2912,7 +2912,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
+/// <reference path="./b2Shape.ts"/>
 var box2d;
 (function (box2d) {
     /// A line segment (edge) shape. These can be connected in chains or loops
@@ -3072,8 +3072,8 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="./b2Shape.ts"/>
+/// <reference path="./b2EdgeShape.ts"/>
 var box2d;
 (function (box2d) {
     /// A chain shape is a free form sequence of line segments.
@@ -3304,7 +3304,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
+/// <reference path="./b2Shape.ts"/>
 var box2d;
 (function (box2d) {
     /// A convex polygon. It is assumed that the interior of the polygon is to
@@ -3812,10 +3812,10 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2GrowableStack.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="../Common/b2GrowableStack.ts"/>
 var box2d;
 (function (box2d) {
     /// A node in the dynamic tree. The client does not interact with this directly.
@@ -4554,10 +4554,10 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2DynamicTree.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="./b2DynamicTree.ts"/>
 var box2d;
 (function (box2d) {
     var b2Pair = (function () {
@@ -4768,12 +4768,12 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Distance.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Timer.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="./b2Distance.ts"/>
+// <reference path="./b2Collision.ts"/>
+// <reference path="./Shapes/b2CircleShape.ts"/>
+// <reference path="./Shapes/b2PolygonShape.ts"/>
+/// <reference path="../Common/b2Timer.ts"/>
 var box2d;
 (function (box2d) {
     box2d.b2_toiTime = 0;
@@ -5197,16 +5197,16 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
-// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-// <reference path="../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
-// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2BroadPhase.ts"/>
+/// <reference path="./b2Body.ts"/>
+// <reference path="../Collision/b2Collision.ts"/>
+/// <reference path="../Collision/Shapes/b2Shape.ts"/>
+// <reference path="./Contacts/b2Contact.ts"/>
+// <reference path="./b2World.ts"/>
+// <reference path="../Collision/Shapes/b2CircleShape.ts"/>
+// <reference path="../Collision/Shapes/b2EdgeShape.ts"/>
+// <reference path="../Collision/Shapes/b2PolygonShape.ts"/>
+// <reference path="../Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../Collision/b2BroadPhase.ts"/>
 var box2d;
 (function (box2d) {
     /// This holds contact filtering data.
@@ -5600,7 +5600,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
+/// <reference path="./b2Settings.ts"/>
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
 *
@@ -5618,8 +5618,8 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
+/// <reference path="./b2Settings.ts"/>
+/// <reference path="./b2Math.ts"/>
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
 *
@@ -5637,10 +5637,10 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
+/// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="../b2Body.ts"/>
+// <reference path="../b2World.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
 var box2d;
 (function (box2d) {
     (function (b2JointType) {
@@ -5832,9 +5832,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
+/// <reference path="./b2Fixture.ts"/>
 var box2d;
 (function (box2d) {
     /// Joints and fixtures are destroyed when their associated
@@ -5981,16 +5981,16 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
+/// <reference path="../../Common/b2Settings.ts"/>
+/// <reference path="../../Common/b2Math.ts"/>
+// <reference path="../../Collision/b2Collision.ts"/>
+// <reference path="../../Collision/Shapes/b2Shape.ts"/>
+/// <reference path="../b2Fixture.ts"/>
+// <reference path="./b2ContactSolver.ts"/>
+/// <reference path="../../Collision/b2TimeOfImpact.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+/// <reference path="../b2Body.ts"/>
+// <reference path="../b2World.ts"/>
 var box2d;
 (function (box2d) {
     /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
@@ -6224,9 +6224,9 @@ var box2d;
     }());
     box2d.b2Contact = b2Contact;
 })(box2d || (box2d = {})); // namespace box2d
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="./Shapes/b2CircleShape.ts"/>
+/// <reference path="./Shapes/b2PolygonShape.ts"/>
 var box2d;
 (function (box2d) {
     var b2CollideCircles_s_pA = new box2d.b2Vec2();
@@ -6347,13 +6347,13 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2CollideCircle.ts"/>
+/// <reference path="./b2Contact.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2Fixture.ts"/>
+// <reference path="../b2WorldCallbacks.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+// <reference path="../../Collision/b2TimeOfImpact.ts"/>
+/// <reference path="../../Collision/b2CollideCircle.ts"/>
 var box2d;
 (function (box2d) {
     var b2CircleContact = (function (_super) {
@@ -6401,10 +6401,10 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2CollideCircle.ts"/>
+/// <reference path="./b2Contact.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+// <reference path="../b2Fixture.ts"/>
+/// <reference path="../../Collision/b2CollideCircle.ts"/>
 var box2d;
 (function (box2d) {
     var b2PolygonAndCircleContact = (function (_super) {
@@ -6441,8 +6441,8 @@ var box2d;
     }(box2d.b2Contact));
     box2d.b2PolygonAndCircleContact = b2PolygonAndCircleContact;
 })(box2d || (box2d = {})); // namespace box2d
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="./Shapes/b2PolygonShape.ts"/>
 var box2d;
 (function (box2d) {
     var b2EdgeSeparation_s_normal1World = new box2d.b2Vec2();
@@ -6707,13 +6707,13 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-// <reference path=""../../../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2CollidePolygon.ts"/>
+/// <reference path="./b2Contact.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+// <reference path="../../Collision/b2TimeOfImpact.ts"/>
+// <reference path="../b2Body.ts"/>
+/// <reference path="../b2Fixture.ts"/>
+// <reference path=""../b2WorldCallbacks.ts"/>
+/// <reference path="../../Collision/b2CollidePolygon.ts"/>
 var box2d;
 (function (box2d) {
     var b2PolygonContact = (function (_super) {
@@ -6744,10 +6744,10 @@ var box2d;
     }(box2d.b2Contact));
     box2d.b2PolygonContact = b2PolygonContact;
 })(box2d || (box2d = {})); // namespace box2d
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="./b2Collision.ts"/>
+/// <reference path="./Shapes/b2CircleShape.ts"/>
+/// <reference path="./Shapes/b2EdgeShape.ts"/>
+/// <reference path="./Shapes/b2PolygonShape.ts"/>
 var box2d;
 (function (box2d) {
     var b2CollideEdgeAndCircle_s_Q = new box2d.b2Vec2();
@@ -7316,10 +7316,10 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2CollideEdge.ts"/>
+/// <reference path="./b2Contact.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+// <reference path="../b2Fixture.ts"/>
+/// <reference path="../../Collision/b2CollideEdge.ts"/>
 var box2d;
 (function (box2d) {
     var b2EdgeAndCircleContact = (function (_super) {
@@ -7373,9 +7373,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
+/// <reference path="./b2Contact.ts"/>
+/// <reference path="../../Common/b2BlockAllocator.ts"/>
+/// <reference path="../b2Fixture.ts"/>
 var box2d;
 (function (box2d) {
     var b2EdgeAndPolygonContact = (function (_super) {
@@ -7429,11 +7429,11 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="./b2Contact.ts"/>
+/// <reference path="../../Common/b2BlockAllocator.ts"/>
+/// <reference path="../b2Fixture.ts"/>
+/// <reference path="../../Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../../Collision/Shapes/b2EdgeShape.ts"/>
 var box2d;
 (function (box2d) {
     var b2ChainAndCircleContact = (function (_super) {
@@ -7491,11 +7491,11 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="./b2Contact.ts"/>
+/// <reference path="../../Common/b2BlockAllocator.ts"/>
+/// <reference path="../b2Fixture.ts"/>
+/// <reference path="../../Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../../Collision/Shapes/b2EdgeShape.ts"/>
 var box2d;
 (function (box2d) {
     var b2ChainAndPolygonContact = (function (_super) {
@@ -7536,25 +7536,25 @@ var box2d;
     }(box2d.b2Contact));
     box2d.b2ChainAndPolygonContact = b2ChainAndPolygonContact;
 })(box2d || (box2d = {})); // namespace box2d
-// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2CircleContact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2PolygonContact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2ChainAndCircleContact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-// <reference path="../../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
+// <reference path="../../Common/b2Math.ts"/>
+// <reference path="../../Collision/b2Collision.ts"/>
+// <reference path="../../Collision/Shapes/b2Shape.ts"/>
+// <reference path="../b2Fixture.ts"/>
+/// <reference path="./b2Contact.ts"/>
+/// <reference path="./b2CircleContact.ts"/>
+/// <reference path="./b2PolygonAndCircleContact.ts"/>
+/// <reference path="./b2PolygonContact.ts"/>
+/// <reference path="./b2EdgeAndCircleContact.ts"/>
+/// <reference path="./b2EdgeAndPolygonContact.ts"/>
+/// <reference path="./b2ChainAndCircleContact.ts"/>
+/// <reference path="./b2ChainAndPolygonContact.ts"/>
+// <reference path="./b2ContactSolver.ts"/>
+// <reference path="../../Collision/b2Collision.ts"/>
+// <reference path="../../Collision/b2TimeOfImpact.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2Fixture.ts"/>
+// <reference path="../b2World.ts"/>
 var box2d;
 (function (box2d) {
     var b2ContactRegister = (function () {
@@ -7685,12 +7685,12 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Collision/b2BroadPhase.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2ContactFactory.ts"/>
+/// <reference path="../Collision/b2BroadPhase.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2Fixture.ts"/>
+/// <reference path="./b2WorldCallbacks.ts"/>
+/// <reference path="./Contacts/b2Contact.ts"/>
+/// <reference path="./Contacts/b2ContactFactory.ts"/>
 var box2d;
 (function (box2d) {
     // Delegate of b2World.
@@ -7919,7 +7919,7 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
 var box2d;
 (function (box2d) {
     /// Profiling data. Times are in milliseconds.
@@ -8019,14 +8019,14 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Common/b2StackAllocator.ts"/>
+/// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="../../Collision/b2Collision.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
+/// <reference path="./b2Contact.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2Fixture.ts"/>
+/// <reference path="../b2World.ts"/>
+/// <reference path="../../Common/b2StackAllocator.ts"/>
 var box2d;
 (function (box2d) {
     var b2VelocityConstraintPoint = (function () {
@@ -9110,19 +9110,19 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Distance.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2StackAllocator.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Timer.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2TimeStep.ts"/>
+/// <reference path="../Collision/b2Distance.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2Fixture.ts"/>
+/// <reference path="./b2World.ts"/>
+/// <reference path="./Contacts/b2Contact.ts"/>
+/// <reference path="./Contacts/b2ContactSolver.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
+/// <reference path="../Common/b2StackAllocator.ts"/>
+/// <reference path="../Common/b2Timer.ts"/>
 var box2d;
 (function (box2d) {
     /*
@@ -9627,9 +9627,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Distance joint definition. This requires defining an
@@ -9934,9 +9934,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Wheel joint definition. This requires defining a line of
@@ -10365,9 +10365,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Mouse joint definition. This requires a world target point,
@@ -10599,9 +10599,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Revolute joint definition. This requires defining an
@@ -11083,9 +11083,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Prismatic joint definition. This requires defining a line of
@@ -11719,9 +11719,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     box2d.b2_minPulleyLength = 2;
@@ -12065,11 +12065,11 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="./b2RevoluteJoint.ts"/>
+/// <reference path="./b2PrismaticJoint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Gear joint definition. This definition requires two existing
@@ -12529,9 +12529,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Weld joint definition. You need to specify local anchor points
@@ -12860,9 +12860,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Friction joint definition.
@@ -13108,9 +13108,9 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     /// Rope joint definition. This requires two body anchor points and
@@ -13341,9 +13341,9 @@ var box2d;
     }(box2d.b2Joint));
     box2d.b2RopeJoint = b2RopeJoint;
 })(box2d || (box2d = {})); // namespace box2d
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="../b2Body.ts"/>
+/// <reference path="../b2TimeStep.ts"/>
 var box2d;
 (function (box2d) {
     var b2MotorJointDef = (function (_super) {
@@ -13605,10 +13605,10 @@ var box2d;
     }(box2d.b2Joint));
     box2d.b2MotorJoint = b2MotorJoint;
 })(box2d || (box2d = {})); // namespace box2d
-// <reference path="../../../Box2D/Common/b2Settings.ts"/>
-// <reference path="../../../Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Dynamics/Joints/b2DistanceJoint.ts"/>
+// <reference path="../../Common/b2Settings.ts"/>
+// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="./b2DistanceJoint.ts"/>
 var box2d;
 (function (box2d) {
     var b2AreaJointDef = (function (_super) {
@@ -13798,23 +13798,23 @@ var box2d;
     }(box2d.b2Joint));
     box2d.b2AreaJoint = b2AreaJoint;
 })(box2d || (box2d = {})); // namespace box2d
-// <reference path="../../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2DistanceJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2MouseJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2GearJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2WeldJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2FrictionJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2RopeJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2MotorJoint.ts"/>
-/// <reference path="../../../../Box2D/Box2D/Dynamics/Joints/b2AreaJoint.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-// <reference path="../../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-// <reference path="../../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
+// <reference path="../../Common/b2Math.ts"/>
+/// <reference path="./b2Joint.ts"/>
+/// <reference path="./b2DistanceJoint.ts"/>
+/// <reference path="./b2WheelJoint.ts"/>
+/// <reference path="./b2MouseJoint.ts"/>
+/// <reference path="./b2RevoluteJoint.ts"/>
+/// <reference path="./b2PrismaticJoint.ts"/>
+/// <reference path="./b2PulleyJoint.ts"/>
+/// <reference path="./b2GearJoint.ts"/>
+/// <reference path="./b2WeldJoint.ts"/>
+/// <reference path="./b2FrictionJoint.ts"/>
+/// <reference path="./b2RopeJoint.ts"/>
+/// <reference path="./b2MotorJoint.ts"/>
+/// <reference path="./b2AreaJoint.ts"/>
+// <reference path="../b2Body.ts"/>
+// <reference path="../b2World.ts"/>
+// <reference path="../../Common/b2BlockAllocator.ts"/>
 var box2d;
 (function (box2d) {
     var b2JointFactory = (function () {
@@ -13873,18 +13873,6 @@ var box2d;
     }());
     box2d.b2JointFactory = b2JointFactory;
 })(box2d || (box2d = {})); // namespace box2d
-// b2Controller.ts
-var box2d;
-(function (box2d) {
-    var b2Controller = (function () {
-        function b2Controller() {
-            this.type = "b2Controller";
-            box2d.b2Assert(true);
-        }
-        return b2Controller;
-    }());
-    box2d.b2Controller = b2Controller;
-})(box2d || (box2d = {}));
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
 *
@@ -13902,31 +13890,31 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2BlockAllocator.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2StackAllocator.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2ContactManager.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Island.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2JointFactory.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2ContactSolver.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2Collision.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2BroadPhase.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Draw.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Timer.ts"/>
-/// <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="../Common/b2BlockAllocator.ts"/>
+/// <reference path="../Common/b2StackAllocator.ts"/>
+/// <reference path="./b2ContactManager.ts"/>
+/// <reference path="./b2WorldCallbacks.ts"/>
+/// <reference path="./b2TimeStep.ts"/>
+/// <reference path="./b2Body.ts"/>
+/// <reference path="./b2Fixture.ts"/>
+/// <reference path="./b2Island.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
+/// <reference path="./Joints/b2JointFactory.ts"/>
+/// <reference path="./Joints/b2PulleyJoint.ts"/>
+/// <reference path="./Contacts/b2Contact.ts"/>
+/// <reference path="./Contacts/b2ContactSolver.ts"/>
+/// <reference path="../Collision/b2Collision.ts"/>
+/// <reference path="../Collision/b2BroadPhase.ts"/>
+/// <reference path="../Collision/Shapes/b2CircleShape.ts"/>
+/// <reference path="../Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="../Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="../Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="../Collision/b2TimeOfImpact.ts"/>
+/// <reference path="../Common/b2Draw.ts"/>
+/// <reference path="../Common/b2Timer.ts"/>
+// <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
 var box2d;
 (function (box2d) {
     (function (b2WorldFlag) {
@@ -15169,13 +15157,13 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../../Box2D/Box2D/Common/b2Math.ts"/>
-/// <reference path="../../../Box2D/Box2D/Collision/Shapes/b2Shape.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/b2World.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../../Box2D/Box2D/Dynamics/Joints/b2Joint.ts"/>
+/// <reference path="../Common/b2Settings.ts"/>
+/// <reference path="../Common/b2Math.ts"/>
+/// <reference path="../Collision/Shapes/b2Shape.ts"/>
+/// <reference path="./b2Fixture.ts"/>
+/// <reference path="./b2World.ts"/>
+/// <reference path="./Contacts/b2Contact.ts"/>
+/// <reference path="./Joints/b2Joint.ts"/>
 var box2d;
 (function (box2d) {
     /// The body type.
@@ -16151,35 +16139,34 @@ var box2d;
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-/// <reference path="../../Box2D/Box2D/Common/b2Settings.ts"/>
-/// <reference path="../../Box2D/Box2D/Common/b2Draw.ts"/>
-/// <reference path="../../Box2D/Box2D/Common/b2Timer.ts"/>
-/// <reference path="../../Box2D/Box2D/Common/b2GrowableStack.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2EdgeShape.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/Shapes/b2PolygonShape.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/b2BroadPhase.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/b2Distance.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/b2DynamicTree.ts"/>
-/// <reference path="../../Box2D/Box2D/Collision/b2TimeOfImpact.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/b2Body.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/b2Fixture.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/b2WorldCallbacks.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/b2TimeStep.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/b2World.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Contacts/b2Contact.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2DistanceJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2FrictionJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2GearJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2MotorJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2MouseJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2PulleyJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2RopeJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2WeldJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2WheelJoint.ts"/>
-/// <reference path="../../Box2D/Box2D/Dynamics/Joints/b2AreaJoint.ts"/>
+/// <reference path="./Common/b2Settings.ts"/>
+/// <reference path="./Common/b2Draw.ts"/>
+/// <reference path="./Common/b2Timer.ts"/>
+/// <reference path="./Common/b2GrowableStack.ts"/>
+/// <reference path="./Collision/Shapes/b2CircleShape.ts"/>
+/// <reference path="./Collision/Shapes/b2EdgeShape.ts"/>
+/// <reference path="./Collision/Shapes/b2ChainShape.ts"/>
+/// <reference path="./Collision/Shapes/b2PolygonShape.ts"/>
+/// <reference path="./Collision/b2BroadPhase.ts"/>
+/// <reference path="./Collision/b2Distance.ts"/>
+/// <reference path="./Collision/b2DynamicTree.ts"/>
+/// <reference path="./Collision/b2TimeOfImpact.ts"/>
+/// <reference path="./Dynamics/b2Body.ts"/>
+/// <reference path="./Dynamics/b2Fixture.ts"/>
+/// <reference path="./Dynamics/b2WorldCallbacks.ts"/>
+/// <reference path="./Dynamics/b2TimeStep.ts"/>
+/// <reference path="./Dynamics/b2World.ts"/>
+/// <reference path="./Dynamics/Contacts/b2Contact.ts"/>
+/// <reference path="./Dynamics/Joints/b2DistanceJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2FrictionJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2GearJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2MotorJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2MouseJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2PrismaticJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2PulleyJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2RevoluteJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2RopeJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2WeldJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2WheelJoint.ts"/>
+/// <reference path="./Dynamics/Joints/b2AreaJoint.ts"/>
 //# sourceMappingURL=box2d.js.map
-if (typeof module === 'object' && module.exports) { module.exports = box2d; }

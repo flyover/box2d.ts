@@ -2104,12 +2104,6 @@ declare namespace box2d {
     }
 }
 declare namespace box2d {
-    class b2Controller {
-        type: string;
-        constructor();
-    }
-}
-declare namespace box2d {
     enum b2WorldFlag {
         e_none = 0,
         e_newFixture = 1,
