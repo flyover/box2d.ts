@@ -41,7 +41,7 @@
 /// <reference path="../Common/b2Draw.ts"/>
 /// <reference path="../Common/b2Timer.ts"/>
 
-/// <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
+// <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
 
 namespace box2d {
 
