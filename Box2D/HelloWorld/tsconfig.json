@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "system"
+  },
+  "files": [
+    "HelloWorld.ts"
+  ]
+}

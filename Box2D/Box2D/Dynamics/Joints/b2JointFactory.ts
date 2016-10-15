@@ -1,22 +1,18 @@
-// <reference path="../../Common/b2Math.ts"/>
-/// <reference path="./b2Joint.ts"/>
-/// <reference path="./b2DistanceJoint.ts"/>
-/// <reference path="./b2WheelJoint.ts"/>
-/// <reference path="./b2MouseJoint.ts"/>
-/// <reference path="./b2RevoluteJoint.ts"/>
-/// <reference path="./b2PrismaticJoint.ts"/>
-/// <reference path="./b2PulleyJoint.ts"/>
-/// <reference path="./b2GearJoint.ts"/>
-/// <reference path="./b2WeldJoint.ts"/>
-/// <reference path="./b2FrictionJoint.ts"/>
-/// <reference path="./b2RopeJoint.ts"/>
-/// <reference path="./b2MotorJoint.ts"/>
-/// <reference path="./b2AreaJoint.ts"/>
-// <reference path="../b2Body.ts"/>
-// <reference path="../b2World.ts"/>
-// <reference path="../../Common/b2BlockAllocator.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2Joint, b2JointDef } from "./b2Joint";
+import { b2JointType } from "./b2Joint";
+import { b2AreaJoint, b2AreaJointDef } from "./b2AreaJoint";
+import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
+import { b2FrictionJoint, b2FrictionJointDef } from "./b2FrictionJoint";
+import { b2GearJoint, b2GearJointDef } from "./b2GearJoint";
+import { b2MotorJoint, b2MotorJointDef } from "./b2MotorJoint";
+import { b2MouseJoint, b2MouseJointDef } from "./b2MouseJoint";
+import { b2PrismaticJoint, b2PrismaticJointDef } from "./b2PrismaticJoint";
+import { b2PulleyJoint, b2PulleyJointDef } from "./b2PulleyJoint";
+import { b2RevoluteJoint, b2RevoluteJointDef } from "./b2RevoluteJoint";
+import { b2RopeJoint, b2RopeJointDef } from "./b2RopeJoint";
+import { b2WeldJoint, b2WeldJointDef } from "./b2WeldJoint";
+import { b2WheelJoint, b2WheelJointDef } from "./b2WheelJoint";
 
 export class b2JointFactory {
   public static Create(def: b2JointDef, allocator: any): b2Joint {
@@ -82,5 +78,3 @@ export class b2JointFactory {
   public static Destroy(joint: b2Joint, allocator: any): void {
   }
 }
-
-} // namespace box2d

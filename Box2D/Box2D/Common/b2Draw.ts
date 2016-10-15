@@ -16,9 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Math.ts"/>
+import { b2Clamp, b2Vec2, b2Transform } from "./b2Math";
 
-namespace box2d {
 
 /// Color for debug drawing. Each value has the range [0,1].
 export class b2Color {
@@ -31,15 +30,15 @@ export class b2Color {
   private _b: number = 0x7f;
 
   constructor(rr: number, gg: number, bb: number) {
-    this._r = box2d.b2Clamp(Math.round(rr * 255), 0, 255);
-    this._g = box2d.b2Clamp(Math.round(gg * 255), 0, 255);
-    this._b = box2d.b2Clamp(Math.round(bb * 255), 0, 255);
+    this._r = b2Clamp(Math.round(rr * 255), 0, 255);
+    this._g = b2Clamp(Math.round(gg * 255), 0, 255);
+    this._b = b2Clamp(Math.round(bb * 255), 0, 255);
   }
 
   public SetRGB(rr: number, gg: number, bb: number): b2Color {
-    this._r = box2d.b2Clamp(Math.round(rr * 255), 0, 255);
-    this._g = box2d.b2Clamp(Math.round(gg * 255), 0, 255);
-    this._b = box2d.b2Clamp(Math.round(bb * 255), 0, 255);
+    this._r = b2Clamp(Math.round(rr * 255), 0, 255);
+    this._g = b2Clamp(Math.round(gg * 255), 0, 255);
+    this._b = b2Clamp(Math.round(bb * 255), 0, 255);
     return this;
   }
 
@@ -63,7 +62,7 @@ export const enum b2DrawFlags {
   e_aabbBit = 0x0004, ///< draw axis aligned bounding boxes
   e_pairBit = 0x0008, ///< draw broad-phase pairs
   e_centerOfMassBit = 0x0010, ///< draw center of mass frame
-  e_controllerBit = 0x0020, /// @see box2d.b2Controller list
+  e_controllerBit = 0x0020, /// @see b2Controller list
   e_all = 0x003f
 }
 
@@ -112,5 +111,3 @@ export class b2Draw {
   public DrawTransform(xf: b2Transform): void {
   }
 }
-
-} // namespace box2d

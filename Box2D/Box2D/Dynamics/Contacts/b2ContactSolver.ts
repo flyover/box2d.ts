@@ -16,16 +16,37 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Common/b2Math.ts"/>
-/// <reference path="../../Collision/b2Collision.ts"/>
-/// <reference path="../b2TimeStep.ts"/>
-/// <reference path="./b2Contact.ts"/>
-/// <reference path="../b2Body.ts"/>
-/// <reference path="../b2Fixture.ts"/>
-/// <reference path="../b2World.ts"/>
-/// <reference path="../../Common/b2StackAllocator.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_baumgarte } from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2_maxLinearCorrection } from "../../Common/b2Settings";
+import { b2_maxManifoldPoints } from "../../Common/b2Settings";
+import { b2_toiBaumgarte } from "../../Common/b2Settings";
+import { b2_velocityThreshold } from "../../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../../Common/b2Math";
+import { b2Vec2 } from "../../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../../Common/b2Math";
+import { b2CrossOneV, b2CrossVOne } from "../../Common/b2Math";
+import { b2AddVCrossSV } from "../../Common/b2Math";
+import { b2MidVV, b2ExtVV } from "../../Common/b2Math";
+import { b2Mat22 } from "../../Common/b2Math";
+import { b2MulMV, b2MulTMV } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2Transform } from "../../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../../Common/b2Math";
+import { b2Manifold } from "../../Collision/b2Collision";
+import { b2ManifoldPoint } from "../../Collision/b2Collision";
+import { b2WorldManifold } from "../../Collision/b2Collision";
+import { b2ManifoldType } from "../../Collision/b2Collision";
+import { b2Shape } from "../../Collision/Shapes/b2Shape";
+import { b2Contact } from "./b2Contact";
+import { b2Body, b2BodyDef } from "../b2Body";
+import { b2Fixture, b2FixtureDef } from "../b2Fixture";
+import { b2Position } from "../b2TimeStep";
+import { b2TimeStep } from "../b2TimeStep";
+import { b2Velocity } from "../b2TimeStep";
 
 export class b2VelocityConstraintPoint {
   public rA: b2Vec2 = new b2Vec2();
@@ -1289,5 +1310,3 @@ export class b2ContactSolver {
     return minSeparation >= -1.5 * b2_linearSlop;
   }
 }
-
-} // namespace box2d

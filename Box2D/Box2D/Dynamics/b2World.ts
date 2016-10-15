@@ -16,34 +16,57 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="../Common/b2BlockAllocator.ts"/>
-/// <reference path="../Common/b2StackAllocator.ts"/>
-/// <reference path="./b2ContactManager.ts"/>
-/// <reference path="./b2WorldCallbacks.ts"/>
-/// <reference path="./b2TimeStep.ts"/>
-/// <reference path="./b2Body.ts"/>
-/// <reference path="./b2Fixture.ts"/>
-/// <reference path="./b2Island.ts"/>
-/// <reference path="./Joints/b2Joint.ts"/>
-/// <reference path="./Joints/b2JointFactory.ts"/>
-/// <reference path="./Joints/b2PulleyJoint.ts"/>
-/// <reference path="./Contacts/b2Contact.ts"/>
-/// <reference path="./Contacts/b2ContactSolver.ts"/>
-/// <reference path="../Collision/b2Collision.ts"/>
-/// <reference path="../Collision/b2BroadPhase.ts"/>
-/// <reference path="../Collision/Shapes/b2CircleShape.ts"/>
-/// <reference path="../Collision/Shapes/b2EdgeShape.ts"/>
-/// <reference path="../Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../Collision/Shapes/b2PolygonShape.ts"/>
-/// <reference path="../Collision/b2TimeOfImpact.ts"/>
-/// <reference path="../Common/b2Draw.ts"/>
-/// <reference path="../Common/b2Timer.ts"/>
-
-// <reference path="../../../Contributions/Enhancements/Controllers/b2Controller.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq } from "../Common/b2Settings";
+import { b2_linearSlop } from "../Common/b2Settings";
+import { b2_maxSubSteps } from "../Common/b2Settings";
+import { b2_maxTOIContacts } from "../Common/b2Settings";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2Transform } from "../Common/b2Math";
+import { b2Sweep } from "../Common/b2Math";
+import { b2Timer } from "../Common/b2Timer";
+import { b2Color } from "../Common/b2Draw";
+import { b2Draw } from "../Common/b2Draw";
+import { b2DrawFlags } from "../Common/b2Draw";
+import { b2BroadPhase } from "../Collision/b2BroadPhase";
+import { b2AABB } from "../Collision/b2Collision";
+import { b2RayCastInput } from "../Collision/b2Collision";
+import { b2RayCastOutput } from "../Collision/b2Collision";
+import { b2TestOverlapShape } from "../Collision/b2Collision";
+import { b2TOIInput } from "../Collision/b2TimeOfImpact";
+import { b2TOIOutput } from "../Collision/b2TimeOfImpact";
+import { b2TOIOutputState } from "../Collision/b2TimeOfImpact";
+import { b2TimeOfImpact } from "../Collision/b2TimeOfImpact";
+import { b2Shape } from "../Collision/Shapes/b2Shape";
+import { b2ShapeType } from "../Collision/Shapes/b2Shape";
+import { b2ChainShape } from "../Collision/Shapes/b2ChainShape";
+import { b2CircleShape } from "../Collision/Shapes/b2CircleShape";
+import { b2EdgeShape } from "../Collision/Shapes/b2EdgeShape";
+import { b2PolygonShape } from "../Collision/Shapes/b2PolygonShape";
+import { b2Contact } from "./Contacts/b2Contact";
+import { b2ContactEdge } from "./Contacts/b2Contact";
+import { b2ContactFlag } from "./Contacts/b2Contact";
+import { b2Joint, b2JointDef } from "./Joints/b2Joint";
+import { b2JointEdge } from "./Joints/b2Joint";
+import { b2JointType } from "./Joints/b2Joint";
+import { b2JointFactory } from "./Joints/b2JointFactory";
+import { b2PulleyJoint, b2PulleyJointDef } from "./Joints/b2PulleyJoint";
+import { b2Body, b2BodyDef } from "./b2Body";
+import { b2BodyFlag } from "./b2Body";
+import { b2BodyType } from "./b2Body";
+import { b2ContactManager } from "./b2ContactManager";
+import { b2Fixture, b2FixtureDef } from "./b2Fixture";
+import { b2FixtureProxy } from "./b2Fixture";
+import { b2Island } from "./b2Island";
+import { b2Profile } from "./b2TimeStep";
+import { b2TimeStep } from "./b2TimeStep";
+import { b2ContactFilter } from "./b2WorldCallbacks";
+import { b2ContactListener } from "./b2WorldCallbacks";
+import { b2DestructionListener } from "./b2WorldCallbacks";
+import { b2QueryCallback } from "./b2WorldCallbacks";
+import { b2RayCastCallback } from "./b2WorldCallbacks";
+///import * as b2Controller from "../../../Contributions/Enhancements/Controllers/b2Controller";
 
 export const enum b2WorldFlag {
   e_none = 0,
@@ -1499,5 +1522,3 @@ export class b2World {
 //    return controller;
 //  }
 }
-
-} // namespace box2d

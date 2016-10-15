@@ -16,18 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Common/b2Settings.ts"/>
-/// <reference path="../../Common/b2Math.ts"/>
-// <reference path="../../Collision/b2Collision.ts"/>
-// <reference path="../../Collision/Shapes/b2Shape.ts"/>
-/// <reference path="../b2Fixture.ts"/>
-// <reference path="./b2ContactSolver.ts"/>
-/// <reference path="../../Collision/b2TimeOfImpact.ts"/>
-// <reference path="../../Common/b2BlockAllocator.ts"/>
-/// <reference path="../b2Body.ts"/>
-// <reference path="../b2World.ts"/>
-
-namespace box2d {
+import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2Pow, b2Sq, b2Sqrt, b2InvSqrt } from "../../Common/b2Math";
+import { b2Transform } from "../../Common/b2Math";
+import { b2Sweep } from "../../Common/b2Math";
+import { b2Manifold } from "../../Collision/b2Collision";
+import { b2WorldManifold } from "../../Collision/b2Collision";
+import { b2TestOverlapShape } from "../../Collision/b2Collision";
+import { b2TOIInput } from "../../Collision/b2TimeOfImpact";
+import { b2TOIOutput } from "../../Collision/b2TimeOfImpact";
+import { b2TimeOfImpact } from "../../Collision/b2TimeOfImpact";
+import { b2Body, b2BodyDef } from "../b2Body";
+import { b2Fixture, b2FixtureDef } from "../b2Fixture";
+import { b2ContactListener } from "../b2WorldCallbacks";
 
 /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
 /// For example, anything slides on ice.
@@ -307,5 +308,3 @@ export class b2Contact {
     return output.t;
   }
 }
-
-} // namespace box2d

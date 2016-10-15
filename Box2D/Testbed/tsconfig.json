@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "system"
+  },
+  "files": [
+    "Testbed.ts",
+    "Framework/Main.ts",
+    "Framework/Render.ts",
+    "Framework/Test.ts",
+    "Tests/TestEntries.ts",
+    "Tests/Car.ts",
+    "Tests/SphereStack.ts"
+  ]
+}

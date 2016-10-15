@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Framework/Test.ts"/>
+import * as testbed from "../Testbed";
 
 // goog.require('box2d.Testbed.AddPair');
 // goog.require('box2d.Testbed.ApplyForce');
@@ -25,7 +25,7 @@
 // goog.require('box2d.Testbed.Bridge');
 // goog.require('box2d.Testbed.BulletTest');
 // goog.require('box2d.Testbed.Cantilever');
-/// <reference path="./Car.ts"/>
+import { Car } from "./Car";
 // goog.require('box2d.Testbed.ContinuousTest');
 // goog.require('box2d.Testbed.Chain');
 // goog.require('box2d.Testbed.CharacterCollision');
@@ -59,7 +59,7 @@
 // goog.require('box2d.Testbed.SensorTest');
 // goog.require('box2d.Testbed.ShapeEditing');
 // goog.require('box2d.Testbed.SliderCrank');
-/// <reference path="./SphereStack.ts"/>
+import { SphereStack } from "./SphereStack";
 // goog.require('box2d.Testbed.TheoJansen');
 // goog.require('box2d.Testbed.Tiles');
 // goog.require('box2d.Testbed.TimeOfImpact');
@@ -76,9 +76,7 @@
 // goog.require('box2d.Testbed.TestRagdoll');
 // goog.require('box2d.Testbed.TestStack');
 
-namespace box2d.Testbed {
-
-export function GetTestEntries(entries: TestEntry[]): TestEntry[] {
+export function GetTestEntries(entries: testbed.TestEntry[]): testbed.TestEntry[] {
 //  entries.push(new box2d.Testbed.TestEntry("Continuous Test", box2d.Testbed.ContinuousTest.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Time of Impact", box2d.Testbed.TimeOfImpact.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Motor Joint", box2d.Testbed.MotorJoint.Create));
@@ -97,11 +95,11 @@ export function GetTestEntries(entries: TestEntry[]): TestEntry[] {
 //  entries.push(new box2d.Testbed.TestEntry("Edge Test", box2d.Testbed.EdgeTest.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Body Types", box2d.Testbed.BodyTypes.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Shape Editing", box2d.Testbed.ShapeEditing.Create));
-  entries.push(new box2d.Testbed.TestEntry("Car", box2d.Testbed.Car.Create));
+  entries.push(new testbed.TestEntry("Car", Car.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Apply Force", box2d.Testbed.ApplyForce.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Prismatic", box2d.Testbed.Prismatic.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Vertical Stack", box2d.Testbed.VerticalStack.Create));
-  entries.push(new box2d.Testbed.TestEntry("SphereStack", box2d.Testbed.SphereStack.Create));
+  entries.push(new testbed.TestEntry("SphereStack", SphereStack.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Revolute", box2d.Testbed.Revolute.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Pulleys", box2d.Testbed.Pulleys.Create));
 //  entries.push(new box2d.Testbed.TestEntry("Polygon Shapes", box2d.Testbed.PolyShapes.Create));
@@ -139,5 +137,3 @@ export function GetTestEntries(entries: TestEntry[]): TestEntry[] {
 
   return entries;
 }
-
-} // namespace box2d.Testbed

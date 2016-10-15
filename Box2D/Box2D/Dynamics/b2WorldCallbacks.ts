@@ -16,11 +16,14 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="./Joints/b2Joint.ts"/>
-/// <reference path="./b2Fixture.ts"/>
-
-namespace box2d {
+import { b2_maxManifoldPoints } from "../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2Manifold } from "../Collision/b2Collision";
+import { b2Contact } from "./Contacts/b2Contact";
+import { b2Joint, b2JointDef } from "./Joints/b2Joint";
+import { b2Filter } from "./b2Fixture";
+import { b2Fixture, b2FixtureDef } from "./b2Fixture";
 
 /// Joints and fixtures are destroyed when their associated
 /// body is destroyed. Implement this listener so that you
@@ -139,5 +142,3 @@ export class b2RayCastCallback {
     return fraction;
   }
 }
-
-} // namespace box2d

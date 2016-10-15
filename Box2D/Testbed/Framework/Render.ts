@@ -16,18 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Box2D/Box2D.ts"/>
-
-namespace box2d.Testbed {
+import * as box2d from "../../Box2D/Box2D";
+import * as testbed from "../Testbed";
 
 // This class implements debug drawing callbacks that are invoked
 // inside b2World::Step.
-export class DebugDraw extends b2Draw {
+export class DebugDraw extends box2d.b2Draw {
   public m_canvas: HTMLCanvasElement = null;
   public m_ctx: CanvasRenderingContext2D = null;
-  public m_settings: Settings = null;
+  public m_settings: testbed.Settings = null;
 
-  constructor(canvas: HTMLCanvasElement, settings: Settings) {
+  constructor(canvas: HTMLCanvasElement, settings: testbed.Settings) {
     super(); // base class constructor
 
     this.m_canvas = canvas;
@@ -35,19 +34,19 @@ export class DebugDraw extends b2Draw {
     this.m_settings = settings;
   }
 
-  public PushTransform(xf: b2Transform): void {
+  public PushTransform(xf: box2d.b2Transform): void {
     const ctx = this.m_ctx;
     ctx.save();
     ctx.translate(xf.p.x, xf.p.y);
     ctx.rotate(xf.q.GetAngleRadians());
   }
 
-  public PopTransform(xf: b2Transform): void {
+  public PopTransform(xf: box2d.b2Transform): void {
     const ctx = this.m_ctx;
     ctx.restore();
   }
 
-  public DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
+  public DrawPolygon(vertices: box2d.b2Vec2[], vertexCount: number, color: box2d.b2Color): void {
     if (!vertexCount) return;
 
     const ctx = this.m_ctx;
@@ -62,7 +61,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
+  public DrawSolidPolygon(vertices: box2d.b2Vec2[], vertexCount: number, color: box2d.b2Color): void {
     if (!vertexCount) return;
 
     const ctx = this.m_ctx;
@@ -79,18 +78,18 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {
+  public DrawCircle(center: box2d.b2Vec2, radius: number, color: box2d.b2Color): void {
     if (!radius) return;
 
     const ctx = this.m_ctx;
 
     ctx.beginPath();
-    ctx.arc(center.x, center.y, radius, 0, b2_pi * 2, true);
+    ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true);
     ctx.strokeStyle = color.MakeStyleString(1);
     ctx.stroke();
   }
 
-  public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {
+  public DrawSolidCircle(center: box2d.b2Vec2, radius: number, axis: box2d.b2Vec2, color: box2d.b2Color): void {
     if (!radius) return;
 
     const ctx = this.m_ctx;
@@ -98,7 +97,7 @@ export class DebugDraw extends b2Draw {
     const cx = center.x;
     const cy = center.y;
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, b2_pi * 2, true);
+    ctx.arc(cx, cy, radius, 0, box2d.b2_pi * 2, true);
     ctx.moveTo(cx, cy);
     ctx.lineTo((cx + axis.x * radius), (cy + axis.y * radius));
     ctx.fillStyle = color.MakeStyleString(0.5);
@@ -107,7 +106,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {
+  public DrawSegment(p1: box2d.b2Vec2, p2: box2d.b2Vec2, color: box2d.b2Color): void {
     const ctx = this.m_ctx;
 
     ctx.beginPath();
@@ -117,7 +116,7 @@ export class DebugDraw extends b2Draw {
     ctx.stroke();
   }
 
-  public DrawTransform(xf: b2Transform): void {
+  public DrawTransform(xf: box2d.b2Transform): void {
     const ctx = this.m_ctx;
 
     this.PushTransform(xf);
@@ -125,19 +124,19 @@ export class DebugDraw extends b2Draw {
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(1, 0);
-    ctx.strokeStyle = b2Color.RED.MakeStyleString(1);
+    ctx.strokeStyle = box2d.b2Color.RED.MakeStyleString(1);
     ctx.stroke();
 
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(0, 1);
-    ctx.strokeStyle = b2Color.GREEN.MakeStyleString(1);
+    ctx.strokeStyle = box2d.b2Color.GREEN.MakeStyleString(1);
     ctx.stroke();
 
     this.PopTransform(xf);
   }
 
-  public DrawPoint(p: b2Vec2, size: number, color: b2Color): void {
+  public DrawPoint(p: box2d.b2Vec2, size: number, color: box2d.b2Color): void {
     const ctx = this.m_ctx;
 
     ctx.fillStyle = color.MakeStyleString();
@@ -147,7 +146,7 @@ export class DebugDraw extends b2Draw {
     ctx.fillRect(p.x - hsize, p.y - hsize, size, size);
   }
 
-  private static DrawString_s_color: b2Color = new b2Color(0.9, 0.6, 0.6);
+  private static DrawString_s_color: box2d.b2Color = new box2d.b2Color(0.9, 0.6, 0.6);
   public DrawString(x: number, y: number, message: string): void {
     const ctx = this.m_ctx;
 
@@ -160,26 +159,26 @@ export class DebugDraw extends b2Draw {
     ctx.restore();
   }
 
-  private static DrawStringWorld_s_p: b2Vec2 = new b2Vec2();
-  private static DrawStringWorld_s_cc: b2Vec2 = new b2Vec2();
-  private static DrawStringWorld_s_color: b2Color = new b2Color(0.5, 0.9, 0.5);
+  private static DrawStringWorld_s_p: box2d.b2Vec2 = new box2d.b2Vec2();
+  private static DrawStringWorld_s_cc: box2d.b2Vec2 = new box2d.b2Vec2();
+  private static DrawStringWorld_s_color: box2d.b2Color = new box2d.b2Color(0.5, 0.9, 0.5);
   public DrawStringWorld(x: number, y: number, message: string): void {
     const p = DebugDraw.DrawStringWorld_s_p.SetXY(x, y);
 
     // world -> viewport
     const vt = this.m_settings.viewCenter;
-    b2SubVV(p, vt, p);
+    box2d.b2SubVV(p, vt, p);
     const vr = this.m_settings.viewRotation;
-    b2MulTRV(vr, p, p);
+    box2d.b2MulTRV(vr, p, p);
     const vs = this.m_settings.viewZoom;
-    b2MulSV(vs, p, p);
+    box2d.b2MulSV(vs, p, p);
 
     // viewport -> canvas
     const cs = this.m_settings.canvasScale;
-    b2MulSV(cs, p, p);
+    box2d.b2MulSV(cs, p, p);
     p.y *= -1;
     const cc = DebugDraw.DrawStringWorld_s_cc.SetXY(0.5 * this.m_canvas.width, 0.5 * this.m_canvas.height);
-    b2AddVV(p, cc, p);
+    box2d.b2AddVV(p, cc, p);
 
     const ctx = this.m_ctx;
 
@@ -192,7 +191,7 @@ export class DebugDraw extends b2Draw {
     ctx.restore();
   }
 
-  public DrawAABB(aabb: b2AABB, color: b2Color): void {
+  public DrawAABB(aabb: box2d.b2AABB, color: box2d.b2Color): void {
     const ctx = this.m_ctx;
 
     ctx.strokeStyle = color.MakeStyleString();
@@ -203,5 +202,3 @@ export class DebugDraw extends b2Draw {
     ctx.strokeRect(x, y, w, h);
   }
 }
-
-} // namespace box2d.Testbed

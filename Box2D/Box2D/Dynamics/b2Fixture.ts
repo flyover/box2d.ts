@@ -16,18 +16,20 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Body.ts"/>
-// <reference path="../Collision/b2Collision.ts"/>
-/// <reference path="../Collision/Shapes/b2Shape.ts"/>
-// <reference path="./Contacts/b2Contact.ts"/>
-// <reference path="./b2World.ts"/>
-// <reference path="../Collision/Shapes/b2CircleShape.ts"/>
-// <reference path="../Collision/Shapes/b2EdgeShape.ts"/>
-// <reference path="../Collision/Shapes/b2PolygonShape.ts"/>
-// <reference path="../Collision/Shapes/b2ChainShape.ts"/>
-/// <reference path="../Collision/b2BroadPhase.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../Common/b2Math";
+import { b2Transform } from "../Common/b2Math";
+import { b2BroadPhase } from "../Collision/b2BroadPhase";
+import { b2AABB } from "../Collision/b2Collision";
+import { b2RayCastInput } from "../Collision/b2Collision";
+import { b2RayCastOutput } from "../Collision/b2Collision";
+import { b2TreeNode } from "../Collision/b2DynamicTree";
+import { b2MassData } from "../Collision/Shapes/b2Shape";
+import { b2Shape } from "../Collision/Shapes/b2Shape";
+import { b2ShapeType } from "../Collision/Shapes/b2Shape";
+import { b2Body, b2BodyDef } from "./b2Body";
 
 /// This holds contact filtering data.
 export class b2Filter {
@@ -452,5 +454,3 @@ export class b2Fixture {
     }
   }
 }
-
-} // namespace box2d

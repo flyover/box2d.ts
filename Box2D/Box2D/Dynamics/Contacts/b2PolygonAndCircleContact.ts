@@ -16,12 +16,15 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Contact.ts"/>
-// <reference path="../../Common/b2BlockAllocator.ts"/>
-// <reference path="../b2Fixture.ts"/>
-/// <reference path="../../Collision/b2CollideCircle.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2Transform } from "../../Common/b2Math";
+import { b2CollidePolygonAndCircle } from "../../Collision/b2CollideCircle";
+import { b2Manifold } from "../../Collision/b2Collision";
+import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
+import { b2CircleShape } from "../../Collision/Shapes/b2CircleShape";
+import { b2PolygonShape } from "../../Collision/Shapes/b2PolygonShape";
+import { b2Contact } from "./b2Contact";
+import { b2Fixture, b2FixtureDef } from "../b2Fixture";
 
 export class b2PolygonAndCircleContact extends b2Contact {
   constructor() {
@@ -52,5 +55,3 @@ export class b2PolygonAndCircleContact extends b2Contact {
       <b2CircleShape> shapeB, xfB);
   }
 }
-
-} // namespace box2d

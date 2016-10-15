@@ -1,24 +1,15 @@
-// <reference path="../../Common/b2Math.ts"/>
-// <reference path="../../Collision/b2Collision.ts"/>
-// <reference path="../../Collision/Shapes/b2Shape.ts"/>
-// <reference path="../b2Fixture.ts"/>
-/// <reference path="./b2Contact.ts"/>
-/// <reference path="./b2CircleContact.ts"/>
-/// <reference path="./b2PolygonAndCircleContact.ts"/>
-/// <reference path="./b2PolygonContact.ts"/>
-/// <reference path="./b2EdgeAndCircleContact.ts"/>
-/// <reference path="./b2EdgeAndPolygonContact.ts"/>
-/// <reference path="./b2ChainAndCircleContact.ts"/>
-/// <reference path="./b2ChainAndPolygonContact.ts"/>
-// <reference path="./b2ContactSolver.ts"/>
-// <reference path="../../Collision/b2Collision.ts"/>
-// <reference path="../../Collision/b2TimeOfImpact.ts"/>
-// <reference path="../../Common/b2BlockAllocator.ts"/>
-// <reference path="../b2Body.ts"/>
-// <reference path="../b2Fixture.ts"/>
-// <reference path="../b2World.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
+import { b2Contact } from "./b2Contact";
+import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact";
+import { b2ChainAndPolygonContact } from "./b2ChainAndPolygonContact";
+import { b2CircleContact } from "./b2CircleContact";
+import { b2EdgeAndCircleContact } from "./b2EdgeAndCircleContact";
+import { b2EdgeAndPolygonContact } from "./b2EdgeAndPolygonContact";
+import { b2PolygonAndCircleContact } from "./b2PolygonAndCircleContact";
+import { b2PolygonContact } from "./b2PolygonContact";
+import { b2Fixture, b2FixtureDef } from "../b2Fixture";
 
 export class b2ContactRegister {
   public pool: b2Contact[] = null;
@@ -140,5 +131,3 @@ export class b2ContactFactory {
     reg.destroyFcn(contact, this.m_allocator);
   }
 }
-
-} // namespace box2d

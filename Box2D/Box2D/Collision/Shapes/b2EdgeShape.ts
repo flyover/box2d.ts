@@ -16,9 +16,21 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Shape.ts"/>
-
-namespace box2d {
+import { ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq } from "../../Common/b2Settings";
+import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
+import { b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Min, b2Max, b2Abs } from "../../Common/b2Math";
+import { b2MinV, b2MaxV, b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2MulSV } from "../../Common/b2Math";
+import { b2AddVMulSV, b2SubVMulSV } from "../../Common/b2Math";
+import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../../Common/b2Math";
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
+import { b2DistanceProxy } from "../b2Distance";
+import { b2MassData } from "./b2Shape";
+import { b2Shape, b2ShapeType } from "./b2Shape";
 
 /// A line segment (edge) shape. These can be connected in chains or loops
 /// to other edge shapes. The connectivity information is used to ensure
@@ -179,5 +191,3 @@ export class b2EdgeShape extends b2Shape {
     b2Log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
   }
 }
-
-} // namespace box2d

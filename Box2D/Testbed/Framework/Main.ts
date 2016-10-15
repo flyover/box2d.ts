@@ -1,8 +1,5 @@
-/// <reference path="./Render.ts"/>
-/// <reference path="./Test.ts"/>
-/// <reference path="../Tests/TestEntries.ts"/>
-
-namespace box2d.Testbed {
+import * as box2d from "../../Box2D/Box2D";
+import * as testbed from "../Testbed";
 
 export class Main {
   public m_time_last: number = 0;
@@ -11,15 +8,15 @@ export class Main {
   public m_fps: number = 0;
   public m_fps_div: any = null;
   public m_debug_div: any = null;
-  public m_settings: Settings = null;
-  public m_test: Test = null;
+  public m_settings: testbed.Settings = null;
+  public m_test: testbed.Test = null;
   public m_test_index: number = 0;
-  public m_test_entries: Testbed.TestEntry[] = null;
+  public m_test_entries: testbed.TestEntry[] = null;
   public m_shift: number = 0;
   public m_ctrl: number = 0;
   public m_rMouseDown: boolean = false;
-  public m_projection0: b2Vec2 = null;
-  public m_viewCenter0: b2Vec2 = null;
+  public m_projection0: box2d.b2Vec2 = null;
+  public m_viewCenter0: box2d.b2Vec2 = null;
   public m_demo_mode: boolean = false;
   public m_demo_time: number = 0;
   public m_max_demo_time: number = 1000 * 10;
@@ -51,12 +48,12 @@ export class Main {
     debug_div.style.zIndex = "256";
     debug_div.innerHTML = "";
 
-    this.m_settings = new Settings();
+    this.m_settings = new testbed.Settings();
 
-    this.m_test_entries = GetTestEntries(new Array());
+    this.m_test_entries = testbed.GetTestEntries(new Array());
 
-    this.m_projection0 = new b2Vec2();
-    this.m_viewCenter0 = new b2Vec2();
+    this.m_projection0 = new box2d.b2Vec2();
+    this.m_viewCenter0 = new box2d.b2Vec2();
 
     document.body.style.backgroundColor = "black";
 
@@ -76,7 +73,7 @@ export class Main {
     const title_div: any = main_div.appendChild(document.createElement("div"));
     title_div.style.textAlign = "center";
     title_div.style.color = "grey";
-    title_div.innerHTML = "Box2D Testbed version " + b2_version + " (revision " + b2_changelist + ")";
+    title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version + " (revision " + box2d.b2_changelist + ")";
 
     const view_div: any = main_div.appendChild(document.createElement("div"));
 
@@ -232,7 +229,7 @@ export class Main {
     this.m_time_last = new Date().getTime();
   }
 
-  public ConvertViewportToElement(viewport: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertViewportToElement(viewport: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     // 0,0 at center of canvas, x right and y up
     const rect = this.m_canvas_div.getBoundingClientRect();
     const element_x = (+viewport.x) + rect.left + (0.5 * rect.width);
@@ -241,7 +238,7 @@ export class Main {
     return element;
   }
 
-  public ConvertElementToViewport(element: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertElementToViewport(element: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     // 0,0 at center of canvas, x right and y up
     const rect = this.m_canvas_div.getBoundingClientRect();
     const viewport_x = +(element.x - rect.left - (0.5 * rect.width));
@@ -250,46 +247,46 @@ export class Main {
     return viewport;
   }
 
-  public ConvertProjectionToViewport(projection: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertProjectionToViewport(projection: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const viewport = out.Copy(projection);
-    b2MulSV(this.m_settings.viewZoom, viewport, viewport);
-    b2MulSV(this.m_settings.canvasScale, viewport, viewport);
+    box2d.b2MulSV(this.m_settings.viewZoom, viewport, viewport);
+    box2d.b2MulSV(this.m_settings.canvasScale, viewport, viewport);
     return viewport;
   }
 
-  public ConvertViewportToProjection(viewport: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertViewportToProjection(viewport: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const projection = out.Copy(viewport);
-    b2MulSV(1 / this.m_settings.canvasScale, projection, projection);
-    b2MulSV(1 / this.m_settings.viewZoom, projection, projection);
+    box2d.b2MulSV(1 / this.m_settings.canvasScale, projection, projection);
+    box2d.b2MulSV(1 / this.m_settings.viewZoom, projection, projection);
     return projection;
   }
 
-  public ConvertWorldToProjection(world: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertWorldToProjection(world: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const projection = out.Copy(world);
-    b2SubVV(projection, this.m_settings.viewCenter, projection);
-    b2MulTRV(this.m_settings.viewRotation, projection, projection);
+    box2d.b2SubVV(projection, this.m_settings.viewCenter, projection);
+    box2d.b2MulTRV(this.m_settings.viewRotation, projection, projection);
     return projection;
   }
 
-  public ConvertProjectionToWorld(projection: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertProjectionToWorld(projection: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const world = out.Copy(projection);
-    b2MulRV(this.m_settings.viewRotation, world, world);
-    b2AddVV(this.m_settings.viewCenter, world, world);
+    box2d.b2MulRV(this.m_settings.viewRotation, world, world);
+    box2d.b2AddVV(this.m_settings.viewCenter, world, world);
     return world;
   }
 
-  public ConvertElementToWorld(element: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertElementToWorld(element: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const viewport = this.ConvertElementToViewport(element, out);
     const projection = this.ConvertViewportToProjection(viewport, out);
     return this.ConvertProjectionToWorld(projection, out);
   }
 
-  public ConvertElementToProjection(element: b2Vec2, out: b2Vec2): b2Vec2 {
+  public ConvertElementToProjection(element: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const viewport = this.ConvertElementToViewport(element, out);
     return this.ConvertViewportToProjection(viewport, out);
   }
 
-  public MoveCamera(move: b2Vec2): void {
+  public MoveCamera(move: box2d.b2Vec2): void {
     const position = this.m_settings.viewCenter.Clone();
     const rotation = this.m_settings.viewRotation.Clone();
     move.SelfRotate(rotation.GetAngleRadians());
@@ -304,33 +301,33 @@ export class Main {
 
   public ZoomCamera(zoom: number): void {
     this.m_settings.viewZoom *= zoom;
-    this.m_settings.viewZoom = b2Clamp(this.m_settings.viewZoom, 0.02, 200);
+    this.m_settings.viewZoom = box2d.b2Clamp(this.m_settings.viewZoom, 0.02, 200);
   }
 
   public HomeCamera(): void {
     this.m_settings.viewCenter.SetXY(0, 20);
-    this.m_settings.viewRotation.SetAngleRadians(b2DegToRad(0));
+    this.m_settings.viewRotation.SetAngleRadians(box2d.b2DegToRad(0));
     this.m_settings.viewZoom = 1;
   }
 
   public HandleMouseMove(e: any): void {
-    const element: b2Vec2 = new b2Vec2(e.clientX, e.clientY);
-    const world: b2Vec2 = this.ConvertElementToWorld(element, new b2Vec2());
+    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.clientX, e.clientY);
+    const world: box2d.b2Vec2 = this.ConvertElementToWorld(element, new box2d.b2Vec2());
 
     this.m_test.MouseMove(world);
 
     if (this.m_rMouseDown) {
       // viewCenter = viewCenter0 - (projection - projection0);
-      const projection: b2Vec2 = this.ConvertElementToProjection(element, new b2Vec2());
-      const diff: b2Vec2 = b2SubVV(projection, this.m_projection0, new b2Vec2());
-      const viewCenter: b2Vec2 = b2SubVV(this.m_viewCenter0, diff, new b2Vec2());
+      const projection: box2d.b2Vec2 = this.ConvertElementToProjection(element, new box2d.b2Vec2());
+      const diff: box2d.b2Vec2 = box2d.b2SubVV(projection, this.m_projection0, new box2d.b2Vec2());
+      const viewCenter: box2d.b2Vec2 = box2d.b2SubVV(this.m_viewCenter0, diff, new box2d.b2Vec2());
       this.m_settings.viewCenter.Copy(viewCenter);
     }
   }
 
   public HandleMouseDown(e: any): void {
-    const element: b2Vec2 = new b2Vec2(e.clientX, e.clientY);
-    const world: b2Vec2 = this.ConvertElementToWorld(element, new b2Vec2());
+    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.clientX, e.clientY);
+    const world: box2d.b2Vec2 = this.ConvertElementToWorld(element, new box2d.b2Vec2());
 
     switch (e.which) {
     case 1: // left mouse button
@@ -341,7 +338,7 @@ export class Main {
       }
       break;
     case 3: // right mouse button
-      const projection = this.ConvertElementToProjection(element, new b2Vec2());
+      const projection = this.ConvertElementToProjection(element, new box2d.b2Vec2());
       this.m_projection0.Copy(projection);
       this.m_viewCenter0.Copy(this.m_settings.viewCenter);
       this.m_rMouseDown = true;
@@ -350,8 +347,8 @@ export class Main {
   }
 
   public HandleMouseUp(e: any): void {
-    const element: b2Vec2 = new b2Vec2(e.clientX, e.clientY);
-    const world: b2Vec2 = this.ConvertElementToWorld(element, new b2Vec2());
+    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.clientX, e.clientY);
+    const world: box2d.b2Vec2 = this.ConvertElementToWorld(element, new box2d.b2Vec2());
 
     switch (e.which) {
     case 1: // left mouse button
@@ -364,15 +361,15 @@ export class Main {
   }
 
   public HandleTouchMove(e: any): void {
-    const element: b2Vec2 = new b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
-    const world: b2Vec2 = this.ConvertElementToWorld(element, new b2Vec2());
+    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
+    const world: box2d.b2Vec2 = this.ConvertElementToWorld(element, new box2d.b2Vec2());
     this.m_test.MouseMove(world);
     e.preventDefault();
   }
 
   public HandleTouchStart(e: any): void {
-    const element: b2Vec2 = new b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
-    const world: b2Vec2 = this.ConvertElementToWorld(element, new b2Vec2());
+    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
+    const world: box2d.b2Vec2 = this.ConvertElementToWorld(element, new box2d.b2Vec2());
     this.m_test.MouseDown(world);
     e.preventDefault();
   }
@@ -393,81 +390,81 @@ export class Main {
 
   public HandleKeyDown(e: any): void {
     switch (e.keyCode) {
-    case KeyCode.CTRL:
+    case testbed.KeyCode.CTRL:
       this.m_ctrl = 1;
       break;
-    case KeyCode.SHIFT:
+    case testbed.KeyCode.SHIFT:
       this.m_shift = 1;
       break;
-    case KeyCode.LEFT:
+    case testbed.KeyCode.LEFT:
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new b2Vec2(2, 0));
+          this.m_test.ShiftOrigin(new box2d.b2Vec2(2, 0));
         }
       } else {
-        this.MoveCamera(new b2Vec2(-0.5, 0));
+        this.MoveCamera(new box2d.b2Vec2(-0.5, 0));
       }
       break;
-    case KeyCode.RIGHT:
+    case testbed.KeyCode.RIGHT:
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new b2Vec2(-2, 0));
+          this.m_test.ShiftOrigin(new box2d.b2Vec2(-2, 0));
         }
       } else {
-        this.MoveCamera(new b2Vec2(0.5, 0));
+        this.MoveCamera(new box2d.b2Vec2(0.5, 0));
       }
       break;
-    case KeyCode.DOWN:
+    case testbed.KeyCode.DOWN:
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new b2Vec2(0, 2));
+          this.m_test.ShiftOrigin(new box2d.b2Vec2(0, 2));
         }
       } else {
-        this.MoveCamera(new b2Vec2(0, -0.5));
+        this.MoveCamera(new box2d.b2Vec2(0, -0.5));
       }
       break;
-    case KeyCode.UP:
+    case testbed.KeyCode.UP:
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new b2Vec2(0, -2));
+          this.m_test.ShiftOrigin(new box2d.b2Vec2(0, -2));
         }
       } else {
-        this.MoveCamera(new b2Vec2(0, 0.5));
+        this.MoveCamera(new box2d.b2Vec2(0, 0.5));
       }
       break;
-    case KeyCode.PAGE_DOWN:
-      this.RollCamera(b2DegToRad(-1));
+    case testbed.KeyCode.PAGE_DOWN:
+      this.RollCamera(box2d.b2DegToRad(-1));
       break;
-    case KeyCode.PAGE_UP:
-      this.RollCamera(b2DegToRad(1));
+    case testbed.KeyCode.PAGE_UP:
+      this.RollCamera(box2d.b2DegToRad(1));
       break;
-    case KeyCode.Z:
+    case testbed.KeyCode.Z:
       this.ZoomCamera(1.1);
       break;
-    case KeyCode.X:
+    case testbed.KeyCode.X:
       this.ZoomCamera(1 / 1.1);
       break;
-    case KeyCode.HOME:
+    case testbed.KeyCode.HOME:
       this.HomeCamera();
       break;
-    case KeyCode.R:
+    case testbed.KeyCode.R:
       this.LoadTest();
       break;
-    case KeyCode.SPACE:
+    case testbed.KeyCode.SPACE:
       if (this.m_test) {
         this.m_test.LaunchBomb();
       }
       break;
-    case KeyCode.P:
+    case testbed.KeyCode.P:
       this.Pause();
       break;
-    case KeyCode.PERIOD:
+    case testbed.KeyCode.PERIOD:
       this.SingleStep();
       break;
-    case KeyCode.OPEN_SQUARE_BRACKET:
+    case testbed.KeyCode.OPEN_SQUARE_BRACKET:
       this.DecrementTest();
       break;
-    case KeyCode.CLOSE_SQUARE_BRACKET:
+    case testbed.KeyCode.CLOSE_SQUARE_BRACKET:
       this.IncrementTest();
       break;
     default:
@@ -482,10 +479,10 @@ export class Main {
 
   public HandleKeyUp(e: any): void {
     switch (e.keyCode) {
-    case KeyCode.CTRL:
+    case testbed.KeyCode.CTRL:
       this.m_ctrl = 0;
       break;
-    case KeyCode.SHIFT:
+    case testbed.KeyCode.SHIFT:
       this.m_shift = 0;
       break;
     default:
@@ -596,7 +593,7 @@ export class Main {
         ctx.translate(-this.m_settings.viewCenter.x, -this.m_settings.viewCenter.y);
 
         const hz = this.m_settings.hz;
-        this.m_settings.hz = b2Max(1000 / time_elapsed, hz);
+        this.m_settings.hz = box2d.b2Max(1000 / time_elapsed, hz);
         this.m_test.Step(this.m_settings);
         this.m_settings.hz = hz;
 
@@ -608,5 +605,3 @@ export class Main {
     }
   }
 }
-
-} // namespace box2d.Testbed

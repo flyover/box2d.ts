@@ -16,12 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="./b2Collision.ts"/>
-/// <reference path="../Common/b2GrowableStack.ts"/>
-
-namespace box2d {
+import { ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import { b2_aabbExtension, b2_aabbMultiplier } from "../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Min, b2Max, b2Abs, b2Sq, b2Sqrt, b2Pow, b2Asin } from "../Common/b2Math";
+import { b2MinV, b2MaxV, b2AbsV, b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2MulSV } from "../Common/b2Math";
+import { b2AddVMulSV, b2SubVMulSV } from "../Common/b2Math";
+import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../Common/b2Math";
+import { b2DistanceVV, b2DistanceSquaredVV } from "../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../Common/b2Math";
+import { b2GrowableStack } from "../Common/b2GrowableStack";
+import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
 
 /// A node in the dynamic tree. The client does not interact with this directly.
 export class b2TreeNode {
@@ -803,5 +809,3 @@ export class b2DynamicTree {
     */
   }
 }
-
-} // namespace box2d

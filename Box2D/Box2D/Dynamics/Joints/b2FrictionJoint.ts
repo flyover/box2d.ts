@@ -16,11 +16,27 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Joint.ts"/>
-/// <reference path="../b2Body.ts"/>
-/// <reference path="../b2TimeStep.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq } from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2_maxLinearCorrection } from "../../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../../Common/b2Math";
+import { b2Pow, b2Sq, b2Sqrt, b2InvSqrt } from "../../Common/b2Math";
+import { b2Vec2 } from "../../Common/b2Math";
+import { b2DistanceVV, b2DistanceSquaredVV } from "../../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../../Common/b2Math";
+import { b2AddVCrossSV } from "../../Common/b2Math";
+import { b2Mat22 } from "../../Common/b2Math";
+import { b2MulMV, b2MulTMV } from "../../Common/b2Math";
+import { b2Rot } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2Joint, b2JointDef } from "./b2Joint";
+import { b2JointType } from "./b2Joint";
+import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
+import { b2Body, b2BodyDef } from "../b2Body";
+import { b2World } from "../b2World";
 
 /// Friction joint definition.
 export class b2FrictionJointDef extends b2JointDef {
@@ -298,5 +314,3 @@ export class b2FrictionJoint extends b2Joint {
     }
   }
 }
-
-} // namespace box2d

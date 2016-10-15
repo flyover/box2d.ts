@@ -16,10 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="../Common/b2Draw.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import { b2_pi } from "../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
+import { b2Asin, b2Acos, b2Atan2 } from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2DistanceVV, b2DistanceSquaredVV } from "../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../Common/b2Math";
+import { b2Color } from "../Common/b2Draw";
+import { b2Draw } from "../Common/b2Draw";
 
 ///
 export class b2RopeDef {
@@ -275,5 +281,3 @@ export class b2Rope {
     }
   }
 }
-
-} // namespace box2d

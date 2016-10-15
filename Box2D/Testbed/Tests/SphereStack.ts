@@ -16,35 +16,33 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Box2D/Box2D.ts"/>
-/// <reference path="../Framework/Render.ts"/>
+import * as box2d from "../../Box2D/Box2D";
+import * as testbed from "../Testbed";
 
-namespace box2d.Testbed {
-
-export class SphereStack extends Test {
+export class SphereStack extends testbed.Test {
   public static e_count: number = 10;
 
-  public m_bodies: b2Body[] = null;
+  public m_bodies: box2d.b2Body[] = null;
 
-  constructor(canvas: HTMLCanvasElement, settings: Settings) {
+  constructor(canvas: HTMLCanvasElement, settings: testbed.Settings) {
     super(canvas, settings); // base class constructor
 
     this.m_bodies = new Array(SphereStack.e_count);
     {
-      const bd: b2BodyDef = new box2d.b2BodyDef();
-      const ground: b2Body = this.m_world.CreateBody(bd);
+      const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
+      const ground: box2d.b2Body = this.m_world.CreateBody(bd);
 
-      const edge_shape: b2EdgeShape = new box2d.b2EdgeShape();
+      const edge_shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
       edge_shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture2(edge_shape, 0.0);
     }
 
     {
-      const circle_shape: b2CircleShape = new box2d.b2CircleShape();
+      const circle_shape: box2d.b2CircleShape = new box2d.b2CircleShape();
       circle_shape.m_radius = 1.0;
 
       for (let i: number = 0; i < SphereStack.e_count; ++i) {
-        const bd: b2BodyDef = new box2d.b2BodyDef();
+        const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         bd.position.SetXY(0.0, 4.0 + 3.0 * i);
 
@@ -57,7 +55,7 @@ export class SphereStack extends Test {
     }
   }
 
-  public Step(settings: Settings): void {
+  public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
     // for (let i: number = 0; i < SphereStack.e_count; ++i)
@@ -73,9 +71,9 @@ export class SphereStack extends Test {
     // printf("\n");
   }
 
-  public static Create(canvas: HTMLCanvasElement, settings: Settings): Test {
+  public static Create(canvas: HTMLCanvasElement, settings: testbed.Settings): testbed.Test {
     return new SphereStack(canvas, settings);
   }
 }
 
-} // namespace box2d.Testbed
+///} // namespace box2d.Testbed

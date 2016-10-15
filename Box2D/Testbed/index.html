@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Box2D Testbed</title>
+    <script type="text/javascript" src="../../node_modules/systemjs/dist/system.src.js"></script>
+    <script type="text/javascript" src="../../node_modules/typescript/lib/typescript.js"></script>
+    <script type="text/javascript">
+
+    function boot(args) {
+      if (false && window.ts) {
+        System.config({
+          transpiler: "typescript",
+          typescriptOptions: {},
+          packages: {
+            '.': { defaultExtension: 'ts' },
+            '../Box2D': { defaultExtension: 'ts' }
+          }
+        });
+      } else {
+        System.config({
+          packages: {
+            '.': { defaultExtension: 'js' },
+            '../Box2D': { defaultExtension: 'js' }
+          }
+        });
+      }
+      System.import("Testbed").then(function(Testbed) {
+        const app = new Testbed.Main();
+        const loop = function () {
+          window.requestAnimationFrame(loop);
+          app.SimulationLoop();
+        }
+        loop();
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }
+
+    window.addEventListener('load', function(event) {
+      var args = window.location.search.substring(1).split('&'); // args from window location
+      console.log(args);
+      boot(args);
+    });
+
+    </script>
+  </head>
+</html>

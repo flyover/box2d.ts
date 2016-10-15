@@ -16,21 +16,30 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="./b2Body.ts"/>
-/// <reference path="./b2TimeStep.ts"/>
-/// <reference path="../Collision/b2Distance.ts"/>
-/// <reference path="./b2Body.ts"/>
-/// <reference path="./b2Fixture.ts"/>
-/// <reference path="./b2World.ts"/>
-/// <reference path="./Contacts/b2Contact.ts"/>
-/// <reference path="./Contacts/b2ContactSolver.ts"/>
-/// <reference path="./Joints/b2Joint.ts"/>
-/// <reference path="../Common/b2StackAllocator.ts"/>
-/// <reference path="../Common/b2Timer.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import { b2_angularSleepTolerance } from "../Common/b2Settings";
+import { b2_linearSleepTolerance } from "../Common/b2Settings";
+import { b2_maxFloat } from "../Common/b2Settings";
+import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";
+import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
+import { b2_timeToSleep } from "../Common/b2Settings";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../Common/b2Math";
+import { b2Timer } from "../Common/b2Timer";
+import { b2Contact } from "./Contacts/b2Contact";
+import { b2ContactSolver, b2ContactSolverDef } from "./Contacts/b2ContactSolver";
+import { b2ContactVelocityConstraint } from "./Contacts/b2ContactSolver";
+import { b2Joint, b2JointDef } from "./Joints/b2Joint";
+import { b2Body, b2BodyDef } from "./b2Body";
+import { b2BodyFlag } from "./b2Body";
+import { b2BodyType } from "./b2Body";
+import { b2Position } from "./b2TimeStep";
+import { b2SolverData } from "./b2TimeStep";
+import { b2Velocity } from "./b2TimeStep";
+import { b2ContactImpulse } from "./b2WorldCallbacks";
+import { b2ContactListener } from "./b2WorldCallbacks";
 
 /*
 Position Correction Notes
@@ -575,5 +584,3 @@ export class b2Island {
     }
   }
 }
-
-} // namespace box2d

@@ -16,12 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Common/b2Math.ts"/>
-/// <reference path="../b2Body.ts"/>
-// <reference path="../b2World.ts"/>
-// <reference path="../../Common/b2BlockAllocator.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2Vec2 } from "../../Common/b2Math";
+import { b2Body, b2BodyDef } from "../b2Body";
+import { b2SolverData } from "../b2TimeStep";
 
 export const enum b2JointType {
   e_unknownJoint = 0,
@@ -214,5 +212,3 @@ export class b2Joint {
     return false;
   }
 }
-
-} // namespace box2d

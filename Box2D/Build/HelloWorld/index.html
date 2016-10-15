@@ -1,12 +1,17 @@
 <html>
 <head>
-	<title>Box2D Hello World</title>
-	<script type="text/javascript" src="box2d-helloworld.js"></script>
-	<script type="text/javascript">
-	function load() {
-		box2d.HelloWorld.main();
-	}
-	window.addEventListener('load', load, false);
-	</script>
+  <title>Box2D Hello World</title>
+  <script type="text/javascript" src="../../../node_modules/systemjs/dist/system.src.js"></script>
+  <script type="text/javascript" src="box2d-helloworld.js"></script>
+  <script type="text/javascript">
+  function load() {
+    System.import("HelloWorld/HelloWorld").then(function(HelloWorld) {
+      HelloWorld.main();
+    }).catch(function (error) {
+      console.error(error);
+    });
+  }
+  window.addEventListener('load', load, false);
+  </script>
 </head>
 </html>

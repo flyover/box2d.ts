@@ -16,14 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="../Common/b2Math.ts"/>
-// <reference path="./Shapes/b2CircleShape.ts"/>
-// <reference path="./Shapes/b2EdgeShape.ts"/>
-// <reference path="./Shapes/b2ChainShape.ts"/>
-// <reference path="./Shapes/b2PolygonShape.ts"/>
-
-namespace box2d {
+import { ENABLE_ASSERTS, b2Assert } from "../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq, b2_maxFloat } from "../Common/b2Settings";
+import { b2MakeNumberArray } from "../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Min, b2Max, b2Abs } from "../Common/b2Math";
+import { b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV } from "../Common/b2Math";
+import { b2CrossVV, b2CrossOneV, b2CrossVOne } from "../Common/b2Math";
+import { b2DistanceVV } from "../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../Common/b2Math";
+import { b2Shape } from "./Shapes/b2Shape";
 
 /// A distance proxy is used by the GJK algorithm.
 /// It encapsulates any shape.
@@ -664,5 +667,3 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     }
   }
 }
-
-} // namespace box2d

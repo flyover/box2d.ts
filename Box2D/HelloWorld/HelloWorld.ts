@@ -16,9 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Box2D/Box2D.ts"/>
+///import * as box2d from "../Box2D/Box2D";
 
-namespace box2d.HelloWorld {
+import { b2Vec2 } from "../Box2D/Common/b2Math";
+import { b2World } from "../Box2D/Dynamics/b2World";
+import { b2Body, b2BodyDef, b2BodyType } from "../Box2D/Dynamics/b2Body";
+import { b2Fixture, b2FixtureDef } from "../Box2D/Dynamics/b2Fixture";
+import { b2PolygonShape } from "../Box2D/Collision/Shapes/b2PolygonShape";
 
 // This is a simple example of building and running a simulation
 // using Box2D. Here we create a large ground box and a small dynamic
@@ -103,5 +107,3 @@ export function main(): number {
 
   return 0;
 }
-
-} // namespace box2d

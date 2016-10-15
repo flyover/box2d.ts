@@ -16,11 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Joint.ts"/>
-// <reference path="../b2Body.ts"/>
-// <reference path="../b2TimeStep.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2_pi } from "../../Common/b2Settings";
+import { b2IsValid } from "../../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../../Common/b2Math";
+import { b2Vec2 } from "../../Common/b2Math";
+import { b2IsEqualToV } from "../../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../../Common/b2Math";
+import { b2CrossOneV, b2CrossVOne } from "../../Common/b2Math";
+import { b2CrossSV, b2CrossVS } from "../../Common/b2Math";
+import { b2Mat22 } from "../../Common/b2Math";
+import { b2MulMV, b2MulTMV } from "../../Common/b2Math";
+import { b2Rot } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2Joint, b2JointDef } from "./b2Joint";
+import { b2JointType } from "./b2Joint";
+import { b2Body, b2BodyDef } from "../b2Body";
 
 /// Wheel joint definition. This requires defining a line of
 /// motion using an axis and an anchor point. The definition uses local
@@ -526,5 +539,3 @@ export class b2WheelJoint extends b2Joint {
     }
   }
 }
-
-} // namespace box2d

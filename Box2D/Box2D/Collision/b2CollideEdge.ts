@@ -1,9 +1,17 @@
-/// <reference path="./b2Collision.ts"/>
-/// <reference path="./Shapes/b2CircleShape.ts"/>
-/// <reference path="./Shapes/b2EdgeShape.ts"/>
-/// <reference path="./Shapes/b2PolygonShape.ts"/>
-
-namespace box2d {
+import { ENABLE_ASSERTS, b2Assert } from "../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq, b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
+import { b2_polygonRadius, b2_maxPolygonVertices, b2_angularSlop } from "../Common/b2Settings";
+import { b2MakeNumberArray } from "../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Min, b2Max, b2Abs } from "../Common/b2Math";
+import { b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2ExtVV } from "../Common/b2Math";
+import { b2CrossVV, b2CrossVOne } from "../Common/b2Math";
+import { b2AddVMulSV, b2SubVMulSV } from "../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../Common/b2Math";
+import { b2MulXX, b2MulTXX } from "../Common/b2Math";
+import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
+import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
 
 const b2CollideEdgeAndCircle_s_Q: b2Vec2 = new b2Vec2();
 const b2CollideEdgeAndCircle_s_e: b2Vec2 = new b2Vec2();
@@ -584,5 +592,3 @@ export function b2CollideEdgeAndPolygon(manifold, edgeA, xfA, polygonB, xfB) {
   const collider: b2EPCollider = b2CollideEdgeAndPolygon_s_collider;
   collider.Collide(manifold, edgeA, xfA, polygonB, xfB);
 }
-
-} // namespace box2d

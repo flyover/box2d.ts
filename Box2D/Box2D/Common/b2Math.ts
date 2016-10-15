@@ -16,9 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Settings.ts"/>
-
-namespace box2d {
+import { b2_pi, ENABLE_ASSERTS, b2Assert, b2_epsilon, b2MakeArray } from "./b2Settings";
 
 export const b2_pi_over_180: number = b2_pi / 180;
 export const b2_180_over_pi: number = 180 / b2_pi;
@@ -1082,5 +1080,3 @@ export class b2Sweep {
     this.a -= d;
   }
 }
-
-} // namespace box2d

@@ -16,9 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Math.ts"/>
-
-namespace box2d {
+import { b2MakeArray } from "../Common/b2Settings";
+import { b2Vec2 } from "../Common/b2Math";
 
 /// Profiling data. Times are in milliseconds.
 export class b2Profile {
@@ -87,5 +86,3 @@ export class b2SolverData {
   public positions: b2Position[] = null;
   public velocities: b2Velocity[] = null;
 }
-
-} // namespace box2d

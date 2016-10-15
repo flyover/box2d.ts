@@ -1,0 +1,24 @@
+{
+  "name": "box2d.ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyover/box2d.ts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flyover/box2d.ts/issues"
+  },
+  "homepage": "https://github.com/flyover/box2d.ts#readme",
+  "dependencies": {
+    "@types/systemjs": "^0.19.31",
+    "systemjs": "^0.19.39",
+    "typescript": "^2.0.3"
+  }
+}

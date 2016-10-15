@@ -16,8 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./Framework/Main.ts"/>
-
-namespace box2d.Testbed {
-
-} // namespace box2d.Testbed
+export * from "./Framework/Main";
+export * from "./Framework/Render";
+export * from "./Framework/Test";
+export * from "./Tests/TestEntries";

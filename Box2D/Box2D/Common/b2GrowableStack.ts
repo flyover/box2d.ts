@@ -16,10 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Settings.ts"/>
-
-namespace box2d {
-
 /// This is a growable LIFO stack with an initial capacity of N.
 /// If the stack size exceeds the initial capacity, the heap is used
 /// to increase the size of the stack.
@@ -55,5 +51,3 @@ export class b2GrowableStack {
     return this.m_count;
   }
 }
-
-} // namespace box2d

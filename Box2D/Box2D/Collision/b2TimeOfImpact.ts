@@ -16,14 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="./b2Distance.ts"/>
-// <reference path="./b2Collision.ts"/>
-// <reference path="./Shapes/b2CircleShape.ts"/>
-// <reference path="./Shapes/b2PolygonShape.ts"/>
-/// <reference path="../Common/b2Timer.ts"/>
-
-namespace box2d {
+import { ENABLE_ASSERTS, b2Assert } from "../Common/b2Settings";
+import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings";
+import { b2MakeNumberArray } from "../Common/b2Settings";
+import { b2Vec2, b2Transform, b2Sweep } from "../Common/b2Math";
+import { b2Min, b2Max, b2Abs } from "../Common/b2Math";
+import { b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV } from "../Common/b2Math";
+import { b2CrossVOne } from "../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../Common/b2Math";
+import { b2Timer } from "../Common/b2Timer";
+import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
 
 export let b2_toiTime: number = 0;
 export let b2_toiMaxTime: number = 0;
@@ -482,5 +485,3 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   b2_toiMaxTime = b2Max(b2_toiMaxTime, time);
   b2_toiTime += time;
 }
-
-} // namespace box2d

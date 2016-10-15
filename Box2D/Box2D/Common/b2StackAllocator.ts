@@ -16,9 +16,4 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Settings.ts"/>
-/// <reference path="./b2Math.ts"/>
-
-namespace box2d {
-
-} // namespace box2d
+export class b2StackAllocator {}

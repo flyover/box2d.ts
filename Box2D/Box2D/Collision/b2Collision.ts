@@ -16,15 +16,22 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="./b2Distance.ts"/>
+import { ENABLE_ASSERTS, b2Assert } from "../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq, b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
+import { b2MakeArray } from "../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Min, b2Max, b2Abs } from "../Common/b2Math";
+import { b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2ExtVV, b2CrossVV } from "../Common/b2Math";
+import { b2AddVMulSV, b2SubVMulSV } from "../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../Common/b2Math";
+import { b2DistanceSquaredVV } from "../Common/b2Math";
+import { b2Shape } from "./Shapes/b2Shape";
+import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance";
 
 /// @file
 /// Structures and functions used for computing contact points, distance
 /// queries, and TOI queries.
-
-namespace box2d {
 
 export const enum b2ContactFeatureType {
   e_vertex = 0,
@@ -624,5 +631,3 @@ export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Sh
 
   return output.distance < 10 * b2_epsilon;
 }
-
-} // namespace box2d

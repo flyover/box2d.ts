@@ -16,11 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Joint.ts"/>
-// <reference path="../b2Body.ts"/>
-// <reference path="../b2TimeStep.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq } from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2_maxLinearCorrection } from "../../Common/b2Settings";
+import { b2_pi } from "../../Common/b2Settings";
+import { b2MakeArray, b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../../Common/b2Math";
+import { b2Pow, b2Sq, b2Sqrt, b2InvSqrt } from "../../Common/b2Math";
+import { b2Vec2 } from "../../Common/b2Math";
+import { b2DistanceVV, b2DistanceSquaredVV } from "../../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../../Common/b2Math";
+import { b2AddVCrossSV } from "../../Common/b2Math";
+import { b2Rot } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2Joint, b2JointDef } from "./b2Joint";
+import { b2JointType } from "./b2Joint";
+import { b2Body, b2BodyDef } from "../b2Body";
+import { b2World } from "../b2World";
 
 /// Distance joint definition. This requires defining an
 /// anchor point on both bodies and the non-zero length of the
@@ -355,5 +369,3 @@ export class b2DistanceJoint extends b2Joint {
     return b2Abs(C) < b2_linearSlop;
   }
 }
-
-} // namespace box2d

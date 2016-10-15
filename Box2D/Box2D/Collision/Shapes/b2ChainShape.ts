@@ -16,10 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Shape.ts"/>
-/// <reference path="./b2EdgeShape.ts"/>
+///import * as box2d from "../../Box2D";
 
-namespace box2d {
+import { ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_pi, b2_epsilon, b2_epsilon_sq, b2_linearSlop } from "../../Common/b2Settings";
+import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
+import { b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Min, b2Max, b2Abs, b2Sq, b2Sqrt, b2Pow, b2Asin } from "../../Common/b2Math";
+import { b2MinV, b2MaxV, b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2MulSV } from "../../Common/b2Math";
+import { b2AddVMulSV, b2SubVMulSV } from "../../Common/b2Math";
+import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../../Common/b2Math";
+import { b2DistanceVV, b2DistanceSquaredVV } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../../Common/b2Math";
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
+import { b2DistanceProxy } from "../b2Distance";
+import { b2MassData } from "./b2Shape";
+import { b2Shape, b2ShapeType } from "./b2Shape";
+import { b2EdgeShape } from "./b2EdgeShape";
 
 /// A chain shape is a free form sequence of line segments.
 /// The chain has two-sided collision, so you can use inside and outside collision.
@@ -237,5 +252,3 @@ export class b2ChainShape extends b2Shape {
     b2Log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
   }
 }
-
-} // namespace box2d

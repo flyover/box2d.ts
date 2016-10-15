@@ -16,15 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../Common/b2Settings.ts"/>
-/// <reference path="../Common/b2Math.ts"/>
-/// <reference path="../Collision/Shapes/b2Shape.ts"/>
-/// <reference path="./b2Fixture.ts"/>
-/// <reference path="./b2World.ts"/>
-/// <reference path="./Contacts/b2Contact.ts"/>
-/// <reference path="./Joints/b2Joint.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import { b2IsValid } from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../Common/b2Math";
+import { b2AddVCrossSV } from "../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../Common/b2Math";
+import { b2Transform } from "../Common/b2Math";
+import { b2MulXV, b2MulTXV } from "../Common/b2Math";
+import { b2Sweep } from "../Common/b2Math";
+import { b2BroadPhase } from "../Collision/b2BroadPhase";
+import { b2MassData } from "../Collision/Shapes/b2Shape";
+import { b2Shape } from "../Collision/Shapes/b2Shape";
+import { b2ContactEdge } from "./Contacts/b2Contact";
+import { b2JointEdge } from "./Joints/b2Joint";
+import { b2Fixture, b2FixtureDef } from "./b2Fixture";
+import { b2World } from "./b2World";
+import { b2WorldFlag } from "./b2World";
 
 /// The body type.
 /// static: zero mass, zero velocity, may be manually moved
@@ -1117,5 +1126,3 @@ export class b2Body {
   //   return this.m_controllerCount;
   // }
 }
-
-} // namespace box2d

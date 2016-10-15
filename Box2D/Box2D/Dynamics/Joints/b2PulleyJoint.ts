@@ -16,11 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="./b2Joint.ts"/>
-/// <reference path="../b2Body.ts"/>
-/// <reference path="../b2TimeStep.ts"/>
-
-namespace box2d {
+import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import { b2_epsilon, b2_epsilon_sq } from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2IsValid } from "../../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Clamp } from "../../Common/b2Math";
+import { b2Vec2 } from "../../Common/b2Math";
+import { b2IsEqualToV } from "../../Common/b2Math";
+import { b2DistanceVV, b2DistanceSquaredVV } from "../../Common/b2Math";
+import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../../Common/b2Math";
+import { b2DotVV, b2CrossVV } from "../../Common/b2Math";
+import { b2CrossSV, b2CrossVS } from "../../Common/b2Math";
+import { b2AddVCrossSV } from "../../Common/b2Math";
+import { b2Mat22 } from "../../Common/b2Math";
+import { b2MulMV, b2MulTMV } from "../../Common/b2Math";
+import { b2Rot } from "../../Common/b2Math";
+import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
+import { b2Joint, b2JointDef } from "./b2Joint";
+import { b2JointType } from "./b2Joint";
 
 export const b2_minPulleyLength: number = 2;
 
@@ -405,5 +418,3 @@ export class b2PulleyJoint extends b2Joint {
     this.m_groundAnchorB.SelfSub(newOrigin);
   }
 }
-
-} // namespace box2d
