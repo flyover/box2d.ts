@@ -65,7 +65,7 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
     return {
         setters:[],
         execute: function() {
-            exports_1("DEBUG", DEBUG = true);
+            exports_1("DEBUG", DEBUG = false);
             exports_1("ENABLE_ASSERTS", ENABLE_ASSERTS = DEBUG);
             exports_1("b2_maxFloat", b2_maxFloat = 1E+37); // FLT_MAX instead of Number.MAX_VALUE;
             exports_1("b2_epsilon", b2_epsilon = 1E-5); // FLT_EPSILON instead of Number.MIN_VALUE;
