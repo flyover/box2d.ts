@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_epsilon, b2_linearSlop } from "../../Common/b2Settings";
 import { b2Abs, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -55,7 +55,7 @@ export class b2PulleyJointDef extends b2JointDef {
     this.lengthA = b2Vec2.DistanceVV(anchorA, groundA);
     this.lengthB = b2Vec2.DistanceVV(anchorB, groundB);
     this.ratio = r;
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.ratio > b2Settings.b2_epsilon); }
+    ///b2Assert(this.ratio > b2_epsilon);
   }
 }
 
@@ -106,7 +106,7 @@ export class b2PulleyJoint extends b2Joint {
     this.m_lengthA = def.lengthA;
     this.m_lengthB = def.lengthB;
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.ratio !== 0); }
+    ///b2Assert(def.ratio !== 0);
     this.m_ratio = def.ratio;
 
     this.m_constant = def.lengthA + this.m_ratio * def.lengthB;
@@ -155,13 +155,13 @@ export class b2PulleyJoint extends b2Joint {
     const lengthA: number = this.m_uA.GetLength();
     const lengthB: number = this.m_uB.GetLength();
 
-    if (lengthA > 10 * b2Settings.b2_linearSlop) {
+    if (lengthA > 10 * b2_linearSlop) {
       this.m_uA.SelfMul(1 / lengthA);
     } else {
       this.m_uA.SetZero();
     }
 
-    if (lengthB > 10 * b2Settings.b2_linearSlop) {
+    if (lengthB > 10 * b2_linearSlop) {
       this.m_uB.SelfMul(1 / lengthB);
     } else {
       this.m_uB.SetZero();
@@ -269,13 +269,13 @@ export class b2PulleyJoint extends b2Joint {
     const lengthA: number = uA.GetLength();
     const lengthB: number = uB.GetLength();
 
-    if (lengthA > 10 * b2Settings.b2_linearSlop) {
+    if (lengthA > 10 * b2_linearSlop) {
       uA.SelfMul(1 / lengthA);
     } else {
       uA.SetZero();
     }
 
-    if (lengthB > 10 * b2Settings.b2_linearSlop) {
+    if (lengthB > 10 * b2_linearSlop) {
       uB.SelfMul(1 / lengthB);
     } else {
       uB.SetZero();
@@ -316,7 +316,7 @@ export class b2PulleyJoint extends b2Joint {
     // data.positions[this.m_indexB].c = cB;
     data.positions[this.m_indexB].a = aB;
 
-    return linearError < b2Settings.b2_linearSlop;
+    return linearError < b2_linearSlop;
   }
 
   public GetAnchorA(out: b2Vec2): b2Vec2 {
@@ -379,24 +379,22 @@ export class b2PulleyJoint extends b2Joint {
     return b2Vec2.DistanceVV(p, s);
   }
 
-  public Dump() {
-    if (b2Settings.DEBUG) {
-      const indexA = this.m_bodyA.m_islandIndex;
-      const indexB = this.m_bodyB.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void) {
+    const indexA = this.m_bodyA.m_islandIndex;
+    const indexB = this.m_bodyB.m_islandIndex;
 
-      b2Settings.b2Log("  const jd: b2PulleyJointDef = new b2PulleyJointDef();\n");
-      b2Settings.b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-      b2Settings.b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-      b2Settings.b2Log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.groundAnchorA.SetXY(%.15f, %.15f);\n", this.m_groundAnchorA.x, this.m_groundAnchorA.y);
-      b2Settings.b2Log("  jd.groundAnchorB.SetXY(%.15f, %.15f);\n", this.m_groundAnchorB.x, this.m_groundAnchorB.y);
-      b2Settings.b2Log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-      b2Settings.b2Log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-      b2Settings.b2Log("  jd.lengthA = %.15f;\n", this.m_lengthA);
-      b2Settings.b2Log("  jd.lengthB = %.15f;\n", this.m_lengthB);
-      b2Settings.b2Log("  jd.ratio = %.15f;\n", this.m_ratio);
-      b2Settings.b2Log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
-    }
+    log("  const jd: b2PulleyJointDef = new b2PulleyJointDef();\n");
+    log("  jd.bodyA = bodies[%d];\n", indexA);
+    log("  jd.bodyB = bodies[%d];\n", indexB);
+    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log("  jd.groundAnchorA.SetXY(%.15f, %.15f);\n", this.m_groundAnchorA.x, this.m_groundAnchorA.y);
+    log("  jd.groundAnchorB.SetXY(%.15f, %.15f);\n", this.m_groundAnchorB.x, this.m_groundAnchorB.y);
+    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.lengthA = %.15f;\n", this.m_lengthA);
+    log("  jd.lengthB = %.15f;\n", this.m_lengthB);
+    log("  jd.ratio = %.15f;\n", this.m_ratio);
+    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 
   public ShiftOrigin(newOrigin) {

@@ -1,4 +1,4 @@
-import * as b2Settings from "../Common/b2Settings";
+import { b2_maxFloat, b2_epsilon } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
 import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
@@ -38,7 +38,7 @@ export function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB)
 
   // Find the min separating edge.
   let normalIndex: number = 0;
-  let separation = (-b2Settings.b2_maxFloat);
+  let separation = (-b2_maxFloat);
   const radius = polygonA.m_radius + circleB.m_radius;
   const vertexCount = polygonA.m_count;
   const vertices = polygonA.m_vertices;
@@ -65,7 +65,7 @@ export function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB)
   const v2 = vertices[vertIndex2];
 
   // If the center is inside the polygon ...
-  if (separation < b2Settings.b2_epsilon) {
+  if (separation < b2_epsilon) {
     manifold.pointCount = 1;
     manifold.type = b2ManifoldType.e_faceA;
     manifold.localNormal.Copy(normals[normalIndex]);

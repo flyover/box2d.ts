@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
 import { b2IsValid, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -112,8 +112,8 @@ export class b2GearJoint extends b2Joint {
     this.m_typeA = this.m_joint1.GetType();
     this.m_typeB = this.m_joint2.GetType();
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_typeA === b2JointType.e_revoluteJoint || this.m_typeA === b2JointType.e_prismaticJoint); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_typeB === b2JointType.e_revoluteJoint || this.m_typeB === b2JointType.e_prismaticJoint); }
+    ///b2Assert(this.m_typeA === b2JointType.e_revoluteJoint || this.m_typeA === b2JointType.e_prismaticJoint);
+    ///b2Assert(this.m_typeB === b2JointType.e_revoluteJoint || this.m_typeB === b2JointType.e_prismaticJoint);
 
     let coordinateA: number, coordinateB;
 
@@ -498,7 +498,7 @@ export class b2GearJoint extends b2Joint {
     data.positions[this.m_indexD].a = aD;
 
     // TODO_ERIN not implemented
-    return linearError < b2Settings.b2_linearSlop;
+    return linearError < b2_linearSlop;
   }
 
   public GetAnchorA(out: b2Vec2): b2Vec2 {
@@ -530,26 +530,24 @@ export class b2GearJoint extends b2Joint {
   }
 
   public SetRatio(ratio) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(ratio)); }
+    ///b2Assert(b2IsValid(ratio));
     this.m_ratio = ratio;
   }
 
-  public Dump() {
-    if (b2Settings.DEBUG) {
-      const indexA = this.m_bodyA.m_islandIndex;
-      const indexB = this.m_bodyB.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void) {
+    const indexA = this.m_bodyA.m_islandIndex;
+    const indexB = this.m_bodyB.m_islandIndex;
 
-      const index1 = this.m_joint1.m_index;
-      const index2 = this.m_joint2.m_index;
+    const index1 = this.m_joint1.m_index;
+    const index2 = this.m_joint2.m_index;
 
-      b2Settings.b2Log("  const jd: b2GearJointDef = new b2GearJointDef();\n");
-      b2Settings.b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-      b2Settings.b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-      b2Settings.b2Log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.joint1 = joints[%d];\n", index1);
-      b2Settings.b2Log("  jd.joint2 = joints[%d];\n", index2);
-      b2Settings.b2Log("  jd.ratio = %.15f;\n", this.m_ratio);
-      b2Settings.b2Log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
-    }
+    log("  const jd: b2GearJointDef = new b2GearJointDef();\n");
+    log("  jd.bodyA = bodies[%d];\n", indexA);
+    log("  jd.bodyB = bodies[%d];\n", indexB);
+    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log("  jd.joint1 = joints[%d];\n", index1);
+    log("  jd.joint2 = joints[%d];\n", index2);
+    log("  jd.ratio = %.15f;\n", this.m_ratio);
+    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 }

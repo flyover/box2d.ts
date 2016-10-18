@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_linearSlop, b2_maxPolygonVertices, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
@@ -79,7 +79,7 @@ export class b2SeparationFunction {
     this.m_proxyA = proxyA;
     this.m_proxyB = proxyB;
     const count: number = cache.count;
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 < count && count < 3); }
+    ///b2Assert(0 < count && count < 3);
 
     this.m_sweepA.Copy(sweepA);
     this.m_sweepB.Copy(sweepB);
@@ -200,7 +200,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       indexA[0] = -1;
       indexB[0] = -1;
       return 0;
@@ -248,7 +248,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       return 0;
     }
   }
@@ -259,8 +259,8 @@ const b2TimeOfImpact_s_cache: b2SimplexCache = new b2SimplexCache();
 const b2TimeOfImpact_s_distanceInput: b2DistanceInput = new b2DistanceInput();
 const b2TimeOfImpact_s_distanceOutput: b2DistanceOutput = new b2DistanceOutput();
 const b2TimeOfImpact_s_fcn: b2SeparationFunction = new b2SeparationFunction();
-const b2TimeOfImpact_s_indexA = b2Settings.b2MakeNumberArray(1);
-const b2TimeOfImpact_s_indexB = b2Settings.b2MakeNumberArray(1);
+const b2TimeOfImpact_s_indexA = b2MakeNumberArray(1);
+const b2TimeOfImpact_s_indexB = b2MakeNumberArray(1);
 const b2TimeOfImpact_s_sweepA: b2Sweep = new b2Sweep();
 const b2TimeOfImpact_s_sweepB: b2Sweep = new b2Sweep();
 export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
@@ -285,9 +285,9 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const tMax: number = input.tMax;
 
   const totalRadius: number = proxyA.m_radius + proxyB.m_radius;
-  const target: number = b2Max(b2Settings.b2_linearSlop, totalRadius - 3 * b2Settings.b2_linearSlop);
-  const tolerance: number = 0.25 * b2Settings.b2_linearSlop;
-  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(target > tolerance); }
+  const target: number = b2Max(b2_linearSlop, totalRadius - 3 * b2_linearSlop);
+  const tolerance: number = 0.25 * b2_linearSlop;
+  ///b2Assert(target > tolerance);
 
   let t1: number = 0;
   const k_maxIterations: number = 20; // TODO_ERIN b2Settings
@@ -452,7 +452,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
 
       ++pushBackIter;
 
-      if (pushBackIter === b2Settings.b2_maxPolygonVertices) {
+      if (pushBackIter === b2_maxPolygonVertices) {
         break;
       }
     }

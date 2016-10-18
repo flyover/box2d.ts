@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
 import { b2IsValid, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -78,10 +78,10 @@ export class b2MouseJoint extends b2Joint {
     this.m_lalcB = new b2Vec2();
     this.m_K = new b2Mat22();
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.target.IsValid()); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0); }
+    ///b2Assert(def.target.IsValid());
+    ///b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0);
+    ///b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0);
+    ///b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
 
     this.m_targetA.Copy(def.target);
     b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
@@ -147,7 +147,7 @@ export class b2MouseJoint extends b2Joint {
     const mass: number = this.m_bodyB.GetMass();
 
     // Frequency
-    const omega: number = 2 * b2Settings.b2_pi * this.m_frequencyHz;
+    const omega: number = 2 * b2_pi * this.m_frequencyHz;
 
     // Damping coefficient
     const d: number = 2 * mass * this.m_dampingRatio * omega;
@@ -159,7 +159,7 @@ export class b2MouseJoint extends b2Joint {
     // gamma has units of inverse mass.
     // beta has units of inverse time.
     const h: number = data.step.dt;
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(d + h * k > b2Settings.b2_epsilon); }
+    ///b2Assert(d + h * k > b2_epsilon);
     this.m_gamma = h * (d + h * k);
     if (this.m_gamma !== 0) {
       this.m_gamma = 1 / this.m_gamma;
@@ -264,10 +264,8 @@ export class b2MouseJoint extends b2Joint {
     return 0;
   }
 
-  public Dump() {
-    if (b2Settings.DEBUG) {
-      b2Settings.b2Log("Mouse joint dumping is not supported.\n");
-    }
+  public Dump(log: (format: string, ...args: any[]) => void) {
+    log("Mouse joint dumping is not supported.\n");
   }
 
   public ShiftOrigin(newOrigin) {

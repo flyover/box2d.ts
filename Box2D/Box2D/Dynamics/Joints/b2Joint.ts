@@ -16,7 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
 import { b2Vec2 } from "../../Common/b2Math";
 import { b2Body, b2BodyDef } from "../b2Body";
 import { b2SolverData } from "../b2TimeStep";
@@ -117,7 +116,7 @@ export class b2Joint {
   public m_userData: any = null;
 
   constructor(def: b2JointDef) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.bodyA !== def.bodyB); }
+    ///b2Assert(def.bodyA !== def.bodyB);
 
     this.m_type = def.type;
     this.m_bodyA = def.bodyA;
@@ -191,10 +190,8 @@ export class b2Joint {
   }
 
   /// Dump this joint to the log file.
-  public Dump(): void {
-    if (b2Settings.DEBUG) {
-      b2Settings.b2Log("// Dump is not supported for this joint type.\n");
-    }
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    log("// Dump is not supported for this joint type.\n");
   }
 
   /// Shift the origin for any points stored in world coordinates.

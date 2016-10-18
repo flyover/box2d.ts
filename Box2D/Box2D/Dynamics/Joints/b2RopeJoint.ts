@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_linearSlop, b2_maxLinearCorrection } from "../../Common/b2Settings";
 import { b2Min, b2Clamp, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -115,7 +115,7 @@ export class b2RopeJoint extends b2Joint {
       this.m_state = b2LimitState.e_inactiveLimit;
     }
 
-    if (this.m_length > b2Settings.b2_linearSlop) {
+    if (this.m_length > b2_linearSlop) {
       this.m_u.SelfMul(1 / this.m_length);
     } else {
       this.m_u.SetZero();
@@ -218,7 +218,7 @@ export class b2RopeJoint extends b2Joint {
     const length: number = u.Normalize();
     let C: number = length - this.m_maxLength;
 
-    C = b2Clamp(C, 0, b2Settings.b2_maxLinearCorrection);
+    C = b2Clamp(C, 0, b2_maxLinearCorrection);
 
     const impulse: number = -this.m_mass * C;
     // b2Vec2 P = impulse * u;
@@ -236,7 +236,7 @@ export class b2RopeJoint extends b2Joint {
     // data.positions[this.m_indexB].c = cB;
     data.positions[this.m_indexB].a = aB;
 
-    return length - this.m_maxLength < b2Settings.b2_linearSlop;
+    return length - this.m_maxLength < b2_linearSlop;
   }
 
   public GetAnchorA(out: b2Vec2): b2Vec2 {
@@ -270,19 +270,17 @@ export class b2RopeJoint extends b2Joint {
     return this.m_state;
   }
 
-  public Dump(): void {
-    if (b2Settings.DEBUG) {
-      const indexA = this.m_bodyA.m_islandIndex;
-      const indexB = this.m_bodyB.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    const indexA = this.m_bodyA.m_islandIndex;
+    const indexB = this.m_bodyB.m_islandIndex;
 
-      b2Settings.b2Log("  const jd: b2RopeJointDef = new b2RopeJointDef();\n");
-      b2Settings.b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-      b2Settings.b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-      b2Settings.b2Log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-      b2Settings.b2Log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-      b2Settings.b2Log("  jd.maxLength = %.15f;\n", this.m_maxLength);
-      b2Settings.b2Log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
-    }
+    log("  const jd: b2RopeJointDef = new b2RopeJointDef();\n");
+    log("  jd.bodyA = bodies[%d];\n", indexA);
+    log("  jd.bodyB = bodies[%d];\n", indexB);
+    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.maxLength = %.15f;\n", this.m_maxLength);
+    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 }

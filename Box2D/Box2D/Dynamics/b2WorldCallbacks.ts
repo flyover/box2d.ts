@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_maxManifoldPoints, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Vec2 } from "../Common/b2Math";
 import { b2Manifold } from "../Collision/b2Collision";
 import { b2Contact } from "./Contacts/b2Contact";
@@ -64,8 +64,8 @@ export class b2ContactFilter {
 /// sub-step forces may approach infinity for rigid body collisions. These
 /// match up one-to-one with the contact points in b2Manifold.
 export class b2ContactImpulse {
-  public normalImpulses: number[] = b2Settings.b2MakeNumberArray(b2Settings.b2_maxManifoldPoints);
-  public tangentImpulses: number[] = b2Settings.b2MakeNumberArray(b2Settings.b2_maxManifoldPoints);
+  public normalImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
+  public tangentImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
   public count: number = 0;
 }
 

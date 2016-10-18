@@ -16,7 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2CollideEdgeAndPolygon } from "../../Collision/b2CollideEdge";
 import { b2Manifold } from "../../Collision/b2Collision";
@@ -41,16 +40,16 @@ export class b2ChainAndPolygonContact extends b2Contact {
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape); }
+    ///b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
+    ///b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
   }
 
   private static Evaluate_s_edge = new b2EdgeShape();
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA = this.m_fixtureA.GetShape();
     const shapeB = this.m_fixtureB.GetShape();
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeA instanceof b2ChainShape); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeB instanceof b2PolygonShape); }
+    ///b2Assert(shapeA instanceof b2ChainShape);
+    ///b2Assert(shapeB instanceof b2PolygonShape);
     const chain = <b2ChainShape> shapeA;
     const edge = b2ChainAndPolygonContact.Evaluate_s_edge;
     chain.GetChildEdge(edge, this.m_indexA);

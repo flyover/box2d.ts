@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_aabbExtension, b2_aabbMultiplier } from "../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2GrowableStack } from "../Common/b2GrowableStack";
 import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
@@ -63,12 +63,12 @@ export class b2DynamicTree {
   public static s_aabb = new b2AABB();
 
   public GetUserData(proxy: b2TreeNode): any {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxy !== null); }
+    ///b2Assert(proxy !== null);
     return proxy.userData;
   }
 
   public GetFatAABB(proxy: b2TreeNode): b2AABB {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxy !== null); }
+    ///b2Assert(proxy !== null);
     return proxy.aabb;
   }
 
@@ -104,7 +104,7 @@ export class b2DynamicTree {
     const p1: b2Vec2 = input.p1;
     const p2: b2Vec2 = input.p2;
     const r: b2Vec2 = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(r.GetLengthSquared() > 0); }
+    ///b2Assert(r.GetLengthSquared() > 0);
     r.Normalize();
 
     // v is perpendicular to the segment.
@@ -205,8 +205,8 @@ export class b2DynamicTree {
     const node: b2TreeNode = this.AllocateNode();
 
     // Fatten the aabb.
-    const r_x: number = b2Settings.b2_aabbExtension;
-    const r_y: number = b2Settings.b2_aabbExtension;
+    const r_x: number = b2_aabbExtension;
+    const r_y: number = b2_aabbExtension;
     node.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
     node.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
     node.aabb.upperBound.x = aabb.upperBound.x + r_x;
@@ -220,14 +220,14 @@ export class b2DynamicTree {
   }
 
   public DestroyProxy(proxy: b2TreeNode): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxy.IsLeaf()); }
+    ///b2Assert(proxy.IsLeaf());
 
     this.RemoveLeaf(proxy);
     this.FreeNode(proxy);
   }
 
   public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): boolean {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxy.IsLeaf()); }
+    ///b2Assert(proxy.IsLeaf());
 
     if (proxy.aabb.Contains(aabb)) {
       return false;
@@ -237,8 +237,8 @@ export class b2DynamicTree {
 
     // Extend AABB.
     // Predict AABB displacement.
-    const r_x: number = b2Settings.b2_aabbExtension + b2Settings.b2_aabbMultiplier * (displacement.x > 0 ? displacement.x : (-displacement.x));
-    const r_y: number = b2Settings.b2_aabbExtension + b2Settings.b2_aabbMultiplier * (displacement.y > 0 ? displacement.y : (-displacement.y));
+    const r_x: number = b2_aabbExtension + b2_aabbMultiplier * (displacement.x > 0 ? displacement.x : (-displacement.x));
+    const r_y: number = b2_aabbExtension + b2_aabbMultiplier * (displacement.y > 0 ? displacement.y : (-displacement.y));
     proxy.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
     proxy.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
     proxy.aabb.upperBound.x = aabb.upperBound.x + r_x;
@@ -358,8 +358,8 @@ export class b2DynamicTree {
       child1 = index.child1;
       child2 = index.child2;
 
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child1 !== null); }
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child2 !== null); }
+      ///b2Assert(child1 !== null);
+      ///b2Assert(child2 !== null);
 
       index.height = 1 + b2Max(child1.height, child2.height);
       index.aabb.Combine2(child1.aabb, child2.aabb);
@@ -418,7 +418,7 @@ export class b2DynamicTree {
   }
 
   public Balance(A: b2TreeNode): b2TreeNode {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(A !== null); }
+    ///b2Assert(A !== null);
 
     if (A.IsLeaf() || A.height < 2) {
       return A;
@@ -444,7 +444,7 @@ export class b2DynamicTree {
         if (C.parent.child1 === A) {
           C.parent.child1 = C;
         } else {
-          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(C.parent.child2 === A); }
+          ///b2Assert(C.parent.child2 === A);
           C.parent.child2 = C;
         }
       } else {
@@ -490,7 +490,7 @@ export class b2DynamicTree {
         if (B.parent.child1 === A) {
           B.parent.child1 = B;
         } else {
-          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(B.parent.child2 === A); }
+          ///b2Assert(B.parent.child2 === A);
           B.parent.child2 = B;
         }
       } else {
@@ -593,7 +593,7 @@ export class b2DynamicTree {
     }
 
     if (index === this.m_root) {
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(index.parent === null); }
+      ///b2Assert(index.parent === null);
     }
 
     const node: b2TreeNode = index;
@@ -602,14 +602,14 @@ export class b2DynamicTree {
     const child2: b2TreeNode = node.child2;
 
     if (node.IsLeaf()) {
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child1 === null); }
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child2 === null); }
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(node.height === 0); }
+      ///b2Assert(child1 === null);
+      ///b2Assert(child2 === null);
+      ///b2Assert(node.height === 0);
       return;
     }
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child1.parent === index); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child2.parent === index); }
+    ///b2Assert(child1.parent === index);
+    ///b2Assert(child2.parent === index);
 
     this.ValidateStructure(child1);
     this.ValidateStructure(child2);
@@ -626,22 +626,22 @@ export class b2DynamicTree {
     const child2: b2TreeNode = node.child2;
 
     if (node.IsLeaf()) {
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child1 === null); }
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(child2 === null); }
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(node.height === 0); }
+      ///b2Assert(child1 === null);
+      ///b2Assert(child2 === null);
+      ///b2Assert(node.height === 0);
       return;
     }
 
     const height1: number = child1.height;
     const height2: number = child2.height;
     const height: number = 1 + b2Max(height1, height2);
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(node.height === height); }
+    ///b2Assert(node.height === height);
 
     const aabb: b2AABB = b2DynamicTree.s_aabb;
     aabb.Combine2(child1.aabb, child2.aabb);
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(aabb.lowerBound === node.aabb.lowerBound); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(aabb.upperBound === node.aabb.upperBound); }
+    ///b2Assert(aabb.lowerBound === node.aabb.lowerBound);
+    ///b2Assert(aabb.upperBound === node.aabb.upperBound);
 
     this.ValidateMetrics(child1);
     this.ValidateMetrics(child2);
@@ -658,7 +658,7 @@ export class b2DynamicTree {
       ++freeCount;
     }
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.GetHeight() === this.ComputeHeight()); }
+    ///b2Assert(this.GetHeight() === this.ComputeHeight());
   }
 
   public GetMaxBalance(): number {
@@ -671,7 +671,7 @@ export class b2DynamicTree {
         return maxBalance;
       }
 
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(node.IsLeaf() === false); }
+      ///b2Assert(node.IsLeaf() === false);
 
       const child1: b2TreeNode = node.child1;
       const child2: b2TreeNode = node.child2;
@@ -689,7 +689,7 @@ export class b2DynamicTree {
         continue;
       }
 
-      b2Settings.b2Assert(node.IsLeaf() === false);
+      b2Assert(node.IsLeaf() === false);
 
       int32 child1 = node.child1;
       int32 child2 = node.child2;
@@ -723,7 +723,7 @@ export class b2DynamicTree {
     }
 
     while (count > 1) {
-      float32 minCost = b2Settings.b2_maxFloat;
+      float32 minCost = b2_maxFloat;
       int32 iMin = -1, jMin = -1;
       for (int32 i = 0; i < count; ++i) {
         b2AABB aabbi = m_nodes[nodes[i]].aabb;
@@ -779,7 +779,7 @@ export class b2DynamicTree {
         return;
       }
 
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(node.IsLeaf() === false); }
+      ///b2Assert(node.IsLeaf() === false);
 
       const child1: b2TreeNode = node.child1;
       const child2: b2TreeNode = node.child2;

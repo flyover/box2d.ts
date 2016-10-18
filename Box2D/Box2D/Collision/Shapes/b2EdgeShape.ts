@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_polygonRadius } from "../../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
@@ -35,7 +35,7 @@ export class b2EdgeShape extends b2Shape {
   public m_hasVertex3: boolean = false;
 
   constructor() {
-    super(b2ShapeType.e_edgeShape, b2Settings.b2_polygonRadius);
+    super(b2ShapeType.e_edgeShape, b2_polygonRadius);
   }
 
   /// Set this as an isolated edge.
@@ -55,7 +55,7 @@ export class b2EdgeShape extends b2Shape {
   public Copy(other: b2EdgeShape): b2EdgeShape {
     super.Copy(other);
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2EdgeShape); }
+    ///b2Assert(other instanceof b2EdgeShape);
 
     this.m_vertex1.Copy(other.m_vertex1);
     this.m_vertex2.Copy(other.m_vertex2);
@@ -171,14 +171,14 @@ export class b2EdgeShape extends b2Shape {
     return 0;
   }
 
-  public Dump(): void {
-    b2Settings.b2Log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-    b2Settings.b2Log("    shape.m_radius = %.15f;\n", this.m_radius);
-    b2Settings.b2Log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
-    b2Settings.b2Log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
-    b2Settings.b2Log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
-    b2Settings.b2Log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
-    b2Settings.b2Log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
-    b2Settings.b2Log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
+    log("    shape.m_radius = %.15f;\n", this.m_radius);
+    log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
+    log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
+    log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
+    log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
+    log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
+    log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
   }
 }

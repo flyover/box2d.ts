@@ -16,7 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
 import { b2IsValid, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2MassData } from "../Collision/Shapes/b2Shape";
@@ -154,13 +153,13 @@ export class b2Body {
   // public m_controllerCount: number = 0;
 
   constructor(bd: b2BodyDef, world: b2World) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(bd.position.IsValid()); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(bd.linearVelocity.IsValid()); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(bd.angle)); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(bd.angularVelocity)); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(bd.gravityScale) && bd.gravityScale >= 0); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0); }
+    ///b2Assert(bd.position.IsValid());
+    ///b2Assert(bd.linearVelocity.IsValid());
+    ///b2Assert(b2IsValid(bd.angle));
+    ///b2Assert(b2IsValid(bd.angularVelocity));
+    ///b2Assert(b2IsValid(bd.gravityScale) && bd.gravityScale >= 0);
+    ///b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
+    ///b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
 
     this.m_flags = b2BodyFlag.e_none;
 
@@ -234,7 +233,7 @@ export class b2Body {
   /// @param def the fixture definition.
   /// @warning This function is locked during callbacks.
   public CreateFixture(def: b2FixtureDef): b2Fixture {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
+    ///b2Assert(this.m_world.IsLocked() === false);
     if (this.m_world.IsLocked() === true) {
       return null;
     }
@@ -288,15 +287,15 @@ export class b2Body {
   /// @param fixture the fixture to be removed.
   /// @warning This function is locked during callbacks.
   public DestroyFixture(fixture: b2Fixture): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
+    ///b2Assert(this.m_world.IsLocked() === false);
     if (this.m_world.IsLocked() === true) {
       return;
     }
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture.m_body === this); }
+    ///b2Assert(fixture.m_body === this);
 
     // Remove the fixture from this body's singly linked list.
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_fixtureCount > 0); }
+    ///b2Assert(this.m_fixtureCount > 0);
     let node: b2Fixture = this.m_fixtureList;
     let ppF: b2Fixture = null;
     let found: boolean = false;
@@ -315,7 +314,7 @@ export class b2Body {
     }
 
     // You tried to remove a shape that is not attached to this body.
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(found); }
+    ///b2Assert(found);
 
     // Destroy any contacts associated with the fixture.
     let edge: b2ContactEdge = this.m_contactList;
@@ -358,7 +357,7 @@ export class b2Body {
   }
 
   public SetTransformXYRadians(x: number, y: number, angle: number): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
+    ///b2Assert(this.m_world.IsLocked() === false);
     if (this.m_world.IsLocked() === true) {
       return;
     }
@@ -612,7 +611,7 @@ export class b2Body {
   /// @param massData the mass properties.
   private static SetMassData_s_oldCenter: b2Vec2 = new b2Vec2();
   public SetMassData(massData: b2MassData): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
+    ///b2Assert(this.m_world.IsLocked() === false);
     if (this.m_world.IsLocked() === true) {
       return;
     }
@@ -634,7 +633,7 @@ export class b2Body {
 
     if (massData.I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
       this.m_I = massData.I - this.m_mass * b2Vec2.DotVV(massData.center, massData.center);
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_I > 0); }
+      ///b2Assert(this.m_I > 0);
       this.m_invI = 1 / this.m_I;
     }
 
@@ -670,7 +669,7 @@ export class b2Body {
       return;
     }
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_type === b2BodyType.b2_dynamicBody); }
+    ///b2Assert(this.m_type === b2BodyType.b2_dynamicBody);
 
     // Accumulate mass over all fixtures.
     const localCenter: b2Vec2 = b2Body.ResetMassData_s_localCenter.SetZero();
@@ -700,7 +699,7 @@ export class b2Body {
     if (this.m_I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
       // Center the inertia about the center of mass.
       this.m_I -= this.m_mass * b2Vec2.DotVV(localCenter, localCenter);
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_I > 0); }
+      ///b2Assert(this.m_I > 0);
       this.m_invI = 1 / this.m_I;
     } else {
       this.m_I = 0;
@@ -791,7 +790,7 @@ export class b2Body {
 
   /// Set the type of this body. This may alter the mass and velocity.
   public SetType(type: b2BodyType): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
+    ///b2Assert(this.m_world.IsLocked() === false);
     if (this.m_world.IsLocked() === true) {
       return;
     }
@@ -910,7 +909,7 @@ export class b2Body {
   /// An inactive body is still owned by a b2World object and remains
   /// in the body list.
   public SetActive(flag: boolean): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
+    ///b2Assert(this.m_world.IsLocked() === false);
 
     if (flag === this.IsActive()) {
       return;
@@ -1013,50 +1012,48 @@ export class b2Body {
   }
 
   /// Dump this body to a log file
-  public Dump(): void {
-    if (b2Settings.DEBUG) {
-      const bodyIndex: number = this.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    const bodyIndex: number = this.m_islandIndex;
 
-      b2Settings.b2Log("{\n");
-      b2Settings.b2Log("  const bd: b2BodyDef = new b2BodyDef();\n");
-      let type_str: string = "";
-      switch (this.m_type) {
-      case b2BodyType.b2_staticBody:
-        type_str = "b2BodyType.b2_staticBody";
-        break;
-      case b2BodyType.b2_kinematicBody:
-        type_str = "b2BodyType.b2_kinematicBody";
-        break;
-      case b2BodyType.b2_dynamicBody:
-        type_str = "b2BodyType.b2_dynamicBody";
-        break;
-      default:
-        ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
-        break;
-      }
-      b2Settings.b2Log("  bd.type = %s;\n", type_str);
-      b2Settings.b2Log("  bd.position.SetXY(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
-      b2Settings.b2Log("  bd.angle = %.15f;\n", this.m_sweep.a);
-      b2Settings.b2Log("  bd.linearVelocity.SetXY(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
-      b2Settings.b2Log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
-      b2Settings.b2Log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
-      b2Settings.b2Log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
-      b2Settings.b2Log("  bd.allowSleep = %s;\n", (this.m_flags & b2BodyFlag.e_autoSleepFlag) ? ("true") : ("false"));
-      b2Settings.b2Log("  bd.awake = %s;\n", (this.m_flags & b2BodyFlag.e_awakeFlag) ? ("true") : ("false"));
-      b2Settings.b2Log("  bd.fixedRotation = %s;\n", (this.m_flags & b2BodyFlag.e_fixedRotationFlag) ? ("true") : ("false"));
-      b2Settings.b2Log("  bd.bullet = %s;\n", (this.m_flags & b2BodyFlag.e_bulletFlag) ? ("true") : ("false"));
-      b2Settings.b2Log("  bd.active = %s;\n", (this.m_flags & b2BodyFlag.e_activeFlag) ? ("true") : ("false"));
-      b2Settings.b2Log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
-      b2Settings.b2Log("\n");
-      b2Settings.b2Log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
-      b2Settings.b2Log("\n");
-      for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
-        b2Settings.b2Log("  {\n");
-        f.Dump(bodyIndex);
-        b2Settings.b2Log("  }\n");
-      }
-      b2Settings.b2Log("}\n");
+    log("{\n");
+    log("  const bd: b2BodyDef = new b2BodyDef();\n");
+    let type_str: string = "";
+    switch (this.m_type) {
+    case b2BodyType.b2_staticBody:
+      type_str = "b2BodyType.b2_staticBody";
+      break;
+    case b2BodyType.b2_kinematicBody:
+      type_str = "b2BodyType.b2_kinematicBody";
+      break;
+    case b2BodyType.b2_dynamicBody:
+      type_str = "b2BodyType.b2_dynamicBody";
+      break;
+    default:
+      ///b2Assert(false);
+      break;
     }
+    log("  bd.type = %s;\n", type_str);
+    log("  bd.position.SetXY(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
+    log("  bd.angle = %.15f;\n", this.m_sweep.a);
+    log("  bd.linearVelocity.SetXY(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
+    log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
+    log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
+    log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
+    log("  bd.allowSleep = %s;\n", (this.m_flags & b2BodyFlag.e_autoSleepFlag) ? ("true") : ("false"));
+    log("  bd.awake = %s;\n", (this.m_flags & b2BodyFlag.e_awakeFlag) ? ("true") : ("false"));
+    log("  bd.fixedRotation = %s;\n", (this.m_flags & b2BodyFlag.e_fixedRotationFlag) ? ("true") : ("false"));
+    log("  bd.bullet = %s;\n", (this.m_flags & b2BodyFlag.e_bulletFlag) ? ("true") : ("false"));
+    log("  bd.active = %s;\n", (this.m_flags & b2BodyFlag.e_activeFlag) ? ("true") : ("false"));
+    log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
+    log("\n");
+    log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
+    log("\n");
+    for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
+      log("  {\n");
+      f.Dump(log, bodyIndex);
+      log("  }\n");
+    }
+    log("}\n");
   }
 
   private static SynchronizeFixtures_s_xf1: b2Transform = new b2Transform();

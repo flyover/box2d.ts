@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection } from "../../Common/b2Settings";
 import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -186,7 +186,7 @@ export class b2RevoluteJoint extends b2Joint {
 
     if (this.m_enableLimit && fixedRotation === false) {
       const jointAngle: number = aB - aA - this.m_referenceAngle;
-      if (b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2 * b2Settings.b2_angularSlop) {
+      if (b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2 * b2_angularSlop) {
         this.m_limitState = b2LimitState.e_equalLimits;
       } else if (jointAngle <= this.m_lowerAngle) {
         if (this.m_limitState !== b2LimitState.e_atLowerLimit) {
@@ -372,7 +372,7 @@ export class b2RevoluteJoint extends b2Joint {
 
       if (this.m_limitState === b2LimitState.e_equalLimits) {
         // Prevent large angular corrections
-        const C: number = b2Clamp(angle - this.m_lowerAngle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
+        const C: number = b2Clamp(angle - this.m_lowerAngle, -b2_maxAngularCorrection, b2_maxAngularCorrection);
         limitImpulse = -this.m_motorMass * C;
         angularError = b2Abs(C);
       } else if (this.m_limitState === b2LimitState.e_atLowerLimit) {
@@ -380,14 +380,14 @@ export class b2RevoluteJoint extends b2Joint {
         angularError = -C;
 
         // Prevent large angular corrections and allow some slop.
-        C = b2Clamp(C + b2Settings.b2_angularSlop, -b2Settings.b2_maxAngularCorrection, 0);
+        C = b2Clamp(C + b2_angularSlop, -b2_maxAngularCorrection, 0);
         limitImpulse = -this.m_motorMass * C;
       } else if (this.m_limitState === b2LimitState.e_atUpperLimit) {
         let C: number = angle - this.m_upperAngle;
         angularError = C;
 
         // Prevent large angular corrections and allow some slop.
-        C = b2Clamp(C - b2Settings.b2_angularSlop, 0, b2Settings.b2_maxAngularCorrection);
+        C = b2Clamp(C - b2_angularSlop, 0, b2_maxAngularCorrection);
         limitImpulse = -this.m_motorMass * C;
       }
 
@@ -441,7 +441,7 @@ export class b2RevoluteJoint extends b2Joint {
     // data.positions[this.m_indexB].c = cB;
     data.positions[this.m_indexB].a = aB;
 
-    return positionError <= b2Settings.b2_linearSlop && angularError <= b2Settings.b2_angularSlop;
+    return positionError <= b2_linearSlop && angularError <= b2_angularSlop;
   }
 
   public GetAnchorA(out: b2Vec2): b2Vec2 {
@@ -548,25 +548,23 @@ export class b2RevoluteJoint extends b2Joint {
     }
   }
 
-  public Dump() {
-    if (b2Settings.DEBUG) {
-      const indexA = this.m_bodyA.m_islandIndex;
-      const indexB = this.m_bodyB.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void) {
+    const indexA = this.m_bodyA.m_islandIndex;
+    const indexB = this.m_bodyB.m_islandIndex;
 
-      b2Settings.b2Log("  const jd: b2RevoluteJointDef = new b2RevoluteJointDef();\n");
-      b2Settings.b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-      b2Settings.b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-      b2Settings.b2Log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-      b2Settings.b2Log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-      b2Settings.b2Log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
-      b2Settings.b2Log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.lowerAngle = %.15f;\n", this.m_lowerAngle);
-      b2Settings.b2Log("  jd.upperAngle = %.15f;\n", this.m_upperAngle);
-      b2Settings.b2Log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
-      b2Settings.b2Log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
-      b2Settings.b2Log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
-    }
+    log("  const jd: b2RevoluteJointDef = new b2RevoluteJointDef();\n");
+    log("  jd.bodyA = bodies[%d];\n", indexA);
+    log("  jd.bodyB = bodies[%d];\n", indexB);
+    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
+    log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
+    log("  jd.lowerAngle = %.15f;\n", this.m_lowerAngle);
+    log("  jd.upperAngle = %.15f;\n", this.m_upperAngle);
+    log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
+    log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
+    log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
+    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 }

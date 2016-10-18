@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_pi, b2_linearSlop } from "../../Common/b2Settings";
 import { b2Abs, b2Clamp, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -226,7 +226,7 @@ export class b2WheelJoint extends b2Joint {
         const C: number = b2Vec2.DotVV(d, this.m_ax);
 
         // Frequency
-        const omega: number = 2 * b2Settings.b2_pi * this.m_frequencyHz;
+        const omega: number = 2 * b2_pi * this.m_frequencyHz;
 
         // Damping coefficient
         const dc: number = 2 * this.m_springMass * this.m_dampingRatio * omega;
@@ -427,11 +427,11 @@ export class b2WheelJoint extends b2Joint {
     // data.positions[this.m_indexB].c = cB;
     data.positions[this.m_indexB].a = aB;
 
-    return b2Abs(C) <= b2Settings.b2_linearSlop;
+    return b2Abs(C) <= b2_linearSlop;
   }
 
   public GetDefinition(def) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); } // TODO
+    ///b2Assert(false); // TODO
     return def;
   }
 
@@ -505,24 +505,22 @@ export class b2WheelJoint extends b2Joint {
     return inv_dt * this.m_motorImpulse;
   }
 
-  public Dump(): void {
-    if (b2Settings.DEBUG) {
-      const indexA = this.m_bodyA.m_islandIndex;
-      const indexB = this.m_bodyB.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    const indexA = this.m_bodyA.m_islandIndex;
+    const indexB = this.m_bodyB.m_islandIndex;
 
-      b2Settings.b2Log("  const jd: b2WheelJointDef = new b2WheelJointDef();\n");
-      b2Settings.b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-      b2Settings.b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-      b2Settings.b2Log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-      b2Settings.b2Log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-      b2Settings.b2Log("  jd.localAxisA.Set(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
-      b2Settings.b2Log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
-      b2Settings.b2Log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
-      b2Settings.b2Log("  jd.frequencyHz = %.15f;\n", this.m_frequencyHz);
-      b2Settings.b2Log("  jd.dampingRatio = %.15f;\n", this.m_dampingRatio);
-      b2Settings.b2Log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
-    }
+    log("  const jd: b2WheelJointDef = new b2WheelJointDef();\n");
+    log("  jd.bodyA = bodies[%d];\n", indexA);
+    log("  jd.bodyB = bodies[%d];\n", indexB);
+    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.localAxisA.Set(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
+    log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
+    log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
+    log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
+    log("  jd.frequencyHz = %.15f;\n", this.m_frequencyHz);
+    log("  jd.dampingRatio = %.15f;\n", this.m_dampingRatio);
+    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 }

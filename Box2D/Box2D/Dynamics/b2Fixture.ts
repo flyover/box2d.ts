@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2MakeArray } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB } from "../Collision/b2Collision";
@@ -47,7 +47,7 @@ export class b2Filter {
   }
 
   public Copy(other: b2Filter): b2Filter {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.categoryBits = other.categoryBits;
     this.maskBits = other.maskBits;
     this.groupIndex = other.groupIndex;
@@ -89,7 +89,7 @@ export class b2FixtureProxy {
   public childIndex: number = 0;
   public proxy: b2TreeNode = null;
   public static MakeArray(length: number): b2FixtureProxy[] {
-    return b2Settings.b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
+    return b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
   }
 }
 
@@ -274,87 +274,27 @@ export class b2Fixture {
   /// If you need a more accurate AABB, compute it using the shape and
   /// the body transform.
   public GetAABB(childIndex: number): b2AABB {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= childIndex && childIndex < this.m_proxyCount); }
+    ///b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
     return this.m_proxies[childIndex].aabb;
   }
 
   /// Dump this fixture to the log file.
-  public Dump(bodyIndex: number): void {
-    if (b2Settings.DEBUG) {
-      b2Settings.b2Log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
-      b2Settings.b2Log("    fd.friction = %.15f;\n", this.m_friction);
-      b2Settings.b2Log("    fd.restitution = %.15f;\n", this.m_restitution);
-      b2Settings.b2Log("    fd.density = %.15f;\n", this.m_density);
-      b2Settings.b2Log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
-      b2Settings.b2Log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
-      b2Settings.b2Log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
-      b2Settings.b2Log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
+  public Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void {
+    log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
+    log("    fd.friction = %.15f;\n", this.m_friction);
+    log("    fd.restitution = %.15f;\n", this.m_restitution);
+    log("    fd.density = %.15f;\n", this.m_density);
+    log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
+    log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
+    log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
+    log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
 
-      this.m_shape.Dump();
-//      switch (this.m_shape.m_type)
-//      {
-//      case b2ShapeType.e_circleShape:
-//        {
-//          const circle: b2CircleShape = <b2CircleShape> this.m_shape;
-//          b2Settings.b2Log("    const shape: b2CircleShape = new b2CircleShape();\n");
-//          b2Settings.b2Log("    shape.m_radius = %.15f;\n", circle.m_radius);
-//          b2Settings.b2Log("    shape.m_p.SetXY(%.15f, %.15f);\n", circle.m_p.x, circle.m_p.y);
-//        }
-//        break;
-//
-//      case b2ShapeType.e_edgeShape:
-//        {
-//          const edge: b2EdgeShape = <b2EdgeShape> this.m_shape;
-//          b2Settings.b2Log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-//          b2Settings.b2Log("    shape.m_radius = %.15f;\n", edge.m_radius);
-//          b2Settings.b2Log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", edge.m_vertex0.x, edge.m_vertex0.y);
-//          b2Settings.b2Log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", edge.m_vertex1.x, edge.m_vertex1.y);
-//          b2Settings.b2Log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", edge.m_vertex2.x, edge.m_vertex2.y);
-//          b2Settings.b2Log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", edge.m_vertex3.x, edge.m_vertex3.y);
-//          b2Settings.b2Log("    shape.m_hasVertex0 = %s;\n", edge.m_hasVertex0);
-//          b2Settings.b2Log("    shape.m_hasVertex3 = %s;\n", edge.m_hasVertex3);
-//        }
-//        break;
-//
-//      case b2ShapeType.e_polygonShape:
-//        {
-//          const polygon: b2PolygonShape = <b2PolygonShape> this.m_shape;
-//          b2Settings.b2Log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
-//          b2Settings.b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
-//          for (let i: number = 0; i < polygon.m_count; ++i)
-//          {
-//            b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, polygon.m_vertices[i].x, polygon.m_vertices[i].y);
-//          }
-//          b2Settings.b2Log("    shape.SetAsVector(vs, %d);\n", polygon.m_count);
-//        }
-//        break;
-//
-//      case b2ShapeType.e_chainShape:
-//        {
-//          const chain: b2ChainShape = <b2ChainShape> this.m_shape;
-//          b2Settings.b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
-//          b2Settings.b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
-//          for (let i: number = 0; i < chain.m_count; ++i)
-//          {
-//            b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, chain.m_vertices[i].x, chain.m_vertices[i].y);
-//          }
-//          b2Settings.b2Log("    shape.CreateChain(vs, %d);\n", chain.m_count);
-//          b2Settings.b2Log("    shape.m_prevVertex.SetXY(%.15f, %.15f);\n", chain.m_prevVertex.x, chain.m_prevVertex.y);
-//          b2Settings.b2Log("    shape.m_nextVertex.SetXY(%.15f, %.15f);\n", chain.m_nextVertex.x, chain.m_nextVertex.y);
-//          b2Settings.b2Log("    shape.m_hasPrevVertex = %s;\n", (chain.m_hasPrevVertex)?('true'):('false'));
-//          b2Settings.b2Log("    shape.m_hasNextVertex = %s;\n", (chain.m_hasNextVertex)?('true'):('false'));
-//        }
-//        break;
-//
-//      default:
-//        return;
-//      }
+    this.m_shape.Dump(log);
 
-      b2Settings.b2Log("\n");
-      b2Settings.b2Log("    fd.shape = shape;\n");
-      b2Settings.b2Log("\n");
-      b2Settings.b2Log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
-    }
+    log("\n");
+    log("    fd.shape = shape;\n");
+    log("\n");
+    log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
   }
 
   // We need separation create/destroy functions from the constructor/destructor because
@@ -389,7 +329,7 @@ export class b2Fixture {
 
   public Destroy(): void {
     // The proxies must be destroyed before calling this.
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_proxyCount === 0); }
+    ///b2Assert(this.m_proxyCount === 0);
 
     // Free the proxy array.
     // int32 childCount = m_shape->GetChildCount();
@@ -401,7 +341,7 @@ export class b2Fixture {
 
   // These support body activation/deactivation.
   public CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_proxyCount === 0); }
+    ///b2Assert(this.m_proxyCount === 0);
 
     // Create proxies in the broad-phase.
     this.m_proxyCount = this.m_shape.GetChildCount();

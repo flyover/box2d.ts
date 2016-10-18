@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
 import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
@@ -39,7 +39,7 @@ export class b2CircleShape extends b2Shape {
   public Copy(other: b2CircleShape): b2CircleShape {
     super.Copy(other);
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2CircleShape); }
+    ///b2Assert(other instanceof b2CircleShape);
 
     this.m_p.Copy(other.m_p);
     return this;
@@ -79,7 +79,7 @@ export class b2CircleShape extends b2Shape {
     const sigma = c * c - rr * b;
 
     // Check for negative discriminant and short segment.
-    if (sigma < 0 || rr < b2Settings.b2_epsilon) {
+    if (sigma < 0 || rr < b2_epsilon) {
       return false;
     }
 
@@ -108,7 +108,7 @@ export class b2CircleShape extends b2Shape {
   /// @see b2Shape::ComputeMass
   public ComputeMass(massData: b2MassData, density: number): void {
     const radius_sq = b2Sq(this.m_radius);
-    massData.mass = density * b2Settings.b2_pi * radius_sq;
+    massData.mass = density * b2_pi * radius_sq;
     massData.center.Copy(this.m_p);
 
     // inertia about the local origin
@@ -126,20 +126,20 @@ export class b2CircleShape extends b2Shape {
     const p: b2Vec2 = b2Transform.MulXV(xf, this.m_p, new b2Vec2());
     const l: number = (-(b2Vec2.DotVV(normal, p) - offset));
 
-    if (l < (-this.m_radius) + b2Settings.b2_epsilon) {
+    if (l < (-this.m_radius) + b2_epsilon) {
       // Completely dry
       return 0;
     }
     if (l > this.m_radius) {
       // Completely wet
       c.Copy(p);
-      return b2Settings.b2_pi * this.m_radius * this.m_radius;
+      return b2_pi * this.m_radius * this.m_radius;
     }
 
     // Magic
     const r2: number = this.m_radius * this.m_radius;
     const l2: number = l * l;
-    const area: number = r2 * (b2Asin(l / this.m_radius) + b2Settings.b2_pi / 2) + l * b2Sqrt(r2 - l2);
+    const area: number = r2 * (b2Asin(l / this.m_radius) + b2_pi / 2) + l * b2Sqrt(r2 - l2);
     const com: number = (-2 / 3 * b2Pow(r2 - l2, 1.5) / area);
 
     c.x = p.x + normal.x * com;
@@ -148,9 +148,9 @@ export class b2CircleShape extends b2Shape {
     return area;
   }
 
-  public Dump(): void {
-    b2Settings.b2Log("    const shape: b2CircleShape = new b2CircleShape();\n");
-    b2Settings.b2Log("    shape.m_radius = %.15f;\n", this.m_radius);
-    b2Settings.b2Log("    shape.m_p.SetXY(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    log("    const shape: b2CircleShape = new b2CircleShape();\n");
+    log("    shape.m_radius = %.15f;\n", this.m_radius);
+    log("    shape.m_p.SetXY(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
   }
 }

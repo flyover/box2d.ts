@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_pi, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Atan2, b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2Color } from "../Common/b2Draw";
 import { b2Draw } from "../Common/b2Draw";
@@ -73,7 +73,7 @@ export class b2Rope {
 
   ///
   public Initialize(def: b2RopeDef): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.count >= 3); }
+    ///b2Assert(def.count >= 3);
     this.m_count = def.count;
     // this.m_ps = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
     this.m_ps = b2Vec2.MakeArray(this.m_count);
@@ -82,7 +82,7 @@ export class b2Rope {
     // this.m_vs = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
     this.m_vs = b2Vec2.MakeArray(this.m_count);
     // this.m_ims = (float32*)b2Alloc(this.m_count * sizeof(float32));
-    this.m_ims = b2Settings.b2MakeNumberArray(this.m_count);
+    this.m_ims = b2MakeNumberArray(this.m_count);
 
     for (let i: number = 0; i < this.m_count; ++i) {
       this.m_ps[i].Copy(def.vertices[i]);
@@ -100,9 +100,9 @@ export class b2Rope {
     const count2: number = this.m_count - 1;
     const count3: number = this.m_count - 2;
     // this.m_Ls = (float32*)be2Alloc(count2 * sizeof(float32));
-    this.m_Ls = b2Settings.b2MakeNumberArray(count2);
+    this.m_Ls = b2MakeNumberArray(count2);
     // this.m_as = (float32*)b2Alloc(count3 * sizeof(float32));
-    this.m_as = b2Settings.b2MakeNumberArray(count3);
+    this.m_as = b2MakeNumberArray(count3);
 
     for (let i: number = 0; i < count2; ++i) {
       const p1: b2Vec2 = this.m_ps[i];
@@ -245,13 +245,13 @@ export class b2Rope {
 
       let C: number = angle - this.m_as[i];
 
-      while (C > b2Settings.b2_pi) {
-        angle -= 2 * b2Settings.b2_pi;
+      while (C > b2_pi) {
+        angle -= 2 * b2_pi;
         C = angle - this.m_as[i];
       }
 
-      while (C < -b2Settings.b2_pi) {
-        angle += 2 * b2Settings.b2_pi;
+      while (C < -b2_pi) {
+        angle += 2 * b2_pi;
         C = angle - this.m_as[i];
       }
 

@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../../Common/b2Settings";
 import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Manifold } from "../../Collision/b2Collision";
 import { b2ManifoldPoint } from "../../Collision/b2Collision";
@@ -40,12 +40,12 @@ export class b2VelocityConstraintPoint {
   public velocityBias: number = 0;
 
   public static MakeArray(length) {
-    return b2Settings.b2MakeArray(length, function (i) { return new b2VelocityConstraintPoint(); });
+    return b2MakeArray(length, function (i) { return new b2VelocityConstraintPoint(); });
   }
 }
 
 export class b2ContactVelocityConstraint {
-  public points: b2VelocityConstraintPoint[] = b2VelocityConstraintPoint.MakeArray(b2Settings.b2_maxManifoldPoints);
+  public points: b2VelocityConstraintPoint[] = b2VelocityConstraintPoint.MakeArray(b2_maxManifoldPoints);
   public normal: b2Vec2 = new b2Vec2();
   public tangent: b2Vec2 = new b2Vec2();
   public normalMass: b2Mat22 = new b2Mat22();
@@ -63,12 +63,12 @@ export class b2ContactVelocityConstraint {
   public contactIndex: number = 0;
 
   public static MakeArray(length) {
-    return b2Settings.b2MakeArray(length, function (i) { return new b2ContactVelocityConstraint(); } );
+    return b2MakeArray(length, function (i) { return new b2ContactVelocityConstraint(); } );
   }
 }
 
 export class b2ContactPositionConstraint {
-  public localPoints: b2Vec2[] = b2Vec2.MakeArray(b2Settings.b2_maxManifoldPoints);
+  public localPoints: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
   public localNormal: b2Vec2 = new b2Vec2();
   public localPoint: b2Vec2 = new b2Vec2();
   public indexA: number = 0;
@@ -85,7 +85,7 @@ export class b2ContactPositionConstraint {
   public pointCount: number = 0;
 
   public static MakeArray(length) {
-    return b2Settings.b2MakeArray(length, function (i) { return new b2ContactPositionConstraint(); } );
+    return b2MakeArray(length, function (i) { return new b2ContactPositionConstraint(); } );
   }
 }
 
@@ -113,7 +113,7 @@ export class b2PositionSolverManifold {
     const planePoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_planePoint;
     const clipPoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_clipPoint;
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pc.pointCount > 0); }
+    ///b2Assert(pc.pointCount > 0);
 
     switch (pc.type) {
     case b2ManifoldType.e_circles: {
@@ -185,11 +185,6 @@ export class b2ContactSolver {
     // TODO:
     if (this.m_positionConstraints.length < this.m_count) {
       const new_length = b2Max(this.m_positionConstraints.length * 2, this.m_count);
-
-      if (b2Settings.DEBUG) {
-        console.log("b2ContactSolver.m_positionConstraints: " + new_length);
-      }
-
       while (this.m_positionConstraints.length < new_length) {
         this.m_positionConstraints[this.m_positionConstraints.length] = new b2ContactPositionConstraint();
       }
@@ -197,11 +192,6 @@ export class b2ContactSolver {
     // TODO:
     if (this.m_velocityConstraints.length < this.m_count) {
       const new_length = b2Max(this.m_velocityConstraints.length * 2, this.m_count);
-
-      if (b2Settings.DEBUG) {
-        console.log("b2ContactSolver.m_velocityConstraints: " + new_length);
-      }
-
       while (this.m_velocityConstraints.length < new_length) {
         this.m_velocityConstraints[this.m_velocityConstraints.length] = new b2ContactVelocityConstraint();
       }
@@ -250,7 +240,7 @@ export class b2ContactSolver {
       manifold = contact.GetManifold();
 
       pointCount = manifold.pointCount;
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pointCount > 0); }
+      ///b2Assert(pointCount > 0);
 
       vc = this.m_velocityConstraints[i];
       vc.friction = contact.m_friction;
@@ -409,7 +399,7 @@ export class b2ContactSolver {
       vB = this.m_velocities[indexB].v;
       wB = this.m_velocities[indexB].w;
 
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(manifold.pointCount > 0); }
+      ///b2Assert(manifold.pointCount > 0);
 
       xfA.q.SetAngleRadians(aA);
       xfB.q.SetAngleRadians(aB);
@@ -456,7 +446,7 @@ export class b2ContactSolver {
             b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0),
             b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1),
             b2Vec2.s_t0));
-        if (vRel < (-b2Settings.b2_velocityThreshold)) {
+        if (vRel < (-b2_velocityThreshold)) {
           vcp.velocityBias += (-vc.restitution * vRel);
         }
       }
@@ -648,7 +638,7 @@ export class b2ContactSolver {
       tangent = vc.tangent; // precomputed from normal
       friction = vc.friction;
 
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pointCount === 1 || pointCount === 2); }
+      ///b2Assert(pointCount === 1 || pointCount === 2);
 
       // Solve tangent constraints first because non-penetration is more important
       // than friction.
@@ -761,7 +751,7 @@ export class b2ContactSolver {
 
         // b2Vec2 a(cp1->normalImpulse, cp2->normalImpulse);
         a.SetXY(cp1.normalImpulse, cp2.normalImpulse);
-        ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(a.x >= 0 && a.y >= 0); }
+        ///b2Assert(a.x >= 0 && a.y >= 0);
 
         // Relative velocity at contact
         // b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
@@ -843,8 +833,8 @@ export class b2ContactSolver {
             vn1 = b2Dot(dv1, normal);
             vn2 = b2Dot(dv2, normal);
 
-            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol); }
-            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol); }
+            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -894,7 +884,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn1 = b2Dot(dv1, normal);
 
-            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol); }
+            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -945,7 +935,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn2 = b2Dot(dv2, normal);
 
-            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol); }
+            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -1113,7 +1103,7 @@ export class b2ContactSolver {
         minSeparation = b2Min(minSeparation, separation);
 
         // Prevent large corrections and allow slop.
-        C = b2Clamp(b2Settings.b2_baumgarte * (separation + b2Settings.b2_linearSlop), (-b2Settings.b2_maxLinearCorrection), 0);
+        C = b2Clamp(b2_baumgarte * (separation + b2_linearSlop), (-b2_maxLinearCorrection), 0);
 
         // Compute the effective mass.
         // float32 rnA = b2Cross(rA, normal);
@@ -1147,9 +1137,9 @@ export class b2ContactSolver {
       this.m_positions[indexB].a = aB;
     }
 
-    // We can't expect minSpeparation >= -b2Settings.b2_linearSlop because we don't
-    // push the separation above -b2Settings.b2_linearSlop.
-    return minSeparation > (-3 * b2Settings.b2_linearSlop);
+    // We can't expect minSpeparation >= -b2_linearSlop because we don't
+    // push the separation above -b2_linearSlop.
+    return minSeparation > (-3 * b2_linearSlop);
   }
 
   private static SolveTOIPositionConstraints_s_xfA = new b2Transform();
@@ -1253,7 +1243,7 @@ export class b2ContactSolver {
         minSeparation = b2Min(minSeparation, separation);
 
         // Prevent large corrections and allow slop.
-        C = b2Clamp(b2Settings.b2_toiBaumgarte * (separation + b2Settings.b2_linearSlop), (-b2Settings.b2_maxLinearCorrection), 0);
+        C = b2Clamp(b2_toiBaumgarte * (separation + b2_linearSlop), (-b2_maxLinearCorrection), 0);
 
         // Compute the effective mass.
         // float32 rnA = b2Cross(rA, normal);
@@ -1287,8 +1277,8 @@ export class b2ContactSolver {
       this.m_positions[indexB].a = aB;
     }
 
-    // We can't expect minSpeparation >= -b2Settings.b2_linearSlop because we don't
-    // push the separation above -b2Settings.b2_linearSlop.
-    return minSeparation >= -1.5 * b2Settings.b2_linearSlop;
+    // We can't expect minSpeparation >= -b2_linearSlop because we don't
+    // push the separation above -b2_linearSlop.
+    return minSeparation >= -1.5 * b2_linearSlop;
   }
 }

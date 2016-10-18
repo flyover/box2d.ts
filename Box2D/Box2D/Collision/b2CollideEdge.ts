@@ -1,4 +1,4 @@
-import * as b2Settings from "../Common/b2Settings";
+import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_polygonRadius, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
 import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
@@ -104,7 +104,7 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
 
   // Region AB
   const den: number = b2Vec2.DotVV(e, e);
-  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(den > 0); }
+  ///b2Assert(den > 0);
   const P: b2Vec2 = b2CollideEdgeAndCircle_s_P;
   P.x = (1 / den) * (u * A.x + v * B.x);
   P.y = (1 / den) * (u * A.y + v * B.y);
@@ -145,8 +145,8 @@ class b2EPAxis {
 }
 
 class b2TempPolygon {
-  public vertices = b2Vec2.MakeArray(b2Settings.b2_maxPolygonVertices);
-  public normals = b2Vec2.MakeArray(b2Settings.b2_maxPolygonVertices);
+  public vertices = b2Vec2.MakeArray(b2_maxPolygonVertices);
+  public normals = b2Vec2.MakeArray(b2_maxPolygonVertices);
   public count: number = 0;
 }
 
@@ -351,7 +351,7 @@ class b2EPCollider {
       b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
     }
 
-    this.m_radius = 2 * b2Settings.b2_polygonRadius;
+    this.m_radius = 2 * b2_polygonRadius;
 
     manifold.pointCount = 0;
 
@@ -467,14 +467,14 @@ class b2EPCollider {
     // Clip to box side 1
     np = b2ClipSegmentToLine(clipPoints1, ie, rf.sideNormal1, rf.sideOffset1, rf.i1);
 
-    if (np < b2Settings.b2_maxManifoldPoints) {
+    if (np < b2_maxManifoldPoints) {
       return;
     }
 
     // Clip to negative box side 1
     np = b2ClipSegmentToLine(clipPoints2, clipPoints1, rf.sideNormal2, rf.sideOffset2, rf.i2);
 
-    if (np < b2Settings.b2_maxManifoldPoints) {
+    if (np < b2_maxManifoldPoints) {
       return;
     }
 
@@ -488,7 +488,7 @@ class b2EPCollider {
     }
 
     let pointCount: number = 0;
-    for (let i: number = 0, ict: number = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
+    for (let i: number = 0, ict: number = b2_maxManifoldPoints; i < ict; ++i) {
       let separation: number;
 
       separation = b2Vec2.DotVV(rf.normal, b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Vec2.s_t0));
@@ -518,7 +518,7 @@ class b2EPCollider {
     const axis: b2EPAxis = out;
     axis.type = b2EPAxisType.e_edgeA;
     axis.index = this.m_front ? 0 : 1;
-    axis.separation = b2Settings.b2_maxFloat;
+    axis.separation = b2_maxFloat;
 
     for (let i: number = 0, ict = this.m_polygonB.count; i < ict; ++i) {
       const s: number = b2Vec2.DotVV(this.m_normal, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
@@ -536,7 +536,7 @@ class b2EPCollider {
     const axis: b2EPAxis = out;
     axis.type = b2EPAxisType.e_unknown;
     axis.index = -1;
-    axis.separation = -b2Settings.b2_maxFloat;
+    axis.separation = -b2_maxFloat;
 
     const perp: b2Vec2 = b2EPCollider.s_perp.SetXY(-this.m_normal.y, this.m_normal.x);
 
@@ -557,11 +557,11 @@ class b2EPCollider {
 
       // Adjacency
       if (b2Vec2.DotVV(n, perp) >= 0) {
-        if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_upperLimit, b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
+        if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_upperLimit, b2Vec2.s_t0), this.m_normal) < -b2_angularSlop) {
           continue;
         }
       } else {
-        if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_lowerLimit, b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
+        if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_lowerLimit, b2Vec2.s_t0), this.m_normal) < -b2_angularSlop) {
           continue;
         }
       }

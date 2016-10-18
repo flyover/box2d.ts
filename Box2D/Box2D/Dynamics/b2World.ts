@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_epsilon, b2_linearSlop, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Color } from "../Common/b2Draw";
@@ -59,7 +59,7 @@ import { b2ContactListener } from "./b2WorldCallbacks";
 import { b2DestructionListener } from "./b2WorldCallbacks";
 import { b2QueryCallback } from "./b2WorldCallbacks";
 import { b2RayCastCallback } from "./b2WorldCallbacks";
-///import * as b2Controller from "../../../Contributions/Enhancements/Controllers/b2Controller";
+///import { b2Controller } from "../../../Contributions/Enhancements/Controllers/b2Controller";
 
 export const enum b2WorldFlag {
   e_none = 0,
@@ -147,7 +147,7 @@ export class b2World {
   /// is retained.
   /// @warning This function is locked during callbacks.
   public CreateBody(def: b2BodyDef): b2Body {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///b2Assert(this.IsLocked() === false);
     if (this.IsLocked()) {
       return null;
     }
@@ -171,8 +171,8 @@ export class b2World {
   /// @warning This automatically deletes all associated shapes and joints.
   /// @warning This function is locked during callbacks.
   public DestroyBody(b: b2Body): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_bodyCount > 0); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///b2Assert(this.m_bodyCount > 0);
+    ///b2Assert(this.IsLocked() === false);
     if (this.IsLocked()) {
       return;
     }
@@ -250,7 +250,7 @@ export class b2World {
   /// is retained. This may cause the connected bodies to cease colliding.
   /// @warning This function is locked during callbacks.
   public CreateJoint(def: b2JointDef): b2Joint {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///b2Assert(this.IsLocked() === false);
     if (this.IsLocked()) {
       return null;
     }
@@ -306,7 +306,7 @@ export class b2World {
   /// Destroy a joint. This may cause the connected bodies to begin colliding.
   /// @warning This function is locked during callbacks.
   public DestroyJoint(j: b2Joint): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///b2Assert(this.IsLocked() === false);
     if (this.IsLocked()) {
       return;
     }
@@ -368,7 +368,7 @@ export class b2World {
 
     b2JointFactory.Destroy(j, null);
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_jointCount > 0); }
+    ///b2Assert(this.m_jointCount > 0);
     --this.m_jointCount;
 
     // If the joint prevents collisions, then flag any contacts for filtering.
@@ -577,7 +577,7 @@ export class b2World {
 
     const WorldQueryWrapper = function (proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       if (callback instanceof b2QueryCallback) {
@@ -596,7 +596,7 @@ export class b2World {
 
     const WorldQueryWrapper = function (proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       if (b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
@@ -620,7 +620,7 @@ export class b2World {
 
     const WorldQueryWrapper = function (proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       if (fixture.TestPoint(point)) {
@@ -634,8 +634,8 @@ export class b2World {
     };
 
     const aabb: b2AABB = b2World.QueryPoint_s_aabb;
-    aabb.lowerBound.SetXY(point.x - b2Settings.b2_linearSlop, point.y - b2Settings.b2_linearSlop);
-    aabb.upperBound.SetXY(point.x + b2Settings.b2_linearSlop, point.y + b2Settings.b2_linearSlop);
+    aabb.lowerBound.SetXY(point.x - b2_linearSlop, point.y - b2_linearSlop);
+    aabb.upperBound.SetXY(point.x + b2_linearSlop, point.y + b2_linearSlop);
     broadPhase.Query(WorldQueryWrapper, aabb);
   }
 
@@ -653,7 +653,7 @@ export class b2World {
 
     const WorldRayCastWrapper = function (input, proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       const output: b2RayCastOutput = b2World.RayCast_s_output;
@@ -856,7 +856,7 @@ export class b2World {
   /// The body shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
   public ShiftOrigin(newOrigin: b2Vec2): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///b2Assert(this.IsLocked() === false);
     if (this.IsLocked()) {
       return;
     }
@@ -886,51 +886,49 @@ export class b2World {
 
   /// Dump the world into the log file.
   /// @warning this should be called outside of a time step.
-  public Dump(): void {
-    if (b2Settings.DEBUG) {
-      if ((this.m_flags & b2WorldFlag.e_locked) === b2WorldFlag.e_locked) {
-        return;
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    if ((this.m_flags & b2WorldFlag.e_locked) === b2WorldFlag.e_locked) {
+      return;
+    }
+
+    log("const g: b2Vec2 = new b2Vec2(%.15f, %.15f);\n", this.m_gravity.x, this.m_gravity.y);
+    log("this.m_world.SetGravity(g);\n");
+
+    log("const bodies: b2Body[] = new Array(%d);\n", this.m_bodyCount);
+    log("const joints: b2Joint[] = new Array(%d);\n", this.m_jointCount);
+    let i: number = 0;
+    for (let b = this.m_bodyList; b; b = b.m_next) {
+      b.m_islandIndex = i;
+      b.Dump(log);
+      ++i;
+    }
+
+    i = 0;
+    for (let j = this.m_jointList; j; j = j.m_next) {
+      j.m_index = i;
+      ++i;
+    }
+
+    // First pass on joints, skip gear joints.
+    for (let j = this.m_jointList; j; j = j.m_next) {
+      if (j.m_type === b2JointType.e_gearJoint) {
+        continue;
       }
 
-      b2Settings.b2Log("const g: b2Vec2 = new b2Vec2(%.15f, %.15f);\n", this.m_gravity.x, this.m_gravity.y);
-      b2Settings.b2Log("this.m_world.SetGravity(g);\n");
+      log("{\n");
+      j.Dump(log);
+      log("}\n");
+    }
 
-      b2Settings.b2Log("const bodies: b2Body[] = new Array(%d);\n", this.m_bodyCount);
-      b2Settings.b2Log("const joints: b2Joint[] = new Array(%d);\n", this.m_jointCount);
-      let i: number = 0;
-      for (let b = this.m_bodyList; b; b = b.m_next) {
-        b.m_islandIndex = i;
-        b.Dump();
-        ++i;
+    // Second pass on joints, only gear joints.
+    for (let j = this.m_jointList; j; j = j.m_next) {
+      if (j.m_type !== b2JointType.e_gearJoint) {
+        continue;
       }
 
-      i = 0;
-      for (let j = this.m_jointList; j; j = j.m_next) {
-        j.m_index = i;
-        ++i;
-      }
-
-      // First pass on joints, skip gear joints.
-      for (let j = this.m_jointList; j; j = j.m_next) {
-        if (j.m_type === b2JointType.e_gearJoint) {
-          continue;
-        }
-
-        b2Settings.b2Log("{\n");
-        j.Dump();
-        b2Settings.b2Log("}\n");
-      }
-
-      // Second pass on joints, only gear joints.
-      for (let j = this.m_jointList; j; j = j.m_next) {
-        if (j.m_type !== b2JointType.e_gearJoint) {
-          continue;
-        }
-
-        b2Settings.b2Log("{\n");
-        j.Dump();
-        b2Settings.b2Log("}\n");
-      }
+      log("{\n");
+      j.Dump(log);
+      log("}\n");
     }
   }
 
@@ -1082,7 +1080,7 @@ export class b2World {
       while (stackCount > 0) {
         // Grab the next body off the stack and add it to the island.
         const b: b2Body = stack[--stackCount];
-        ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b.IsActive() === true); }
+        ///b2Assert(b.IsActive() === true);
         island.AddBody(b);
 
         // Make sure the body is awake.
@@ -1126,7 +1124,7 @@ export class b2World {
             continue;
           }
 
-          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(stackCount < stackSize); }
+          ///b2Assert(stackCount < stackSize);
           stack[stackCount++] = other;
           other.m_flags |= b2BodyFlag.e_islandFlag;
         }
@@ -1151,7 +1149,7 @@ export class b2World {
             continue;
           }
 
-          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(stackCount < stackSize); }
+          ///b2Assert(stackCount < stackSize);
           stack[stackCount++] = other;
           other.m_flags |= b2BodyFlag.e_islandFlag;
         }
@@ -1207,9 +1205,9 @@ export class b2World {
   private static SolveTOI_s_toi_input = new b2TOIInput();
   private static SolveTOI_s_toi_output = new b2TOIOutput();
   public SolveTOI(step: b2TimeStep): void {
-    // b2Island island(2 * b2Settings.b2_maxTOIContacts, b2Settings.b2_maxTOIContacts, 0, &m_stackAllocator, m_contactManager.m_contactListener);
+    // b2Island island(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, &m_stackAllocator, m_contactManager.m_contactListener);
     const island: b2Island = this.m_island;
-    island.Initialize(2 * b2Settings.b2_maxTOIContacts, b2Settings.b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
+    island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
 
     if (this.m_stepComplete) {
       for (let b = this.m_bodyList; b; b = b.m_next) {
@@ -1238,7 +1236,7 @@ export class b2World {
         }
 
         // Prevent excessive sub-stepping.
-        if (c.m_toiCount > b2Settings.b2_maxSubSteps) {
+        if (c.m_toiCount > b2_maxSubSteps) {
           continue;
         }
 
@@ -1260,7 +1258,7 @@ export class b2World {
 
           const typeA: b2BodyType = bA.m_type;
           const typeB: b2BodyType = bB.m_type;
-          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(typeA === b2BodyType.b2_dynamicBody || typeB === b2BodyType.b2_dynamicBody); }
+          ///b2Assert(typeA === b2BodyType.b2_dynamicBody || typeB === b2BodyType.b2_dynamicBody);
 
           const activeA: boolean = bA.IsAwake() && typeA !== b2BodyType.b2_staticBody;
           const activeB: boolean = bB.IsAwake() && typeB !== b2BodyType.b2_staticBody;
@@ -1290,7 +1288,7 @@ export class b2World {
             bB.m_sweep.Advance(alpha0);
           }
 
-          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(alpha0 < 1); }
+          ///b2Assert(alpha0 < 1);
 
           const indexA: number = c.GetChildIndexA();
           const indexB: number = c.GetChildIndexB();
@@ -1325,7 +1323,7 @@ export class b2World {
         }
       }
 
-      if (minContact === null || 1 - 10 * b2Settings.b2_epsilon < minAlpha) {
+      if (minContact === null || 1 - 10 * b2_epsilon < minAlpha) {
         // No more TOI events. Done!
         this.m_stepComplete = true;
         break;
@@ -1489,7 +1487,7 @@ export class b2World {
   }
 
 //  public AddController(controller: b2Controller): b2Controller {
-//    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(controller.m_world === null, "Controller can only be a member of one world"); }
+//    ///b2Assert(controller.m_world === null, "Controller can only be a member of one world");
 //    controller.m_world = this;
 //    controller.m_next = this.m_controllerList;
 //    controller.m_prev = null;
@@ -1501,7 +1499,7 @@ export class b2World {
 //  }
 
 //  public RemoveController(controller: b2Controller): b2Controller {
-//    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(controller.m_world === this, "Controller is not a member of this world"); }
+//    ///b2Assert(controller.m_world === this, "Controller is not a member of this world");
 //    if (controller.m_prev)
 //      controller.m_prev.m_next = controller.m_next;
 //    if (controller.m_next)

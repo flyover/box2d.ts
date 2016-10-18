@@ -1,6 +1,4 @@
 declare module "Box2D/Common/b2Settings" {
-    export const DEBUG: boolean;
-    export const ENABLE_ASSERTS: boolean;
     export function b2Assert(condition: boolean, ...args: any[]): void;
     export const b2_maxFloat: number;
     export const b2_epsilon: number;
@@ -416,7 +414,7 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
         ComputeMass(massData: b2MassData, density: number): void;
         SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
         ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Collision/b2Collision" {
@@ -706,7 +704,7 @@ declare module "Box2D/Collision/Shapes/b2EdgeShape" {
         ComputeMass(massData: b2MassData, density: number): void;
         SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
         ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Collision/Shapes/b2ChainShape" {
@@ -741,7 +739,7 @@ declare module "Box2D/Collision/Shapes/b2ChainShape" {
         ComputeMass(massData: b2MassData, density: number): void;
         SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
         ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Collision/Shapes/b2CircleShape" {
@@ -768,7 +766,7 @@ declare module "Box2D/Collision/Shapes/b2CircleShape" {
         ComputeMass(massData: b2MassData, density: number): void;
         SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
         ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Collision/Shapes/b2PolygonShape" {
@@ -818,7 +816,7 @@ declare module "Box2D/Collision/Shapes/b2PolygonShape" {
         private static ComputeSubmergedArea_s_outoVec;
         private static ComputeSubmergedArea_s_center;
         ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         private static ComputeCentroid_s_pRef;
         private static ComputeCentroid_s_e1;
         private static ComputeCentroid_s_e2;
@@ -934,7 +932,7 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         SetUserData(data: any): void;
         IsActive(): boolean;
         GetCollideConnected(): boolean;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         ShiftOrigin(newOrigin: b2Vec2): void;
         InitVelocityConstraints(data: b2SolverData): void;
         SolveVelocityConstraints(data: b2SolverData): void;
@@ -1008,7 +1006,7 @@ declare module "Box2D/Dynamics/b2Fixture" {
         GetRestitution(): number;
         SetRestitution(restitution: number): void;
         GetAABB(childIndex: number): b2AABB;
-        Dump(bodyIndex: number): void;
+        Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
         Create(body: b2Body, def: b2FixtureDef): void;
         Destroy(): void;
         CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
@@ -1151,7 +1149,7 @@ declare module "Box2D/Dynamics/b2Body" {
         GetUserData(): any;
         SetUserData(data: any): void;
         GetWorld(): b2World;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         private static SynchronizeFixtures_s_xf1;
         SynchronizeFixtures(): void;
         SynchronizeTransform(): void;
@@ -1310,7 +1308,7 @@ declare module "Box2D/Dynamics/Joints/b2DistanceJoint" {
         GetFrequency(): number;
         SetDampingRatio(ratio: any): void;
         GetDampingRatio(): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         private static InitVelocityConstraints_s_P;
         InitVelocityConstraints(data: any): void;
         private static SolveVelocityConstraints_s_vpA;
@@ -1354,7 +1352,7 @@ declare module "Box2D/Dynamics/Joints/b2AreaJoint" {
         GetFrequency(): number;
         SetDampingRatio(ratio: any): void;
         GetDampingRatio(): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         InitVelocityConstraints(data: any): void;
         SolveVelocityConstraints(data: any): void;
         SolvePositionConstraints(data: any): boolean;
@@ -1412,7 +1410,7 @@ declare module "Box2D/Dynamics/Joints/b2FrictionJoint" {
         GetMaxForce(): number;
         SetMaxTorque(torque: number): void;
         GetMaxTorque(): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2PrismaticJoint" {
@@ -1513,7 +1511,7 @@ declare module "Box2D/Dynamics/Joints/b2PrismaticJoint" {
         SetMaxMotorForce(force: any): void;
         GetMaxMotorForce(): number;
         GetMotorForce(inv_dt: any): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2RevoluteJoint" {
@@ -1597,7 +1595,7 @@ declare module "Box2D/Dynamics/Joints/b2RevoluteJoint" {
         GetUpperLimit(): number;
         SetLimits(lower: any, upper: any): void;
         SetMotorSpeed(speed: any): void;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2GearJoint" {
@@ -1682,7 +1680,7 @@ declare module "Box2D/Dynamics/Joints/b2GearJoint" {
         GetJoint2(): b2Joint;
         GetRatio(): number;
         SetRatio(ratio: any): void;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2MotorJoint" {
@@ -1741,7 +1739,7 @@ declare module "Box2D/Dynamics/Joints/b2MotorJoint" {
         private static SolveVelocityConstraints_s_oldImpulse_v2;
         SolveVelocityConstraints(data: any): void;
         SolvePositionConstraints(data: any): boolean;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2MouseJoint" {
@@ -1793,7 +1791,7 @@ declare module "Box2D/Dynamics/Joints/b2MouseJoint" {
         GetAnchorB(out: b2Vec2): b2Vec2;
         GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
         GetReactionTorque(inv_dt: number): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         ShiftOrigin(newOrigin: any): void;
     }
 }
@@ -1864,7 +1862,7 @@ declare module "Box2D/Dynamics/Joints/b2PulleyJoint" {
         GetCurrentLengthA(): number;
         private static GetCurrentLengthB_s_p;
         GetCurrentLengthB(): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         ShiftOrigin(newOrigin: any): void;
     }
 }
@@ -1919,7 +1917,7 @@ declare module "Box2D/Dynamics/Joints/b2RopeJoint" {
         SetMaxLength(length: number): void;
         GetMaxLength(): number;
         GetLimitState(): b2LimitState;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2WeldJoint" {
@@ -1982,7 +1980,7 @@ declare module "Box2D/Dynamics/Joints/b2WeldJoint" {
         GetFrequency(): number;
         SetDampingRatio(ratio: any): void;
         GetDampingRatio(): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2WheelJoint" {
@@ -2068,7 +2066,7 @@ declare module "Box2D/Dynamics/Joints/b2WheelJoint" {
         SetMotorSpeed(speed: number): void;
         SetMaxMotorTorque(force: number): void;
         GetMotorTorque(inv_dt: number): number;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Dynamics/Joints/b2JointFactory" {
@@ -2472,7 +2470,7 @@ declare module "Box2D/Dynamics/b2World" {
         ShiftOrigin(newOrigin: b2Vec2): void;
         GetContactManager(): b2ContactManager;
         GetProfile(): b2Profile;
-        Dump(): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
         private static DrawJoint_s_p1;
         private static DrawJoint_s_p2;
         private static DrawJoint_s_color;

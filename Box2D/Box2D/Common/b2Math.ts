@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "./b2Settings";
+import { b2_pi, b2_epsilon, b2MakeArray } from "./b2Settings";
 
-export const b2_pi_over_180: number = b2Settings.b2_pi / 180;
-export const b2_180_over_pi: number = 180 / b2Settings.b2_pi;
-export const b2_two_pi: number = 2 * b2Settings.b2_pi;
+export const b2_pi_over_180: number = b2_pi / 180;
+export const b2_180_over_pi: number = 180 / b2_pi;
+export const b2_two_pi: number = 2 * b2_pi;
 
 export function b2Abs(n: number): number {
   return (n < 0) ? (-n) : (n);
@@ -39,7 +39,7 @@ export function b2Clamp(a: number, lo: number, hi: number): number {
 }
 
 export function b2Swap(a: any[], b: any[]): void {
-  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+  ///b2Assert(false);
   const tmp: any = a[0];
   a[0] = b[0];
   b[0] = tmp;
@@ -153,7 +153,7 @@ export class b2Vec2 {
   }
 
   public Copy(other: b2Vec2): b2Vec2 {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     return this;
@@ -221,7 +221,7 @@ export class b2Vec2 {
 
   public Normalize(): number {
     const length: number = this.GetLength();
-    if (length >= b2Settings.b2_epsilon) {
+    if (length >= b2_epsilon) {
       const inv_length: number = 1 / length;
       this.x *= inv_length;
       this.y *= inv_length;
@@ -231,7 +231,7 @@ export class b2Vec2 {
 
   public SelfNormalize(): b2Vec2 {
     const length: number = this.GetLength();
-    if (length >= b2Settings.b2_epsilon) {
+    if (length >= b2_epsilon) {
       const inv_length: number = 1 / length;
       this.x *= inv_length;
       this.y *= inv_length;
@@ -298,7 +298,7 @@ export class b2Vec2 {
   }
 
   public static MakeArray(length: number): b2Vec2[] {
-    return b2Settings.b2MakeArray(length, function (i: number): b2Vec2 { return new b2Vec2(); });
+    return b2MakeArray(length, function (i: number): b2Vec2 { return new b2Vec2(); });
   }
 
   public static AbsV(v: b2Vec2, out: b2Vec2): b2Vec2 { return b2AbsV(v, out); }
@@ -470,7 +470,7 @@ export class b2Vec3 {
   }
 
   public Copy(other: b2Vec3): b2Vec3 {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     this.z = other.z;
@@ -580,7 +580,7 @@ export class b2Mat22 {
   }
 
   public Copy(other: b2Mat22): b2Mat22 {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     return this;
@@ -739,7 +739,7 @@ export class b2Mat33 {
   }
 
   public Copy(other: b2Mat33): b2Mat33 {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     this.ez.Copy(other.ez);
@@ -970,7 +970,7 @@ export class b2Transform {
   }
 
   public Copy(other: b2Transform): b2Transform {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.p.Copy(other.p);
     this.q.Copy(other.q);
     return this;
@@ -1092,7 +1092,7 @@ export class b2Sweep {
   }
 
   public Copy(other: b2Sweep): b2Sweep {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
+    ///b2Assert(this !== other);
     this.localCenter.Copy(other.localCenter);
     this.c0.Copy(other.c0);
     this.c.Copy(other.c);
@@ -1114,7 +1114,7 @@ export class b2Sweep {
   }
 
   public Advance(alpha: number): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.alpha0 < 1); }
+    ///b2Assert(this.alpha0 < 1);
     const beta: number = (alpha - this.alpha0) / (1 - this.alpha0);
     const one_minus_beta: number = (1 - beta);
     this.c0.x = one_minus_beta * this.c0.x + beta * this.c.x;

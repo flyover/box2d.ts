@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop } from "../../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -238,7 +238,7 @@ export class b2PrismaticJoint extends b2Joint {
     if (this.m_enableLimit) {
       // float32 jointTranslation = b2Dot(m_axis, d);
       const jointTranslation: number = b2Vec2.DotVV(this.m_axis, d);
-      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
+      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
         this.m_limitState = b2LimitState.e_equalLimits;
       } else if (jointTranslation <= this.m_lowerTranslation) {
         if (this.m_limitState !== b2LimitState.e_atLowerLimit) {
@@ -480,19 +480,19 @@ export class b2PrismaticJoint extends b2Joint {
     if (this.m_enableLimit) {
       // float32 translation = b2Dot(axis, d);
       const translation: number = b2Vec2.DotVV(axis, d);
-      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
+      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
         // Prevent large angular corrections
-        C2 = b2Clamp(translation, (-b2Settings.b2_maxLinearCorrection), b2Settings.b2_maxLinearCorrection);
+        C2 = b2Clamp(translation, (-b2_maxLinearCorrection), b2_maxLinearCorrection);
         linearError = b2Max(linearError, b2Abs(translation));
         active = true;
       } else if (translation <= this.m_lowerTranslation) {
         // Prevent large linear corrections and allow some slop.
-        C2 = b2Clamp(translation - this.m_lowerTranslation + b2Settings.b2_linearSlop, (-b2Settings.b2_maxLinearCorrection), 0);
+        C2 = b2Clamp(translation - this.m_lowerTranslation + b2_linearSlop, (-b2_maxLinearCorrection), 0);
         linearError = b2Max(linearError, this.m_lowerTranslation - translation);
         active = true;
       } else if (translation >= this.m_upperTranslation) {
         // Prevent large linear corrections and allow some slop.
-        C2 = b2Clamp(translation - this.m_upperTranslation - b2Settings.b2_linearSlop, 0, b2Settings.b2_maxLinearCorrection);
+        C2 = b2Clamp(translation - this.m_upperTranslation - b2_linearSlop, 0, b2_maxLinearCorrection);
         linearError = b2Max(linearError, translation - this.m_upperTranslation);
         active = true;
       }
@@ -579,7 +579,7 @@ export class b2PrismaticJoint extends b2Joint {
     // data.positions[this.m_indexB].c = cB;
     data.positions[this.m_indexB].a = aB;
 
-    return linearError <= b2Settings.b2_linearSlop && angularError <= b2Settings.b2_angularSlop;
+    return linearError <= b2_linearSlop && angularError <= b2_angularSlop;
   }
 
   public GetAnchorA(out: b2Vec2): b2Vec2 {
@@ -725,26 +725,24 @@ export class b2PrismaticJoint extends b2Joint {
     return inv_dt * this.m_motorImpulse;
   }
 
-  public Dump() {
-    if (b2Settings.DEBUG) {
-      const indexA = this.m_bodyA.m_islandIndex;
-      const indexB = this.m_bodyB.m_islandIndex;
+  public Dump(log: (format: string, ...args: any[]) => void) {
+    const indexA = this.m_bodyA.m_islandIndex;
+    const indexB = this.m_bodyB.m_islandIndex;
 
-      b2Settings.b2Log("  const jd: b2PrismaticJointDef = new b2PrismaticJointDef();\n");
-      b2Settings.b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-      b2Settings.b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-      b2Settings.b2Log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-      b2Settings.b2Log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-      b2Settings.b2Log("  jd.localAxisA.SetXY(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
-      b2Settings.b2Log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
-      b2Settings.b2Log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.lowerTranslation = %.15f;\n", this.m_lowerTranslation);
-      b2Settings.b2Log("  jd.upperTranslation = %.15f;\n", this.m_upperTranslation);
-      b2Settings.b2Log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
-      b2Settings.b2Log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
-      b2Settings.b2Log("  jd.maxMotorForce = %.15f;\n", this.m_maxMotorForce);
-      b2Settings.b2Log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
-    }
+    log("  const jd: b2PrismaticJointDef = new b2PrismaticJointDef();\n");
+    log("  jd.bodyA = bodies[%d];\n", indexA);
+    log("  jd.bodyB = bodies[%d];\n", indexB);
+    log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
+    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.localAxisA.SetXY(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
+    log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
+    log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
+    log("  jd.lowerTranslation = %.15f;\n", this.m_lowerTranslation);
+    log("  jd.upperTranslation = %.15f;\n", this.m_upperTranslation);
+    log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
+    log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
+    log("  jd.maxMotorForce = %.15f;\n", this.m_maxMotorForce);
+    log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 }

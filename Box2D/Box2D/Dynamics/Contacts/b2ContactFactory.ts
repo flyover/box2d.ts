@@ -1,4 +1,4 @@
-import * as b2Settings from "../../Common/b2Settings";
+import { b2MakeArray } from "../../Common/b2Settings";
 import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Contact } from "./b2Contact";
 import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact";
@@ -29,7 +29,7 @@ export class b2ContactFactory {
   private AddType(createFcn, destroyFcn, type1: b2ShapeType, type2: b2ShapeType): void {
     const that = this;
 
-    const pool = b2Settings.b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
+    const pool = b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
 
     const poolCreateFcn = function (allocator) {
       if (pool.length > 0) {
@@ -92,8 +92,8 @@ export class b2ContactFactory {
     const type1: b2ShapeType = fixtureA.GetType();
     const type2: b2ShapeType = fixtureB.GetType();
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= type1 && type1 < b2ShapeType.e_shapeTypeCount); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount); }
+    ///b2Assert(0 <= type1 && type1 < b2ShapeType.e_shapeTypeCount);
+    ///b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount);
 
     const reg: b2ContactRegister = this.m_registers[type1][type2];
 
@@ -122,8 +122,8 @@ export class b2ContactFactory {
     const typeA: b2ShapeType = fixtureA.GetType();
     const typeB: b2ShapeType = fixtureB.GetType();
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount); }
+    ///b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
+    ///b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
 
     const reg: b2ContactRegister = this.m_registers[typeA][typeB];
 

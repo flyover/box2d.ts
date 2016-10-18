@@ -1,4 +1,4 @@
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNumberArray } from "../../Common/b2Settings";
 import { b2Sq, b2Sqrt, b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
@@ -49,13 +49,13 @@ export class b2AreaJoint extends b2Joint {
   constructor(def) {
     super(def); // base class constructor
 
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies."); }
+    ///b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
 
     this.m_bodies = def.bodies;
     this.m_frequencyHz = def.frequencyHz;
     this.m_dampingRatio = def.dampingRatio;
 
-    this.m_targetLengths = b2Settings.b2MakeNumberArray(def.bodies.length);
+    this.m_targetLengths = b2MakeNumberArray(def.bodies.length);
     this.m_normals = b2Vec2.MakeArray(def.bodies.length);
     this.m_joints = new Array(def.bodies.length);
     this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
@@ -125,10 +125,8 @@ export class b2AreaJoint extends b2Joint {
     return this.m_dampingRatio;
   }
 
-  public Dump() {
-    if (b2Settings.DEBUG) {
-      b2Settings.b2Log("Area joint dumping is not supported.\n");
-    }
+  public Dump(log: (format: string, ...args: any[]) => void) {
+    log("Area joint dumping is not supported.\n");
   }
 
   public InitVelocityConstraints(data) {
@@ -172,7 +170,7 @@ export class b2AreaJoint extends b2Joint {
     }
 
     const lambda = -2 * crossMassSum / dotMassSum;
-    // lambda = b2Clamp(lambda, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
+    // lambda = b2Clamp(lambda, -b2_maxLinearCorrection, b2_maxLinearCorrection);
 
     this.m_impulse += lambda;
 
@@ -199,7 +197,7 @@ export class b2AreaJoint extends b2Joint {
       const delta: b2Vec2 = b2Vec2.SubVV(next_c, body_c, this.m_delta);
 
       let dist = delta.GetLength();
-      if (dist < b2Settings.b2_epsilon) {
+      if (dist < b2_epsilon) {
         dist = 1;
       }
 
@@ -226,10 +224,10 @@ export class b2AreaJoint extends b2Joint {
       delta.SelfMul(toExtrude);
 
       const norm_sq = delta.GetLengthSquared();
-      if (norm_sq > b2Sq(b2Settings.b2_maxLinearCorrection)) {
-        delta.SelfMul(b2Settings.b2_maxLinearCorrection / b2Sqrt(norm_sq));
+      if (norm_sq > b2Sq(b2_maxLinearCorrection)) {
+        delta.SelfMul(b2_maxLinearCorrection / b2Sqrt(norm_sq));
       }
-      if (norm_sq > b2Sq(b2Settings.b2_linearSlop)) {
+      if (norm_sq > b2Sq(b2_linearSlop)) {
         done = false;
       }
 

@@ -16,7 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2CollidePolygons } from "../../Collision/b2CollidePolygon";
 import { b2Manifold } from "../../Collision/b2Collision";
@@ -44,8 +43,8 @@ export class b2PolygonContact extends b2Contact {
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA = this.m_fixtureA.GetShape();
     const shapeB = this.m_fixtureB.GetShape();
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeA instanceof b2PolygonShape); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeB instanceof b2PolygonShape); }
+    ///b2Assert(shapeA instanceof b2PolygonShape);
+    ///b2Assert(shapeB instanceof b2PolygonShape);
     b2CollidePolygons(
       manifold,
       <b2PolygonShape> shapeA, xfA,

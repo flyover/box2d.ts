@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_maxManifoldPoints, b2MakeArray } from "../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance";
@@ -133,7 +133,7 @@ export class b2ManifoldPoint {
   public id: b2ContactID = new b2ContactID();  ///< uniquely identifies a contact point between two shapes
 
   public static MakeArray(length: number): b2ManifoldPoint[] {
-    return b2Settings.b2MakeArray(length, function (i: number): b2ManifoldPoint { return new b2ManifoldPoint(); } );
+    return b2MakeArray(length, function (i: number): b2ManifoldPoint { return new b2ManifoldPoint(); } );
   }
 
   public Reset(): void {
@@ -176,15 +176,15 @@ export const enum b2ManifoldType {
 /// All contact scenarios must be expressed in one of these types.
 /// This structure is stored across time steps, so we keep it small.
 export class b2Manifold {
-  public points: b2ManifoldPoint[] = b2ManifoldPoint.MakeArray(b2Settings.b2_maxManifoldPoints);
+  public points: b2ManifoldPoint[] = b2ManifoldPoint.MakeArray(b2_maxManifoldPoints);
   public localNormal: b2Vec2 = new b2Vec2();
   public localPoint: b2Vec2 = new b2Vec2();
   public type: number = b2ManifoldType.e_unknown;
   public pointCount: number = 0;
 
   public Reset(): void {
-    for (let i: number = 0, ict = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.points[i] instanceof b2ManifoldPoint); }
+    for (let i: number = 0, ict = b2_maxManifoldPoints; i < ict; ++i) {
+      ///b2Assert(this.points[i] instanceof b2ManifoldPoint);
       this.points[i].Reset();
     }
     this.localNormal.SetZero();
@@ -195,8 +195,8 @@ export class b2Manifold {
 
   public Copy(o: b2Manifold): b2Manifold {
     this.pointCount = o.pointCount;
-    for (let i: number = 0, ict = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.points[i] instanceof b2ManifoldPoint); }
+    for (let i: number = 0, ict = b2_maxManifoldPoints; i < ict; ++i) {
+      ///b2Assert(this.points[i] instanceof b2ManifoldPoint);
       this.points[i].Copy(o.points[i]);
     }
     this.localNormal.Copy(o.localNormal);
@@ -212,7 +212,7 @@ export class b2Manifold {
 
 export class b2WorldManifold {
   public normal: b2Vec2 = new b2Vec2();
-  public points: b2Vec2[] = b2Vec2.MakeArray(b2Settings.b2_maxManifoldPoints);
+  public points: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
 
   private static Initialize_s_pointA = new b2Vec2();
   private static Initialize_s_pointB = new b2Vec2();
@@ -230,7 +230,7 @@ export class b2WorldManifold {
         this.normal.SetXY(1, 0);
         const pointA: b2Vec2 = b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
         const pointB: b2Vec2 = b2Transform.MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
-        if (b2Vec2.DistanceSquaredVV(pointA, pointB) > b2Settings.b2_epsilon_sq) {
+        if (b2Vec2.DistanceSquaredVV(pointA, pointB) > b2_epsilon_sq) {
           b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
         }
 
@@ -300,7 +300,7 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
       }
     }
   }
-  for (; i < b2Settings.b2_maxManifoldPoints; ++i) {
+  for (; i < b2_maxManifoldPoints; ++i) {
     state1[i] = b2PointState.b2_nullState;
   }
 
@@ -318,7 +318,7 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
       }
     }
   }
-  for (; i < b2Settings.b2_maxManifoldPoints; ++i) {
+  for (; i < b2_maxManifoldPoints; ++i) {
     state2[i] = b2PointState.b2_nullState;
   }
 }
@@ -329,7 +329,7 @@ export class b2ClipVertex {
   public id: b2ContactID = new b2ContactID();
 
   public static MakeArray(length: number): b2ClipVertex[] {
-    return b2Settings.b2MakeArray(length, function (i: number): b2ClipVertex { return new b2ClipVertex(); });
+    return b2MakeArray(length, function (i: number): b2ClipVertex { return new b2ClipVertex(); });
   }
 
   public Copy(other: b2ClipVertex): b2ClipVertex {
@@ -441,8 +441,8 @@ export class b2AABB {
 
   // From Real-time Collision Detection, p179.
   public RayCast(output: b2RayCastOutput, input: b2RayCastInput): boolean {
-    let tmin = (-b2Settings.b2_maxFloat);
-    let tmax = b2Settings.b2_maxFloat;
+    let tmin = (-b2_maxFloat);
+    let tmax = b2_maxFloat;
 
     const p_x = input.p1.x;
     const p_y = input.p1.y;
@@ -453,7 +453,7 @@ export class b2AABB {
 
     const normal = output.normal;
 
-    if (absD_x < b2Settings.b2_epsilon) {
+    if (absD_x < b2_epsilon) {
       // Parallel.
       if (p_x < this.lowerBound.x || this.upperBound.x < p_x) {
         return false;
@@ -488,7 +488,7 @@ export class b2AABB {
       }
     }
 
-    if (absD_y < b2Settings.b2_epsilon) {
+    if (absD_y < b2_epsilon) {
       // Parallel.
       if (p_y < this.lowerBound.y || this.upperBound.y < p_y) {
         return false;
@@ -621,5 +621,5 @@ export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Sh
 
   b2Distance(output, simplexCache, input);
 
-  return output.distance < 10 * b2Settings.b2_epsilon;
+  return output.distance < 10 * b2_epsilon;
 }

@@ -16,10 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-export const DEBUG: boolean = false;
-
-export const ENABLE_ASSERTS: boolean = DEBUG;
-
 export function b2Assert(condition: boolean, ...args: any[]): void {
   if (!condition) {
     debugger;

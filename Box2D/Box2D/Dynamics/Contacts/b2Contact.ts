@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../../Common/b2Settings";
+import { b2_linearSlop } from "../../Common/b2Settings";
 import { b2Sqrt, b2Vec2, b2Transform, b2Sweep } from "../../Common/b2Math";
 import { b2Manifold } from "../../Collision/b2Collision";
 import { b2WorldManifold } from "../../Collision/b2Collision";
@@ -297,7 +297,7 @@ export class b2Contact {
     input.proxyB.SetShape(this.m_fixtureB.GetShape(), this.m_indexB);
     input.sweepA.Copy(sweepA);
     input.sweepB.Copy(sweepB);
-    input.tMax = b2Settings.b2_linearSlop;
+    input.tMax = b2_linearSlop;
 
     const output = b2Contact.ComputeTOI_s_output;
 

@@ -16,7 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_maxFloat, b2_linearSlop, b2_timeToSleep } from "../Common/b2Settings";
+import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
+import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";
+import { b2_linearSleepTolerance, b2_angularSleepTolerance } from "../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Contact } from "./Contacts/b2Contact";
@@ -60,7 +63,7 @@ after the constraint is solved. The radius vectors (aka Jacobians) are
 re-computed too (otherwise the algorithm has horrible instability). The pseudo
 velocity states are not needed because they are effectively zero at the beginning
 of each iteration. Since we have the current position error, we allow the
-iterations to terminate early if the error becomes smaller than b2Settings.b2_linearSlop.
+iterations to terminate early if the error becomes smaller than b2_linearSlop.
 
 Full NGS or just NGS - Like Modified NGS except the effective mass are re-computed
 each time a constraint is solved.
@@ -196,11 +199,6 @@ export class b2Island {
     // TODO:
     if (this.m_positions.length < bodyCapacity) {
       const new_length = b2Max(this.m_positions.length * 2, bodyCapacity);
-
-      if (b2Settings.DEBUG) {
-        console.log("b2Island.m_positions: " + new_length);
-      }
-
       while (this.m_positions.length < new_length) {
         this.m_positions[this.m_positions.length] = new b2Position();
       }
@@ -208,11 +206,6 @@ export class b2Island {
     // TODO:
     if (this.m_velocities.length < bodyCapacity) {
       const new_length = b2Max(this.m_velocities.length * 2, bodyCapacity);
-
-      if (b2Settings.DEBUG) {
-        console.log("b2Island.m_velocities: " + new_length);
-      }
-
       while (this.m_velocities.length < new_length) {
         this.m_velocities[this.m_velocities.length] = new b2Velocity();
       }
@@ -226,18 +219,18 @@ export class b2Island {
   }
 
   public AddBody(body) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_bodyCount < this.m_bodyCapacity); }
+    ///b2Assert(this.m_bodyCount < this.m_bodyCapacity);
     body.m_islandIndex = this.m_bodyCount;
     this.m_bodies[this.m_bodyCount++] = body;
   }
 
   public AddContact(contact) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_contactCount < this.m_contactCapacity); }
+    ///b2Assert(this.m_contactCount < this.m_contactCapacity);
     this.m_contacts[this.m_contactCount++] = contact;
   }
 
   public AddJoint(joint) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_jointCount < this.m_jointCapacity); }
+    ///b2Assert(this.m_jointCount < this.m_jointCapacity);
     this.m_joints[this.m_jointCount++] = joint;
   }
 
@@ -340,14 +333,14 @@ export class b2Island {
 
       // Check for large velocities
       const translation: b2Vec2 = b2Vec2.MulSV(h, v, b2Island.s_translation);
-      if (b2Vec2.DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
-        const ratio: number = b2Settings.b2_maxTranslation / translation.GetLength();
+      if (b2Vec2.DotVV(translation, translation) > b2_maxTranslationSquared) {
+        const ratio: number = b2_maxTranslation / translation.GetLength();
         v.SelfMul(ratio);
       }
 
       const rotation: number = h * w;
-      if (rotation * rotation > b2Settings.b2_maxRotationSquared) {
-        const ratio: number = b2Settings.b2_maxRotation / b2Abs(rotation);
+      if (rotation * rotation > b2_maxRotationSquared) {
+        const ratio: number = b2_maxRotation / b2Abs(rotation);
         w *= ratio;
       }
 
@@ -396,10 +389,10 @@ export class b2Island {
     this.Report(contactSolver.m_velocityConstraints);
 
     if (allowSleep) {
-      let minSleepTime: number = b2Settings.b2_maxFloat;
+      let minSleepTime: number = b2_maxFloat;
 
-      const linTolSqr: number = b2Settings.b2_linearSleepTolerance * b2Settings.b2_linearSleepTolerance;
-      const angTolSqr: number = b2Settings.b2_angularSleepTolerance * b2Settings.b2_angularSleepTolerance;
+      const linTolSqr: number = b2_linearSleepTolerance * b2_linearSleepTolerance;
+      const angTolSqr: number = b2_angularSleepTolerance * b2_angularSleepTolerance;
 
       for (let i: number = 0; i < this.m_bodyCount; ++i) {
         const b: b2Body = this.m_bodies[i];
@@ -418,7 +411,7 @@ export class b2Island {
         }
       }
 
-      if (minSleepTime >= b2Settings.b2_timeToSleep && positionSolved) {
+      if (minSleepTime >= b2_timeToSleep && positionSolved) {
         for (let i: number = 0; i < this.m_bodyCount; ++i) {
           const b: b2Body = this.m_bodies[i];
           b.SetAwake(false);
@@ -428,8 +421,8 @@ export class b2Island {
   }
 
   public SolveTOI(subStep, toiIndexA, toiIndexB) {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(toiIndexA < this.m_bodyCount); }
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(toiIndexB < this.m_bodyCount); }
+    ///b2Assert(toiIndexA < this.m_bodyCount);
+    ///b2Assert(toiIndexB < this.m_bodyCount);
 
     // Initialize the body state.
     for (let i: number = 0; i < this.m_bodyCount; ++i) {
@@ -519,14 +512,14 @@ export class b2Island {
 
       // Check for large velocities
       const translation: b2Vec2 = b2Vec2.MulSV(h, v, b2Island.s_translation);
-      if (b2Vec2.DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
-        const ratio: number = b2Settings.b2_maxTranslation / translation.GetLength();
+      if (b2Vec2.DotVV(translation, translation) > b2_maxTranslationSquared) {
+        const ratio: number = b2_maxTranslation / translation.GetLength();
         v.SelfMul(ratio);
       }
 
       const rotation: number = h * w;
-      if (rotation * rotation > b2Settings.b2_maxRotationSquared) {
-        const ratio: number = b2Settings.b2_maxRotation / b2Abs(rotation);
+      if (rotation * rotation > b2_maxRotationSquared) {
+        const ratio: number = b2_maxRotation / b2Abs(rotation);
         w *= ratio;
       }
 

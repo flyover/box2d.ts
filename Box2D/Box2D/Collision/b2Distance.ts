@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
+import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 
@@ -72,7 +72,7 @@ export class b2DistanceProxy {
   }
 
   public GetVertex(index: number): b2Vec2 {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= index && index < this.m_count); }
+    ///b2Assert(0 <= index && index < this.m_count);
     return this.m_vertices[index];
   }
 }
@@ -80,8 +80,8 @@ export class b2DistanceProxy {
 export class b2SimplexCache {
   public metric: number = 0;
   public count: number = 0;
-  public indexA: number[] = b2Settings.b2MakeNumberArray(3);
-  public indexB: number[] = b2Settings.b2MakeNumberArray(3);
+  public indexA: number[] = b2MakeNumberArray(3);
+  public indexB: number[] = b2MakeNumberArray(3);
 
   public Reset(): b2SimplexCache {
     this.metric = 0;
@@ -160,7 +160,7 @@ export class b2Simplex {
   }
 
   public ReadCache(cache: b2SimplexCache, proxyA: b2DistanceProxy, transformA: b2Transform, proxyB: b2DistanceProxy, transformB: b2Transform): void {
-    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= cache.count && cache.count <= 3); }
+    ///b2Assert(0 <= cache.count && cache.count <= 3);
 
     // Copy data from cache.
     this.m_count = cache.count;
@@ -182,7 +182,7 @@ export class b2Simplex {
     if (this.m_count > 1) {
       const metric1: number = cache.metric;
       const metric2: number = this.GetMetric();
-      if (metric2 < 0.5 * metric1 || 2 * metric1 < metric2 || metric2 < b2Settings.b2_epsilon) {
+      if (metric2 < 0.5 * metric1 || 2 * metric1 < metric2 || metric2 < b2_epsilon) {
         // Reset the simplex.
         this.m_count = 0;
       }
@@ -231,7 +231,7 @@ export class b2Simplex {
       }
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       return out.SetZero();
     }
   }
@@ -239,7 +239,7 @@ export class b2Simplex {
   public GetClosestPoint(out: b2Vec2): b2Vec2 {
     switch (this.m_count) {
     case 0:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       return out.SetZero();
 
     case 1:
@@ -254,7 +254,7 @@ export class b2Simplex {
       return out.SetZero();
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       return out.SetZero();
     }
   }
@@ -262,7 +262,7 @@ export class b2Simplex {
   public GetWitnessPoints(pA: b2Vec2, pB: b2Vec2): void {
     switch (this.m_count) {
     case 0:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       break;
 
     case 1:
@@ -283,7 +283,7 @@ export class b2Simplex {
       break;
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       break;
     }
   }
@@ -291,7 +291,7 @@ export class b2Simplex {
   public GetMetric(): number {
     switch (this.m_count) {
     case 0:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       return 0;
 
     case 1:
@@ -304,7 +304,7 @@ export class b2Simplex {
       return b2Vec2.CrossVV(b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Vec2.s_t0), b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Vec2.s_t1));
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       return 0;
     }
   }
@@ -447,8 +447,8 @@ export class b2Simplex {
 }
 
 const b2Distance_s_simplex: b2Simplex = new b2Simplex();
-const b2Distance_s_saveA = b2Settings.b2MakeNumberArray(3);
-const b2Distance_s_saveB = b2Settings.b2MakeNumberArray(3);
+const b2Distance_s_saveA = b2MakeNumberArray(3);
+const b2Distance_s_saveB = b2MakeNumberArray(3);
 const b2Distance_s_p: b2Vec2 = new b2Vec2();
 const b2Distance_s_d: b2Vec2 = new b2Vec2();
 const b2Distance_s_normal: b2Vec2 = new b2Vec2();
@@ -477,7 +477,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
   const saveB: number[] = b2Distance_s_saveB;
   let saveCount: number = 0;
 
-  let distanceSqr1: number = b2Settings.b2_maxFloat;
+  let distanceSqr1: number = b2_maxFloat;
   let distanceSqr2: number = distanceSqr1;
 
   // Main iteration loop.
@@ -503,7 +503,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
       break;
 
     default:
-      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///b2Assert(false);
       break;
     }
 
@@ -529,7 +529,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     const d: b2Vec2 = simplex.GetSearchDirection(b2Distance_s_d);
 
     // Ensure the search direction is numerically fit.
-    if (d.GetLengthSquared() < b2Settings.b2_epsilon_sq) {
+    if (d.GetLengthSquared() < b2_epsilon_sq) {
       // The origin is probably contained by a line segment
       // or triangle. Thus the shapes are overlapped.
 
@@ -584,7 +584,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     const rA: number = proxyA.m_radius;
     const rB: number = proxyB.m_radius;
 
-    if (output.distance > (rA + rB) && output.distance > b2Settings.b2_epsilon) {
+    if (output.distance > (rA + rB) && output.distance > b2_epsilon) {
       // Shapes are still no overlapped.
       // Move the witness points to the outer surface.
       output.distance -= rA + rB;
