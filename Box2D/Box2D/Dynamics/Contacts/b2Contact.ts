@@ -17,7 +17,7 @@
 */
 
 import * as b2Settings from "../../Common/b2Settings";
-import * as b2Math from "../../Common/b2Math";
+import { b2Sqrt, b2Vec2, b2Transform, b2Sweep } from "../../Common/b2Math";
 import { b2Manifold } from "../../Collision/b2Collision";
 import { b2WorldManifold } from "../../Collision/b2Collision";
 import { b2TestOverlapShape } from "../../Collision/b2Collision";
@@ -31,7 +31,7 @@ import { b2ContactListener } from "../b2WorldCallbacks";
 /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
 /// For example, anything slides on ice.
 export function b2MixFriction(friction1: number, friction2: number): number {
-  return b2Math.b2Sqrt(friction1 * friction2);
+  return b2Sqrt(friction1 * friction2);
 }
 
 /// Restitution mixing law. The idea is allow for anything to bounce off an inelastic surface.
@@ -132,7 +132,7 @@ export class b2Contact {
     return this.m_indexB;
   }
 
-  public Evaluate(manifold: b2Manifold, xfA: b2Math.b2Transform, xfB: b2Math.b2Transform): void {
+  public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
   }
 
   public FlagForFiltering(): void {
@@ -291,7 +291,7 @@ export class b2Contact {
 
   private static ComputeTOI_s_input = new b2TOIInput();
   private static ComputeTOI_s_output = new b2TOIOutput();
-  public ComputeTOI(sweepA: b2Math.b2Sweep, sweepB: b2Math.b2Sweep): number {
+  public ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number {
     const input = b2Contact.ComputeTOI_s_input;
     input.proxyA.SetShape(this.m_fixtureA.GetShape(), this.m_indexA);
     input.proxyB.SetShape(this.m_fixtureB.GetShape(), this.m_indexB);

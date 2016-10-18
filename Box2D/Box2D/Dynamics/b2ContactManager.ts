@@ -17,7 +17,6 @@
 */
 
 import * as b2Settings from "../Common/b2Settings";
-import * as b2Math from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2Contact } from "./Contacts/b2Contact";

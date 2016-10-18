@@ -17,7 +17,7 @@
 */
 
 import * as b2Settings from "../../Common/b2Settings";
-import * as b2Math from "../../Common/b2Math";
+import { b2Vec2 } from "../../Common/b2Math";
 import { b2Body, b2BodyDef } from "../b2Body";
 import { b2SolverData } from "../b2TimeStep";
 
@@ -45,7 +45,7 @@ export const enum b2LimitState {
 }
 
 export class b2Jacobian {
-  public linear: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public linear: b2Vec2 = new b2Vec2();
   public angularA: number = 0;
   public angularB: number = 0;
 
@@ -56,7 +56,7 @@ export class b2Jacobian {
     return this;
   }
 
-  public Set(x: b2Math.b2Vec2, a1: number, a2: number): b2Jacobian {
+  public Set(x: b2Vec2, a1: number, a2: number): b2Jacobian {
     this.linear.Copy(x);
     this.angularA = a1;
     this.angularB = a2;
@@ -144,17 +144,17 @@ export class b2Joint {
   }
 
   /// Get the anchor point on bodyA in world coordinates.
-  public GetAnchorA(out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetAnchorA(out: b2Vec2): b2Vec2 {
     return out.SetZero();
   }
 
   /// Get the anchor point on bodyB in world coordinates.
-  public GetAnchorB(out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetAnchorB(out: b2Vec2): b2Vec2 {
     return out.SetZero();
   }
 
   /// Get the reaction force on bodyB at the joint anchor in Newtons.
-  public GetReactionForce(inv_dt: number, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
     return out.SetZero();
   }
 
@@ -198,7 +198,7 @@ export class b2Joint {
   }
 
   /// Shift the origin for any points stored in world coordinates.
-  public ShiftOrigin(newOrigin: b2Math.b2Vec2): void {
+  public ShiftOrigin(newOrigin: b2Vec2): void {
   }
 
   public InitVelocityConstraints(data: b2SolverData): void {

@@ -17,14 +17,14 @@
 */
 
 import * as b2Settings from "../Common/b2Settings";
-import * as b2Math from "../Common/b2Math";
+import { b2Atan2, b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2Color } from "../Common/b2Draw";
 import { b2Draw } from "../Common/b2Draw";
 
 ///
 export class b2RopeDef {
   ///
-  public vertices: b2Math.b2Vec2[] = new Array();
+  public vertices: b2Vec2[] = new Array();
 
   ///
   public count: number = 0;
@@ -33,7 +33,7 @@ export class b2RopeDef {
   public masses: number[] = new Array();
 
   ///
-  public gravity: b2Math.b2Vec2 = new b2Math.b2Vec2(0, 0);
+  public gravity: b2Vec2 = new b2Vec2(0, 0);
 
   ///
   public damping: number = 0.1;
@@ -48,16 +48,16 @@ export class b2RopeDef {
 ///
 export class b2Rope {
   public m_count: number = 0;
-  public m_ps: b2Math.b2Vec2[] = null;
-  public m_p0s: b2Math.b2Vec2[] = null;
-  public m_vs: b2Math.b2Vec2[] = null;
+  public m_ps: b2Vec2[] = null;
+  public m_p0s: b2Vec2[] = null;
+  public m_vs: b2Vec2[] = null;
 
   public m_ims: number[] = null;
 
   public m_Ls: number[] = null;
   public m_as: number[] = null;
 
-  public m_gravity: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public m_gravity: b2Vec2 = new b2Vec2();
   public m_damping: number = 0;
 
   public m_k2: number = 1;
@@ -67,7 +67,7 @@ export class b2Rope {
     return this.m_count;
   }
 
-  public GetVertices(): b2Math.b2Vec2[] {
+  public GetVertices(): b2Vec2[] {
     return this.m_ps;
   }
 
@@ -75,12 +75,12 @@ export class b2Rope {
   public Initialize(def: b2RopeDef): void {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.count >= 3); }
     this.m_count = def.count;
-    // this.m_ps = (b2Math.b2Vec2*)b2Alloc(this.m_count * sizeof(b2Math.b2Vec2));
-    this.m_ps = b2Math.b2Vec2.MakeArray(this.m_count);
-    // this.m_p0s = (b2Math.b2Vec2*)b2Alloc(this.m_count * sizeof(b2Math.b2Vec2));
-    this.m_p0s = b2Math.b2Vec2.MakeArray(this.m_count);
-    // this.m_vs = (b2Math.b2Vec2*)b2Alloc(this.m_count * sizeof(b2Math.b2Vec2));
-    this.m_vs = b2Math.b2Vec2.MakeArray(this.m_count);
+    // this.m_ps = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
+    this.m_ps = b2Vec2.MakeArray(this.m_count);
+    // this.m_p0s = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
+    this.m_p0s = b2Vec2.MakeArray(this.m_count);
+    // this.m_vs = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
+    this.m_vs = b2Vec2.MakeArray(this.m_count);
     // this.m_ims = (float32*)b2Alloc(this.m_count * sizeof(float32));
     this.m_ims = b2Settings.b2MakeNumberArray(this.m_count);
 
@@ -105,23 +105,23 @@ export class b2Rope {
     this.m_as = b2Settings.b2MakeNumberArray(count3);
 
     for (let i: number = 0; i < count2; ++i) {
-      const p1: b2Math.b2Vec2 = this.m_ps[i];
-      const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
-      this.m_Ls[i] = b2Math.b2Vec2.DistanceVV(p1, p2);
+      const p1: b2Vec2 = this.m_ps[i];
+      const p2: b2Vec2 = this.m_ps[i + 1];
+      this.m_Ls[i] = b2Vec2.DistanceVV(p1, p2);
     }
 
     for (let i: number = 0; i < count3; ++i) {
-      const p1: b2Math.b2Vec2 = this.m_ps[i];
-      const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
-      const p3: b2Math.b2Vec2 = this.m_ps[i + 2];
+      const p1: b2Vec2 = this.m_ps[i];
+      const p2: b2Vec2 = this.m_ps[i + 1];
+      const p3: b2Vec2 = this.m_ps[i + 2];
 
-      const d1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2Math.b2Vec2.s_t0);
-      const d2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p3, p2, b2Math.b2Vec2.s_t1);
+      const d1: b2Vec2 = b2Vec2.SubVV(p2, p1, b2Vec2.s_t0);
+      const d2: b2Vec2 = b2Vec2.SubVV(p3, p2, b2Vec2.s_t1);
 
-      const a: number = b2Math.b2Vec2.CrossVV(d1, d2);
-      const b: number = b2Math.b2Vec2.DotVV(d1, d2);
+      const a: number = b2Vec2.CrossVV(d1, d2);
+      const b: number = b2Vec2.DotVV(d1, d2);
 
-      this.m_as[i] = b2Math.b2Atan2(a, b);
+      this.m_as[i] = b2Atan2(a, b);
     }
 
     this.m_gravity.Copy(def.gravity);
@@ -155,20 +155,20 @@ export class b2Rope {
 
     const inv_h: number = 1 / h;
     for (let i: number = 0; i < this.m_count; ++i) {
-      b2Math.b2Vec2.MulSV(inv_h, b2Math.b2Vec2.SubVV(this.m_ps[i], this.m_p0s[i], b2Math.b2Vec2.s_t0), this.m_vs[i]);
+      b2Vec2.MulSV(inv_h, b2Vec2.SubVV(this.m_ps[i], this.m_p0s[i], b2Vec2.s_t0), this.m_vs[i]);
     }
   }
 
   ///
-  private static s_d = new b2Math.b2Vec2();
+  private static s_d = new b2Vec2();
   public SolveC2(): void {
     const count2: number = this.m_count - 1;
 
     for (let i: number = 0; i < count2; ++i) {
-      const p1: b2Math.b2Vec2 = this.m_ps[i];
-      const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
+      const p1: b2Vec2 = this.m_ps[i];
+      const p2: b2Vec2 = this.m_ps[i + 1];
 
-      const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2Rope.s_d);
+      const d: b2Vec2 = b2Vec2.SubVV(p2, p1, b2Rope.s_d);
       const L: number = d.Normalize();
 
       const im1: number = this.m_ims[i];
@@ -196,26 +196,26 @@ export class b2Rope {
     }
   }
 
-  private static s_d1 = new b2Math.b2Vec2();
-  private static s_d2 = new b2Math.b2Vec2();
-  private static s_Jd1 = new b2Math.b2Vec2();
-  private static s_Jd2 = new b2Math.b2Vec2();
-  private static s_J1 = new b2Math.b2Vec2();
-  private static s_J2 = new b2Math.b2Vec2();
+  private static s_d1 = new b2Vec2();
+  private static s_d2 = new b2Vec2();
+  private static s_Jd1 = new b2Vec2();
+  private static s_Jd2 = new b2Vec2();
+  private static s_J1 = new b2Vec2();
+  private static s_J2 = new b2Vec2();
   public SolveC3(): void {
     const count3: number = this.m_count - 2;
 
     for (let i: number = 0; i < count3; ++i) {
-      const p1: b2Math.b2Vec2 = this.m_ps[i];
-      const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
-      const p3: b2Math.b2Vec2 = this.m_ps[i + 2];
+      const p1: b2Vec2 = this.m_ps[i];
+      const p2: b2Vec2 = this.m_ps[i + 1];
+      const p3: b2Vec2 = this.m_ps[i + 2];
 
       const m1: number = this.m_ims[i];
       const m2: number = this.m_ims[i + 1];
       const m3: number = this.m_ims[i + 2];
 
-      const d1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
-      const d2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
+      const d1: b2Vec2 = b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
+      const d2: b2Vec2 = b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
 
       const L1sqr: number = d1.GetLengthSquared();
       const L2sqr: number = d2.GetLengthSquared();
@@ -224,19 +224,19 @@ export class b2Rope {
         continue;
       }
 
-      const a: number = b2Math.b2Vec2.CrossVV(d1, d2);
-      const b: number = b2Math.b2Vec2.DotVV(d1, d2);
+      const a: number = b2Vec2.CrossVV(d1, d2);
+      const b: number = b2Vec2.DotVV(d1, d2);
 
-      let angle: number = b2Math.b2Atan2(a, b);
+      let angle: number = b2Atan2(a, b);
 
-      const Jd1: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
-      const Jd2: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV(( 1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
+      const Jd1: b2Vec2 = b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
+      const Jd2: b2Vec2 = b2Vec2.MulSV(( 1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
 
-      const J1: b2Math.b2Vec2 = b2Math.b2Vec2.NegV(Jd1, b2Rope.s_J1);
-      const J2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(Jd1, Jd2, b2Rope.s_J2);
-      const J3: b2Math.b2Vec2 = Jd2;
+      const J1: b2Vec2 = b2Vec2.NegV(Jd1, b2Rope.s_J1);
+      const J2: b2Vec2 = b2Vec2.SubVV(Jd1, Jd2, b2Rope.s_J2);
+      const J3: b2Vec2 = Jd2;
 
-      let mass: number = m1 * b2Math.b2Vec2.DotVV(J1, J1) + m2 * b2Math.b2Vec2.DotVV(J2, J2) + m3 * b2Math.b2Vec2.DotVV(J3, J3);
+      let mass: number = m1 * b2Vec2.DotVV(J1, J1) + m2 * b2Vec2.DotVV(J2, J2) + m3 * b2Vec2.DotVV(J3, J3);
       if (mass === 0) {
         continue;
       }

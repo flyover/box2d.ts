@@ -17,7 +17,7 @@
 */
 
 import * as b2Settings from "../Common/b2Settings";
-import * as b2Math from "../Common/b2Math";
+import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB } from "../Collision/b2Collision";
 import { b2RayCastInput } from "../Collision/b2Collision";
@@ -217,7 +217,7 @@ export class b2Fixture {
 
   /// Test a point for containment in this fixture.
   /// @param p a point in world coordinates.
-  public TestPoint(p: b2Math.b2Vec2): boolean {
+  public TestPoint(p: b2Vec2): boolean {
     return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
   }
 
@@ -320,7 +320,7 @@ export class b2Fixture {
 //        {
 //          const polygon: b2PolygonShape = <b2PolygonShape> this.m_shape;
 //          b2Settings.b2Log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
-//          b2Settings.b2Log("    const vs: b2Math.b2Vec2[] = b2Math.b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+//          b2Settings.b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
 //          for (let i: number = 0; i < polygon.m_count; ++i)
 //          {
 //            b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, polygon.m_vertices[i].x, polygon.m_vertices[i].y);
@@ -333,7 +333,7 @@ export class b2Fixture {
 //        {
 //          const chain: b2ChainShape = <b2ChainShape> this.m_shape;
 //          b2Settings.b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
-//          b2Settings.b2Log("    const vs: b2Math.b2Vec2[] = b2Math.b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+//          b2Settings.b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
 //          for (let i: number = 0; i < chain.m_count; ++i)
 //          {
 //            b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, chain.m_vertices[i].x, chain.m_vertices[i].y);
@@ -400,7 +400,7 @@ export class b2Fixture {
   }
 
   // These support body activation/deactivation.
-  public CreateProxies(broadPhase: b2BroadPhase, xf: b2Math.b2Transform): void {
+  public CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_proxyCount === 0); }
 
     // Create proxies in the broad-phase.
@@ -428,8 +428,8 @@ export class b2Fixture {
 
   private static Synchronize_s_aabb1 = new b2AABB();
   private static Synchronize_s_aabb2 = new b2AABB();
-  private static Synchronize_s_displacement = new b2Math.b2Vec2();
-  public Synchronize(broadPhase: b2BroadPhase, transform1: b2Math.b2Transform, transform2: b2Math.b2Transform): void {
+  private static Synchronize_s_displacement = new b2Vec2();
+  public Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void {
     if (this.m_proxyCount === 0) {
       return;
     }
@@ -445,7 +445,7 @@ export class b2Fixture {
 
       proxy.aabb.Combine2(aabb1, aabb2);
 
-      const displacement: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
+      const displacement: b2Vec2 = b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
 
       broadPhase.MoveProxy(proxy.proxy, proxy.aabb, displacement);
     }

@@ -17,7 +17,7 @@
 */
 
 import * as b2Settings from "../Common/b2Settings";
-import * as b2Math from "../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
 
@@ -29,20 +29,20 @@ export let b2_toiMaxIters: number = 0;
 export let b2_toiRootIters: number = 0;
 export let b2_toiMaxRootIters: number = 0;
 
-const b2TimeOfImpact_s_xfA: b2Math.b2Transform = new b2Math.b2Transform();
-const b2TimeOfImpact_s_xfB: b2Math.b2Transform = new b2Math.b2Transform();
-const b2TimeOfImpact_s_pointA: b2Math.b2Vec2 = new b2Math.b2Vec2();
-const b2TimeOfImpact_s_pointB: b2Math.b2Vec2 = new b2Math.b2Vec2();
-const b2TimeOfImpact_s_normal: b2Math.b2Vec2 = new b2Math.b2Vec2();
-const b2TimeOfImpact_s_axisA: b2Math.b2Vec2 = new b2Math.b2Vec2();
-const b2TimeOfImpact_s_axisB: b2Math.b2Vec2 = new b2Math.b2Vec2();
+const b2TimeOfImpact_s_xfA: b2Transform = new b2Transform();
+const b2TimeOfImpact_s_xfB: b2Transform = new b2Transform();
+const b2TimeOfImpact_s_pointA: b2Vec2 = new b2Vec2();
+const b2TimeOfImpact_s_pointB: b2Vec2 = new b2Vec2();
+const b2TimeOfImpact_s_normal: b2Vec2 = new b2Vec2();
+const b2TimeOfImpact_s_axisA: b2Vec2 = new b2Vec2();
+const b2TimeOfImpact_s_axisB: b2Vec2 = new b2Vec2();
 
 /// Input parameters for b2TimeOfImpact
 export class b2TOIInput {
   public proxyA: b2DistanceProxy = new b2DistanceProxy();
   public proxyB: b2DistanceProxy = new b2DistanceProxy();
-  public sweepA: b2Math.b2Sweep = new b2Math.b2Sweep();
-  public sweepB: b2Math.b2Sweep = new b2Math.b2Sweep();
+  public sweepA: b2Sweep = new b2Sweep();
+  public sweepB: b2Sweep = new b2Sweep();
   public tMax: number = 0; // defines sweep interval [0, tMax]
 }
 
@@ -69,13 +69,13 @@ export const enum b2SeparationFunctionType {
 export class b2SeparationFunction {
   public m_proxyA = null;
   public m_proxyB = null;
-  public m_sweepA: b2Math.b2Sweep = new b2Math.b2Sweep();
-  public m_sweepB: b2Math.b2Sweep = new b2Math.b2Sweep();
+  public m_sweepA: b2Sweep = new b2Sweep();
+  public m_sweepB: b2Sweep = new b2Sweep();
   public m_type = b2SeparationFunctionType.e_unknown;
-  public m_localPoint: b2Math.b2Vec2 = new b2Math.b2Vec2();
-  public m_axis: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public m_localPoint: b2Vec2 = new b2Vec2();
+  public m_axis: b2Vec2 = new b2Vec2();
 
-  public Initialize(cache: b2SimplexCache, proxyA: b2DistanceProxy, sweepA: b2Math.b2Sweep, proxyB: b2DistanceProxy, sweepB: b2Math.b2Sweep, t1: number): number {
+  public Initialize(cache: b2SimplexCache, proxyA: b2DistanceProxy, sweepA: b2Sweep, proxyB: b2DistanceProxy, sweepB: b2Sweep, t1: number): number {
     this.m_proxyA = proxyA;
     this.m_proxyB = proxyB;
     const count: number = cache.count;
@@ -84,36 +84,36 @@ export class b2SeparationFunction {
     this.m_sweepA.Copy(sweepA);
     this.m_sweepB.Copy(sweepB);
 
-    const xfA: b2Math.b2Transform = b2TimeOfImpact_s_xfA;
-    const xfB: b2Math.b2Transform = b2TimeOfImpact_s_xfB;
+    const xfA: b2Transform = b2TimeOfImpact_s_xfA;
+    const xfB: b2Transform = b2TimeOfImpact_s_xfB;
     this.m_sweepA.GetTransform(xfA, t1);
     this.m_sweepB.GetTransform(xfB, t1);
 
     if (count === 1) {
       this.m_type = b2SeparationFunctionType.e_points;
-      const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
-      const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
-      const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-      const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-      b2Math.b2Vec2.SubVV(pointB, pointA, this.m_axis);
+      const localPointA: b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
+      const localPointB: b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
+      const pointA: b2Vec2 = b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+      const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+      b2Vec2.SubVV(pointB, pointA, this.m_axis);
       const s: number = this.m_axis.Normalize();
       return s;
     } else if (cache.indexA[0] === cache.indexA[1]) {
       // Two points on B and one on A.
       this.m_type = b2SeparationFunctionType.e_faceB;
-      const localPointB1: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
-      const localPointB2: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[1]);
+      const localPointB1: b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
+      const localPointB2: b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[1]);
 
-      b2Math.b2Vec2.CrossVOne(b2Math.b2Vec2.SubVV(localPointB2, localPointB1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-      const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+      b2Vec2.CrossVOne(b2Vec2.SubVV(localPointB2, localPointB1, b2Vec2.s_t0), this.m_axis).SelfNormalize();
+      const normal: b2Vec2 = b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
 
-      b2Math.b2Vec2.MidVV(localPointB1, localPointB2, this.m_localPoint);
-      const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+      b2Vec2.MidVV(localPointB1, localPointB2, this.m_localPoint);
+      const pointB: b2Vec2 = b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
-      const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
-      const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+      const localPointA: b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
+      const pointA: b2Vec2 = b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
 
-      let s: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+      let s: number = b2Vec2.DotVV(b2Vec2.SubVV(pointA, pointB, b2Vec2.s_t0), normal);
       if (s < 0) {
         this.m_axis.SelfNeg();
         s = -s;
@@ -122,19 +122,19 @@ export class b2SeparationFunction {
     } else {
       // Two points on A and one or two points on B.
       this.m_type = b2SeparationFunctionType.e_faceA;
-      const localPointA1: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
-      const localPointA2: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[1]);
+      const localPointA1: b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
+      const localPointA2: b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[1]);
 
-      b2Math.b2Vec2.CrossVOne(b2Math.b2Vec2.SubVV(localPointA2, localPointA1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-      const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+      b2Vec2.CrossVOne(b2Vec2.SubVV(localPointA2, localPointA1, b2Vec2.s_t0), this.m_axis).SelfNormalize();
+      const normal: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
 
-      b2Math.b2Vec2.MidVV(localPointA1, localPointA2, this.m_localPoint);
-      const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+      b2Vec2.MidVV(localPointA1, localPointA2, this.m_localPoint);
+      const pointA: b2Vec2 = b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
-      const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
-      const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+      const localPointB: b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
+      const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-      let s: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+      let s: number = b2Vec2.DotVV(b2Vec2.SubVV(pointB, pointA, b2Vec2.s_t0), normal);
       if (s < 0) {
         this.m_axis.SelfNeg();
         s = -s;
@@ -144,58 +144,58 @@ export class b2SeparationFunction {
   }
 
   public FindMinSeparation(indexA: number[], indexB: number[], t: number): number {
-    const xfA: b2Math.b2Transform = b2TimeOfImpact_s_xfA;
-    const xfB: b2Math.b2Transform = b2TimeOfImpact_s_xfB;
+    const xfA: b2Transform = b2TimeOfImpact_s_xfA;
+    const xfB: b2Transform = b2TimeOfImpact_s_xfB;
     this.m_sweepA.GetTransform(xfA, t);
     this.m_sweepB.GetTransform(xfB, t);
 
     switch (this.m_type) {
     case b2SeparationFunctionType.e_points: {
-        const axisA: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
-        const axisB: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfB.q, b2Math.b2Vec2.NegV(this.m_axis, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+        const axisA: b2Vec2 = b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
+        const axisB: b2Vec2 = b2Rot.MulTRV(xfB.q, b2Vec2.NegV(this.m_axis, b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
 
         indexA[0] = this.m_proxyA.GetSupport(axisA);
         indexB[0] = this.m_proxyB.GetSupport(axisB);
 
-        const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA[0]);
-        const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB[0]);
+        const localPointA: b2Vec2 = this.m_proxyA.GetVertex(indexA[0]);
+        const localPointB: b2Vec2 = this.m_proxyB.GetVertex(indexB[0]);
 
-        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const pointA: b2Vec2 = b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
+        const separation: number = b2Vec2.DotVV(b2Vec2.SubVV(pointB, pointA, b2Vec2.s_t0), this.m_axis);
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceA: {
-        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+        const normal: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointA: b2Vec2 = b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
-        const axisB: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfB.q, b2Math.b2Vec2.NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+        const axisB: b2Vec2 = b2Rot.MulTRV(xfB.q, b2Vec2.NegV(normal, b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
 
         indexA[0] = -1;
         indexB[0] = this.m_proxyB.GetSupport(axisB);
 
-        const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB[0]);
-        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const localPointB: b2Vec2 = this.m_proxyB.GetVertex(indexB[0]);
+        const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Vec2.DotVV(b2Vec2.SubVV(pointB, pointA, b2Vec2.s_t0), normal);
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceB: {
-        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+        const normal: b2Vec2 = b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointB: b2Vec2 = b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
-        const axisA: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfA.q, b2Math.b2Vec2.NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
+        const axisA: b2Vec2 = b2Rot.MulTRV(xfA.q, b2Vec2.NegV(normal, b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
 
         indexB[0] = -1;
         indexA[0] = this.m_proxyA.GetSupport(axisA);
 
-        const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA[0]);
-        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const localPointA: b2Vec2 = this.m_proxyA.GetVertex(indexA[0]);
+        const pointA: b2Vec2 = b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
 
-        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Vec2.DotVV(b2Vec2.SubVV(pointA, pointB, b2Vec2.s_t0), normal);
         return separation;
       }
 
@@ -208,42 +208,42 @@ export class b2SeparationFunction {
   }
 
   public Evaluate(indexA: number, indexB: number, t: number): number {
-    const xfA: b2Math.b2Transform = b2TimeOfImpact_s_xfA;
-    const xfB: b2Math.b2Transform = b2TimeOfImpact_s_xfB;
+    const xfA: b2Transform = b2TimeOfImpact_s_xfA;
+    const xfB: b2Transform = b2TimeOfImpact_s_xfB;
     this.m_sweepA.GetTransform(xfA, t);
     this.m_sweepB.GetTransform(xfB, t);
 
     switch (this.m_type) {
     case b2SeparationFunctionType.e_points: {
-        const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA);
-        const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB);
+        const localPointA: b2Vec2 = this.m_proxyA.GetVertex(indexA);
+        const localPointB: b2Vec2 = this.m_proxyB.GetVertex(indexB);
 
-        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
+        const pointA: b2Vec2 = b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const separation: number = b2Vec2.DotVV(b2Vec2.SubVV(pointB, pointA, b2Vec2.s_t0), this.m_axis);
 
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceA: {
-        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+        const normal: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointA: b2Vec2 = b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
-        const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB);
-        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const localPointB: b2Vec2 = this.m_proxyB.GetVertex(indexB);
+        const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Vec2.DotVV(b2Vec2.SubVV(pointB, pointA, b2Vec2.s_t0), normal);
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceB: {
-        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+        const normal: b2Vec2 = b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointB: b2Vec2 = b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
-        const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA);
-        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const localPointA: b2Vec2 = this.m_proxyA.GetVertex(indexA);
+        const pointA: b2Vec2 = b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
 
-        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Vec2.DotVV(b2Vec2.SubVV(pointA, pointB, b2Vec2.s_t0), normal);
         return separation;
       }
 
@@ -261,8 +261,8 @@ const b2TimeOfImpact_s_distanceOutput: b2DistanceOutput = new b2DistanceOutput()
 const b2TimeOfImpact_s_fcn: b2SeparationFunction = new b2SeparationFunction();
 const b2TimeOfImpact_s_indexA = b2Settings.b2MakeNumberArray(1);
 const b2TimeOfImpact_s_indexB = b2Settings.b2MakeNumberArray(1);
-const b2TimeOfImpact_s_sweepA: b2Math.b2Sweep = new b2Math.b2Sweep();
-const b2TimeOfImpact_s_sweepB: b2Math.b2Sweep = new b2Math.b2Sweep();
+const b2TimeOfImpact_s_sweepA: b2Sweep = new b2Sweep();
+const b2TimeOfImpact_s_sweepB: b2Sweep = new b2Sweep();
 export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const timer: b2Timer = b2TimeOfImpact_s_timer.Reset();
 
@@ -274,8 +274,8 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const proxyA: b2DistanceProxy = input.proxyA;
   const proxyB: b2DistanceProxy = input.proxyB;
 
-  const sweepA: b2Math.b2Sweep = b2TimeOfImpact_s_sweepA.Copy(input.sweepA);
-  const sweepB: b2Math.b2Sweep = b2TimeOfImpact_s_sweepB.Copy(input.sweepB);
+  const sweepA: b2Sweep = b2TimeOfImpact_s_sweepA.Copy(input.sweepA);
+  const sweepB: b2Sweep = b2TimeOfImpact_s_sweepB.Copy(input.sweepB);
 
   // Large rotations can make the root finder fail, so we normalize the
   // sweep angles.
@@ -285,7 +285,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const tMax: number = input.tMax;
 
   const totalRadius: number = proxyA.m_radius + proxyB.m_radius;
-  const target: number = b2Math.b2Max(b2Settings.b2_linearSlop, totalRadius - 3 * b2Settings.b2_linearSlop);
+  const target: number = b2Max(b2Settings.b2_linearSlop, totalRadius - 3 * b2Settings.b2_linearSlop);
   const tolerance: number = 0.25 * b2Settings.b2_linearSlop;
   if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(target > tolerance); }
 
@@ -304,8 +304,8 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   // The outer loop progressively attempts to compute new separating axes.
   // This loop terminates when an axis is repeated (no progress is made).
   for (; ; ) {
-    const xfA: b2Math.b2Transform = b2TimeOfImpact_s_xfA;
-    const xfB: b2Math.b2Transform = b2TimeOfImpact_s_xfB;
+    const xfA: b2Transform = b2TimeOfImpact_s_xfA;
+    const xfB: b2Transform = b2TimeOfImpact_s_xfB;
     sweepA.GetTransform(xfA, t1);
     sweepB.GetTransform(xfB, t1);
 
@@ -428,7 +428,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
 
         const s: number = fcn.Evaluate(indexA[0], indexB[0], t);
 
-        if (b2Math.b2Abs(s - target) < tolerance) {
+        if (b2Abs(s - target) < tolerance) {
           // t2 holds a tentative value for t1
           t2 = t;
           break;
@@ -448,7 +448,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
         }
       }
 
-      b2_toiMaxRootIters = b2Math.b2Max(b2_toiMaxRootIters, rootIterCount);
+      b2_toiMaxRootIters = b2Max(b2_toiMaxRootIters, rootIterCount);
 
       ++pushBackIter;
 
@@ -472,9 +472,9 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
     }
   }
 
-  b2_toiMaxIters = b2Math.b2Max(b2_toiMaxIters, iter);
+  b2_toiMaxIters = b2Max(b2_toiMaxIters, iter);
 
   const time: number = timer.GetMilliseconds();
-  b2_toiMaxTime = b2Math.b2Max(b2_toiMaxTime, time);
+  b2_toiMaxTime = b2Max(b2_toiMaxTime, time);
   b2_toiTime += time;
 }

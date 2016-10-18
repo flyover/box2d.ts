@@ -1,5 +1,5 @@
 import * as b2Settings from "../../Common/b2Settings";
-import * as b2Math from "../../Common/b2Math";
+import { b2Sq, b2Sqrt, b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
 import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
@@ -56,10 +56,10 @@ export class b2AreaJoint extends b2Joint {
     this.m_dampingRatio = def.dampingRatio;
 
     this.m_targetLengths = b2Settings.b2MakeNumberArray(def.bodies.length);
-    this.m_normals = b2Math.b2Vec2.MakeArray(def.bodies.length);
+    this.m_normals = b2Vec2.MakeArray(def.bodies.length);
     this.m_joints = new Array(def.bodies.length);
-    this.m_deltas = b2Math.b2Vec2.MakeArray(def.bodies.length);
-    this.m_delta = new b2Math.b2Vec2();
+    this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
+    this.m_delta = new b2Vec2();
 
     const djd: b2DistanceJointDef = new b2DistanceJointDef();
     djd.frequencyHz = def.frequencyHz;
@@ -74,9 +74,9 @@ export class b2AreaJoint extends b2Joint {
       const body_c = body.GetWorldCenter();
       const next_c = next.GetWorldCenter();
 
-      this.m_targetLengths[i] = b2Math.b2Vec2.DistanceVV(body_c, next_c);
+      this.m_targetLengths[i] = b2Vec2.DistanceVV(body_c, next_c);
 
-      this.m_targetArea += b2Math.b2Vec2.CrossVV(body_c, next_c);
+      this.m_targetArea += b2Vec2.CrossVV(body_c, next_c);
 
       djd.Initialize(body, next, body_c, next_c);
       this.m_joints[i] = def.world.CreateJoint(djd);
@@ -85,15 +85,15 @@ export class b2AreaJoint extends b2Joint {
     this.m_targetArea *= 0.5;
   }
 
-  public GetAnchorA(out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetAnchorA(out: b2Vec2): b2Vec2 {
     return out.SetZero();
   }
 
-  public GetAnchorB(out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetAnchorB(out: b2Vec2): b2Vec2 {
     return out.SetZero();
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
     return out.SetZero();
   }
 
@@ -139,7 +139,7 @@ export class b2AreaJoint extends b2Joint {
       const next_c = data.positions[next.m_islandIndex].c;
       const delta = this.m_deltas[i];
 
-      b2Math.b2Vec2.SubVV(next_c, prev_c, delta);
+      b2Vec2.SubVV(next_c, prev_c, delta);
     }
 
     if (data.step.warmStarting) {
@@ -168,11 +168,11 @@ export class b2AreaJoint extends b2Joint {
       const delta = this.m_deltas[i];
 
       dotMassSum += delta.GetLengthSquared() / body.GetMass();
-      crossMassSum += b2Math.b2Vec2.CrossVV(body_v, delta);
+      crossMassSum += b2Vec2.CrossVV(body_v, delta);
     }
 
     const lambda = -2 * crossMassSum / dotMassSum;
-    // lambda = b2Math.b2Clamp(lambda, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
+    // lambda = b2Clamp(lambda, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
 
     this.m_impulse += lambda;
 
@@ -196,7 +196,7 @@ export class b2AreaJoint extends b2Joint {
       const body_c = data.positions[body.m_islandIndex].c;
       const next_c = data.positions[next.m_islandIndex].c;
 
-      const delta: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(next_c, body_c, this.m_delta);
+      const delta: b2Vec2 = b2Vec2.SubVV(next_c, body_c, this.m_delta);
 
       let dist = delta.GetLength();
       if (dist < b2Settings.b2_epsilon) {
@@ -208,7 +208,7 @@ export class b2AreaJoint extends b2Joint {
 
       perimeter += dist;
 
-      area += b2Math.b2Vec2.CrossVV(body_c, next_c);
+      area += b2Vec2.CrossVV(body_c, next_c);
     }
 
     area *= 0.5;
@@ -222,14 +222,14 @@ export class b2AreaJoint extends b2Joint {
       const body_c = data.positions[body.m_islandIndex].c;
       const next_i = (i + 1) % ict;
 
-      const delta: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
+      const delta: b2Vec2 = b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
       delta.SelfMul(toExtrude);
 
       const norm_sq = delta.GetLengthSquared();
-      if (norm_sq > b2Math.b2Sq(b2Settings.b2_maxLinearCorrection)) {
-        delta.SelfMul(b2Settings.b2_maxLinearCorrection / b2Math.b2Sqrt(norm_sq));
+      if (norm_sq > b2Sq(b2Settings.b2_maxLinearCorrection)) {
+        delta.SelfMul(b2Settings.b2_maxLinearCorrection / b2Sqrt(norm_sq));
       }
-      if (norm_sq > b2Math.b2Sq(b2Settings.b2_linearSlop)) {
+      if (norm_sq > b2Sq(b2Settings.b2_linearSlop)) {
         done = false;
       }
 

@@ -17,7 +17,7 @@
 */
 
 import * as b2Settings from "../../Common/b2Settings";
-import * as b2Math from "../../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
 import { b2LimitState } from "./b2Joint";
@@ -53,9 +53,9 @@ export class b2PrismaticJointDef extends b2JointDef {
   constructor() {
     super(b2JointType.e_prismaticJoint); // base class constructor
 
-    this.localAnchorA = new b2Math.b2Vec2();
-    this.localAnchorB = new b2Math.b2Vec2();
-    this.localAxisA = new b2Math.b2Vec2(1, 0);
+    this.localAnchorA = new b2Vec2();
+    this.localAnchorB = new b2Vec2();
+    this.localAxisA = new b2Vec2(1, 0);
   }
 
   public Initialize(bA, bB, anchor, axis) {
@@ -70,12 +70,12 @@ export class b2PrismaticJointDef extends b2JointDef {
 
 export class b2PrismaticJoint extends b2Joint {
   // Solver shared
-  public m_localAnchorA: b2Math.b2Vec2 = null;
-  public m_localAnchorB: b2Math.b2Vec2 = null;
-  public m_localXAxisA: b2Math.b2Vec2 = null;
-  public m_localYAxisA: b2Math.b2Vec2 = null;
+  public m_localAnchorA: b2Vec2 = null;
+  public m_localAnchorB: b2Vec2 = null;
+  public m_localXAxisA: b2Vec2 = null;
+  public m_localYAxisA: b2Vec2 = null;
   public m_referenceAngle: number = 0;
-  public m_impulse: b2Math.b2Vec3 = null;
+  public m_impulse: b2Vec3 = null;
   public m_motorImpulse: number = 0;
   public m_lowerTranslation: number = 0;
   public m_upperTranslation: number = 0;
@@ -88,29 +88,29 @@ export class b2PrismaticJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_localCenterA: b2Math.b2Vec2 = null;
-  public m_localCenterB: b2Math.b2Vec2 = null;
+  public m_localCenterA: b2Vec2 = null;
+  public m_localCenterB: b2Vec2 = null;
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_axis: b2Math.b2Vec2 = null;
-  public m_perp: b2Math.b2Vec2 = null;
+  public m_axis: b2Vec2 = null;
+  public m_perp: b2Vec2 = null;
   public m_s1: number = 0;
   public m_s2: number = 0;
   public m_a1: number = 0;
   public m_a2: number = 0;
-  public m_K: b2Math.b2Mat33 = null;
-  public m_K3: b2Math.b2Mat33 = null;
-  public m_K2: b2Math.b2Mat22 = null;
+  public m_K: b2Mat33 = null;
+  public m_K3: b2Mat33 = null;
+  public m_K2: b2Mat22 = null;
   public m_motorMass: number = 0;
 
-  public m_qA: b2Math.b2Rot = null;
-  public m_qB: b2Math.b2Rot = null;
-  public m_lalcA: b2Math.b2Vec2 = null;
-  public m_lalcB: b2Math.b2Vec2 = null;
-  public m_rA: b2Math.b2Vec2 = null;
-  public m_rB: b2Math.b2Vec2 = null;
+  public m_qA: b2Rot = null;
+  public m_qB: b2Rot = null;
+  public m_lalcA: b2Vec2 = null;
+  public m_lalcB: b2Vec2 = null;
+  public m_rA: b2Vec2 = null;
+  public m_rB: b2Vec2 = null;
 
   constructor(def) {
     super(def); // base class constructor
@@ -118,9 +118,9 @@ export class b2PrismaticJoint extends b2Joint {
     this.m_localAnchorA = def.localAnchorA.Clone();
     this.m_localAnchorB = def.localAnchorB.Clone();
     this.m_localXAxisA = def.localAxisA.Clone().SelfNormalize();
-    this.m_localYAxisA = b2Math.b2Vec2.CrossOneV(this.m_localXAxisA, new b2Math.b2Vec2());
+    this.m_localYAxisA = b2Vec2.CrossOneV(this.m_localXAxisA, new b2Vec2());
     this.m_referenceAngle = def.referenceAngle;
-    this.m_impulse = new b2Math.b2Vec3(0, 0, 0);
+    this.m_impulse = new b2Vec3(0, 0, 0);
     this.m_lowerTranslation = def.lowerTranslation;
     this.m_upperTranslation = def.upperTranslation;
     this.m_maxMotorForce = def.maxMotorForce;
@@ -128,24 +128,24 @@ export class b2PrismaticJoint extends b2Joint {
     this.m_enableLimit = def.enableLimit;
     this.m_enableMotor = def.enableMotor;
 
-    this.m_localCenterA = new b2Math.b2Vec2();
-    this.m_localCenterB = new b2Math.b2Vec2();
-    this.m_axis = new b2Math.b2Vec2(0, 0);
-    this.m_perp = new b2Math.b2Vec2(0, 0);
-    this.m_K = new b2Math.b2Mat33();
-    this.m_K3 = new b2Math.b2Mat33();
-    this.m_K2 = new b2Math.b2Mat22();
+    this.m_localCenterA = new b2Vec2();
+    this.m_localCenterB = new b2Vec2();
+    this.m_axis = new b2Vec2(0, 0);
+    this.m_perp = new b2Vec2(0, 0);
+    this.m_K = new b2Mat33();
+    this.m_K3 = new b2Mat33();
+    this.m_K2 = new b2Mat22();
 
-    this.m_qA = new b2Math.b2Rot();
-    this.m_qB = new b2Math.b2Rot();
-    this.m_lalcA = new b2Math.b2Vec2();
-    this.m_lalcB = new b2Math.b2Vec2();
-    this.m_rA = new b2Math.b2Vec2();
-    this.m_rB = new b2Math.b2Vec2();
+    this.m_qA = new b2Rot();
+    this.m_qB = new b2Rot();
+    this.m_lalcA = new b2Vec2();
+    this.m_lalcB = new b2Vec2();
+    this.m_rA = new b2Vec2();
+    this.m_rB = new b2Vec2();
   }
 
-  private static InitVelocityConstraints_s_d = new b2Math.b2Vec2();
-  private static InitVelocityConstraints_s_P = new b2Math.b2Vec2();
+  private static InitVelocityConstraints_s_d = new b2Vec2();
+  private static InitVelocityConstraints_s_P = new b2Vec2();
   public InitVelocityConstraints(data) {
     this.m_indexA = this.m_bodyA.m_islandIndex;
     this.m_indexB = this.m_bodyB.m_islandIndex;
@@ -156,29 +156,29 @@ export class b2PrismaticJoint extends b2Joint {
     this.m_invIA = this.m_bodyA.m_invI;
     this.m_invIB = this.m_bodyB.m_invI;
 
-    const cA: b2Math.b2Vec2 = data.positions[this.m_indexA].c;
+    const cA: b2Vec2 = data.positions[this.m_indexA].c;
     const aA: number = data.positions[this.m_indexA].a;
-    const vA: b2Math.b2Vec2 = data.velocities[this.m_indexA].v;
+    const vA: b2Vec2 = data.velocities[this.m_indexA].v;
     let wA: number = data.velocities[this.m_indexA].w;
 
-    const cB: b2Math.b2Vec2 = data.positions[this.m_indexB].c;
+    const cB: b2Vec2 = data.positions[this.m_indexB].c;
     const aB: number = data.positions[this.m_indexB].a;
-    const vB: b2Math.b2Vec2 = data.velocities[this.m_indexB].v;
+    const vB: b2Vec2 = data.velocities[this.m_indexB].v;
     let wB: number = data.velocities[this.m_indexB].w;
 
-    const qA: b2Math.b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Math.b2Rot = this.m_qB.SetAngleRadians(aB);
+    const qA: b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Rot = this.m_qB.SetAngleRadians(aB);
 
     // Compute the effective masses.
-    // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-    const rA: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
-    // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-    const rB: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
-    // b2Math.b2Vec2 d = (cB - cA) + rB - rA;
-    const d: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(
-      b2Math.b2Vec2.SubVV(cB, cA, b2Math.b2Vec2.s_t0),
-      b2Math.b2Vec2.SubVV(rB, rA, b2Math.b2Vec2.s_t1),
+    // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
+    b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+    const rA: b2Vec2 = b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+    // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+    b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+    const rB: b2Vec2 = b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+    // b2Vec2 d = (cB - cA) + rB - rA;
+    const d: b2Vec2 = b2Vec2.AddVV(
+      b2Vec2.SubVV(cB, cA, b2Vec2.s_t0),
+      b2Vec2.SubVV(rB, rA, b2Vec2.s_t1),
       b2PrismaticJoint.InitVelocityConstraints_s_d);
 
     const mA: number = this.m_invMassA, mB: number = this.m_invMassB;
@@ -187,11 +187,11 @@ export class b2PrismaticJoint extends b2Joint {
     // Compute motor Jacobian and effective mass.
     {
       // m_axis = b2Mul(qA, m_localXAxisA);
-      b2Math.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
+      b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
       // m_a1 = b2Cross(d + rA, m_axis);
-      this.m_a1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_axis);
+      this.m_a1 = b2Vec2.CrossVV(b2Vec2.AddVV(d, rA, b2Vec2.s_t0), this.m_axis);
       // m_a2 = b2Cross(rB, m_axis);
-      this.m_a2 = b2Math.b2Vec2.CrossVV(rB, this.m_axis);
+      this.m_a2 = b2Vec2.CrossVV(rB, this.m_axis);
 
       this.m_motorMass = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
       if (this.m_motorMass > 0) {
@@ -202,12 +202,12 @@ export class b2PrismaticJoint extends b2Joint {
     // Prismatic constraint.
     {
       // m_perp = b2Mul(qA, m_localYAxisA);
-      b2Math.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
+      b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
 
       // m_s1 = b2Cross(d + rA, m_perp);
-      this.m_s1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_perp);
+      this.m_s1 = b2Vec2.CrossVV(b2Vec2.AddVV(d, rA, b2Vec2.s_t0), this.m_perp);
       // m_s2 = b2Cross(rB, m_perp);
-      this.m_s2 = b2Math.b2Vec2.CrossVV(rB, this.m_perp);
+      this.m_s2 = b2Vec2.CrossVV(rB, this.m_perp);
 
       // float32 k11 = mA + mB + iA * m_s1 * m_s1 + iB * m_s2 * m_s2;
       this.m_K.ex.x = mA + mB + iA * this.m_s1 * this.m_s1 + iB * this.m_s2 * this.m_s2;
@@ -237,8 +237,8 @@ export class b2PrismaticJoint extends b2Joint {
     // Compute motor and limit terms.
     if (this.m_enableLimit) {
       // float32 jointTranslation = b2Dot(m_axis, d);
-      const jointTranslation: number = b2Math.b2Vec2.DotVV(this.m_axis, d);
-      if (b2Math.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
+      const jointTranslation: number = b2Vec2.DotVV(this.m_axis, d);
+      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
         this.m_limitState = b2LimitState.e_equalLimits;
       } else if (jointTranslation <= this.m_lowerTranslation) {
         if (this.m_limitState !== b2LimitState.e_atLowerLimit) {
@@ -269,10 +269,10 @@ export class b2PrismaticJoint extends b2Joint {
       this.m_impulse.SelfMul(data.step.dtRatio);
       this.m_motorImpulse *= data.step.dtRatio;
 
-      // b2Math.b2Vec2 P = m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis;
-      const P: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(
-        b2Math.b2Vec2.MulSV(this.m_impulse.x, this.m_perp, b2Math.b2Vec2.s_t0),
-        b2Math.b2Vec2.MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Math.b2Vec2.s_t1),
+      // b2Vec2 P = m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis;
+      const P: b2Vec2 = b2Vec2.AddVV(
+        b2Vec2.MulSV(this.m_impulse.x, this.m_perp, b2Vec2.s_t0),
+        b2Vec2.MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Vec2.s_t1),
         b2PrismaticJoint.InitVelocityConstraints_s_P);
       // float32 LA = m_impulse.x * m_s1 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a1;
       const LA = this.m_impulse.x * this.m_s1 + this.m_impulse.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_a1;
@@ -297,15 +297,15 @@ export class b2PrismaticJoint extends b2Joint {
     data.velocities[this.m_indexB].w = wB;
   }
 
-  private static SolveVelocityConstraints_s_P = new b2Math.b2Vec2();
-  private static SolveVelocityConstraints_s_f2r = new b2Math.b2Vec2();
-  private static SolveVelocityConstraints_s_f1 = new b2Math.b2Vec3();
-  private static SolveVelocityConstraints_s_df3 = new b2Math.b2Vec3();
-  private static SolveVelocityConstraints_s_df2 = new b2Math.b2Vec2();
+  private static SolveVelocityConstraints_s_P = new b2Vec2();
+  private static SolveVelocityConstraints_s_f2r = new b2Vec2();
+  private static SolveVelocityConstraints_s_f1 = new b2Vec3();
+  private static SolveVelocityConstraints_s_df3 = new b2Vec3();
+  private static SolveVelocityConstraints_s_df2 = new b2Vec2();
   public SolveVelocityConstraints(data) {
-    const vA: b2Math.b2Vec2 = data.velocities[this.m_indexA].v;
+    const vA: b2Vec2 = data.velocities[this.m_indexA].v;
     let wA: number = data.velocities[this.m_indexA].w;
-    const vB: b2Math.b2Vec2 = data.velocities[this.m_indexB].v;
+    const vB: b2Vec2 = data.velocities[this.m_indexB].v;
     let wB: number = data.velocities[this.m_indexB].w;
 
     const mA: number = this.m_invMassA, mB: number = this.m_invMassB;
@@ -314,15 +314,15 @@ export class b2PrismaticJoint extends b2Joint {
     // Solve linear motor constraint.
     if (this.m_enableMotor && this.m_limitState !== b2LimitState.e_equalLimits) {
       // float32 Cdot = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-      const Cdot: number = b2Math.b2Vec2.DotVV(this.m_axis, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+      const Cdot: number = b2Vec2.DotVV(this.m_axis, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
       let impulse = this.m_motorMass * (this.m_motorSpeed - Cdot);
       const oldImpulse = this.m_motorImpulse;
       const maxImpulse = data.step.dt * this.m_maxMotorForce;
-      this.m_motorImpulse = b2Math.b2Clamp(this.m_motorImpulse + impulse, (-maxImpulse), maxImpulse);
+      this.m_motorImpulse = b2Clamp(this.m_motorImpulse + impulse, (-maxImpulse), maxImpulse);
       impulse = this.m_motorImpulse - oldImpulse;
 
-      // b2Math.b2Vec2 P = impulse * m_axis;
-      const P: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+      // b2Vec2 P = impulse * m_axis;
+      const P: b2Vec2 = b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
       const LA = impulse * this.m_a1;
       const LB = impulse * this.m_a2;
 
@@ -335,9 +335,9 @@ export class b2PrismaticJoint extends b2Joint {
       wB += iB * LB;
     }
 
-    // b2Math.b2Vec2 Cdot1;
+    // b2Vec2 Cdot1;
     // Cdot1.x = b2Dot(m_perp, vB - vA) + m_s2 * wB - m_s1 * wA;
-    const Cdot1_x: number = b2Math.b2Vec2.DotVV(this.m_perp, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
+    const Cdot1_x: number = b2Vec2.DotVV(this.m_perp, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
     // Cdot1.y = wB - wA;
     const Cdot1_y = wB - wA;
 
@@ -345,27 +345,27 @@ export class b2PrismaticJoint extends b2Joint {
       // Solve prismatic and limit constraint in block form.
       // float32 Cdot2;
       // Cdot2 = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-      const Cdot2: number = b2Math.b2Vec2.DotVV(this.m_axis, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
-      // b2Math.b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
+      const Cdot2: number = b2Vec2.DotVV(this.m_axis, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+      // b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
 
-      // b2Math.b2Vec3 f1 = m_impulse;
+      // b2Vec3 f1 = m_impulse;
       const f1 = b2PrismaticJoint.SolveVelocityConstraints_s_f1.Copy(this.m_impulse);
-      // b2Math.b2Vec3 df =  m_K.Solve33(-Cdot);
+      // b2Vec3 df =  m_K.Solve33(-Cdot);
       const df3 = this.m_K.Solve33((-Cdot1_x), (-Cdot1_y), (-Cdot2), b2PrismaticJoint.SolveVelocityConstraints_s_df3);
       // m_impulse += df;
       this.m_impulse.SelfAdd(df3);
 
       if (this.m_limitState === b2LimitState.e_atLowerLimit) {
-        this.m_impulse.z = b2Math.b2Max(this.m_impulse.z, 0);
+        this.m_impulse.z = b2Max(this.m_impulse.z, 0);
       } else if (this.m_limitState === b2LimitState.e_atUpperLimit) {
-        this.m_impulse.z = b2Math.b2Min(this.m_impulse.z, 0);
+        this.m_impulse.z = b2Min(this.m_impulse.z, 0);
       }
 
       // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) + f1(1:2)
-      // b2Math.b2Vec2 b = -Cdot1 - (m_impulse.z - f1.z) * b2Math.b2Vec2(m_K.ez.x, m_K.ez.y);
+      // b2Vec2 b = -Cdot1 - (m_impulse.z - f1.z) * b2Vec2(m_K.ez.x, m_K.ez.y);
       const b_x = (-Cdot1_x) - (this.m_impulse.z - f1.z) * this.m_K.ez.x;
       const b_y = (-Cdot1_y) - (this.m_impulse.z - f1.z) * this.m_K.ez.y;
-      // b2Math.b2Vec2 f2r = m_K.Solve22(b) + b2Math.b2Vec2(f1.x, f1.y);
+      // b2Vec2 f2r = m_K.Solve22(b) + b2Vec2(f1.x, f1.y);
       const f2r = this.m_K.Solve22(b_x, b_y, b2PrismaticJoint.SolveVelocityConstraints_s_f2r);
       f2r.x += f1.x;
       f2r.y += f1.y;
@@ -379,10 +379,10 @@ export class b2PrismaticJoint extends b2Joint {
       df3.y = this.m_impulse.y - f1.y;
       df3.z = this.m_impulse.z - f1.z;
 
-      // b2Math.b2Vec2 P = df.x * m_perp + df.z * m_axis;
-      const P: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(
-        b2Math.b2Vec2.MulSV(df3.x, this.m_perp, b2Math.b2Vec2.s_t0),
-        b2Math.b2Vec2.MulSV(df3.z, this.m_axis, b2Math.b2Vec2.s_t1),
+      // b2Vec2 P = df.x * m_perp + df.z * m_axis;
+      const P: b2Vec2 = b2Vec2.AddVV(
+        b2Vec2.MulSV(df3.x, this.m_perp, b2Vec2.s_t0),
+        b2Vec2.MulSV(df3.z, this.m_axis, b2Vec2.s_t1),
         b2PrismaticJoint.SolveVelocityConstraints_s_P);
       // float32 LA = df.x * m_s1 + df.y + df.z * m_a1;
       const LA = df3.x * this.m_s1 + df3.y + df3.z * this.m_a1;
@@ -398,13 +398,13 @@ export class b2PrismaticJoint extends b2Joint {
       wB += iB * LB;
     } else {
       // Limit is inactive, just solve the prismatic constraint in block form.
-      // b2Math.b2Vec2 df = m_K.Solve22(-Cdot1);
+      // b2Vec2 df = m_K.Solve22(-Cdot1);
       const df2 = this.m_K.Solve22((-Cdot1_x), (-Cdot1_y), b2PrismaticJoint.SolveVelocityConstraints_s_df2);
       this.m_impulse.x += df2.x;
       this.m_impulse.y += df2.y;
 
-      // b2Math.b2Vec2 P = df.x * m_perp;
-      const P: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+      // b2Vec2 P = df.x * m_perp;
+      const P: b2Vec2 = b2Vec2.MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
       // float32 LA = df.x * m_s1 + df.y;
       const LA = df2.x * this.m_s1 + df2.y;
       // float32 LB = df.x * m_s2 + df.y;
@@ -425,75 +425,75 @@ export class b2PrismaticJoint extends b2Joint {
     data.velocities[this.m_indexB].w = wB;
   }
 
-  private static SolvePositionConstraints_s_d = new b2Math.b2Vec2();
-  private static SolvePositionConstraints_s_impulse = new b2Math.b2Vec3();
-  private static SolvePositionConstraints_s_impulse1 = new b2Math.b2Vec2();
-  private static SolvePositionConstraints_s_P = new b2Math.b2Vec2();
+  private static SolvePositionConstraints_s_d = new b2Vec2();
+  private static SolvePositionConstraints_s_impulse = new b2Vec3();
+  private static SolvePositionConstraints_s_impulse1 = new b2Vec2();
+  private static SolvePositionConstraints_s_P = new b2Vec2();
   public SolvePositionConstraints(data) {
-    const cA: b2Math.b2Vec2 = data.positions[this.m_indexA].c;
+    const cA: b2Vec2 = data.positions[this.m_indexA].c;
     let aA: number = data.positions[this.m_indexA].a;
-    const cB: b2Math.b2Vec2 = data.positions[this.m_indexB].c;
+    const cB: b2Vec2 = data.positions[this.m_indexB].c;
     let aB: number = data.positions[this.m_indexB].a;
 
-    const qA: b2Math.b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Math.b2Rot = this.m_qB.SetAngleRadians(aB);
+    const qA: b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Rot = this.m_qB.SetAngleRadians(aB);
 
     const mA: number = this.m_invMassA, mB: number = this.m_invMassB;
     const iA: number = this.m_invIA, iB: number = this.m_invIB;
 
-    // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-    const rA: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
-    // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-    const rB: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
-    // b2Math.b2Vec2 d = cB + rB - cA - rA;
-    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(
-      b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0),
-      b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1),
+    // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
+    const rA: b2Vec2 = b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+    // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+    const rB: b2Vec2 = b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+    // b2Vec2 d = cB + rB - cA - rA;
+    const d: b2Vec2 = b2Vec2.SubVV(
+      b2Vec2.AddVV(cB, rB, b2Vec2.s_t0),
+      b2Vec2.AddVV(cA, rA, b2Vec2.s_t1),
       b2PrismaticJoint.SolvePositionConstraints_s_d);
 
-    // b2Math.b2Vec2 axis = b2Mul(qA, m_localXAxisA);
-    const axis: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
+    // b2Vec2 axis = b2Mul(qA, m_localXAxisA);
+    const axis: b2Vec2 = b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
     // float32 a1 = b2Cross(d + rA, axis);
-    const a1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), axis);
+    const a1 = b2Vec2.CrossVV(b2Vec2.AddVV(d, rA, b2Vec2.s_t0), axis);
     // float32 a2 = b2Cross(rB, axis);
-    const a2 = b2Math.b2Vec2.CrossVV(rB, axis);
-    // b2Math.b2Vec2 perp = b2Mul(qA, m_localYAxisA);
-    const perp: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
+    const a2 = b2Vec2.CrossVV(rB, axis);
+    // b2Vec2 perp = b2Mul(qA, m_localYAxisA);
+    const perp: b2Vec2 = b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
 
     // float32 s1 = b2Cross(d + rA, perp);
-    const s1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), perp);
+    const s1 = b2Vec2.CrossVV(b2Vec2.AddVV(d, rA, b2Vec2.s_t0), perp);
     // float32 s2 = b2Cross(rB, perp);
-    const s2 = b2Math.b2Vec2.CrossVV(rB, perp);
+    const s2 = b2Vec2.CrossVV(rB, perp);
 
-    // b2Math.b2Vec3 impulse;
+    // b2Vec3 impulse;
     let impulse = b2PrismaticJoint.SolvePositionConstraints_s_impulse;
-    // b2Math.b2Vec2 C1;
+    // b2Vec2 C1;
     // C1.x = b2Dot(perp, d);
-    const C1_x: number = b2Math.b2Vec2.DotVV(perp, d);
+    const C1_x: number = b2Vec2.DotVV(perp, d);
     // C1.y = aB - aA - m_referenceAngle;
     const C1_y = aB - aA - this.m_referenceAngle;
 
-    let linearError = b2Math.b2Abs(C1_x);
-    let angularError = b2Math.b2Abs(C1_y);
+    let linearError = b2Abs(C1_x);
+    let angularError = b2Abs(C1_y);
 
     let active = false;
     let C2: number = 0;
     if (this.m_enableLimit) {
       // float32 translation = b2Dot(axis, d);
-      const translation: number = b2Math.b2Vec2.DotVV(axis, d);
-      if (b2Math.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
+      const translation: number = b2Vec2.DotVV(axis, d);
+      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
         // Prevent large angular corrections
-        C2 = b2Math.b2Clamp(translation, (-b2Settings.b2_maxLinearCorrection), b2Settings.b2_maxLinearCorrection);
-        linearError = b2Math.b2Max(linearError, b2Math.b2Abs(translation));
+        C2 = b2Clamp(translation, (-b2Settings.b2_maxLinearCorrection), b2Settings.b2_maxLinearCorrection);
+        linearError = b2Max(linearError, b2Abs(translation));
         active = true;
       } else if (translation <= this.m_lowerTranslation) {
         // Prevent large linear corrections and allow some slop.
-        C2 = b2Math.b2Clamp(translation - this.m_lowerTranslation + b2Settings.b2_linearSlop, (-b2Settings.b2_maxLinearCorrection), 0);
-        linearError = b2Math.b2Max(linearError, this.m_lowerTranslation - translation);
+        C2 = b2Clamp(translation - this.m_lowerTranslation + b2Settings.b2_linearSlop, (-b2Settings.b2_maxLinearCorrection), 0);
+        linearError = b2Max(linearError, this.m_lowerTranslation - translation);
         active = true;
       } else if (translation >= this.m_upperTranslation) {
         // Prevent large linear corrections and allow some slop.
-        C2 = b2Math.b2Clamp(translation - this.m_upperTranslation - b2Settings.b2_linearSlop, 0, b2Settings.b2_maxLinearCorrection);
-        linearError = b2Math.b2Max(linearError, translation - this.m_upperTranslation);
+        C2 = b2Clamp(translation - this.m_upperTranslation - b2Settings.b2_linearSlop, 0, b2Settings.b2_maxLinearCorrection);
+        linearError = b2Max(linearError, translation - this.m_upperTranslation);
         active = true;
       }
     }
@@ -516,7 +516,7 @@ export class b2PrismaticJoint extends b2Joint {
       // float32 k33 = mA + mB + iA * a1 * a1 + iB * a2 * a2;
       const k33 = mA + mB + iA * a1 * a1 + iB * a2 * a2;
 
-      // b2Math.b2Mat33 K;
+      // b2Mat33 K;
       const K = this.m_K3;
       // K.ex.Set(k11, k12, k13);
       K.ex.SetXYZ(k11, k12, k13);
@@ -525,7 +525,7 @@ export class b2PrismaticJoint extends b2Joint {
       // K.ez.Set(k13, k23, k33);
       K.ez.SetXYZ(k13, k23, k33);
 
-      // b2Math.b2Vec3 C;
+      // b2Vec3 C;
       // C.x = C1.x;
       // C.y = C1.y;
       // C.z = C2;
@@ -543,24 +543,24 @@ export class b2PrismaticJoint extends b2Joint {
         k22 = 1;
       }
 
-      // b2Math.b2Mat22 K;
+      // b2Mat22 K;
       const K2 = this.m_K2;
       // K.ex.Set(k11, k12);
       K2.ex.SetXY(k11, k12);
       // K.ey.Set(k12, k22);
       K2.ey.SetXY(k12, k22);
 
-      // b2Math.b2Vec2 impulse1 = K.Solve(-C1);
+      // b2Vec2 impulse1 = K.Solve(-C1);
       const impulse1 = K2.Solve((-C1_x), (-C1_y), b2PrismaticJoint.SolvePositionConstraints_s_impulse1);
       impulse.x = impulse1.x;
       impulse.y = impulse1.y;
       impulse.z = 0;
     }
 
-    // b2Math.b2Vec2 P = impulse.x * perp + impulse.z * axis;
-    const P: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(
-      b2Math.b2Vec2.MulSV(impulse.x, perp, b2Math.b2Vec2.s_t0),
-      b2Math.b2Vec2.MulSV(impulse.z, axis, b2Math.b2Vec2.s_t1),
+    // b2Vec2 P = impulse.x * perp + impulse.z * axis;
+    const P: b2Vec2 = b2Vec2.AddVV(
+      b2Vec2.MulSV(impulse.x, perp, b2Vec2.s_t0),
+      b2Vec2.MulSV(impulse.z, axis, b2Vec2.s_t1),
       b2PrismaticJoint.SolvePositionConstraints_s_P);
     // float32 LA = impulse.x * s1 + impulse.y + impulse.z * a1;
     const LA = impulse.x * s1 + impulse.y + impulse.z * a1;
@@ -582,15 +582,15 @@ export class b2PrismaticJoint extends b2Joint {
     return linearError <= b2Settings.b2_linearSlop && angularError <= b2Settings.b2_angularSlop;
   }
 
-  public GetAnchorA(out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetAnchorA(out: b2Vec2): b2Vec2 {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetAnchorB(out: b2Vec2): b2Vec2 {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
     // return inv_dt * (m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis);
     return out.SetXY(inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.x), inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.y));
   }
@@ -599,30 +599,30 @@ export class b2PrismaticJoint extends b2Joint {
     return inv_dt * this.m_impulse.y;
   }
 
-  public GetLocalAnchorA(): b2Math.b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Math.b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
 
-  public GetLocalAxisA(): b2Math.b2Vec2 { return this.m_localXAxisA; }
+  public GetLocalAxisA(): b2Vec2 { return this.m_localXAxisA; }
 
   public GetReferenceAngle() { return this.m_referenceAngle; }
 
-  private static GetJointTranslation_s_pA = new b2Math.b2Vec2();
-  private static GetJointTranslation_s_pB = new b2Math.b2Vec2();
-  private static GetJointTranslation_s_d = new b2Math.b2Vec2();
-  private static GetJointTranslation_s_axis = new b2Math.b2Vec2();
+  private static GetJointTranslation_s_pA = new b2Vec2();
+  private static GetJointTranslation_s_pB = new b2Vec2();
+  private static GetJointTranslation_s_d = new b2Vec2();
+  private static GetJointTranslation_s_axis = new b2Vec2();
   public GetJointTranslation(): number {
-    // b2Math.b2Vec2 pA = m_bodyA.GetWorldPoint(m_localAnchorA);
+    // b2Vec2 pA = m_bodyA.GetWorldPoint(m_localAnchorA);
     const pA = this.m_bodyA.GetWorldPoint(this.m_localAnchorA, b2PrismaticJoint.GetJointTranslation_s_pA);
-    // b2Math.b2Vec2 pB = m_bodyB.GetWorldPoint(m_localAnchorB);
+    // b2Vec2 pB = m_bodyB.GetWorldPoint(m_localAnchorB);
     const pB = this.m_bodyB.GetWorldPoint(this.m_localAnchorB, b2PrismaticJoint.GetJointTranslation_s_pB);
-    // b2Math.b2Vec2 d = pB - pA;
-    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(pB, pA, b2PrismaticJoint.GetJointTranslation_s_d);
-    // b2Math.b2Vec2 axis = m_bodyA.GetWorldVector(m_localXAxisA);
+    // b2Vec2 d = pB - pA;
+    const d: b2Vec2 = b2Vec2.SubVV(pB, pA, b2PrismaticJoint.GetJointTranslation_s_d);
+    // b2Vec2 axis = m_bodyA.GetWorldVector(m_localXAxisA);
     const axis = this.m_bodyA.GetWorldVector(this.m_localXAxisA, b2PrismaticJoint.GetJointTranslation_s_axis);
 
     // float32 translation = b2Dot(d, axis);
-    const translation: number = b2Math.b2Vec2.DotVV(d, axis);
+    const translation: number = b2Vec2.DotVV(d, axis);
     return translation;
   }
 
@@ -630,19 +630,19 @@ export class b2PrismaticJoint extends b2Joint {
     const bA: b2Body = this.m_bodyA;
     const bB: b2Body = this.m_bodyB;
 
-    // b2Math.b2Vec2 rA = b2Mul(bA->m_xf.q, m_localAnchorA - bA->m_sweep.localCenter);
-    b2Math.b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
-    const rA: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
-    // b2Math.b2Vec2 rB = b2Mul(bB->m_xf.q, m_localAnchorB - bB->m_sweep.localCenter);
-    b2Math.b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
-    const rB: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
-    // b2Math.b2Vec2 pA = bA->m_sweep.c + rA;
-    const pA: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(bA.m_sweep.c, rA, b2Math.b2Vec2.s_t0); // pA uses s_t0
-    // b2Math.b2Vec2 pB = bB->m_sweep.c + rB;
-    const pB: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(bB.m_sweep.c, rB, b2Math.b2Vec2.s_t1); // pB uses s_t1
-    // b2Math.b2Vec2 d = pB - pA;
-    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(pB, pA, b2Math.b2Vec2.s_t2); // d uses s_t2
-    // b2Math.b2Vec2 axis = b2Mul(bA.m_xf.q, m_localXAxisA);
+    // b2Vec2 rA = b2Mul(bA->m_xf.q, m_localAnchorA - bA->m_sweep.localCenter);
+    b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
+    const rA: b2Vec2 = b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
+    // b2Vec2 rB = b2Mul(bB->m_xf.q, m_localAnchorB - bB->m_sweep.localCenter);
+    b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
+    const rB: b2Vec2 = b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
+    // b2Vec2 pA = bA->m_sweep.c + rA;
+    const pA: b2Vec2 = b2Vec2.AddVV(bA.m_sweep.c, rA, b2Vec2.s_t0); // pA uses s_t0
+    // b2Vec2 pB = bB->m_sweep.c + rB;
+    const pB: b2Vec2 = b2Vec2.AddVV(bB.m_sweep.c, rB, b2Vec2.s_t1); // pB uses s_t1
+    // b2Vec2 d = pB - pA;
+    const d: b2Vec2 = b2Vec2.SubVV(pB, pA, b2Vec2.s_t2); // d uses s_t2
+    // b2Vec2 axis = b2Mul(bA.m_xf.q, m_localXAxisA);
     const axis = bA.GetWorldVector(this.m_localXAxisA, this.m_axis);
 
     const vA = bA.m_linearVelocity;
@@ -652,13 +652,13 @@ export class b2PrismaticJoint extends b2Joint {
 
     // float32 speed = b2Dot(d, b2Cross(wA, axis)) + b2Dot(axis, vB + b2Cross(wB, rB) - vA - b2Cross(wA, rA));
     const speed =
-      b2Math.b2Vec2.DotVV(d, b2Math.b2Vec2.CrossSV(wA, axis, b2Math.b2Vec2.s_t0)) +
-      b2Math.b2Vec2.DotVV(
+      b2Vec2.DotVV(d, b2Vec2.CrossSV(wA, axis, b2Vec2.s_t0)) +
+      b2Vec2.DotVV(
         axis,
-        b2Math.b2Vec2.SubVV(
-          b2Math.b2Vec2.AddVCrossSV(vB, wB, rB, b2Math.b2Vec2.s_t0),
-          b2Math.b2Vec2.AddVCrossSV(vA, wA, rA, b2Math.b2Vec2.s_t1),
-          b2Math.b2Vec2.s_t0));
+        b2Vec2.SubVV(
+          b2Vec2.AddVCrossSV(vB, wB, rB, b2Vec2.s_t0),
+          b2Vec2.AddVCrossSV(vA, wA, rA, b2Vec2.s_t1),
+          b2Vec2.s_t0));
     return speed;
   }
 

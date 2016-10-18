@@ -16,8 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as b2Settings from "../Common/b2Settings";
-import * as b2Math from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
 import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
 import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
@@ -60,7 +59,7 @@ export class b2BroadPhase {
 
   /// Call MoveProxy as many times as you like, then when you are done
   /// call UpdatePairs to finalized the proxy pairs (for your time step).
-  public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Math.b2Vec2): void {
+  public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void {
     const buffer = this.m_tree.MoveProxy(proxy, aabb, displacement);
     if (buffer) {
       this.BufferMove(proxy);
@@ -210,7 +209,7 @@ export class b2BroadPhase {
   /// Shift the world origin. Useful for large worlds.
   /// The shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
-  public ShiftOrigin(newOrigin: b2Math.b2Vec2): void {
+  public ShiftOrigin(newOrigin: b2Vec2): void {
     this.m_tree.ShiftOrigin(newOrigin);
   }
 

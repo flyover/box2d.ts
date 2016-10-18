@@ -17,7 +17,7 @@
 */
 
 import * as b2Settings from "../../Common/b2Settings";
-import * as b2Math from "../../Common/b2Math";
+import { b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 
@@ -27,7 +27,7 @@ export class b2MassData {
   public mass: number = 0;
 
   /// The position of the shape's centroid relative to the shape's origin.
-  public center: b2Math.b2Vec2 = new b2Math.b2Vec2(0, 0);
+  public center: b2Vec2 = new b2Vec2(0, 0);
 
   /// The rotational inertia of the shape about the local origin.
   public I: number = 0;
@@ -81,7 +81,7 @@ export class b2Shape {
   /// Test a point for containment in this shape. This only works for convex shapes.
   /// @param xf the shape world transform.
   /// @param p a point in world coordinates.
-  public TestPoint(xf: b2Math.b2Transform, p: b2Math.b2Vec2): boolean {
+  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false, "pure virtual"); }
     return false;
   }
@@ -91,7 +91,7 @@ export class b2Shape {
   /// @param input the ray-cast input parameters.
   /// @param transform the transform to be applied to the shape.
   /// @param childIndex the child shape index
-  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Math.b2Transform, childIndex: number): boolean {
+  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false, "pure virtual"); }
     return false;
   }
@@ -100,7 +100,7 @@ export class b2Shape {
   /// @param aabb returns the axis aligned box.
   /// @param xf the world transform of the shape.
   /// @param childIndex the child shape
-  public ComputeAABB(aabb: b2AABB, xf: b2Math.b2Transform, childIndex: number): void {
+  public ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false, "pure virtual"); }
   }
 
@@ -116,7 +116,7 @@ export class b2Shape {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false, "pure virtual"); }
   }
 
-  public ComputeSubmergedArea(normal: b2Math.b2Vec2, offset: number, xf: b2Math.b2Transform, c: b2Math.b2Vec2): number {
+  public ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number {
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false, "pure virtual"); }
     c.SetZero();
     return 0;

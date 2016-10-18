@@ -1,5 +1,4 @@
 import * as b2Settings from "../../Common/b2Settings";
-import * as b2Math from "../../Common/b2Math";
 import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Contact } from "./b2Contact";
 import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact";
