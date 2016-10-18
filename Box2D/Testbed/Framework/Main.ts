@@ -249,29 +249,29 @@ export class Main {
 
   public ConvertProjectionToViewport(projection: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const viewport = out.Copy(projection);
-    box2d.b2MulSV(this.m_settings.viewZoom, viewport, viewport);
-    box2d.b2MulSV(this.m_settings.canvasScale, viewport, viewport);
+    box2d.b2Vec2.MulSV(this.m_settings.viewZoom, viewport, viewport);
+    box2d.b2Vec2.MulSV(this.m_settings.canvasScale, viewport, viewport);
     return viewport;
   }
 
   public ConvertViewportToProjection(viewport: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const projection = out.Copy(viewport);
-    box2d.b2MulSV(1 / this.m_settings.canvasScale, projection, projection);
-    box2d.b2MulSV(1 / this.m_settings.viewZoom, projection, projection);
+    box2d.b2Vec2.MulSV(1 / this.m_settings.canvasScale, projection, projection);
+    box2d.b2Vec2.MulSV(1 / this.m_settings.viewZoom, projection, projection);
     return projection;
   }
 
   public ConvertWorldToProjection(world: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const projection = out.Copy(world);
-    box2d.b2SubVV(projection, this.m_settings.viewCenter, projection);
-    box2d.b2MulTRV(this.m_settings.viewRotation, projection, projection);
+    box2d.b2Vec2.SubVV(projection, this.m_settings.viewCenter, projection);
+    box2d.b2Rot.MulTRV(this.m_settings.viewRotation, projection, projection);
     return projection;
   }
 
   public ConvertProjectionToWorld(projection: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2 {
     const world = out.Copy(projection);
-    box2d.b2MulRV(this.m_settings.viewRotation, world, world);
-    box2d.b2AddVV(this.m_settings.viewCenter, world, world);
+    box2d.b2Rot.MulRV(this.m_settings.viewRotation, world, world);
+    box2d.b2Vec2.AddVV(this.m_settings.viewCenter, world, world);
     return world;
   }
 
@@ -319,8 +319,8 @@ export class Main {
     if (this.m_rMouseDown) {
       // viewCenter = viewCenter0 - (projection - projection0);
       const projection: box2d.b2Vec2 = this.ConvertElementToProjection(element, new box2d.b2Vec2());
-      const diff: box2d.b2Vec2 = box2d.b2SubVV(projection, this.m_projection0, new box2d.b2Vec2());
-      const viewCenter: box2d.b2Vec2 = box2d.b2SubVV(this.m_viewCenter0, diff, new box2d.b2Vec2());
+      const diff: box2d.b2Vec2 = box2d.b2Vec2.SubVV(projection, this.m_projection0, new box2d.b2Vec2());
+      const viewCenter: box2d.b2Vec2 = box2d.b2Vec2.SubVV(this.m_viewCenter0, diff, new box2d.b2Vec2());
       this.m_settings.viewCenter.Copy(viewCenter);
     }
   }

@@ -93,9 +93,9 @@ export class b2SeparationFunction {
       this.m_type = b2SeparationFunctionType.e_points;
       const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
       const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
-      const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-      const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-      b2Math.b2SubVV(pointB, pointA, this.m_axis);
+      const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+      const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+      b2Math.b2Vec2.SubVV(pointB, pointA, this.m_axis);
       const s: number = this.m_axis.Normalize();
       return s;
     } else if (cache.indexA[0] === cache.indexA[1]) {
@@ -104,16 +104,16 @@ export class b2SeparationFunction {
       const localPointB1: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
       const localPointB2: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[1]);
 
-      b2Math.b2CrossVOne(b2Math.b2SubVV(localPointB2, localPointB1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-      const normal: b2Math.b2Vec2 = b2Math.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+      b2Math.b2Vec2.CrossVOne(b2Math.b2Vec2.SubVV(localPointB2, localPointB1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
+      const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
 
-      b2Math.b2MidVV(localPointB1, localPointB2, this.m_localPoint);
-      const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+      b2Math.b2Vec2.MidVV(localPointB1, localPointB2, this.m_localPoint);
+      const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
       const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
-      const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+      const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
 
-      let s: number = b2Math.b2DotVV(b2Math.b2SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+      let s: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
       if (s < 0) {
         this.m_axis.SelfNeg();
         s = -s;
@@ -125,16 +125,16 @@ export class b2SeparationFunction {
       const localPointA1: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[0]);
       const localPointA2: b2Math.b2Vec2 = this.m_proxyA.GetVertex(cache.indexA[1]);
 
-      b2Math.b2CrossVOne(b2Math.b2SubVV(localPointA2, localPointA1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-      const normal: b2Math.b2Vec2 = b2Math.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+      b2Math.b2Vec2.CrossVOne(b2Math.b2Vec2.SubVV(localPointA2, localPointA1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
+      const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
 
-      b2Math.b2MidVV(localPointA1, localPointA2, this.m_localPoint);
-      const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+      b2Math.b2Vec2.MidVV(localPointA1, localPointA2, this.m_localPoint);
+      const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
       const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(cache.indexB[0]);
-      const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+      const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-      let s: number = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+      let s: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
       if (s < 0) {
         this.m_axis.SelfNeg();
         s = -s;
@@ -151,8 +151,8 @@ export class b2SeparationFunction {
 
     switch (this.m_type) {
     case b2SeparationFunctionType.e_points: {
-        const axisA: b2Math.b2Vec2 = b2Math.b2MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
-        const axisB: b2Math.b2Vec2 = b2Math.b2MulTRV(xfB.q, b2Math.b2NegV(this.m_axis, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+        const axisA: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
+        const axisB: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfB.q, b2Math.b2Vec2.NegV(this.m_axis, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
 
         indexA[0] = this.m_proxyA.GetSupport(axisA);
         indexB[0] = this.m_proxyB.GetSupport(axisB);
@@ -160,42 +160,42 @@ export class b2SeparationFunction {
         const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA[0]);
         const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB[0]);
 
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-        const separation: number = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
+        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceA: {
-        const normal: b2Math.b2Vec2 = b2Math.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
-        const axisB: b2Math.b2Vec2 = b2Math.b2MulTRV(xfB.q, b2Math.b2NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+        const axisB: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfB.q, b2Math.b2Vec2.NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
 
         indexA[0] = -1;
         indexB[0] = this.m_proxyB.GetSupport(axisB);
 
         const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB[0]);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-        const separation: number = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceB: {
-        const normal: b2Math.b2Vec2 = b2Math.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
-        const axisA: b2Math.b2Vec2 = b2Math.b2MulTRV(xfA.q, b2Math.b2NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
+        const axisA: b2Math.b2Vec2 = b2Math.b2Rot.MulTRV(xfA.q, b2Math.b2Vec2.NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
 
         indexB[0] = -1;
         indexA[0] = this.m_proxyA.GetSupport(axisA);
 
         const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA[0]);
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
 
-        const separation: number = b2Math.b2DotVV(b2Math.b2SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
         return separation;
       }
 
@@ -218,32 +218,32 @@ export class b2SeparationFunction {
         const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA);
         const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB);
 
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-        const separation: number = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
 
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceA: {
-        const normal: b2Math.b2Vec2 = b2Math.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
 
         const localPointB: b2Math.b2Vec2 = this.m_proxyB.GetVertex(indexB);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
 
-        const separation: number = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
         return separation;
       }
 
     case b2SeparationFunctionType.e_faceB: {
-        const normal: b2Math.b2Vec2 = b2Math.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+        const normal: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
 
         const localPointA: b2Math.b2Vec2 = this.m_proxyA.GetVertex(indexA);
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
 
-        const separation: number = b2Math.b2DotVV(b2Math.b2SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+        const separation: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
         return separation;
       }
 

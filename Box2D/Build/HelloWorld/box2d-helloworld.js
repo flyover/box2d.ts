@@ -279,25 +279,21 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = b2Abs(v.y);
         return out;
     }
-    exports_2("b2AbsV", b2AbsV);
     function b2MinV(a, b, out) {
         out.x = b2Min(a.x, b.x);
         out.y = b2Min(a.y, b.y);
         return out;
     }
-    exports_2("b2MinV", b2MinV);
     function b2MaxV(a, b, out) {
         out.x = b2Max(a.x, b.x);
         out.y = b2Max(a.y, b.y);
         return out;
     }
-    exports_2("b2MaxV", b2MaxV);
     function b2ClampV(v, lo, hi, out) {
         out.x = b2Clamp(v.x, lo.x, hi.x);
         out.y = b2Clamp(v.y, lo.y, hi.y);
         return out;
     }
-    exports_2("b2ClampV", b2ClampV);
     function b2RotateV(v, radians, out) {
         const v_x = v.x, v_y = v.y;
         const c = Math.cos(radians);
@@ -306,86 +302,66 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = s * v_x + c * v_y;
         return out;
     }
-    exports_2("b2RotateV", b2RotateV);
     function b2DotVV(a, b) {
         return a.x * b.x + a.y * b.y;
     }
-    exports_2("b2DotVV", b2DotVV);
     function b2CrossVV(a, b) {
         return a.x * b.y - a.y * b.x;
     }
-    exports_2("b2CrossVV", b2CrossVV);
     function b2CrossVS(v, s, out) {
         const v_x = v.x;
         out.x = s * v.y;
         out.y = -s * v_x;
         return out;
     }
-    exports_2("b2CrossVS", b2CrossVS);
     function b2CrossVOne(v, out) {
         const v_x = v.x;
         out.x = v.y;
         out.y = -v_x;
         return out;
     }
-    exports_2("b2CrossVOne", b2CrossVOne);
     function b2CrossSV(s, v, out) {
         const v_x = v.x;
         out.x = -s * v.y;
         out.y = s * v_x;
         return out;
     }
-    exports_2("b2CrossSV", b2CrossSV);
     function b2CrossOneV(v, out) {
         const v_x = v.x;
         out.x = -v.y;
         out.y = v_x;
         return out;
     }
-    exports_2("b2CrossOneV", b2CrossOneV);
     function b2AddVV(a, b, out) { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
-    exports_2("b2AddVV", b2AddVV);
     function b2SubVV(a, b, out) { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
-    exports_2("b2SubVV", b2SubVV);
     function b2MulSV(s, v, out) { out.x = v.x * s; out.y = v.y * s; return out; }
-    exports_2("b2MulSV", b2MulSV);
     function b2AddVMulSV(a, s, b, out) { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
-    exports_2("b2AddVMulSV", b2AddVMulSV);
     function b2SubVMulSV(a, s, b, out) { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
-    exports_2("b2SubVMulSV", b2SubVMulSV);
     function b2AddVCrossSV(a, s, v, out) {
         const v_x = v.x;
         out.x = a.x - (s * v.y);
         out.y = a.y + (s * v_x);
         return out;
     }
-    exports_2("b2AddVCrossSV", b2AddVCrossSV);
     function b2MidVV(a, b, out) { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
-    exports_2("b2MidVV", b2MidVV);
     function b2ExtVV(a, b, out) { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
-    exports_2("b2ExtVV", b2ExtVV);
     function b2IsEqualToV(a, b) {
         return a.x === b.x && a.y === b.y;
     }
-    exports_2("b2IsEqualToV", b2IsEqualToV);
     function b2DistanceVV(a, b) {
         const c_x = a.x - b.x;
         const c_y = a.y - b.y;
         return Math.sqrt(c_x * c_x + c_y * c_y);
     }
-    exports_2("b2DistanceVV", b2DistanceVV);
     function b2DistanceSquaredVV(a, b) {
         const c_x = a.x - b.x;
         const c_y = a.y - b.y;
         return (c_x * c_x + c_y * c_y);
     }
-    exports_2("b2DistanceSquaredVV", b2DistanceSquaredVV);
     function b2NegV(v, out) { out.x = -v.x; out.y = -v.y; return out; }
-    exports_2("b2NegV", b2NegV);
     function b2DotV3V3(a, b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
-    exports_2("b2DotV3V3", b2DotV3V3);
     function b2CrossV3V3(a, b, out) {
         const a_x = a.x, a_y = a.y, a_z = a.z;
         const b_x = b.x, b_y = b.y, b_z = b.z;
@@ -394,7 +370,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.z = a_x * b_y - a_y * b_x;
         return out;
     }
-    exports_2("b2CrossV3V3", b2CrossV3V3);
     function b2AbsM(M, out) {
         const M_ex = M.ex, M_ey = M.ey;
         out.ex.x = b2Abs(M_ex.x);
@@ -403,7 +378,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.ey.y = b2Abs(M_ey.y);
         return out;
     }
-    exports_2("b2AbsM", b2AbsM);
     function b2MulMV(M, v, out) {
         const M_ex = M.ex, M_ey = M.ey;
         const v_x = v.x, v_y = v.y;
@@ -411,7 +385,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = M_ex.y * v_x + M_ey.y * v_y;
         return out;
     }
-    exports_2("b2MulMV", b2MulMV);
     function b2MulTMV(M, v, out) {
         const M_ex = M.ex, M_ey = M.ey;
         const v_x = v.x, v_y = v.y;
@@ -419,7 +392,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = M_ey.x * v_x + M_ey.y * v_y;
         return out;
     }
-    exports_2("b2MulTMV", b2MulTMV);
     function b2AddMM(A, B, out) {
         const A_ex = A.ex, A_ey = A.ey;
         const B_ex = B.ex, B_ey = B.ey;
@@ -429,7 +401,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.ey.y = A_ey.y + B_ey.y;
         return out;
     }
-    exports_2("b2AddMM", b2AddMM);
     function b2MulMM(A, B, out) {
         const A_ex_x = A.ex.x, A_ex_y = A.ex.y;
         const A_ey_x = A.ey.x, A_ey_y = A.ey.y;
@@ -441,7 +412,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.ey.y = A_ex_y * B_ey_x + A_ey_y * B_ey_y;
         return out;
     }
-    exports_2("b2MulMM", b2MulMM);
     function b2MulTMM(A, B, out) {
         const A_ex_x = A.ex.x, A_ex_y = A.ex.y;
         const A_ey_x = A.ey.x, A_ey_y = A.ey.y;
@@ -453,7 +423,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.ey.y = A_ey_x * B_ey_x + A_ey_y * B_ey_y;
         return out;
     }
-    exports_2("b2MulTMM", b2MulTMM);
     function b2MulM33V3(A, v, out) {
         const v_x = v.x, v_y = v.y, v_z = v.z;
         out.x = A.ex.x * v_x + A.ey.x * v_y + A.ez.x * v_z;
@@ -461,27 +430,23 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.z = A.ex.z * v_x + A.ey.z * v_y + A.ez.z * v_z;
         return out;
     }
-    exports_2("b2MulM33V3", b2MulM33V3);
     function b2MulM33XYZ(A, x, y, z, out) {
         out.x = A.ex.x * x + A.ey.x * y + A.ez.x * z;
         out.y = A.ex.y * x + A.ey.y * y + A.ez.y * z;
         out.z = A.ex.z * x + A.ey.z * y + A.ez.z * z;
         return out;
     }
-    exports_2("b2MulM33XYZ", b2MulM33XYZ);
     function b2MulM33V2(A, v, out) {
         const v_x = v.x, v_y = v.y;
         out.x = A.ex.x * v_x + A.ey.x * v_y;
         out.y = A.ex.y * v_x + A.ey.y * v_y;
         return out;
     }
-    exports_2("b2MulM33V2", b2MulM33V2);
     function b2MulM33XY(A, x, y, out) {
         out.x = A.ex.x * x + A.ey.x * y;
         out.y = A.ex.y * x + A.ey.y * y;
         return out;
     }
-    exports_2("b2MulM33XY", b2MulM33XY);
     function b2MulRR(q, r, out) {
         // [qc -qs] * [rc -rs] = [qc*rc-qs*rs -qc*rs-qs*rc]
         // [qs  qc]   [rs  rc]   [qs*rc+qc*rs -qs*rs+qc*rc]
@@ -493,7 +458,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.c = q_c * r_c - q_s * r_s;
         return out;
     }
-    exports_2("b2MulRR", b2MulRR);
     function b2MulTRR(q, r, out) {
         // [ qc qs] * [rc -rs] = [qc*rc+qs*rs -qc*rs+qs*rc]
         // [-qs qc]   [rs  rc]   [-qs*rc+qc*rs qs*rs+qc*rc]
@@ -505,7 +469,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.c = q_c * r_c + q_s * r_s;
         return out;
     }
-    exports_2("b2MulTRR", b2MulTRR);
     function b2MulRV(q, v, out) {
         const q_c = q.c, q_s = q.s;
         const v_x = v.x, v_y = v.y;
@@ -513,7 +476,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = q_s * v_x + q_c * v_y;
         return out;
     }
-    exports_2("b2MulRV", b2MulRV);
     function b2MulTRV(q, v, out) {
         const q_c = q.c, q_s = q.s;
         const v_x = v.x, v_y = v.y;
@@ -521,7 +483,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = -q_s * v_x + q_c * v_y;
         return out;
     }
-    exports_2("b2MulTRV", b2MulTRV);
     function b2MulXV(T, v, out) {
         //  float32 x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
         //  float32 y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
@@ -533,7 +494,6 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = (T_q_s * v_x + T_q_c * v_y) + T.p.y;
         return out;
     }
-    exports_2("b2MulXV", b2MulXV);
     function b2MulTXV(T, v, out) {
         //  float32 px = v.x - T.p.x;
         //  float32 py = v.y - T.p.y;
@@ -548,19 +508,16 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
         out.y = (-T_q_s * p_x + T_q_c * p_y);
         return out;
     }
-    exports_2("b2MulTXV", b2MulTXV);
     function b2MulXX(A, B, out) {
         b2MulRR(A.q, B.q, out.q);
         b2AddVV(b2MulRV(A.q, B.p, out.p), A.p, out.p);
         return out;
     }
-    exports_2("b2MulXX", b2MulXX);
     function b2MulTXX(A, B, out) {
         b2MulTRR(A.q, B.q, out.q);
         b2MulTRV(A.q, b2SubVV(B.p, A.p, out.p), out.p);
         return out;
     }
-    exports_2("b2MulTXX", b2MulTXX);
     return {
         setters:[
             function (b2Settings_1) {
@@ -714,6 +671,29 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
                 static MakeArray(length) {
                     return b2Settings.b2MakeArray(length, function (i) { return new b2Vec2(); });
                 }
+                static AbsV(v, out) { return b2AbsV(v, out); }
+                static MinV(a, b, out) { return b2MinV(a, b, out); }
+                static MaxV(a, b, out) { return b2MaxV(a, b, out); }
+                static ClampV(v, lo, hi, out) { return b2ClampV(v, lo, hi, out); }
+                static RotateV(v, radians, out) { return b2RotateV(v, radians, out); }
+                static DotVV(a, b) { return b2DotVV(a, b); }
+                static CrossVV(a, b) { return b2CrossVV(a, b); }
+                static CrossVS(v, s, out) { return b2CrossVS(v, s, out); }
+                static CrossVOne(v, out) { return b2CrossVOne(v, out); }
+                static CrossSV(s, v, out) { return b2CrossSV(s, v, out); }
+                static CrossOneV(v, out) { return b2CrossOneV(v, out); }
+                static AddVV(a, b, out) { return b2AddVV(a, b, out); }
+                static SubVV(a, b, out) { return b2SubVV(a, b, out); }
+                static MulSV(s, v, out) { return b2MulSV(s, v, out); }
+                static AddVMulSV(a, s, b, out) { return b2AddVMulSV(a, s, b, out); }
+                static SubVMulSV(a, s, b, out) { return b2SubVMulSV(a, s, b, out); }
+                static AddVCrossSV(a, s, v, out) { return b2AddVCrossSV(a, s, v, out); }
+                static MidVV(a, b, out) { return b2MidVV(a, b, out); }
+                static ExtVV(a, b, out) { return b2ExtVV(a, b, out); }
+                static IsEqualToV(a, b) { return b2IsEqualToV(a, b); }
+                static DistanceVV(a, b) { return b2DistanceVV(a, b); }
+                static DistanceSquaredVV(a, b) { return b2DistanceSquaredVV(a, b); }
+                static NegV(v, out) { return b2NegV(v, out); }
             };
             b2Vec2.ZERO = new b2Vec2(0, 0);
             b2Vec2.UNITX = new b2Vec2(1, 0);
@@ -789,6 +769,8 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
                     this.z *= s;
                     return this;
                 }
+                static DotV3V3(a, b) { return b2DotV3V3(a, b); }
+                static CrossV3V3(a, b, out) { return b2CrossV3V3(a, b, out); }
             };
             b2Vec3.ZERO = new b2Vec3(0, 0, 0);
             b2Vec3.s_t0 = new b2Vec3();
@@ -891,6 +873,12 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
                     this.ey.SelfSub(M.ey);
                     return this;
                 }
+                static AbsM(M, out) { return b2AbsM(M, out); }
+                static MulMV(M, v, out) { return b2MulMV(M, v, out); }
+                static MulTMV(M, v, out) { return b2MulTMV(M, v, out); }
+                static AddMM(A, B, out) { return b2AddMM(A, B, out); }
+                static MulMM(A, B, out) { return b2MulMM(A, B, out); }
+                static MulTMM(A, B, out) { return b2MulTMM(A, B, out); }
             };
             b2Mat22.IDENTITY = new b2Mat22();
             exports_2("b2Mat22", b2Mat22);
@@ -993,6 +981,10 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
                     M.ez.y = M.ey.z;
                     M.ez.z = det * (a11 * a22 - a12 * a12);
                 }
+                static MulM33V3(A, v, out) { return b2MulM33V3(A, v, out); }
+                static MulM33XYZ(A, x, y, z, out) { return b2MulM33XYZ(A, x, y, z, out); }
+                static MulM33V2(A, v, out) { return b2MulM33V2(A, v, out); }
+                static MulM33XY(A, x, y, out) { return b2MulM33XY(A, x, y, out); }
             };
             b2Mat33.IDENTITY = new b2Mat33();
             exports_2("b2Mat33", b2Mat33);
@@ -1037,6 +1029,10 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
                     out.y = this.c;
                     return out;
                 }
+                static MulRR(q, r, out) { return b2MulRR(q, r, out); }
+                static MulTRR(q, r, out) { return b2MulTRR(q, r, out); }
+                static MulRV(q, v, out) { return b2MulRV(q, v, out); }
+                static MulTRV(q, v, out) { return b2MulTRV(q, v, out); }
             };
             b2Rot.IDENTITY = new b2Rot();
             exports_2("b2Rot", b2Rot);
@@ -1099,6 +1095,10 @@ System.register("Box2D/Common/b2Math", ["Box2D/Common/b2Settings"], function(exp
                 GetAngleRadians() {
                     return this.q.GetAngleRadians();
                 }
+                static MulXV(T, v, out) { return b2MulXV(T, v, out); }
+                static MulTXV(T, v, out) { return b2MulTXV(T, v, out); }
+                static MulXX(A, B, out) { return b2MulXX(A, B, out); }
+                static MulTXX(A, B, out) { return b2MulTXX(A, B, out); }
             };
             b2Transform.IDENTITY = new b2Transform();
             exports_2("b2Transform", b2Transform);
@@ -1434,11 +1434,11 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
             }
             // Compute a tentative new simplex vertex using support points.
             const vertex = vertices[simplex.m_count];
-            vertex.indexA = proxyA.GetSupport(b2Math.b2MulTRV(transformA.q, b2Math.b2NegV(d, b2Math.b2Vec2.s_t0), b2Distance_s_supportA));
-            b2Math.b2MulXV(transformA, proxyA.GetVertex(vertex.indexA), vertex.wA);
-            vertex.indexB = proxyB.GetSupport(b2Math.b2MulTRV(transformB.q, d, b2Distance_s_supportB));
-            b2Math.b2MulXV(transformB, proxyB.GetVertex(vertex.indexB), vertex.wB);
-            b2Math.b2SubVV(vertex.wB, vertex.wA, vertex.w);
+            vertex.indexA = proxyA.GetSupport(b2Math.b2Rot.MulTRV(transformA.q, b2Math.b2Vec2.NegV(d, b2Math.b2Vec2.s_t0), b2Distance_s_supportA));
+            b2Math.b2Transform.MulXV(transformA, proxyA.GetVertex(vertex.indexA), vertex.wA);
+            vertex.indexB = proxyB.GetSupport(b2Math.b2Rot.MulTRV(transformB.q, d, b2Distance_s_supportB));
+            b2Math.b2Transform.MulXV(transformB, proxyB.GetVertex(vertex.indexB), vertex.wB);
+            b2Math.b2Vec2.SubVV(vertex.wB, vertex.wA, vertex.w);
             // Iteration count is equated to the number of support point calls.
             ++iter;
             exports_5("b2_gjkIters", ++b2_gjkIters);
@@ -1460,7 +1460,7 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
         exports_5("b2_gjkMaxIters", b2_gjkMaxIters = b2Math.b2Max(b2_gjkMaxIters, iter));
         // Prepare output.
         simplex.GetWitnessPoints(output.pointA, output.pointB);
-        output.distance = b2Math.b2DistanceVV(output.pointA, output.pointB);
+        output.distance = b2Math.b2Vec2.DistanceVV(output.pointA, output.pointB);
         output.iterations = iter;
         // Cache the simplex.
         simplex.WriteCache(cache);
@@ -1472,7 +1472,7 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                 // Shapes are still no overlapped.
                 // Move the witness points to the outer surface.
                 output.distance -= rA + rB;
-                const normal = b2Math.b2SubVV(output.pointB, output.pointA, b2Distance_s_normal);
+                const normal = b2Math.b2Vec2.SubVV(output.pointB, output.pointA, b2Distance_s_normal);
                 normal.Normalize();
                 output.pointA.SelfMulAdd(rA, normal);
                 output.pointB.SelfMulSub(rB, normal);
@@ -1480,7 +1480,7 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
             else {
                 // Shapes are overlapped when radii are considered.
                 // Move the witness points to the middle.
-                const p = b2Math.b2MidVV(output.pointA, output.pointB, b2Distance_s_p);
+                const p = b2Math.b2Vec2.MidVV(output.pointA, output.pointB, b2Distance_s_p);
                 output.pointA.Copy(p);
                 output.pointB.Copy(p);
                 output.distance = 0;
@@ -1574,9 +1574,9 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                 }
                 GetSupport(d) {
                     let bestIndex = 0;
-                    let bestValue = b2Math.b2DotVV(this.m_vertices[0], d);
+                    let bestValue = b2Math.b2Vec2.DotVV(this.m_vertices[0], d);
                     for (let i = 1; i < this.m_count; ++i) {
-                        const value = b2Math.b2DotVV(this.m_vertices[i], d);
+                        const value = b2Math.b2Vec2.DotVV(this.m_vertices[i], d);
                         if (value > bestValue) {
                             bestIndex = i;
                             bestValue = value;
@@ -1586,9 +1586,9 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                 }
                 GetSupportVertex(d) {
                     let bestIndex = 0;
-                    let bestValue = b2Math.b2DotVV(this.m_vertices[0], d);
+                    let bestValue = b2Math.b2Vec2.DotVV(this.m_vertices[0], d);
                     for (let i = 1; i < this.m_count; ++i) {
-                        const value = b2Math.b2DotVV(this.m_vertices[i], d);
+                        const value = b2Math.b2Vec2.DotVV(this.m_vertices[i], d);
                         if (value > bestValue) {
                             bestIndex = i;
                             bestValue = value;
@@ -1702,9 +1702,9 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                         v.indexB = cache.indexB[i];
                         const wALocal = proxyA.GetVertex(v.indexA);
                         const wBLocal = proxyB.GetVertex(v.indexB);
-                        b2Math.b2MulXV(transformA, wALocal, v.wA);
-                        b2Math.b2MulXV(transformB, wBLocal, v.wB);
-                        b2Math.b2SubVV(v.wB, v.wA, v.w);
+                        b2Math.b2Transform.MulXV(transformA, wALocal, v.wA);
+                        b2Math.b2Transform.MulXV(transformB, wBLocal, v.wB);
+                        b2Math.b2Vec2.SubVV(v.wB, v.wA, v.w);
                         v.a = 0;
                     }
                     // Compute the new simplex metric, if it is substantially different than
@@ -1724,9 +1724,9 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                         v.indexB = 0;
                         const wALocal = proxyA.GetVertex(0);
                         const wBLocal = proxyB.GetVertex(0);
-                        b2Math.b2MulXV(transformA, wALocal, v.wA);
-                        b2Math.b2MulXV(transformB, wBLocal, v.wB);
-                        b2Math.b2SubVV(v.wB, v.wA, v.w);
+                        b2Math.b2Transform.MulXV(transformA, wALocal, v.wA);
+                        b2Math.b2Transform.MulXV(transformB, wBLocal, v.wB);
+                        b2Math.b2Vec2.SubVV(v.wB, v.wA, v.w);
                         v.a = 1;
                         this.m_count = 1;
                     }
@@ -1743,17 +1743,17 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                 GetSearchDirection(out) {
                     switch (this.m_count) {
                         case 1:
-                            return b2Math.b2NegV(this.m_v1.w, out);
+                            return b2Math.b2Vec2.NegV(this.m_v1.w, out);
                         case 2: {
-                            const e12 = b2Math.b2SubVV(this.m_v2.w, this.m_v1.w, out);
-                            const sgn = b2Math.b2CrossVV(e12, b2Math.b2NegV(this.m_v1.w, b2Math.b2Vec2.s_t0));
+                            const e12 = b2Math.b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, out);
+                            const sgn = b2Math.b2Vec2.CrossVV(e12, b2Math.b2Vec2.NegV(this.m_v1.w, b2Math.b2Vec2.s_t0));
                             if (sgn > 0) {
                                 // Origin is left of e12.
-                                return b2Math.b2CrossOneV(e12, out);
+                                return b2Math.b2Vec2.CrossOneV(e12, out);
                             }
                             else {
                                 // Origin is right of e12.
-                                return b2Math.b2CrossVOne(e12, out);
+                                return b2Math.b2Vec2.CrossVOne(e12, out);
                             }
                         }
                         default:
@@ -1821,9 +1821,9 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                         case 1:
                             return 0;
                         case 2:
-                            return b2Math.b2DistanceVV(this.m_v1.w, this.m_v2.w);
+                            return b2Math.b2Vec2.DistanceVV(this.m_v1.w, this.m_v2.w);
                         case 3:
-                            return b2Math.b2CrossVV(b2Math.b2SubVV(this.m_v2.w, this.m_v1.w, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(this.m_v3.w, this.m_v1.w, b2Math.b2Vec2.s_t1));
+                            return b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Math.b2Vec2.s_t1));
                         default:
                             if (b2Settings.ENABLE_ASSERTS) {
                                 b2Settings.b2Assert(false);
@@ -1834,9 +1834,9 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                 Solve2() {
                     const w1 = this.m_v1.w;
                     const w2 = this.m_v2.w;
-                    const e12 = b2Math.b2SubVV(w2, w1, b2Simplex.s_e12);
+                    const e12 = b2Math.b2Vec2.SubVV(w2, w1, b2Simplex.s_e12);
                     // w1 region
-                    const d12_2 = (-b2Math.b2DotVV(w1, e12));
+                    const d12_2 = (-b2Math.b2Vec2.DotVV(w1, e12));
                     if (d12_2 <= 0) {
                         // a2 <= 0, so we clamp it to 0
                         this.m_v1.a = 1;
@@ -1844,7 +1844,7 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                         return;
                     }
                     // w2 region
-                    const d12_1 = b2Math.b2DotVV(w2, e12);
+                    const d12_1 = b2Math.b2Vec2.DotVV(w2, e12);
                     if (d12_1 <= 0) {
                         // a1 <= 0, so we clamp it to 0
                         this.m_v2.a = 1;
@@ -1866,34 +1866,34 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                     // [1      1     ][a1] = [1]
                     // [w1.e12 w2.e12][a2] = [0]
                     // a3 = 0
-                    const e12 = b2Math.b2SubVV(w2, w1, b2Simplex.s_e12);
-                    const w1e12 = b2Math.b2DotVV(w1, e12);
-                    const w2e12 = b2Math.b2DotVV(w2, e12);
+                    const e12 = b2Math.b2Vec2.SubVV(w2, w1, b2Simplex.s_e12);
+                    const w1e12 = b2Math.b2Vec2.DotVV(w1, e12);
+                    const w2e12 = b2Math.b2Vec2.DotVV(w2, e12);
                     const d12_1 = w2e12;
                     const d12_2 = (-w1e12);
                     // Edge13
                     // [1      1     ][a1] = [1]
                     // [w1.e13 w3.e13][a3] = [0]
                     // a2 = 0
-                    const e13 = b2Math.b2SubVV(w3, w1, b2Simplex.s_e13);
-                    const w1e13 = b2Math.b2DotVV(w1, e13);
-                    const w3e13 = b2Math.b2DotVV(w3, e13);
+                    const e13 = b2Math.b2Vec2.SubVV(w3, w1, b2Simplex.s_e13);
+                    const w1e13 = b2Math.b2Vec2.DotVV(w1, e13);
+                    const w3e13 = b2Math.b2Vec2.DotVV(w3, e13);
                     const d13_1 = w3e13;
                     const d13_2 = (-w1e13);
                     // Edge23
                     // [1      1     ][a2] = [1]
                     // [w2.e23 w3.e23][a3] = [0]
                     // a1 = 0
-                    const e23 = b2Math.b2SubVV(w3, w2, b2Simplex.s_e23);
-                    const w2e23 = b2Math.b2DotVV(w2, e23);
-                    const w3e23 = b2Math.b2DotVV(w3, e23);
+                    const e23 = b2Math.b2Vec2.SubVV(w3, w2, b2Simplex.s_e23);
+                    const w2e23 = b2Math.b2Vec2.DotVV(w2, e23);
+                    const w3e23 = b2Math.b2Vec2.DotVV(w3, e23);
                     const d23_1 = w3e23;
                     const d23_2 = (-w2e23);
                     // Triangle123
-                    const n123 = b2Math.b2CrossVV(e12, e13);
-                    const d123_1 = n123 * b2Math.b2CrossVV(w2, w3);
-                    const d123_2 = n123 * b2Math.b2CrossVV(w3, w1);
-                    const d123_3 = n123 * b2Math.b2CrossVV(w1, w2);
+                    const n123 = b2Math.b2Vec2.CrossVV(e12, e13);
+                    const d123_1 = n123 * b2Math.b2Vec2.CrossVV(w2, w3);
+                    const d123_2 = n123 * b2Math.b2Vec2.CrossVV(w3, w1);
+                    const d123_3 = n123 * b2Math.b2Vec2.CrossVV(w1, w2);
                     // w1 region
                     if (d12_2 <= 0 && d13_2 <= 0) {
                         this.m_v1.a = 1;
@@ -2176,8 +2176,8 @@ System.register("Box2D/Collision/b2Collision", ["Box2D/Common/b2Settings", "Box2
         const vIn0 = vIn[0];
         const vIn1 = vIn[1];
         // Calculate the distance of end points to the line
-        const distance0 = b2Math.b2DotVV(normal, vIn0.v) - offset;
-        const distance1 = b2Math.b2DotVV(normal, vIn1.v) - offset;
+        const distance0 = b2Math.b2Vec2.DotVV(normal, vIn0.v) - offset;
+        const distance1 = b2Math.b2Vec2.DotVV(normal, vIn1.v) - offset;
         // If the points are behind the plane
         if (distance0 <= 0)
             vOut[numOut++].Copy(vIn0);
@@ -2401,39 +2401,39 @@ System.register("Box2D/Collision/b2Collision", ["Box2D/Common/b2Settings", "Box2
                         case 0 /* e_circles */:
                             {
                                 this.normal.SetXY(1, 0);
-                                const pointA = b2Math.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
-                                const pointB = b2Math.b2MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
-                                if (b2Math.b2DistanceSquaredVV(pointA, pointB) > b2Settings.b2_epsilon_sq) {
-                                    b2Math.b2SubVV(pointB, pointA, this.normal).SelfNormalize();
+                                const pointA = b2Math.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
+                                const pointB = b2Math.b2Transform.MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
+                                if (b2Math.b2Vec2.DistanceSquaredVV(pointA, pointB) > b2Settings.b2_epsilon_sq) {
+                                    b2Math.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
                                 }
-                                const cA = b2Math.b2AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-                                const cB = b2Math.b2SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-                                b2Math.b2MidVV(cA, cB, this.points[0]);
+                                const cA = b2Math.b2Vec2.AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+                                const cB = b2Math.b2Vec2.SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+                                b2Math.b2Vec2.MidVV(cA, cB, this.points[0]);
                             }
                             break;
                         case 1 /* e_faceA */:
                             {
-                                b2Math.b2MulRV(xfA.q, manifold.localNormal, this.normal);
-                                const planePoint = b2Math.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+                                b2Math.b2Rot.MulRV(xfA.q, manifold.localNormal, this.normal);
+                                const planePoint = b2Math.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
                                 for (let i = 0, ict = manifold.pointCount; i < ict; ++i) {
-                                    const clipPoint = b2Math.b2MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-                                    const s = radiusA - b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
-                                    const cA = b2Math.b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
-                                    const cB = b2Math.b2SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-                                    b2Math.b2MidVV(cA, cB, this.points[i]);
+                                    const clipPoint = b2Math.b2Transform.MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+                                    const s = radiusA - b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
+                                    const cA = b2Math.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
+                                    const cB = b2Math.b2Vec2.SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+                                    b2Math.b2Vec2.MidVV(cA, cB, this.points[i]);
                                 }
                             }
                             break;
                         case 2 /* e_faceB */:
                             {
-                                b2Math.b2MulRV(xfB.q, manifold.localNormal, this.normal);
-                                const planePoint = b2Math.b2MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+                                b2Math.b2Rot.MulRV(xfB.q, manifold.localNormal, this.normal);
+                                const planePoint = b2Math.b2Transform.MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
                                 for (let i = 0, ict = manifold.pointCount; i < ict; ++i) {
-                                    const clipPoint = b2Math.b2MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-                                    const s = radiusB - b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
-                                    const cB = b2Math.b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
-                                    const cA = b2Math.b2SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-                                    b2Math.b2MidVV(cA, cB, this.points[i]);
+                                    const clipPoint = b2Math.b2Transform.MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+                                    const s = radiusB - b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
+                                    const cB = b2Math.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
+                                    const cA = b2Math.b2Vec2.SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+                                    b2Math.b2Vec2.MidVV(cA, cB, this.points[i]);
                                 }
                                 // Ensure normal points from A to B.
                                 this.normal.SelfNeg();
@@ -2517,11 +2517,11 @@ System.register("Box2D/Collision/b2Collision", ["Box2D/Common/b2Settings", "Box2
                 }
                 /// Get the center of the AABB.
                 GetCenter() {
-                    return b2Math.b2MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
+                    return b2Math.b2Vec2.MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
                 }
                 /// Get the extents of the AABB (half-widths).
                 GetExtents() {
-                    return b2Math.b2ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
+                    return b2Math.b2Vec2.ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
                 }
                 /// Get the perimeter length
                 GetPerimeter() {
@@ -2820,14 +2820,14 @@ System.register("Box2D/Collision/b2DynamicTree", ["Box2D/Common/b2Settings", "Bo
                         return;
                     const p1 = input.p1;
                     const p2 = input.p2;
-                    const r = b2Math.b2SubVV(p2, p1, b2DynamicTree.s_r);
+                    const r = b2Math.b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
                     if (b2Settings.ENABLE_ASSERTS) {
                         b2Settings.b2Assert(r.GetLengthSquared() > 0);
                     }
                     r.Normalize();
                     // v is perpendicular to the segment.
-                    const v = b2Math.b2CrossOneV(r, b2DynamicTree.s_v);
-                    const abs_v = b2Math.b2AbsV(v, b2DynamicTree.s_abs_v);
+                    const v = b2Math.b2Vec2.CrossOneV(r, b2DynamicTree.s_v);
+                    const abs_v = b2Math.b2Vec2.AbsV(v, b2DynamicTree.s_abs_v);
                     // Separating axis for segment (Gino, p80).
                     // |dot(v, p1 - c)| > dot(|v|, h)
                     let maxFraction = input.maxFraction;
@@ -2853,7 +2853,7 @@ System.register("Box2D/Collision/b2DynamicTree", ["Box2D/Common/b2Settings", "Bo
                         // |dot(v, p1 - c)| > dot(|v|, h)
                         const c = node.aabb.GetCenter();
                         const h = node.aabb.GetExtents();
-                        const separation = b2Math.b2Abs(b2Math.b2DotVV(v, b2Math.b2SubVV(p1, c, b2Math.b2Vec2.s_t0))) - b2Math.b2DotVV(abs_v, h);
+                        const separation = b2Math.b2Abs(b2Math.b2Vec2.DotVV(v, b2Math.b2Vec2.SubVV(p1, c, b2Math.b2Vec2.s_t0))) - b2Math.b2Vec2.DotVV(abs_v, h);
                         if (separation > 0) {
                             continue;
                         }
@@ -3970,9 +3970,9 @@ System.register("Box2D/Collision/b2TimeOfImpact", ["Box2D/Common/b2Settings", "B
                         this.m_type = 0 /* e_points */;
                         const localPointA = this.m_proxyA.GetVertex(cache.indexA[0]);
                         const localPointB = this.m_proxyB.GetVertex(cache.indexB[0]);
-                        const pointA = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                        const pointB = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                        b2Math.b2SubVV(pointB, pointA, this.m_axis);
+                        const pointA = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                        const pointB = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                        b2Math.b2Vec2.SubVV(pointB, pointA, this.m_axis);
                         const s = this.m_axis.Normalize();
                         return s;
                     }
@@ -3981,13 +3981,13 @@ System.register("Box2D/Collision/b2TimeOfImpact", ["Box2D/Common/b2Settings", "B
                         this.m_type = 2 /* e_faceB */;
                         const localPointB1 = this.m_proxyB.GetVertex(cache.indexB[0]);
                         const localPointB2 = this.m_proxyB.GetVertex(cache.indexB[1]);
-                        b2Math.b2CrossVOne(b2Math.b2SubVV(localPointB2, localPointB1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-                        const normal = b2Math.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-                        b2Math.b2MidVV(localPointB1, localPointB2, this.m_localPoint);
-                        const pointB = b2Math.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+                        b2Math.b2Vec2.CrossVOne(b2Math.b2Vec2.SubVV(localPointB2, localPointB1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
+                        const normal = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+                        b2Math.b2Vec2.MidVV(localPointB1, localPointB2, this.m_localPoint);
+                        const pointB = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
                         const localPointA = this.m_proxyA.GetVertex(cache.indexA[0]);
-                        const pointA = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                        let s = b2Math.b2DotVV(b2Math.b2SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+                        const pointA = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                        let s = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
                         if (s < 0) {
                             this.m_axis.SelfNeg();
                             s = -s;
@@ -3999,13 +3999,13 @@ System.register("Box2D/Collision/b2TimeOfImpact", ["Box2D/Common/b2Settings", "B
                         this.m_type = 1 /* e_faceA */;
                         const localPointA1 = this.m_proxyA.GetVertex(cache.indexA[0]);
                         const localPointA2 = this.m_proxyA.GetVertex(cache.indexA[1]);
-                        b2Math.b2CrossVOne(b2Math.b2SubVV(localPointA2, localPointA1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-                        const normal = b2Math.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-                        b2Math.b2MidVV(localPointA1, localPointA2, this.m_localPoint);
-                        const pointA = b2Math.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+                        b2Math.b2Vec2.CrossVOne(b2Math.b2Vec2.SubVV(localPointA2, localPointA1, b2Math.b2Vec2.s_t0), this.m_axis).SelfNormalize();
+                        const normal = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+                        b2Math.b2Vec2.MidVV(localPointA1, localPointA2, this.m_localPoint);
+                        const pointA = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
                         const localPointB = this.m_proxyB.GetVertex(cache.indexB[0]);
-                        const pointB = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                        let s = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+                        const pointB = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                        let s = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
                         if (s < 0) {
                             this.m_axis.SelfNeg();
                             s = -s;
@@ -4020,37 +4020,37 @@ System.register("Box2D/Collision/b2TimeOfImpact", ["Box2D/Common/b2Settings", "B
                     this.m_sweepB.GetTransform(xfB, t);
                     switch (this.m_type) {
                         case 0 /* e_points */: {
-                            const axisA = b2Math.b2MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
-                            const axisB = b2Math.b2MulTRV(xfB.q, b2Math.b2NegV(this.m_axis, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+                            const axisA = b2Math.b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
+                            const axisB = b2Math.b2Rot.MulTRV(xfB.q, b2Math.b2Vec2.NegV(this.m_axis, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
                             indexA[0] = this.m_proxyA.GetSupport(axisA);
                             indexB[0] = this.m_proxyB.GetSupport(axisB);
                             const localPointA = this.m_proxyA.GetVertex(indexA[0]);
                             const localPointB = this.m_proxyB.GetVertex(indexB[0]);
-                            const pointA = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const pointB = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
+                            const pointA = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const pointB = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
                             return separation;
                         }
                         case 1 /* e_faceA */: {
-                            const normal = b2Math.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointA = b2Math.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
-                            const axisB = b2Math.b2MulTRV(xfB.q, b2Math.b2NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+                            const normal = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointA = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+                            const axisB = b2Math.b2Rot.MulTRV(xfB.q, b2Math.b2Vec2.NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
                             indexA[0] = -1;
                             indexB[0] = this.m_proxyB.GetSupport(axisB);
                             const localPointB = this.m_proxyB.GetVertex(indexB[0]);
-                            const pointB = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+                            const pointB = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         case 2 /* e_faceB */: {
-                            const normal = b2Math.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointB = b2Math.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
-                            const axisA = b2Math.b2MulTRV(xfA.q, b2Math.b2NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
+                            const normal = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointB = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+                            const axisA = b2Math.b2Rot.MulTRV(xfA.q, b2Math.b2Vec2.NegV(normal, b2Math.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
                             indexB[0] = -1;
                             indexA[0] = this.m_proxyA.GetSupport(axisA);
                             const localPointA = this.m_proxyA.GetVertex(indexA[0]);
-                            const pointA = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const separation = b2Math.b2DotVV(b2Math.b2SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+                            const pointA = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         default:
@@ -4071,25 +4071,25 @@ System.register("Box2D/Collision/b2TimeOfImpact", ["Box2D/Common/b2Settings", "B
                         case 0 /* e_points */: {
                             const localPointA = this.m_proxyA.GetVertex(indexA);
                             const localPointB = this.m_proxyB.GetVertex(indexB);
-                            const pointA = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const pointB = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
+                            const pointA = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const pointB = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.m_axis);
                             return separation;
                         }
                         case 1 /* e_faceA */: {
-                            const normal = b2Math.b2MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointA = b2Math.b2MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+                            const normal = b2Math.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointA = b2Math.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
                             const localPointB = this.m_proxyB.GetVertex(indexB);
-                            const pointB = b2Math.b2MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
+                            const pointB = b2Math.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         case 2 /* e_faceB */: {
-                            const normal = b2Math.b2MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointB = b2Math.b2MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+                            const normal = b2Math.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointB = b2Math.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
                             const localPointA = this.m_proxyA.GetVertex(indexA);
-                            const pointA = b2Math.b2MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const separation = b2Math.b2DotVV(b2Math.b2SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
+                            const pointA = b2Math.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointA, pointB, b2Math.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         default:
@@ -4195,18 +4195,18 @@ System.register("Box2D/Collision/Shapes/b2EdgeShape", ["Box2D/Common/b2Settings"
                 }
                 RayCast(output, input, xf, childIndex) {
                     // Put the ray into the edge's frame of reference.
-                    const p1 = b2Math.b2MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
-                    const p2 = b2Math.b2MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
-                    const d = b2Math.b2SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
+                    const p1 = b2Math.b2Transform.MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
+                    const p2 = b2Math.b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
+                    const d = b2Math.b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
                     const v1 = this.m_vertex1;
                     const v2 = this.m_vertex2;
-                    const e = b2Math.b2SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
+                    const e = b2Math.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
                     const normal = output.normal.SetXY(e.y, -e.x).SelfNormalize();
                     // q = p1 + t * d
                     // dot(normal, q - v1) = 0
                     // dot(normal, p1 - v1) + t * dot(normal, d) = 0
-                    const numerator = b2Math.b2DotVV(normal, b2Math.b2SubVV(v1, p1, b2Math.b2Vec2.s_t0));
-                    const denominator = b2Math.b2DotVV(normal, d);
+                    const numerator = b2Math.b2Vec2.DotVV(normal, b2Math.b2Vec2.SubVV(v1, p1, b2Math.b2Vec2.s_t0));
+                    const denominator = b2Math.b2Vec2.DotVV(normal, d);
                     if (denominator === 0) {
                         return false;
                     }
@@ -4214,15 +4214,15 @@ System.register("Box2D/Collision/Shapes/b2EdgeShape", ["Box2D/Common/b2Settings"
                     if (t < 0 || input.maxFraction < t) {
                         return false;
                     }
-                    const q = b2Math.b2AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
+                    const q = b2Math.b2Vec2.AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
                     // q = v1 + s * r
                     // s = dot(q - v1, r) / dot(r, r)
-                    const r = b2Math.b2SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
-                    const rr = b2Math.b2DotVV(r, r);
+                    const r = b2Math.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
+                    const rr = b2Math.b2Vec2.DotVV(r, r);
                     if (rr === 0) {
                         return false;
                     }
-                    const s = b2Math.b2DotVV(b2Math.b2SubVV(q, v1, b2Math.b2Vec2.s_t0), r) / rr;
+                    const s = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(q, v1, b2Math.b2Vec2.s_t0), r) / rr;
                     if (s < 0 || 1 < s) {
                         return false;
                     }
@@ -4233,10 +4233,10 @@ System.register("Box2D/Collision/Shapes/b2EdgeShape", ["Box2D/Common/b2Settings"
                     return true;
                 }
                 ComputeAABB(aabb, xf, childIndex) {
-                    const v1 = b2Math.b2MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
-                    const v2 = b2Math.b2MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
-                    b2Math.b2MinV(v1, v2, aabb.lowerBound);
-                    b2Math.b2MaxV(v1, v2, aabb.upperBound);
+                    const v1 = b2Math.b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
+                    const v2 = b2Math.b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
+                    b2Math.b2Vec2.MinV(v1, v2, aabb.lowerBound);
+                    b2Math.b2Vec2.MaxV(v1, v2, aabb.upperBound);
                     const r = this.m_radius;
                     aabb.lowerBound.SelfSubXY(r, r);
                     aabb.upperBound.SelfAddXY(r, r);
@@ -4244,7 +4244,7 @@ System.register("Box2D/Collision/Shapes/b2EdgeShape", ["Box2D/Common/b2Settings"
                 /// @see b2Shape::ComputeMass
                 ComputeMass(massData, density) {
                     massData.mass = 0;
-                    b2Math.b2MidVV(this.m_vertex1, this.m_vertex2, massData.center);
+                    b2Math.b2Vec2.MidVV(this.m_vertex1, this.m_vertex2, massData.center);
                     massData.I = 0;
                 }
                 SetupDistanceProxy(proxy, index) {
@@ -4356,7 +4356,7 @@ System.register("Box2D/Collision/Shapes/b2ChainShape", ["Box2D/Common/b2Settings
                             const v1 = vertices[i - 1];
                             const v2 = vertices[i];
                             // If the code crashes here, it means your vertices are too close together.
-                            b2Settings.b2Assert(b2Math.b2DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
+                            b2Settings.b2Assert(b2Math.b2Vec2.DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
                         }
                     }
                     this.m_count = count + 1;
@@ -4387,7 +4387,7 @@ System.register("Box2D/Collision/Shapes/b2ChainShape", ["Box2D/Common/b2Settings
                             const v1 = vertices[i - 1];
                             const v2 = vertices[i];
                             // If the code crashes here, it means your vertices are too close together.
-                            b2Settings.b2Assert(b2Math.b2DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
+                            b2Settings.b2Assert(b2Math.b2Vec2.DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
                         }
                     }
                     this.m_count = count;
@@ -4480,10 +4480,10 @@ System.register("Box2D/Collision/Shapes/b2ChainShape", ["Box2D/Common/b2Settings
                     }
                     const vertexi1 = this.m_vertices[childIndex];
                     const vertexi2 = this.m_vertices[(childIndex + 1) % this.m_count];
-                    const v1 = b2Math.b2MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
-                    const v2 = b2Math.b2MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
-                    b2Math.b2MinV(v1, v2, aabb.lowerBound);
-                    b2Math.b2MaxV(v1, v2, aabb.upperBound);
+                    const v1 = b2Math.b2Transform.MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
+                    const v2 = b2Math.b2Transform.MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
+                    b2Math.b2Vec2.MinV(v1, v2, aabb.lowerBound);
+                    b2Math.b2Vec2.MaxV(v1, v2, aabb.upperBound);
                 }
                 /// Chains have zero mass.
                 /// @see b2Shape::ComputeMass
@@ -4590,18 +4590,18 @@ System.register("Box2D/Collision/Shapes/b2CircleShape", ["Box2D/Common/b2Setting
                     return 1;
                 }
                 TestPoint(transform, p) {
-                    const center = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
-                    const d = b2Math.b2SubVV(p, center, b2CircleShape.TestPoint_s_d);
-                    return b2Math.b2DotVV(d, d) <= b2Math.b2Sq(this.m_radius);
+                    const center = b2Math.b2Transform.MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
+                    const d = b2Math.b2Vec2.SubVV(p, center, b2CircleShape.TestPoint_s_d);
+                    return b2Math.b2Vec2.DotVV(d, d) <= b2Math.b2Sq(this.m_radius);
                 }
                 RayCast(output, input, transform, childIndex) {
-                    const position = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
-                    const s = b2Math.b2SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
-                    const b = b2Math.b2DotVV(s, s) - b2Math.b2Sq(this.m_radius);
+                    const position = b2Math.b2Transform.MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
+                    const s = b2Math.b2Vec2.SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
+                    const b = b2Math.b2Vec2.DotVV(s, s) - b2Math.b2Sq(this.m_radius);
                     // Solve quadratic equation.
-                    const r = b2Math.b2SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
-                    const c = b2Math.b2DotVV(s, r);
-                    const rr = b2Math.b2DotVV(r, r);
+                    const r = b2Math.b2Vec2.SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
+                    const c = b2Math.b2Vec2.DotVV(s, r);
+                    const rr = b2Math.b2Vec2.DotVV(r, r);
                     const sigma = c * c - rr * b;
                     // Check for negative discriminant and short segment.
                     if (sigma < 0 || rr < b2Settings.b2_epsilon) {
@@ -4613,13 +4613,13 @@ System.register("Box2D/Collision/Shapes/b2CircleShape", ["Box2D/Common/b2Setting
                     if (0 <= a && a <= input.maxFraction * rr) {
                         a /= rr;
                         output.fraction = a;
-                        b2Math.b2AddVMulSV(s, a, r, output.normal).SelfNormalize();
+                        b2Math.b2Vec2.AddVMulSV(s, a, r, output.normal).SelfNormalize();
                         return true;
                     }
                     return false;
                 }
                 ComputeAABB(aabb, transform, childIndex) {
-                    const p = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
+                    const p = b2Math.b2Transform.MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
                     aabb.lowerBound.SetXY(p.x - this.m_radius, p.y - this.m_radius);
                     aabb.upperBound.SetXY(p.x + this.m_radius, p.y + this.m_radius);
                 }
@@ -4629,7 +4629,7 @@ System.register("Box2D/Collision/Shapes/b2CircleShape", ["Box2D/Common/b2Setting
                     massData.mass = density * b2Settings.b2_pi * radius_sq;
                     massData.center.Copy(this.m_p);
                     // inertia about the local origin
-                    massData.I = massData.mass * (0.5 * radius_sq + b2Math.b2DotVV(this.m_p, this.m_p));
+                    massData.I = massData.mass * (0.5 * radius_sq + b2Math.b2Vec2.DotVV(this.m_p, this.m_p));
                 }
                 SetupDistanceProxy(proxy, index) {
                     proxy.m_vertices = [];
@@ -4638,8 +4638,8 @@ System.register("Box2D/Collision/Shapes/b2CircleShape", ["Box2D/Common/b2Setting
                     proxy.m_radius = this.m_radius;
                 }
                 ComputeSubmergedArea(normal, offset, xf, c) {
-                    const p = b2Math.b2MulXV(xf, this.m_p, new b2Math.b2Vec2());
-                    const l = (-(b2Math.b2DotVV(normal, p) - offset));
+                    const p = b2Math.b2Transform.MulXV(xf, this.m_p, new b2Math.b2Vec2());
+                    const l = (-(b2Math.b2Vec2.DotVV(normal, p) - offset));
                     if (l < (-this.m_radius) + b2Settings.b2_epsilon) {
                         // Completely dry
                         return 0;
@@ -4787,9 +4787,9 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                                 ie = j;
                                 continue;
                             }
-                            const r = b2Math.b2SubVV(ps[ie], ps[hull[m]], b2PolygonShape.SetAsVector_s_r);
-                            const v = b2Math.b2SubVV(ps[j], ps[hull[m]], b2PolygonShape.SetAsVector_s_v);
-                            const c = b2Math.b2CrossVV(r, v);
+                            const r = b2Math.b2Vec2.SubVV(ps[ie], ps[hull[m]], b2PolygonShape.SetAsVector_s_r);
+                            const v = b2Math.b2Vec2.SubVV(ps[j], ps[hull[m]], b2PolygonShape.SetAsVector_s_v);
+                            const c = b2Math.b2Vec2.CrossVV(r, v);
                             if (c < 0) {
                                 ie = j;
                             }
@@ -4813,11 +4813,11 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                     for (let i = 0, ict = m; i < ict; ++i) {
                         const vertexi1 = this.m_vertices[i];
                         const vertexi2 = this.m_vertices[(i + 1) % ict];
-                        const edge = b2Math.b2SubVV(vertexi2, vertexi1, b2Math.b2Vec2.s_t0); // edge uses s_t0
+                        const edge = b2Math.b2Vec2.SubVV(vertexi2, vertexi1, b2Math.b2Vec2.s_t0); // edge uses s_t0
                         if (b2Settings.ENABLE_ASSERTS) {
                             b2Settings.b2Assert(edge.GetLengthSquared() > b2Settings.b2_epsilon_sq);
                         }
-                        b2Math.b2CrossVOne(edge, this.m_normals[i]).SelfNormalize();
+                        b2Math.b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
                     }
                     // Compute the polygon centroid.
                     b2PolygonShape.ComputeCentroid(this.m_vertices, m, this.m_centroid);
@@ -4863,15 +4863,15 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                     xf.SetRotationAngleRadians(angle);
                     // Transform vertices and normals.
                     for (let i = 0, ict = this.m_count; i < ict; ++i) {
-                        b2Math.b2MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
-                        b2Math.b2MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
+                        b2Math.b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
+                        b2Math.b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
                     }
                     return this;
                 }
                 TestPoint(xf, p) {
-                    const pLocal = b2Math.b2MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
+                    const pLocal = b2Math.b2Transform.MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
                     for (let i = 0, ict = this.m_count; i < ict; ++i) {
-                        const dot = b2Math.b2DotVV(this.m_normals[i], b2Math.b2SubVV(pLocal, this.m_vertices[i], b2Math.b2Vec2.s_t0));
+                        const dot = b2Math.b2Vec2.DotVV(this.m_normals[i], b2Math.b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Math.b2Vec2.s_t0));
                         if (dot > 0) {
                             return false;
                         }
@@ -4880,17 +4880,17 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                 }
                 RayCast(output, input, xf, childIndex) {
                     // Put the ray into the polygon's frame of reference.
-                    const p1 = b2Math.b2MulTXV(xf, input.p1, b2PolygonShape.RayCast_s_p1);
-                    const p2 = b2Math.b2MulTXV(xf, input.p2, b2PolygonShape.RayCast_s_p2);
-                    const d = b2Math.b2SubVV(p2, p1, b2PolygonShape.RayCast_s_d);
+                    const p1 = b2Math.b2Transform.MulTXV(xf, input.p1, b2PolygonShape.RayCast_s_p1);
+                    const p2 = b2Math.b2Transform.MulTXV(xf, input.p2, b2PolygonShape.RayCast_s_p2);
+                    const d = b2Math.b2Vec2.SubVV(p2, p1, b2PolygonShape.RayCast_s_d);
                     let lower = 0, upper = input.maxFraction;
                     let index = -1;
                     for (let i = 0, ict = this.m_count; i < ict; ++i) {
                         // p = p1 + a * d
                         // dot(normal, p - v) = 0
                         // dot(normal, p1 - v) + a * dot(normal, d) = 0
-                        const numerator = b2Math.b2DotVV(this.m_normals[i], b2Math.b2SubVV(this.m_vertices[i], p1, b2Math.b2Vec2.s_t0));
-                        const denominator = b2Math.b2DotVV(this.m_normals[i], d);
+                        const numerator = b2Math.b2Vec2.DotVV(this.m_normals[i], b2Math.b2Vec2.SubVV(this.m_vertices[i], p1, b2Math.b2Vec2.s_t0));
+                        const denominator = b2Math.b2Vec2.DotVV(this.m_normals[i], d);
                         if (denominator === 0) {
                             if (numerator < 0) {
                                 return false;
@@ -4926,18 +4926,18 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                     }
                     if (index >= 0) {
                         output.fraction = lower;
-                        b2Math.b2MulRV(xf.q, this.m_normals[index], output.normal);
+                        b2Math.b2Rot.MulRV(xf.q, this.m_normals[index], output.normal);
                         return true;
                     }
                     return false;
                 }
                 ComputeAABB(aabb, xf, childIndex) {
-                    const lower = b2Math.b2MulXV(xf, this.m_vertices[0], aabb.lowerBound);
+                    const lower = b2Math.b2Transform.MulXV(xf, this.m_vertices[0], aabb.lowerBound);
                     const upper = aabb.upperBound.Copy(lower);
                     for (let i = 0, ict = this.m_count; i < ict; ++i) {
-                        const v = b2Math.b2MulXV(xf, this.m_vertices[i], b2PolygonShape.ComputeAABB_s_v);
-                        b2Math.b2MinV(v, lower, lower);
-                        b2Math.b2MaxV(v, upper, upper);
+                        const v = b2Math.b2Transform.MulXV(xf, this.m_vertices[i], b2PolygonShape.ComputeAABB_s_v);
+                        b2Math.b2Vec2.MinV(v, lower, lower);
+                        b2Math.b2Vec2.MaxV(v, upper, upper);
                     }
                     const r = this.m_radius;
                     lower.SelfSubXY(r, r);
@@ -4984,13 +4984,13 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                     const k_inv3 = 1 / 3;
                     for (let i = 0, ict = this.m_count; i < ict; ++i) {
                         // Triangle vertices.
-                        const e1 = b2Math.b2SubVV(this.m_vertices[i], s, b2PolygonShape.ComputeMass_s_e1);
-                        const e2 = b2Math.b2SubVV(this.m_vertices[(i + 1) % ict], s, b2PolygonShape.ComputeMass_s_e2);
-                        const D = b2Math.b2CrossVV(e1, e2);
+                        const e1 = b2Math.b2Vec2.SubVV(this.m_vertices[i], s, b2PolygonShape.ComputeMass_s_e1);
+                        const e2 = b2Math.b2Vec2.SubVV(this.m_vertices[(i + 1) % ict], s, b2PolygonShape.ComputeMass_s_e2);
+                        const D = b2Math.b2Vec2.CrossVV(e1, e2);
                         const triangleArea = 0.5 * D;
                         area += triangleArea;
                         // Area weighted centroid
-                        center.SelfAdd(b2Math.b2MulSV(triangleArea * k_inv3, b2Math.b2AddVV(e1, e2, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t1));
+                        center.SelfAdd(b2Math.b2Vec2.MulSV(triangleArea * k_inv3, b2Math.b2Vec2.AddVV(e1, e2, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t1));
                         const ex1 = e1.x;
                         const ey1 = e1.y;
                         const ex2 = e2.x;
@@ -5006,24 +5006,24 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                         b2Settings.b2Assert(area > b2Settings.b2_epsilon);
                     }
                     center.SelfMul(1 / area);
-                    b2Math.b2AddVV(center, s, massData.center);
+                    b2Math.b2Vec2.AddVV(center, s, massData.center);
                     // Inertia tensor relative to the local origin (point s).
                     massData.I = density * I;
                     // Shift to center of mass then to original body origin.
-                    massData.I += massData.mass * (b2Math.b2DotVV(massData.center, massData.center) - b2Math.b2DotVV(center, center));
+                    massData.I += massData.mass * (b2Math.b2Vec2.DotVV(massData.center, massData.center) - b2Math.b2Vec2.DotVV(center, center));
                 }
                 Validate() {
                     for (let i = 0; i < this.m_count; ++i) {
                         const i1 = i;
                         const i2 = (i + 1) % this.m_count;
                         const p = this.m_vertices[i1];
-                        const e = b2Math.b2SubVV(this.m_vertices[i2], p, b2PolygonShape.Validate_s_e);
+                        const e = b2Math.b2Vec2.SubVV(this.m_vertices[i2], p, b2PolygonShape.Validate_s_e);
                         for (let j = 0; j < this.m_count; ++j) {
                             if (j === i1 || j === i2) {
                                 continue;
                             }
-                            const v = b2Math.b2SubVV(this.m_vertices[j], p, b2PolygonShape.Validate_s_v);
-                            const c = b2Math.b2CrossVV(e, v);
+                            const v = b2Math.b2Vec2.SubVV(this.m_vertices[j], p, b2PolygonShape.Validate_s_v);
+                            const c = b2Math.b2Vec2.CrossVV(e, v);
                             if (c < 0) {
                                 return false;
                             }
@@ -5038,15 +5038,15 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                 }
                 ComputeSubmergedArea(normal, offset, xf, c) {
                     // Transform plane into shape co-ordinates
-                    const normalL = b2Math.b2MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
-                    const offsetL = offset - b2Math.b2DotVV(normal, xf.p);
+                    const normalL = b2Math.b2Rot.MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
+                    const offsetL = offset - b2Math.b2Vec2.DotVV(normal, xf.p);
                     const depths = b2PolygonShape.ComputeSubmergedArea_s_depths;
                     let diveCount = 0;
                     let intoIndex = -1;
                     let outoIndex = -1;
                     let lastSubmerged = false;
                     for (let i = 0, ict = this.m_count; i < ict; ++i) {
-                        depths[i] = b2Math.b2DotVV(normalL, this.m_vertices[i]) - offsetL;
+                        depths[i] = b2Math.b2Vec2.DotVV(normalL, this.m_vertices[i]) - offsetL;
                         const isSubmerged = depths[i] < (-b2Settings.b2_epsilon);
                         if (i > 0) {
                             if (isSubmerged) {
@@ -5070,7 +5070,7 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                                 // Completely submerged
                                 const md = b2PolygonShape.ComputeSubmergedArea_s_md;
                                 this.ComputeMass(md, 1);
-                                b2Math.b2MulXV(xf, md.center, c);
+                                b2Math.b2Transform.MulXV(xf, md.center, c);
                                 return md.mass;
                             }
                             else {
@@ -5114,7 +5114,7 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                     }
                     // Normalize and transform centroid
                     center.SelfMul(1 / area);
-                    b2Math.b2MulXV(xf, center, c);
+                    b2Math.b2Transform.MulXV(xf, center, c);
                     return area;
                 }
                 Dump() {
@@ -5150,9 +5150,9 @@ System.register("Box2D/Collision/Shapes/b2PolygonShape", ["Box2D/Common/b2Settin
                         const p1 = pRef;
                         const p2 = vs[i];
                         const p3 = vs[(i + 1) % count];
-                        const e1 = b2Math.b2SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
-                        const e2 = b2Math.b2SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
-                        const D = b2Math.b2CrossVV(e1, e2);
+                        const e1 = b2Math.b2Vec2.SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
+                        const e2 = b2Math.b2Vec2.SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
+                        const D = b2Math.b2Vec2.CrossVV(e1, e2);
                         const triangleArea = 0.5 * D;
                         area += triangleArea;
                         // Area weighted centroid
@@ -5886,7 +5886,7 @@ System.register("Box2D/Dynamics/b2Fixture", ["Box2D/Common/b2Settings", "Box2D/C
                         this.m_shape.ComputeAABB(aabb1, transform1, i);
                         this.m_shape.ComputeAABB(aabb2, transform2, i);
                         proxy.aabb.Combine2(aabb1, aabb2);
-                        const displacement = b2Math.b2SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
+                        const displacement = b2Math.b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
                         broadPhase.MoveProxy(proxy.proxy, proxy.aabb, displacement);
                     }
                 }
@@ -6202,7 +6202,7 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     }
                     this.m_xf.q.SetAngleRadians(angle);
                     this.m_xf.p.SetXY(x, y);
-                    b2Math.b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+                    b2Math.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
                     this.m_sweep.a = angle;
                     this.m_sweep.c0.Copy(this.m_sweep.c);
                     this.m_sweep.a0 = angle;
@@ -6253,7 +6253,7 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     if (this.m_type === 0 /* b2_staticBody */) {
                         return;
                     }
-                    if (b2Math.b2DotVV(v, v) > 0) {
+                    if (b2Math.b2Vec2.DotVV(v, v) > 0) {
                         this.SetAwake(true);
                     }
                     this.m_linearVelocity.Copy(v);
@@ -6391,13 +6391,13 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                 /// Get the rotational inertia of the body about the local origin.
                 /// @return the rotational inertia, usually in kg-m^2.
                 GetInertia() {
-                    return this.m_I + this.m_mass * b2Math.b2DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+                    return this.m_I + this.m_mass * b2Math.b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
                 }
                 /// Get the mass data of the body.
                 /// @return a struct containing the mass, inertia and center of the body.
                 GetMassData(data) {
                     data.mass = this.m_mass;
-                    data.I = this.m_I + this.m_mass * b2Math.b2DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+                    data.I = this.m_I + this.m_mass * b2Math.b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
                     data.center.Copy(this.m_sweep.localCenter);
                     return data;
                 }
@@ -6420,7 +6420,7 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     }
                     this.m_invMass = 1 / this.m_mass;
                     if (massData.I > 0 && (this.m_flags & 16 /* e_fixedRotationFlag */) === 0) {
-                        this.m_I = massData.I - this.m_mass * b2Math.b2DotVV(massData.center, massData.center);
+                        this.m_I = massData.I - this.m_mass * b2Math.b2Vec2.DotVV(massData.center, massData.center);
                         if (b2Settings.ENABLE_ASSERTS) {
                             b2Settings.b2Assert(this.m_I > 0);
                         }
@@ -6429,10 +6429,10 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     // Move center of mass.
                     const oldCenter = b2Body.SetMassData_s_oldCenter.Copy(this.m_sweep.c);
                     this.m_sweep.localCenter.Copy(massData.center);
-                    b2Math.b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+                    b2Math.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
                     this.m_sweep.c0.Copy(this.m_sweep.c);
                     // Update center of mass velocity.
-                    b2Math.b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2SubVV(this.m_sweep.c, oldCenter, b2Math.b2Vec2.s_t0), this.m_linearVelocity);
+                    b2Math.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Math.b2Vec2.s_t0), this.m_linearVelocity);
                 }
                 ResetMassData() {
                     // Compute mass data from shapes. Each shape has its own density.
@@ -6476,7 +6476,7 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     }
                     if (this.m_I > 0 && (this.m_flags & 16 /* e_fixedRotationFlag */) === 0) {
                         // Center the inertia about the center of mass.
-                        this.m_I -= this.m_mass * b2Math.b2DotVV(localCenter, localCenter);
+                        this.m_I -= this.m_mass * b2Math.b2Vec2.DotVV(localCenter, localCenter);
                         if (b2Settings.ENABLE_ASSERTS) {
                             b2Settings.b2Assert(this.m_I > 0);
                         }
@@ -6489,40 +6489,40 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     // Move center of mass.
                     const oldCenter = b2Body.ResetMassData_s_oldCenter.Copy(this.m_sweep.c);
                     this.m_sweep.localCenter.Copy(localCenter);
-                    b2Math.b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+                    b2Math.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
                     this.m_sweep.c0.Copy(this.m_sweep.c);
                     // Update center of mass velocity.
-                    b2Math.b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2SubVV(this.m_sweep.c, oldCenter, b2Math.b2Vec2.s_t0), this.m_linearVelocity);
+                    b2Math.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Math.b2Vec2.s_t0), this.m_linearVelocity);
                 }
                 /// Get the world coordinates of a point given the local coordinates.
                 /// @param localPoint a point on the body measured relative the the body's origin.
                 /// @return the same point expressed in world coordinates.
                 GetWorldPoint(localPoint, out) {
-                    return b2Math.b2MulXV(this.m_xf, localPoint, out);
+                    return b2Math.b2Transform.MulXV(this.m_xf, localPoint, out);
                 }
                 /// Get the world coordinates of a vector given the local coordinates.
                 /// @param localVector a vector fixed in the body.
                 /// @return the same vector expressed in world coordinates.
                 GetWorldVector(localVector, out) {
-                    return b2Math.b2MulRV(this.m_xf.q, localVector, out);
+                    return b2Math.b2Rot.MulRV(this.m_xf.q, localVector, out);
                 }
                 /// Gets a local point relative to the body's origin given a world point.
                 /// @param a point in world coordinates.
                 /// @return the corresponding local point relative to the body's origin.
                 GetLocalPoint(worldPoint, out) {
-                    return b2Math.b2MulTXV(this.m_xf, worldPoint, out);
+                    return b2Math.b2Transform.MulTXV(this.m_xf, worldPoint, out);
                 }
                 /// Gets a local vector given a world vector.
                 /// @param a vector in world coordinates.
                 /// @return the corresponding local vector.
                 GetLocalVector(worldVector, out) {
-                    return b2Math.b2MulTRV(this.m_xf.q, worldVector, out);
+                    return b2Math.b2Rot.MulTRV(this.m_xf.q, worldVector, out);
                 }
                 /// Get the world linear velocity of a world point attached to this body.
                 /// @param a point in world coordinates.
                 /// @return the world velocity of a point.
                 GetLinearVelocityFromWorldPoint(worldPoint, out) {
-                    return b2Math.b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2SubVV(worldPoint, this.m_sweep.c, b2Math.b2Vec2.s_t0), out);
+                    return b2Math.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2Vec2.SubVV(worldPoint, this.m_sweep.c, b2Math.b2Vec2.s_t0), out);
                 }
                 /// Get the world velocity of a local point.
                 /// @param a point in local coordinates.
@@ -6799,8 +6799,8 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                 SynchronizeFixtures() {
                     const xf1 = b2Body.SynchronizeFixtures_s_xf1;
                     xf1.q.SetAngleRadians(this.m_sweep.a0);
-                    b2Math.b2MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
-                    b2Math.b2SubVV(this.m_sweep.c0, xf1.p, xf1.p);
+                    b2Math.b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
+                    b2Math.b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
                     const broadPhase = this.m_world.m_contactManager.m_broadPhase;
                     for (let f = this.m_fixtureList; f; f = f.m_next) {
                         f.Synchronize(broadPhase, xf1, this.m_xf);
@@ -6808,8 +6808,8 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                 }
                 SynchronizeTransform() {
                     this.m_xf.q.SetAngleRadians(this.m_sweep.a);
-                    b2Math.b2MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-                    b2Math.b2SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+                    b2Math.b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+                    b2Math.b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
                 }
                 // This is used to prevent connected bodies from colliding.
                 // It may lie, depending on the collideConnected flag.
@@ -6834,8 +6834,8 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Settings", "Box2D/Comm
                     this.m_sweep.c.Copy(this.m_sweep.c0);
                     this.m_sweep.a = this.m_sweep.a0;
                     this.m_xf.q.SetAngleRadians(this.m_sweep.a);
-                    b2Math.b2MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-                    b2Math.b2SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+                    b2Math.b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+                    b2Math.b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
                 }
             };
             /// Creates a fixture from a shape and attach it to this body.
@@ -7319,7 +7319,7 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                     this.bodyB = b2;
                     this.bodyA.GetLocalPoint(anchor1, this.localAnchorA);
                     this.bodyB.GetLocalPoint(anchor2, this.localAnchorB);
-                    this.length = b2Math.b2DistanceVV(anchor1, anchor2);
+                    this.length = b2Math.b2Vec2.DistanceVV(anchor1, anchor2);
                     this.frequencyHz = 0;
                     this.dampingRatio = 0;
                 }
@@ -7437,11 +7437,11 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                     // const qA: b2Math.b2Rot = new b2Math.b2Rot(aA), qB: b2Math.b2Rot = new b2Math.b2Rot(aB);
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // m_u = cB + m_rB - cA - m_rA;
                     this.m_u.x = cB.x + this.m_rB.x - cA.x - this.m_rA.x;
                     this.m_u.y = cB.y + this.m_rB.y - cA.y - this.m_rA.y;
@@ -7454,9 +7454,9 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                         this.m_u.SetZero();
                     }
                     // float32 crAu = b2Cross(m_rA, m_u);
-                    const crAu = b2Math.b2CrossVV(this.m_rA, this.m_u);
+                    const crAu = b2Math.b2Vec2.CrossVV(this.m_rA, this.m_u);
                     // float32 crBu = b2Cross(m_rB, m_u);
-                    const crBu = b2Math.b2CrossVV(this.m_rB, this.m_u);
+                    const crBu = b2Math.b2Vec2.CrossVV(this.m_rB, this.m_u);
                     // float32 invMass = m_invMassA + m_invIA * crAu * crAu + m_invMassB + m_invIB * crBu * crBu;
                     let invMass = this.m_invMassA + this.m_invIA * crAu * crAu + this.m_invMassB + this.m_invIB * crBu * crBu;
                     // Compute the effective mass matrix.
@@ -7485,15 +7485,15 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                         // Scale the impulse to support a variable time step.
                         this.m_impulse *= data.step.dtRatio;
                         // b2Math.b2Vec2 P = m_impulse * m_u;
-                        const P = b2Math.b2MulSV(this.m_impulse, this.m_u, b2DistanceJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.MulSV(this.m_impulse, this.m_u, b2DistanceJoint.InitVelocityConstraints_s_P);
                         // vA -= m_invMassA * P;
                         vA.SelfMulSub(this.m_invMassA, P);
                         // wA -= m_invIA * b2Cross(m_rA, P);
-                        wA -= this.m_invIA * b2Math.b2CrossVV(this.m_rA, P);
+                        wA -= this.m_invIA * b2Math.b2Vec2.CrossVV(this.m_rA, P);
                         // vB += m_invMassB * P;
                         vB.SelfMulAdd(this.m_invMassB, P);
                         // wB += m_invIB * b2Cross(m_rB, P);
-                        wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, P);
+                        wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, P);
                     }
                     else {
                         this.m_impulse = 0;
@@ -7509,23 +7509,23 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                     const vB = data.velocities[this.m_indexB].v;
                     let wB = data.velocities[this.m_indexB].w;
                     // b2Math.b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-                    const vpA = b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
+                    const vpA = b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
                     // b2Math.b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-                    const vpB = b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
+                    const vpB = b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
                     // float32 Cdot = b2Dot(m_u, vpB - vpA);
-                    const Cdot = b2Math.b2DotVV(this.m_u, b2Math.b2SubVV(vpB, vpA, b2Math.b2Vec2.s_t0));
+                    const Cdot = b2Math.b2Vec2.DotVV(this.m_u, b2Math.b2Vec2.SubVV(vpB, vpA, b2Math.b2Vec2.s_t0));
                     const impulse = (-this.m_mass * (Cdot + this.m_bias + this.m_gamma * this.m_impulse));
                     this.m_impulse += impulse;
                     // b2Math.b2Vec2 P = impulse * m_u;
-                    const P = b2Math.b2MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
+                    const P = b2Math.b2Vec2.MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
                     // vA -= m_invMassA * P;
                     vA.SelfMulSub(this.m_invMassA, P);
                     // wA -= m_invIA * b2Cross(m_rA, P);
-                    wA -= this.m_invIA * b2Math.b2CrossVV(this.m_rA, P);
+                    wA -= this.m_invIA * b2Math.b2Vec2.CrossVV(this.m_rA, P);
                     // vB += m_invMassB * P;
                     vB.SelfMulAdd(this.m_invMassB, P);
                     // wB += m_invIB * b2Cross(m_rB, P);
-                    wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, P);
+                    wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, P);
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
                     // data.velocities[this.m_indexB].v = vB;
@@ -7543,9 +7543,9 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                     // const qA: b2Math.b2Rot = new b2Math.b2Rot(aA), qB: b2Math.b2Rot = new b2Math.b2Rot(aB);
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    const rA = b2Math.b2MulRV(this.m_qA, this.m_lalcA, this.m_rA); // use m_rA
+                    const rA = b2Math.b2Rot.MulRV(this.m_qA, this.m_lalcA, this.m_rA); // use m_rA
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    const rB = b2Math.b2MulRV(this.m_qB, this.m_lalcB, this.m_rB); // use m_rB
+                    const rB = b2Math.b2Rot.MulRV(this.m_qB, this.m_lalcB, this.m_rB); // use m_rB
                     // b2Math.b2Vec2 u = cB + rB - cA - rA;
                     const u = this.m_u; // use m_u
                     u.x = cB.x + rB.x - cA.x - rA.x;
@@ -7557,15 +7557,15 @@ System.register("Box2D/Dynamics/Joints/b2DistanceJoint", ["Box2D/Common/b2Settin
                     C = b2Math.b2Clamp(C, (-b2Settings.b2_maxLinearCorrection), b2Settings.b2_maxLinearCorrection);
                     const impulse = (-this.m_mass * C);
                     // b2Math.b2Vec2 P = impulse * u;
-                    const P = b2Math.b2MulSV(impulse, u, b2DistanceJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math.b2Vec2.MulSV(impulse, u, b2DistanceJoint.SolvePositionConstraints_s_P);
                     // cA -= m_invMassA * P;
                     cA.SelfMulSub(this.m_invMassA, P);
                     // aA -= m_invIA * b2Cross(rA, P);
-                    aA -= this.m_invIA * b2Math.b2CrossVV(rA, P);
+                    aA -= this.m_invIA * b2Math.b2Vec2.CrossVV(rA, P);
                     // cB += m_invMassB * P;
                     cB.SelfMulAdd(this.m_invMassB, P);
                     // aB += m_invIB * b2Cross(rB, P);
-                    aB += this.m_invIB * b2Math.b2CrossVV(rB, P);
+                    aB += this.m_invIB * b2Math.b2Vec2.CrossVV(rB, P);
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
@@ -7656,8 +7656,8 @@ System.register("Box2D/Dynamics/Joints/b2AreaJoint", ["Box2D/Common/b2Settings",
                         const next = this.m_bodies[(i + 1) % ict];
                         const body_c = body.GetWorldCenter();
                         const next_c = next.GetWorldCenter();
-                        this.m_targetLengths[i] = b2Math.b2DistanceVV(body_c, next_c);
-                        this.m_targetArea += b2Math.b2CrossVV(body_c, next_c);
+                        this.m_targetLengths[i] = b2Math.b2Vec2.DistanceVV(body_c, next_c);
+                        this.m_targetArea += b2Math.b2Vec2.CrossVV(body_c, next_c);
                         djd.Initialize(body, next, body_c, next_c);
                         this.m_joints[i] = def.world.CreateJoint(djd);
                     }
@@ -7705,7 +7705,7 @@ System.register("Box2D/Dynamics/Joints/b2AreaJoint", ["Box2D/Common/b2Settings",
                         const prev_c = data.positions[prev.m_islandIndex].c;
                         const next_c = data.positions[next.m_islandIndex].c;
                         const delta = this.m_deltas[i];
-                        b2Math.b2SubVV(next_c, prev_c, delta);
+                        b2Math.b2Vec2.SubVV(next_c, prev_c, delta);
                     }
                     if (data.step.warmStarting) {
                         this.m_impulse *= data.step.dtRatio;
@@ -7729,7 +7729,7 @@ System.register("Box2D/Dynamics/Joints/b2AreaJoint", ["Box2D/Common/b2Settings",
                         const body_v = data.velocities[body.m_islandIndex].v;
                         const delta = this.m_deltas[i];
                         dotMassSum += delta.GetLengthSquared() / body.GetMass();
-                        crossMassSum += b2Math.b2CrossVV(body_v, delta);
+                        crossMassSum += b2Math.b2Vec2.CrossVV(body_v, delta);
                     }
                     const lambda = -2 * crossMassSum / dotMassSum;
                     // lambda = b2Math.b2Clamp(lambda, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
@@ -7750,7 +7750,7 @@ System.register("Box2D/Dynamics/Joints/b2AreaJoint", ["Box2D/Common/b2Settings",
                         const next = this.m_bodies[(i + 1) % ict];
                         const body_c = data.positions[body.m_islandIndex].c;
                         const next_c = data.positions[next.m_islandIndex].c;
-                        const delta = b2Math.b2SubVV(next_c, body_c, this.m_delta);
+                        const delta = b2Math.b2Vec2.SubVV(next_c, body_c, this.m_delta);
                         let dist = delta.GetLength();
                         if (dist < b2Settings.b2_epsilon) {
                             dist = 1;
@@ -7758,7 +7758,7 @@ System.register("Box2D/Dynamics/Joints/b2AreaJoint", ["Box2D/Common/b2Settings",
                         this.m_normals[i].x = delta.y / dist;
                         this.m_normals[i].y = -delta.x / dist;
                         perimeter += dist;
-                        area += b2Math.b2CrossVV(body_c, next_c);
+                        area += b2Math.b2Vec2.CrossVV(body_c, next_c);
                     }
                     area *= 0.5;
                     const deltaArea = this.m_targetArea - area;
@@ -7768,7 +7768,7 @@ System.register("Box2D/Dynamics/Joints/b2AreaJoint", ["Box2D/Common/b2Settings",
                         const body = this.m_bodies[i];
                         const body_c = data.positions[body.m_islandIndex].c;
                         const next_i = (i + 1) % ict;
-                        const delta = b2Math.b2AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
+                        const delta = b2Math.b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
                         delta.SelfMul(toExtrude);
                         const norm_sq = delta.GetLengthSquared();
                         if (norm_sq > b2Math.b2Sq(b2Settings.b2_maxLinearCorrection)) {
@@ -7894,11 +7894,11 @@ System.register("Box2D/Dynamics/Joints/b2FrictionJoint", ["Box2D/Common/b2Settin
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // Compute the effective mass matrix.
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -7928,11 +7928,11 @@ System.register("Box2D/Dynamics/Joints/b2FrictionJoint", ["Box2D/Common/b2Settin
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
                         // wA -= iA * (b2Cross(m_rA, P) + m_angularImpulse);
-                        wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + this.m_angularImpulse);
+                        wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + this.m_angularImpulse);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
                         // wB += iB * (b2Cross(m_rB, P) + m_angularImpulse);
-                        wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + this.m_angularImpulse);
+                        wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + this.m_angularImpulse);
                     }
                     else {
                         this.m_linearImpulse.SetZero();
@@ -7965,9 +7965,9 @@ System.register("Box2D/Dynamics/Joints/b2FrictionJoint", ["Box2D/Common/b2Settin
                     // Solve linear friction
                     if (true) {
                         // b2Math.b2Vec2 Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-                        const Cdot_v2 = b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2);
+                        const Cdot_v2 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2);
                         // b2Math.b2Vec2 impulse = -b2Mul(m_linearMass, Cdot);
-                        const impulseV = b2Math.b2MulMV(this.m_linearMass, Cdot_v2, b2FrictionJoint.SolveVelocityConstraints_s_impulseV).SelfNeg();
+                        const impulseV = b2Math.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2FrictionJoint.SolveVelocityConstraints_s_impulseV).SelfNeg();
                         // b2Math.b2Vec2 oldImpulse = m_linearImpulse;
                         const oldImpulseV = b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV.Copy(this.m_linearImpulse);
                         // m_linearImpulse += impulse;
@@ -7978,15 +7978,15 @@ System.register("Box2D/Dynamics/Joints/b2FrictionJoint", ["Box2D/Common/b2Settin
                             this.m_linearImpulse.SelfMul(maxImpulse);
                         }
                         // impulse = m_linearImpulse - oldImpulse;
-                        b2Math.b2SubVV(this.m_linearImpulse, oldImpulseV, impulseV);
+                        b2Math.b2Vec2.SubVV(this.m_linearImpulse, oldImpulseV, impulseV);
                         // vA -= mA * impulse;
                         vA.SelfMulSub(mA, impulseV);
                         // wA -= iA * b2Cross(m_rA, impulse);
-                        wA -= iA * b2Math.b2CrossVV(this.m_rA, impulseV);
+                        wA -= iA * b2Math.b2Vec2.CrossVV(this.m_rA, impulseV);
                         // vB += mB * impulse;
                         vB.SelfMulAdd(mB, impulseV);
                         // wB += iB * b2Cross(m_rB, impulse);
-                        wB += iB * b2Math.b2CrossVV(this.m_rB, impulseV);
+                        wB += iB * b2Math.b2Vec2.CrossVV(this.m_rB, impulseV);
                     }
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
@@ -8158,7 +8158,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     this.m_localAnchorA = def.localAnchorA.Clone();
                     this.m_localAnchorB = def.localAnchorB.Clone();
                     this.m_localXAxisA = def.localAxisA.Clone().SelfNormalize();
-                    this.m_localYAxisA = b2Math.b2CrossOneV(this.m_localXAxisA, new b2Math.b2Vec2());
+                    this.m_localYAxisA = b2Math.b2Vec2.CrossOneV(this.m_localXAxisA, new b2Math.b2Vec2());
                     this.m_referenceAngle = def.referenceAngle;
                     this.m_impulse = new b2Math.b2Vec3(0, 0, 0);
                     this.m_lowerTranslation = def.lowerTranslation;
@@ -8201,23 +8201,23 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // Compute the effective masses.
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Math.b2Vec2 d = (cB - cA) + rB - rA;
-                    const d = b2Math.b2AddVV(b2Math.b2SubVV(cB, cA, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(rB, rA, b2Math.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_d);
+                    const d = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.SubVV(cB, cA, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(rB, rA, b2Math.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_d);
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
                     // Compute motor Jacobian and effective mass.
                     {
                         // m_axis = b2Mul(qA, m_localXAxisA);
-                        b2Math.b2MulRV(qA, this.m_localXAxisA, this.m_axis);
+                        b2Math.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
                         // m_a1 = b2Cross(d + rA, m_axis);
-                        this.m_a1 = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_axis);
+                        this.m_a1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_axis);
                         // m_a2 = b2Cross(rB, m_axis);
-                        this.m_a2 = b2Math.b2CrossVV(rB, this.m_axis);
+                        this.m_a2 = b2Math.b2Vec2.CrossVV(rB, this.m_axis);
                         this.m_motorMass = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
                         if (this.m_motorMass > 0) {
                             this.m_motorMass = 1 / this.m_motorMass;
@@ -8226,11 +8226,11 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     // Prismatic constraint.
                     {
                         // m_perp = b2Mul(qA, m_localYAxisA);
-                        b2Math.b2MulRV(qA, this.m_localYAxisA, this.m_perp);
+                        b2Math.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
                         // m_s1 = b2Cross(d + rA, m_perp);
-                        this.m_s1 = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_perp);
+                        this.m_s1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_perp);
                         // m_s2 = b2Cross(rB, m_perp);
-                        this.m_s2 = b2Math.b2CrossVV(rB, this.m_perp);
+                        this.m_s2 = b2Math.b2Vec2.CrossVV(rB, this.m_perp);
                         // float32 k11 = mA + mB + iA * m_s1 * m_s1 + iB * m_s2 * m_s2;
                         this.m_K.ex.x = mA + mB + iA * this.m_s1 * this.m_s1 + iB * this.m_s2 * this.m_s2;
                         // float32 k12 = iA * m_s1 + iB * m_s2;
@@ -8254,7 +8254,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     // Compute motor and limit terms.
                     if (this.m_enableLimit) {
                         // float32 jointTranslation = b2Dot(m_axis, d);
-                        const jointTranslation = b2Math.b2DotVV(this.m_axis, d);
+                        const jointTranslation = b2Math.b2Vec2.DotVV(this.m_axis, d);
                         if (b2Math.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
                             this.m_limitState = 3 /* e_equalLimits */;
                         }
@@ -8288,7 +8288,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                         this.m_impulse.SelfMul(data.step.dtRatio);
                         this.m_motorImpulse *= data.step.dtRatio;
                         // b2Math.b2Vec2 P = m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis;
-                        const P = b2Math.b2AddVV(b2Math.b2MulSV(this.m_impulse.x, this.m_perp, b2Math.b2Vec2.s_t0), b2Math.b2MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Math.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.MulSV(this.m_impulse.x, this.m_perp, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Math.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_P);
                         // float32 LA = m_impulse.x * m_s1 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a1;
                         const LA = this.m_impulse.x * this.m_s1 + this.m_impulse.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_a1;
                         // float32 LB = m_impulse.x * m_s2 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a2;
@@ -8319,14 +8319,14 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     // Solve linear motor constraint.
                     if (this.m_enableMotor && this.m_limitState !== 3 /* e_equalLimits */) {
                         // float32 Cdot = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-                        const Cdot = b2Math.b2DotVV(this.m_axis, b2Math.b2SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+                        const Cdot = b2Math.b2Vec2.DotVV(this.m_axis, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
                         let impulse = this.m_motorMass * (this.m_motorSpeed - Cdot);
                         const oldImpulse = this.m_motorImpulse;
                         const maxImpulse = data.step.dt * this.m_maxMotorForce;
                         this.m_motorImpulse = b2Math.b2Clamp(this.m_motorImpulse + impulse, (-maxImpulse), maxImpulse);
                         impulse = this.m_motorImpulse - oldImpulse;
                         // b2Math.b2Vec2 P = impulse * m_axis;
-                        const P = b2Math.b2MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
                         const LA = impulse * this.m_a1;
                         const LB = impulse * this.m_a2;
                         // vA -= mA * P;
@@ -8338,14 +8338,14 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     }
                     // b2Math.b2Vec2 Cdot1;
                     // Cdot1.x = b2Dot(m_perp, vB - vA) + m_s2 * wB - m_s1 * wA;
-                    const Cdot1_x = b2Math.b2DotVV(this.m_perp, b2Math.b2SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
+                    const Cdot1_x = b2Math.b2Vec2.DotVV(this.m_perp, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
                     // Cdot1.y = wB - wA;
                     const Cdot1_y = wB - wA;
                     if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */) {
                         // Solve prismatic and limit constraint in block form.
                         // float32 Cdot2;
                         // Cdot2 = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-                        const Cdot2 = b2Math.b2DotVV(this.m_axis, b2Math.b2SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+                        const Cdot2 = b2Math.b2Vec2.DotVV(this.m_axis, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
                         // b2Math.b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
                         // b2Math.b2Vec3 f1 = m_impulse;
                         const f1 = b2PrismaticJoint.SolveVelocityConstraints_s_f1.Copy(this.m_impulse);
@@ -8376,7 +8376,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                         df3.y = this.m_impulse.y - f1.y;
                         df3.z = this.m_impulse.z - f1.z;
                         // b2Math.b2Vec2 P = df.x * m_perp + df.z * m_axis;
-                        const P = b2Math.b2AddVV(b2Math.b2MulSV(df3.x, this.m_perp, b2Math.b2Vec2.s_t0), b2Math.b2MulSV(df3.z, this.m_axis, b2Math.b2Vec2.s_t1), b2PrismaticJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.MulSV(df3.x, this.m_perp, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.MulSV(df3.z, this.m_axis, b2Math.b2Vec2.s_t1), b2PrismaticJoint.SolveVelocityConstraints_s_P);
                         // float32 LA = df.x * m_s1 + df.y + df.z * m_a1;
                         const LA = df3.x * this.m_s1 + df3.y + df3.z * this.m_a1;
                         // float32 LB = df.x * m_s2 + df.y + df.z * m_a2;
@@ -8395,7 +8395,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                         this.m_impulse.x += df2.x;
                         this.m_impulse.y += df2.y;
                         // b2Math.b2Vec2 P = df.x * m_perp;
-                        const P = b2Math.b2MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
                         // float32 LA = df.x * m_s1 + df.y;
                         const LA = df2.x * this.m_s1 + df2.y;
                         // float32 LB = df.x * m_s2 + df.y;
@@ -8421,28 +8421,28 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Math.b2Vec2 d = cB + rB - cA - rA;
-                    const d = b2Math.b2SubVV(b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_d);
+                    const d = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_d);
                     // b2Math.b2Vec2 axis = b2Mul(qA, m_localXAxisA);
-                    const axis = b2Math.b2MulRV(qA, this.m_localXAxisA, this.m_axis);
+                    const axis = b2Math.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
                     // float32 a1 = b2Cross(d + rA, axis);
-                    const a1 = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), axis);
+                    const a1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), axis);
                     // float32 a2 = b2Cross(rB, axis);
-                    const a2 = b2Math.b2CrossVV(rB, axis);
+                    const a2 = b2Math.b2Vec2.CrossVV(rB, axis);
                     // b2Math.b2Vec2 perp = b2Mul(qA, m_localYAxisA);
-                    const perp = b2Math.b2MulRV(qA, this.m_localYAxisA, this.m_perp);
+                    const perp = b2Math.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
                     // float32 s1 = b2Cross(d + rA, perp);
-                    const s1 = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), perp);
+                    const s1 = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), perp);
                     // float32 s2 = b2Cross(rB, perp);
-                    const s2 = b2Math.b2CrossVV(rB, perp);
+                    const s2 = b2Math.b2Vec2.CrossVV(rB, perp);
                     // b2Math.b2Vec3 impulse;
                     let impulse = b2PrismaticJoint.SolvePositionConstraints_s_impulse;
                     // b2Math.b2Vec2 C1;
                     // C1.x = b2Dot(perp, d);
-                    const C1_x = b2Math.b2DotVV(perp, d);
+                    const C1_x = b2Math.b2Vec2.DotVV(perp, d);
                     // C1.y = aB - aA - m_referenceAngle;
                     const C1_y = aB - aA - this.m_referenceAngle;
                     let linearError = b2Math.b2Abs(C1_x);
@@ -8451,7 +8451,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     let C2 = 0;
                     if (this.m_enableLimit) {
                         // float32 translation = b2Dot(axis, d);
-                        const translation = b2Math.b2DotVV(axis, d);
+                        const translation = b2Math.b2Vec2.DotVV(axis, d);
                         if (b2Math.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings.b2_linearSlop) {
                             // Prevent large angular corrections
                             C2 = b2Math.b2Clamp(translation, (-b2Settings.b2_maxLinearCorrection), b2Settings.b2_maxLinearCorrection);
@@ -8526,7 +8526,7 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                         impulse.z = 0;
                     }
                     // b2Math.b2Vec2 P = impulse.x * perp + impulse.z * axis;
-                    const P = b2Math.b2AddVV(b2Math.b2MulSV(impulse.x, perp, b2Math.b2Vec2.s_t0), b2Math.b2MulSV(impulse.z, axis, b2Math.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.MulSV(impulse.x, perp, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.MulSV(impulse.z, axis, b2Math.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_P);
                     // float32 LA = impulse.x * s1 + impulse.y + impulse.z * a1;
                     const LA = impulse.x * s1 + impulse.y + impulse.z * a1;
                     // float32 LB = impulse.x * s2 + impulse.y + impulse.z * a2;
@@ -8566,28 +8566,28 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     // b2Math.b2Vec2 pB = m_bodyB.GetWorldPoint(m_localAnchorB);
                     const pB = this.m_bodyB.GetWorldPoint(this.m_localAnchorB, b2PrismaticJoint.GetJointTranslation_s_pB);
                     // b2Math.b2Vec2 d = pB - pA;
-                    const d = b2Math.b2SubVV(pB, pA, b2PrismaticJoint.GetJointTranslation_s_d);
+                    const d = b2Math.b2Vec2.SubVV(pB, pA, b2PrismaticJoint.GetJointTranslation_s_d);
                     // b2Math.b2Vec2 axis = m_bodyA.GetWorldVector(m_localXAxisA);
                     const axis = this.m_bodyA.GetWorldVector(this.m_localXAxisA, b2PrismaticJoint.GetJointTranslation_s_axis);
                     // float32 translation = b2Dot(d, axis);
-                    const translation = b2Math.b2DotVV(d, axis);
+                    const translation = b2Math.b2Vec2.DotVV(d, axis);
                     return translation;
                 }
                 GetJointSpeed() {
                     const bA = this.m_bodyA;
                     const bB = this.m_bodyB;
                     // b2Math.b2Vec2 rA = b2Mul(bA->m_xf.q, m_localAnchorA - bA->m_sweep.localCenter);
-                    b2Math.b2SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(bB->m_xf.q, m_localAnchorB - bB->m_sweep.localCenter);
-                    b2Math.b2SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
                     // b2Math.b2Vec2 pA = bA->m_sweep.c + rA;
-                    const pA = b2Math.b2AddVV(bA.m_sweep.c, rA, b2Math.b2Vec2.s_t0); // pA uses s_t0
+                    const pA = b2Math.b2Vec2.AddVV(bA.m_sweep.c, rA, b2Math.b2Vec2.s_t0); // pA uses s_t0
                     // b2Math.b2Vec2 pB = bB->m_sweep.c + rB;
-                    const pB = b2Math.b2AddVV(bB.m_sweep.c, rB, b2Math.b2Vec2.s_t1); // pB uses s_t1
+                    const pB = b2Math.b2Vec2.AddVV(bB.m_sweep.c, rB, b2Math.b2Vec2.s_t1); // pB uses s_t1
                     // b2Math.b2Vec2 d = pB - pA;
-                    const d = b2Math.b2SubVV(pB, pA, b2Math.b2Vec2.s_t2); // d uses s_t2
+                    const d = b2Math.b2Vec2.SubVV(pB, pA, b2Math.b2Vec2.s_t2); // d uses s_t2
                     // b2Math.b2Vec2 axis = b2Mul(bA.m_xf.q, m_localXAxisA);
                     const axis = bA.GetWorldVector(this.m_localXAxisA, this.m_axis);
                     const vA = bA.m_linearVelocity;
@@ -8595,8 +8595,8 @@ System.register("Box2D/Dynamics/Joints/b2PrismaticJoint", ["Box2D/Common/b2Setti
                     const wA = bA.m_angularVelocity;
                     const wB = bB.m_angularVelocity;
                     // float32 speed = b2Dot(d, b2Cross(wA, axis)) + b2Dot(axis, vB + b2Cross(wB, rB) - vA - b2Cross(wA, rA));
-                    const speed = b2Math.b2DotVV(d, b2Math.b2CrossSV(wA, axis, b2Math.b2Vec2.s_t0)) +
-                        b2Math.b2DotVV(axis, b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0));
+                    const speed = b2Math.b2Vec2.DotVV(d, b2Math.b2Vec2.CrossSV(wA, axis, b2Math.b2Vec2.s_t0)) +
+                        b2Math.b2Vec2.DotVV(axis, b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0));
                     return speed;
                 }
                 IsLimitEnabled() {
@@ -8823,11 +8823,11 @@ System.register("Box2D/Dynamics/Joints/b2RevoluteJoint", ["Box2D/Common/b2Settin
                     // b2Math.b2Rot qA(aA), qB(aB);
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -8887,10 +8887,10 @@ System.register("Box2D/Dynamics/Joints/b2RevoluteJoint", ["Box2D/Common/b2Settin
                         const P = b2RevoluteJoint.InitVelocityConstraints_s_P.SetXY(this.m_impulse.x, this.m_impulse.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + this.m_motorImpulse + this.m_impulse.z);
+                        wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + this.m_motorImpulse + this.m_impulse.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + this.m_motorImpulse + this.m_impulse.z);
+                        wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + this.m_motorImpulse + this.m_impulse.z);
                     }
                     else {
                         this.m_impulse.SetZero();
@@ -8923,7 +8923,7 @@ System.register("Box2D/Dynamics/Joints/b2RevoluteJoint", ["Box2D/Common/b2Settin
                     // Solve limit constraint.
                     if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */ && fixedRotation === false) {
                         // b2Math.b2Vec2 Cdot1 = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-                        const Cdot1 = b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1);
+                        const Cdot1 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1);
                         const Cdot2 = wB - wA;
                         // b2Math.b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
                         // b2Math.b2Vec3 impulse = -this.m_mass.Solve33(Cdot);
@@ -8971,25 +8971,25 @@ System.register("Box2D/Dynamics/Joints/b2RevoluteJoint", ["Box2D/Common/b2Settin
                         const P = b2RevoluteJoint.SolveVelocityConstraints_s_P.SetXY(impulse_v3.x, impulse_v3.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + impulse_v3.z);
+                        wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + impulse_v3.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + impulse_v3.z);
+                        wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + impulse_v3.z);
                     }
                     else {
                         // Solve point-to-point constraint
                         // b2Math.b2Vec2 Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-                        const Cdot_v2 = b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2);
+                        const Cdot_v2 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2);
                         // b2Math.b2Vec2 impulse = m_mass.Solve22(-Cdot);
                         const impulse_v2 = this.m_mass.Solve22(-Cdot_v2.x, -Cdot_v2.y, b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v2);
                         this.m_impulse.x += impulse_v2.x;
                         this.m_impulse.y += impulse_v2.y;
                         // vA -= mA * impulse;
                         vA.SelfMulSub(mA, impulse_v2);
-                        wA -= iA * b2Math.b2CrossVV(this.m_rA, impulse_v2);
+                        wA -= iA * b2Math.b2Vec2.CrossVV(this.m_rA, impulse_v2);
                         // vB += mB * impulse;
                         vB.SelfMulAdd(mB, impulse_v2);
-                        wB += iB * b2Math.b2CrossVV(this.m_rB, impulse_v2);
+                        wB += iB * b2Math.b2Vec2.CrossVV(this.m_rB, impulse_v2);
                     }
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
@@ -9038,13 +9038,13 @@ System.register("Box2D/Dynamics/Joints/b2RevoluteJoint", ["Box2D/Common/b2Settin
                         qA.SetAngleRadians(aA);
                         qB.SetAngleRadians(aB);
                         // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                        b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                        const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                        b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                        const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                         // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                        b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                        const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                        b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                        const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                         // b2Math.b2Vec2 C = cB + rB - cA - rA;
-                        const C_v2 = b2Math.b2SubVV(b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2RevoluteJoint.SolvePositionConstraints_s_C_v2);
+                        const C_v2 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2RevoluteJoint.SolvePositionConstraints_s_C_v2);
                         // positionError = C.Length();
                         positionError = C_v2.GetLength();
                         const mA = this.m_invMassA, mB = this.m_invMassB;
@@ -9058,10 +9058,10 @@ System.register("Box2D/Dynamics/Joints/b2RevoluteJoint", ["Box2D/Common/b2Settin
                         const impulse = K.Solve(C_v2.x, C_v2.y, b2RevoluteJoint.SolvePositionConstraints_s_impulse).SelfNeg();
                         // cA -= mA * impulse;
                         cA.SelfMulSub(mA, impulse);
-                        aA -= iA * b2Math.b2CrossVV(rA, impulse);
+                        aA -= iA * b2Math.b2Vec2.CrossVV(rA, impulse);
                         // cB += mB * impulse;
                         cB.SelfMulAdd(mB, impulse);
-                        aB += iB * b2Math.b2CrossVV(rB, impulse);
+                        aB += iB * b2Math.b2Vec2.CrossVV(rB, impulse);
                     }
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
@@ -9321,9 +9321,9 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                         // b2Math.b2Vec2 pC = m_localAnchorC;
                         const pC = this.m_localAnchorC;
                         // b2Math.b2Vec2 pA = b2MulT(xfC.q, b2Mul(xfA.q, m_localAnchorA) + (xfA.p - xfC.p));
-                        const pA = b2Math.b2MulTRV(xfC.q, b2Math.b2AddVV(b2Math.b2MulRV(xfA.q, this.m_localAnchorA, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(xfA.p, xfC.p, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pA uses s_t0
+                        const pA = b2Math.b2Rot.MulTRV(xfC.q, b2Math.b2Vec2.AddVV(b2Math.b2Rot.MulRV(xfA.q, this.m_localAnchorA, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(xfA.p, xfC.p, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pA uses s_t0
                         // coordinateA = b2Dot(pA - pC, m_localAxisC);
-                        coordinateA = b2Math.b2DotVV(b2Math.b2SubVV(pA, pC, b2Math.b2Vec2.s_t0), this.m_localAxisC);
+                        coordinateA = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pA, pC, b2Math.b2Vec2.s_t0), this.m_localAxisC);
                     }
                     this.m_bodyD = this.m_joint2.GetBodyA();
                     this.m_bodyB = this.m_joint2.GetBodyB();
@@ -9349,9 +9349,9 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                         // b2Math.b2Vec2 pD = m_localAnchorD;
                         const pD = this.m_localAnchorD;
                         // b2Math.b2Vec2 pB = b2MulT(xfD.q, b2Mul(xfB.q, m_localAnchorB) + (xfB.p - xfD.p));
-                        const pB = b2Math.b2MulTRV(xfD.q, b2Math.b2AddVV(b2Math.b2MulRV(xfB.q, this.m_localAnchorB, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(xfB.p, xfD.p, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pB uses s_t0
+                        const pB = b2Math.b2Rot.MulTRV(xfD.q, b2Math.b2Vec2.AddVV(b2Math.b2Rot.MulRV(xfB.q, this.m_localAnchorB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(xfB.p, xfD.p, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pB uses s_t0
                         // coordinateB = b2Dot(pB - pD, m_localAxisD);
-                        coordinateB = b2Math.b2DotVV(b2Math.b2SubVV(pB, pD, b2Math.b2Vec2.s_t0), this.m_localAxisD);
+                        coordinateB = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pB, pD, b2Math.b2Vec2.s_t0), this.m_localAxisD);
                     }
                     this.m_ratio = def.ratio;
                     this.m_constant = coordinateA + this.m_ratio * coordinateB;
@@ -9397,19 +9397,19 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                     }
                     else {
                         // b2Math.b2Vec2 u = b2Mul(qC, m_localAxisC);
-                        const u = b2Math.b2MulRV(qC, this.m_localAxisC, b2GearJoint.InitVelocityConstraints_s_u);
+                        const u = b2Math.b2Rot.MulRV(qC, this.m_localAxisC, b2GearJoint.InitVelocityConstraints_s_u);
                         // b2Math.b2Vec2 rC = b2Mul(qC, m_localAnchorC - m_lcC);
-                        b2Math.b2SubVV(this.m_localAnchorC, this.m_lcC, this.m_lalcC);
-                        const rC = b2Math.b2MulRV(qC, this.m_lalcC, b2GearJoint.InitVelocityConstraints_s_rC);
+                        b2Math.b2Vec2.SubVV(this.m_localAnchorC, this.m_lcC, this.m_lalcC);
+                        const rC = b2Math.b2Rot.MulRV(qC, this.m_lalcC, b2GearJoint.InitVelocityConstraints_s_rC);
                         // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_lcA);
-                        b2Math.b2SubVV(this.m_localAnchorA, this.m_lcA, this.m_lalcA);
-                        const rA = b2Math.b2MulRV(qA, this.m_lalcA, b2GearJoint.InitVelocityConstraints_s_rA);
+                        b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_lcA, this.m_lalcA);
+                        const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, b2GearJoint.InitVelocityConstraints_s_rA);
                         // m_JvAC = u;
                         this.m_JvAC.Copy(u);
                         // m_JwC = b2Cross(rC, u);
-                        this.m_JwC = b2Math.b2CrossVV(rC, u);
+                        this.m_JwC = b2Math.b2Vec2.CrossVV(rC, u);
                         // m_JwA = b2Cross(rA, u);
-                        this.m_JwA = b2Math.b2CrossVV(rA, u);
+                        this.m_JwA = b2Math.b2Vec2.CrossVV(rA, u);
                         this.m_mass += this.m_mC + this.m_mA + this.m_iC * this.m_JwC * this.m_JwC + this.m_iA * this.m_JwA * this.m_JwA;
                     }
                     if (this.m_typeB === 1 /* e_revoluteJoint */) {
@@ -9420,19 +9420,19 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                     }
                     else {
                         // b2Math.b2Vec2 u = b2Mul(qD, m_localAxisD);
-                        const u = b2Math.b2MulRV(qD, this.m_localAxisD, b2GearJoint.InitVelocityConstraints_s_u);
+                        const u = b2Math.b2Rot.MulRV(qD, this.m_localAxisD, b2GearJoint.InitVelocityConstraints_s_u);
                         // b2Math.b2Vec2 rD = b2Mul(qD, m_localAnchorD - m_lcD);
-                        b2Math.b2SubVV(this.m_localAnchorD, this.m_lcD, this.m_lalcD);
-                        const rD = b2Math.b2MulRV(qD, this.m_lalcD, b2GearJoint.InitVelocityConstraints_s_rD);
+                        b2Math.b2Vec2.SubVV(this.m_localAnchorD, this.m_lcD, this.m_lalcD);
+                        const rD = b2Math.b2Rot.MulRV(qD, this.m_lalcD, b2GearJoint.InitVelocityConstraints_s_rD);
                         // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_lcB);
-                        b2Math.b2SubVV(this.m_localAnchorB, this.m_lcB, this.m_lalcB);
-                        const rB = b2Math.b2MulRV(qB, this.m_lalcB, b2GearJoint.InitVelocityConstraints_s_rB);
+                        b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_lcB, this.m_lalcB);
+                        const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, b2GearJoint.InitVelocityConstraints_s_rB);
                         // m_JvBD = m_ratio * u;
-                        b2Math.b2MulSV(this.m_ratio, u, this.m_JvBD);
+                        b2Math.b2Vec2.MulSV(this.m_ratio, u, this.m_JvBD);
                         // m_JwD = m_ratio * b2Cross(rD, u);
-                        this.m_JwD = this.m_ratio * b2Math.b2CrossVV(rD, u);
+                        this.m_JwD = this.m_ratio * b2Math.b2Vec2.CrossVV(rD, u);
                         // m_JwB = m_ratio * b2Cross(rB, u);
-                        this.m_JwB = this.m_ratio * b2Math.b2CrossVV(rB, u);
+                        this.m_JwB = this.m_ratio * b2Math.b2Vec2.CrossVV(rB, u);
                         this.m_mass += this.m_ratio * this.m_ratio * (this.m_mD + this.m_mB) + this.m_iD * this.m_JwD * this.m_JwD + this.m_iB * this.m_JwB * this.m_JwB;
                     }
                     // Compute effective mass.
@@ -9473,8 +9473,8 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                     const vD = data.velocities[this.m_indexD].v;
                     let wD = data.velocities[this.m_indexD].w;
                     // float32 Cdot = b2Dot(m_JvAC, vA - vC) + b2Dot(m_JvBD, vB - vD);
-                    let Cdot = b2Math.b2DotVV(this.m_JvAC, b2Math.b2SubVV(vA, vC, b2Math.b2Vec2.s_t0)) +
-                        b2Math.b2DotVV(this.m_JvBD, b2Math.b2SubVV(vB, vD, b2Math.b2Vec2.s_t0));
+                    let Cdot = b2Math.b2Vec2.DotVV(this.m_JvAC, b2Math.b2Vec2.SubVV(vA, vC, b2Math.b2Vec2.s_t0)) +
+                        b2Math.b2Vec2.DotVV(this.m_JvBD, b2Math.b2Vec2.SubVV(vB, vD, b2Math.b2Vec2.s_t0));
                     Cdot += (this.m_JwA * wA - this.m_JwC * wC) + (this.m_JwB * wB - this.m_JwD * wD);
                     const impulse = -this.m_mass * Cdot;
                     this.m_impulse += impulse;
@@ -9524,24 +9524,24 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                     }
                     else {
                         // b2Math.b2Vec2 u = b2Mul(qC, m_localAxisC);
-                        const u = b2Math.b2MulRV(qC, this.m_localAxisC, b2GearJoint.SolvePositionConstraints_s_u);
+                        const u = b2Math.b2Rot.MulRV(qC, this.m_localAxisC, b2GearJoint.SolvePositionConstraints_s_u);
                         // b2Math.b2Vec2 rC = b2Mul(qC, m_localAnchorC - m_lcC);
-                        const rC = b2Math.b2MulRV(qC, this.m_lalcC, b2GearJoint.SolvePositionConstraints_s_rC);
+                        const rC = b2Math.b2Rot.MulRV(qC, this.m_lalcC, b2GearJoint.SolvePositionConstraints_s_rC);
                         // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_lcA);
-                        const rA = b2Math.b2MulRV(qA, this.m_lalcA, b2GearJoint.SolvePositionConstraints_s_rA);
+                        const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, b2GearJoint.SolvePositionConstraints_s_rA);
                         // JvAC = u;
                         JvAC.Copy(u);
                         // JwC = b2Cross(rC, u);
-                        JwC = b2Math.b2CrossVV(rC, u);
+                        JwC = b2Math.b2Vec2.CrossVV(rC, u);
                         // JwA = b2Cross(rA, u);
-                        JwA = b2Math.b2CrossVV(rA, u);
+                        JwA = b2Math.b2Vec2.CrossVV(rA, u);
                         mass += this.m_mC + this.m_mA + this.m_iC * JwC * JwC + this.m_iA * JwA * JwA;
                         // b2Math.b2Vec2 pC = m_localAnchorC - m_lcC;
                         const pC = this.m_lalcC;
                         // b2Math.b2Vec2 pA = b2MulT(qC, rA + (cA - cC));
-                        const pA = b2Math.b2MulTRV(qC, b2Math.b2AddVV(rA, b2Math.b2SubVV(cA, cC, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pA uses s_t0
+                        const pA = b2Math.b2Rot.MulTRV(qC, b2Math.b2Vec2.AddVV(rA, b2Math.b2Vec2.SubVV(cA, cC, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pA uses s_t0
                         // coordinateA = b2Dot(pA - pC, m_localAxisC);
-                        coordinateA = b2Math.b2DotVV(b2Math.b2SubVV(pA, pC, b2Math.b2Vec2.s_t0), this.m_localAxisC);
+                        coordinateA = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pA, pC, b2Math.b2Vec2.s_t0), this.m_localAxisC);
                     }
                     if (this.m_typeB === 1 /* e_revoluteJoint */) {
                         JvBD.SetZero();
@@ -9552,24 +9552,24 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                     }
                     else {
                         // b2Math.b2Vec2 u = b2Mul(qD, m_localAxisD);
-                        const u = b2Math.b2MulRV(qD, this.m_localAxisD, b2GearJoint.SolvePositionConstraints_s_u);
+                        const u = b2Math.b2Rot.MulRV(qD, this.m_localAxisD, b2GearJoint.SolvePositionConstraints_s_u);
                         // b2Math.b2Vec2 rD = b2Mul(qD, m_localAnchorD - m_lcD);
-                        const rD = b2Math.b2MulRV(qD, this.m_lalcD, b2GearJoint.SolvePositionConstraints_s_rD);
+                        const rD = b2Math.b2Rot.MulRV(qD, this.m_lalcD, b2GearJoint.SolvePositionConstraints_s_rD);
                         // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_lcB);
-                        const rB = b2Math.b2MulRV(qB, this.m_lalcB, b2GearJoint.SolvePositionConstraints_s_rB);
+                        const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, b2GearJoint.SolvePositionConstraints_s_rB);
                         // JvBD = m_ratio * u;
-                        b2Math.b2MulSV(this.m_ratio, u, JvBD);
+                        b2Math.b2Vec2.MulSV(this.m_ratio, u, JvBD);
                         // JwD = m_ratio * b2Cross(rD, u);
-                        JwD = this.m_ratio * b2Math.b2CrossVV(rD, u);
+                        JwD = this.m_ratio * b2Math.b2Vec2.CrossVV(rD, u);
                         // JwB = m_ratio * b2Cross(rB, u);
-                        JwB = this.m_ratio * b2Math.b2CrossVV(rB, u);
+                        JwB = this.m_ratio * b2Math.b2Vec2.CrossVV(rB, u);
                         mass += this.m_ratio * this.m_ratio * (this.m_mD + this.m_mB) + this.m_iD * JwD * JwD + this.m_iB * JwB * JwB;
                         // b2Math.b2Vec2 pD = m_localAnchorD - m_lcD;
                         const pD = this.m_lalcD;
                         // b2Math.b2Vec2 pB = b2MulT(qD, rB + (cB - cD));
-                        const pB = b2Math.b2MulTRV(qD, b2Math.b2AddVV(rB, b2Math.b2SubVV(cB, cD, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pB uses s_t0
+                        const pB = b2Math.b2Rot.MulTRV(qD, b2Math.b2Vec2.AddVV(rB, b2Math.b2Vec2.SubVV(cB, cD, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0); // pB uses s_t0
                         // coordinateB = b2Dot(pB - pD, m_localAxisD);
-                        coordinateB = b2Math.b2DotVV(b2Math.b2SubVV(pB, pD, b2Math.b2Vec2.s_t0), this.m_localAxisD);
+                        coordinateB = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pB, pD, b2Math.b2Vec2.s_t0), this.m_localAxisD);
                     }
                     const C = (coordinateA + this.m_ratio * coordinateB) - this.m_constant;
                     let impulse = 0;
@@ -9608,7 +9608,7 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
                 GetReactionForce(inv_dt, out) {
                     // b2Math.b2Vec2 P = m_impulse * m_JvAC;
                     // return inv_dt * P;
-                    return b2Math.b2MulSV(inv_dt * this.m_impulse, this.m_JvAC, out);
+                    return b2Math.b2Vec2.MulSV(inv_dt * this.m_impulse, this.m_JvAC, out);
                 }
                 GetReactionTorque(inv_dt) {
                     // float32 L = m_impulse * m_JwA;
@@ -9738,13 +9738,13 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Settings"
                 }
                 GetReactionForce(inv_dt, out) {
                     // return inv_dt * m_linearImpulse;
-                    return b2Math.b2MulSV(inv_dt, this.m_linearImpulse, out);
+                    return b2Math.b2Vec2.MulSV(inv_dt, this.m_linearImpulse, out);
                 }
                 GetReactionTorque(inv_dt) {
                     return inv_dt * this.m_angularImpulse;
                 }
                 SetLinearOffset(linearOffset) {
-                    if (!b2Math.b2IsEqualToV(linearOffset, this.m_linearOffset)) {
+                    if (!b2Math.b2Vec2.IsEqualToV(linearOffset, this.m_linearOffset)) {
                         this.m_bodyA.SetAwake(true);
                         this.m_bodyB.SetAwake(true);
                         this.m_linearOffset.Copy(linearOffset);
@@ -9801,9 +9801,9 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Settings"
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // Compute the effective mass matrix.
                     // this.m_rA = b2Mul(qA, -this.m_localCenterA);
-                    const rA = b2Math.b2MulRV(qA, b2Math.b2NegV(this.m_localCenterA, b2Math.b2Vec2.s_t0), this.m_rA);
+                    const rA = b2Math.b2Rot.MulRV(qA, b2Math.b2Vec2.NegV(this.m_localCenterA, b2Math.b2Vec2.s_t0), this.m_rA);
                     // this.m_rB = b2Mul(qB, -this.m_localCenterB);
-                    const rB = b2Math.b2MulRV(qB, b2Math.b2NegV(this.m_localCenterB, b2Math.b2Vec2.s_t0), this.m_rB);
+                    const rB = b2Math.b2Rot.MulRV(qB, b2Math.b2Vec2.NegV(this.m_localCenterB, b2Math.b2Vec2.s_t0), this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -9825,7 +9825,7 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Settings"
                         this.m_angularMass = 1 / this.m_angularMass;
                     }
                     // this.m_linearError = cB + rB - cA - rA - b2Mul(qA, this.m_linearOffset);
-                    b2Math.b2SubVV(b2Math.b2SubVV(b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t2), b2Math.b2MulRV(qA, this.m_linearOffset, b2Math.b2Vec2.s_t3), this.m_linearError);
+                    b2Math.b2Vec2.SubVV(b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t2), b2Math.b2Rot.MulRV(qA, this.m_linearOffset, b2Math.b2Vec2.s_t3), this.m_linearError);
                     this.m_angularError = aB - aA - this.m_angularOffset;
                     if (data.step.warmStarting) {
                         // Scale impulses to support a variable time step.
@@ -9836,10 +9836,10 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Settings"
                         const P = this.m_linearImpulse;
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math.b2CrossVV(rA, P) + this.m_angularImpulse);
+                        wA -= iA * (b2Math.b2Vec2.CrossVV(rA, P) + this.m_angularImpulse);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math.b2CrossVV(rB, P) + this.m_angularImpulse);
+                        wB += iB * (b2Math.b2Vec2.CrossVV(rB, P) + this.m_angularImpulse);
                     }
                     else {
                         this.m_linearImpulse.SetZero();
@@ -9874,10 +9874,10 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Settings"
                     {
                         const rA = this.m_rA;
                         const rB = this.m_rB;
-                        // b2Math.b2Vec2 Cdot = vB + b2Math.b2CrossSV(wB, rB) - vA - b2Math.b2CrossSV(wA, rA) + inv_h * this.m_correctionFactor * this.m_linearError;
-                        const Cdot_v2 = b2Math.b2AddVV(b2Math.b2SubVV(b2Math.b2AddVV(vB, b2Math.b2CrossSV(wB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2AddVV(vA, b2Math.b2CrossSV(wA, rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t2), b2Math.b2MulSV(inv_h * this.m_correctionFactor, this.m_linearError, b2Math.b2Vec2.s_t3), b2MotorJoint.SolveVelocityConstraints_s_Cdot_v2);
+                        // b2Math.b2Vec2 Cdot = vB + b2Math.b2Vec2.CrossSV(wB, rB) - vA - b2Math.b2Vec2.CrossSV(wA, rA) + inv_h * this.m_correctionFactor * this.m_linearError;
+                        const Cdot_v2 = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(vB, b2Math.b2Vec2.CrossSV(wB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(vA, b2Math.b2Vec2.CrossSV(wA, rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t2), b2Math.b2Vec2.MulSV(inv_h * this.m_correctionFactor, this.m_linearError, b2Math.b2Vec2.s_t3), b2MotorJoint.SolveVelocityConstraints_s_Cdot_v2);
                         // b2Math.b2Vec2 impulse = -b2Mul(this.m_linearMass, Cdot);
-                        const impulse_v2 = b2Math.b2MulMV(this.m_linearMass, Cdot_v2, b2MotorJoint.SolveVelocityConstraints_s_impulse_v2).SelfNeg();
+                        const impulse_v2 = b2Math.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2MotorJoint.SolveVelocityConstraints_s_impulse_v2).SelfNeg();
                         // b2Math.b2Vec2 oldImpulse = this.m_linearImpulse;
                         const oldImpulse_v2 = b2MotorJoint.SolveVelocityConstraints_s_oldImpulse_v2.Copy(this.m_linearImpulse);
                         // this.m_linearImpulse += impulse;
@@ -9889,15 +9889,15 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Settings"
                             this.m_linearImpulse.SelfMul(maxImpulse);
                         }
                         // impulse = this.m_linearImpulse - oldImpulse;
-                        b2Math.b2SubVV(this.m_linearImpulse, oldImpulse_v2, impulse_v2);
+                        b2Math.b2Vec2.SubVV(this.m_linearImpulse, oldImpulse_v2, impulse_v2);
                         // vA -= mA * impulse;
                         vA.SelfMulSub(mA, impulse_v2);
-                        // wA -= iA * b2Math.b2CrossVV(rA, impulse);
-                        wA -= iA * b2Math.b2CrossVV(rA, impulse_v2);
+                        // wA -= iA * b2Math.b2Vec2.CrossVV(rA, impulse);
+                        wA -= iA * b2Math.b2Vec2.CrossVV(rA, impulse_v2);
                         // vB += mB * impulse;
                         vB.SelfMulAdd(mB, impulse_v2);
-                        // wB += iB * b2Math.b2CrossVV(rB, impulse);
-                        wB += iB * b2Math.b2CrossVV(rB, impulse_v2);
+                        // wB += iB * b2Math.b2Vec2.CrossVV(rB, impulse);
+                        wB += iB * b2Math.b2Vec2.CrossVV(rB, impulse_v2);
                     }
                     // data.velocities[this.m_indexA].v = vA; // vA is a reference
                     data.velocities[this.m_indexA].w = wA;
@@ -10024,7 +10024,7 @@ System.register("Box2D/Dynamics/Joints/b2MouseJoint", ["Box2D/Common/b2Settings"
                         b2Settings.b2Assert(b2Math.b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
                     }
                     this.m_targetA.Copy(def.target);
-                    b2Math.b2MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
+                    b2Math.b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
                     this.m_maxForce = def.maxForce;
                     this.m_impulse.SetZero();
                     this.m_frequencyHz = def.frequencyHz;
@@ -10089,8 +10089,8 @@ System.register("Box2D/Dynamics/Joints/b2MouseJoint", ["Box2D/Common/b2Settings"
                     }
                     this.m_beta = h * k * this.m_gamma;
                     // Compute the effective mass matrix.
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
                     //      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
                     //        [    0     1/m1+1/m2]           [-r1.x*r1.y r1.x*r1.x]           [-r1.x*r1.y r1.x*r1.x]
@@ -10112,7 +10112,7 @@ System.register("Box2D/Dynamics/Joints/b2MouseJoint", ["Box2D/Common/b2Settings"
                         // vB += m_invMassB * m_impulse;
                         vB.x += this.m_invMassB * this.m_impulse.x;
                         vB.y += this.m_invMassB * this.m_impulse.y;
-                        wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, this.m_impulse);
+                        wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, this.m_impulse);
                     }
                     else {
                         this.m_impulse.SetZero();
@@ -10125,9 +10125,9 @@ System.register("Box2D/Dynamics/Joints/b2MouseJoint", ["Box2D/Common/b2Settings"
                     let wB = data.velocities[this.m_indexB].w;
                     // Cdot = v + cross(w, r)
                     // b2Math.b2Vec2 Cdot = vB + b2Cross(wB, m_rB);
-                    const Cdot = b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2MouseJoint.SolveVelocityConstraints_s_Cdot);
+                    const Cdot = b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2MouseJoint.SolveVelocityConstraints_s_Cdot);
                     //  b2Math.b2Vec2 impulse = b2Mul(m_mass, -(Cdot + m_C + m_gamma * m_impulse));
-                    const impulse = b2Math.b2MulMV(this.m_mass, b2Math.b2AddVV(Cdot, b2Math.b2AddVV(this.m_C, b2Math.b2MulSV(this.m_gamma, this.m_impulse, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0).SelfNeg(), b2MouseJoint.SolveVelocityConstraints_s_impulse);
+                    const impulse = b2Math.b2Mat22.MulMV(this.m_mass, b2Math.b2Vec2.AddVV(Cdot, b2Math.b2Vec2.AddVV(this.m_C, b2Math.b2Vec2.MulSV(this.m_gamma, this.m_impulse, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0), b2Math.b2Vec2.s_t0).SelfNeg(), b2MouseJoint.SolveVelocityConstraints_s_impulse);
                     // b2Math.b2Vec2 oldImpulse = m_impulse;
                     const oldImpulse = b2MouseJoint.SolveVelocityConstraints_s_oldImpulse.Copy(this.m_impulse);
                     // m_impulse += impulse;
@@ -10137,10 +10137,10 @@ System.register("Box2D/Dynamics/Joints/b2MouseJoint", ["Box2D/Common/b2Settings"
                         this.m_impulse.SelfMul(maxImpulse / this.m_impulse.GetLength());
                     }
                     // impulse = m_impulse - oldImpulse;
-                    b2Math.b2SubVV(this.m_impulse, oldImpulse, impulse);
+                    b2Math.b2Vec2.SubVV(this.m_impulse, oldImpulse, impulse);
                     // vB += m_invMassB * impulse;
                     vB.SelfMulAdd(this.m_invMassB, impulse);
-                    wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, impulse);
+                    wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, impulse);
                     // data.velocities[this.m_indexB].v = vB;
                     data.velocities[this.m_indexB].w = wB;
                 }
@@ -10154,7 +10154,7 @@ System.register("Box2D/Dynamics/Joints/b2MouseJoint", ["Box2D/Common/b2Settings"
                     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
                 }
                 GetReactionForce(inv_dt, out) {
-                    return b2Math.b2MulSV(inv_dt, this.m_impulse, out);
+                    return b2Math.b2Vec2.MulSV(inv_dt, this.m_impulse, out);
                 }
                 GetReactionTorque(inv_dt) {
                     return 0;
@@ -10231,8 +10231,8 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     this.groundAnchorB.Copy(groundB);
                     this.bodyA.GetLocalPoint(anchorA, this.localAnchorA);
                     this.bodyB.GetLocalPoint(anchorB, this.localAnchorB);
-                    this.lengthA = b2Math.b2DistanceVV(anchorA, groundA);
-                    this.lengthB = b2Math.b2DistanceVV(anchorB, groundB);
+                    this.lengthA = b2Math.b2Vec2.DistanceVV(anchorA, groundA);
+                    this.lengthB = b2Math.b2Vec2.DistanceVV(anchorB, groundB);
                     this.ratio = r;
                     if (b2Settings.ENABLE_ASSERTS) {
                         b2Settings.b2Assert(this.ratio > b2Settings.b2_epsilon);
@@ -10304,11 +10304,11 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     // b2Math.b2Rot qA(aA), qB(aB);
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // Get the pulley axes.
                     // m_uA = cA + m_rA - m_groundAnchorA;
                     this.m_uA.Copy(cA).SelfAdd(this.m_rA).SelfSub(this.m_groundAnchorA);
@@ -10329,8 +10329,8 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                         this.m_uB.SetZero();
                     }
                     // Compute effective mass.
-                    const ruA = b2Math.b2CrossVV(this.m_rA, this.m_uA);
-                    const ruB = b2Math.b2CrossVV(this.m_rB, this.m_uB);
+                    const ruA = b2Math.b2Vec2.CrossVV(this.m_rA, this.m_uA);
+                    const ruB = b2Math.b2Vec2.CrossVV(this.m_rB, this.m_uB);
                     const mA = this.m_invMassA + this.m_invIA * ruA * ruA;
                     const mB = this.m_invMassB + this.m_invIB * ruB * ruB;
                     this.m_mass = mA + this.m_ratio * this.m_ratio * mB;
@@ -10342,15 +10342,15 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                         this.m_impulse *= data.step.dtRatio;
                         // Warm starting.
                         // b2Math.b2Vec2 PA = -(m_impulse) * m_uA;
-                        const PA = b2Math.b2MulSV(-(this.m_impulse), this.m_uA, b2PulleyJoint.InitVelocityConstraints_s_PA);
+                        const PA = b2Math.b2Vec2.MulSV(-(this.m_impulse), this.m_uA, b2PulleyJoint.InitVelocityConstraints_s_PA);
                         // b2Math.b2Vec2 PB = (-m_ratio * m_impulse) * m_uB;
-                        const PB = b2Math.b2MulSV((-this.m_ratio * this.m_impulse), this.m_uB, b2PulleyJoint.InitVelocityConstraints_s_PB);
+                        const PB = b2Math.b2Vec2.MulSV((-this.m_ratio * this.m_impulse), this.m_uB, b2PulleyJoint.InitVelocityConstraints_s_PB);
                         // vA += m_invMassA * PA;
                         vA.SelfMulAdd(this.m_invMassA, PA);
-                        wA += this.m_invIA * b2Math.b2CrossVV(this.m_rA, PA);
+                        wA += this.m_invIA * b2Math.b2Vec2.CrossVV(this.m_rA, PA);
                         // vB += m_invMassB * PB;
                         vB.SelfMulAdd(this.m_invMassB, PB);
-                        wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, PB);
+                        wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, PB);
                     }
                     else {
                         this.m_impulse = 0;
@@ -10366,22 +10366,22 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     const vB = data.velocities[this.m_indexB].v;
                     let wB = data.velocities[this.m_indexB].w;
                     // b2Math.b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-                    const vpA = b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2PulleyJoint.SolveVelocityConstraints_s_vpA);
+                    const vpA = b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2PulleyJoint.SolveVelocityConstraints_s_vpA);
                     // b2Math.b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-                    const vpB = b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2PulleyJoint.SolveVelocityConstraints_s_vpB);
-                    const Cdot = -b2Math.b2DotVV(this.m_uA, vpA) - this.m_ratio * b2Math.b2DotVV(this.m_uB, vpB);
+                    const vpB = b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2PulleyJoint.SolveVelocityConstraints_s_vpB);
+                    const Cdot = -b2Math.b2Vec2.DotVV(this.m_uA, vpA) - this.m_ratio * b2Math.b2Vec2.DotVV(this.m_uB, vpB);
                     const impulse = -this.m_mass * Cdot;
                     this.m_impulse += impulse;
                     // b2Math.b2Vec2 PA = -impulse * m_uA;
-                    const PA = b2Math.b2MulSV(-impulse, this.m_uA, b2PulleyJoint.SolveVelocityConstraints_s_PA);
+                    const PA = b2Math.b2Vec2.MulSV(-impulse, this.m_uA, b2PulleyJoint.SolveVelocityConstraints_s_PA);
                     // b2Math.b2Vec2 PB = -m_ratio * impulse * m_uB;
-                    const PB = b2Math.b2MulSV(-this.m_ratio * impulse, this.m_uB, b2PulleyJoint.SolveVelocityConstraints_s_PB);
+                    const PB = b2Math.b2Vec2.MulSV(-this.m_ratio * impulse, this.m_uB, b2PulleyJoint.SolveVelocityConstraints_s_PB);
                     // vA += m_invMassA * PA;
                     vA.SelfMulAdd(this.m_invMassA, PA);
-                    wA += this.m_invIA * b2Math.b2CrossVV(this.m_rA, PA);
+                    wA += this.m_invIA * b2Math.b2Vec2.CrossVV(this.m_rA, PA);
                     // vB += m_invMassB * PB;
                     vB.SelfMulAdd(this.m_invMassB, PB);
-                    wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, PB);
+                    wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, PB);
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
                     // data.velocities[this.m_indexB].v = vB;
@@ -10395,11 +10395,11 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     // b2Math.b2Rot qA(aA), qB(aB);
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // Get the pulley axes.
                     // b2Math.b2Vec2 uA = cA + rA - m_groundAnchorA;
                     const uA = this.m_uA.Copy(cA).SelfAdd(rA).SelfSub(this.m_groundAnchorA);
@@ -10420,8 +10420,8 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                         uB.SetZero();
                     }
                     // Compute effective mass.
-                    const ruA = b2Math.b2CrossVV(rA, uA);
-                    const ruB = b2Math.b2CrossVV(rB, uB);
+                    const ruA = b2Math.b2Vec2.CrossVV(rA, uA);
+                    const ruB = b2Math.b2Vec2.CrossVV(rB, uB);
                     const mA = this.m_invMassA + this.m_invIA * ruA * ruA;
                     const mB = this.m_invMassB + this.m_invIB * ruB * ruB;
                     let mass = mA + this.m_ratio * this.m_ratio * mB;
@@ -10432,15 +10432,15 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     const linearError = b2Math.b2Abs(C);
                     const impulse = -mass * C;
                     // b2Math.b2Vec2 PA = -impulse * uA;
-                    const PA = b2Math.b2MulSV(-impulse, uA, b2PulleyJoint.SolvePositionConstraints_s_PA);
+                    const PA = b2Math.b2Vec2.MulSV(-impulse, uA, b2PulleyJoint.SolvePositionConstraints_s_PA);
                     // b2Math.b2Vec2 PB = -m_ratio * impulse * uB;
-                    const PB = b2Math.b2MulSV(-this.m_ratio * impulse, uB, b2PulleyJoint.SolvePositionConstraints_s_PB);
+                    const PB = b2Math.b2Vec2.MulSV(-this.m_ratio * impulse, uB, b2PulleyJoint.SolvePositionConstraints_s_PB);
                     // cA += m_invMassA * PA;
                     cA.SelfMulAdd(this.m_invMassA, PA);
-                    aA += this.m_invIA * b2Math.b2CrossVV(rA, PA);
+                    aA += this.m_invIA * b2Math.b2Vec2.CrossVV(rA, PA);
                     // cB += m_invMassB * PB;
                     cB.SelfMulAdd(this.m_invMassB, PB);
-                    aB += this.m_invIB * b2Math.b2CrossVV(rB, PB);
+                    aB += this.m_invIB * b2Math.b2Vec2.CrossVV(rB, PB);
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
@@ -10483,7 +10483,7 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     // return d.Length();
                     const p = this.m_bodyA.GetWorldPoint(this.m_localAnchorA, b2PulleyJoint.GetCurrentLengthA_s_p);
                     const s = this.m_groundAnchorA;
-                    return b2Math.b2DistanceVV(p, s);
+                    return b2Math.b2Vec2.DistanceVV(p, s);
                 }
                 GetCurrentLengthB() {
                     // b2Math.b2Vec2 p = m_bodyB->GetWorldPoint(m_localAnchorB);
@@ -10492,7 +10492,7 @@ System.register("Box2D/Dynamics/Joints/b2PulleyJoint", ["Box2D/Common/b2Settings
                     // return d.Length();
                     const p = this.m_bodyB.GetWorldPoint(this.m_localAnchorB, b2PulleyJoint.GetCurrentLengthB_s_p);
                     const s = this.m_groundAnchorB;
-                    return b2Math.b2DistanceVV(p, s);
+                    return b2Math.b2Vec2.DistanceVV(p, s);
                 }
                 Dump() {
                     if (b2Settings.DEBUG) {
@@ -10628,11 +10628,11 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                     let wB = data.velocities[this.m_indexB].w;
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // this.m_rA = b2Mul(qA, this.m_localAnchorA - this.m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // this.m_rB = b2Mul(qB, this.m_localAnchorB - this.m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // this.m_u = cB + this.m_rB - cA - this.m_rA;
                     this.m_u.Copy(cB).SelfAdd(this.m_rB).SelfSub(cA).SelfSub(this.m_rA);
                     this.m_length = this.m_u.GetLength();
@@ -10653,21 +10653,21 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                         return;
                     }
                     // Compute effective mass.
-                    const crA = b2Math.b2CrossVV(this.m_rA, this.m_u);
-                    const crB = b2Math.b2CrossVV(this.m_rB, this.m_u);
+                    const crA = b2Math.b2Vec2.CrossVV(this.m_rA, this.m_u);
+                    const crB = b2Math.b2Vec2.CrossVV(this.m_rB, this.m_u);
                     const invMass = this.m_invMassA + this.m_invIA * crA * crA + this.m_invMassB + this.m_invIB * crB * crB;
                     this.m_mass = invMass !== 0 ? 1 / invMass : 0;
                     if (data.step.warmStarting) {
                         // Scale the impulse to support a variable time step.
                         this.m_impulse *= data.step.dtRatio;
                         // b2Math.b2Vec2 P = m_impulse * m_u;
-                        const P = b2Math.b2MulSV(this.m_impulse, this.m_u, b2RopeJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.MulSV(this.m_impulse, this.m_u, b2RopeJoint.InitVelocityConstraints_s_P);
                         // vA -= m_invMassA * P;
                         vA.SelfMulSub(this.m_invMassA, P);
-                        wA -= this.m_invIA * b2Math.b2CrossVV(this.m_rA, P);
+                        wA -= this.m_invIA * b2Math.b2Vec2.CrossVV(this.m_rA, P);
                         // vB += m_invMassB * P;
                         vB.SelfMulAdd(this.m_invMassB, P);
-                        wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, P);
+                        wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, P);
                     }
                     else {
                         this.m_impulse = 0;
@@ -10684,13 +10684,13 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                     let wB = data.velocities[this.m_indexB].w;
                     // Cdot = dot(u, v + cross(w, r))
                     // b2Math.b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-                    const vpA = b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2RopeJoint.SolveVelocityConstraints_s_vpA);
+                    const vpA = b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2RopeJoint.SolveVelocityConstraints_s_vpA);
                     // b2Math.b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-                    const vpB = b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2RopeJoint.SolveVelocityConstraints_s_vpB);
+                    const vpB = b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2RopeJoint.SolveVelocityConstraints_s_vpB);
                     // float32 C = m_length - m_maxLength;
                     const C = this.m_length - this.m_maxLength;
                     // float32 Cdot = b2Dot(m_u, vpB - vpA);
-                    let Cdot = b2Math.b2DotVV(this.m_u, b2Math.b2SubVV(vpB, vpA, b2Math.b2Vec2.s_t0));
+                    let Cdot = b2Math.b2Vec2.DotVV(this.m_u, b2Math.b2Vec2.SubVV(vpB, vpA, b2Math.b2Vec2.s_t0));
                     // Predictive constraint.
                     if (C < 0) {
                         Cdot += data.step.inv_dt * C;
@@ -10700,13 +10700,13 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                     this.m_impulse = b2Math.b2Min(0, this.m_impulse + impulse);
                     impulse = this.m_impulse - oldImpulse;
                     // b2Math.b2Vec2 P = impulse * m_u;
-                    const P = b2Math.b2MulSV(impulse, this.m_u, b2RopeJoint.SolveVelocityConstraints_s_P);
+                    const P = b2Math.b2Vec2.MulSV(impulse, this.m_u, b2RopeJoint.SolveVelocityConstraints_s_P);
                     // vA -= m_invMassA * P;
                     vA.SelfMulSub(this.m_invMassA, P);
-                    wA -= this.m_invIA * b2Math.b2CrossVV(this.m_rA, P);
+                    wA -= this.m_invIA * b2Math.b2Vec2.CrossVV(this.m_rA, P);
                     // vB += m_invMassB * P;
                     vB.SelfMulAdd(this.m_invMassB, P);
-                    wB += this.m_invIB * b2Math.b2CrossVV(this.m_rB, P);
+                    wB += this.m_invIB * b2Math.b2Vec2.CrossVV(this.m_rB, P);
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
                     // data.velocities[this.m_indexB].v = vB;
@@ -10719,11 +10719,11 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                     let aB = data.positions[this.m_indexB].a;
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // b2Math.b2Vec2 rA = b2Mul(qA, this.m_localAnchorA - this.m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, this.m_localAnchorB - this.m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Math.b2Vec2 u = cB + rB - cA - rA;
                     const u = this.m_u.Copy(cB).SelfAdd(rB).SelfSub(cA).SelfSub(rA);
                     const length = u.Normalize();
@@ -10731,13 +10731,13 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                     C = b2Math.b2Clamp(C, 0, b2Settings.b2_maxLinearCorrection);
                     const impulse = -this.m_mass * C;
                     // b2Math.b2Vec2 P = impulse * u;
-                    const P = b2Math.b2MulSV(impulse, u, b2RopeJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math.b2Vec2.MulSV(impulse, u, b2RopeJoint.SolvePositionConstraints_s_P);
                     // cA -= m_invMassA * P;
                     cA.SelfMulSub(this.m_invMassA, P);
-                    aA -= this.m_invIA * b2Math.b2CrossVV(rA, P);
+                    aA -= this.m_invIA * b2Math.b2Vec2.CrossVV(rA, P);
                     // cB += m_invMassB * P;
                     cB.SelfMulAdd(this.m_invMassB, P);
-                    aB += this.m_invIB * b2Math.b2CrossVV(rB, P);
+                    aB += this.m_invIB * b2Math.b2Vec2.CrossVV(rB, P);
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
@@ -10751,7 +10751,7 @@ System.register("Box2D/Dynamics/Joints/b2RopeJoint", ["Box2D/Common/b2Settings",
                     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
                 }
                 GetReactionForce(inv_dt, out) {
-                    const F = b2Math.b2MulSV((inv_dt * this.m_impulse), this.m_u, out);
+                    const F = b2Math.b2Vec2.MulSV((inv_dt * this.m_impulse), this.m_u, out);
                     return F;
                     // return out.SetXY(inv_dt * this.m_linearImpulse.x, inv_dt * this.m_linearImpulse.y);
                 }
@@ -10899,11 +10899,11 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                     let wB = data.velocities[this.m_indexB].w;
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -10954,10 +10954,10 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                         const P = b2WeldJoint.InitVelocityConstraints_s_P.SetXY(this.m_impulse.x, this.m_impulse.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + this.m_impulse.z);
+                        wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + this.m_impulse.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + this.m_impulse.z);
+                        wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + this.m_impulse.z);
                     }
                     else {
                         this.m_impulse.SetZero();
@@ -10980,10 +10980,10 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                         this.m_impulse.z += impulse2;
                         wA -= iA * impulse2;
                         wB += iB * impulse2;
-                        // b2Math.b2Vec2 Cdot1 = vB + b2Math.b2CrossSV(wB, this.m_rB) - vA - b2Math.b2CrossSV(wA, this.m_rA);
-                        const Cdot1 = b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
+                        // b2Math.b2Vec2 Cdot1 = vB + b2Math.b2Vec2.CrossSV(wB, this.m_rB) - vA - b2Math.b2Vec2.CrossSV(wA, this.m_rA);
+                        const Cdot1 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
                         // b2Math.b2Vec2 impulse1 = -b2Mul22(m_mass, Cdot1);
-                        const impulse1 = b2Math.b2MulM33XY(this.m_mass, Cdot1.x, Cdot1.y, b2WeldJoint.SolveVelocityConstraints_s_impulse1).SelfNeg();
+                        const impulse1 = b2Math.b2Mat33.MulM33XY(this.m_mass, Cdot1.x, Cdot1.y, b2WeldJoint.SolveVelocityConstraints_s_impulse1).SelfNeg();
                         this.m_impulse.x += impulse1.x;
                         this.m_impulse.y += impulse1.y;
                         // b2Math.b2Vec2 P = impulse1;
@@ -10991,28 +10991,28 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
                         // wA -= iA * b2Cross(m_rA, P);
-                        wA -= iA * b2Math.b2CrossVV(this.m_rA, P);
+                        wA -= iA * b2Math.b2Vec2.CrossVV(this.m_rA, P);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
                         // wB += iB * b2Cross(m_rB, P);
-                        wB += iB * b2Math.b2CrossVV(this.m_rB, P);
+                        wB += iB * b2Math.b2Vec2.CrossVV(this.m_rB, P);
                     }
                     else {
                         // b2Math.b2Vec2 Cdot1 = vB + b2Cross(wB, this.m_rB) - vA - b2Cross(wA, this.m_rA);
-                        const Cdot1 = b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
+                        const Cdot1 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
                         const Cdot2 = wB - wA;
                         // b2Math.b2Vec3 const Cdot(Cdot1.x, Cdot1.y, Cdot2);
                         // b2Math.b2Vec3 impulse = -b2Mul(m_mass, Cdot);
-                        const impulse = b2Math.b2MulM33XYZ(this.m_mass, Cdot1.x, Cdot1.y, Cdot2, b2WeldJoint.SolveVelocityConstraints_s_impulse).SelfNeg();
+                        const impulse = b2Math.b2Mat33.MulM33XYZ(this.m_mass, Cdot1.x, Cdot1.y, Cdot2, b2WeldJoint.SolveVelocityConstraints_s_impulse).SelfNeg();
                         this.m_impulse.SelfAdd(impulse);
                         // b2Math.b2Vec2 P(impulse.x, impulse.y);
                         const P = b2WeldJoint.SolveVelocityConstraints_s_P.SetXY(impulse.x, impulse.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + impulse.z);
+                        wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + impulse.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + impulse.z);
+                        wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + impulse.z);
                     }
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
@@ -11028,11 +11028,11 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     let positionError, angularError;
                     const K = this.m_K;
                     K.ex.x = mA + mB + rA.y * rA.y * iA + rB.y * rB.y * iB;
@@ -11046,21 +11046,21 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                     K.ez.z = iA + iB;
                     if (this.m_frequencyHz > 0) {
                         // b2Math.b2Vec2 C1 =  cB + rB - cA - rA;
-                        const C1 = b2Math.b2SubVV(b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
+                        const C1 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
                         positionError = C1.GetLength();
                         angularError = 0;
                         // b2Math.b2Vec2 P = -K.Solve22(C1);
                         const P = K.Solve22(C1.x, C1.y, b2WeldJoint.SolvePositionConstraints_s_P).SelfNeg();
                         // cA -= mA * P;
                         cA.SelfMulSub(mA, P);
-                        aA -= iA * b2Math.b2CrossVV(rA, P);
+                        aA -= iA * b2Math.b2Vec2.CrossVV(rA, P);
                         // cB += mB * P;
                         cB.SelfMulAdd(mB, P);
-                        aB += iB * b2Math.b2CrossVV(rB, P);
+                        aB += iB * b2Math.b2Vec2.CrossVV(rB, P);
                     }
                     else {
                         // b2Math.b2Vec2 C1 =  cB + rB - cA - rA;
-                        const C1 = b2Math.b2SubVV(b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
+                        const C1 = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
                         const C2 = aB - aA - this.m_referenceAngle;
                         positionError = C1.GetLength();
                         angularError = b2Math.b2Abs(C2);
@@ -11071,10 +11071,10 @@ System.register("Box2D/Dynamics/Joints/b2WeldJoint", ["Box2D/Common/b2Settings",
                         const P = b2WeldJoint.SolvePositionConstraints_s_P.SetXY(impulse.x, impulse.y);
                         // cA -= mA * P;
                         cA.SelfMulSub(mA, P);
-                        aA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + impulse.z);
+                        aA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + impulse.z);
                         // cB += mB * P;
                         cB.SelfMulAdd(mB, P);
-                        aB += iB * (b2Math.b2CrossVV(this.m_rB, P) + impulse.z);
+                        aB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + impulse.z);
                     }
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
@@ -11240,7 +11240,7 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     this.m_localAnchorA.Copy(def.localAnchorA);
                     this.m_localAnchorB.Copy(def.localAnchorB);
                     this.m_localXAxisA.Copy(def.localAxisA);
-                    b2Math.b2CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
+                    b2Math.b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
                     this.m_maxMotorTorque = def.maxMotorTorque;
                     this.m_motorSpeed = def.motorSpeed;
                     this.m_enableMotor = def.enableMotor;
@@ -11287,21 +11287,21 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // Compute the effective masses.
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Math.b2Vec2 d = cB + rB - cA - rA;
-                    const d = b2Math.b2SubVV(b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_d);
+                    const d = b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_d);
                     // Point to line constraint
                     {
                         // m_ay = b2Mul(qA, m_localYAxisA);
-                        b2Math.b2MulRV(qA, this.m_localYAxisA, this.m_ay);
+                        b2Math.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_ay);
                         // m_sAy = b2Cross(d + rA, m_ay);
-                        this.m_sAy = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_ay);
+                        this.m_sAy = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_ay);
                         // m_sBy = b2Cross(rB, m_ay);
-                        this.m_sBy = b2Math.b2CrossVV(rB, this.m_ay);
+                        this.m_sBy = b2Math.b2Vec2.CrossVV(rB, this.m_ay);
                         this.m_mass = mA + mB + iA * this.m_sAy * this.m_sAy + iB * this.m_sBy * this.m_sBy;
                         if (this.m_mass > 0) {
                             this.m_mass = 1 / this.m_mass;
@@ -11313,15 +11313,15 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     this.m_gamma = 0;
                     if (this.m_frequencyHz > 0) {
                         // m_ax = b2Mul(qA, m_localXAxisA);
-                        b2Math.b2MulRV(qA, this.m_localXAxisA, this.m_ax);
+                        b2Math.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_ax);
                         // m_sAx = b2Cross(d + rA, m_ax);
-                        this.m_sAx = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_ax);
+                        this.m_sAx = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), this.m_ax);
                         // m_sBx = b2Cross(rB, m_ax);
-                        this.m_sBx = b2Math.b2CrossVV(rB, this.m_ax);
+                        this.m_sBx = b2Math.b2Vec2.CrossVV(rB, this.m_ax);
                         const invMass = mA + mB + iA * this.m_sAx * this.m_sAx + iB * this.m_sBx * this.m_sBx;
                         if (invMass > 0) {
                             this.m_springMass = 1 / invMass;
-                            const C = b2Math.b2DotVV(d, this.m_ax);
+                            const C = b2Math.b2Vec2.DotVV(d, this.m_ax);
                             // Frequency
                             const omega = 2 * b2Settings.b2_pi * this.m_frequencyHz;
                             // Damping coefficient
@@ -11361,7 +11361,7 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                         this.m_springImpulse *= data.step.dtRatio;
                         this.m_motorImpulse *= data.step.dtRatio;
                         // b2Math.b2Vec2 P = m_impulse * m_ay + m_springImpulse * m_ax;
-                        const P = b2Math.b2AddVV(b2Math.b2MulSV(this.m_impulse, this.m_ay, b2Math.b2Vec2.s_t0), b2Math.b2MulSV(this.m_springImpulse, this.m_ax, b2Math.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.MulSV(this.m_impulse, this.m_ay, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.MulSV(this.m_springImpulse, this.m_ax, b2Math.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_P);
                         // float32 LA = m_impulse * m_sAy + m_springImpulse * m_sAx + m_motorImpulse;
                         const LA = this.m_impulse * this.m_sAy + this.m_springImpulse * this.m_sAx + this.m_motorImpulse;
                         // float32 LB = m_impulse * m_sBy + m_springImpulse * m_sBx + m_motorImpulse;
@@ -11392,11 +11392,11 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     let wB = data.velocities[this.m_indexB].w;
                     // Solve spring constraint
                     if (true) {
-                        const Cdot = b2Math.b2DotVV(this.m_ax, b2Math.b2SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_sBx * wB - this.m_sAx * wA;
+                        const Cdot = b2Math.b2Vec2.DotVV(this.m_ax, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_sBx * wB - this.m_sAx * wA;
                         const impulse = -this.m_springMass * (Cdot + this.m_bias + this.m_gamma * this.m_springImpulse);
                         this.m_springImpulse += impulse;
                         // b2Math.b2Vec2 P = impulse * m_ax;
-                        const P = b2Math.b2MulSV(impulse, this.m_ax, b2WheelJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.MulSV(impulse, this.m_ax, b2WheelJoint.SolveVelocityConstraints_s_P);
                         const LA = impulse * this.m_sAx;
                         const LB = impulse * this.m_sBx;
                         // vA -= mA * P;
@@ -11419,11 +11419,11 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     }
                     // Solve point to line constraint
                     if (true) {
-                        const Cdot = b2Math.b2DotVV(this.m_ay, b2Math.b2SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_sBy * wB - this.m_sAy * wA;
+                        const Cdot = b2Math.b2Vec2.DotVV(this.m_ay, b2Math.b2Vec2.SubVV(vB, vA, b2Math.b2Vec2.s_t0)) + this.m_sBy * wB - this.m_sAy * wA;
                         const impulse = -this.m_mass * Cdot;
                         this.m_impulse += impulse;
                         // b2Math.b2Vec2 P = impulse * m_ay;
-                        const P = b2Math.b2MulSV(impulse, this.m_ay, b2WheelJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math.b2Vec2.MulSV(impulse, this.m_ay, b2WheelJoint.SolveVelocityConstraints_s_P);
                         const LA = impulse * this.m_sAy;
                         const LB = impulse * this.m_sBy;
                         // vA -= mA * P;
@@ -11445,21 +11445,21 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     let aB = data.positions[this.m_indexB].a;
                     const qA = this.m_qA.SetAngleRadians(aA), qB = this.m_qB.SetAngleRadians(aB);
                     // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Math.b2Vec2 d = (cB - cA) + rB - rA;
-                    const d = b2Math.b2AddVV(b2Math.b2SubVV(cB, cA, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(rB, rA, b2Math.b2Vec2.s_t1), b2WheelJoint.SolvePositionConstraints_s_d);
+                    const d = b2Math.b2Vec2.AddVV(b2Math.b2Vec2.SubVV(cB, cA, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(rB, rA, b2Math.b2Vec2.s_t1), b2WheelJoint.SolvePositionConstraints_s_d);
                     // b2Math.b2Vec2 ay = b2Mul(qA, m_localYAxisA);
-                    const ay = b2Math.b2MulRV(qA, this.m_localYAxisA, this.m_ay);
+                    const ay = b2Math.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_ay);
                     // float32 sAy = b2Cross(d + rA, ay);
-                    const sAy = b2Math.b2CrossVV(b2Math.b2AddVV(d, rA, b2Math.b2Vec2.s_t0), ay);
+                    const sAy = b2Math.b2Vec2.CrossVV(b2Math.b2Vec2.AddVV(d, rA, b2Math.b2Vec2.s_t0), ay);
                     // float32 sBy = b2Cross(rB, ay);
-                    const sBy = b2Math.b2CrossVV(rB, ay);
+                    const sBy = b2Math.b2Vec2.CrossVV(rB, ay);
                     // float32 C = b2Dot(d, ay);
-                    const C = b2Math.b2DotVV(d, this.m_ay);
+                    const C = b2Math.b2Vec2.DotVV(d, this.m_ay);
                     const k = this.m_invMassA + this.m_invMassB + this.m_invIA * this.m_sAy * this.m_sAy + this.m_invIB * this.m_sBy * this.m_sBy;
                     let impulse;
                     if (k !== 0) {
@@ -11469,7 +11469,7 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                         impulse = 0;
                     }
                     // b2Math.b2Vec2 P = impulse * ay;
-                    const P = b2Math.b2MulSV(impulse, ay, b2WheelJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math.b2Vec2.MulSV(impulse, ay, b2WheelJoint.SolvePositionConstraints_s_P);
                     const LA = impulse * sAy;
                     const LB = impulse * sBy;
                     // cA -= m_invMassA * P;
@@ -11513,9 +11513,9 @@ System.register("Box2D/Dynamics/Joints/b2WheelJoint", ["Box2D/Common/b2Settings"
                     const bB = this.m_bodyB;
                     const pA = bA.GetWorldPoint(this.m_localAnchorA, new b2Math.b2Vec2());
                     const pB = bB.GetWorldPoint(this.m_localAnchorB, new b2Math.b2Vec2());
-                    const d = b2Math.b2SubVV(pB, pA, new b2Math.b2Vec2());
+                    const d = b2Math.b2Vec2.SubVV(pB, pA, new b2Math.b2Vec2());
                     const axis = bA.GetWorldVector(this.m_localXAxisA, new b2Math.b2Vec2());
-                    const translation = b2Math.b2DotVV(d, axis);
+                    const translation = b2Math.b2Vec2.DotVV(d, axis);
                     return translation;
                 }
                 GetJointSpeed() {
@@ -11683,13 +11683,13 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
     function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
         // Compute circle in frame of edge
-        const Q = b2Math.b2MulTXV(xfA, b2Math.b2MulXV(xfB, circleB.m_p, b2Math.b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
+        const Q = b2Math.b2Transform.MulTXV(xfA, b2Math.b2Transform.MulXV(xfB, circleB.m_p, b2Math.b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
         const A = edgeA.m_vertex1;
         const B = edgeA.m_vertex2;
-        const e = b2Math.b2SubVV(B, A, b2CollideEdgeAndCircle_s_e);
+        const e = b2Math.b2Vec2.SubVV(B, A, b2CollideEdgeAndCircle_s_e);
         // Barycentric coordinates
-        const u = b2Math.b2DotVV(e, b2Math.b2SubVV(B, Q, b2Math.b2Vec2.s_t0));
-        const v = b2Math.b2DotVV(e, b2Math.b2SubVV(Q, A, b2Math.b2Vec2.s_t0));
+        const u = b2Math.b2Vec2.DotVV(e, b2Math.b2Vec2.SubVV(B, Q, b2Math.b2Vec2.s_t0));
+        const v = b2Math.b2Vec2.DotVV(e, b2Math.b2Vec2.SubVV(Q, A, b2Math.b2Vec2.s_t0));
         const radius = edgeA.m_radius + circleB.m_radius;
         // const cf: b2ContactFeature = new b2ContactFeature();
         const id = b2CollideEdgeAndCircle_s_id;
@@ -11698,8 +11698,8 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
         // Region A
         if (v <= 0) {
             const P = A;
-            const d = b2Math.b2SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-            const dd = b2Math.b2DotVV(d, d);
+            const d = b2Math.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+            const dd = b2Math.b2Vec2.DotVV(d, d);
             if (dd > radius * radius) {
                 return;
             }
@@ -11707,8 +11707,8 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
             if (edgeA.m_hasVertex0) {
                 const A1 = edgeA.m_vertex0;
                 const B1 = A;
-                const e1 = b2Math.b2SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
-                const u1 = b2Math.b2DotVV(e1, b2Math.b2SubVV(B1, Q, b2Math.b2Vec2.s_t0));
+                const e1 = b2Math.b2Vec2.SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
+                const u1 = b2Math.b2Vec2.DotVV(e1, b2Math.b2Vec2.SubVV(B1, Q, b2Math.b2Vec2.s_t0));
                 // Is the circle in Region AB of the previous edge?
                 if (u1 > 0) {
                     return;
@@ -11729,8 +11729,8 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
         // Region B
         if (u <= 0) {
             const P = B;
-            const d = b2Math.b2SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-            const dd = b2Math.b2DotVV(d, d);
+            const d = b2Math.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+            const dd = b2Math.b2Vec2.DotVV(d, d);
             if (dd > radius * radius) {
                 return;
             }
@@ -11738,8 +11738,8 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
             if (edgeA.m_hasVertex3) {
                 const B2 = edgeA.m_vertex3;
                 const A2 = B;
-                const e2 = b2Math.b2SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
-                const v2 = b2Math.b2DotVV(e2, b2Math.b2SubVV(Q, A2, b2Math.b2Vec2.s_t0));
+                const e2 = b2Math.b2Vec2.SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
+                const v2 = b2Math.b2Vec2.DotVV(e2, b2Math.b2Vec2.SubVV(Q, A2, b2Math.b2Vec2.s_t0));
                 // Is the circle in Region AB of the next edge?
                 if (v2 > 0) {
                     return;
@@ -11758,20 +11758,20 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
             return;
         }
         // Region AB
-        const den = b2Math.b2DotVV(e, e);
+        const den = b2Math.b2Vec2.DotVV(e, e);
         if (b2Settings.ENABLE_ASSERTS) {
             b2Settings.b2Assert(den > 0);
         }
         const P = b2CollideEdgeAndCircle_s_P;
         P.x = (1 / den) * (u * A.x + v * B.x);
         P.y = (1 / den) * (u * A.y + v * B.y);
-        const d = b2Math.b2SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-        const dd = b2Math.b2DotVV(d, d);
+        const d = b2Math.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+        const dd = b2Math.b2Vec2.DotVV(d, d);
         if (dd > radius * radius) {
             return;
         }
         const n = b2CollideEdgeAndCircle_s_n.SetXY(-e.y, e.x);
-        if (b2Math.b2DotVV(n, b2Math.b2SubVV(Q, A, b2Math.b2Vec2.s_t0)) < 0) {
+        if (b2Math.b2Vec2.DotVV(n, b2Math.b2Vec2.SubVV(Q, A, b2Math.b2Vec2.s_t0)) < 0) {
             n.SetXY(-n.x, -n.y);
         }
         n.Normalize();
@@ -11861,37 +11861,37 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                     this.m_front = false;
                 }
                 Collide(manifold, edgeA, xfA, polygonB, xfB) {
-                    b2Math.b2MulTXX(xfA, xfB, this.m_xf);
-                    b2Math.b2MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
+                    b2Math.b2Transform.MulTXX(xfA, xfB, this.m_xf);
+                    b2Math.b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
                     this.m_v0.Copy(edgeA.m_vertex0);
                     this.m_v1.Copy(edgeA.m_vertex1);
                     this.m_v2.Copy(edgeA.m_vertex2);
                     this.m_v3.Copy(edgeA.m_vertex3);
                     const hasVertex0 = edgeA.m_hasVertex0;
                     const hasVertex3 = edgeA.m_hasVertex3;
-                    const edge1 = b2Math.b2SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
+                    const edge1 = b2Math.b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
                     edge1.Normalize();
                     this.m_normal1.SetXY(edge1.y, -edge1.x);
-                    const offset1 = b2Math.b2DotVV(this.m_normal1, b2Math.b2SubVV(this.m_centroidB, this.m_v1, b2Math.b2Vec2.s_t0));
+                    const offset1 = b2Math.b2Vec2.DotVV(this.m_normal1, b2Math.b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Math.b2Vec2.s_t0));
                     let offset0 = 0;
                     let offset2 = 0;
                     let convex1 = false;
                     let convex2 = false;
                     // Is there a preceding edge?
                     if (hasVertex0) {
-                        const edge0 = b2Math.b2SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
+                        const edge0 = b2Math.b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
                         edge0.Normalize();
                         this.m_normal0.SetXY(edge0.y, -edge0.x);
-                        convex1 = b2Math.b2CrossVV(edge0, edge1) >= 0;
-                        offset0 = b2Math.b2DotVV(this.m_normal0, b2Math.b2SubVV(this.m_centroidB, this.m_v0, b2Math.b2Vec2.s_t0));
+                        convex1 = b2Math.b2Vec2.CrossVV(edge0, edge1) >= 0;
+                        offset0 = b2Math.b2Vec2.DotVV(this.m_normal0, b2Math.b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Math.b2Vec2.s_t0));
                     }
                     // Is there a following edge?
                     if (hasVertex3) {
-                        const edge2 = b2Math.b2SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
+                        const edge2 = b2Math.b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
                         edge2.Normalize();
                         this.m_normal2.SetXY(edge2.y, -edge2.x);
-                        convex2 = b2Math.b2CrossVV(edge1, edge2) > 0;
-                        offset2 = b2Math.b2DotVV(this.m_normal2, b2Math.b2SubVV(this.m_centroidB, this.m_v2, b2Math.b2Vec2.s_t0));
+                        convex2 = b2Math.b2Vec2.CrossVV(edge1, edge2) > 0;
+                        offset2 = b2Math.b2Vec2.DotVV(this.m_normal2, b2Math.b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Math.b2Vec2.s_t0));
                     }
                     // Determine front or back collision. Determine collision normal limits.
                     if (hasVertex0 && hasVertex3) {
@@ -12020,8 +12020,8 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                     // Get polygonB in frameA
                     this.m_polygonB.count = polygonB.m_count;
                     for (let i = 0, ict = polygonB.m_count; i < ict; ++i) {
-                        b2Math.b2MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
-                        b2Math.b2MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
+                        b2Math.b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
+                        b2Math.b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
                     }
                     this.m_radius = 2 * b2Settings.b2_polygonRadius;
                     manifold.pointCount = 0;
@@ -12056,9 +12056,9 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                         manifold.type = 1 /* e_faceA */;
                         // Search for the polygon normal that is most anti-parallel to the edge normal.
                         let bestIndex = 0;
-                        let bestValue = b2Math.b2DotVV(this.m_normal, this.m_polygonB.normals[0]);
+                        let bestValue = b2Math.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
                         for (let i = 1, ict = this.m_polygonB.count; i < ict; ++i) {
-                            const value = b2Math.b2DotVV(this.m_normal, this.m_polygonB.normals[i]);
+                            const value = b2Math.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
                             if (value < bestValue) {
                                 bestValue = value;
                                 bestIndex = i;
@@ -12115,8 +12115,8 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                     }
                     rf.sideNormal1.SetXY(rf.normal.y, -rf.normal.x);
                     rf.sideNormal2.Copy(rf.sideNormal1).SelfNeg();
-                    rf.sideOffset1 = b2Math.b2DotVV(rf.sideNormal1, rf.v1);
-                    rf.sideOffset2 = b2Math.b2DotVV(rf.sideNormal2, rf.v2);
+                    rf.sideOffset1 = b2Math.b2Vec2.DotVV(rf.sideNormal1, rf.v1);
+                    rf.sideOffset2 = b2Math.b2Vec2.DotVV(rf.sideNormal2, rf.v2);
                     // Clip incident edge against extruded edge1 side edges.
                     const clipPoints1 = b2EPCollider.s_clipPoints1;
                     const clipPoints2 = b2EPCollider.s_clipPoints2;
@@ -12143,11 +12143,11 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                     let pointCount = 0;
                     for (let i = 0, ict = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
                         let separation;
-                        separation = b2Math.b2DotVV(rf.normal, b2Math.b2SubVV(clipPoints2[i].v, rf.v1, b2Math.b2Vec2.s_t0));
+                        separation = b2Math.b2Vec2.DotVV(rf.normal, b2Math.b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Math.b2Vec2.s_t0));
                         if (separation <= this.m_radius) {
                             const cp = manifold.points[pointCount];
                             if (primaryAxis.type === 1 /* e_edgeA */) {
-                                b2Math.b2MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
+                                b2Math.b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
                                 cp.id = clipPoints2[i].id;
                             }
                             else {
@@ -12168,7 +12168,7 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                     axis.index = this.m_front ? 0 : 1;
                     axis.separation = b2Settings.b2_maxFloat;
                     for (let i = 0, ict = this.m_polygonB.count; i < ict; ++i) {
-                        const s = b2Math.b2DotVV(this.m_normal, b2Math.b2SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
+                        const s = b2Math.b2Vec2.DotVV(this.m_normal, b2Math.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
                         if (s < axis.separation) {
                             axis.separation = s;
                         }
@@ -12182,9 +12182,9 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                     axis.separation = -b2Settings.b2_maxFloat;
                     const perp = b2EPCollider.s_perp.SetXY(-this.m_normal.y, this.m_normal.x);
                     for (let i = 0, ict = this.m_polygonB.count; i < ict; ++i) {
-                        const n = b2Math.b2NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
-                        const s1 = b2Math.b2DotVV(n, b2Math.b2SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
-                        const s2 = b2Math.b2DotVV(n, b2Math.b2SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Math.b2Vec2.s_t0));
+                        const n = b2Math.b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
+                        const s1 = b2Math.b2Vec2.DotVV(n, b2Math.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
+                        const s2 = b2Math.b2Vec2.DotVV(n, b2Math.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Math.b2Vec2.s_t0));
                         const s = b2Math.b2Min(s1, s2);
                         if (s > this.m_radius) {
                             // No collision
@@ -12194,13 +12194,13 @@ System.register("Box2D/Collision/b2CollideEdge", ["Box2D/Common/b2Settings", "Bo
                             return axis;
                         }
                         // Adjacency
-                        if (b2Math.b2DotVV(n, perp) >= 0) {
-                            if (b2Math.b2DotVV(b2Math.b2SubVV(n, this.m_upperLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
+                        if (b2Math.b2Vec2.DotVV(n, perp) >= 0) {
+                            if (b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(n, this.m_upperLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
                                 continue;
                             }
                         }
                         else {
-                            if (b2Math.b2DotVV(b2Math.b2SubVV(n, this.m_lowerLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
+                            if (b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(n, this.m_lowerLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
                                 continue;
                             }
                         }
@@ -12397,9 +12397,9 @@ System.register("Box2D/Collision/b2CollideCircle", ["Box2D/Common/b2Settings", "
     var b2CollideCircles_s_pA, b2CollideCircles_s_pB, b2CollidePolygonAndCircle_s_c, b2CollidePolygonAndCircle_s_cLocal, b2CollidePolygonAndCircle_s_faceCenter;
     function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
-        const pA = b2Math.b2MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
-        const pB = b2Math.b2MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
-        const distSqr = b2Math.b2DistanceSquaredVV(pA, pB);
+        const pA = b2Math.b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
+        const pB = b2Math.b2Transform.MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
+        const distSqr = b2Math.b2Vec2.DistanceSquaredVV(pA, pB);
         const radius = circleA.m_radius + circleB.m_radius;
         if (distSqr > radius * radius) {
             return;
@@ -12415,8 +12415,8 @@ System.register("Box2D/Collision/b2CollideCircle", ["Box2D/Common/b2Settings", "
     function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
         // Compute circle position in the frame of the polygon.
-        const c = b2Math.b2MulXV(xfB, circleB.m_p, b2CollidePolygonAndCircle_s_c);
-        const cLocal = b2Math.b2MulTXV(xfA, c, b2CollidePolygonAndCircle_s_cLocal);
+        const c = b2Math.b2Transform.MulXV(xfB, circleB.m_p, b2CollidePolygonAndCircle_s_c);
+        const cLocal = b2Math.b2Transform.MulTXV(xfA, c, b2CollidePolygonAndCircle_s_cLocal);
         // Find the min separating edge.
         let normalIndex = 0;
         let separation = (-b2Settings.b2_maxFloat);
@@ -12425,7 +12425,7 @@ System.register("Box2D/Collision/b2CollideCircle", ["Box2D/Common/b2Settings", "
         const vertices = polygonA.m_vertices;
         const normals = polygonA.m_normals;
         for (let i = 0; i < vertexCount; ++i) {
-            const s = b2Math.b2DotVV(normals[i], b2Math.b2SubVV(cLocal, vertices[i], b2Math.b2Vec2.s_t0));
+            const s = b2Math.b2Vec2.DotVV(normals[i], b2Math.b2Vec2.SubVV(cLocal, vertices[i], b2Math.b2Vec2.s_t0));
             if (s > radius) {
                 // Early out.
                 return;
@@ -12445,39 +12445,39 @@ System.register("Box2D/Collision/b2CollideCircle", ["Box2D/Common/b2Settings", "
             manifold.pointCount = 1;
             manifold.type = 1 /* e_faceA */;
             manifold.localNormal.Copy(normals[normalIndex]);
-            b2Math.b2MidVV(v1, v2, manifold.localPoint);
+            b2Math.b2Vec2.MidVV(v1, v2, manifold.localPoint);
             manifold.points[0].localPoint.Copy(circleB.m_p);
             manifold.points[0].id.key = 0;
             return;
         }
         // Compute barycentric coordinates
-        const u1 = b2Math.b2DotVV(b2Math.b2SubVV(cLocal, v1, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(v2, v1, b2Math.b2Vec2.s_t1));
-        const u2 = b2Math.b2DotVV(b2Math.b2SubVV(cLocal, v2, b2Math.b2Vec2.s_t0), b2Math.b2SubVV(v1, v2, b2Math.b2Vec2.s_t1));
+        const u1 = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(cLocal, v1, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(v2, v1, b2Math.b2Vec2.s_t1));
+        const u2 = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(cLocal, v2, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.SubVV(v1, v2, b2Math.b2Vec2.s_t1));
         if (u1 <= 0) {
-            if (b2Math.b2DistanceSquaredVV(cLocal, v1) > radius * radius) {
+            if (b2Math.b2Vec2.DistanceSquaredVV(cLocal, v1) > radius * radius) {
                 return;
             }
             manifold.pointCount = 1;
             manifold.type = 1 /* e_faceA */;
-            b2Math.b2SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
+            b2Math.b2Vec2.SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
             manifold.localPoint.Copy(v1);
             manifold.points[0].localPoint.Copy(circleB.m_p);
             manifold.points[0].id.key = 0;
         }
         else if (u2 <= 0) {
-            if (b2Math.b2DistanceSquaredVV(cLocal, v2) > radius * radius) {
+            if (b2Math.b2Vec2.DistanceSquaredVV(cLocal, v2) > radius * radius) {
                 return;
             }
             manifold.pointCount = 1;
             manifold.type = 1 /* e_faceA */;
-            b2Math.b2SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
+            b2Math.b2Vec2.SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
             manifold.localPoint.Copy(v2);
             manifold.points[0].localPoint.Copy(circleB.m_p);
             manifold.points[0].id.key = 0;
         }
         else {
-            const faceCenter = b2Math.b2MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
-            separation = b2Math.b2DotVV(b2Math.b2SubVV(cLocal, faceCenter, b2Math.b2Vec2.s_t1), normals[vertIndex1]);
+            const faceCenter = b2Math.b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
+            separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(cLocal, faceCenter, b2Math.b2Vec2.s_t1), normals[vertIndex1]);
             if (separation > radius) {
                 return;
             }
@@ -12809,34 +12809,34 @@ System.register("Box2D/Collision/b2CollidePolygon", ["Box2D/Common/b2Settings", 
             b2Settings.b2Assert(0 <= edge1 && edge1 < count1);
         }
         // Convert normal from poly1's frame into poly2's frame.
-        const normal1World = b2Math.b2MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
-        const normal1 = b2Math.b2MulTRV(xf2.q, normal1World, b2EdgeSeparation_s_normal1);
+        const normal1World = b2Math.b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
+        const normal1 = b2Math.b2Rot.MulTRV(xf2.q, normal1World, b2EdgeSeparation_s_normal1);
         // Find support vertex on poly2 for -normal.
         let index = 0;
         let minDot = b2Settings.b2_maxFloat;
         for (let i = 0; i < count2; ++i) {
-            const dot = b2Math.b2DotVV(vertices2[i], normal1);
+            const dot = b2Math.b2Vec2.DotVV(vertices2[i], normal1);
             if (dot < minDot) {
                 minDot = dot;
                 index = i;
             }
         }
-        const v1 = b2Math.b2MulXV(xf1, vertices1[edge1], b2EdgeSeparation_s_v1);
-        const v2 = b2Math.b2MulXV(xf2, vertices2[index], b2EdgeSeparation_s_v2);
-        const separation = b2Math.b2DotVV(b2Math.b2SubVV(v2, v1, b2Math.b2Vec2.s_t0), normal1World);
+        const v1 = b2Math.b2Transform.MulXV(xf1, vertices1[edge1], b2EdgeSeparation_s_v1);
+        const v2 = b2Math.b2Transform.MulXV(xf2, vertices2[index], b2EdgeSeparation_s_v2);
+        const separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(v2, v1, b2Math.b2Vec2.s_t0), normal1World);
         return separation;
     }
     function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
         const count1 = poly1.m_count;
         const normals1 = poly1.m_normals;
         // Vector pointing from the centroid of poly1 to the centroid of poly2.
-        const d = b2Math.b2SubVV(b2Math.b2MulXV(xf2, poly2.m_centroid, b2Math.b2Vec2.s_t0), b2Math.b2MulXV(xf1, poly1.m_centroid, b2Math.b2Vec2.s_t1), b2FindMaxSeparation_s_d);
-        const dLocal1 = b2Math.b2MulTRV(xf1.q, d, b2FindMaxSeparation_s_dLocal1);
+        const d = b2Math.b2Vec2.SubVV(b2Math.b2Transform.MulXV(xf2, poly2.m_centroid, b2Math.b2Vec2.s_t0), b2Math.b2Transform.MulXV(xf1, poly1.m_centroid, b2Math.b2Vec2.s_t1), b2FindMaxSeparation_s_d);
+        const dLocal1 = b2Math.b2Rot.MulTRV(xf1.q, d, b2FindMaxSeparation_s_dLocal1);
         // Find edge normal on poly1 that has the largest projection onto d.
         let edge = 0;
         let maxDot = (-b2Settings.b2_maxFloat);
         for (let i = 0; i < count1; ++i) {
-            const dot = b2Math.b2DotVV(normals1[i], dLocal1);
+            const dot = b2Math.b2Vec2.DotVV(normals1[i], dLocal1);
             if (dot > maxDot) {
                 maxDot = dot;
                 edge = i;
@@ -12896,12 +12896,12 @@ System.register("Box2D/Collision/b2CollidePolygon", ["Box2D/Common/b2Settings", 
             b2Settings.b2Assert(0 <= edge1 && edge1 < count1);
         }
         // Get the normal of the reference edge in poly2's frame.
-        const normal1 = b2Math.b2MulTRV(xf2.q, b2Math.b2MulRV(xf1.q, normals1[edge1], b2Math.b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
+        const normal1 = b2Math.b2Rot.MulTRV(xf2.q, b2Math.b2Rot.MulRV(xf1.q, normals1[edge1], b2Math.b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
         // Find the incident edge on poly2.
         let index = 0;
         let minDot = b2Settings.b2_maxFloat;
         for (let i = 0; i < count2; ++i) {
-            const dot = b2Math.b2DotVV(normal1, normals2[i]);
+            const dot = b2Math.b2Vec2.DotVV(normal1, normals2[i]);
             if (dot < minDot) {
                 minDot = dot;
                 index = i;
@@ -12911,14 +12911,14 @@ System.register("Box2D/Collision/b2CollidePolygon", ["Box2D/Common/b2Settings", 
         const i1 = index;
         const i2 = (i1 + 1) % count2;
         const c0 = c[0];
-        b2Math.b2MulXV(xf2, vertices2[i1], c0.v);
+        b2Math.b2Transform.MulXV(xf2, vertices2[i1], c0.v);
         const cf0 = c0.id.cf;
         cf0.indexA = edge1;
         cf0.indexB = i1;
         cf0.typeA = 1 /* e_face */;
         cf0.typeB = 0 /* e_vertex */;
         const c1 = c[1];
-        b2Math.b2MulXV(xf2, vertices2[i2], c1.v);
+        b2Math.b2Transform.MulXV(xf2, vertices2[i2], c1.v);
         const cf1 = c1.id.cf;
         cf1.indexA = edge1;
         cf1.indexB = i2;
@@ -12971,25 +12971,25 @@ System.register("Box2D/Collision/b2CollidePolygon", ["Box2D/Common/b2Settings", 
         const iv2 = (edge1 + 1) % count1;
         const local_v11 = vertices1[iv1];
         const local_v12 = vertices1[iv2];
-        const localTangent = b2Math.b2SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
+        const localTangent = b2Math.b2Vec2.SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
         localTangent.Normalize();
-        const localNormal = b2Math.b2CrossVOne(localTangent, b2CollidePolygons_s_localNormal);
-        const planePoint = b2Math.b2MidVV(local_v11, local_v12, b2CollidePolygons_s_planePoint);
-        const tangent = b2Math.b2MulRV(xf1.q, localTangent, b2CollidePolygons_s_tangent);
-        const normal = b2Math.b2CrossVOne(tangent, b2CollidePolygons_s_normal);
-        const v11 = b2Math.b2MulXV(xf1, local_v11, b2CollidePolygons_s_v11);
-        const v12 = b2Math.b2MulXV(xf1, local_v12, b2CollidePolygons_s_v12);
+        const localNormal = b2Math.b2Vec2.CrossVOne(localTangent, b2CollidePolygons_s_localNormal);
+        const planePoint = b2Math.b2Vec2.MidVV(local_v11, local_v12, b2CollidePolygons_s_planePoint);
+        const tangent = b2Math.b2Rot.MulRV(xf1.q, localTangent, b2CollidePolygons_s_tangent);
+        const normal = b2Math.b2Vec2.CrossVOne(tangent, b2CollidePolygons_s_normal);
+        const v11 = b2Math.b2Transform.MulXV(xf1, local_v11, b2CollidePolygons_s_v11);
+        const v12 = b2Math.b2Transform.MulXV(xf1, local_v12, b2CollidePolygons_s_v12);
         // Face offset.
-        const frontOffset = b2Math.b2DotVV(normal, v11);
+        const frontOffset = b2Math.b2Vec2.DotVV(normal, v11);
         // Side offsets, extended by polytope skin thickness.
-        const sideOffset1 = -b2Math.b2DotVV(tangent, v11) + totalRadius;
-        const sideOffset2 = b2Math.b2DotVV(tangent, v12) + totalRadius;
+        const sideOffset1 = -b2Math.b2Vec2.DotVV(tangent, v11) + totalRadius;
+        const sideOffset2 = b2Math.b2Vec2.DotVV(tangent, v12) + totalRadius;
         // Clip incident edge against extruded edge1 side edges.
         const clipPoints1 = b2CollidePolygons_s_clipPoints1;
         const clipPoints2 = b2CollidePolygons_s_clipPoints2;
         let np;
         // Clip to box side 1
-        const ntangent = b2Math.b2NegV(tangent, b2CollidePolygons_s_ntangent);
+        const ntangent = b2Math.b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
         np = b2Collision_8.b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
         if (np < 2)
             return;
@@ -13004,10 +13004,10 @@ System.register("Box2D/Collision/b2CollidePolygon", ["Box2D/Common/b2Settings", 
         let pointCount = 0;
         for (let i = 0; i < b2Settings.b2_maxManifoldPoints; ++i) {
             const cv = clipPoints2[i];
-            const separation = b2Math.b2DotVV(normal, cv.v) - frontOffset;
+            const separation = b2Math.b2Vec2.DotVV(normal, cv.v) - frontOffset;
             if (separation <= totalRadius) {
                 const cp = manifold.points[pointCount];
-                b2Math.b2MulTXV(xf2, cv.v, cp.localPoint);
+                b2Math.b2Transform.MulTXV(xf2, cv.v, cp.localPoint);
                 cp.id.Copy(cv.id);
                 if (flip) {
                     // Swap features
@@ -13645,28 +13645,28 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         case 0 /* e_circles */:
                             {
                                 // b2Math.b2Vec2 pointA = b2Mul(xfA, pc->localPoint);
-                                b2Math.b2MulXV(xfA, pc.localPoint, pointA);
+                                b2Math.b2Transform.MulXV(xfA, pc.localPoint, pointA);
                                 // b2Math.b2Vec2 pointB = b2Mul(xfB, pc->localPoints[0]);
-                                b2Math.b2MulXV(xfB, pc.localPoints[0], pointB);
+                                b2Math.b2Transform.MulXV(xfB, pc.localPoints[0], pointB);
                                 // normal = pointB - pointA;
                                 // normal.Normalize();
-                                b2Math.b2SubVV(pointB, pointA, this.normal).SelfNormalize();
+                                b2Math.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
                                 // point = 0.5f * (pointA + pointB);
-                                b2Math.b2MidVV(pointA, pointB, this.point);
+                                b2Math.b2Vec2.MidVV(pointA, pointB, this.point);
                                 // separation = b2Dot(pointB - pointA, normal) - pc->radius;
-                                this.separation = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+                                this.separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                             }
                             break;
                         case 1 /* e_faceA */:
                             {
                                 // normal = b2Mul(xfA.q, pc->localNormal);
-                                b2Math.b2MulRV(xfA.q, pc.localNormal, this.normal);
+                                b2Math.b2Rot.MulRV(xfA.q, pc.localNormal, this.normal);
                                 // b2Math.b2Vec2 planePoint = b2Mul(xfA, pc->localPoint);
-                                b2Math.b2MulXV(xfA, pc.localPoint, planePoint);
+                                b2Math.b2Transform.MulXV(xfA, pc.localPoint, planePoint);
                                 // b2Math.b2Vec2 clipPoint = b2Mul(xfB, pc->localPoints[index]);
-                                b2Math.b2MulXV(xfB, pc.localPoints[index], clipPoint);
+                                b2Math.b2Transform.MulXV(xfB, pc.localPoints[index], clipPoint);
                                 // separation = b2Dot(clipPoint - planePoint, normal) - pc->radius;
-                                this.separation = b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+                                this.separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                                 // point = clipPoint;
                                 this.point.Copy(clipPoint);
                             }
@@ -13674,13 +13674,13 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         case 2 /* e_faceB */:
                             {
                                 // normal = b2Mul(xfB.q, pc->localNormal);
-                                b2Math.b2MulRV(xfB.q, pc.localNormal, this.normal);
+                                b2Math.b2Rot.MulRV(xfB.q, pc.localNormal, this.normal);
                                 // b2Math.b2Vec2 planePoint = b2Mul(xfB, pc->localPoint);
-                                b2Math.b2MulXV(xfB, pc.localPoint, planePoint);
+                                b2Math.b2Transform.MulXV(xfB, pc.localPoint, planePoint);
                                 // b2Math.b2Vec2 clipPoint = b2Mul(xfA, pc->localPoints[index]);
-                                b2Math.b2MulXV(xfA, pc.localPoints[index], clipPoint);
+                                b2Math.b2Transform.MulXV(xfA, pc.localPoints[index], clipPoint);
                                 // separation = b2Dot(clipPoint - planePoint, normal) - pc->radius;
-                                this.separation = b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+                                this.separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                                 // point = clipPoint;
                                 this.point.Copy(clipPoint);
                                 // Ensure normal points from A to B
@@ -13895,32 +13895,32 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         }
                         xfA.q.SetAngleRadians(aA);
                         xfB.q.SetAngleRadians(aB);
-                        b2Math.b2SubVV(cA, b2Math.b2MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
-                        b2Math.b2SubVV(cB, b2Math.b2MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
+                        b2Math.b2Vec2.SubVV(cA, b2Math.b2Rot.MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
+                        b2Math.b2Vec2.SubVV(cB, b2Math.b2Rot.MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
                         worldManifold.Initialize(manifold, xfA, radiusA, xfB, radiusB);
                         vc.normal.Copy(worldManifold.normal);
-                        b2Math.b2CrossVOne(vc.normal, vc.tangent); // compute from normal
+                        b2Math.b2Vec2.CrossVOne(vc.normal, vc.tangent); // compute from normal
                         pointCount = vc.pointCount;
                         for (j = 0, jct = pointCount; j < jct; ++j) {
                             vcp = vc.points[j];
                             // vcp->rA = worldManifold.points[j] - cA;
-                            b2Math.b2SubVV(worldManifold.points[j], cA, vcp.rA);
+                            b2Math.b2Vec2.SubVV(worldManifold.points[j], cA, vcp.rA);
                             // vcp->rB = worldManifold.points[j] - cB;
-                            b2Math.b2SubVV(worldManifold.points[j], cB, vcp.rB);
-                            rnA = b2Math.b2CrossVV(vcp.rA, vc.normal);
-                            rnB = b2Math.b2CrossVV(vcp.rB, vc.normal);
+                            b2Math.b2Vec2.SubVV(worldManifold.points[j], cB, vcp.rB);
+                            rnA = b2Math.b2Vec2.CrossVV(vcp.rA, vc.normal);
+                            rnB = b2Math.b2Vec2.CrossVV(vcp.rB, vc.normal);
                             kNormal = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             vcp.normalMass = kNormal > 0 ? 1 / kNormal : 0;
                             // b2Math.b2Vec2 tangent = b2Cross(vc->normal, 1.0f);
                             tangent = vc.tangent; // precomputed from normal
-                            rtA = b2Math.b2CrossVV(vcp.rA, tangent);
-                            rtB = b2Math.b2CrossVV(vcp.rB, tangent);
+                            rtA = b2Math.b2Vec2.CrossVV(vcp.rA, tangent);
+                            rtB = b2Math.b2Vec2.CrossVV(vcp.rB, tangent);
                             kTangent = mA + mB + iA * rtA * rtA + iB * rtB * rtB;
                             vcp.tangentMass = kTangent > 0 ? 1 / kTangent : 0;
                             // Setup a velocity bias for restitution.
                             vcp.velocityBias = 0;
                             // float32 vRel = b2Dot(vc->normal, vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA));
-                            vRel = b2Math.b2DotVV(vc.normal, b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0));
+                            vRel = b2Math.b2Vec2.DotVV(vc.normal, b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1), b2Math.b2Vec2.s_t0));
                             if (vRel < (-b2Settings.b2_velocityThreshold)) {
                                 vcp.velocityBias += (-vc.restitution * vRel);
                             }
@@ -13929,10 +13929,10 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         if (vc.pointCount === 2) {
                             vcp1 = vc.points[0];
                             vcp2 = vc.points[1];
-                            rn1A = b2Math.b2CrossVV(vcp1.rA, vc.normal);
-                            rn1B = b2Math.b2CrossVV(vcp1.rB, vc.normal);
-                            rn2A = b2Math.b2CrossVV(vcp2.rA, vc.normal);
-                            rn2B = b2Math.b2CrossVV(vcp2.rB, vc.normal);
+                            rn1A = b2Math.b2Vec2.CrossVV(vcp1.rA, vc.normal);
+                            rn1B = b2Math.b2Vec2.CrossVV(vcp1.rB, vc.normal);
+                            rn2A = b2Math.b2Vec2.CrossVV(vcp2.rA, vc.normal);
+                            rn2B = b2Math.b2Vec2.CrossVV(vcp2.rB, vc.normal);
                             k11 = mA + mB + iA * rn1A * rn1A + iB * rn1B * rn1B;
                             k22 = mA + mB + iA * rn2A * rn2A + iB * rn2B * rn2B;
                             k12 = mA + mB + iA * rn1A * rn2A + iB * rn1B * rn2B;
@@ -13993,13 +13993,13 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         for (j = 0, jct = pointCount; j < jct; ++j) {
                             vcp = vc.points[j];
                             // b2Math.b2Vec2 P = vcp->normalImpulse * normal + vcp->tangentImpulse * tangent;
-                            b2Math.b2AddVV(b2Math.b2MulSV(vcp.normalImpulse, normal, b2Math.b2Vec2.s_t0), b2Math.b2MulSV(vcp.tangentImpulse, tangent, b2Math.b2Vec2.s_t1), P);
+                            b2Math.b2Vec2.AddVV(b2Math.b2Vec2.MulSV(vcp.normalImpulse, normal, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.MulSV(vcp.tangentImpulse, tangent, b2Math.b2Vec2.s_t1), P);
                             // wA -= iA * b2Cross(vcp->rA, P);
-                            wA -= iA * b2Math.b2CrossVV(vcp.rA, P);
+                            wA -= iA * b2Math.b2Vec2.CrossVV(vcp.rA, P);
                             // vA -= mA * P;
                             vA.SelfMulSub(mA, P);
                             // wB += iB * b2Cross(vcp->rB, P);
-                            wB += iB * b2Math.b2CrossVV(vcp.rB, P);
+                            wB += iB * b2Math.b2Vec2.CrossVV(vcp.rB, P);
                             // vB += mB * P;
                             vB.SelfMulAdd(mB, P);
                         }
@@ -14077,10 +14077,10 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                             vcp = vc.points[j];
                             // Relative velocity at contact
                             // b2Math.b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-                            b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1), dv);
+                            b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1), dv);
                             // Compute tangent force
                             // float32 vt = b2Dot(dv, tangent) - vc->tangentSpeed;
-                            vt = b2Math.b2DotVV(dv, tangent) - vc.tangentSpeed;
+                            vt = b2Math.b2Vec2.DotVV(dv, tangent) - vc.tangentSpeed;
                             lambda = vcp.tangentMass * (-vt);
                             // b2Math.b2Clamp the accumulated force
                             maxFriction = friction * vcp.normalImpulse;
@@ -14089,25 +14089,25 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                             vcp.tangentImpulse = newImpulse;
                             // Apply contact impulse
                             // b2Math.b2Vec2 P = lambda * tangent;
-                            b2Math.b2MulSV(lambda, tangent, P);
+                            b2Math.b2Vec2.MulSV(lambda, tangent, P);
                             // vA -= mA * P;
                             vA.SelfMulSub(mA, P);
                             // wA -= iA * b2Cross(vcp->rA, P);
-                            wA -= iA * b2Math.b2CrossVV(vcp.rA, P);
+                            wA -= iA * b2Math.b2Vec2.CrossVV(vcp.rA, P);
                             // vB += mB * P;
                             vB.SelfMulAdd(mB, P);
                             // wB += iB * b2Cross(vcp->rB, P);
-                            wB += iB * b2Math.b2CrossVV(vcp.rB, P);
+                            wB += iB * b2Math.b2Vec2.CrossVV(vcp.rB, P);
                         }
                         // Solve normal constraints
                         if (vc.pointCount === 1) {
                             vcp = vc.points[0];
                             // Relative velocity at contact
                             // b2Math.b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-                            b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1), dv);
+                            b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1), dv);
                             // Compute normal impulse
                             // float32 vn = b2Dot(dv, normal);
-                            vn = b2Math.b2DotVV(dv, normal);
+                            vn = b2Math.b2Vec2.DotVV(dv, normal);
                             lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
                             // b2Math.b2Clamp the accumulated impulse
                             // float32 newImpulse = b2Math.b2Max(vcp->normalImpulse + lambda, 0.0f);
@@ -14116,15 +14116,15 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                             vcp.normalImpulse = newImpulse;
                             // Apply contact impulse
                             // b2Math.b2Vec2 P = lambda * normal;
-                            b2Math.b2MulSV(lambda, normal, P);
+                            b2Math.b2Vec2.MulSV(lambda, normal, P);
                             // vA -= mA * P;
                             vA.SelfMulSub(mA, P);
                             // wA -= iA * b2Cross(vcp->rA, P);
-                            wA -= iA * b2Math.b2CrossVV(vcp.rA, P);
+                            wA -= iA * b2Math.b2Vec2.CrossVV(vcp.rA, P);
                             // vB += mB * P;
                             vB.SelfMulAdd(mB, P);
                             // wB += iB * b2Cross(vcp->rB, P);
-                            wB += iB * b2Math.b2CrossVV(vcp.rB, P);
+                            wB += iB * b2Math.b2Vec2.CrossVV(vcp.rB, P);
                         }
                         else {
                             // Block solver developed in collaboration with Dirk Gregorius (back in 01/07 on Box2D_Lite).
@@ -14168,20 +14168,20 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                             }
                             // Relative velocity at contact
                             // b2Math.b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
-                            b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, cp1.rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, cp1.rA, b2Math.b2Vec2.s_t1), dv1);
+                            b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, cp1.rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, cp1.rA, b2Math.b2Vec2.s_t1), dv1);
                             // b2Math.b2Vec2 dv2 = vB + b2Cross(wB, cp2->rB) - vA - b2Cross(wA, cp2->rA);
-                            b2Math.b2SubVV(b2Math.b2AddVCrossSV(vB, wB, cp2.rB, b2Math.b2Vec2.s_t0), b2Math.b2AddVCrossSV(vA, wA, cp2.rA, b2Math.b2Vec2.s_t1), dv2);
+                            b2Math.b2Vec2.SubVV(b2Math.b2Vec2.AddVCrossSV(vB, wB, cp2.rB, b2Math.b2Vec2.s_t0), b2Math.b2Vec2.AddVCrossSV(vA, wA, cp2.rA, b2Math.b2Vec2.s_t1), dv2);
                             // Compute normal velocity
                             // float32 vn1 = b2Dot(dv1, normal);
-                            vn1 = b2Math.b2DotVV(dv1, normal);
+                            vn1 = b2Math.b2Vec2.DotVV(dv1, normal);
                             // float32 vn2 = b2Dot(dv2, normal);
-                            vn2 = b2Math.b2DotVV(dv2, normal);
+                            vn2 = b2Math.b2Vec2.DotVV(dv2, normal);
                             // b2Math.b2Vec2 b;
                             b.x = vn1 - cp1.velocityBias;
                             b.y = vn2 - cp2.velocityBias;
                             // Compute b'
                             // b -= b2Mul(vc->K, a);
-                            b.SelfSub(b2Math.b2MulMV(vc.K, a, b2Math.b2Vec2.s_t0));
+                            b.SelfSub(b2Math.b2Mat22.MulMV(vc.K, a, b2Math.b2Vec2.s_t0));
                             /*
                             #if B2_DEBUG_SOLVER === 1
                             const k_errorTol: number = 0.001;
@@ -14198,25 +14198,25 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                                 // x = - inv(A) * b'
                                 //
                                 // b2Math.b2Vec2 x = - b2Mul(vc->normalMass, b);
-                                b2Math.b2MulMV(vc.normalMass, b, x).SelfNeg();
+                                b2Math.b2Mat22.MulMV(vc.normalMass, b, x).SelfNeg();
                                 if (x.x >= 0 && x.y >= 0) {
                                     // Get the incremental impulse
                                     // b2Math.b2Vec2 d = x - a;
-                                    b2Math.b2SubVV(x, a, d);
+                                    b2Math.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Math.b2Vec2 P1 = d.x * normal;
-                                    b2Math.b2MulSV(d.x, normal, P1);
+                                    b2Math.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Math.b2Vec2 P2 = d.y * normal;
-                                    b2Math.b2MulSV(d.y, normal, P2);
-                                    b2Math.b2AddVV(P1, P2, P1P2);
+                                    b2Math.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -14249,21 +14249,21 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                                 if (x.x >= 0 && vn2 >= 0) {
                                     // Get the incremental impulse
                                     // b2Math.b2Vec2 d = x - a;
-                                    b2Math.b2SubVV(x, a, d);
+                                    b2Math.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Math.b2Vec2 P1 = d.x * normal;
-                                    b2Math.b2MulSV(d.x, normal, P1);
+                                    b2Math.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Math.b2Vec2 P2 = d.y * normal;
-                                    b2Math.b2MulSV(d.y, normal, P2);
-                                    b2Math.b2AddVV(P1, P2, P1P2);
+                                    b2Math.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -14293,21 +14293,21 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                                 if (x.y >= 0 && vn1 >= 0) {
                                     // Resubstitute for the incremental impulse
                                     // b2Math.b2Vec2 d = x - a;
-                                    b2Math.b2SubVV(x, a, d);
+                                    b2Math.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Math.b2Vec2 P1 = d.x * normal;
-                                    b2Math.b2MulSV(d.x, normal, P1);
+                                    b2Math.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Math.b2Vec2 P2 = d.y * normal;
-                                    b2Math.b2MulSV(d.y, normal, P2);
-                                    b2Math.b2AddVV(P1, P2, P1P2);
+                                    b2Math.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -14336,21 +14336,21 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                                 if (vn1 >= 0 && vn2 >= 0) {
                                     // Resubstitute for the incremental impulse
                                     // b2Math.b2Vec2 d = x - a;
-                                    b2Math.b2SubVV(x, a, d);
+                                    b2Math.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Math.b2Vec2 P1 = d.x * normal;
-                                    b2Math.b2MulSV(d.x, normal, P1);
+                                    b2Math.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Math.b2Vec2 P2 = d.y * normal;
-                                    b2Math.b2MulSV(d.y, normal, P2);
-                                    b2Math.b2AddVV(P1, P2, P1P2);
+                                    b2Math.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -14435,39 +14435,39 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         for (j = 0, jct = pointCount; j < jct; ++j) {
                             xfA.q.SetAngleRadians(aA);
                             xfB.q.SetAngleRadians(aB);
-                            b2Math.b2SubVV(cA, b2Math.b2MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
-                            b2Math.b2SubVV(cB, b2Math.b2MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
+                            b2Math.b2Vec2.SubVV(cA, b2Math.b2Rot.MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
+                            b2Math.b2Vec2.SubVV(cB, b2Math.b2Rot.MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
                             psm.Initialize(pc, xfA, xfB, j);
                             normal = psm.normal;
                             point = psm.point;
                             separation = psm.separation;
                             // b2Math.b2Vec2 rA = point - cA;
-                            b2Math.b2SubVV(point, cA, rA);
+                            b2Math.b2Vec2.SubVV(point, cA, rA);
                             // b2Math.b2Vec2 rB = point - cB;
-                            b2Math.b2SubVV(point, cB, rB);
+                            b2Math.b2Vec2.SubVV(point, cB, rB);
                             // Track max constraint error.
                             minSeparation = b2Math.b2Min(minSeparation, separation);
                             // Prevent large corrections and allow slop.
                             C = b2Math.b2Clamp(b2Settings.b2_baumgarte * (separation + b2Settings.b2_linearSlop), (-b2Settings.b2_maxLinearCorrection), 0);
                             // Compute the effective mass.
                             // float32 rnA = b2Cross(rA, normal);
-                            rnA = b2Math.b2CrossVV(rA, normal);
+                            rnA = b2Math.b2Vec2.CrossVV(rA, normal);
                             // float32 rnB = b2Cross(rB, normal);
-                            rnB = b2Math.b2CrossVV(rB, normal);
+                            rnB = b2Math.b2Vec2.CrossVV(rB, normal);
                             // float32 K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             // Compute normal impulse
                             impulse = K > 0 ? -C / K : 0;
                             // b2Math.b2Vec2 P = impulse * normal;
-                            b2Math.b2MulSV(impulse, normal, P);
+                            b2Math.b2Vec2.MulSV(impulse, normal, P);
                             // cA -= mA * P;
                             cA.SelfMulSub(mA, P);
                             // aA -= iA * b2Cross(rA, P);
-                            aA -= iA * b2Math.b2CrossVV(rA, P);
+                            aA -= iA * b2Math.b2Vec2.CrossVV(rA, P);
                             // cB += mB * P;
                             cB.SelfMulAdd(mB, P);
                             // aB += iB * b2Cross(rB, P);
-                            aB += iB * b2Math.b2CrossVV(rB, P);
+                            aB += iB * b2Math.b2Vec2.CrossVV(rB, P);
                         }
                         // this.m_positions[indexA].c = cA;
                         this.m_positions[indexA].a = aA;
@@ -14539,39 +14539,39 @@ System.register("Box2D/Dynamics/Contacts/b2ContactSolver", ["Box2D/Common/b2Sett
                         for (j = 0, jct = pointCount; j < jct; ++j) {
                             xfA.q.SetAngleRadians(aA);
                             xfB.q.SetAngleRadians(aB);
-                            b2Math.b2SubVV(cA, b2Math.b2MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
-                            b2Math.b2SubVV(cB, b2Math.b2MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
+                            b2Math.b2Vec2.SubVV(cA, b2Math.b2Rot.MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
+                            b2Math.b2Vec2.SubVV(cB, b2Math.b2Rot.MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
                             psm.Initialize(pc, xfA, xfB, j);
                             normal = psm.normal;
                             point = psm.point;
                             separation = psm.separation;
                             // b2Math.b2Vec2 rA = point - cA;
-                            b2Math.b2SubVV(point, cA, rA);
+                            b2Math.b2Vec2.SubVV(point, cA, rA);
                             // b2Math.b2Vec2 rB = point - cB;
-                            b2Math.b2SubVV(point, cB, rB);
+                            b2Math.b2Vec2.SubVV(point, cB, rB);
                             // Track max constraint error.
                             minSeparation = b2Math.b2Min(minSeparation, separation);
                             // Prevent large corrections and allow slop.
                             C = b2Math.b2Clamp(b2Settings.b2_toiBaumgarte * (separation + b2Settings.b2_linearSlop), (-b2Settings.b2_maxLinearCorrection), 0);
                             // Compute the effective mass.
                             // float32 rnA = b2Cross(rA, normal);
-                            rnA = b2Math.b2CrossVV(rA, normal);
+                            rnA = b2Math.b2Vec2.CrossVV(rA, normal);
                             // float32 rnB = b2Cross(rB, normal);
-                            rnB = b2Math.b2CrossVV(rB, normal);
+                            rnB = b2Math.b2Vec2.CrossVV(rB, normal);
                             // float32 K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             // Compute normal impulse
                             impulse = K > 0 ? -C / K : 0;
                             // b2Math.b2Vec2 P = impulse * normal;
-                            b2Math.b2MulSV(impulse, normal, P);
+                            b2Math.b2Vec2.MulSV(impulse, normal, P);
                             // cA -= mA * P;
                             cA.SelfMulSub(mA, P);
                             // aA -= iA * b2Cross(rA, P);
-                            aA -= iA * b2Math.b2CrossVV(rA, P);
+                            aA -= iA * b2Math.b2Vec2.CrossVV(rA, P);
                             // cB += mB * P;
                             cB.SelfMulAdd(mB, P);
                             // aB += iB * b2Cross(rB, P);
-                            aB += iB * b2Math.b2CrossVV(rB, P);
+                            aB += iB * b2Math.b2Vec2.CrossVV(rB, P);
                         }
                         // this.m_positions[indexA].c = cA;
                         this.m_positions[indexA].a = aA;
@@ -14930,8 +14930,8 @@ System.register("Box2D/Dynamics/b2Island", ["Box2D/Common/b2Settings", "Box2D/Co
                         const v = this.m_velocities[i].v;
                         let w = this.m_velocities[i].w;
                         // Check for large velocities
-                        const translation = b2Math.b2MulSV(h, v, b2Island.s_translation);
-                        if (b2Math.b2DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
+                        const translation = b2Math.b2Vec2.MulSV(h, v, b2Island.s_translation);
+                        if (b2Math.b2Vec2.DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
                             const ratio = b2Settings.b2_maxTranslation / translation.GetLength();
                             v.SelfMul(ratio);
                         }
@@ -14987,7 +14987,7 @@ System.register("Box2D/Dynamics/b2Island", ["Box2D/Common/b2Settings", "Box2D/Co
                             }
                             if ((b.m_flags & 4 /* e_autoSleepFlag */) === 0 ||
                                 b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
-                                b2Math.b2DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
+                                b2Math.b2Vec2.DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
                                 b.m_sleepTime = 0;
                                 minSleepTime = 0;
                             }
@@ -15088,8 +15088,8 @@ System.register("Box2D/Dynamics/b2Island", ["Box2D/Common/b2Settings", "Box2D/Co
                         const v = this.m_velocities[i].v;
                         let w = this.m_velocities[i].w;
                         // Check for large velocities
-                        const translation = b2Math.b2MulSV(h, v, b2Island.s_translation);
-                        if (b2Math.b2DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
+                        const translation = b2Math.b2Vec2.MulSV(h, v, b2Island.s_translation);
+                        if (b2Math.b2Vec2.DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
                             const ratio = b2Settings.b2_maxTranslation / translation.GetLength();
                             v.SelfMul(ratio);
                         }

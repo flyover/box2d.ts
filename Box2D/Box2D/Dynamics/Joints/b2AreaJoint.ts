@@ -74,9 +74,9 @@ export class b2AreaJoint extends b2Joint {
       const body_c = body.GetWorldCenter();
       const next_c = next.GetWorldCenter();
 
-      this.m_targetLengths[i] = b2Math.b2DistanceVV(body_c, next_c);
+      this.m_targetLengths[i] = b2Math.b2Vec2.DistanceVV(body_c, next_c);
 
-      this.m_targetArea += b2Math.b2CrossVV(body_c, next_c);
+      this.m_targetArea += b2Math.b2Vec2.CrossVV(body_c, next_c);
 
       djd.Initialize(body, next, body_c, next_c);
       this.m_joints[i] = def.world.CreateJoint(djd);
@@ -139,7 +139,7 @@ export class b2AreaJoint extends b2Joint {
       const next_c = data.positions[next.m_islandIndex].c;
       const delta = this.m_deltas[i];
 
-      b2Math.b2SubVV(next_c, prev_c, delta);
+      b2Math.b2Vec2.SubVV(next_c, prev_c, delta);
     }
 
     if (data.step.warmStarting) {
@@ -168,7 +168,7 @@ export class b2AreaJoint extends b2Joint {
       const delta = this.m_deltas[i];
 
       dotMassSum += delta.GetLengthSquared() / body.GetMass();
-      crossMassSum += b2Math.b2CrossVV(body_v, delta);
+      crossMassSum += b2Math.b2Vec2.CrossVV(body_v, delta);
     }
 
     const lambda = -2 * crossMassSum / dotMassSum;
@@ -196,7 +196,7 @@ export class b2AreaJoint extends b2Joint {
       const body_c = data.positions[body.m_islandIndex].c;
       const next_c = data.positions[next.m_islandIndex].c;
 
-      const delta: b2Math.b2Vec2 = b2Math.b2SubVV(next_c, body_c, this.m_delta);
+      const delta: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(next_c, body_c, this.m_delta);
 
       let dist = delta.GetLength();
       if (dist < b2Settings.b2_epsilon) {
@@ -208,7 +208,7 @@ export class b2AreaJoint extends b2Joint {
 
       perimeter += dist;
 
-      area += b2Math.b2CrossVV(body_c, next_c);
+      area += b2Math.b2Vec2.CrossVV(body_c, next_c);
     }
 
     area *= 0.5;
@@ -222,7 +222,7 @@ export class b2AreaJoint extends b2Joint {
       const body_c = data.positions[body.m_islandIndex].c;
       const next_i = (i + 1) % ict;
 
-      const delta: b2Math.b2Vec2 = b2Math.b2AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
+      const delta: b2Math.b2Vec2 = b2Math.b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
       delta.SelfMul(toExtrude);
 
       const norm_sq = delta.GetLengthSquared();

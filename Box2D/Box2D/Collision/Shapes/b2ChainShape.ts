@@ -54,7 +54,7 @@ export class b2ChainShape extends b2Shape {
         const v1 = vertices[i - 1];
         const v2 = vertices[i];
         // If the code crashes here, it means your vertices are too close together.
-        b2Settings.b2Assert(b2Math.b2DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
+        b2Settings.b2Assert(b2Math.b2Vec2.DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
       }
     }
 
@@ -83,7 +83,7 @@ export class b2ChainShape extends b2Shape {
         const v1 = vertices[i - 1];
         const v2 = vertices[i];
         // If the code crashes here, it means your vertices are too close together.
-        b2Settings.b2Assert(b2Math.b2DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
+        b2Settings.b2Assert(b2Math.b2Vec2.DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
       }
     }
 
@@ -192,11 +192,11 @@ export class b2ChainShape extends b2Shape {
     const vertexi1: b2Math.b2Vec2 = this.m_vertices[childIndex];
     const vertexi2: b2Math.b2Vec2 = this.m_vertices[(childIndex + 1) % this.m_count];
 
-    const v1: b2Math.b2Vec2 = b2Math.b2MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
-    const v2: b2Math.b2Vec2 = b2Math.b2MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
+    const v1: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
+    const v2: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
 
-    b2Math.b2MinV(v1, v2, aabb.lowerBound);
-    b2Math.b2MaxV(v1, v2, aabb.upperBound);
+    b2Math.b2Vec2.MinV(v1, v2, aabb.lowerBound);
+    b2Math.b2Vec2.MaxV(v1, v2, aabb.upperBound);
   }
 
   /// Chains have zero mass.

@@ -228,42 +228,42 @@ export class b2WorldManifold {
     switch (manifold.type) {
     case b2ManifoldType.e_circles: {
         this.normal.SetXY(1, 0);
-        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
-        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
-        if (b2Math.b2DistanceSquaredVV(pointA, pointB) > b2Settings.b2_epsilon_sq) {
-          b2Math.b2SubVV(pointB, pointA, this.normal).SelfNormalize();
+        const pointA: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
+        const pointB: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
+        if (b2Math.b2Vec2.DistanceSquaredVV(pointA, pointB) > b2Settings.b2_epsilon_sq) {
+          b2Math.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
         }
 
-        const cA: b2Math.b2Vec2 = b2Math.b2AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-        const cB: b2Math.b2Vec2 = b2Math.b2SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-        b2Math.b2MidVV(cA, cB, this.points[0]);
+        const cA: b2Math.b2Vec2 = b2Math.b2Vec2.AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+        const cB: b2Math.b2Vec2 = b2Math.b2Vec2.SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+        b2Math.b2Vec2.MidVV(cA, cB, this.points[0]);
       }
       break;
 
     case b2ManifoldType.e_faceA: {
-        b2Math.b2MulRV(xfA.q, manifold.localNormal, this.normal);
-        const planePoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+        b2Math.b2Rot.MulRV(xfA.q, manifold.localNormal, this.normal);
+        const planePoint: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
 
         for (let i: number = 0, ict = manifold.pointCount; i < ict; ++i) {
-          const clipPoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-          const s = radiusA - b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
-          const cA: b2Math.b2Vec2 = b2Math.b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
-          const cB: b2Math.b2Vec2 = b2Math.b2SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-          b2Math.b2MidVV(cA, cB, this.points[i]);
+          const clipPoint: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+          const s = radiusA - b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
+          const cA: b2Math.b2Vec2 = b2Math.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
+          const cB: b2Math.b2Vec2 = b2Math.b2Vec2.SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+          b2Math.b2Vec2.MidVV(cA, cB, this.points[i]);
         }
       }
       break;
 
     case b2ManifoldType.e_faceB: {
-        b2Math.b2MulRV(xfB.q, manifold.localNormal, this.normal);
-        const planePoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+        b2Math.b2Rot.MulRV(xfB.q, manifold.localNormal, this.normal);
+        const planePoint: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
 
         for (let i: number = 0, ict = manifold.pointCount; i < ict; ++i) {
-          const clipPoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-          const s = radiusB - b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
-          const cB: b2Math.b2Vec2 = b2Math.b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
-          const cA: b2Math.b2Vec2 = b2Math.b2SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-          b2Math.b2MidVV(cA, cB, this.points[i]);
+          const clipPoint: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+          const s = radiusB - b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
+          const cB: b2Math.b2Vec2 = b2Math.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
+          const cA: b2Math.b2Vec2 = b2Math.b2Vec2.SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+          b2Math.b2Vec2.MidVV(cA, cB, this.points[i]);
         }
 
         // Ensure normal points from A to B.
@@ -391,12 +391,12 @@ export class b2AABB {
 
   /// Get the center of the AABB.
   public GetCenter(): b2Math.b2Vec2 {
-    return b2Math.b2MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
+    return b2Math.b2Vec2.MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
   }
 
   /// Get the extents of the AABB (half-widths).
   public GetExtents(): b2Math.b2Vec2 {
-    return b2Math.b2ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
+    return b2Math.b2Vec2.ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
   }
 
   /// Get the perimeter length
@@ -575,8 +575,8 @@ export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], n
   const vIn1 = vIn[1];
 
   // Calculate the distance of end points to the line
-  const distance0: number = b2Math.b2DotVV(normal, vIn0.v) - offset;
-  const distance1: number = b2Math.b2DotVV(normal, vIn1.v) - offset;
+  const distance0: number = b2Math.b2Vec2.DotVV(normal, vIn0.v) - offset;
+  const distance1: number = b2Math.b2Vec2.DotVV(normal, vIn1.v) - offset;
 
   // If the points are behind the plane
   if (distance0 <= 0) vOut[numOut++].Copy(vIn0);

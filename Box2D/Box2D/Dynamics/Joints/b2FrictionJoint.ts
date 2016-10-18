@@ -114,11 +114,11 @@ export class b2FrictionJoint extends b2Joint {
 
     // Compute the effective mass matrix.
     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-    const rA: b2Math.b2Vec2 = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+    const rA: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-    const rB: b2Math.b2Vec2 = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+    const rB: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
 
     // J = [-I -r1_skew I r2_skew]
     //     [ 0       -1 0       1]
@@ -157,11 +157,11 @@ export class b2FrictionJoint extends b2Joint {
       // vA -= mA * P;
       vA.SelfMulSub(mA, P);
       // wA -= iA * (b2Cross(m_rA, P) + m_angularImpulse);
-      wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + this.m_angularImpulse);
+      wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + this.m_angularImpulse);
       // vB += mB * P;
       vB.SelfMulAdd(mB, P);
       // wB += iB * (b2Cross(m_rB, P) + m_angularImpulse);
-      wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + this.m_angularImpulse);
+      wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + this.m_angularImpulse);
     } else {
       this.m_linearImpulse.SetZero();
       this.m_angularImpulse = 0;
@@ -204,13 +204,13 @@ export class b2FrictionJoint extends b2Joint {
     // Solve linear friction
     if (true) {
       // b2Math.b2Vec2 Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-      const Cdot_v2: b2Math.b2Vec2 = b2Math.b2SubVV(
-        b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0),
-        b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1),
+      const Cdot_v2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(
+        b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0),
+        b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1),
         b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2);
 
       // b2Math.b2Vec2 impulse = -b2Mul(m_linearMass, Cdot);
-      const impulseV: b2Math.b2Vec2 = b2Math.b2MulMV(this.m_linearMass, Cdot_v2, b2FrictionJoint.SolveVelocityConstraints_s_impulseV).SelfNeg();
+      const impulseV: b2Math.b2Vec2 = b2Math.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2FrictionJoint.SolveVelocityConstraints_s_impulseV).SelfNeg();
       // b2Math.b2Vec2 oldImpulse = m_linearImpulse;
       const oldImpulseV = b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV.Copy(this.m_linearImpulse);
       // m_linearImpulse += impulse;
@@ -224,17 +224,17 @@ export class b2FrictionJoint extends b2Joint {
       }
 
       // impulse = m_linearImpulse - oldImpulse;
-      b2Math.b2SubVV(this.m_linearImpulse, oldImpulseV, impulseV);
+      b2Math.b2Vec2.SubVV(this.m_linearImpulse, oldImpulseV, impulseV);
 
       // vA -= mA * impulse;
       vA.SelfMulSub(mA, impulseV);
       // wA -= iA * b2Cross(m_rA, impulse);
-      wA -= iA * b2Math.b2CrossVV(this.m_rA, impulseV);
+      wA -= iA * b2Math.b2Vec2.CrossVV(this.m_rA, impulseV);
 
       // vB += mB * impulse;
       vB.SelfMulAdd(mB, impulseV);
       // wB += iB * b2Cross(m_rB, impulse);
-      wB += iB * b2Math.b2CrossVV(this.m_rB, impulseV);
+      wB += iB * b2Math.b2Vec2.CrossVV(this.m_rB, impulseV);
     }
 
     // data.velocities[this.m_indexA].v = vA;

@@ -118,29 +118,29 @@ export class b2PositionSolverManifold {
     switch (pc.type) {
     case b2ManifoldType.e_circles: {
         // b2Math.b2Vec2 pointA = b2Mul(xfA, pc->localPoint);
-        b2Math.b2MulXV(xfA, pc.localPoint, pointA);
+        b2Math.b2Transform.MulXV(xfA, pc.localPoint, pointA);
         // b2Math.b2Vec2 pointB = b2Mul(xfB, pc->localPoints[0]);
-        b2Math.b2MulXV(xfB, pc.localPoints[0], pointB);
+        b2Math.b2Transform.MulXV(xfB, pc.localPoints[0], pointB);
         // normal = pointB - pointA;
         // normal.Normalize();
-        b2Math.b2SubVV(pointB, pointA, this.normal).SelfNormalize();
+        b2Math.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
         // point = 0.5f * (pointA + pointB);
-        b2Math.b2MidVV(pointA, pointB, this.point);
+        b2Math.b2Vec2.MidVV(pointA, pointB, this.point);
         // separation = b2Dot(pointB - pointA, normal) - pc->radius;
-        this.separation = b2Math.b2DotVV(b2Math.b2SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+        this.separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(pointB, pointA, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
       }
       break;
 
     case b2ManifoldType.e_faceA: {
         // normal = b2Mul(xfA.q, pc->localNormal);
-        b2Math.b2MulRV(xfA.q, pc.localNormal, this.normal);
+        b2Math.b2Rot.MulRV(xfA.q, pc.localNormal, this.normal);
         // b2Math.b2Vec2 planePoint = b2Mul(xfA, pc->localPoint);
-        b2Math.b2MulXV(xfA, pc.localPoint, planePoint);
+        b2Math.b2Transform.MulXV(xfA, pc.localPoint, planePoint);
 
         // b2Math.b2Vec2 clipPoint = b2Mul(xfB, pc->localPoints[index]);
-        b2Math.b2MulXV(xfB, pc.localPoints[index], clipPoint);
+        b2Math.b2Transform.MulXV(xfB, pc.localPoints[index], clipPoint);
         // separation = b2Dot(clipPoint - planePoint, normal) - pc->radius;
-        this.separation = b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+        this.separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
         // point = clipPoint;
         this.point.Copy(clipPoint);
       }
@@ -148,14 +148,14 @@ export class b2PositionSolverManifold {
 
     case b2ManifoldType.e_faceB: {
         // normal = b2Mul(xfB.q, pc->localNormal);
-        b2Math.b2MulRV(xfB.q, pc.localNormal, this.normal);
+        b2Math.b2Rot.MulRV(xfB.q, pc.localNormal, this.normal);
         // b2Math.b2Vec2 planePoint = b2Mul(xfB, pc->localPoint);
-        b2Math.b2MulXV(xfB, pc.localPoint, planePoint);
+        b2Math.b2Transform.MulXV(xfB, pc.localPoint, planePoint);
 
         // b2Math.b2Vec2 clipPoint = b2Mul(xfA, pc->localPoints[index]);
-        b2Math.b2MulXV(xfA, pc.localPoints[index], clipPoint);
+        b2Math.b2Transform.MulXV(xfA, pc.localPoints[index], clipPoint);
         // separation = b2Dot(clipPoint - planePoint, normal) - pc->radius;
-        this.separation = b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+        this.separation = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
         // point = clipPoint;
         this.point.Copy(clipPoint);
 
@@ -413,25 +413,25 @@ export class b2ContactSolver {
 
       xfA.q.SetAngleRadians(aA);
       xfB.q.SetAngleRadians(aB);
-      b2Math.b2SubVV(cA, b2Math.b2MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
-      b2Math.b2SubVV(cB, b2Math.b2MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
+      b2Math.b2Vec2.SubVV(cA, b2Math.b2Rot.MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
+      b2Math.b2Vec2.SubVV(cB, b2Math.b2Rot.MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
 
       worldManifold.Initialize(manifold, xfA, radiusA, xfB, radiusB);
 
       vc.normal.Copy(worldManifold.normal);
-      b2Math.b2CrossVOne(vc.normal, vc.tangent); // compute from normal
+      b2Math.b2Vec2.CrossVOne(vc.normal, vc.tangent); // compute from normal
 
       pointCount = vc.pointCount;
       for (j = 0, jct = pointCount; j < jct; ++j) {
         vcp = vc.points[j];
 
         // vcp->rA = worldManifold.points[j] - cA;
-        b2Math.b2SubVV(worldManifold.points[j], cA, vcp.rA);
+        b2Math.b2Vec2.SubVV(worldManifold.points[j], cA, vcp.rA);
         // vcp->rB = worldManifold.points[j] - cB;
-        b2Math.b2SubVV(worldManifold.points[j], cB, vcp.rB);
+        b2Math.b2Vec2.SubVV(worldManifold.points[j], cB, vcp.rB);
 
-        rnA = b2Math.b2CrossVV(vcp.rA, vc.normal);
-        rnB = b2Math.b2CrossVV(vcp.rB, vc.normal);
+        rnA = b2Math.b2Vec2.CrossVV(vcp.rA, vc.normal);
+        rnB = b2Math.b2Vec2.CrossVV(vcp.rB, vc.normal);
 
         kNormal = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
 
@@ -440,8 +440,8 @@ export class b2ContactSolver {
         // b2Math.b2Vec2 tangent = b2Cross(vc->normal, 1.0f);
         tangent = vc.tangent; // precomputed from normal
 
-        rtA = b2Math.b2CrossVV(vcp.rA, tangent);
-        rtB = b2Math.b2CrossVV(vcp.rB, tangent);
+        rtA = b2Math.b2Vec2.CrossVV(vcp.rA, tangent);
+        rtB = b2Math.b2Vec2.CrossVV(vcp.rB, tangent);
 
         kTangent = mA + mB + iA * rtA * rtA + iB * rtB * rtB;
 
@@ -450,11 +450,11 @@ export class b2ContactSolver {
         // Setup a velocity bias for restitution.
         vcp.velocityBias = 0;
         // float32 vRel = b2Dot(vc->normal, vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA));
-        vRel = b2Math.b2DotVV(
+        vRel = b2Math.b2Vec2.DotVV(
           vc.normal,
-          b2Math.b2SubVV(
-            b2Math.b2AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0),
-            b2Math.b2AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1),
+          b2Math.b2Vec2.SubVV(
+            b2Math.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0),
+            b2Math.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1),
             b2Math.b2Vec2.s_t0));
         if (vRel < (-b2Settings.b2_velocityThreshold)) {
           vcp.velocityBias += (-vc.restitution * vRel);
@@ -466,10 +466,10 @@ export class b2ContactSolver {
         vcp1 = vc.points[0];
         vcp2 = vc.points[1];
 
-        rn1A = b2Math.b2CrossVV(vcp1.rA, vc.normal);
-        rn1B = b2Math.b2CrossVV(vcp1.rB, vc.normal);
-        rn2A = b2Math.b2CrossVV(vcp2.rA, vc.normal);
-        rn2B = b2Math.b2CrossVV(vcp2.rB, vc.normal);
+        rn1A = b2Math.b2Vec2.CrossVV(vcp1.rA, vc.normal);
+        rn1B = b2Math.b2Vec2.CrossVV(vcp1.rB, vc.normal);
+        rn2A = b2Math.b2Vec2.CrossVV(vcp2.rA, vc.normal);
+        rn2B = b2Math.b2Vec2.CrossVV(vcp2.rB, vc.normal);
 
         k11 = mA + mB + iA * rn1A * rn1A + iB * rn1B * rn1B;
         k22 = mA + mB + iA * rn2A * rn2A + iB * rn2B * rn2B;
@@ -543,16 +543,16 @@ export class b2ContactSolver {
       for (j = 0, jct = pointCount; j < jct; ++j) {
         vcp = vc.points[j];
         // b2Math.b2Vec2 P = vcp->normalImpulse * normal + vcp->tangentImpulse * tangent;
-        b2Math.b2AddVV(
-          b2Math.b2MulSV(vcp.normalImpulse, normal, b2Math.b2Vec2.s_t0),
-          b2Math.b2MulSV(vcp.tangentImpulse, tangent, b2Math.b2Vec2.s_t1),
+        b2Math.b2Vec2.AddVV(
+          b2Math.b2Vec2.MulSV(vcp.normalImpulse, normal, b2Math.b2Vec2.s_t0),
+          b2Math.b2Vec2.MulSV(vcp.tangentImpulse, tangent, b2Math.b2Vec2.s_t1),
           P);
         // wA -= iA * b2Cross(vcp->rA, P);
-        wA -= iA * b2Math.b2CrossVV(vcp.rA, P);
+        wA -= iA * b2Math.b2Vec2.CrossVV(vcp.rA, P);
         // vA -= mA * P;
         vA.SelfMulSub(mA, P);
         // wB += iB * b2Cross(vcp->rB, P);
-        wB += iB * b2Math.b2CrossVV(vcp.rB, P);
+        wB += iB * b2Math.b2Vec2.CrossVV(vcp.rB, P);
         // vB += mB * P;
         vB.SelfMulAdd(mB, P);
       }
@@ -657,14 +657,14 @@ export class b2ContactSolver {
 
         // Relative velocity at contact
         // b2Math.b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-        b2Math.b2SubVV(
-          b2Math.b2AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0),
-          b2Math.b2AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1),
+        b2Math.b2Vec2.SubVV(
+          b2Math.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0),
+          b2Math.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1),
           dv);
 
         // Compute tangent force
         // float32 vt = b2Dot(dv, tangent) - vc->tangentSpeed;
-        vt = b2Math.b2DotVV(dv, tangent) - vc.tangentSpeed;
+        vt = b2Math.b2Vec2.DotVV(dv, tangent) - vc.tangentSpeed;
         lambda = vcp.tangentMass * (-vt);
 
         // b2Math.b2Clamp the accumulated force
@@ -675,17 +675,17 @@ export class b2ContactSolver {
 
         // Apply contact impulse
         // b2Math.b2Vec2 P = lambda * tangent;
-        b2Math.b2MulSV(lambda, tangent, P);
+        b2Math.b2Vec2.MulSV(lambda, tangent, P);
 
         // vA -= mA * P;
         vA.SelfMulSub(mA, P);
         // wA -= iA * b2Cross(vcp->rA, P);
-        wA -= iA * b2Math.b2CrossVV(vcp.rA, P);
+        wA -= iA * b2Math.b2Vec2.CrossVV(vcp.rA, P);
 
         // vB += mB * P;
         vB.SelfMulAdd(mB, P);
         // wB += iB * b2Cross(vcp->rB, P);
-        wB += iB * b2Math.b2CrossVV(vcp.rB, P);
+        wB += iB * b2Math.b2Vec2.CrossVV(vcp.rB, P);
       }
 
       // Solve normal constraints
@@ -694,14 +694,14 @@ export class b2ContactSolver {
 
         // Relative velocity at contact
         // b2Math.b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-        b2Math.b2SubVV(
-          b2Math.b2AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0),
-          b2Math.b2AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1),
+        b2Math.b2Vec2.SubVV(
+          b2Math.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math.b2Vec2.s_t0),
+          b2Math.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math.b2Vec2.s_t1),
           dv);
 
         // Compute normal impulse
         // float32 vn = b2Dot(dv, normal);
-        vn = b2Math.b2DotVV(dv, normal);
+        vn = b2Math.b2Vec2.DotVV(dv, normal);
         lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
 
         // b2Math.b2Clamp the accumulated impulse
@@ -712,16 +712,16 @@ export class b2ContactSolver {
 
         // Apply contact impulse
         // b2Math.b2Vec2 P = lambda * normal;
-        b2Math.b2MulSV(lambda, normal, P);
+        b2Math.b2Vec2.MulSV(lambda, normal, P);
         // vA -= mA * P;
         vA.SelfMulSub(mA, P);
         // wA -= iA * b2Cross(vcp->rA, P);
-        wA -= iA * b2Math.b2CrossVV(vcp.rA, P);
+        wA -= iA * b2Math.b2Vec2.CrossVV(vcp.rA, P);
 
         // vB += mB * P;
         vB.SelfMulAdd(mB, P);
         // wB += iB * b2Cross(vcp->rB, P);
-        wB += iB * b2Math.b2CrossVV(vcp.rB, P);
+        wB += iB * b2Math.b2Vec2.CrossVV(vcp.rB, P);
       } else {
         // Block solver developed in collaboration with Dirk Gregorius (back in 01/07 on Box2D_Lite).
         // Build the mini LCP for this contact patch
@@ -765,21 +765,21 @@ export class b2ContactSolver {
 
         // Relative velocity at contact
         // b2Math.b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
-        b2Math.b2SubVV(
-          b2Math.b2AddVCrossSV(vB, wB, cp1.rB, b2Math.b2Vec2.s_t0),
-          b2Math.b2AddVCrossSV(vA, wA, cp1.rA, b2Math.b2Vec2.s_t1),
+        b2Math.b2Vec2.SubVV(
+          b2Math.b2Vec2.AddVCrossSV(vB, wB, cp1.rB, b2Math.b2Vec2.s_t0),
+          b2Math.b2Vec2.AddVCrossSV(vA, wA, cp1.rA, b2Math.b2Vec2.s_t1),
           dv1);
         // b2Math.b2Vec2 dv2 = vB + b2Cross(wB, cp2->rB) - vA - b2Cross(wA, cp2->rA);
-        b2Math.b2SubVV(
-          b2Math.b2AddVCrossSV(vB, wB, cp2.rB, b2Math.b2Vec2.s_t0),
-          b2Math.b2AddVCrossSV(vA, wA, cp2.rA, b2Math.b2Vec2.s_t1),
+        b2Math.b2Vec2.SubVV(
+          b2Math.b2Vec2.AddVCrossSV(vB, wB, cp2.rB, b2Math.b2Vec2.s_t0),
+          b2Math.b2Vec2.AddVCrossSV(vA, wA, cp2.rA, b2Math.b2Vec2.s_t1),
           dv2);
 
         // Compute normal velocity
         // float32 vn1 = b2Dot(dv1, normal);
-        vn1 = b2Math.b2DotVV(dv1, normal);
+        vn1 = b2Math.b2Vec2.DotVV(dv1, normal);
         // float32 vn2 = b2Dot(dv2, normal);
-        vn2 = b2Math.b2DotVV(dv2, normal);
+        vn2 = b2Math.b2Vec2.DotVV(dv2, normal);
 
         // b2Math.b2Vec2 b;
         b.x = vn1 - cp1.velocityBias;
@@ -787,7 +787,7 @@ export class b2ContactSolver {
 
         // Compute b'
         // b -= b2Mul(vc->K, a);
-        b.SelfSub(b2Math.b2MulMV(vc.K, a, b2Math.b2Vec2.s_t0));
+        b.SelfSub(b2Math.b2Mat22.MulMV(vc.K, a, b2Math.b2Vec2.s_t0));
 
         /*
         #if B2_DEBUG_SOLVER === 1
@@ -806,28 +806,28 @@ export class b2ContactSolver {
           // x = - inv(A) * b'
           //
           // b2Math.b2Vec2 x = - b2Mul(vc->normalMass, b);
-          b2Math.b2MulMV(vc.normalMass, b, x).SelfNeg();
+          b2Math.b2Mat22.MulMV(vc.normalMass, b, x).SelfNeg();
 
           if (x.x >= 0 && x.y >= 0) {
             // Get the incremental impulse
             // b2Math.b2Vec2 d = x - a;
-            b2Math.b2SubVV(x, a, d);
+            b2Math.b2Vec2.SubVV(x, a, d);
 
             // Apply incremental impulse
             // b2Math.b2Vec2 P1 = d.x * normal;
-            b2Math.b2MulSV(d.x, normal, P1);
+            b2Math.b2Vec2.MulSV(d.x, normal, P1);
             // b2Math.b2Vec2 P2 = d.y * normal;
-            b2Math.b2MulSV(d.y, normal, P2);
-            b2Math.b2AddVV(P1, P2, P1P2);
+            b2Math.b2Vec2.MulSV(d.y, normal, P2);
+            b2Math.b2Vec2.AddVV(P1, P2, P1P2);
             // vA -= mA * (P1 + P2);
             vA.SelfMulSub(mA, P1P2);
             // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-            wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+            wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
 
             // vB += mB * (P1 + P2);
             vB.SelfMulAdd(mB, P1P2);
             // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-            wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+            wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
 
             // Accumulate
             cp1.normalImpulse = x.x;
@@ -864,23 +864,23 @@ export class b2ContactSolver {
           if (x.x >= 0 && vn2 >= 0) {
             // Get the incremental impulse
             // b2Math.b2Vec2 d = x - a;
-            b2Math.b2SubVV(x, a, d);
+            b2Math.b2Vec2.SubVV(x, a, d);
 
             // Apply incremental impulse
             // b2Math.b2Vec2 P1 = d.x * normal;
-            b2Math.b2MulSV(d.x, normal, P1);
+            b2Math.b2Vec2.MulSV(d.x, normal, P1);
             // b2Math.b2Vec2 P2 = d.y * normal;
-            b2Math.b2MulSV(d.y, normal, P2);
-            b2Math.b2AddVV(P1, P2, P1P2);
+            b2Math.b2Vec2.MulSV(d.y, normal, P2);
+            b2Math.b2Vec2.AddVV(P1, P2, P1P2);
             // vA -= mA * (P1 + P2);
             vA.SelfMulSub(mA, P1P2);
             // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-            wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+            wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
 
             // vB += mB * (P1 + P2);
             vB.SelfMulAdd(mB, P1P2);
             // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-            wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+            wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
 
             // Accumulate
             cp1.normalImpulse = x.x;
@@ -915,23 +915,23 @@ export class b2ContactSolver {
           if (x.y >= 0 && vn1 >= 0) {
             // Resubstitute for the incremental impulse
             // b2Math.b2Vec2 d = x - a;
-            b2Math.b2SubVV(x, a, d);
+            b2Math.b2Vec2.SubVV(x, a, d);
 
             // Apply incremental impulse
             // b2Math.b2Vec2 P1 = d.x * normal;
-            b2Math.b2MulSV(d.x, normal, P1);
+            b2Math.b2Vec2.MulSV(d.x, normal, P1);
             // b2Math.b2Vec2 P2 = d.y * normal;
-            b2Math.b2MulSV(d.y, normal, P2);
-            b2Math.b2AddVV(P1, P2, P1P2);
+            b2Math.b2Vec2.MulSV(d.y, normal, P2);
+            b2Math.b2Vec2.AddVV(P1, P2, P1P2);
             // vA -= mA * (P1 + P2);
             vA.SelfMulSub(mA, P1P2);
             // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-            wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+            wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
 
             // vB += mB * (P1 + P2);
             vB.SelfMulAdd(mB, P1P2);
             // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-            wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+            wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
 
             // Accumulate
             cp1.normalImpulse = x.x;
@@ -964,23 +964,23 @@ export class b2ContactSolver {
           if (vn1 >= 0 && vn2 >= 0) {
             // Resubstitute for the incremental impulse
             // b2Math.b2Vec2 d = x - a;
-            b2Math.b2SubVV(x, a, d);
+            b2Math.b2Vec2.SubVV(x, a, d);
 
             // Apply incremental impulse
             // b2Math.b2Vec2 P1 = d.x * normal;
-            b2Math.b2MulSV(d.x, normal, P1);
+            b2Math.b2Vec2.MulSV(d.x, normal, P1);
             // b2Math.b2Vec2 P2 = d.y * normal;
-            b2Math.b2MulSV(d.y, normal, P2);
-            b2Math.b2AddVV(P1, P2, P1P2);
+            b2Math.b2Vec2.MulSV(d.y, normal, P2);
+            b2Math.b2Vec2.AddVV(P1, P2, P1P2);
             // vA -= mA * (P1 + P2);
             vA.SelfMulSub(mA, P1P2);
             // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-            wA -= iA * (b2Math.b2CrossVV(cp1.rA, P1) + b2Math.b2CrossVV(cp2.rA, P2));
+            wA -= iA * (b2Math.b2Vec2.CrossVV(cp1.rA, P1) + b2Math.b2Vec2.CrossVV(cp2.rA, P2));
 
             // vB += mB * (P1 + P2);
             vB.SelfMulAdd(mB, P1P2);
             // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-            wB += iB * (b2Math.b2CrossVV(cp1.rB, P1) + b2Math.b2CrossVV(cp2.rB, P2));
+            wB += iB * (b2Math.b2Vec2.CrossVV(cp1.rB, P1) + b2Math.b2Vec2.CrossVV(cp2.rB, P2));
 
             // Accumulate
             cp1.normalImpulse = x.x;
@@ -1095,8 +1095,8 @@ export class b2ContactSolver {
       for (j = 0, jct = pointCount; j < jct; ++j) {
         xfA.q.SetAngleRadians(aA);
         xfB.q.SetAngleRadians(aB);
-        b2Math.b2SubVV(cA, b2Math.b2MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
-        b2Math.b2SubVV(cB, b2Math.b2MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
+        b2Math.b2Vec2.SubVV(cA, b2Math.b2Rot.MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
+        b2Math.b2Vec2.SubVV(cB, b2Math.b2Rot.MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
 
         psm.Initialize(pc, xfA, xfB, j);
         normal = psm.normal;
@@ -1105,9 +1105,9 @@ export class b2ContactSolver {
         separation = psm.separation;
 
         // b2Math.b2Vec2 rA = point - cA;
-        b2Math.b2SubVV(point, cA, rA);
+        b2Math.b2Vec2.SubVV(point, cA, rA);
         // b2Math.b2Vec2 rB = point - cB;
-        b2Math.b2SubVV(point, cB, rB);
+        b2Math.b2Vec2.SubVV(point, cB, rB);
 
         // Track max constraint error.
         minSeparation = b2Math.b2Min(minSeparation, separation);
@@ -1117,9 +1117,9 @@ export class b2ContactSolver {
 
         // Compute the effective mass.
         // float32 rnA = b2Cross(rA, normal);
-        rnA = b2Math.b2CrossVV(rA, normal);
+        rnA = b2Math.b2Vec2.CrossVV(rA, normal);
         // float32 rnB = b2Cross(rB, normal);
-        rnB = b2Math.b2CrossVV(rB, normal);
+        rnB = b2Math.b2Vec2.CrossVV(rB, normal);
         // float32 K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
         K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
 
@@ -1127,17 +1127,17 @@ export class b2ContactSolver {
         impulse = K > 0 ? - C / K : 0;
 
         // b2Math.b2Vec2 P = impulse * normal;
-        b2Math.b2MulSV(impulse, normal, P);
+        b2Math.b2Vec2.MulSV(impulse, normal, P);
 
         // cA -= mA * P;
         cA.SelfMulSub(mA, P);
         // aA -= iA * b2Cross(rA, P);
-        aA -= iA * b2Math.b2CrossVV(rA, P);
+        aA -= iA * b2Math.b2Vec2.CrossVV(rA, P);
 
         // cB += mB * P;
         cB.SelfMulAdd(mB, P);
         // aB += iB * b2Cross(rB, P);
-        aB += iB * b2Math.b2CrossVV(rB, P);
+        aB += iB * b2Math.b2Vec2.CrossVV(rB, P);
       }
 
       // this.m_positions[indexA].c = cA;
@@ -1235,8 +1235,8 @@ export class b2ContactSolver {
       for (j = 0, jct = pointCount; j < jct; ++j) {
         xfA.q.SetAngleRadians(aA);
         xfB.q.SetAngleRadians(aB);
-        b2Math.b2SubVV(cA, b2Math.b2MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
-        b2Math.b2SubVV(cB, b2Math.b2MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
+        b2Math.b2Vec2.SubVV(cA, b2Math.b2Rot.MulRV(xfA.q, localCenterA, b2Math.b2Vec2.s_t0), xfA.p);
+        b2Math.b2Vec2.SubVV(cB, b2Math.b2Rot.MulRV(xfB.q, localCenterB, b2Math.b2Vec2.s_t0), xfB.p);
 
         psm.Initialize(pc, xfA, xfB, j);
         normal = psm.normal;
@@ -1245,9 +1245,9 @@ export class b2ContactSolver {
         separation = psm.separation;
 
         // b2Math.b2Vec2 rA = point - cA;
-        b2Math.b2SubVV(point, cA, rA);
+        b2Math.b2Vec2.SubVV(point, cA, rA);
         // b2Math.b2Vec2 rB = point - cB;
-        b2Math.b2SubVV(point, cB, rB);
+        b2Math.b2Vec2.SubVV(point, cB, rB);
 
         // Track max constraint error.
         minSeparation = b2Math.b2Min(minSeparation, separation);
@@ -1257,9 +1257,9 @@ export class b2ContactSolver {
 
         // Compute the effective mass.
         // float32 rnA = b2Cross(rA, normal);
-        rnA = b2Math.b2CrossVV(rA, normal);
+        rnA = b2Math.b2Vec2.CrossVV(rA, normal);
         // float32 rnB = b2Cross(rB, normal);
-        rnB = b2Math.b2CrossVV(rB, normal);
+        rnB = b2Math.b2Vec2.CrossVV(rB, normal);
         // float32 K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
         K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
 
@@ -1267,17 +1267,17 @@ export class b2ContactSolver {
         impulse = K > 0 ? - C / K : 0;
 
         // b2Math.b2Vec2 P = impulse * normal;
-        b2Math.b2MulSV(impulse, normal, P);
+        b2Math.b2Vec2.MulSV(impulse, normal, P);
 
         // cA -= mA * P;
         cA.SelfMulSub(mA, P);
         // aA -= iA * b2Cross(rA, P);
-        aA -= iA * b2Math.b2CrossVV(rA, P);
+        aA -= iA * b2Math.b2Vec2.CrossVV(rA, P);
 
         // cB += mB * P;
         cB.SelfMulAdd(mB, P);
         // aB += iB * b2Cross(rB, P);
-        aB += iB * b2Math.b2CrossVV(rB, P);
+        aB += iB * b2Math.b2Vec2.CrossVV(rB, P);
       }
 
       // this.m_positions[indexA].c = cA;

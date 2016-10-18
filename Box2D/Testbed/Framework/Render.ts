@@ -167,18 +167,18 @@ export class DebugDraw extends box2d.b2Draw {
 
     // world -> viewport
     const vt = this.m_settings.viewCenter;
-    box2d.b2SubVV(p, vt, p);
+    box2d.b2Vec2.SubVV(p, vt, p);
     const vr = this.m_settings.viewRotation;
-    box2d.b2MulTRV(vr, p, p);
+    box2d.b2Rot.MulTRV(vr, p, p);
     const vs = this.m_settings.viewZoom;
-    box2d.b2MulSV(vs, p, p);
+    box2d.b2Vec2.MulSV(vs, p, p);
 
     // viewport -> canvas
     const cs = this.m_settings.canvasScale;
-    box2d.b2MulSV(cs, p, p);
+    box2d.b2Vec2.MulSV(cs, p, p);
     p.y *= -1;
     const cc = DebugDraw.DrawStringWorld_s_cc.SetXY(0.5 * this.m_canvas.width, 0.5 * this.m_canvas.height);
-    box2d.b2AddVV(p, cc, p);
+    box2d.b2Vec2.AddVV(p, cc, p);
 
     const ctx = this.m_ctx;
 

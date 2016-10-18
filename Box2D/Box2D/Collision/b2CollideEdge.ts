@@ -15,15 +15,15 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
   manifold.pointCount = 0;
 
   // Compute circle in frame of edge
-  const Q: b2Math.b2Vec2 = b2Math.b2MulTXV(xfA, b2Math.b2MulXV(xfB, circleB.m_p, b2Math.b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
+  const Q: b2Math.b2Vec2 = b2Math.b2Transform.MulTXV(xfA, b2Math.b2Transform.MulXV(xfB, circleB.m_p, b2Math.b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
 
   const A: b2Math.b2Vec2 = edgeA.m_vertex1;
   const B: b2Math.b2Vec2 = edgeA.m_vertex2;
-  const e: b2Math.b2Vec2 = b2Math.b2SubVV(B, A, b2CollideEdgeAndCircle_s_e);
+  const e: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(B, A, b2CollideEdgeAndCircle_s_e);
 
   // Barycentric coordinates
-  const u: number = b2Math.b2DotVV(e, b2Math.b2SubVV(B, Q, b2Math.b2Vec2.s_t0));
-  const v: number = b2Math.b2DotVV(e, b2Math.b2SubVV(Q, A, b2Math.b2Vec2.s_t0));
+  const u: number = b2Math.b2Vec2.DotVV(e, b2Math.b2Vec2.SubVV(B, Q, b2Math.b2Vec2.s_t0));
+  const v: number = b2Math.b2Vec2.DotVV(e, b2Math.b2Vec2.SubVV(Q, A, b2Math.b2Vec2.s_t0));
 
   const radius: number = edgeA.m_radius + circleB.m_radius;
 
@@ -35,8 +35,8 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
   // Region A
   if (v <= 0) {
     const P: b2Math.b2Vec2 = A;
-    const d: b2Math.b2Vec2 = b2Math.b2SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-    const dd: number = b2Math.b2DotVV(d, d);
+    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+    const dd: number = b2Math.b2Vec2.DotVV(d, d);
     if (dd > radius * radius) {
       return;
     }
@@ -45,8 +45,8 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
     if (edgeA.m_hasVertex0) {
       const A1: b2Math.b2Vec2 = edgeA.m_vertex0;
       const B1: b2Math.b2Vec2 = A;
-      const e1: b2Math.b2Vec2 = b2Math.b2SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
-      const u1: number = b2Math.b2DotVV(e1, b2Math.b2SubVV(B1, Q, b2Math.b2Vec2.s_t0));
+      const e1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
+      const u1: number = b2Math.b2Vec2.DotVV(e1, b2Math.b2Vec2.SubVV(B1, Q, b2Math.b2Vec2.s_t0));
 
       // Is the circle in Region AB of the previous edge?
       if (u1 > 0) {
@@ -70,8 +70,8 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
   // Region B
   if (u <= 0) {
     const P: b2Math.b2Vec2 = B;
-    const d: b2Math.b2Vec2 = b2Math.b2SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-    const dd: number = b2Math.b2DotVV(d, d);
+    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+    const dd: number = b2Math.b2Vec2.DotVV(d, d);
     if (dd > radius * radius) {
       return;
     }
@@ -80,8 +80,8 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
     if (edgeA.m_hasVertex3) {
       const B2: b2Math.b2Vec2 = edgeA.m_vertex3;
       const A2: b2Math.b2Vec2 = B;
-      const e2: b2Math.b2Vec2 = b2Math.b2SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
-      const v2: number = b2Math.b2DotVV(e2, b2Math.b2SubVV(Q, A2, b2Math.b2Vec2.s_t0));
+      const e2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
+      const v2: number = b2Math.b2Vec2.DotVV(e2, b2Math.b2Vec2.SubVV(Q, A2, b2Math.b2Vec2.s_t0));
 
       // Is the circle in Region AB of the next edge?
       if (v2 > 0) {
@@ -103,19 +103,19 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
   }
 
   // Region AB
-  const den: number = b2Math.b2DotVV(e, e);
+  const den: number = b2Math.b2Vec2.DotVV(e, e);
   if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(den > 0); }
   const P: b2Math.b2Vec2 = b2CollideEdgeAndCircle_s_P;
   P.x = (1 / den) * (u * A.x + v * B.x);
   P.y = (1 / den) * (u * A.y + v * B.y);
-  const d: b2Math.b2Vec2 = b2Math.b2SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-  const dd: number = b2Math.b2DotVV(d, d);
+  const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+  const dd: number = b2Math.b2Vec2.DotVV(d, d);
   if (dd > radius * radius) {
     return;
   }
 
   const n: b2Math.b2Vec2 = b2CollideEdgeAndCircle_s_n.SetXY(-e.y, e.x);
-  if (b2Math.b2DotVV(n, b2Math.b2SubVV(Q, A, b2Math.b2Vec2.s_t0)) < 0) {
+  if (b2Math.b2Vec2.DotVV(n, b2Math.b2Vec2.SubVV(Q, A, b2Math.b2Vec2.s_t0)) < 0) {
     n.SetXY(-n.x, -n.y);
   }
   n.Normalize();
@@ -197,9 +197,9 @@ class b2EPCollider {
   private static s_edgeAxis = new b2EPAxis();
   private static s_polygonAxis = new b2EPAxis();
   public Collide(manifold, edgeA, xfA, polygonB, xfB) {
-    b2Math.b2MulTXX(xfA, xfB, this.m_xf);
+    b2Math.b2Transform.MulTXX(xfA, xfB, this.m_xf);
 
-    b2Math.b2MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
+    b2Math.b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
 
     this.m_v0.Copy(edgeA.m_vertex0);
     this.m_v1.Copy(edgeA.m_vertex1);
@@ -209,10 +209,10 @@ class b2EPCollider {
     const hasVertex0: boolean = edgeA.m_hasVertex0;
     const hasVertex3: boolean = edgeA.m_hasVertex3;
 
-    const edge1: b2Math.b2Vec2 = b2Math.b2SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
+    const edge1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
     edge1.Normalize();
     this.m_normal1.SetXY(edge1.y, -edge1.x);
-    const offset1: number = b2Math.b2DotVV(this.m_normal1, b2Math.b2SubVV(this.m_centroidB, this.m_v1, b2Math.b2Vec2.s_t0));
+    const offset1: number = b2Math.b2Vec2.DotVV(this.m_normal1, b2Math.b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Math.b2Vec2.s_t0));
     let offset0: number = 0;
     let offset2: number = 0;
     let convex1: boolean = false;
@@ -220,20 +220,20 @@ class b2EPCollider {
 
     // Is there a preceding edge?
     if (hasVertex0) {
-      const edge0: b2Math.b2Vec2 = b2Math.b2SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
+      const edge0: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
       edge0.Normalize();
       this.m_normal0.SetXY(edge0.y, -edge0.x);
-      convex1 = b2Math.b2CrossVV(edge0, edge1) >= 0;
-      offset0 = b2Math.b2DotVV(this.m_normal0, b2Math.b2SubVV(this.m_centroidB, this.m_v0, b2Math.b2Vec2.s_t0));
+      convex1 = b2Math.b2Vec2.CrossVV(edge0, edge1) >= 0;
+      offset0 = b2Math.b2Vec2.DotVV(this.m_normal0, b2Math.b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Math.b2Vec2.s_t0));
     }
 
     // Is there a following edge?
     if (hasVertex3) {
-      const edge2: b2Math.b2Vec2 = b2Math.b2SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
+      const edge2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
       edge2.Normalize();
       this.m_normal2.SetXY(edge2.y, -edge2.x);
-      convex2 = b2Math.b2CrossVV(edge1, edge2) > 0;
-      offset2 = b2Math.b2DotVV(this.m_normal2, b2Math.b2SubVV(this.m_centroidB, this.m_v2, b2Math.b2Vec2.s_t0));
+      convex2 = b2Math.b2Vec2.CrossVV(edge1, edge2) > 0;
+      offset2 = b2Math.b2Vec2.DotVV(this.m_normal2, b2Math.b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Math.b2Vec2.s_t0));
     }
 
     // Determine front or back collision. Determine collision normal limits.
@@ -347,8 +347,8 @@ class b2EPCollider {
     // Get polygonB in frameA
     this.m_polygonB.count = polygonB.m_count;
     for (let i: number = 0, ict: number = polygonB.m_count; i < ict; ++i) {
-      b2Math.b2MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
-      b2Math.b2MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
+      b2Math.b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
+      b2Math.b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
     }
 
     this.m_radius = 2 * b2Settings.b2_polygonRadius;
@@ -391,9 +391,9 @@ class b2EPCollider {
 
       // Search for the polygon normal that is most anti-parallel to the edge normal.
       let bestIndex: number = 0;
-      let bestValue: number = b2Math.b2DotVV(this.m_normal, this.m_polygonB.normals[0]);
+      let bestValue: number = b2Math.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
       for (let i: number = 1, ict: number = this.m_polygonB.count; i < ict; ++i) {
-        const value: number = b2Math.b2DotVV(this.m_normal, this.m_polygonB.normals[i]);
+        const value: number = b2Math.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
         if (value < bestValue) {
           bestValue = value;
           bestIndex = i;
@@ -456,8 +456,8 @@ class b2EPCollider {
 
     rf.sideNormal1.SetXY(rf.normal.y, -rf.normal.x);
     rf.sideNormal2.Copy(rf.sideNormal1).SelfNeg();
-    rf.sideOffset1 = b2Math.b2DotVV(rf.sideNormal1, rf.v1);
-    rf.sideOffset2 = b2Math.b2DotVV(rf.sideNormal2, rf.v2);
+    rf.sideOffset1 = b2Math.b2Vec2.DotVV(rf.sideNormal1, rf.v1);
+    rf.sideOffset2 = b2Math.b2Vec2.DotVV(rf.sideNormal2, rf.v2);
 
     // Clip incident edge against extruded edge1 side edges.
     const clipPoints1: b2ClipVertex[] = b2EPCollider.s_clipPoints1;
@@ -491,13 +491,13 @@ class b2EPCollider {
     for (let i: number = 0, ict: number = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
       let separation: number;
 
-      separation = b2Math.b2DotVV(rf.normal, b2Math.b2SubVV(clipPoints2[i].v, rf.v1, b2Math.b2Vec2.s_t0));
+      separation = b2Math.b2Vec2.DotVV(rf.normal, b2Math.b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Math.b2Vec2.s_t0));
 
       if (separation <= this.m_radius) {
         const cp: b2ManifoldPoint = manifold.points[pointCount];
 
         if (primaryAxis.type === b2EPAxisType.e_edgeA) {
-          b2Math.b2MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
+          b2Math.b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
           cp.id = clipPoints2[i].id;
         } else {
           cp.localPoint.Copy(clipPoints2[i].v);
@@ -521,7 +521,7 @@ class b2EPCollider {
     axis.separation = b2Settings.b2_maxFloat;
 
     for (let i: number = 0, ict = this.m_polygonB.count; i < ict; ++i) {
-      const s: number = b2Math.b2DotVV(this.m_normal, b2Math.b2SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
+      const s: number = b2Math.b2Vec2.DotVV(this.m_normal, b2Math.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
       if (s < axis.separation) {
         axis.separation = s;
       }
@@ -541,10 +541,10 @@ class b2EPCollider {
     const perp: b2Math.b2Vec2 = b2EPCollider.s_perp.SetXY(-this.m_normal.y, this.m_normal.x);
 
     for (let i: number = 0, ict = this.m_polygonB.count; i < ict; ++i) {
-      const n: b2Math.b2Vec2 = b2Math.b2NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
+      const n: b2Math.b2Vec2 = b2Math.b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
 
-      const s1: number = b2Math.b2DotVV(n, b2Math.b2SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
-      const s2: number = b2Math.b2DotVV(n, b2Math.b2SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Math.b2Vec2.s_t0));
+      const s1: number = b2Math.b2Vec2.DotVV(n, b2Math.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math.b2Vec2.s_t0));
+      const s2: number = b2Math.b2Vec2.DotVV(n, b2Math.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Math.b2Vec2.s_t0));
       const s: number = b2Math.b2Min(s1, s2);
 
       if (s > this.m_radius) {
@@ -556,12 +556,12 @@ class b2EPCollider {
       }
 
       // Adjacency
-      if (b2Math.b2DotVV(n, perp) >= 0) {
-        if (b2Math.b2DotVV(b2Math.b2SubVV(n, this.m_upperLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
+      if (b2Math.b2Vec2.DotVV(n, perp) >= 0) {
+        if (b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(n, this.m_upperLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
           continue;
         }
       } else {
-        if (b2Math.b2DotVV(b2Math.b2SubVV(n, this.m_lowerLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
+        if (b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(n, this.m_lowerLimit, b2Math.b2Vec2.s_t0), this.m_normal) < -b2Settings.b2_angularSlop) {
           continue;
         }
       }

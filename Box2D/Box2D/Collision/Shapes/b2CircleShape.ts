@@ -54,9 +54,9 @@ export class b2CircleShape extends b2Shape {
   private static TestPoint_s_center = new b2Math.b2Vec2();
   private static TestPoint_s_d = new b2Math.b2Vec2();
   public TestPoint(transform: b2Math.b2Transform, p: b2Math.b2Vec2): boolean {
-    const center: b2Math.b2Vec2 = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
-    const d: b2Math.b2Vec2 = b2Math.b2SubVV(p, center, b2CircleShape.TestPoint_s_d);
-    return b2Math.b2DotVV(d, d) <= b2Math.b2Sq(this.m_radius);
+    const center: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
+    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p, center, b2CircleShape.TestPoint_s_d);
+    return b2Math.b2Vec2.DotVV(d, d) <= b2Math.b2Sq(this.m_radius);
   }
 
   /// Implement b2Shape.
@@ -68,14 +68,14 @@ export class b2CircleShape extends b2Shape {
   private static RayCast_s_s = new b2Math.b2Vec2();
   private static RayCast_s_r = new b2Math.b2Vec2();
   public RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Math.b2Transform, childIndex: number): boolean {
-    const position: b2Math.b2Vec2 = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
-    const s: b2Math.b2Vec2 = b2Math.b2SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
-    const b: number = b2Math.b2DotVV(s, s) - b2Math.b2Sq(this.m_radius);
+    const position: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
+    const s: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
+    const b: number = b2Math.b2Vec2.DotVV(s, s) - b2Math.b2Sq(this.m_radius);
 
     // Solve quadratic equation.
-    const r: b2Math.b2Vec2 = b2Math.b2SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
-    const c: number = b2Math.b2DotVV(s, r);
-    const rr: number = b2Math.b2DotVV(r, r);
+    const r: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
+    const c: number = b2Math.b2Vec2.DotVV(s, r);
+    const rr: number = b2Math.b2Vec2.DotVV(r, r);
     const sigma = c * c - rr * b;
 
     // Check for negative discriminant and short segment.
@@ -90,7 +90,7 @@ export class b2CircleShape extends b2Shape {
     if (0 <= a && a <= input.maxFraction * rr) {
       a /= rr;
       output.fraction = a;
-      b2Math.b2AddVMulSV(s, a, r, output.normal).SelfNormalize();
+      b2Math.b2Vec2.AddVMulSV(s, a, r, output.normal).SelfNormalize();
       return true;
     }
 
@@ -100,7 +100,7 @@ export class b2CircleShape extends b2Shape {
   /// @see b2Shape::ComputeAABB
   private static ComputeAABB_s_p = new b2Math.b2Vec2();
   public ComputeAABB(aabb: b2AABB, transform: b2Math.b2Transform, childIndex: number): void {
-    const p: b2Math.b2Vec2 = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
+    const p: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
     aabb.lowerBound.SetXY(p.x - this.m_radius, p.y - this.m_radius);
     aabb.upperBound.SetXY(p.x + this.m_radius, p.y + this.m_radius);
   }
@@ -112,7 +112,7 @@ export class b2CircleShape extends b2Shape {
     massData.center.Copy(this.m_p);
 
     // inertia about the local origin
-    massData.I = massData.mass * (0.5 * radius_sq + b2Math.b2DotVV(this.m_p, this.m_p));
+    massData.I = massData.mass * (0.5 * radius_sq + b2Math.b2Vec2.DotVV(this.m_p, this.m_p));
   }
 
   public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
@@ -123,8 +123,8 @@ export class b2CircleShape extends b2Shape {
   }
 
   public ComputeSubmergedArea(normal: b2Math.b2Vec2, offset: number, xf: b2Math.b2Transform, c: b2Math.b2Vec2): number {
-    const p: b2Math.b2Vec2 = b2Math.b2MulXV(xf, this.m_p, new b2Math.b2Vec2());
-    const l: number = (-(b2Math.b2DotVV(normal, p) - offset));
+    const p: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xf, this.m_p, new b2Math.b2Vec2());
+    const l: number = (-(b2Math.b2Vec2.DotVV(normal, p) - offset));
 
     if (l < (-this.m_radius) + b2Settings.b2_epsilon) {
       // Completely dry

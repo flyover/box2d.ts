@@ -109,31 +109,31 @@ declare module "Common/b2Math" {
         SelfNeg(): b2Vec2;
         SelfSkew(): b2Vec2;
         static MakeArray(length: number): b2Vec2[];
+        static AbsV(v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static ClampV(v: b2Vec2, lo: b2Vec2, hi: b2Vec2, out: b2Vec2): b2Vec2;
+        static RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2;
+        static DotVV(a: b2Vec2, b: b2Vec2): number;
+        static CrossVV(a: b2Vec2, b: b2Vec2): number;
+        static CrossVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2;
+        static CrossVOne(v: b2Vec2, out: b2Vec2): b2Vec2;
+        static CrossSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static CrossOneV(v: b2Vec2, out: b2Vec2): b2Vec2;
+        static AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MidVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static ExtVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
+        static IsEqualToV(a: b2Vec2, b: b2Vec2): boolean;
+        static DistanceVV(a: b2Vec2, b: b2Vec2): number;
+        static DistanceSquaredVV(a: b2Vec2, b: b2Vec2): number;
+        static NegV(v: b2Vec2, out: b2Vec2): b2Vec2;
     }
     export const b2Vec2_zero: b2Vec2;
-    export function b2AbsV(v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2ClampV(v: b2Vec2, lo: b2Vec2, hi: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2;
-    export function b2DotVV(a: b2Vec2, b: b2Vec2): number;
-    export function b2CrossVV(a: b2Vec2, b: b2Vec2): number;
-    export function b2CrossVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2;
-    export function b2CrossVOne(v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2CrossSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2CrossOneV(v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MidVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2ExtVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2IsEqualToV(a: b2Vec2, b: b2Vec2): boolean;
-    export function b2DistanceVV(a: b2Vec2, b: b2Vec2): number;
-    export function b2DistanceSquaredVV(a: b2Vec2, b: b2Vec2): number;
-    export function b2NegV(v: b2Vec2, out: b2Vec2): b2Vec2;
     export class b2Vec3 {
         static ZERO: b2Vec3;
         static s_t0: b2Vec3;
@@ -151,9 +151,9 @@ declare module "Common/b2Math" {
         SelfSub(v: b2Vec3): b2Vec3;
         SelfSubXYZ(x: number, y: number, z: number): b2Vec3;
         SelfMul(s: number): b2Vec3;
+        static DotV3V3(a: b2Vec3, b: b2Vec3): number;
+        static CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3;
     }
-    export function b2DotV3V3(a: b2Vec3, b: b2Vec3): number;
-    export function b2CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3;
     export class b2Mat22 {
         static IDENTITY: b2Mat22;
         ex: b2Vec2;
@@ -175,13 +175,13 @@ declare module "Common/b2Math" {
         SelfInv(): b2Mat22;
         SelfAddM(M: b2Mat22): b2Mat22;
         SelfSubM(M: b2Mat22): b2Mat22;
+        static AbsM(M: b2Mat22, out: b2Mat22): b2Mat22;
+        static MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22;
+        static MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22;
+        static MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22;
     }
-    export function b2AbsM(M: b2Mat22, out: b2Mat22): b2Mat22;
-    export function b2MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22;
-    export function b2MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22;
-    export function b2MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22;
     export class b2Mat33 {
         static IDENTITY: b2Mat33;
         ex: b2Vec3;
@@ -197,11 +197,11 @@ declare module "Common/b2Math" {
         Solve22(b_x: number, b_y: number, out: b2Vec2): b2Vec2;
         GetInverse22(M: b2Mat33): void;
         GetSymInverse33(M: b2Mat33): void;
+        static MulM33V3(A: b2Mat33, v: b2Vec3, out: b2Vec3): b2Vec3;
+        static MulM33XYZ(A: b2Mat33, x: number, y: number, z: number, out: b2Vec3): b2Vec3;
+        static MulM33V2(A: b2Mat33, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2;
     }
-    export function b2MulM33V3(A: b2Mat33, v: b2Vec3, out: b2Vec3): b2Vec3;
-    export function b2MulM33XYZ(A: b2Mat33, x: number, y: number, z: number, out: b2Vec3): b2Vec3;
-    export function b2MulM33V2(A: b2Mat33, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2;
     export class b2Rot {
         static IDENTITY: b2Rot;
         s: number;
@@ -214,11 +214,11 @@ declare module "Common/b2Math" {
         GetAngleRadians(): number;
         GetXAxis(out: b2Vec2): b2Vec2;
         GetYAxis(out: b2Vec2): b2Vec2;
+        static MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot;
+        static MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot;
+        static MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2;
     }
-    export function b2MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot;
-    export function b2MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot;
-    export function b2MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2;
     export class b2Transform {
         static IDENTITY: b2Transform;
         p: b2Vec2;
@@ -236,11 +236,11 @@ declare module "Common/b2Math" {
         GetRotation(): b2Rot;
         GetRotationAngleRadians(): number;
         GetAngleRadians(): number;
+        static MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform;
+        static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform;
     }
-    export function b2MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2;
-    export function b2MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform;
-    export function b2MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform;
     export class b2Sweep {
         localCenter: b2Vec2;
         c0: b2Vec2;

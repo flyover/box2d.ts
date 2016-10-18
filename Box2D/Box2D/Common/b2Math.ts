@@ -328,31 +328,31 @@ export class b2Vec2 {
 
 export const b2Vec2_zero: b2Vec2 = new b2Vec2(0, 0);
 
-export function b2AbsV(v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2AbsV(v: b2Vec2, out: b2Vec2): b2Vec2 {
   out.x = b2Abs(v.x);
   out.y = b2Abs(v.y);
   return out;
 }
 
-export function b2MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 {
   out.x = b2Min(a.x, b.x);
   out.y = b2Min(a.y, b.y);
   return out;
 }
 
-export function b2MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 {
   out.x = b2Max(a.x, b.x);
   out.y = b2Max(a.y, b.y);
   return out;
 }
 
-export function b2ClampV(v: b2Vec2, lo: b2Vec2, hi: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2ClampV(v: b2Vec2, lo: b2Vec2, hi: b2Vec2, out: b2Vec2): b2Vec2 {
   out.x = b2Clamp(v.x, lo.x, hi.x);
   out.y = b2Clamp(v.y, lo.y, hi.y);
   return out;
 }
 
-export function b2RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2 {
+function b2RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x, v_y: number = v.y;
   const c: number = Math.cos(radians);
   const s: number = Math.sin(radians);
@@ -361,79 +361,79 @@ export function b2RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-export function b2DotVV(a: b2Vec2, b: b2Vec2): number {
+function b2DotVV(a: b2Vec2, b: b2Vec2): number {
   return a.x * b.x + a.y * b.y;
 }
 
-export function b2CrossVV(a: b2Vec2, b: b2Vec2): number {
+function b2CrossVV(a: b2Vec2, b: b2Vec2): number {
   return a.x * b.y - a.y * b.x;
 }
 
-export function b2CrossVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 {
+function b2CrossVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x;
   out.x =  s * v.y;
   out.y = -s * v_x;
   return out;
 }
 
-export function b2CrossVOne(v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2CrossVOne(v: b2Vec2, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x;
   out.x =  v.y;
   out.y = -v_x;
   return out;
 }
 
-export function b2CrossSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2CrossSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x;
   out.x = -s * v.y;
   out.y =  s * v_x;
   return out;
 }
 
-export function b2CrossOneV(v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2CrossOneV(v: b2Vec2, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x;
   out.x = -v.y;
   out.y =  v_x;
   return out;
 }
 
-export function b2AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
+function b2AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
 
-export function b2SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
+function b2SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
 
-export function b2MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = v.x * s; out.y = v.y * s; return out; }
+function b2MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = v.x * s; out.y = v.y * s; return out; }
 
-export function b2AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
-export function b2SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
+function b2AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
+function b2SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
 
-export function b2AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x;
   out.x = a.x - (s * v.y);
   out.y = a.y + (s * v_x);
   return out;
 }
 
-export function b2MidVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
+function b2MidVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
 
-export function b2ExtVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
+function b2ExtVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
 
-export function b2IsEqualToV(a: b2Vec2, b: b2Vec2): boolean {
+function b2IsEqualToV(a: b2Vec2, b: b2Vec2): boolean {
   return a.x === b.x && a.y === b.y;
 }
 
-export function b2DistanceVV(a: b2Vec2, b: b2Vec2): number {
+function b2DistanceVV(a: b2Vec2, b: b2Vec2): number {
   const c_x: number = a.x - b.x;
   const c_y: number = a.y - b.y;
   return Math.sqrt(c_x * c_x + c_y * c_y);
 }
 
-export function b2DistanceSquaredVV(a: b2Vec2, b: b2Vec2): number {
+function b2DistanceSquaredVV(a: b2Vec2, b: b2Vec2): number {
   const c_x: number = a.x - b.x;
   const c_y: number = a.y - b.y;
   return (c_x * c_x + c_y * c_y);
 }
 
-export function b2NegV(v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = -v.x; out.y = -v.y; return out; }
+function b2NegV(v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = -v.x; out.y = -v.y; return out; }
 
 /// A 2D column vector with 3 elements.
 export class b2Vec3 {
@@ -523,11 +523,11 @@ export class b2Vec3 {
   public static CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 { return b2CrossV3V3(a, b, out); }
 }
 
-export function b2DotV3V3(a: b2Vec3, b: b2Vec3): number {
+function b2DotV3V3(a: b2Vec3, b: b2Vec3): number {
   return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-export function b2CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 {
+function b2CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 {
   const a_x: number = a.x, a_y = a.y, a_z = a.z;
   const b_x: number = b.x, b_y = b.y, b_z = b.z;
   out.x = a_y * b_z - a_z * b_y;
@@ -660,7 +660,7 @@ export class b2Mat22 {
   public static MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2MulTMM(A, B, out); }
 }
 
-export function b2AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 {
+function b2AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 {
   const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
   out.ex.x = b2Abs(M_ex.x);
   out.ex.y = b2Abs(M_ex.y);
@@ -669,7 +669,7 @@ export function b2AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 {
   return out;
 }
 
-export function b2MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
   const v_x: number = v.x, v_y: number = v.y;
   out.x = M_ex.x * v_x + M_ey.x * v_y;
@@ -677,7 +677,7 @@ export function b2MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-export function b2MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
   const v_x: number = v.x, v_y: number = v.y;
   out.x = M_ex.x * v_x + M_ex.y * v_y;
@@ -685,7 +685,7 @@ export function b2MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-export function b2AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
+function b2AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
   const A_ex: b2Vec2 = A.ex, A_ey: b2Vec2 = A.ey;
   const B_ex: b2Vec2 = B.ex, B_ey: b2Vec2 = B.ey;
   out.ex.x = A_ex.x + B_ex.x;
@@ -695,7 +695,7 @@ export function b2AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
   return out;
 }
 
-export function b2MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
+function b2MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
   const A_ex_x: number = A.ex.x, A_ex_y: number = A.ex.y;
   const A_ey_x: number = A.ey.x, A_ey_y: number = A.ey.y;
   const B_ex_x: number = B.ex.x, B_ex_y: number = B.ex.y;
@@ -707,7 +707,7 @@ export function b2MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
   return out;
 }
 
-export function b2MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
+function b2MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
   const A_ex_x: number = A.ex.x, A_ex_y: number = A.ex.y;
   const A_ey_x: number = A.ey.x, A_ey_y: number = A.ey.y;
   const B_ex_x: number = B.ex.x, B_ex_y: number = B.ex.y;
@@ -834,26 +834,26 @@ export class b2Mat33 {
   public static MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2 { return b2MulM33XY(A, x, y, out); }
 }
 
-export function b2MulM33V3(A: b2Mat33, v: b2Vec3, out: b2Vec3): b2Vec3 {
+function b2MulM33V3(A: b2Mat33, v: b2Vec3, out: b2Vec3): b2Vec3 {
   const v_x: number = v.x, v_y: number = v.y, v_z: number = v.z;
   out.x = A.ex.x * v_x + A.ey.x * v_y + A.ez.x * v_z;
   out.y = A.ex.y * v_x + A.ey.y * v_y + A.ez.y * v_z;
   out.z = A.ex.z * v_x + A.ey.z * v_y + A.ez.z * v_z;
   return out;
 }
-export function b2MulM33XYZ(A: b2Mat33, x: number, y: number, z: number, out: b2Vec3): b2Vec3 {
+function b2MulM33XYZ(A: b2Mat33, x: number, y: number, z: number, out: b2Vec3): b2Vec3 {
   out.x = A.ex.x * x + A.ey.x * y + A.ez.x * z;
   out.y = A.ex.y * x + A.ey.y * y + A.ez.y * z;
   out.z = A.ex.z * x + A.ey.z * y + A.ez.z * z;
   return out;
 }
-export function b2MulM33V2(A: b2Mat33, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulM33V2(A: b2Mat33, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const v_x: number = v.x, v_y: number = v.y;
   out.x = A.ex.x * v_x + A.ey.x * v_y;
   out.y = A.ex.y * v_x + A.ey.y * v_y;
   return out;
 }
-export function b2MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2 {
+function b2MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2 {
   out.x = A.ex.x * x + A.ey.x * y;
   out.y = A.ex.y * x + A.ey.y * y;
   return out;
@@ -917,7 +917,7 @@ export class b2Rot {
   public static MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulTRV(q, v, out); }
 }
 
-export function b2MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
+function b2MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
   // [qc -qs] * [rc -rs] = [qc*rc-qs*rs -qc*rs-qs*rc]
   // [qs  qc]   [rs  rc]   [qs*rc+qc*rs -qs*rs+qc*rc]
   // s = qs * rc + qc * rs
@@ -929,7 +929,7 @@ export function b2MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
   return out;
 }
 
-export function b2MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
+function b2MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
   // [ qc qs] * [rc -rs] = [qc*rc+qs*rs -qc*rs+qs*rc]
   // [-qs qc]   [rs  rc]   [-qs*rc+qc*rs qs*rs+qc*rc]
   // s = qc * rs - qs * rc
@@ -941,7 +941,7 @@ export function b2MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
   return out;
 }
 
-export function b2MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const q_c: number = q.c, q_s: number = q.s;
   const v_x: number = v.x, v_y: number = v.y;
   out.x = q_c * v_x - q_s * v_y;
@@ -949,7 +949,7 @@ export function b2MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-export function b2MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
   const q_c: number = q.c, q_s: number = q.s;
   const v_x: number = v.x, v_y: number = v.y;
   out.x =  q_c * v_x + q_s * v_y;
@@ -1036,7 +1036,7 @@ export class b2Transform {
   public static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform { return b2MulTXX(A, B, out); }
 }
 
-export function b2MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
 //  float32 x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
 //  float32 y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
 //
@@ -1048,7 +1048,7 @@ export function b2MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-export function b2MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
 //  float32 px = v.x - T.p.x;
 //  float32 py = v.y - T.p.y;
 //  float32 x = (T.q.c * px + T.q.s * py);
@@ -1063,13 +1063,13 @@ export function b2MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-export function b2MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
+function b2MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
   b2MulRR(A.q, B.q, out.q);
   b2AddVV(b2MulRV(A.q, B.p, out.p), A.p, out.p);
   return out;
 }
 
-export function b2MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
+function b2MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
   b2MulTRR(A.q, B.q, out.q);
   b2MulTRV(A.q, b2SubVV(B.p, A.p, out.p), out.p);
   return out;

@@ -145,11 +145,11 @@ export class b2RevoluteJoint extends b2Joint {
     const qA: b2Math.b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Math.b2Rot = this.m_qB.SetAngleRadians(aB);
 
     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-    b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-    b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+    b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+    b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-    b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-    b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+    b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+    b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
 
     // J = [-I -r1_skew I r2_skew]
     //     [ 0       -1 0       1]
@@ -216,11 +216,11 @@ export class b2RevoluteJoint extends b2Joint {
 
       // vA -= mA * P;
       vA.SelfMulSub(mA, P);
-      wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + this.m_motorImpulse + this.m_impulse.z);
+      wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + this.m_motorImpulse + this.m_impulse.z);
 
       // vB += mB * P;
       vB.SelfMulAdd(mB, P);
-      wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + this.m_motorImpulse + this.m_impulse.z);
+      wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + this.m_motorImpulse + this.m_impulse.z);
     } else {
       this.m_impulse.SetZero();
       this.m_motorImpulse = 0;
@@ -265,9 +265,9 @@ export class b2RevoluteJoint extends b2Joint {
     // Solve limit constraint.
     if (this.m_enableLimit && this.m_limitState !== b2LimitState.e_inactiveLimit && fixedRotation === false) {
       // b2Math.b2Vec2 Cdot1 = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-      const Cdot1: b2Math.b2Vec2 = b2Math.b2SubVV(
-        b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0),
-        b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1),
+      const Cdot1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(
+        b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0),
+        b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1),
         b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1);
       const Cdot2: number = wB - wA;
       // b2Math.b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
@@ -316,17 +316,17 @@ export class b2RevoluteJoint extends b2Joint {
 
       // vA -= mA * P;
       vA.SelfMulSub(mA, P);
-      wA -= iA * (b2Math.b2CrossVV(this.m_rA, P) + impulse_v3.z);
+      wA -= iA * (b2Math.b2Vec2.CrossVV(this.m_rA, P) + impulse_v3.z);
 
       // vB += mB * P;
       vB.SelfMulAdd(mB, P);
-      wB += iB * (b2Math.b2CrossVV(this.m_rB, P) + impulse_v3.z);
+      wB += iB * (b2Math.b2Vec2.CrossVV(this.m_rB, P) + impulse_v3.z);
     } else {
       // Solve point-to-point constraint
       // b2Math.b2Vec2 Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-      const Cdot_v2: b2Math.b2Vec2 = b2Math.b2SubVV(
-        b2Math.b2AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0),
-        b2Math.b2AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1),
+      const Cdot_v2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(
+        b2Math.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math.b2Vec2.s_t0),
+        b2Math.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math.b2Vec2.s_t1),
         b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2);
       // b2Math.b2Vec2 impulse = m_mass.Solve22(-Cdot);
       const impulse_v2: b2Math.b2Vec2 = this.m_mass.Solve22(-Cdot_v2.x, -Cdot_v2.y, b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v2);
@@ -336,11 +336,11 @@ export class b2RevoluteJoint extends b2Joint {
 
       // vA -= mA * impulse;
       vA.SelfMulSub(mA, impulse_v2);
-      wA -= iA * b2Math.b2CrossVV(this.m_rA, impulse_v2);
+      wA -= iA * b2Math.b2Vec2.CrossVV(this.m_rA, impulse_v2);
 
       // vB += mB * impulse;
       vB.SelfMulAdd(mB, impulse_v2);
-      wB += iB * b2Math.b2CrossVV(this.m_rB, impulse_v2);
+      wB += iB * b2Math.b2Vec2.CrossVV(this.m_rB, impulse_v2);
     }
 
     // data.velocities[this.m_indexA].v = vA;
@@ -400,17 +400,17 @@ export class b2RevoluteJoint extends b2Joint {
       qA.SetAngleRadians(aA);
       qB.SetAngleRadians(aB);
       // b2Math.b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-      b2Math.b2SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-      const rA: b2Math.b2Vec2 = b2Math.b2MulRV(qA, this.m_lalcA, this.m_rA);
+      b2Math.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+      const rA: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
       // b2Math.b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-      b2Math.b2SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-      const rB: b2Math.b2Vec2 = b2Math.b2MulRV(qB, this.m_lalcB, this.m_rB);
+      b2Math.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+      const rB: b2Math.b2Vec2 = b2Math.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
 
       // b2Math.b2Vec2 C = cB + rB - cA - rA;
       const C_v2 =
-        b2Math.b2SubVV(
-          b2Math.b2AddVV(cB, rB, b2Math.b2Vec2.s_t0),
-          b2Math.b2AddVV(cA, rA, b2Math.b2Vec2.s_t1),
+        b2Math.b2Vec2.SubVV(
+          b2Math.b2Vec2.AddVV(cB, rB, b2Math.b2Vec2.s_t0),
+          b2Math.b2Vec2.AddVV(cA, rA, b2Math.b2Vec2.s_t1),
           b2RevoluteJoint.SolvePositionConstraints_s_C_v2);
       // positionError = C.Length();
       positionError = C_v2.GetLength();
@@ -429,11 +429,11 @@ export class b2RevoluteJoint extends b2Joint {
 
       // cA -= mA * impulse;
       cA.SelfMulSub(mA, impulse);
-      aA -= iA * b2Math.b2CrossVV(rA, impulse);
+      aA -= iA * b2Math.b2Vec2.CrossVV(rA, impulse);
 
       // cB += mB * impulse;
       cB.SelfMulAdd(mB, impulse);
-      aB += iB * b2Math.b2CrossVV(rB, impulse);
+      aB += iB * b2Math.b2Vec2.CrossVV(rB, impulse);
     }
 
     // data.positions[this.m_indexA].c = cA;

@@ -445,7 +445,7 @@ export class b2Fixture {
 
       proxy.aabb.Combine2(aabb1, aabb2);
 
-      const displacement: b2Math.b2Vec2 = b2Math.b2SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
+      const displacement: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
 
       broadPhase.MoveProxy(proxy.proxy, proxy.aabb, displacement);
     }

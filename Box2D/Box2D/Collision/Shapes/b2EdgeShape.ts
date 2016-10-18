@@ -90,20 +90,20 @@ export class b2EdgeShape extends b2Shape {
   private static RayCast_s_r = new b2Math.b2Vec2();
   public RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Math.b2Transform, childIndex: number): boolean {
     // Put the ray into the edge's frame of reference.
-    const p1: b2Math.b2Vec2 = b2Math.b2MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
-    const p2: b2Math.b2Vec2 = b2Math.b2MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
-    const d: b2Math.b2Vec2 = b2Math.b2SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
+    const p1: b2Math.b2Vec2 = b2Math.b2Transform.MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
+    const p2: b2Math.b2Vec2 = b2Math.b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
+    const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
 
     const v1 = this.m_vertex1;
     const v2 = this.m_vertex2;
-    const e: b2Math.b2Vec2 = b2Math.b2SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
+    const e: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
     const normal = output.normal.SetXY(e.y, -e.x).SelfNormalize();
 
     // q = p1 + t * d
     // dot(normal, q - v1) = 0
     // dot(normal, p1 - v1) + t * dot(normal, d) = 0
-    const numerator: number = b2Math.b2DotVV(normal, b2Math.b2SubVV(v1, p1, b2Math.b2Vec2.s_t0));
-    const denominator: number = b2Math.b2DotVV(normal, d);
+    const numerator: number = b2Math.b2Vec2.DotVV(normal, b2Math.b2Vec2.SubVV(v1, p1, b2Math.b2Vec2.s_t0));
+    const denominator: number = b2Math.b2Vec2.DotVV(normal, d);
 
     if (denominator === 0) {
       return false;
@@ -114,17 +114,17 @@ export class b2EdgeShape extends b2Shape {
       return false;
     }
 
-    const q: b2Math.b2Vec2 = b2Math.b2AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
+    const q: b2Math.b2Vec2 = b2Math.b2Vec2.AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
 
     // q = v1 + s * r
     // s = dot(q - v1, r) / dot(r, r)
-    const r: b2Math.b2Vec2 = b2Math.b2SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
-    const rr: number = b2Math.b2DotVV(r, r);
+    const r: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
+    const rr: number = b2Math.b2Vec2.DotVV(r, r);
     if (rr === 0) {
       return false;
     }
 
-    const s: number = b2Math.b2DotVV(b2Math.b2SubVV(q, v1, b2Math.b2Vec2.s_t0), r) / rr;
+    const s: number = b2Math.b2Vec2.DotVV(b2Math.b2Vec2.SubVV(q, v1, b2Math.b2Vec2.s_t0), r) / rr;
     if (s < 0 || 1 < s) {
       return false;
     }
@@ -140,11 +140,11 @@ export class b2EdgeShape extends b2Shape {
   private static ComputeAABB_s_v1 = new b2Math.b2Vec2();
   private static ComputeAABB_s_v2 = new b2Math.b2Vec2();
   public ComputeAABB(aabb: b2AABB, xf: b2Math.b2Transform, childIndex: number): void {
-    const v1: b2Math.b2Vec2 = b2Math.b2MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
-    const v2: b2Math.b2Vec2 = b2Math.b2MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
+    const v1: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
+    const v2: b2Math.b2Vec2 = b2Math.b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
 
-    b2Math.b2MinV(v1, v2, aabb.lowerBound);
-    b2Math.b2MaxV(v1, v2, aabb.upperBound);
+    b2Math.b2Vec2.MinV(v1, v2, aabb.lowerBound);
+    b2Math.b2Vec2.MaxV(v1, v2, aabb.upperBound);
 
     const r = this.m_radius;
     aabb.lowerBound.SelfSubXY(r, r);
@@ -154,7 +154,7 @@ export class b2EdgeShape extends b2Shape {
   /// @see b2Shape::ComputeMass
   public ComputeMass(massData: b2MassData, density: number): void {
     massData.mass = 0;
-    b2Math.b2MidVV(this.m_vertex1, this.m_vertex2, massData.center);
+    b2Math.b2Vec2.MidVV(this.m_vertex1, this.m_vertex2, massData.center);
     massData.I = 0;
   }
 

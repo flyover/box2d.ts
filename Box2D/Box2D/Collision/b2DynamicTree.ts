@@ -103,13 +103,13 @@ export class b2DynamicTree {
 
     const p1: b2Math.b2Vec2 = input.p1;
     const p2: b2Math.b2Vec2 = input.p2;
-    const r: b2Math.b2Vec2 = b2Math.b2SubVV(p2, p1, b2DynamicTree.s_r);
+    const r: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
     if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(r.GetLengthSquared() > 0); }
     r.Normalize();
 
     // v is perpendicular to the segment.
-    const v: b2Math.b2Vec2 = b2Math.b2CrossOneV(r, b2DynamicTree.s_v);
-    const abs_v: b2Math.b2Vec2 = b2Math.b2AbsV(v, b2DynamicTree.s_abs_v);
+    const v: b2Math.b2Vec2 = b2Math.b2Vec2.CrossOneV(r, b2DynamicTree.s_v);
+    const abs_v: b2Math.b2Vec2 = b2Math.b2Vec2.AbsV(v, b2DynamicTree.s_abs_v);
 
     // Separating axis for segment (Gino, p80).
     // |dot(v, p1 - c)| > dot(|v|, h)
@@ -142,7 +142,7 @@ export class b2DynamicTree {
       // |dot(v, p1 - c)| > dot(|v|, h)
       const c: b2Math.b2Vec2 = node.aabb.GetCenter();
       const h: b2Math.b2Vec2 = node.aabb.GetExtents();
-      const separation: number = b2Math.b2Abs(b2Math.b2DotVV(v, b2Math.b2SubVV(p1, c, b2Math.b2Vec2.s_t0))) - b2Math.b2DotVV(abs_v, h);
+      const separation: number = b2Math.b2Abs(b2Math.b2Vec2.DotVV(v, b2Math.b2Vec2.SubVV(p1, c, b2Math.b2Vec2.s_t0))) - b2Math.b2Vec2.DotVV(abs_v, h);
       if (separation > 0) {
         continue;
       }

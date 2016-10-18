@@ -339,8 +339,8 @@ export class b2Island {
       let w: number = this.m_velocities[i].w;
 
       // Check for large velocities
-      const translation: b2Math.b2Vec2 = b2Math.b2MulSV(h, v, b2Island.s_translation);
-      if (b2Math.b2DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
+      const translation: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV(h, v, b2Island.s_translation);
+      if (b2Math.b2Vec2.DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
         const ratio: number = b2Settings.b2_maxTranslation / translation.GetLength();
         v.SelfMul(ratio);
       }
@@ -409,7 +409,7 @@ export class b2Island {
 
         if ((b.m_flags & b2BodyFlag.e_autoSleepFlag) === 0 ||
           b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
-          b2Math.b2DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
+          b2Math.b2Vec2.DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
           b.m_sleepTime = 0;
           minSleepTime = 0;
         } else {
@@ -518,8 +518,8 @@ export class b2Island {
       let w: number = this.m_velocities[i].w;
 
       // Check for large velocities
-      const translation: b2Math.b2Vec2 = b2Math.b2MulSV(h, v, b2Island.s_translation);
-      if (b2Math.b2DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
+      const translation: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV(h, v, b2Island.s_translation);
+      if (b2Math.b2Vec2.DotVV(translation, translation) > b2Settings.b2_maxTranslationSquared) {
         const ratio: number = b2Settings.b2_maxTranslation / translation.GetLength();
         v.SelfMul(ratio);
       }

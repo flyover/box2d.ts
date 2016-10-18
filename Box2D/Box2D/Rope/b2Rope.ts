@@ -107,7 +107,7 @@ export class b2Rope {
     for (let i: number = 0; i < count2; ++i) {
       const p1: b2Math.b2Vec2 = this.m_ps[i];
       const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
-      this.m_Ls[i] = b2Math.b2DistanceVV(p1, p2);
+      this.m_Ls[i] = b2Math.b2Vec2.DistanceVV(p1, p2);
     }
 
     for (let i: number = 0; i < count3; ++i) {
@@ -115,11 +115,11 @@ export class b2Rope {
       const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
       const p3: b2Math.b2Vec2 = this.m_ps[i + 2];
 
-      const d1: b2Math.b2Vec2 = b2Math.b2SubVV(p2, p1, b2Math.b2Vec2.s_t0);
-      const d2: b2Math.b2Vec2 = b2Math.b2SubVV(p3, p2, b2Math.b2Vec2.s_t1);
+      const d1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2Math.b2Vec2.s_t0);
+      const d2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p3, p2, b2Math.b2Vec2.s_t1);
 
-      const a: number = b2Math.b2CrossVV(d1, d2);
-      const b: number = b2Math.b2DotVV(d1, d2);
+      const a: number = b2Math.b2Vec2.CrossVV(d1, d2);
+      const b: number = b2Math.b2Vec2.DotVV(d1, d2);
 
       this.m_as[i] = b2Math.b2Atan2(a, b);
     }
@@ -155,7 +155,7 @@ export class b2Rope {
 
     const inv_h: number = 1 / h;
     for (let i: number = 0; i < this.m_count; ++i) {
-      b2Math.b2MulSV(inv_h, b2Math.b2SubVV(this.m_ps[i], this.m_p0s[i], b2Math.b2Vec2.s_t0), this.m_vs[i]);
+      b2Math.b2Vec2.MulSV(inv_h, b2Math.b2Vec2.SubVV(this.m_ps[i], this.m_p0s[i], b2Math.b2Vec2.s_t0), this.m_vs[i]);
     }
   }
 
@@ -168,7 +168,7 @@ export class b2Rope {
       const p1: b2Math.b2Vec2 = this.m_ps[i];
       const p2: b2Math.b2Vec2 = this.m_ps[i + 1];
 
-      const d: b2Math.b2Vec2 = b2Math.b2SubVV(p2, p1, b2Rope.s_d);
+      const d: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2Rope.s_d);
       const L: number = d.Normalize();
 
       const im1: number = this.m_ims[i];
@@ -214,8 +214,8 @@ export class b2Rope {
       const m2: number = this.m_ims[i + 1];
       const m3: number = this.m_ims[i + 2];
 
-      const d1: b2Math.b2Vec2 = b2Math.b2SubVV(p2, p1, b2Rope.s_d1);
-      const d2: b2Math.b2Vec2 = b2Math.b2SubVV(p3, p2, b2Rope.s_d2);
+      const d1: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
+      const d2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
 
       const L1sqr: number = d1.GetLengthSquared();
       const L2sqr: number = d2.GetLengthSquared();
@@ -224,19 +224,19 @@ export class b2Rope {
         continue;
       }
 
-      const a: number = b2Math.b2CrossVV(d1, d2);
-      const b: number = b2Math.b2DotVV(d1, d2);
+      const a: number = b2Math.b2Vec2.CrossVV(d1, d2);
+      const b: number = b2Math.b2Vec2.DotVV(d1, d2);
 
       let angle: number = b2Math.b2Atan2(a, b);
 
-      const Jd1: b2Math.b2Vec2 = b2Math.b2MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
-      const Jd2: b2Math.b2Vec2 = b2Math.b2MulSV(( 1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
+      const Jd1: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
+      const Jd2: b2Math.b2Vec2 = b2Math.b2Vec2.MulSV(( 1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
 
-      const J1: b2Math.b2Vec2 = b2Math.b2NegV(Jd1, b2Rope.s_J1);
-      const J2: b2Math.b2Vec2 = b2Math.b2SubVV(Jd1, Jd2, b2Rope.s_J2);
+      const J1: b2Math.b2Vec2 = b2Math.b2Vec2.NegV(Jd1, b2Rope.s_J1);
+      const J2: b2Math.b2Vec2 = b2Math.b2Vec2.SubVV(Jd1, Jd2, b2Rope.s_J2);
       const J3: b2Math.b2Vec2 = Jd2;
 
-      let mass: number = m1 * b2Math.b2DotVV(J1, J1) + m2 * b2Math.b2DotVV(J2, J2) + m3 * b2Math.b2DotVV(J3, J3);
+      let mass: number = m1 * b2Math.b2Vec2.DotVV(J1, J1) + m2 * b2Math.b2Vec2.DotVV(J2, J2) + m3 * b2Math.b2Vec2.DotVV(J3, J3);
       if (mass === 0) {
         continue;
       }
