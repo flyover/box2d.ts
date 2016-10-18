@@ -47,8 +47,8 @@ export class b2ContactManager {
 
   // Broad-phase callback.
   public AddPair(proxyUserDataA, proxyUserDataB) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxyUserDataA instanceof b2FixtureProxy); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxyUserDataB instanceof b2FixtureProxy); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxyUserDataA instanceof b2FixtureProxy); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxyUserDataB instanceof b2FixtureProxy); }
     const proxyA: b2FixtureProxy = proxyUserDataA; // (proxyUserDataA instanceof b2FixtureProxy ? proxyUserDataA : null);
     const proxyB: b2FixtureProxy = proxyUserDataB; // (proxyUserDataB instanceof b2FixtureProxy ? proxyUserDataB : null);
 

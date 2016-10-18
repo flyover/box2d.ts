@@ -37,63 +37,6 @@ export class b2DistanceProxy {
 
   public SetShape(shape: b2Shape, index: number): void {
     shape.SetupDistanceProxy(this, index);
-//    switch (shape.GetType())
-//    {
-//    case b2ShapeType.e_circleShape:
-//      {
-//        const circle: b2CircleShape = <b2CircleShape> shape;
-//        this.m_vertices = new Array(1, true);
-//        this.m_vertices[0] = circle.m_p;
-//        this.m_count = 1;
-//        this.m_radius = circle.m_radius;
-//      }
-//      break;
-//
-//    case b2ShapeType.e_polygonShape:
-//      {
-//        const polygon: b2PolygonShape = <b2PolygonShape> shape;
-//        this.m_vertices = polygon.m_vertices;
-//        this.m_count = polygon.m_count;
-//        this.m_radius = polygon.m_radius;
-//      }
-//      break;
-//
-//    case b2ShapeType.e_edgeShape:
-//      {
-//        const edge: b2EdgeShape = <b2EdgeShape> shape;
-//        this.m_vertices = new Array(2);
-//        this.m_vertices[0] = edge.m_vertex1;
-//        this.m_vertices[1] = edge.m_vertex2;
-//        this.m_count = 2;
-//        this.m_radius = edge.m_radius;
-//      }
-//      break;
-//
-//    case b2ShapeType.e_chainShape:
-//      {
-//        const chain: b2ChainShape = <b2ChainShape> shape;
-//        if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= index && index < chain.m_count); }
-//
-//        this.m_buffer[0].Copy(chain.m_vertices[index]);
-//        if (index + 1 < chain.m_count)
-//        {
-//          this.m_buffer[1].Copy(chain.m_vertices[index + 1]);
-//        }
-//        else
-//        {
-//          this.m_buffer[1].Copy(chain.m_vertices[0]);
-//        }
-//
-//        this.m_vertices = this.m_buffer;
-//        this.m_count = 2;
-//        this.m_radius = chain.m_radius;
-//      }
-//      break;
-//
-//    default:
-//      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
-//      break;
-//    }
   }
 
   public GetSupport(d: b2Vec2): number {
@@ -129,7 +72,7 @@ export class b2DistanceProxy {
   }
 
   public GetVertex(index: number): b2Vec2 {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= index && index < this.m_count); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= index && index < this.m_count); }
     return this.m_vertices[index];
   }
 }
@@ -217,7 +160,7 @@ export class b2Simplex {
   }
 
   public ReadCache(cache: b2SimplexCache, proxyA: b2DistanceProxy, transformA: b2Transform, proxyB: b2DistanceProxy, transformB: b2Transform): void {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= cache.count && cache.count <= 3); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= cache.count && cache.count <= 3); }
 
     // Copy data from cache.
     this.m_count = cache.count;
@@ -288,7 +231,7 @@ export class b2Simplex {
       }
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       return out.SetZero();
     }
   }
@@ -296,7 +239,7 @@ export class b2Simplex {
   public GetClosestPoint(out: b2Vec2): b2Vec2 {
     switch (this.m_count) {
     case 0:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       return out.SetZero();
 
     case 1:
@@ -311,7 +254,7 @@ export class b2Simplex {
       return out.SetZero();
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       return out.SetZero();
     }
   }
@@ -319,7 +262,7 @@ export class b2Simplex {
   public GetWitnessPoints(pA: b2Vec2, pB: b2Vec2): void {
     switch (this.m_count) {
     case 0:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       break;
 
     case 1:
@@ -340,7 +283,7 @@ export class b2Simplex {
       break;
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       break;
     }
   }
@@ -348,7 +291,7 @@ export class b2Simplex {
   public GetMetric(): number {
     switch (this.m_count) {
     case 0:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       return 0;
 
     case 1:
@@ -361,7 +304,7 @@ export class b2Simplex {
       return b2Vec2.CrossVV(b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Vec2.s_t0), b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Vec2.s_t1));
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       return 0;
     }
   }
@@ -560,7 +503,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
       break;
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       break;
     }
 

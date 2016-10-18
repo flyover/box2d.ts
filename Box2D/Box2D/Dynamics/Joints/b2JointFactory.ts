@@ -68,7 +68,7 @@ export class b2JointFactory {
       break;
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       break;
     }
 

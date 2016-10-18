@@ -41,16 +41,16 @@ export class b2ChainAndCircleContact extends b2Contact {
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape); }
   }
 
   private static Evaluate_s_edge = new b2EdgeShape();
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA = this.m_fixtureA.GetShape();
     const shapeB = this.m_fixtureB.GetShape();
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeA instanceof b2ChainShape); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeB instanceof b2CircleShape); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeA instanceof b2ChainShape); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeB instanceof b2CircleShape); }
     const chain = <b2ChainShape> shapeA;
     const edge = b2ChainAndCircleContact.Evaluate_s_edge;
     chain.GetChildEdge(edge, this.m_indexA);

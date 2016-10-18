@@ -15,7 +15,7 @@ function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
   const count2 = poly2.m_count;
   const vertices2 = poly2.m_vertices;
 
-  if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= edge1 && edge1 < count1); }
+  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= edge1 && edge1 < count1); }
 
   // Convert normal from poly1's frame into poly2's frame.
   const normal1World: b2Vec2 = b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
@@ -118,7 +118,7 @@ function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
   const vertices2 = poly2.m_vertices;
   const normals2 = poly2.m_normals;
 
-  if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= edge1 && edge1 < count1); }
+  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= edge1 && edge1 < count1); }
 
   // Get the normal of the reference edge in poly2's frame.
   const normal1: b2Vec2 = b2Rot.MulTRV(xf2.q, b2Rot.MulRV(xf1.q, normals1[edge1], b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);

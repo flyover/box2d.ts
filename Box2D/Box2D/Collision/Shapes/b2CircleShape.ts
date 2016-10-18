@@ -39,7 +39,7 @@ export class b2CircleShape extends b2Shape {
   public Copy(other: b2CircleShape): b2CircleShape {
     super.Copy(other);
 
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2CircleShape); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2CircleShape); }
 
     this.m_p.Copy(other.m_p);
     return this;

@@ -112,8 +112,8 @@ export class b2GearJoint extends b2Joint {
     this.m_typeA = this.m_joint1.GetType();
     this.m_typeB = this.m_joint2.GetType();
 
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_typeA === b2JointType.e_revoluteJoint || this.m_typeA === b2JointType.e_prismaticJoint); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_typeB === b2JointType.e_revoluteJoint || this.m_typeB === b2JointType.e_prismaticJoint); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_typeA === b2JointType.e_revoluteJoint || this.m_typeA === b2JointType.e_prismaticJoint); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_typeB === b2JointType.e_revoluteJoint || this.m_typeB === b2JointType.e_prismaticJoint); }
 
     let coordinateA: number, coordinateB;
 
@@ -530,7 +530,7 @@ export class b2GearJoint extends b2Joint {
   }
 
   public SetRatio(ratio) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(ratio)); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2IsValid(ratio)); }
     this.m_ratio = ratio;
   }
 

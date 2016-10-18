@@ -73,7 +73,7 @@ export class b2Rope {
 
   ///
   public Initialize(def: b2RopeDef): void {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.count >= 3); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.count >= 3); }
     this.m_count = def.count;
     // this.m_ps = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
     this.m_ps = b2Vec2.MakeArray(this.m_count);

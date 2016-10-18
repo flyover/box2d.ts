@@ -79,7 +79,7 @@ export class b2SeparationFunction {
     this.m_proxyA = proxyA;
     this.m_proxyB = proxyB;
     const count: number = cache.count;
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 < count && count < 3); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 < count && count < 3); }
 
     this.m_sweepA.Copy(sweepA);
     this.m_sweepB.Copy(sweepB);
@@ -200,7 +200,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       indexA[0] = -1;
       indexB[0] = -1;
       return 0;
@@ -248,7 +248,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       return 0;
     }
   }
@@ -287,7 +287,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const totalRadius: number = proxyA.m_radius + proxyB.m_radius;
   const target: number = b2Max(b2Settings.b2_linearSlop, totalRadius - 3 * b2Settings.b2_linearSlop);
   const tolerance: number = 0.25 * b2Settings.b2_linearSlop;
-  if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(target > tolerance); }
+  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(target > tolerance); }
 
   let t1: number = 0;
   const k_maxIterations: number = 20; // TODO_ERIN b2Settings

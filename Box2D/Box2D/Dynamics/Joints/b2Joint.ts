@@ -117,7 +117,7 @@ export class b2Joint {
   public m_userData: any = null;
 
   constructor(def: b2JointDef) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.bodyA !== def.bodyB); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(def.bodyA !== def.bodyB); }
 
     this.m_type = def.type;
     this.m_bodyA = def.bodyA;

@@ -104,7 +104,7 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
 
   // Region AB
   const den: number = b2Vec2.DotVV(e, e);
-  if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(den > 0); }
+  ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(den > 0); }
   const P: b2Vec2 = b2CollideEdgeAndCircle_s_P;
   P.x = (1 / den) * (u * A.x + v * B.x);
   P.y = (1 / den) * (u * A.y + v * B.y);

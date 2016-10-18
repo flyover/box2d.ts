@@ -226,18 +226,18 @@ export class b2Island {
   }
 
   public AddBody(body) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_bodyCount < this.m_bodyCapacity); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_bodyCount < this.m_bodyCapacity); }
     body.m_islandIndex = this.m_bodyCount;
     this.m_bodies[this.m_bodyCount++] = body;
   }
 
   public AddContact(contact) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_contactCount < this.m_contactCapacity); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_contactCount < this.m_contactCapacity); }
     this.m_contacts[this.m_contactCount++] = contact;
   }
 
   public AddJoint(joint) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_jointCount < this.m_jointCapacity); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_jointCount < this.m_jointCapacity); }
     this.m_joints[this.m_jointCount++] = joint;
   }
 
@@ -428,8 +428,8 @@ export class b2Island {
   }
 
   public SolveTOI(subStep, toiIndexA, toiIndexB) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(toiIndexA < this.m_bodyCount); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(toiIndexB < this.m_bodyCount); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(toiIndexA < this.m_bodyCount); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(toiIndexB < this.m_bodyCount); }
 
     // Initialize the body state.
     for (let i: number = 0; i < this.m_bodyCount; ++i) {

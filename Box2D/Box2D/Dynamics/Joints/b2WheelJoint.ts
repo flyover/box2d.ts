@@ -431,7 +431,7 @@ export class b2WheelJoint extends b2Joint {
   }
 
   public GetDefinition(def) {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); } // TODO
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); } // TODO
     return def;
   }
 

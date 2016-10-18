@@ -92,8 +92,8 @@ export class b2ContactFactory {
     const type1: b2ShapeType = fixtureA.GetType();
     const type2: b2ShapeType = fixtureB.GetType();
 
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= type1 && type1 < b2ShapeType.e_shapeTypeCount); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= type1 && type1 < b2ShapeType.e_shapeTypeCount); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount); }
 
     const reg: b2ContactRegister = this.m_registers[type1][type2];
 
@@ -122,8 +122,8 @@ export class b2ContactFactory {
     const typeA: b2ShapeType = fixtureA.GetType();
     const typeB: b2ShapeType = fixtureB.GetType();
 
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount); }
 
     const reg: b2ContactRegister = this.m_registers[typeA][typeB];
 

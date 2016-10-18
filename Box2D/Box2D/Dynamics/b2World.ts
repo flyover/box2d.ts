@@ -147,7 +147,7 @@ export class b2World {
   /// is retained.
   /// @warning This function is locked during callbacks.
   public CreateBody(def: b2BodyDef): b2Body {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
     if (this.IsLocked()) {
       return null;
     }
@@ -171,8 +171,8 @@ export class b2World {
   /// @warning This automatically deletes all associated shapes and joints.
   /// @warning This function is locked during callbacks.
   public DestroyBody(b: b2Body): void {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_bodyCount > 0); }
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_bodyCount > 0); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
     if (this.IsLocked()) {
       return;
     }
@@ -250,7 +250,7 @@ export class b2World {
   /// is retained. This may cause the connected bodies to cease colliding.
   /// @warning This function is locked during callbacks.
   public CreateJoint(def: b2JointDef): b2Joint {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
     if (this.IsLocked()) {
       return null;
     }
@@ -306,7 +306,7 @@ export class b2World {
   /// Destroy a joint. This may cause the connected bodies to begin colliding.
   /// @warning This function is locked during callbacks.
   public DestroyJoint(j: b2Joint): void {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
     if (this.IsLocked()) {
       return;
     }
@@ -368,7 +368,7 @@ export class b2World {
 
     b2JointFactory.Destroy(j, null);
 
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_jointCount > 0); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_jointCount > 0); }
     --this.m_jointCount;
 
     // If the joint prevents collisions, then flag any contacts for filtering.
@@ -577,7 +577,7 @@ export class b2World {
 
     const WorldQueryWrapper = function (proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       if (callback instanceof b2QueryCallback) {
@@ -596,7 +596,7 @@ export class b2World {
 
     const WorldQueryWrapper = function (proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       if (b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
@@ -620,7 +620,7 @@ export class b2World {
 
     const WorldQueryWrapper = function (proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       if (fixture.TestPoint(point)) {
@@ -653,7 +653,7 @@ export class b2World {
 
     const WorldRayCastWrapper = function (input, proxy) {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture_proxy instanceof b2FixtureProxy); }
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       const output: b2RayCastOutput = b2World.RayCast_s_output;
@@ -856,7 +856,7 @@ export class b2World {
   /// The body shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
   public ShiftOrigin(newOrigin: b2Vec2): void {
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.IsLocked() === false); }
     if (this.IsLocked()) {
       return;
     }
@@ -1082,7 +1082,7 @@ export class b2World {
       while (stackCount > 0) {
         // Grab the next body off the stack and add it to the island.
         const b: b2Body = stack[--stackCount];
-        if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b.IsActive() === true); }
+        ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b.IsActive() === true); }
         island.AddBody(b);
 
         // Make sure the body is awake.
@@ -1126,7 +1126,7 @@ export class b2World {
             continue;
           }
 
-          if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(stackCount < stackSize); }
+          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(stackCount < stackSize); }
           stack[stackCount++] = other;
           other.m_flags |= b2BodyFlag.e_islandFlag;
         }
@@ -1151,7 +1151,7 @@ export class b2World {
             continue;
           }
 
-          if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(stackCount < stackSize); }
+          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(stackCount < stackSize); }
           stack[stackCount++] = other;
           other.m_flags |= b2BodyFlag.e_islandFlag;
         }
@@ -1260,7 +1260,7 @@ export class b2World {
 
           const typeA: b2BodyType = bA.m_type;
           const typeB: b2BodyType = bB.m_type;
-          if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(typeA === b2BodyType.b2_dynamicBody || typeB === b2BodyType.b2_dynamicBody); }
+          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(typeA === b2BodyType.b2_dynamicBody || typeB === b2BodyType.b2_dynamicBody); }
 
           const activeA: boolean = bA.IsAwake() && typeA !== b2BodyType.b2_staticBody;
           const activeB: boolean = bB.IsAwake() && typeB !== b2BodyType.b2_staticBody;
@@ -1290,7 +1290,7 @@ export class b2World {
             bB.m_sweep.Advance(alpha0);
           }
 
-          if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(alpha0 < 1); }
+          ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(alpha0 < 1); }
 
           const indexA: number = c.GetChildIndexA();
           const indexB: number = c.GetChildIndexB();
@@ -1489,7 +1489,7 @@ export class b2World {
   }
 
 //  public AddController(controller: b2Controller): b2Controller {
-//    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(controller.m_world === null, "Controller can only be a member of one world"); }
+//    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(controller.m_world === null, "Controller can only be a member of one world"); }
 //    controller.m_world = this;
 //    controller.m_next = this.m_controllerList;
 //    controller.m_prev = null;
@@ -1501,7 +1501,7 @@ export class b2World {
 //  }
 
 //  public RemoveController(controller: b2Controller): b2Controller {
-//    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(controller.m_world === this, "Controller is not a member of this world"); }
+//    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(controller.m_world === this, "Controller is not a member of this world"); }
 //    if (controller.m_prev)
 //      controller.m_prev.m_next = controller.m_next;
 //    if (controller.m_next)

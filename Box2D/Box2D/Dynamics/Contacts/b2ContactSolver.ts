@@ -113,7 +113,7 @@ export class b2PositionSolverManifold {
     const planePoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_planePoint;
     const clipPoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_clipPoint;
 
-    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pc.pointCount > 0); }
+    ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pc.pointCount > 0); }
 
     switch (pc.type) {
     case b2ManifoldType.e_circles: {
@@ -250,7 +250,7 @@ export class b2ContactSolver {
       manifold = contact.GetManifold();
 
       pointCount = manifold.pointCount;
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pointCount > 0); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pointCount > 0); }
 
       vc = this.m_velocityConstraints[i];
       vc.friction = contact.m_friction;
@@ -409,7 +409,7 @@ export class b2ContactSolver {
       vB = this.m_velocities[indexB].v;
       wB = this.m_velocities[indexB].w;
 
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(manifold.pointCount > 0); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(manifold.pointCount > 0); }
 
       xfA.q.SetAngleRadians(aA);
       xfB.q.SetAngleRadians(aB);
@@ -648,7 +648,7 @@ export class b2ContactSolver {
       tangent = vc.tangent; // precomputed from normal
       friction = vc.friction;
 
-      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pointCount === 1 || pointCount === 2); }
+      ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(pointCount === 1 || pointCount === 2); }
 
       // Solve tangent constraints first because non-penetration is more important
       // than friction.
@@ -761,7 +761,7 @@ export class b2ContactSolver {
 
         // b2Vec2 a(cp1->normalImpulse, cp2->normalImpulse);
         a.SetXY(cp1.normalImpulse, cp2.normalImpulse);
-        if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(a.x >= 0 && a.y >= 0); }
+        ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(a.x >= 0 && a.y >= 0); }
 
         // Relative velocity at contact
         // b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
@@ -843,8 +843,8 @@ export class b2ContactSolver {
             vn1 = b2Dot(dv1, normal);
             vn2 = b2Dot(dv2, normal);
 
-            if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol); }
-            if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol); }
+            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol); }
+            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol); }
             #endif
             */
             break;
@@ -894,7 +894,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn1 = b2Dot(dv1, normal);
 
-            if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol); }
+            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol); }
             #endif
             */
             break;
@@ -945,7 +945,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn2 = b2Dot(dv2, normal);
 
-            if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol); }
+            ///if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol); }
             #endif
             */
             break;
