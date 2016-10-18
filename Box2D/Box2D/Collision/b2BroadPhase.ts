@@ -16,19 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { ENABLE_ASSERTS, b2Assert } from "../Common/b2Settings";
-import { b2_epsilon, b2_epsilon_sq, b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
-import { b2_polygonRadius, b2_maxPolygonVertices, b2_angularSlop } from "../Common/b2Settings";
-import { b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../Common/b2Math";
-import { b2Min, b2Max, b2Abs } from "../Common/b2Math";
-import { b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2ExtVV } from "../Common/b2Math";
-import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../Common/b2Math";
-import { b2AddVMulSV, b2SubVMulSV } from "../Common/b2Math";
-import { b2DistanceVV, b2DistanceSquaredVV } from "../Common/b2Math";
-import { b2MulRV, b2MulTRV } from "../Common/b2Math";
-import { b2MulXV, b2MulTXV } from "../Common/b2Math";
-import { b2MulXX, b2MulTXX } from "../Common/b2Math";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
 import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
 import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
@@ -71,7 +60,7 @@ export class b2BroadPhase {
 
   /// Call MoveProxy as many times as you like, then when you are done
   /// call UpdatePairs to finalized the proxy pairs (for your time step).
-  public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void {
+  public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Math.b2Vec2): void {
     const buffer = this.m_tree.MoveProxy(proxy, aabb, displacement);
     if (buffer) {
       this.BufferMove(proxy);
@@ -221,7 +210,7 @@ export class b2BroadPhase {
   /// Shift the world origin. Useful for large worlds.
   /// The shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
-  public ShiftOrigin(newOrigin: b2Vec2): void {
+  public ShiftOrigin(newOrigin: b2Math.b2Vec2): void {
     this.m_tree.ShiftOrigin(newOrigin);
   }
 

@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
-import { b2Transform } from "../../Common/b2Math";
+import * as b2Settings from "../../Common/b2Settings";
+import * as b2Math from "../../Common/b2Math";
 import { b2CollidePolygons } from "../../Collision/b2CollidePolygon";
 import { b2Manifold } from "../../Collision/b2Collision";
 import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
@@ -41,11 +41,11 @@ export class b2PolygonContact extends b2Contact {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
   }
 
-  public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
+  public Evaluate(manifold: b2Manifold, xfA: b2Math.b2Transform, xfB: b2Math.b2Transform): void {
     const shapeA = this.m_fixtureA.GetShape();
     const shapeB = this.m_fixtureB.GetShape();
-    if (ENABLE_ASSERTS) { b2Assert(shapeA instanceof b2PolygonShape); }
-    if (ENABLE_ASSERTS) { b2Assert(shapeB instanceof b2PolygonShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeA instanceof b2PolygonShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeB instanceof b2PolygonShape); }
     b2CollidePolygons(
       manifold,
       <b2PolygonShape> shapeA, xfA,

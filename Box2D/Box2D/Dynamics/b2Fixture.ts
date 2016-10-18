@@ -16,11 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
-import { b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Vec2 } from "../Common/b2Math";
-import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../Common/b2Math";
-import { b2Transform } from "../Common/b2Math";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB } from "../Collision/b2Collision";
 import { b2RayCastInput } from "../Collision/b2Collision";
@@ -50,7 +47,7 @@ export class b2Filter {
   }
 
   public Copy(other: b2Filter): b2Filter {
-    // if (ENABLE_ASSERTS) { b2Assert(this !== other); }
+    // if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this !== other); }
     this.categoryBits = other.categoryBits;
     this.maskBits = other.maskBits;
     this.groupIndex = other.groupIndex;
@@ -92,7 +89,7 @@ export class b2FixtureProxy {
   public childIndex: number = 0;
   public proxy: b2TreeNode = null;
   public static MakeArray(length: number): b2FixtureProxy[] {
-    return b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
+    return b2Settings.b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
   }
 }
 
@@ -220,7 +217,7 @@ export class b2Fixture {
 
   /// Test a point for containment in this fixture.
   /// @param p a point in world coordinates.
-  public TestPoint(p: b2Vec2): boolean {
+  public TestPoint(p: b2Math.b2Vec2): boolean {
     return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
   }
 
@@ -277,21 +274,21 @@ export class b2Fixture {
   /// If you need a more accurate AABB, compute it using the shape and
   /// the body transform.
   public GetAABB(childIndex: number): b2AABB {
-    if (ENABLE_ASSERTS) { b2Assert(0 <= childIndex && childIndex < this.m_proxyCount); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= childIndex && childIndex < this.m_proxyCount); }
     return this.m_proxies[childIndex].aabb;
   }
 
   /// Dump this fixture to the log file.
   public Dump(bodyIndex: number): void {
-    if (DEBUG) {
-      b2Log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
-      b2Log("    fd.friction = %.15f;\n", this.m_friction);
-      b2Log("    fd.restitution = %.15f;\n", this.m_restitution);
-      b2Log("    fd.density = %.15f;\n", this.m_density);
-      b2Log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
-      b2Log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
-      b2Log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
-      b2Log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
+    if (b2Settings.DEBUG) {
+      b2Settings.b2Log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
+      b2Settings.b2Log("    fd.friction = %.15f;\n", this.m_friction);
+      b2Settings.b2Log("    fd.restitution = %.15f;\n", this.m_restitution);
+      b2Settings.b2Log("    fd.density = %.15f;\n", this.m_density);
+      b2Settings.b2Log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
+      b2Settings.b2Log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
+      b2Settings.b2Log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
+      b2Settings.b2Log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
 
       this.m_shape.Dump();
 //      switch (this.m_shape.m_type)
@@ -299,53 +296,53 @@ export class b2Fixture {
 //      case b2ShapeType.e_circleShape:
 //        {
 //          const circle: b2CircleShape = <b2CircleShape> this.m_shape;
-//          b2Log("    const shape: b2CircleShape = new b2CircleShape();\n");
-//          b2Log("    shape.m_radius = %.15f;\n", circle.m_radius);
-//          b2Log("    shape.m_p.SetXY(%.15f, %.15f);\n", circle.m_p.x, circle.m_p.y);
+//          b2Settings.b2Log("    const shape: b2CircleShape = new b2CircleShape();\n");
+//          b2Settings.b2Log("    shape.m_radius = %.15f;\n", circle.m_radius);
+//          b2Settings.b2Log("    shape.m_p.SetXY(%.15f, %.15f);\n", circle.m_p.x, circle.m_p.y);
 //        }
 //        break;
 //
 //      case b2ShapeType.e_edgeShape:
 //        {
 //          const edge: b2EdgeShape = <b2EdgeShape> this.m_shape;
-//          b2Log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-//          b2Log("    shape.m_radius = %.15f;\n", edge.m_radius);
-//          b2Log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", edge.m_vertex0.x, edge.m_vertex0.y);
-//          b2Log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", edge.m_vertex1.x, edge.m_vertex1.y);
-//          b2Log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", edge.m_vertex2.x, edge.m_vertex2.y);
-//          b2Log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", edge.m_vertex3.x, edge.m_vertex3.y);
-//          b2Log("    shape.m_hasVertex0 = %s;\n", edge.m_hasVertex0);
-//          b2Log("    shape.m_hasVertex3 = %s;\n", edge.m_hasVertex3);
+//          b2Settings.b2Log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
+//          b2Settings.b2Log("    shape.m_radius = %.15f;\n", edge.m_radius);
+//          b2Settings.b2Log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", edge.m_vertex0.x, edge.m_vertex0.y);
+//          b2Settings.b2Log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", edge.m_vertex1.x, edge.m_vertex1.y);
+//          b2Settings.b2Log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", edge.m_vertex2.x, edge.m_vertex2.y);
+//          b2Settings.b2Log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", edge.m_vertex3.x, edge.m_vertex3.y);
+//          b2Settings.b2Log("    shape.m_hasVertex0 = %s;\n", edge.m_hasVertex0);
+//          b2Settings.b2Log("    shape.m_hasVertex3 = %s;\n", edge.m_hasVertex3);
 //        }
 //        break;
 //
 //      case b2ShapeType.e_polygonShape:
 //        {
 //          const polygon: b2PolygonShape = <b2PolygonShape> this.m_shape;
-//          b2Log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
-//          b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+//          b2Settings.b2Log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
+//          b2Settings.b2Log("    const vs: b2Math.b2Vec2[] = b2Math.b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
 //          for (let i: number = 0; i < polygon.m_count; ++i)
 //          {
-//            b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, polygon.m_vertices[i].x, polygon.m_vertices[i].y);
+//            b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, polygon.m_vertices[i].x, polygon.m_vertices[i].y);
 //          }
-//          b2Log("    shape.SetAsVector(vs, %d);\n", polygon.m_count);
+//          b2Settings.b2Log("    shape.SetAsVector(vs, %d);\n", polygon.m_count);
 //        }
 //        break;
 //
 //      case b2ShapeType.e_chainShape:
 //        {
 //          const chain: b2ChainShape = <b2ChainShape> this.m_shape;
-//          b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
-//          b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+//          b2Settings.b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
+//          b2Settings.b2Log("    const vs: b2Math.b2Vec2[] = b2Math.b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
 //          for (let i: number = 0; i < chain.m_count; ++i)
 //          {
-//            b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, chain.m_vertices[i].x, chain.m_vertices[i].y);
+//            b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, chain.m_vertices[i].x, chain.m_vertices[i].y);
 //          }
-//          b2Log("    shape.CreateChain(vs, %d);\n", chain.m_count);
-//          b2Log("    shape.m_prevVertex.SetXY(%.15f, %.15f);\n", chain.m_prevVertex.x, chain.m_prevVertex.y);
-//          b2Log("    shape.m_nextVertex.SetXY(%.15f, %.15f);\n", chain.m_nextVertex.x, chain.m_nextVertex.y);
-//          b2Log("    shape.m_hasPrevVertex = %s;\n", (chain.m_hasPrevVertex)?('true'):('false'));
-//          b2Log("    shape.m_hasNextVertex = %s;\n", (chain.m_hasNextVertex)?('true'):('false'));
+//          b2Settings.b2Log("    shape.CreateChain(vs, %d);\n", chain.m_count);
+//          b2Settings.b2Log("    shape.m_prevVertex.SetXY(%.15f, %.15f);\n", chain.m_prevVertex.x, chain.m_prevVertex.y);
+//          b2Settings.b2Log("    shape.m_nextVertex.SetXY(%.15f, %.15f);\n", chain.m_nextVertex.x, chain.m_nextVertex.y);
+//          b2Settings.b2Log("    shape.m_hasPrevVertex = %s;\n", (chain.m_hasPrevVertex)?('true'):('false'));
+//          b2Settings.b2Log("    shape.m_hasNextVertex = %s;\n", (chain.m_hasNextVertex)?('true'):('false'));
 //        }
 //        break;
 //
@@ -353,10 +350,10 @@ export class b2Fixture {
 //        return;
 //      }
 
-      b2Log("\n");
-      b2Log("    fd.shape = shape;\n");
-      b2Log("\n");
-      b2Log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
+      b2Settings.b2Log("\n");
+      b2Settings.b2Log("    fd.shape = shape;\n");
+      b2Settings.b2Log("\n");
+      b2Settings.b2Log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
     }
   }
 
@@ -392,7 +389,7 @@ export class b2Fixture {
 
   public Destroy(): void {
     // The proxies must be destroyed before calling this.
-    if (ENABLE_ASSERTS) { b2Assert(this.m_proxyCount === 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_proxyCount === 0); }
 
     // Free the proxy array.
     // int32 childCount = m_shape->GetChildCount();
@@ -403,8 +400,8 @@ export class b2Fixture {
   }
 
   // These support body activation/deactivation.
-  public CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_proxyCount === 0); }
+  public CreateProxies(broadPhase: b2BroadPhase, xf: b2Math.b2Transform): void {
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_proxyCount === 0); }
 
     // Create proxies in the broad-phase.
     this.m_proxyCount = this.m_shape.GetChildCount();
@@ -431,8 +428,8 @@ export class b2Fixture {
 
   private static Synchronize_s_aabb1 = new b2AABB();
   private static Synchronize_s_aabb2 = new b2AABB();
-  private static Synchronize_s_displacement = new b2Vec2();
-  public Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void {
+  private static Synchronize_s_displacement = new b2Math.b2Vec2();
+  public Synchronize(broadPhase: b2BroadPhase, transform1: b2Math.b2Transform, transform2: b2Math.b2Transform): void {
     if (this.m_proxyCount === 0) {
       return;
     }
@@ -448,7 +445,7 @@ export class b2Fixture {
 
       proxy.aabb.Combine2(aabb1, aabb2);
 
-      const displacement: b2Vec2 = b2SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
+      const displacement: b2Math.b2Vec2 = b2Math.b2SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
 
       broadPhase.MoveProxy(proxy.proxy, proxy.aabb, displacement);
     }

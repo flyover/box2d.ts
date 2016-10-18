@@ -16,8 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Clamp, b2Vec2, b2Transform } from "./b2Math";
-
+import * as b2Math from "./b2Math";
 
 /// Color for debug drawing. Each value has the range [0,1].
 export class b2Color {
@@ -30,15 +29,15 @@ export class b2Color {
   private _b: number = 0x7f;
 
   constructor(rr: number, gg: number, bb: number) {
-    this._r = b2Clamp(Math.round(rr * 255), 0, 255);
-    this._g = b2Clamp(Math.round(gg * 255), 0, 255);
-    this._b = b2Clamp(Math.round(bb * 255), 0, 255);
+    this._r = b2Math.b2Clamp(Math.round(rr * 255), 0, 255);
+    this._g = b2Math.b2Clamp(Math.round(gg * 255), 0, 255);
+    this._b = b2Math.b2Clamp(Math.round(bb * 255), 0, 255);
   }
 
   public SetRGB(rr: number, gg: number, bb: number): b2Color {
-    this._r = b2Clamp(Math.round(rr * 255), 0, 255);
-    this._g = b2Clamp(Math.round(gg * 255), 0, 255);
-    this._b = b2Clamp(Math.round(bb * 255), 0, 255);
+    this._r = b2Math.b2Clamp(Math.round(rr * 255), 0, 255);
+    this._g = b2Math.b2Clamp(Math.round(gg * 255), 0, 255);
+    this._b = b2Math.b2Clamp(Math.round(bb * 255), 0, 255);
     return this;
   }
 
@@ -87,27 +86,27 @@ export class b2Draw {
     this.m_drawFlags &= ~flags;
   }
 
-  public PushTransform(xf: b2Transform): void {
+  public PushTransform(xf: b2Math.b2Transform): void {
   }
 
-  public PopTransform(xf: b2Transform): void {
+  public PopTransform(xf: b2Math.b2Transform): void {
   }
 
-  public DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
+  public DrawPolygon(vertices: b2Math.b2Vec2[], vertexCount: number, color: b2Color): void {
   }
 
-  public DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
+  public DrawSolidPolygon(vertices: b2Math.b2Vec2[], vertexCount: number, color: b2Color): void {
   }
 
-  public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {
+  public DrawCircle(center: b2Math.b2Vec2, radius: number, color: b2Color): void {
   }
 
-  public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {
+  public DrawSolidCircle(center: b2Math.b2Vec2, radius: number, axis: b2Math.b2Vec2, color: b2Color): void {
   }
 
-  public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {
+  public DrawSegment(p1: b2Math.b2Vec2, p2: b2Math.b2Vec2, color: b2Color): void {
   }
 
-  public DrawTransform(xf: b2Transform): void {
+  public DrawTransform(xf: b2Math.b2Transform): void {
   }
 }

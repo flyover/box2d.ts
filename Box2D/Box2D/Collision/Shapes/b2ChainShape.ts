@@ -16,20 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D";
-
-import { ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
-import { b2_pi, b2_epsilon, b2_epsilon_sq, b2_linearSlop } from "../../Common/b2Settings";
-import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
-import { b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
-import { b2Min, b2Max, b2Abs, b2Sq, b2Sqrt, b2Pow, b2Asin } from "../../Common/b2Math";
-import { b2MinV, b2MaxV, b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2MulSV } from "../../Common/b2Math";
-import { b2AddVMulSV, b2SubVMulSV } from "../../Common/b2Math";
-import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../../Common/b2Math";
-import { b2DistanceVV, b2DistanceSquaredVV } from "../../Common/b2Math";
-import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
-import { b2MulXV, b2MulTXV } from "../../Common/b2Math";
+import * as b2Settings from "../../Common/b2Settings";
+import * as b2Math from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -43,35 +31,35 @@ import { b2EdgeShape } from "./b2EdgeShape";
 /// Connectivity information is used to create smooth collisions.
 /// WARNING: The chain will not collide properly if there are self-intersections.
 export class b2ChainShape extends b2Shape {
-  public m_vertices: b2Vec2[] = null;
+  public m_vertices: b2Math.b2Vec2[] = null;
   public m_count: number = 0;
-  public m_prevVertex: b2Vec2 = new b2Vec2();
-  public m_nextVertex: b2Vec2 = new b2Vec2();
+  public m_prevVertex: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public m_nextVertex: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public m_hasPrevVertex: boolean = false;
   public m_hasNextVertex: boolean = false;
 
   constructor() {
-    super(b2ShapeType.e_chainShape, b2_polygonRadius);
+    super(b2ShapeType.e_chainShape, b2Settings.b2_polygonRadius);
   }
 
   /// Create a loop. This automatically adjusts connectivity.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateLoop(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
+  public CreateLoop(vertices: b2Math.b2Vec2[], count: number = vertices.length): b2ChainShape {
     count = count || vertices.length;
-    if (ENABLE_ASSERTS) { b2Assert(this.m_vertices === null && this.m_count === 0); }
-    if (ENABLE_ASSERTS) { b2Assert(count >= 3); }
-    if (ENABLE_ASSERTS) {
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_vertices === null && this.m_count === 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(count >= 3); }
+    if (b2Settings.ENABLE_ASSERTS) {
       for (let i: number = 1; i < count; ++i) {
         const v1 = vertices[i - 1];
         const v2 = vertices[i];
         // If the code crashes here, it means your vertices are too close together.
-        b2Assert(b2DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
+        b2Settings.b2Assert(b2Math.b2DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
       }
     }
 
     this.m_count = count + 1;
-    this.m_vertices = b2Vec2.MakeArray(this.m_count);
+    this.m_vertices = b2Math.b2Vec2.MakeArray(this.m_count);
     for (let i: number = 0; i < count; ++i) {
       this.m_vertices[i].Copy(vertices[i]);
     }
@@ -86,21 +74,21 @@ export class b2ChainShape extends b2Shape {
   /// Create a chain with isolated end vertices.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateChain(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
+  public CreateChain(vertices: b2Math.b2Vec2[], count: number = vertices.length): b2ChainShape {
     count = count || vertices.length;
-    if (ENABLE_ASSERTS) { b2Assert(this.m_vertices === null && this.m_count === 0); }
-    if (ENABLE_ASSERTS) { b2Assert(count >= 2); }
-    if (ENABLE_ASSERTS) {
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_vertices === null && this.m_count === 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(count >= 2); }
+    if (b2Settings.ENABLE_ASSERTS) {
       for (let i: number = 1; i < count; ++i) {
         const v1 = vertices[i - 1];
         const v2 = vertices[i];
         // If the code crashes here, it means your vertices are too close together.
-        b2Assert(b2DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
+        b2Settings.b2Assert(b2Math.b2DistanceSquaredVV(v1, v2) > b2Settings.b2_linearSlop * b2Settings.b2_linearSlop);
       }
     }
 
     this.m_count = count;
-    this.m_vertices = b2Vec2.MakeArray(count);
+    this.m_vertices = b2Math.b2Vec2.MakeArray(count);
     for (let i: number = 0; i < count; ++i) {
       this.m_vertices[i].Copy(vertices[i]);
     }
@@ -111,7 +99,7 @@ export class b2ChainShape extends b2Shape {
 
   /// Establish connectivity to a vertex that precedes the first vertex.
   /// Don't call this for loops.
-  public SetPrevVertex(prevVertex: b2Vec2): b2ChainShape {
+  public SetPrevVertex(prevVertex: b2Math.b2Vec2): b2ChainShape {
     this.m_prevVertex.Copy(prevVertex);
     this.m_hasPrevVertex = true;
     return this;
@@ -119,7 +107,7 @@ export class b2ChainShape extends b2Shape {
 
   /// Establish connectivity to a vertex that follows the last vertex.
   /// Don't call this for loops.
-  public SetNextVertex(nextVertex: b2Vec2): b2ChainShape {
+  public SetNextVertex(nextVertex: b2Math.b2Vec2): b2ChainShape {
     this.m_nextVertex.Copy(nextVertex);
     this.m_hasNextVertex = true;
     return this;
@@ -133,7 +121,7 @@ export class b2ChainShape extends b2Shape {
   public Copy(other: b2ChainShape): b2ChainShape {
     super.Copy(other);
 
-    if (ENABLE_ASSERTS) { b2Assert(other instanceof b2ChainShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2ChainShape); }
 
     this.CreateChain(other.m_vertices, other.m_count);
     this.m_prevVertex.Copy(other.m_prevVertex);
@@ -152,7 +140,7 @@ export class b2ChainShape extends b2Shape {
 
   /// Get a child edge.
   public GetChildEdge(edge: b2EdgeShape, index: number): void {
-    if (ENABLE_ASSERTS) { b2Assert(0 <= index && index < this.m_count - 1); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= index && index < this.m_count - 1); }
     edge.m_type = b2ShapeType.e_edgeShape;
     edge.m_radius = this.m_radius;
 
@@ -178,14 +166,14 @@ export class b2ChainShape extends b2Shape {
 
   /// This always return false.
   /// @see b2Shape::TestPoint
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(xf: b2Math.b2Transform, p: b2Math.b2Vec2): boolean {
     return false;
   }
 
   /// Implement b2Shape.
   private static RayCast_s_edgeShape = new b2EdgeShape();
-  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean {
-    if (ENABLE_ASSERTS) { b2Assert(childIndex < this.m_count); }
+  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Math.b2Transform, childIndex: number): boolean {
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(childIndex < this.m_count); }
 
     const edgeShape: b2EdgeShape = b2ChainShape.RayCast_s_edgeShape;
 
@@ -196,19 +184,19 @@ export class b2ChainShape extends b2Shape {
   }
 
   /// @see b2Shape::ComputeAABB
-  private static ComputeAABB_s_v1 = new b2Vec2();
-  private static ComputeAABB_s_v2 = new b2Vec2();
-  public ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void {
-    if (ENABLE_ASSERTS) { b2Assert(childIndex < this.m_count); }
+  private static ComputeAABB_s_v1 = new b2Math.b2Vec2();
+  private static ComputeAABB_s_v2 = new b2Math.b2Vec2();
+  public ComputeAABB(aabb: b2AABB, xf: b2Math.b2Transform, childIndex: number): void {
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(childIndex < this.m_count); }
 
-    const vertexi1: b2Vec2 = this.m_vertices[childIndex];
-    const vertexi2: b2Vec2 = this.m_vertices[(childIndex + 1) % this.m_count];
+    const vertexi1: b2Math.b2Vec2 = this.m_vertices[childIndex];
+    const vertexi2: b2Math.b2Vec2 = this.m_vertices[(childIndex + 1) % this.m_count];
 
-    const v1: b2Vec2 = b2MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
-    const v2: b2Vec2 = b2MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
+    const v1: b2Math.b2Vec2 = b2Math.b2MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
+    const v2: b2Math.b2Vec2 = b2Math.b2MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
 
-    b2MinV(v1, v2, aabb.lowerBound);
-    b2MaxV(v1, v2, aabb.upperBound);
+    b2Math.b2MinV(v1, v2, aabb.lowerBound);
+    b2Math.b2MaxV(v1, v2, aabb.upperBound);
   }
 
   /// Chains have zero mass.
@@ -220,7 +208,7 @@ export class b2ChainShape extends b2Shape {
   }
 
   public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
-    if (ENABLE_ASSERTS) { b2Assert(0 <= index && index < this.m_count); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(0 <= index && index < this.m_count); }
 
     proxy.m_buffer[0].Copy(this.m_vertices[index]);
     if (index + 1 < this.m_count) {
@@ -234,21 +222,21 @@ export class b2ChainShape extends b2Shape {
     proxy.m_radius = this.m_radius;
   }
 
-  public ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number {
+  public ComputeSubmergedArea(normal: b2Math.b2Vec2, offset: number, xf: b2Math.b2Transform, c: b2Math.b2Vec2): number {
     c.SetZero();
     return 0;
   }
 
   public Dump(): void {
-    b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
-    b2Log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+    b2Settings.b2Log("    const shape: b2ChainShape = new b2ChainShape();\n");
+    b2Settings.b2Log("    const vs: b2Math.b2Vec2[] = b2Math.b2Vec2.MakeArray(%d);\n", b2Settings.b2_maxPolygonVertices);
     for (let i: number = 0; i < this.m_count; ++i) {
-      b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+      b2Settings.b2Log("    vs[%d].SetXY(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
     }
-    b2Log("    shape.CreateChain(vs, %d);\n", this.m_count);
-    b2Log("    shape.m_prevVertex.SetXY(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
-    b2Log("    shape.m_nextVertex.SetXY(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
-    b2Log("    shape.m_hasPrevVertex = %s;\n", (this.m_hasPrevVertex) ? ("true") : ("false"));
-    b2Log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
+    b2Settings.b2Log("    shape.CreateChain(vs, %d);\n", this.m_count);
+    b2Settings.b2Log("    shape.m_prevVertex.SetXY(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
+    b2Settings.b2Log("    shape.m_nextVertex.SetXY(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
+    b2Settings.b2Log("    shape.m_hasPrevVertex = %s;\n", (this.m_hasPrevVertex) ? ("true") : ("false"));
+    b2Settings.b2Log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
   }
 }

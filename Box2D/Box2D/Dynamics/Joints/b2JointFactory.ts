@@ -1,4 +1,5 @@
-import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
+import * as b2Settings from "../../Common/b2Settings";
+import * as b2Math from "../../Common/b2Math";
 import { b2Joint, b2JointDef } from "./b2Joint";
 import { b2JointType } from "./b2Joint";
 import { b2AreaJoint, b2AreaJointDef } from "./b2AreaJoint";
@@ -68,7 +69,7 @@ export class b2JointFactory {
       break;
 
     default:
-      if (ENABLE_ASSERTS) { b2Assert(false); }
+      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
       break;
     }
 

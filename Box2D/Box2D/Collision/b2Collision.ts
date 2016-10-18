@@ -16,16 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { ENABLE_ASSERTS, b2Assert } from "../Common/b2Settings";
-import { b2_epsilon, b2_epsilon_sq, b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
-import { b2MakeArray } from "../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../Common/b2Math";
-import { b2Min, b2Max, b2Abs } from "../Common/b2Math";
-import { b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2ExtVV, b2CrossVV } from "../Common/b2Math";
-import { b2AddVMulSV, b2SubVMulSV } from "../Common/b2Math";
-import { b2MulRV, b2MulTRV } from "../Common/b2Math";
-import { b2MulXV, b2MulTXV } from "../Common/b2Math";
-import { b2DistanceSquaredVV } from "../Common/b2Math";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance";
 
@@ -135,13 +127,13 @@ export class b2ContactID {
 /// Note: the impulses are used for internal caching and may not
 /// provide reliable contact forces, especially for high speed collisions.
 export class b2ManifoldPoint {
-  public localPoint: b2Vec2 = new b2Vec2();  ///< usage depends on manifold type
+  public localPoint: b2Math.b2Vec2 = new b2Math.b2Vec2();  ///< usage depends on manifold type
   public normalImpulse: number = 0;      ///< the non-penetration impulse
   public tangentImpulse: number = 0;      ///< the friction impulse
   public id: b2ContactID = new b2ContactID();  ///< uniquely identifies a contact point between two shapes
 
   public static MakeArray(length: number): b2ManifoldPoint[] {
-    return b2MakeArray(length, function (i: number): b2ManifoldPoint { return new b2ManifoldPoint(); } );
+    return b2Settings.b2MakeArray(length, function (i: number): b2ManifoldPoint { return new b2ManifoldPoint(); } );
   }
 
   public Reset(): void {
@@ -184,15 +176,15 @@ export const enum b2ManifoldType {
 /// All contact scenarios must be expressed in one of these types.
 /// This structure is stored across time steps, so we keep it small.
 export class b2Manifold {
-  public points: b2ManifoldPoint[] = b2ManifoldPoint.MakeArray(b2_maxManifoldPoints);
-  public localNormal: b2Vec2 = new b2Vec2();
-  public localPoint: b2Vec2 = new b2Vec2();
+  public points: b2ManifoldPoint[] = b2ManifoldPoint.MakeArray(b2Settings.b2_maxManifoldPoints);
+  public localNormal: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public localPoint: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public type: number = b2ManifoldType.e_unknown;
   public pointCount: number = 0;
 
   public Reset(): void {
-    for (let i: number = 0, ict = b2_maxManifoldPoints; i < ict; ++i) {
-      if (ENABLE_ASSERTS) { b2Assert(this.points[i] instanceof b2ManifoldPoint); }
+    for (let i: number = 0, ict = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
+      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.points[i] instanceof b2ManifoldPoint); }
       this.points[i].Reset();
     }
     this.localNormal.SetZero();
@@ -203,8 +195,8 @@ export class b2Manifold {
 
   public Copy(o: b2Manifold): b2Manifold {
     this.pointCount = o.pointCount;
-    for (let i: number = 0, ict = b2_maxManifoldPoints; i < ict; ++i) {
-      if (ENABLE_ASSERTS) { b2Assert(this.points[i] instanceof b2ManifoldPoint); }
+    for (let i: number = 0, ict = b2Settings.b2_maxManifoldPoints; i < ict; ++i) {
+      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.points[i] instanceof b2ManifoldPoint); }
       this.points[i].Copy(o.points[i]);
     }
     this.localNormal.Copy(o.localNormal);
@@ -219,16 +211,16 @@ export class b2Manifold {
 }
 
 export class b2WorldManifold {
-  public normal: b2Vec2 = new b2Vec2();
-  public points: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
+  public normal: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public points: b2Math.b2Vec2[] = b2Math.b2Vec2.MakeArray(b2Settings.b2_maxManifoldPoints);
 
-  private static Initialize_s_pointA = new b2Vec2();
-  private static Initialize_s_pointB = new b2Vec2();
-  private static Initialize_s_cA = new b2Vec2();
-  private static Initialize_s_cB = new b2Vec2();
-  private static Initialize_s_planePoint = new b2Vec2();
-  private static Initialize_s_clipPoint = new b2Vec2();
-  public Initialize(manifold: b2Manifold, xfA: b2Transform, radiusA: number, xfB: b2Transform, radiusB: number): void {
+  private static Initialize_s_pointA = new b2Math.b2Vec2();
+  private static Initialize_s_pointB = new b2Math.b2Vec2();
+  private static Initialize_s_cA = new b2Math.b2Vec2();
+  private static Initialize_s_cB = new b2Math.b2Vec2();
+  private static Initialize_s_planePoint = new b2Math.b2Vec2();
+  private static Initialize_s_clipPoint = new b2Math.b2Vec2();
+  public Initialize(manifold: b2Manifold, xfA: b2Math.b2Transform, radiusA: number, xfB: b2Math.b2Transform, radiusB: number): void {
     if (manifold.pointCount === 0) {
       return;
     }
@@ -236,42 +228,42 @@ export class b2WorldManifold {
     switch (manifold.type) {
     case b2ManifoldType.e_circles: {
         this.normal.SetXY(1, 0);
-        const pointA: b2Vec2 = b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
-        const pointB: b2Vec2 = b2MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
-        if (b2DistanceSquaredVV(pointA, pointB) > b2_epsilon_sq) {
-          b2SubVV(pointB, pointA, this.normal).SelfNormalize();
+        const pointA: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
+        const pointB: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
+        if (b2Math.b2DistanceSquaredVV(pointA, pointB) > b2Settings.b2_epsilon_sq) {
+          b2Math.b2SubVV(pointB, pointA, this.normal).SelfNormalize();
         }
 
-        const cA: b2Vec2 = b2AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-        const cB: b2Vec2 = b2SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-        b2MidVV(cA, cB, this.points[0]);
+        const cA: b2Math.b2Vec2 = b2Math.b2AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+        const cB: b2Math.b2Vec2 = b2Math.b2SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+        b2Math.b2MidVV(cA, cB, this.points[0]);
       }
       break;
 
     case b2ManifoldType.e_faceA: {
-        b2MulRV(xfA.q, manifold.localNormal, this.normal);
-        const planePoint: b2Vec2 = b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+        b2Math.b2MulRV(xfA.q, manifold.localNormal, this.normal);
+        const planePoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
 
         for (let i: number = 0, ict = manifold.pointCount; i < ict; ++i) {
-          const clipPoint: b2Vec2 = b2MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-          const s = radiusA - b2DotVV(b2SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal);
-          const cA: b2Vec2 = b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
-          const cB: b2Vec2 = b2SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-          b2MidVV(cA, cB, this.points[i]);
+          const clipPoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+          const s = radiusA - b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
+          const cA: b2Math.b2Vec2 = b2Math.b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
+          const cB: b2Math.b2Vec2 = b2Math.b2SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+          b2Math.b2MidVV(cA, cB, this.points[i]);
         }
       }
       break;
 
     case b2ManifoldType.e_faceB: {
-        b2MulRV(xfB.q, manifold.localNormal, this.normal);
-        const planePoint: b2Vec2 = b2MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+        b2Math.b2MulRV(xfB.q, manifold.localNormal, this.normal);
+        const planePoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
 
         for (let i: number = 0, ict = manifold.pointCount; i < ict; ++i) {
-          const clipPoint: b2Vec2 = b2MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-          const s = radiusB - b2DotVV(b2SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal);
-          const cB: b2Vec2 = b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
-          const cA: b2Vec2 = b2SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-          b2MidVV(cA, cB, this.points[i]);
+          const clipPoint: b2Math.b2Vec2 = b2Math.b2MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+          const s = radiusB - b2Math.b2DotVV(b2Math.b2SubVV(clipPoint, planePoint, b2Math.b2Vec2.s_t0), this.normal);
+          const cB: b2Math.b2Vec2 = b2Math.b2AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
+          const cA: b2Math.b2Vec2 = b2Math.b2SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+          b2Math.b2MidVV(cA, cB, this.points[i]);
         }
 
         // Ensure normal points from A to B.
@@ -308,7 +300,7 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
       }
     }
   }
-  for (; i < b2_maxManifoldPoints; ++i) {
+  for (; i < b2Settings.b2_maxManifoldPoints; ++i) {
     state1[i] = b2PointState.b2_nullState;
   }
 
@@ -326,18 +318,18 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
       }
     }
   }
-  for (; i < b2_maxManifoldPoints; ++i) {
+  for (; i < b2Settings.b2_maxManifoldPoints; ++i) {
     state2[i] = b2PointState.b2_nullState;
   }
 }
 
 /// Used for computing contact manifolds.
 export class b2ClipVertex {
-  public v: b2Vec2 = new b2Vec2();
+  public v: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public id: b2ContactID = new b2ContactID();
 
   public static MakeArray(length: number): b2ClipVertex[] {
-    return b2MakeArray(length, function (i: number): b2ClipVertex { return new b2ClipVertex(); });
+    return b2Settings.b2MakeArray(length, function (i: number): b2ClipVertex { return new b2ClipVertex(); });
   }
 
   public Copy(other: b2ClipVertex): b2ClipVertex {
@@ -349,8 +341,8 @@ export class b2ClipVertex {
 
 /// Ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
 export class b2RayCastInput {
-  public p1: b2Vec2 = new b2Vec2();
-  public p2: b2Vec2 = new b2Vec2();
+  public p1: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public p2: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public maxFraction: number = 1;
 
   public Copy(o: b2RayCastInput): b2RayCastInput {
@@ -364,7 +356,7 @@ export class b2RayCastInput {
 /// Ray-cast output data. The ray hits at p1 + fraction * (p2 - p1), where p1 and p2
 /// come from b2RayCastInput.
 export class b2RayCastOutput {
-  public normal: b2Vec2 = new b2Vec2();
+  public normal: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public fraction: number = 0;
 
   public Copy(o: b2RayCastOutput): b2RayCastOutput {
@@ -376,11 +368,11 @@ export class b2RayCastOutput {
 
 /// An axis aligned bounding box.
 export class b2AABB {
-  public lowerBound: b2Vec2 = new b2Vec2(); ///< the lower vertex
-  public upperBound: b2Vec2 = new b2Vec2(); ///< the upper vertex
+  public lowerBound: b2Math.b2Vec2 = new b2Math.b2Vec2(); ///< the lower vertex
+  public upperBound: b2Math.b2Vec2 = new b2Math.b2Vec2(); ///< the upper vertex
 
-  private m_cache_center: b2Vec2 = new b2Vec2(); // access using GetCenter()
-  private m_cache_extent: b2Vec2 = new b2Vec2(); // access using GetExtents()
+  private m_cache_center: b2Math.b2Vec2 = new b2Math.b2Vec2(); // access using GetCenter()
+  private m_cache_extent: b2Math.b2Vec2 = new b2Math.b2Vec2(); // access using GetExtents()
 
   public Copy(o: b2AABB): b2AABB {
     this.lowerBound.Copy(o.lowerBound);
@@ -398,13 +390,13 @@ export class b2AABB {
   }
 
   /// Get the center of the AABB.
-  public GetCenter(): b2Vec2 {
-    return b2MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
+  public GetCenter(): b2Math.b2Vec2 {
+    return b2Math.b2MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
   }
 
   /// Get the extents of the AABB (half-widths).
-  public GetExtents(): b2Vec2 {
-    return b2ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
+  public GetExtents(): b2Math.b2Vec2 {
+    return b2Math.b2ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
   }
 
   /// Get the perimeter length
@@ -416,19 +408,19 @@ export class b2AABB {
 
   /// Combine an AABB into this one.
   public Combine1(aabb: b2AABB): b2AABB {
-    this.lowerBound.x = b2Min(this.lowerBound.x, aabb.lowerBound.x);
-    this.lowerBound.y = b2Min(this.lowerBound.y, aabb.lowerBound.y);
-    this.upperBound.x = b2Max(this.upperBound.x, aabb.upperBound.x);
-    this.upperBound.y = b2Max(this.upperBound.y, aabb.upperBound.y);
+    this.lowerBound.x = b2Math.b2Min(this.lowerBound.x, aabb.lowerBound.x);
+    this.lowerBound.y = b2Math.b2Min(this.lowerBound.y, aabb.lowerBound.y);
+    this.upperBound.x = b2Math.b2Max(this.upperBound.x, aabb.upperBound.x);
+    this.upperBound.y = b2Math.b2Max(this.upperBound.y, aabb.upperBound.y);
     return this;
   }
 
   /// Combine two AABBs into this one.
   public Combine2(aabb1: b2AABB, aabb2: b2AABB): b2AABB {
-    this.lowerBound.x = b2Min(aabb1.lowerBound.x, aabb2.lowerBound.x);
-    this.lowerBound.y = b2Min(aabb1.lowerBound.y, aabb2.lowerBound.y);
-    this.upperBound.x = b2Max(aabb1.upperBound.x, aabb2.upperBound.x);
-    this.upperBound.y = b2Max(aabb1.upperBound.y, aabb2.upperBound.y);
+    this.lowerBound.x = b2Math.b2Min(aabb1.lowerBound.x, aabb2.lowerBound.x);
+    this.lowerBound.y = b2Math.b2Min(aabb1.lowerBound.y, aabb2.lowerBound.y);
+    this.upperBound.x = b2Math.b2Max(aabb1.upperBound.x, aabb2.upperBound.x);
+    this.upperBound.y = b2Math.b2Max(aabb1.upperBound.y, aabb2.upperBound.y);
     return this;
   }
 
@@ -449,19 +441,19 @@ export class b2AABB {
 
   // From Real-time Collision Detection, p179.
   public RayCast(output: b2RayCastOutput, input: b2RayCastInput): boolean {
-    let tmin = (-b2_maxFloat);
-    let tmax = b2_maxFloat;
+    let tmin = (-b2Settings.b2_maxFloat);
+    let tmax = b2Settings.b2_maxFloat;
 
     const p_x = input.p1.x;
     const p_y = input.p1.y;
     const d_x = input.p2.x - input.p1.x;
     const d_y = input.p2.y - input.p1.y;
-    const absD_x = b2Abs(d_x);
-    const absD_y = b2Abs(d_y);
+    const absD_x = b2Math.b2Abs(d_x);
+    const absD_y = b2Math.b2Abs(d_y);
 
     const normal = output.normal;
 
-    if (absD_x < b2_epsilon) {
+    if (absD_x < b2Settings.b2_epsilon) {
       // Parallel.
       if (p_x < this.lowerBound.x || this.upperBound.x < p_x) {
         return false;
@@ -489,14 +481,14 @@ export class b2AABB {
       }
 
       // Pull the max down
-      tmax = b2Min(tmax, t2);
+      tmax = b2Math.b2Min(tmax, t2);
 
       if (tmin > tmax) {
         return false;
       }
     }
 
-    if (absD_y < b2_epsilon) {
+    if (absD_y < b2Settings.b2_epsilon) {
       // Parallel.
       if (p_y < this.lowerBound.y || this.upperBound.y < p_y) {
         return false;
@@ -524,7 +516,7 @@ export class b2AABB {
       }
 
       // Pull the max down
-      tmax = b2Min(tmax, t2);
+      tmax = b2Math.b2Min(tmax, t2);
 
       if (tmin > tmax) {
         return false;
@@ -575,7 +567,7 @@ export function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean {
 }
 
 /// Clipping for contact manifolds.
-export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number {
+export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Math.b2Vec2, offset: number, vertexIndexA: number): number {
   // Start with no output points
   let numOut: number = 0;
 
@@ -583,8 +575,8 @@ export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], n
   const vIn1 = vIn[1];
 
   // Calculate the distance of end points to the line
-  const distance0: number = b2DotVV(normal, vIn0.v) - offset;
-  const distance1: number = b2DotVV(normal, vIn1.v) - offset;
+  const distance0: number = b2Math.b2DotVV(normal, vIn0.v) - offset;
+  const distance1: number = b2Math.b2DotVV(normal, vIn1.v) - offset;
 
   // If the points are behind the plane
   if (distance0 <= 0) vOut[numOut++].Copy(vIn0);
@@ -614,7 +606,7 @@ export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], n
 const b2TestOverlapShape_s_input: b2DistanceInput = new b2DistanceInput();
 const b2TestOverlapShape_s_simplexCache: b2SimplexCache = new b2SimplexCache();
 const b2TestOverlapShape_s_output: b2DistanceOutput = new b2DistanceOutput();
-export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean {
+export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Math.b2Transform, xfB: b2Math.b2Transform): boolean {
   const input = b2TestOverlapShape_s_input.Reset();
   input.proxyA.SetShape(shapeA, indexA);
   input.proxyB.SetShape(shapeB, indexB);
@@ -629,5 +621,5 @@ export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Sh
 
   b2Distance(output, simplexCache, input);
 
-  return output.distance < 10 * b2_epsilon;
+  return output.distance < 10 * b2Settings.b2_epsilon;
 }

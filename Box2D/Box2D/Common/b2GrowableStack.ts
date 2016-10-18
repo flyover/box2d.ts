@@ -40,7 +40,7 @@ export class b2GrowableStack {
   }
 
   public Pop(): any {
-    // if (box2d.ENABLE_ASSERTS) { box2d.b2Assert(this.m_count > 0); }
+    // if (box2d.b2Settings.ENABLE_ASSERTS) { box2d.b2Settings.b2Assert(this.m_count > 0); }
     this.m_count--;
     const element: any = this.m_stack[this.m_count];
     this.m_stack[this.m_count] = null;

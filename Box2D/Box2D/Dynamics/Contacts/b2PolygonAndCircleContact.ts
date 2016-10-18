@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
-import { b2Transform } from "../../Common/b2Math";
+import * as b2Settings from "../../Common/b2Settings";
+import * as b2Math from "../../Common/b2Math";
 import { b2CollidePolygonAndCircle } from "../../Collision/b2CollideCircle";
 import { b2Manifold } from "../../Collision/b2Collision";
 import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
@@ -40,15 +40,15 @@ export class b2PolygonAndCircleContact extends b2Contact {
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
-    if (ENABLE_ASSERTS) { b2Assert(fixtureA.GetType() === b2ShapeType.e_polygonShape); }
-    if (ENABLE_ASSERTS) { b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureA.GetType() === b2ShapeType.e_polygonShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape); }
   }
 
-  public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
+  public Evaluate(manifold: b2Manifold, xfA: b2Math.b2Transform, xfB: b2Math.b2Transform): void {
     const shapeA = this.m_fixtureA.GetShape();
     const shapeB = this.m_fixtureB.GetShape();
-    if (ENABLE_ASSERTS) { b2Assert(shapeA instanceof b2PolygonShape); }
-    if (ENABLE_ASSERTS) { b2Assert(shapeB instanceof b2CircleShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeA instanceof b2PolygonShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(shapeB instanceof b2CircleShape); }
     b2CollidePolygonAndCircle(
       manifold,
       <b2PolygonShape> shapeA, xfA,

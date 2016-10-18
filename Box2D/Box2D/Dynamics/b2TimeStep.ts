@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2MakeArray } from "../Common/b2Settings";
-import { b2Vec2 } from "../Common/b2Math";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 
 /// Profiling data. Times are in milliseconds.
 export class b2Profile {
@@ -64,20 +64,20 @@ export class b2TimeStep {
 }
 
 export class b2Position {
-  public c: b2Vec2 = new b2Vec2();
+  public c: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public a: number = 0;
 
   public static MakeArray(length: number): b2Position[] {
-    return b2MakeArray(length, function (i: number): b2Position { return new b2Position(); } );
+    return b2Settings.b2MakeArray(length, function (i: number): b2Position { return new b2Position(); } );
   }
 }
 
 export class b2Velocity {
-  public v: b2Vec2 = new b2Vec2();
+  public v: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public w: number = 0;
 
   public static MakeArray(length: number): b2Velocity[] {
-    return b2MakeArray(length, function (i: number): b2Velocity { return new b2Velocity(); } );
+    return b2Settings.b2MakeArray(length, function (i: number): b2Velocity { return new b2Velocity(); } );
   }
 }
 

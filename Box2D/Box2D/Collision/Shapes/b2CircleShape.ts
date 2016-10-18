@@ -16,17 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
-import { b2_pi, b2_epsilon, b2_epsilon_sq } from "../../Common/b2Settings";
-import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
-import { b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
-import { b2Min, b2Max, b2Abs, b2Sq, b2Sqrt, b2Pow, b2Asin } from "../../Common/b2Math";
-import { b2MinV, b2MaxV, b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2MulSV } from "../../Common/b2Math";
-import { b2AddVMulSV, b2SubVMulSV } from "../../Common/b2Math";
-import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../../Common/b2Math";
-import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
-import { b2MulXV, b2MulTXV } from "../../Common/b2Math";
+import * as b2Settings from "../../Common/b2Settings";
+import * as b2Math from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -34,7 +25,7 @@ import { b2Shape, b2ShapeType } from "./b2Shape";
 
 /// A circle shape.
 export class b2CircleShape extends b2Shape {
-  public m_p: b2Vec2 = new b2Vec2();
+  public m_p: b2Math.b2Vec2 = new b2Math.b2Vec2();
 
   constructor(radius: number = 0) {
     super(b2ShapeType.e_circleShape, radius);
@@ -48,7 +39,7 @@ export class b2CircleShape extends b2Shape {
   public Copy(other: b2CircleShape): b2CircleShape {
     super.Copy(other);
 
-    if (ENABLE_ASSERTS) { b2Assert(other instanceof b2CircleShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2CircleShape); }
 
     this.m_p.Copy(other.m_p);
     return this;
@@ -60,12 +51,12 @@ export class b2CircleShape extends b2Shape {
   }
 
   /// Implement b2Shape.
-  private static TestPoint_s_center = new b2Vec2();
-  private static TestPoint_s_d = new b2Vec2();
-  public TestPoint(transform: b2Transform, p: b2Vec2): boolean {
-    const center: b2Vec2 = b2MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
-    const d: b2Vec2 = b2SubVV(p, center, b2CircleShape.TestPoint_s_d);
-    return b2DotVV(d, d) <= b2Sq(this.m_radius);
+  private static TestPoint_s_center = new b2Math.b2Vec2();
+  private static TestPoint_s_d = new b2Math.b2Vec2();
+  public TestPoint(transform: b2Math.b2Transform, p: b2Math.b2Vec2): boolean {
+    const center: b2Math.b2Vec2 = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
+    const d: b2Math.b2Vec2 = b2Math.b2SubVV(p, center, b2CircleShape.TestPoint_s_d);
+    return b2Math.b2DotVV(d, d) <= b2Math.b2Sq(this.m_radius);
   }
 
   /// Implement b2Shape.
@@ -73,33 +64,33 @@ export class b2CircleShape extends b2Shape {
   // From Section 3.1.2
   // x = s + a * r
   // norm(x) = radius
-  private static RayCast_s_position = new b2Vec2();
-  private static RayCast_s_s = new b2Vec2();
-  private static RayCast_s_r = new b2Vec2();
-  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean {
-    const position: b2Vec2 = b2MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
-    const s: b2Vec2 = b2SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
-    const b: number = b2DotVV(s, s) - b2Sq(this.m_radius);
+  private static RayCast_s_position = new b2Math.b2Vec2();
+  private static RayCast_s_s = new b2Math.b2Vec2();
+  private static RayCast_s_r = new b2Math.b2Vec2();
+  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Math.b2Transform, childIndex: number): boolean {
+    const position: b2Math.b2Vec2 = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
+    const s: b2Math.b2Vec2 = b2Math.b2SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
+    const b: number = b2Math.b2DotVV(s, s) - b2Math.b2Sq(this.m_radius);
 
     // Solve quadratic equation.
-    const r: b2Vec2 = b2SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
-    const c: number = b2DotVV(s, r);
-    const rr: number = b2DotVV(r, r);
+    const r: b2Math.b2Vec2 = b2Math.b2SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
+    const c: number = b2Math.b2DotVV(s, r);
+    const rr: number = b2Math.b2DotVV(r, r);
     const sigma = c * c - rr * b;
 
     // Check for negative discriminant and short segment.
-    if (sigma < 0 || rr < b2_epsilon) {
+    if (sigma < 0 || rr < b2Settings.b2_epsilon) {
       return false;
     }
 
     // Find the point of intersection of the line with the circle.
-    let a: number = (-(c + b2Sqrt(sigma)));
+    let a: number = (-(c + b2Math.b2Sqrt(sigma)));
 
     // Is the intersection point on the segment?
     if (0 <= a && a <= input.maxFraction * rr) {
       a /= rr;
       output.fraction = a;
-      b2AddVMulSV(s, a, r, output.normal).SelfNormalize();
+      b2Math.b2AddVMulSV(s, a, r, output.normal).SelfNormalize();
       return true;
     }
 
@@ -107,21 +98,21 @@ export class b2CircleShape extends b2Shape {
   }
 
   /// @see b2Shape::ComputeAABB
-  private static ComputeAABB_s_p = new b2Vec2();
-  public ComputeAABB(aabb: b2AABB, transform: b2Transform, childIndex: number): void {
-    const p: b2Vec2 = b2MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
+  private static ComputeAABB_s_p = new b2Math.b2Vec2();
+  public ComputeAABB(aabb: b2AABB, transform: b2Math.b2Transform, childIndex: number): void {
+    const p: b2Math.b2Vec2 = b2Math.b2MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
     aabb.lowerBound.SetXY(p.x - this.m_radius, p.y - this.m_radius);
     aabb.upperBound.SetXY(p.x + this.m_radius, p.y + this.m_radius);
   }
 
   /// @see b2Shape::ComputeMass
   public ComputeMass(massData: b2MassData, density: number): void {
-    const radius_sq = b2Sq(this.m_radius);
-    massData.mass = density * b2_pi * radius_sq;
+    const radius_sq = b2Math.b2Sq(this.m_radius);
+    massData.mass = density * b2Settings.b2_pi * radius_sq;
     massData.center.Copy(this.m_p);
 
     // inertia about the local origin
-    massData.I = massData.mass * (0.5 * radius_sq + b2DotVV(this.m_p, this.m_p));
+    massData.I = massData.mass * (0.5 * radius_sq + b2Math.b2DotVV(this.m_p, this.m_p));
   }
 
   public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
@@ -131,25 +122,25 @@ export class b2CircleShape extends b2Shape {
     proxy.m_radius = this.m_radius;
   }
 
-  public ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number {
-    const p: b2Vec2 = b2MulXV(xf, this.m_p, new b2Vec2());
-    const l: number = (-(b2DotVV(normal, p) - offset));
+  public ComputeSubmergedArea(normal: b2Math.b2Vec2, offset: number, xf: b2Math.b2Transform, c: b2Math.b2Vec2): number {
+    const p: b2Math.b2Vec2 = b2Math.b2MulXV(xf, this.m_p, new b2Math.b2Vec2());
+    const l: number = (-(b2Math.b2DotVV(normal, p) - offset));
 
-    if (l < (-this.m_radius) + b2_epsilon) {
+    if (l < (-this.m_radius) + b2Settings.b2_epsilon) {
       // Completely dry
       return 0;
     }
     if (l > this.m_radius) {
       // Completely wet
       c.Copy(p);
-      return b2_pi * this.m_radius * this.m_radius;
+      return b2Settings.b2_pi * this.m_radius * this.m_radius;
     }
 
     // Magic
     const r2: number = this.m_radius * this.m_radius;
     const l2: number = l * l;
-    const area: number = r2 * (b2Asin(l / this.m_radius) + b2_pi / 2) + l * b2Sqrt(r2 - l2);
-    const com: number = (-2 / 3 * b2Pow(r2 - l2, 1.5) / area);
+    const area: number = r2 * (b2Math.b2Asin(l / this.m_radius) + b2Settings.b2_pi / 2) + l * b2Math.b2Sqrt(r2 - l2);
+    const com: number = (-2 / 3 * b2Math.b2Pow(r2 - l2, 1.5) / area);
 
     c.x = p.x + normal.x * com;
     c.y = p.y + normal.y * com;
@@ -158,8 +149,8 @@ export class b2CircleShape extends b2Shape {
   }
 
   public Dump(): void {
-    b2Log("    const shape: b2CircleShape = new b2CircleShape();\n");
-    b2Log("    shape.m_radius = %.15f;\n", this.m_radius);
-    b2Log("    shape.m_p.SetXY(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
+    b2Settings.b2Log("    const shape: b2CircleShape = new b2CircleShape();\n");
+    b2Settings.b2Log("    shape.m_radius = %.15f;\n", this.m_radius);
+    b2Settings.b2Log("    shape.m_p.SetXY(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
   }
 }

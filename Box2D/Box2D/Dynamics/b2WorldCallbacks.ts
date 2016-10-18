@@ -16,9 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_maxManifoldPoints } from "../Common/b2Settings";
-import { b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Vec2 } from "../Common/b2Math";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 import { b2Manifold } from "../Collision/b2Collision";
 import { b2Contact } from "./Contacts/b2Contact";
 import { b2Joint, b2JointDef } from "./Joints/b2Joint";
@@ -65,8 +64,8 @@ export class b2ContactFilter {
 /// sub-step forces may approach infinity for rigid body collisions. These
 /// match up one-to-one with the contact points in b2Manifold.
 export class b2ContactImpulse {
-  public normalImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
-  public tangentImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
+  public normalImpulses: number[] = b2Settings.b2MakeNumberArray(b2Settings.b2_maxManifoldPoints);
+  public tangentImpulses: number[] = b2Settings.b2MakeNumberArray(b2Settings.b2_maxManifoldPoints);
   public count: number = 0;
 }
 
@@ -138,7 +137,7 @@ export class b2RayCastCallback {
   /// @param normal the normal vector at the point of intersection
   /// @return -1 to filter, 0 to terminate, fraction to clip the ray for
   /// closest hit, 1 to continue
-  public ReportFixture(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number {
+  public ReportFixture(fixture: b2Fixture, point: b2Math.b2Vec2, normal: b2Math.b2Vec2, fraction: number): number {
     return fraction;
   }
 }

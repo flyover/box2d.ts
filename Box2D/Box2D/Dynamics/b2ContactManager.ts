@@ -16,7 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2Contact } from "./Contacts/b2Contact";
@@ -47,8 +48,8 @@ export class b2ContactManager {
 
   // Broad-phase callback.
   public AddPair(proxyUserDataA, proxyUserDataB) {
-    if (ENABLE_ASSERTS) { b2Assert(proxyUserDataA instanceof b2FixtureProxy); }
-    if (ENABLE_ASSERTS) { b2Assert(proxyUserDataB instanceof b2FixtureProxy); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxyUserDataA instanceof b2FixtureProxy); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(proxyUserDataB instanceof b2FixtureProxy); }
     const proxyA: b2FixtureProxy = proxyUserDataA; // (proxyUserDataA instanceof b2FixtureProxy ? proxyUserDataA : null);
     const proxyB: b2FixtureProxy = proxyUserDataB; // (proxyUserDataB instanceof b2FixtureProxy ? proxyUserDataB : null);
 

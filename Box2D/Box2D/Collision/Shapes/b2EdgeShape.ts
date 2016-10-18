@@ -16,17 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { ENABLE_ASSERTS, b2Assert, b2Log } from "../../Common/b2Settings";
-import { b2_epsilon, b2_epsilon_sq } from "../../Common/b2Settings";
-import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
-import { b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
-import { b2Min, b2Max, b2Abs } from "../../Common/b2Math";
-import { b2MinV, b2MaxV, b2NegV, b2DotVV, b2AddVV, b2SubVV, b2MidVV, b2MulSV } from "../../Common/b2Math";
-import { b2AddVMulSV, b2SubVMulSV } from "../../Common/b2Math";
-import { b2CrossVV, b2CrossVOne, b2CrossOneV } from "../../Common/b2Math";
-import { b2MulRV, b2MulTRV } from "../../Common/b2Math";
-import { b2MulXV, b2MulTXV } from "../../Common/b2Math";
+import * as b2Settings from "../../Common/b2Settings";
+import * as b2Math from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -36,19 +27,19 @@ import { b2Shape, b2ShapeType } from "./b2Shape";
 /// to other edge shapes. The connectivity information is used to ensure
 /// correct contact normals.
 export class b2EdgeShape extends b2Shape {
-  public m_vertex1: b2Vec2 = new b2Vec2();
-  public m_vertex2: b2Vec2 = new b2Vec2();
-  public m_vertex0: b2Vec2 = new b2Vec2();
-  public m_vertex3: b2Vec2 = new b2Vec2();
+  public m_vertex1: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public m_vertex2: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public m_vertex0: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  public m_vertex3: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public m_hasVertex0: boolean = false;
   public m_hasVertex3: boolean = false;
 
   constructor() {
-    super(b2ShapeType.e_edgeShape, b2_polygonRadius);
+    super(b2ShapeType.e_edgeShape, b2Settings.b2_polygonRadius);
   }
 
   /// Set this as an isolated edge.
-  public SetAsEdge(v1: b2Vec2, v2: b2Vec2): b2EdgeShape {
+  public SetAsEdge(v1: b2Math.b2Vec2, v2: b2Math.b2Vec2): b2EdgeShape {
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
     this.m_hasVertex0 = false;
@@ -64,7 +55,7 @@ export class b2EdgeShape extends b2Shape {
   public Copy(other: b2EdgeShape): b2EdgeShape {
     super.Copy(other);
 
-    if (ENABLE_ASSERTS) { b2Assert(other instanceof b2EdgeShape); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(other instanceof b2EdgeShape); }
 
     this.m_vertex1.Copy(other.m_vertex1);
     this.m_vertex2.Copy(other.m_vertex2);
@@ -82,7 +73,7 @@ export class b2EdgeShape extends b2Shape {
   }
 
   /// @see b2Shape::TestPoint
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(xf: b2Math.b2Transform, p: b2Math.b2Vec2): boolean {
     return false;
   }
 
@@ -91,28 +82,28 @@ export class b2EdgeShape extends b2Shape {
   // v = v1 + s * e
   // p1 + t * d = v1 + s * e
   // s * e - t * d = p1 - v1
-  private static RayCast_s_p1 = new b2Vec2();
-  private static RayCast_s_p2 = new b2Vec2();
-  private static RayCast_s_d = new b2Vec2();
-  private static RayCast_s_e = new b2Vec2();
-  private static RayCast_s_q = new b2Vec2();
-  private static RayCast_s_r = new b2Vec2();
-  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean {
+  private static RayCast_s_p1 = new b2Math.b2Vec2();
+  private static RayCast_s_p2 = new b2Math.b2Vec2();
+  private static RayCast_s_d = new b2Math.b2Vec2();
+  private static RayCast_s_e = new b2Math.b2Vec2();
+  private static RayCast_s_q = new b2Math.b2Vec2();
+  private static RayCast_s_r = new b2Math.b2Vec2();
+  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Math.b2Transform, childIndex: number): boolean {
     // Put the ray into the edge's frame of reference.
-    const p1: b2Vec2 = b2MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
-    const p2: b2Vec2 = b2MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
-    const d: b2Vec2 = b2SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
+    const p1: b2Math.b2Vec2 = b2Math.b2MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
+    const p2: b2Math.b2Vec2 = b2Math.b2MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
+    const d: b2Math.b2Vec2 = b2Math.b2SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
 
     const v1 = this.m_vertex1;
     const v2 = this.m_vertex2;
-    const e: b2Vec2 = b2SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
+    const e: b2Math.b2Vec2 = b2Math.b2SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
     const normal = output.normal.SetXY(e.y, -e.x).SelfNormalize();
 
     // q = p1 + t * d
     // dot(normal, q - v1) = 0
     // dot(normal, p1 - v1) + t * dot(normal, d) = 0
-    const numerator: number = b2DotVV(normal, b2SubVV(v1, p1, b2Vec2.s_t0));
-    const denominator: number = b2DotVV(normal, d);
+    const numerator: number = b2Math.b2DotVV(normal, b2Math.b2SubVV(v1, p1, b2Math.b2Vec2.s_t0));
+    const denominator: number = b2Math.b2DotVV(normal, d);
 
     if (denominator === 0) {
       return false;
@@ -123,17 +114,17 @@ export class b2EdgeShape extends b2Shape {
       return false;
     }
 
-    const q: b2Vec2 = b2AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
+    const q: b2Math.b2Vec2 = b2Math.b2AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
 
     // q = v1 + s * r
     // s = dot(q - v1, r) / dot(r, r)
-    const r: b2Vec2 = b2SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
-    const rr: number = b2DotVV(r, r);
+    const r: b2Math.b2Vec2 = b2Math.b2SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
+    const rr: number = b2Math.b2DotVV(r, r);
     if (rr === 0) {
       return false;
     }
 
-    const s: number = b2DotVV(b2SubVV(q, v1, b2Vec2.s_t0), r) / rr;
+    const s: number = b2Math.b2DotVV(b2Math.b2SubVV(q, v1, b2Math.b2Vec2.s_t0), r) / rr;
     if (s < 0 || 1 < s) {
       return false;
     }
@@ -146,14 +137,14 @@ export class b2EdgeShape extends b2Shape {
   }
 
   /// @see b2Shape::ComputeAABB
-  private static ComputeAABB_s_v1 = new b2Vec2();
-  private static ComputeAABB_s_v2 = new b2Vec2();
-  public ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void {
-    const v1: b2Vec2 = b2MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
-    const v2: b2Vec2 = b2MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
+  private static ComputeAABB_s_v1 = new b2Math.b2Vec2();
+  private static ComputeAABB_s_v2 = new b2Math.b2Vec2();
+  public ComputeAABB(aabb: b2AABB, xf: b2Math.b2Transform, childIndex: number): void {
+    const v1: b2Math.b2Vec2 = b2Math.b2MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
+    const v2: b2Math.b2Vec2 = b2Math.b2MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
 
-    b2MinV(v1, v2, aabb.lowerBound);
-    b2MaxV(v1, v2, aabb.upperBound);
+    b2Math.b2MinV(v1, v2, aabb.lowerBound);
+    b2Math.b2MaxV(v1, v2, aabb.upperBound);
 
     const r = this.m_radius;
     aabb.lowerBound.SelfSubXY(r, r);
@@ -163,7 +154,7 @@ export class b2EdgeShape extends b2Shape {
   /// @see b2Shape::ComputeMass
   public ComputeMass(massData: b2MassData, density: number): void {
     massData.mass = 0;
-    b2MidVV(this.m_vertex1, this.m_vertex2, massData.center);
+    b2Math.b2MidVV(this.m_vertex1, this.m_vertex2, massData.center);
     massData.I = 0;
   }
 
@@ -175,19 +166,19 @@ export class b2EdgeShape extends b2Shape {
     proxy.m_radius = this.m_radius;
   }
 
-  public ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number {
+  public ComputeSubmergedArea(normal: b2Math.b2Vec2, offset: number, xf: b2Math.b2Transform, c: b2Math.b2Vec2): number {
     c.SetZero();
     return 0;
   }
 
   public Dump(): void {
-    b2Log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-    b2Log("    shape.m_radius = %.15f;\n", this.m_radius);
-    b2Log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
-    b2Log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
-    b2Log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
-    b2Log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
-    b2Log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
-    b2Log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
+    b2Settings.b2Log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
+    b2Settings.b2Log("    shape.m_radius = %.15f;\n", this.m_radius);
+    b2Settings.b2Log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
+    b2Settings.b2Log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
+    b2Settings.b2Log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
+    b2Settings.b2Log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
+    b2Settings.b2Log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
+    b2Settings.b2Log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
   }
 }

@@ -16,16 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { DEBUG, ENABLE_ASSERTS, b2Assert, b2Log } from "../Common/b2Settings";
-import { b2IsValid } from "../Common/b2Math";
-import { b2Vec2 } from "../Common/b2Math";
-import { b2NegV, b2AddVV, b2SubVV, b2MulSV } from "../Common/b2Math";
-import { b2DotVV, b2CrossVV } from "../Common/b2Math";
-import { b2AddVCrossSV } from "../Common/b2Math";
-import { b2MulRV, b2MulTRV } from "../Common/b2Math";
-import { b2Transform } from "../Common/b2Math";
-import { b2MulXV, b2MulTXV } from "../Common/b2Math";
-import { b2Sweep } from "../Common/b2Math";
+import * as b2Settings from "../Common/b2Settings";
+import * as b2Math from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2MassData } from "../Collision/Shapes/b2Shape";
 import { b2Shape } from "../Collision/Shapes/b2Shape";
@@ -58,13 +50,13 @@ export class b2BodyDef {
 
   /// The world position of the body. Avoid creating bodies at the origin
   /// since this can lead to many overlapping shapes.
-  public position: b2Vec2 = new b2Vec2(0, 0);
+  public position: b2Math.b2Vec2 = new b2Math.b2Vec2(0, 0);
 
   /// The world angle of the body in radians.
   public angle: number = 0;
 
   /// The linear velocity of the body's origin in world co-ordinates.
-  public linearVelocity: b2Vec2 = new b2Vec2(0, 0);
+  public linearVelocity: b2Math.b2Vec2 = new b2Math.b2Vec2(0, 0);
 
   /// The angular velocity of the body.
   public angularVelocity: number = 0;
@@ -124,13 +116,13 @@ export class b2Body {
 
   public m_islandIndex: number = 0;
 
-  public m_xf: b2Transform = new b2Transform();  // the body origin transform
-  public m_sweep: b2Sweep = new b2Sweep();    // the swept motion for CCD
+  public m_xf: b2Math.b2Transform = new b2Math.b2Transform();  // the body origin transform
+  public m_sweep: b2Math.b2Sweep = new b2Math.b2Sweep();    // the swept motion for CCD
 
-  public m_linearVelocity: b2Vec2 = new b2Vec2();
+  public m_linearVelocity: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public m_angularVelocity: number = 0;
 
-  public m_force: b2Vec2 = new b2Vec2;
+  public m_force: b2Math.b2Vec2 = new b2Math.b2Vec2;
   public m_torque: number = 0;
 
   public m_world: b2World = null;
@@ -162,13 +154,13 @@ export class b2Body {
   // public m_controllerCount: number = 0;
 
   constructor(bd: b2BodyDef, world: b2World) {
-    if (ENABLE_ASSERTS) { b2Assert(bd.position.IsValid()); }
-    if (ENABLE_ASSERTS) { b2Assert(bd.linearVelocity.IsValid()); }
-    if (ENABLE_ASSERTS) { b2Assert(b2IsValid(bd.angle)); }
-    if (ENABLE_ASSERTS) { b2Assert(b2IsValid(bd.angularVelocity)); }
-    if (ENABLE_ASSERTS) { b2Assert(b2IsValid(bd.gravityScale) && bd.gravityScale >= 0); }
-    if (ENABLE_ASSERTS) { b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0); }
-    if (ENABLE_ASSERTS) { b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(bd.position.IsValid()); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(bd.linearVelocity.IsValid()); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Math.b2IsValid(bd.angle)); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Math.b2IsValid(bd.angularVelocity)); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Math.b2IsValid(bd.gravityScale) && bd.gravityScale >= 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Math.b2IsValid(bd.angularDamping) && bd.angularDamping >= 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(b2Math.b2IsValid(bd.linearDamping) && bd.linearDamping >= 0); }
 
     this.m_flags = b2BodyFlag.e_none;
 
@@ -242,7 +234,7 @@ export class b2Body {
   /// @param def the fixture definition.
   /// @warning This function is locked during callbacks.
   public CreateFixture(def: b2FixtureDef): b2Fixture {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_world.IsLocked() === false); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
     if (this.m_world.IsLocked() === true) {
       return null;
     }
@@ -296,15 +288,15 @@ export class b2Body {
   /// @param fixture the fixture to be removed.
   /// @warning This function is locked during callbacks.
   public DestroyFixture(fixture: b2Fixture): void {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_world.IsLocked() === false); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
     if (this.m_world.IsLocked() === true) {
       return;
     }
 
-    if (ENABLE_ASSERTS) { b2Assert(fixture.m_body === this); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(fixture.m_body === this); }
 
     // Remove the fixture from this body's singly linked list.
-    if (ENABLE_ASSERTS) { b2Assert(this.m_fixtureCount > 0); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_fixtureCount > 0); }
     let node: b2Fixture = this.m_fixtureList;
     let ppF: b2Fixture = null;
     let found: boolean = false;
@@ -323,7 +315,7 @@ export class b2Body {
     }
 
     // You tried to remove a shape that is not attached to this body.
-    if (ENABLE_ASSERTS) { b2Assert(found); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(found); }
 
     // Destroy any contacts associated with the fixture.
     let edge: b2ContactEdge = this.m_contactList;
@@ -361,12 +353,12 @@ export class b2Body {
   /// Manipulating a body's transform may cause non-physical behavior.
   /// @param position the world position of the body's local origin.
   /// @param angle the world rotation in radians.
-  public SetTransformVecRadians(position: b2Vec2, angle: number): void {
+  public SetTransformVecRadians(position: b2Math.b2Vec2, angle: number): void {
     this.SetTransformXYRadians(position.x, position.y, angle);
   }
 
   public SetTransformXYRadians(x: number, y: number, angle: number): void {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_world.IsLocked() === false); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
     if (this.m_world.IsLocked() === true) {
       return;
     }
@@ -374,7 +366,7 @@ export class b2Body {
     this.m_xf.q.SetAngleRadians(angle);
     this.m_xf.p.SetXY(x, y);
 
-    b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+    b2Math.b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
     this.m_sweep.a = angle;
 
     this.m_sweep.c0.Copy(this.m_sweep.c);
@@ -388,23 +380,23 @@ export class b2Body {
     this.m_world.m_contactManager.FindNewContacts();
   }
 
-  public SetTransform(xf: b2Transform): void {
+  public SetTransform(xf: b2Math.b2Transform): void {
     this.SetTransformVecRadians(xf.p, xf.GetAngleRadians());
   }
 
   /// Get the body transform for the body's origin.
   /// @return the world transform of the body's origin.
-  public GetTransform(): b2Transform {
+  public GetTransform(): b2Math.b2Transform {
     return this.m_xf;
   }
 
   /// Get the world body origin position.
   /// @return the world position of the body's origin.
-  public GetPosition(): b2Vec2 {
+  public GetPosition(): b2Math.b2Vec2 {
     return this.m_xf.p;
   }
 
-  public SetPosition(position: b2Vec2): void {
+  public SetPosition(position: b2Math.b2Vec2): void {
     this.SetTransformVecRadians(position, this.GetAngleRadians());
   }
 
@@ -423,23 +415,23 @@ export class b2Body {
   }
 
   /// Get the world position of the center of mass.
-  public GetWorldCenter(): b2Vec2 {
+  public GetWorldCenter(): b2Math.b2Vec2 {
     return this.m_sweep.c;
   }
 
   /// Get the local position of the center of mass.
-  public GetLocalCenter(): b2Vec2 {
+  public GetLocalCenter(): b2Math.b2Vec2 {
     return this.m_sweep.localCenter;
   }
 
   /// Set the linear velocity of the center of mass.
   /// @param v the new linear velocity of the center of mass.
-  public SetLinearVelocity(v: b2Vec2): void {
+  public SetLinearVelocity(v: b2Math.b2Vec2): void {
     if (this.m_type === b2BodyType.b2_staticBody) {
       return;
     }
 
-    if (b2DotVV(v, v) > 0) {
+    if (b2Math.b2DotVV(v, v) > 0) {
       this.SetAwake(true);
     }
 
@@ -448,7 +440,7 @@ export class b2Body {
 
   /// Get the linear velocity of the center of mass.
   /// @return the linear velocity of the center of mass.
-  public GetLinearVelocity(): b2Vec2 {
+  public GetLinearVelocity(): b2Math.b2Vec2 {
     return this.m_linearVelocity;
   }
 
@@ -601,14 +593,14 @@ export class b2Body {
   /// Get the rotational inertia of the body about the local origin.
   /// @return the rotational inertia, usually in kg-m^2.
   public GetInertia(): number {
-    return this.m_I + this.m_mass * b2DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+    return this.m_I + this.m_mass * b2Math.b2DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
   }
 
   /// Get the mass data of the body.
   /// @return a struct containing the mass, inertia and center of the body.
   public GetMassData(data: b2MassData): b2MassData {
     data.mass = this.m_mass;
-    data.I = this.m_I + this.m_mass * b2DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+    data.I = this.m_I + this.m_mass * b2Math.b2DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
     data.center.Copy(this.m_sweep.localCenter);
     return data;
   }
@@ -618,9 +610,9 @@ export class b2Body {
   /// Note that creating or destroying fixtures can also alter the mass.
   /// This function has no effect if the body isn't dynamic.
   /// @param massData the mass properties.
-  private static SetMassData_s_oldCenter: b2Vec2 = new b2Vec2();
+  private static SetMassData_s_oldCenter: b2Math.b2Vec2 = new b2Math.b2Vec2();
   public SetMassData(massData: b2MassData): void {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_world.IsLocked() === false); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
     if (this.m_world.IsLocked() === true) {
       return;
     }
@@ -641,26 +633,26 @@ export class b2Body {
     this.m_invMass = 1 / this.m_mass;
 
     if (massData.I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
-      this.m_I = massData.I - this.m_mass * b2DotVV(massData.center, massData.center);
-      if (ENABLE_ASSERTS) { b2Assert(this.m_I > 0); }
+      this.m_I = massData.I - this.m_mass * b2Math.b2DotVV(massData.center, massData.center);
+      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_I > 0); }
       this.m_invI = 1 / this.m_I;
     }
 
     // Move center of mass.
-    const oldCenter: b2Vec2 = b2Body.SetMassData_s_oldCenter.Copy(this.m_sweep.c);
+    const oldCenter: b2Math.b2Vec2 = b2Body.SetMassData_s_oldCenter.Copy(this.m_sweep.c);
     this.m_sweep.localCenter.Copy(massData.center);
-    b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+    b2Math.b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
     this.m_sweep.c0.Copy(this.m_sweep.c);
 
     // Update center of mass velocity.
-    b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2SubVV(this.m_sweep.c, oldCenter, b2Vec2.s_t0), this.m_linearVelocity);
+    b2Math.b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2SubVV(this.m_sweep.c, oldCenter, b2Math.b2Vec2.s_t0), this.m_linearVelocity);
   }
 
   /// This resets the mass properties to the sum of the mass properties of the fixtures.
   /// This normally does not need to be called unless you called SetMassData to override
   /// the mass and you later want to reset the mass.
-  private static ResetMassData_s_localCenter: b2Vec2 = new b2Vec2();
-  private static ResetMassData_s_oldCenter: b2Vec2 = new b2Vec2();
+  private static ResetMassData_s_localCenter: b2Math.b2Vec2 = new b2Math.b2Vec2();
+  private static ResetMassData_s_oldCenter: b2Math.b2Vec2 = new b2Math.b2Vec2();
   private static ResetMassData_s_massData: b2MassData = new b2MassData();
   public ResetMassData(): void {
     // Compute mass data from shapes. Each shape has its own density.
@@ -678,10 +670,10 @@ export class b2Body {
       return;
     }
 
-    if (ENABLE_ASSERTS) { b2Assert(this.m_type === b2BodyType.b2_dynamicBody); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_type === b2BodyType.b2_dynamicBody); }
 
     // Accumulate mass over all fixtures.
-    const localCenter: b2Vec2 = b2Body.ResetMassData_s_localCenter.SetZero();
+    const localCenter: b2Math.b2Vec2 = b2Body.ResetMassData_s_localCenter.SetZero();
     for (let f = this.m_fixtureList; f; f = f.m_next) {
       if (f.m_density === 0) {
         continue;
@@ -707,8 +699,8 @@ export class b2Body {
 
     if (this.m_I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
       // Center the inertia about the center of mass.
-      this.m_I -= this.m_mass * b2DotVV(localCenter, localCenter);
-      if (ENABLE_ASSERTS) { b2Assert(this.m_I > 0); }
+      this.m_I -= this.m_mass * b2Math.b2DotVV(localCenter, localCenter);
+      if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_I > 0); }
       this.m_invI = 1 / this.m_I;
     } else {
       this.m_I = 0;
@@ -716,54 +708,54 @@ export class b2Body {
     }
 
     // Move center of mass.
-    const oldCenter: b2Vec2 = b2Body.ResetMassData_s_oldCenter.Copy(this.m_sweep.c);
+    const oldCenter: b2Math.b2Vec2 = b2Body.ResetMassData_s_oldCenter.Copy(this.m_sweep.c);
     this.m_sweep.localCenter.Copy(localCenter);
-    b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+    b2Math.b2MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
     this.m_sweep.c0.Copy(this.m_sweep.c);
 
     // Update center of mass velocity.
-    b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2SubVV(this.m_sweep.c, oldCenter, b2Vec2.s_t0), this.m_linearVelocity);
+    b2Math.b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2SubVV(this.m_sweep.c, oldCenter, b2Math.b2Vec2.s_t0), this.m_linearVelocity);
   }
 
   /// Get the world coordinates of a point given the local coordinates.
   /// @param localPoint a point on the body measured relative the the body's origin.
   /// @return the same point expressed in world coordinates.
-  public GetWorldPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2 {
-    return b2MulXV(this.m_xf, localPoint, out);
+  public GetWorldPoint(localPoint: b2Math.b2Vec2, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+    return b2Math.b2MulXV(this.m_xf, localPoint, out);
   }
 
   /// Get the world coordinates of a vector given the local coordinates.
   /// @param localVector a vector fixed in the body.
   /// @return the same vector expressed in world coordinates.
-  public GetWorldVector(localVector: b2Vec2, out: b2Vec2): b2Vec2 {
-    return b2MulRV(this.m_xf.q, localVector, out);
+  public GetWorldVector(localVector: b2Math.b2Vec2, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+    return b2Math.b2MulRV(this.m_xf.q, localVector, out);
   }
 
   /// Gets a local point relative to the body's origin given a world point.
   /// @param a point in world coordinates.
   /// @return the corresponding local point relative to the body's origin.
-  public GetLocalPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2 {
-    return b2MulTXV(this.m_xf, worldPoint, out);
+  public GetLocalPoint(worldPoint: b2Math.b2Vec2, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+    return b2Math.b2MulTXV(this.m_xf, worldPoint, out);
   }
 
   /// Gets a local vector given a world vector.
   /// @param a vector in world coordinates.
   /// @return the corresponding local vector.
-  public GetLocalVector(worldVector: b2Vec2, out: b2Vec2): b2Vec2 {
-    return b2MulTRV(this.m_xf.q, worldVector, out);
+  public GetLocalVector(worldVector: b2Math.b2Vec2, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+    return b2Math.b2MulTRV(this.m_xf.q, worldVector, out);
   }
 
   /// Get the world linear velocity of a world point attached to this body.
   /// @param a point in world coordinates.
   /// @return the world velocity of a point.
-  public GetLinearVelocityFromWorldPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2 {
-    return b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2SubVV(worldPoint, this.m_sweep.c, b2Vec2.s_t0), out);
+  public GetLinearVelocityFromWorldPoint(worldPoint: b2Math.b2Vec2, out: b2Math.b2Vec2): b2Math.b2Vec2 {
+    return b2Math.b2AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math.b2SubVV(worldPoint, this.m_sweep.c, b2Math.b2Vec2.s_t0), out);
   }
 
   /// Get the world velocity of a local point.
   /// @param a point in local coordinates.
   /// @return the world velocity of a point.
-  public GetLinearVelocityFromLocalPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetLinearVelocityFromLocalPoint(localPoint: b2Math.b2Vec2, out: b2Math.b2Vec2): b2Math.b2Vec2 {
     return this.GetLinearVelocityFromWorldPoint(this.GetWorldPoint(localPoint, out), out);
   }
 
@@ -799,7 +791,7 @@ export class b2Body {
 
   /// Set the type of this body. This may alter the mass and velocity.
   public SetType(type: b2BodyType): void {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_world.IsLocked() === false); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
     if (this.m_world.IsLocked() === true) {
       return;
     }
@@ -918,7 +910,7 @@ export class b2Body {
   /// An inactive body is still owned by a b2World object and remains
   /// in the body list.
   public SetActive(flag: boolean): void {
-    if (ENABLE_ASSERTS) { b2Assert(this.m_world.IsLocked() === false); }
+    if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(this.m_world.IsLocked() === false); }
 
     if (flag === this.IsActive()) {
       return;
@@ -1022,11 +1014,11 @@ export class b2Body {
 
   /// Dump this body to a log file
   public Dump(): void {
-    if (DEBUG) {
+    if (b2Settings.DEBUG) {
       const bodyIndex: number = this.m_islandIndex;
 
-      b2Log("{\n");
-      b2Log("  const bd: b2BodyDef = new b2BodyDef();\n");
+      b2Settings.b2Log("{\n");
+      b2Settings.b2Log("  const bd: b2BodyDef = new b2BodyDef();\n");
       let type_str: string = "";
       switch (this.m_type) {
       case b2BodyType.b2_staticBody:
@@ -1039,40 +1031,40 @@ export class b2Body {
         type_str = "b2BodyType.b2_dynamicBody";
         break;
       default:
-        if (ENABLE_ASSERTS) { b2Assert(false); }
+        if (b2Settings.ENABLE_ASSERTS) { b2Settings.b2Assert(false); }
         break;
       }
-      b2Log("  bd.type = %s;\n", type_str);
-      b2Log("  bd.position.SetXY(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
-      b2Log("  bd.angle = %.15f;\n", this.m_sweep.a);
-      b2Log("  bd.linearVelocity.SetXY(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
-      b2Log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
-      b2Log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
-      b2Log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
-      b2Log("  bd.allowSleep = %s;\n", (this.m_flags & b2BodyFlag.e_autoSleepFlag) ? ("true") : ("false"));
-      b2Log("  bd.awake = %s;\n", (this.m_flags & b2BodyFlag.e_awakeFlag) ? ("true") : ("false"));
-      b2Log("  bd.fixedRotation = %s;\n", (this.m_flags & b2BodyFlag.e_fixedRotationFlag) ? ("true") : ("false"));
-      b2Log("  bd.bullet = %s;\n", (this.m_flags & b2BodyFlag.e_bulletFlag) ? ("true") : ("false"));
-      b2Log("  bd.active = %s;\n", (this.m_flags & b2BodyFlag.e_activeFlag) ? ("true") : ("false"));
-      b2Log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
-      b2Log("\n");
-      b2Log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
-      b2Log("\n");
+      b2Settings.b2Log("  bd.type = %s;\n", type_str);
+      b2Settings.b2Log("  bd.position.SetXY(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
+      b2Settings.b2Log("  bd.angle = %.15f;\n", this.m_sweep.a);
+      b2Settings.b2Log("  bd.linearVelocity.SetXY(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
+      b2Settings.b2Log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
+      b2Settings.b2Log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
+      b2Settings.b2Log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
+      b2Settings.b2Log("  bd.allowSleep = %s;\n", (this.m_flags & b2BodyFlag.e_autoSleepFlag) ? ("true") : ("false"));
+      b2Settings.b2Log("  bd.awake = %s;\n", (this.m_flags & b2BodyFlag.e_awakeFlag) ? ("true") : ("false"));
+      b2Settings.b2Log("  bd.fixedRotation = %s;\n", (this.m_flags & b2BodyFlag.e_fixedRotationFlag) ? ("true") : ("false"));
+      b2Settings.b2Log("  bd.bullet = %s;\n", (this.m_flags & b2BodyFlag.e_bulletFlag) ? ("true") : ("false"));
+      b2Settings.b2Log("  bd.active = %s;\n", (this.m_flags & b2BodyFlag.e_activeFlag) ? ("true") : ("false"));
+      b2Settings.b2Log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
+      b2Settings.b2Log("\n");
+      b2Settings.b2Log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
+      b2Settings.b2Log("\n");
       for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
-        b2Log("  {\n");
+        b2Settings.b2Log("  {\n");
         f.Dump(bodyIndex);
-        b2Log("  }\n");
+        b2Settings.b2Log("  }\n");
       }
-      b2Log("}\n");
+      b2Settings.b2Log("}\n");
     }
   }
 
-  private static SynchronizeFixtures_s_xf1: b2Transform = new b2Transform();
+  private static SynchronizeFixtures_s_xf1: b2Math.b2Transform = new b2Math.b2Transform();
   public SynchronizeFixtures(): void {
-    const xf1: b2Transform = b2Body.SynchronizeFixtures_s_xf1;
+    const xf1: b2Math.b2Transform = b2Body.SynchronizeFixtures_s_xf1;
     xf1.q.SetAngleRadians(this.m_sweep.a0);
-    b2MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
-    b2SubVV(this.m_sweep.c0, xf1.p, xf1.p);
+    b2Math.b2MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
+    b2Math.b2SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
     const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
     for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
@@ -1082,8 +1074,8 @@ export class b2Body {
 
   public SynchronizeTransform(): void {
     this.m_xf.q.SetAngleRadians(this.m_sweep.a);
-    b2MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-    b2SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+    b2Math.b2MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+    b2Math.b2SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
   }
 
   // This is used to prevent connected bodies from colliding.
@@ -1112,8 +1104,8 @@ export class b2Body {
     this.m_sweep.c.Copy(this.m_sweep.c0);
     this.m_sweep.a = this.m_sweep.a0;
     this.m_xf.q.SetAngleRadians(this.m_sweep.a);
-    b2MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-    b2SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+    b2Math.b2MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+    b2Math.b2SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
   }
 
   // public GetControllerList(): b2ControllerEdge
