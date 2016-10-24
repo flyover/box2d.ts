@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_maxManifoldPoints, b2MakeArray } from "../Common/b2Settings";
+import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_maxManifoldPoints, b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance";
@@ -33,14 +33,31 @@ export const enum b2ContactFeatureType {
 /// The features that intersect to form the contact point
 /// This must be 4 bytes or less.
 export class b2ContactFeature {
-  public _id: b2ContactID = null;
+  public _key: number = 0;
+  public _key_invalid = false;
   public _indexA: number = 0;
   public _indexB: number = 0;
   public _typeA: number = 0;
   public _typeB: number = 0;
 
-  constructor(id: b2ContactID) {
-    this._id = id;
+  constructor() {
+  }
+
+  public get key(): number {
+    if (this._key_invalid) {
+      this._key_invalid = false;
+      this._key = this._indexA | (this._indexB << 8) | (this._typeA << 16) | (this._typeB << 24);
+    }
+    return this._key;
+  }
+
+  public set key(value: number) {
+    this._key = value;
+    this._key_invalid = false;
+    this._indexA = this._key & 0xff;
+    this._indexB = (this._key >> 8) & 0xff;
+    this._typeA = (this._key >> 16) & 0xff;
+    this._typeB = (this._key >> 24) & 0xff;
   }
 
   public get indexA(): number {
@@ -49,8 +66,7 @@ export class b2ContactFeature {
 
   public set indexA(value: number) {
     this._indexA = value;
-    // update the b2ContactID
-    this._id._key = (this._id._key & 0xffffff00) | (this._indexA & 0x000000ff);
+    this._key_invalid = true;
   }
 
   public get indexB(): number {
@@ -59,8 +75,7 @@ export class b2ContactFeature {
 
   public set indexB(value: number) {
     this._indexB = value;
-    // update the b2ContactID
-    this._id._key = (this._id._key & 0xffff00ff) | ((this._indexB << 8) & 0x0000ff00);
+    this._key_invalid = true;
   }
 
   public get typeA(): number {
@@ -69,8 +84,7 @@ export class b2ContactFeature {
 
   public set typeA(value: number) {
     this._typeA = value;
-    // update the b2ContactID
-    this._id._key = (this._id._key & 0xff00ffff) | ((this._typeA << 16) & 0x00ff0000);
+    this._key_invalid = true;
   }
 
   public get typeB(): number {
@@ -79,19 +93,13 @@ export class b2ContactFeature {
 
   public set typeB(value: number) {
     this._typeB = value;
-    // update the b2ContactID
-    this._id._key = (this._id._key & 0x00ffffff) | ((this._typeB << 24) & 0xff000000);
+    this._key_invalid = true;
   }
 }
 
 /// Contact ids to facilitate warm starting.
 export class b2ContactID {
-  public cf: b2ContactFeature = null;
-  public _key: number = 0;
-
-  constructor() {
-    this.cf = new b2ContactFeature(this);
-  }
+  public cf: b2ContactFeature = new b2ContactFeature();
 
   public Copy(o: b2ContactID): b2ContactID {
     this.key = o.key;
@@ -103,16 +111,11 @@ export class b2ContactID {
   }
 
   public get key(): number {
-    return this._key;
+    return this.cf.key;
   }
 
   public set key(value: number) {
-    this._key = value;
-    // update the b2ContactFeature
-    this.cf._indexA = this._key & 0x000000ff;
-    this.cf._indexB = (this._key >> 8) & 0x000000ff;
-    this.cf._typeA = (this._key >> 16) & 0x000000ff;
-    this.cf._typeB = (this._key >> 24) & 0x000000ff;
+    this.cf.key = value;
   }
 }
 
@@ -183,7 +186,7 @@ export class b2Manifold {
   public pointCount: number = 0;
 
   public Reset(): void {
-    for (let i: number = 0, ict = b2_maxManifoldPoints; i < ict; ++i) {
+    for (let i: number = 0; i < b2_maxManifoldPoints; ++i) {
       ///b2Assert(this.points[i] instanceof b2ManifoldPoint);
       this.points[i].Reset();
     }
@@ -195,7 +198,7 @@ export class b2Manifold {
 
   public Copy(o: b2Manifold): b2Manifold {
     this.pointCount = o.pointCount;
-    for (let i: number = 0, ict = b2_maxManifoldPoints; i < ict; ++i) {
+    for (let i: number = 0; i < b2_maxManifoldPoints; ++i) {
       ///b2Assert(this.points[i] instanceof b2ManifoldPoint);
       this.points[i].Copy(o.points[i]);
     }
@@ -213,6 +216,7 @@ export class b2Manifold {
 export class b2WorldManifold {
   public normal: b2Vec2 = new b2Vec2();
   public points: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
+  public separations: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
 
   private static Initialize_s_pointA = new b2Vec2();
   private static Initialize_s_pointB = new b2Vec2();
@@ -227,7 +231,7 @@ export class b2WorldManifold {
 
     switch (manifold.type) {
     case b2ManifoldType.e_circles: {
-        this.normal.SetXY(1, 0);
+        this.normal.Set(1, 0);
         const pointA: b2Vec2 = b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
         const pointB: b2Vec2 = b2Transform.MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
         if (b2Vec2.DistanceSquaredVV(pointA, pointB) > b2_epsilon_sq) {
@@ -237,6 +241,7 @@ export class b2WorldManifold {
         const cA: b2Vec2 = b2Vec2.AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
         const cB: b2Vec2 = b2Vec2.SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
         b2Vec2.MidVV(cA, cB, this.points[0]);
+        this.separations[0] = b2Vec2.DotVV(b2Vec2.SubVV(cB, cA, b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
       }
       break;
 
@@ -244,12 +249,13 @@ export class b2WorldManifold {
         b2Rot.MulRV(xfA.q, manifold.localNormal, this.normal);
         const planePoint: b2Vec2 = b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
 
-        for (let i: number = 0, ict = manifold.pointCount; i < ict; ++i) {
+        for (let i: number = 0; i < manifold.pointCount; ++i) {
           const clipPoint: b2Vec2 = b2Transform.MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-          const s = radiusA - b2Vec2.DotVV(b2Vec2.SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal);
+          const s: number = radiusA - b2Vec2.DotVV(b2Vec2.SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal);
           const cA: b2Vec2 = b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
           const cB: b2Vec2 = b2Vec2.SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
           b2Vec2.MidVV(cA, cB, this.points[i]);
+          this.separations[i] = b2Vec2.DotVV(b2Vec2.SubVV(cB, cA, b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
         }
       }
       break;
@@ -258,12 +264,13 @@ export class b2WorldManifold {
         b2Rot.MulRV(xfB.q, manifold.localNormal, this.normal);
         const planePoint: b2Vec2 = b2Transform.MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
 
-        for (let i: number = 0, ict = manifold.pointCount; i < ict; ++i) {
+        for (let i: number = 0; i < manifold.pointCount; ++i) {
           const clipPoint: b2Vec2 = b2Transform.MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-          const s = radiusB - b2Vec2.DotVV(b2Vec2.SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal);
+          const s: number = radiusB - b2Vec2.DotVV(b2Vec2.SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal);
           const cB: b2Vec2 = b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
           const cA: b2Vec2 = b2Vec2.SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
           b2Vec2.MidVV(cA, cB, this.points[i]);
+          this.separations[i] = b2Vec2.DotVV(b2Vec2.SubVV(cA, cB, b2Vec2.s_t0), this.normal); // b2Dot(cA - cB, normal);
         }
 
         // Ensure normal points from A to B.
@@ -288,8 +295,8 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
   // Detect persists and removes.
   let i: number;
   for (i = 0; i < manifold1.pointCount; ++i) {
-    const id = manifold1.points[i].id;
-    const key = id.key;
+    const id: b2ContactID = manifold1.points[i].id;
+    const key: number = id.key;
 
     state1[i] = b2PointState.b2_removeState;
 
@@ -306,8 +313,8 @@ export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[],
 
   // Detect persists and adds.
   for (i = 0; i < manifold2.pointCount; ++i) {
-    const id = manifold2.points[i].id;
-    const key = id.key;
+    const id: b2ContactID = manifold2.points[i].id;
+    const key: number = id.key;
 
     state2[i] = b2PointState.b2_addState;
 
@@ -382,9 +389,9 @@ export class b2AABB {
 
   /// Verify that the bounds are sorted.
   public IsValid(): boolean {
-    const d_x = this.upperBound.x - this.lowerBound.x;
-    const d_y = this.upperBound.y - this.lowerBound.y;
-    let valid = d_x >= 0 && d_y >= 0;
+    const d_x: number = this.upperBound.x - this.lowerBound.x;
+    const d_y: number = this.upperBound.y - this.lowerBound.y;
+    let valid: boolean = d_x >= 0 && d_y >= 0;
     valid = valid && this.lowerBound.IsValid() && this.upperBound.IsValid();
     return valid;
   }
@@ -401,8 +408,8 @@ export class b2AABB {
 
   /// Get the perimeter length
   public GetPerimeter(): number {
-    const wx = this.upperBound.x - this.lowerBound.x;
-    const wy = this.upperBound.y - this.lowerBound.y;
+    const wx: number = this.upperBound.x - this.lowerBound.x;
+    const wy: number = this.upperBound.y - this.lowerBound.y;
     return 2 * (wx + wy);
   }
 
@@ -431,7 +438,7 @@ export class b2AABB {
 
   /// Does this aabb contain the provided AABB.
   public Contains(aabb: b2AABB): boolean {
-    let result = true;
+    let result: boolean = true;
     result = result && this.lowerBound.x <= aabb.lowerBound.x;
     result = result && this.lowerBound.y <= aabb.lowerBound.y;
     result = result && aabb.upperBound.x <= this.upperBound.x;
@@ -441,17 +448,17 @@ export class b2AABB {
 
   // From Real-time Collision Detection, p179.
   public RayCast(output: b2RayCastOutput, input: b2RayCastInput): boolean {
-    let tmin = (-b2_maxFloat);
-    let tmax = b2_maxFloat;
+    let tmin: number = (-b2_maxFloat);
+    let tmax: number = b2_maxFloat;
 
-    const p_x = input.p1.x;
-    const p_y = input.p1.y;
-    const d_x = input.p2.x - input.p1.x;
-    const d_y = input.p2.y - input.p1.y;
-    const absD_x = b2Abs(d_x);
-    const absD_y = b2Abs(d_y);
+    const p_x: number = input.p1.x;
+    const p_y: number = input.p1.y;
+    const d_x: number = input.p2.x - input.p1.x;
+    const d_y: number = input.p2.y - input.p1.y;
+    const absD_x: number = b2Abs(d_x);
+    const absD_y: number = b2Abs(d_y);
 
-    const normal = output.normal;
+    const normal: b2Vec2 = output.normal;
 
     if (absD_x < b2_epsilon) {
       // Parallel.
@@ -460,14 +467,14 @@ export class b2AABB {
       }
     } else {
       const inv_d: number = 1 / d_x;
-      let t1 = (this.lowerBound.x - p_x) * inv_d;
-      let t2 = (this.upperBound.x - p_x) * inv_d;
+      let t1: number = (this.lowerBound.x - p_x) * inv_d;
+      let t2: number = (this.upperBound.x - p_x) * inv_d;
 
       // Sign of the normal vector.
-      let s = (-1);
+      let s: number = (-1);
 
       if (t1 > t2) {
-        const t3 = t1;
+        const t3: number = t1;
         t1 = t2;
         t2 = t3;
         s = 1;
@@ -495,14 +502,14 @@ export class b2AABB {
       }
     } else {
       const inv_d: number = 1 / d_y;
-      let t1 = (this.lowerBound.y - p_y) * inv_d;
-      let t2 = (this.upperBound.y - p_y) * inv_d;
+      let t1: number = (this.lowerBound.y - p_y) * inv_d;
+      let t2: number = (this.upperBound.y - p_y) * inv_d;
 
       // Sign of the normal vector.
-      let s = (-1);
+      let s: number = (-1);
 
       if (t1 > t2) {
-        const t3 = t1;
+        const t3: number = t1;
         t1 = t2;
         t2 = t3;
         s = 1;
@@ -536,10 +543,10 @@ export class b2AABB {
   }
 
   public TestOverlap(other: b2AABB): boolean {
-    const d1_x = other.lowerBound.x - this.upperBound.x;
-    const d1_y = other.lowerBound.y - this.upperBound.y;
-    const d2_x = this.lowerBound.x - other.upperBound.x;
-    const d2_y = this.lowerBound.y - other.upperBound.y;
+    const d1_x: number = other.lowerBound.x - this.upperBound.x;
+    const d1_y: number = other.lowerBound.y - this.upperBound.y;
+    const d2_x: number = this.lowerBound.x - other.upperBound.x;
+    const d2_y: number = this.lowerBound.y - other.upperBound.y;
 
     if (d1_x > 0 || d1_y > 0)
       return false;
@@ -552,10 +559,10 @@ export class b2AABB {
 }
 
 export function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean {
-  const d1_x = b.lowerBound.x - a.upperBound.x;
-  const d1_y = b.lowerBound.y - a.upperBound.y;
-  const d2_x = a.lowerBound.x - b.upperBound.x;
-  const d2_y = a.lowerBound.y - b.upperBound.y;
+  const d1_x: number = b.lowerBound.x - a.upperBound.x;
+  const d1_y: number = b.lowerBound.y - a.upperBound.y;
+  const d2_x: number = a.lowerBound.x - b.upperBound.x;
+  const d2_y: number = a.lowerBound.y - b.upperBound.y;
 
   if (d1_x > 0 || d1_y > 0)
     return false;
@@ -571,8 +578,8 @@ export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], n
   // Start with no output points
   let numOut: number = 0;
 
-  const vIn0 = vIn[0];
-  const vIn1 = vIn[1];
+  const vIn0: b2ClipVertex = vIn[0];
+  const vIn1: b2ClipVertex = vIn[1];
 
   // Calculate the distance of end points to the line
   const distance0: number = b2Vec2.DotVV(normal, vIn0.v) - offset;
@@ -585,13 +592,13 @@ export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], n
   // If the points are on different sides of the plane
   if (distance0 * distance1 < 0) {
     // Find intersection point of edge and plane
-    const interp = distance0 / (distance0 - distance1);
-    const v = vOut[numOut].v;
+    const interp: number = distance0 / (distance0 - distance1);
+    const v: b2Vec2 = vOut[numOut].v;
     v.x = vIn0.v.x + interp * (vIn1.v.x - vIn0.v.x);
     v.y = vIn0.v.y + interp * (vIn1.v.y - vIn0.v.y);
 
     // VertexA is hitting edgeB.
-    const id = vOut[numOut].id;
+    const id: b2ContactID = vOut[numOut].id;
     id.cf.indexA = vertexIndexA;
     id.cf.indexB = vIn0.id.cf.indexB;
     id.cf.typeA = b2ContactFeatureType.e_vertex;
@@ -607,17 +614,17 @@ const b2TestOverlapShape_s_input: b2DistanceInput = new b2DistanceInput();
 const b2TestOverlapShape_s_simplexCache: b2SimplexCache = new b2SimplexCache();
 const b2TestOverlapShape_s_output: b2DistanceOutput = new b2DistanceOutput();
 export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean {
-  const input = b2TestOverlapShape_s_input.Reset();
+  const input: b2DistanceInput = b2TestOverlapShape_s_input.Reset();
   input.proxyA.SetShape(shapeA, indexA);
   input.proxyB.SetShape(shapeB, indexB);
   input.transformA.Copy(xfA);
   input.transformB.Copy(xfB);
   input.useRadii = true;
 
-  const simplexCache = b2TestOverlapShape_s_simplexCache.Reset();
+  const simplexCache: b2SimplexCache = b2TestOverlapShape_s_simplexCache.Reset();
   simplexCache.count = 0;
 
-  const output = b2TestOverlapShape_s_output.Reset();
+  const output: b2DistanceOutput = b2TestOverlapShape_s_output.Reset();
 
   b2Distance(output, simplexCache, input);
 

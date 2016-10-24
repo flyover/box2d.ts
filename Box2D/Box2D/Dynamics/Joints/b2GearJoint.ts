@@ -17,14 +17,12 @@
 */
 
 import { b2_linearSlop } from "../../Common/b2Settings";
-import { b2IsValid, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef } from "./b2Joint";
-import { b2JointType } from "./b2Joint";
-import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
-import { b2PrismaticJoint, b2PrismaticJointDef } from "./b2PrismaticJoint";
-import { b2RevoluteJoint, b2RevoluteJointDef } from "./b2RevoluteJoint";
-import { b2Body, b2BodyDef } from "../b2Body";
-import { b2World } from "../b2World";
+import { b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2PrismaticJoint } from "./b2PrismaticJoint";
+import { b2RevoluteJoint } from "./b2RevoluteJoint";
+import { b2SolverData } from "../b2TimeStep";
+import { b2Body } from "../b2Body";
 
 /// Gear joint definition. This definition requires two existing
 /// revolute or prismatic joints (any combination will work).
@@ -36,7 +34,7 @@ export class b2GearJointDef extends b2JointDef {
   public ratio: number = 1;
 
   constructor() {
-    super(b2JointType.e_gearJoint); // base class constructor
+    super(b2JointType.e_gearJoint);
   }
 }
 
@@ -103,8 +101,8 @@ export class b2GearJoint extends b2Joint {
   public m_lalcC: b2Vec2 = new b2Vec2();
   public m_lalcD: b2Vec2 = new b2Vec2();
 
-  constructor(def) {
-    super(def); // base class constructor
+  constructor(def: b2GearJointDef) {
+    super(def);
 
     this.m_joint1 = def.joint1;
     this.m_joint2 = def.joint2;
@@ -115,7 +113,7 @@ export class b2GearJoint extends b2Joint {
     ///b2Assert(this.m_typeA === b2JointType.e_revoluteJoint || this.m_typeA === b2JointType.e_prismaticJoint);
     ///b2Assert(this.m_typeB === b2JointType.e_revoluteJoint || this.m_typeB === b2JointType.e_prismaticJoint);
 
-    let coordinateA: number, coordinateB;
+    let coordinateA: number, coordinateB: number;
 
     // TODO_ERIN there might be some problem with the joint edges in b2Joint.
 
@@ -129,7 +127,7 @@ export class b2GearJoint extends b2Joint {
     const aC: number = this.m_bodyC.m_sweep.a;
 
     if (this.m_typeA === b2JointType.e_revoluteJoint) {
-      const revolute: b2RevoluteJoint = def.joint1;
+      const revolute: b2RevoluteJoint = <b2RevoluteJoint> def.joint1;
       this.m_localAnchorC.Copy(revolute.m_localAnchorA);
       this.m_localAnchorA.Copy(revolute.m_localAnchorB);
       this.m_referenceAngleA = revolute.m_referenceAngle;
@@ -137,7 +135,7 @@ export class b2GearJoint extends b2Joint {
 
       coordinateA = aA - aC - this.m_referenceAngleA;
     } else {
-      const prismatic: b2PrismaticJoint = def.joint1;
+      const prismatic: b2PrismaticJoint = <b2PrismaticJoint> def.joint1;
       this.m_localAnchorC.Copy(prismatic.m_localAnchorA);
       this.m_localAnchorA.Copy(prismatic.m_localAnchorB);
       this.m_referenceAngleA = prismatic.m_referenceAngle;
@@ -167,7 +165,7 @@ export class b2GearJoint extends b2Joint {
     const aD: number = this.m_bodyD.m_sweep.a;
 
     if (this.m_typeB === b2JointType.e_revoluteJoint) {
-      const revolute: b2RevoluteJoint = def.joint2;
+      const revolute: b2RevoluteJoint = <b2RevoluteJoint> def.joint2;
       this.m_localAnchorD.Copy(revolute.m_localAnchorA);
       this.m_localAnchorB.Copy(revolute.m_localAnchorB);
       this.m_referenceAngleB = revolute.m_referenceAngle;
@@ -175,7 +173,7 @@ export class b2GearJoint extends b2Joint {
 
       coordinateB = aB - aD - this.m_referenceAngleB;
     } else {
-      const prismatic: b2PrismaticJoint = def.joint2;
+      const prismatic: b2PrismaticJoint = <b2PrismaticJoint> def.joint2;
       this.m_localAnchorD.Copy(prismatic.m_localAnchorA);
       this.m_localAnchorB.Copy(prismatic.m_localAnchorB);
       this.m_referenceAngleB = prismatic.m_referenceAngle;
@@ -207,7 +205,7 @@ export class b2GearJoint extends b2Joint {
   private static InitVelocityConstraints_s_rB = new b2Vec2();
   private static InitVelocityConstraints_s_rC = new b2Vec2();
   private static InitVelocityConstraints_s_rD = new b2Vec2();
-  public InitVelocityConstraints(data) {
+  public InitVelocityConstraints(data: b2SolverData): void {
     this.m_indexA = this.m_bodyA.m_islandIndex;
     this.m_indexB = this.m_bodyB.m_islandIndex;
     this.m_indexC = this.m_bodyC.m_islandIndex;
@@ -242,10 +240,10 @@ export class b2GearJoint extends b2Joint {
     let wD: number = data.velocities[this.m_indexD].w;
 
     // b2Rot qA(aA), qB(aB), qC(aC), qD(aD);
-    const qA: b2Rot = this.m_qA.SetAngleRadians(aA),
-      qB: b2Rot = this.m_qB.SetAngleRadians(aB),
-      qC: b2Rot = this.m_qC.SetAngleRadians(aC),
-      qD: b2Rot = this.m_qD.SetAngleRadians(aD);
+    const qA: b2Rot = this.m_qA.SetAngle(aA),
+      qB: b2Rot = this.m_qB.SetAngle(aB),
+      qC: b2Rot = this.m_qC.SetAngle(aC),
+      qD: b2Rot = this.m_qD.SetAngle(aD);
 
     this.m_mass = 0;
 
@@ -325,7 +323,7 @@ export class b2GearJoint extends b2Joint {
     data.velocities[this.m_indexD].w = wD;
   }
 
-  public SolveVelocityConstraints(data) {
+  public SolveVelocityConstraints(data: b2SolverData): void {
     const vA: b2Vec2 = data.velocities[this.m_indexA].v;
     let wA: number = data.velocities[this.m_indexA].w;
     const vB: b2Vec2 = data.velocities[this.m_indexB].v;
@@ -372,7 +370,7 @@ export class b2GearJoint extends b2Joint {
   private static SolvePositionConstraints_s_rB = new b2Vec2();
   private static SolvePositionConstraints_s_rC = new b2Vec2();
   private static SolvePositionConstraints_s_rD = new b2Vec2();
-  public SolvePositionConstraints(data) {
+  public SolvePositionConstraints(data: b2SolverData): boolean {
     const cA: b2Vec2 = data.positions[this.m_indexA].c;
     let aA: number = data.positions[this.m_indexA].a;
     const cB: b2Vec2 = data.positions[this.m_indexB].c;
@@ -383,17 +381,17 @@ export class b2GearJoint extends b2Joint {
     let aD: number = data.positions[this.m_indexD].a;
 
     // b2Rot qA(aA), qB(aB), qC(aC), qD(aD);
-    const qA: b2Rot = this.m_qA.SetAngleRadians(aA),
-      qB: b2Rot = this.m_qB.SetAngleRadians(aB),
-      qC: b2Rot = this.m_qC.SetAngleRadians(aC),
-      qD: b2Rot = this.m_qD.SetAngleRadians(aD);
+    const qA: b2Rot = this.m_qA.SetAngle(aA),
+      qB: b2Rot = this.m_qB.SetAngle(aB),
+      qC: b2Rot = this.m_qC.SetAngle(aC),
+      qD: b2Rot = this.m_qD.SetAngle(aD);
 
     const linearError: number = 0;
 
-    let coordinateA: number, coordinateB;
+    let coordinateA: number, coordinateB: number;
 
-    const JvAC: b2Vec2 = this.m_JvAC, JvBD = this.m_JvBD;
-    let JwA: number, JwB, JwC, JwD;
+    const JvAC: b2Vec2 = this.m_JvAC, JvBD: b2Vec2 = this.m_JvBD;
+    let JwA: number, JwB: number, JwC: number, JwD: number;
     let mass: number = 0;
 
     if (this.m_typeA === b2JointType.e_revoluteJoint) {
@@ -529,7 +527,7 @@ export class b2GearJoint extends b2Joint {
     return this.m_ratio;
   }
 
-  public SetRatio(ratio) {
+  public SetRatio(ratio: number): void {
     ///b2Assert(b2IsValid(ratio));
     this.m_ratio = ratio;
   }

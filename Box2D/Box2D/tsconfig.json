@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "system"
+    "module": "system",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitUseStrict": true,
+    "strictNullChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false
   },
   "files": [
     "Box2D.ts",

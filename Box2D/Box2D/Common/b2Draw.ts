@@ -86,27 +86,19 @@ export class b2Draw {
     this.m_drawFlags &= ~flags;
   }
 
-  public PushTransform(xf: b2Transform): void {
-  }
+  public PushTransform(xf: b2Transform): void {}
 
-  public PopTransform(xf: b2Transform): void {
-  }
+  public PopTransform(xf: b2Transform): void {}
 
-  public DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
-  }
+  public DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {}
 
-  public DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {
-  }
+  public DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {}
 
-  public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {
-  }
+  public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {}
 
-  public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {
-  }
+  public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {}
 
-  public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {
-  }
+  public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {}
 
-  public DrawTransform(xf: b2Transform): void {
-  }
+  public DrawTransform(xf: b2Transform): void {}
 }

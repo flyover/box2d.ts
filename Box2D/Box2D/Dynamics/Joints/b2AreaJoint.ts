@@ -1,25 +1,25 @@
-import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Vec2, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef } from "./b2Joint";
-import { b2JointType } from "./b2Joint";
+import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNullArray, b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2Sq, b2Sqrt, b2Vec2 } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
 import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
-import { b2Body, b2BodyDef } from "../b2Body";
+import { b2SolverData } from "../b2TimeStep";
+import { b2Body } from "../b2Body";
 import { b2World } from "../b2World";
 
 export class b2AreaJointDef extends b2JointDef {
   public world: b2World = null;
 
-  public bodies: b2Body[] = new Array();
+  public bodies: b2Body[] = [];
 
   public frequencyHz: number = 0;
 
   public dampingRatio: number = 0;
 
   constructor() {
-    super(b2JointType.e_areaJoint); // base class constructor
+    super(b2JointType.e_areaJoint);
   }
 
-  public AddBody(body) {
+  public AddBody(body: b2Body): void {
     this.bodies.push(body);
 
     if (this.bodies.length === 1) {
@@ -39,15 +39,15 @@ export class b2AreaJoint extends b2Joint {
   public m_impulse: number = 0;
 
   // Solver temp
-  public m_targetLengths = null;
+  public m_targetLengths: number[] = null;
   public m_targetArea: number = 0;
-  public m_normals = null;
-  public m_joints = null;
-  public m_deltas = null;
-  public m_delta = null;
+  public m_normals: b2Vec2[] = null;
+  public m_joints: b2DistanceJoint[] = null;
+  public m_deltas: b2Vec2[] = null;
+  public m_delta: b2Vec2 = null;
 
-  constructor(def) {
-    super(def); // base class constructor
+  constructor(def: b2AreaJointDef) {
+    super(def);
 
     ///b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
 
@@ -57,7 +57,7 @@ export class b2AreaJoint extends b2Joint {
 
     this.m_targetLengths = b2MakeNumberArray(def.bodies.length);
     this.m_normals = b2Vec2.MakeArray(def.bodies.length);
-    this.m_joints = new Array(def.bodies.length);
+    this.m_joints = b2MakeNullArray(def.bodies.length);
     this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
     this.m_delta = new b2Vec2();
 
@@ -67,19 +67,19 @@ export class b2AreaJoint extends b2Joint {
 
     this.m_targetArea = 0;
 
-    for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-      const body = this.m_bodies[i];
-      const next = this.m_bodies[(i + 1) % ict];
+    for (let i: number = 0; i < this.m_bodies.length; ++i) {
+      const body: b2Body = this.m_bodies[i];
+      const next: b2Body = this.m_bodies[(i + 1) % this.m_bodies.length];
 
-      const body_c = body.GetWorldCenter();
-      const next_c = next.GetWorldCenter();
+      const body_c: b2Vec2 = body.GetWorldCenter();
+      const next_c: b2Vec2 = next.GetWorldCenter();
 
       this.m_targetLengths[i] = b2Vec2.DistanceVV(body_c, next_c);
 
       this.m_targetArea += b2Vec2.CrossVV(body_c, next_c);
 
       djd.Initialize(body, next, body_c, next_c);
-      this.m_joints[i] = def.world.CreateJoint(djd);
+      this.m_joints[i] = <b2DistanceJoint> def.world.CreateJoint(djd);
     }
 
     this.m_targetArea *= 0.5;
@@ -101,10 +101,10 @@ export class b2AreaJoint extends b2Joint {
     return 0;
   }
 
-  public SetFrequency(hz) {
+  public SetFrequency(hz: number): void {
     this.m_frequencyHz = hz;
 
-    for (let i: number = 0, ict = this.m_joints.length; i < ict; ++i) {
+    for (let i: number = 0; i < this.m_joints.length; ++i) {
       this.m_joints[i].SetFrequency(hz);
     }
   }
@@ -113,10 +113,10 @@ export class b2AreaJoint extends b2Joint {
     return this.m_frequencyHz;
   }
 
-  public SetDampingRatio(ratio) {
+  public SetDampingRatio(ratio: number): void {
     this.m_dampingRatio = ratio;
 
-    for (let i: number = 0, ict = this.m_joints.length; i < ict; ++i) {
+    for (let i: number = 0; i < this.m_joints.length; ++i) {
       this.m_joints[i].SetDampingRatio(ratio);
     }
   }
@@ -129,13 +129,13 @@ export class b2AreaJoint extends b2Joint {
     log("Area joint dumping is not supported.\n");
   }
 
-  public InitVelocityConstraints(data) {
-    for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-      const prev = this.m_bodies[(i + ict - 1) % ict];
-      const next = this.m_bodies[(i + 1) % ict];
-      const prev_c = data.positions[prev.m_islandIndex].c;
-      const next_c = data.positions[next.m_islandIndex].c;
-      const delta = this.m_deltas[i];
+  public InitVelocityConstraints(data: b2SolverData): void {
+    for (let i: number = 0; i < this.m_bodies.length; ++i) {
+      const prev: b2Body = this.m_bodies[(i + this.m_bodies.length - 1) % this.m_bodies.length];
+      const next: b2Body = this.m_bodies[(i + 1) % this.m_bodies.length];
+      const prev_c: b2Vec2 = data.positions[prev.m_islandIndex].c;
+      const next_c: b2Vec2 = data.positions[next.m_islandIndex].c;
+      const delta: b2Vec2 = this.m_deltas[i];
 
       b2Vec2.SubVV(next_c, prev_c, delta);
     }
@@ -143,10 +143,10 @@ export class b2AreaJoint extends b2Joint {
     if (data.step.warmStarting) {
       this.m_impulse *= data.step.dtRatio;
 
-      for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-        const body = this.m_bodies[i];
-        const body_v = data.velocities[body.m_islandIndex].v;
-        const delta = this.m_deltas[i];
+      for (let i: number = 0; i < this.m_bodies.length; ++i) {
+        const body: b2Body = this.m_bodies[i];
+        const body_v: b2Vec2 = data.velocities[body.m_islandIndex].v;
+        const delta: b2Vec2 = this.m_deltas[i];
 
         body_v.x += body.m_invMass *  delta.y * 0.5 * this.m_impulse;
         body_v.y += body.m_invMass * -delta.x * 0.5 * this.m_impulse;
@@ -156,47 +156,47 @@ export class b2AreaJoint extends b2Joint {
     }
   }
 
-  public SolveVelocityConstraints(data) {
+  public SolveVelocityConstraints(data: b2SolverData): void {
     let dotMassSum: number = 0;
     let crossMassSum: number = 0;
 
-    for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-      const body = this.m_bodies[i];
-      const body_v = data.velocities[body.m_islandIndex].v;
-      const delta = this.m_deltas[i];
+    for (let i: number = 0; i < this.m_bodies.length; ++i) {
+      const body: b2Body = this.m_bodies[i];
+      const body_v: b2Vec2 = data.velocities[body.m_islandIndex].v;
+      const delta: b2Vec2 = this.m_deltas[i];
 
-      dotMassSum += delta.GetLengthSquared() / body.GetMass();
+      dotMassSum += delta.GetLength() / body.GetMass();
       crossMassSum += b2Vec2.CrossVV(body_v, delta);
     }
 
-    const lambda = -2 * crossMassSum / dotMassSum;
+    const lambda: number = -2 * crossMassSum / dotMassSum;
     // lambda = b2Clamp(lambda, -b2_maxLinearCorrection, b2_maxLinearCorrection);
 
     this.m_impulse += lambda;
 
-    for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-      const body = this.m_bodies[i];
-      const body_v = data.velocities[body.m_islandIndex].v;
-      const delta = this.m_deltas[i];
+    for (let i: number = 0; i < this.m_bodies.length; ++i) {
+      const body: b2Body = this.m_bodies[i];
+      const body_v: b2Vec2 = data.velocities[body.m_islandIndex].v;
+      const delta: b2Vec2 = this.m_deltas[i];
 
       body_v.x += body.m_invMass *  delta.y * 0.5 * lambda;
       body_v.y += body.m_invMass * -delta.x * 0.5 * lambda;
     }
   }
 
-  public SolvePositionConstraints(data) {
+  public SolvePositionConstraints(data: b2SolverData): boolean {
     let perimeter: number = 0;
     let area: number = 0;
 
-    for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-      const body = this.m_bodies[i];
-      const next = this.m_bodies[(i + 1) % ict];
-      const body_c = data.positions[body.m_islandIndex].c;
-      const next_c = data.positions[next.m_islandIndex].c;
+    for (let i: number = 0; i < this.m_bodies.length; ++i) {
+      const body: b2Body = this.m_bodies[i];
+      const next: b2Body = this.m_bodies[(i + 1) % this.m_bodies.length];
+      const body_c: b2Vec2 = data.positions[body.m_islandIndex].c;
+      const next_c: b2Vec2 = data.positions[next.m_islandIndex].c;
 
       const delta: b2Vec2 = b2Vec2.SubVV(next_c, body_c, this.m_delta);
 
-      let dist = delta.GetLength();
+      let dist: number = delta.Length();
       if (dist < b2_epsilon) {
         dist = 1;
       }
@@ -211,19 +211,19 @@ export class b2AreaJoint extends b2Joint {
 
     area *= 0.5;
 
-    const deltaArea = this.m_targetArea - area;
+    const deltaArea: number = this.m_targetArea - area;
     const toExtrude: number = 0.5 * deltaArea / perimeter;
-    let done = true;
+    let done: boolean = true;
 
-    for (let i: number = 0, ict = this.m_bodies.length; i < ict; ++i) {
-      const body = this.m_bodies[i];
-      const body_c = data.positions[body.m_islandIndex].c;
-      const next_i = (i + 1) % ict;
+    for (let i: number = 0; i < this.m_bodies.length; ++i) {
+      const body: b2Body = this.m_bodies[i];
+      const body_c: b2Vec2 = data.positions[body.m_islandIndex].c;
+      const next_i: number = (i + 1) % this.m_bodies.length;
 
       const delta: b2Vec2 = b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
       delta.SelfMul(toExtrude);
 
-      const norm_sq = delta.GetLengthSquared();
+      const norm_sq: number = delta.GetLength();
       if (norm_sq > b2Sq(b2_maxLinearCorrection)) {
         delta.SelfMul(b2_maxLinearCorrection / b2Sqrt(norm_sq));
       }

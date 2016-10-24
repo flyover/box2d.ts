@@ -150,9 +150,9 @@ export class b2Version {
 }
 
 /// Current version.
-export const b2_version: b2Version = new b2Version(2, 3, 0);
+export const b2_version: b2Version = new b2Version(2, 3, 2);
 
-export const b2_changelist: number = 251;
+export const b2_changelist: number = 313;
 
 export function b2ParseInt(v: string): number {
   return parseInt(v, 10);
@@ -163,13 +163,25 @@ export function b2ParseUInt(v: string): number {
 }
 
 export function b2MakeArray(length: number, init: { (i: number): any; }): any[] {
-  let a: any[] = [];
-  for (let i: number = 0; i < length; ++i) {
+  let a: any[] = [/*length*/];
+  for (let i: number = length - 1; i >= 0; --i) {
     a.push(init(i));
   }
   return a;
 }
 
-export function b2MakeNumberArray(length: number): number[] {
-  return b2MakeArray(length, function (i: number): number { return 0; });
+export function b2MakeNullArray(length: number): any[] {
+  const a: any[] = [];
+  for (let i: number = length - 1; i >= 0; --i) {
+    a.push(null);
+  }
+  return a;
+}
+
+export function b2MakeNumberArray(length: number, init: number = 0): number[] {
+  const a: any[] = [];
+  for (let i: number = length - 1; i >= 0; --i) {
+    a.push(init);
+  }
+  return a;
 }

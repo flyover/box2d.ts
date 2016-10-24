@@ -25,7 +25,7 @@ export class b2GrowableStack {
   public m_count: number = 0;
 
   constructor(N: number) {
-    this.m_stack = new Array(N);
+    this.m_stack = [/*N*/];
     this.m_count = 0;
   }
 

@@ -18,16 +18,11 @@
 
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
-import { b2Contact } from "./Contacts/b2Contact";
-import { b2ContactEdge } from "./Contacts/b2Contact";
-import { b2ContactFlag } from "./Contacts/b2Contact";
+import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact";
 import { b2ContactFactory } from "./Contacts/b2ContactFactory";
-import { b2Body, b2BodyDef } from "./b2Body";
-import { b2BodyType } from "./b2Body";
-import { b2Fixture, b2FixtureDef } from "./b2Fixture";
-import { b2FixtureProxy } from "./b2Fixture";
-import { b2ContactFilter } from "./b2WorldCallbacks";
-import { b2ContactListener } from "./b2WorldCallbacks";
+import { b2Body, b2BodyType } from "./b2Body";
+import { b2Fixture, b2FixtureProxy } from "./b2Fixture";
+import { b2ContactFilter, b2ContactListener } from "./b2WorldCallbacks";
 
 // Delegate of b2World.
 export class b2ContactManager {
@@ -45,11 +40,11 @@ export class b2ContactManager {
   }
 
   // Broad-phase callback.
-  public AddPair(proxyUserDataA, proxyUserDataB) {
+  public AddPair(proxyUserDataA: any, proxyUserDataB: any): void {
     ///b2Assert(proxyUserDataA instanceof b2FixtureProxy);
     ///b2Assert(proxyUserDataB instanceof b2FixtureProxy);
-    const proxyA: b2FixtureProxy = proxyUserDataA; // (proxyUserDataA instanceof b2FixtureProxy ? proxyUserDataA : null);
-    const proxyB: b2FixtureProxy = proxyUserDataB; // (proxyUserDataB instanceof b2FixtureProxy ? proxyUserDataB : null);
+    const proxyA: b2FixtureProxy = <b2FixtureProxy>proxyUserDataA; // (proxyUserDataA instanceof b2FixtureProxy ? proxyUserDataA : null);
+    const proxyB: b2FixtureProxy = <b2FixtureProxy>proxyUserDataB; // (proxyUserDataB instanceof b2FixtureProxy ? proxyUserDataB : null);
 
     let fixtureA: b2Fixture = proxyA.fixture;
     let fixtureB: b2Fixture = proxyB.fixture;
@@ -90,13 +85,8 @@ export class b2ContactManager {
       edge = edge.next;
     }
 
-    // Does a joint override collision? Is at least one body dynamic?
-    if (bodyB.ShouldCollide(bodyA) === false) {
-      return;
-    }
-
     // Check user filtering.
-    if (this.m_contactFilter && this.m_contactFilter.ShouldCollide(fixtureA, fixtureB) === false) {
+    if (this.m_contactFilter && !this.m_contactFilter.ShouldCollide(fixtureA, fixtureB)) {
       return;
     }
 
@@ -147,7 +137,7 @@ export class b2ContactManager {
     bodyB.m_contactList = c.m_nodeB;
 
     // Wake up the bodies
-    if (fixtureA.IsSensor() === false && fixtureB.IsSensor() === false) {
+    if (!fixtureA.IsSensor() && !fixtureB.IsSensor()) {
       bodyA.SetAwake(true);
       bodyB.SetAwake(true);
     }
@@ -155,11 +145,11 @@ export class b2ContactManager {
     ++this.m_contactCount;
   }
 
-  public FindNewContacts() {
+  public FindNewContacts(): void {
     this.m_broadPhase.UpdatePairs(this);
   }
 
-  public Destroy(c) {
+  public Destroy(c: b2Contact): void {
     const fixtureA: b2Fixture = c.GetFixtureA();
     const fixtureB: b2Fixture = c.GetFixtureB();
     const bodyA: b2Body = fixtureA.GetBody();
@@ -216,7 +206,7 @@ export class b2ContactManager {
   // This is the top level collision call for the time step. Here
   // all the narrow phase collision is processed for the world
   // contact list.
-  public Collide() {
+  public Collide(): void {
     // Update awake contacts.
     let c: b2Contact = this.m_contactList;
     while (c) {
@@ -228,17 +218,9 @@ export class b2ContactManager {
       const bodyB: b2Body = fixtureB.GetBody();
 
       // Is this contact flagged for filtering?
-      if (c.m_flags & b2ContactFlag.e_filterFlag) {
-        // Should these bodies collide?
-        if (bodyB.ShouldCollide(bodyA) === false) {
-          const cNuke: b2Contact = c;
-          c = cNuke.m_next;
-          this.Destroy(cNuke);
-          continue;
-        }
-
+      if (c.m_filterFlag) {
         // Check user filtering.
-        if (this.m_contactFilter && this.m_contactFilter.ShouldCollide(fixtureA, fixtureB) === false) {
+        if (this.m_contactFilter && !this.m_contactFilter.ShouldCollide(fixtureA, fixtureB)) {
           const cNuke: b2Contact = c;
           c = cNuke.m_next;
           this.Destroy(cNuke);
@@ -246,14 +228,14 @@ export class b2ContactManager {
         }
 
         // Clear the filtering flag.
-        c.m_flags &= ~b2ContactFlag.e_filterFlag;
+        c.m_filterFlag = false;
       }
 
       const activeA: boolean = bodyA.IsAwake() && bodyA.m_type !== b2BodyType.b2_staticBody;
       const activeB: boolean = bodyB.IsAwake() && bodyB.m_type !== b2BodyType.b2_staticBody;
 
       // At least one body must be awake and it must be dynamic or kinematic.
-      if (activeA === false && activeB === false) {
+      if (!activeA && !activeB) {
         c = c.m_next;
         continue;
       }
@@ -263,7 +245,7 @@ export class b2ContactManager {
       const overlap: boolean = this.m_broadPhase.TestOverlap(proxyA, proxyB);
 
       // Here we destroy contacts that cease to overlap in the broad-phase.
-      if (overlap === false) {
+      if (!overlap) {
         const cNuke: b2Contact = c;
         c = cNuke.m_next;
         this.Destroy(cNuke);

@@ -1,7 +1,10 @@
 import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_polygonRadius, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
-import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
-import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
+import { b2ContactFeatureType, b2ContactID } from "./b2Collision";
+import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
+import { b2CircleShape } from "./Shapes/b2CircleShape";
+import { b2PolygonShape } from "./Shapes/b2PolygonShape";
+import { b2EdgeShape } from "./Shapes/b2EdgeShape";
 
 const b2CollideEdgeAndCircle_s_Q: b2Vec2 = new b2Vec2();
 const b2CollideEdgeAndCircle_s_e: b2Vec2 = new b2Vec2();
@@ -11,7 +14,7 @@ const b2CollideEdgeAndCircle_s_e2: b2Vec2 = new b2Vec2();
 const b2CollideEdgeAndCircle_s_P: b2Vec2 = new b2Vec2();
 const b2CollideEdgeAndCircle_s_n: b2Vec2 = new b2Vec2();
 const b2CollideEdgeAndCircle_s_id: b2ContactID = new b2ContactID();
-export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
+export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void {
   manifold.pointCount = 0;
 
   // Compute circle in frame of edge
@@ -114,9 +117,9 @@ export function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
     return;
   }
 
-  const n: b2Vec2 = b2CollideEdgeAndCircle_s_n.SetXY(-e.y, e.x);
+  const n: b2Vec2 = b2CollideEdgeAndCircle_s_n.Set(-e.y, e.x);
   if (b2Vec2.DotVV(n, b2Vec2.SubVV(Q, A, b2Vec2.s_t0)) < 0) {
-    n.SetXY(-n.x, -n.y);
+    n.Set(-n.x, -n.y);
   }
   n.Normalize();
 
@@ -139,14 +142,14 @@ const enum b2EPAxisType {
 }
 
 class b2EPAxis {
-  public type = b2EPAxisType.e_unknown;
+  public type: b2EPAxisType = b2EPAxisType.e_unknown;
   public index: number = 0;
   public separation: number = 0;
 }
 
 class b2TempPolygon {
-  public vertices = b2Vec2.MakeArray(b2_maxPolygonVertices);
-  public normals = b2Vec2.MakeArray(b2_maxPolygonVertices);
+  public vertices: b2Vec2[] = b2Vec2.MakeArray(b2_maxPolygonVertices);
+  public normals: b2Vec2[] = b2Vec2.MakeArray(b2_maxPolygonVertices);
   public count: number = 0;
 }
 
@@ -185,7 +188,7 @@ class b2EPCollider {
   public m_lowerLimit: b2Vec2 = new b2Vec2();
   public m_upperLimit: b2Vec2 = new b2Vec2();
   public m_radius: number = 0;
-  public m_front = false;
+  public m_front: boolean = false;
 
   private static s_edge1 = new b2Vec2();
   private static s_edge0 = new b2Vec2();
@@ -196,7 +199,7 @@ class b2EPCollider {
   private static s_clipPoints2 = b2ClipVertex.MakeArray(2);
   private static s_edgeAxis = new b2EPAxis();
   private static s_polygonAxis = new b2EPAxis();
-  public Collide(manifold, edgeA, xfA, polygonB, xfB) {
+  public Collide(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void {
     b2Transform.MulTXX(xfA, xfB, this.m_xf);
 
     b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
@@ -211,7 +214,7 @@ class b2EPCollider {
 
     const edge1: b2Vec2 = b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
     edge1.Normalize();
-    this.m_normal1.SetXY(edge1.y, -edge1.x);
+    this.m_normal1.Set(edge1.y, -edge1.x);
     const offset1: number = b2Vec2.DotVV(this.m_normal1, b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Vec2.s_t0));
     let offset0: number = 0;
     let offset2: number = 0;
@@ -222,7 +225,7 @@ class b2EPCollider {
     if (hasVertex0) {
       const edge0: b2Vec2 = b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
       edge0.Normalize();
-      this.m_normal0.SetXY(edge0.y, -edge0.x);
+      this.m_normal0.Set(edge0.y, -edge0.x);
       convex1 = b2Vec2.CrossVV(edge0, edge1) >= 0;
       offset0 = b2Vec2.DotVV(this.m_normal0, b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Vec2.s_t0));
     }
@@ -231,7 +234,7 @@ class b2EPCollider {
     if (hasVertex3) {
       const edge2: b2Vec2 = b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
       edge2.Normalize();
-      this.m_normal2.SetXY(edge2.y, -edge2.x);
+      this.m_normal2.Set(edge2.y, -edge2.x);
       convex2 = b2Vec2.CrossVV(edge1, edge2) > 0;
       offset2 = b2Vec2.DotVV(this.m_normal2, b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Vec2.s_t0));
     }
@@ -346,7 +349,7 @@ class b2EPCollider {
 
     // Get polygonB in frameA
     this.m_polygonB.count = polygonB.m_count;
-    for (let i: number = 0, ict: number = polygonB.m_count; i < ict; ++i) {
+    for (let i: number = 0; i < polygonB.m_count; ++i) {
       b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
       b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
     }
@@ -392,7 +395,7 @@ class b2EPCollider {
       // Search for the polygon normal that is most anti-parallel to the edge normal.
       let bestIndex: number = 0;
       let bestValue: number = b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
-      for (let i: number = 1, ict: number = this.m_polygonB.count; i < ict; ++i) {
+      for (let i: number = 1; i < this.m_polygonB.count; ++i) {
         const value: number = b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
         if (value < bestValue) {
           bestValue = value;
@@ -403,14 +406,14 @@ class b2EPCollider {
       const i1: number = bestIndex;
       const i2: number = (i1 + 1) % this.m_polygonB.count;
 
-      const ie0 = ie[0];
+      const ie0: b2ClipVertex = ie[0];
       ie0.v.Copy(this.m_polygonB.vertices[i1]);
       ie0.id.cf.indexA = 0;
       ie0.id.cf.indexB = i1;
       ie0.id.cf.typeA = b2ContactFeatureType.e_face;
       ie0.id.cf.typeB = b2ContactFeatureType.e_vertex;
 
-      const ie1 = ie[1];
+      const ie1: b2ClipVertex = ie[1];
       ie1.v.Copy(this.m_polygonB.vertices[i2]);
       ie1.id.cf.indexA = 0;
       ie1.id.cf.indexB = i2;
@@ -433,14 +436,14 @@ class b2EPCollider {
     } else {
       manifold.type = b2ManifoldType.e_faceB;
 
-      const ie0 = ie[0];
+      const ie0: b2ClipVertex = ie[0];
       ie0.v.Copy(this.m_v1);
       ie0.id.cf.indexA = 0;
       ie0.id.cf.indexB = primaryAxis.index;
       ie0.id.cf.typeA = b2ContactFeatureType.e_vertex;
       ie0.id.cf.typeB = b2ContactFeatureType.e_face;
 
-      const ie1 = ie[1];
+      const ie1: b2ClipVertex = ie[1];
       ie1.v.Copy(this.m_v2);
       ie1.id.cf.indexA = 0;
       ie1.id.cf.indexB = primaryAxis.index;
@@ -454,7 +457,7 @@ class b2EPCollider {
       rf.normal.Copy(this.m_polygonB.normals[rf.i1]);
     }
 
-    rf.sideNormal1.SetXY(rf.normal.y, -rf.normal.x);
+    rf.sideNormal1.Set(rf.normal.y, -rf.normal.x);
     rf.sideNormal2.Copy(rf.sideNormal1).SelfNeg();
     rf.sideOffset1 = b2Vec2.DotVV(rf.sideNormal1, rf.v1);
     rf.sideOffset2 = b2Vec2.DotVV(rf.sideNormal2, rf.v2);
@@ -488,7 +491,7 @@ class b2EPCollider {
     }
 
     let pointCount: number = 0;
-    for (let i: number = 0, ict: number = b2_maxManifoldPoints; i < ict; ++i) {
+    for (let i: number = 0; i < b2_maxManifoldPoints; ++i) {
       let separation: number;
 
       separation = b2Vec2.DotVV(rf.normal, b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Vec2.s_t0));
@@ -514,13 +517,13 @@ class b2EPCollider {
     manifold.pointCount = pointCount;
   }
 
-  public ComputeEdgeSeparation(out) {
+  public ComputeEdgeSeparation(out: b2EPAxis): b2EPAxis {
     const axis: b2EPAxis = out;
     axis.type = b2EPAxisType.e_edgeA;
     axis.index = this.m_front ? 0 : 1;
     axis.separation = b2_maxFloat;
 
-    for (let i: number = 0, ict = this.m_polygonB.count; i < ict; ++i) {
+    for (let i: number = 0; i < this.m_polygonB.count; ++i) {
       const s: number = b2Vec2.DotVV(this.m_normal, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
       if (s < axis.separation) {
         axis.separation = s;
@@ -532,15 +535,15 @@ class b2EPCollider {
 
   private static s_n = new b2Vec2();
   private static s_perp = new b2Vec2();
-  public ComputePolygonSeparation(out) {
+  public ComputePolygonSeparation(out: b2EPAxis): b2EPAxis {
     const axis: b2EPAxis = out;
     axis.type = b2EPAxisType.e_unknown;
     axis.index = -1;
     axis.separation = -b2_maxFloat;
 
-    const perp: b2Vec2 = b2EPCollider.s_perp.SetXY(-this.m_normal.y, this.m_normal.x);
+    const perp: b2Vec2 = b2EPCollider.s_perp.Set(-this.m_normal.y, this.m_normal.x);
 
-    for (let i: number = 0, ict = this.m_polygonB.count; i < ict; ++i) {
+    for (let i: number = 0; i < this.m_polygonB.count; ++i) {
       const n: b2Vec2 = b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
 
       const s1: number = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
@@ -578,7 +581,7 @@ class b2EPCollider {
 }
 
 const b2CollideEdgeAndPolygon_s_collider: b2EPCollider = new b2EPCollider();
-export function b2CollideEdgeAndPolygon(manifold, edgeA, xfA, polygonB, xfB) {
+export function b2CollideEdgeAndPolygon(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void {
   const collider: b2EPCollider = b2CollideEdgeAndPolygon_s_collider;
   collider.Collide(manifold, edgeA, xfA, polygonB, xfB);
 }

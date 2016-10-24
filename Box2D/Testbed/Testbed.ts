@@ -17,6 +17,6 @@
 */
 
 export * from "./Framework/Main";
-export * from "./Framework/Render";
+export * from "./Framework/DebugDraw";
 export * from "./Framework/Test";
 export * from "./Tests/TestEntries";

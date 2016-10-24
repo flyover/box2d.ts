@@ -16,18 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Transform } from "../../Common/b2Math";
 import { b2CollidePolygonAndCircle } from "../../Collision/b2CollideCircle";
 import { b2Manifold } from "../../Collision/b2Collision";
-import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
+import { b2Shape } from "../../Collision/Shapes/b2Shape";
 import { b2CircleShape } from "../../Collision/Shapes/b2CircleShape";
 import { b2PolygonShape } from "../../Collision/Shapes/b2PolygonShape";
 import { b2Contact } from "./b2Contact";
-import { b2Fixture, b2FixtureDef } from "../b2Fixture";
+import { b2Fixture } from "../b2Fixture";
 
 export class b2PolygonAndCircleContact extends b2Contact {
   constructor() {
-    super(); // base class constructor
+    super();
   }
 
   public static Create(allocator: any): b2Contact {
@@ -44,8 +44,8 @@ export class b2PolygonAndCircleContact extends b2Contact {
   }
 
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
-    const shapeA = this.m_fixtureA.GetShape();
-    const shapeB = this.m_fixtureB.GetShape();
+    const shapeA: b2Shape = this.m_fixtureA.GetShape();
+    const shapeB: b2Shape = this.m_fixtureB.GetShape();
     ///b2Assert(shapeA instanceof b2PolygonShape);
     ///b2Assert(shapeB instanceof b2CircleShape);
     b2CollidePolygonAndCircle(

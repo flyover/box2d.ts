@@ -1,19 +1,20 @@
 import { b2_maxFloat, b2_maxManifoldPoints, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature } from "./b2Collision";
-import { b2ManifoldType, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
+import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
+import { b2PolygonShape } from "./Shapes/b2PolygonShape";
 
 const b2EdgeSeparation_s_normal1World: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_normal1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v2: b2Vec2 = new b2Vec2();
-function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
-  const count1 = poly1.m_count;
-  const vertices1 = poly1.m_vertices;
-  const normals1 = poly1.m_normals;
+function b2EdgeSeparation(poly1: b2PolygonShape, xf1: b2Transform, edge1: number, poly2: b2PolygonShape, xf2: b2Transform): number {
+  ///const count1: number = poly1.m_count;
+  const vertices1: b2Vec2[] = poly1.m_vertices;
+  const normals1: b2Vec2[] = poly1.m_normals;
 
-  const count2 = poly2.m_count;
-  const vertices2 = poly2.m_vertices;
+  const count2: number = poly2.m_count;
+  const vertices2: b2Vec2[] = poly2.m_vertices;
 
   ///b2Assert(0 <= edge1 && edge1 < count1);
 
@@ -23,7 +24,7 @@ function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
 
   // Find support vertex on poly2 for -normal.
   let index: number = 0;
-  let minDot = b2_maxFloat;
+  let minDot: number = b2_maxFloat;
 
   for (let i: number = 0; i < count2; ++i) {
     const dot: number = b2Vec2.DotVV(vertices2[i], normal1);
@@ -41,9 +42,9 @@ function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
 
 const b2FindMaxSeparation_s_d: b2Vec2 = new b2Vec2();
 const b2FindMaxSeparation_s_dLocal1: b2Vec2 = new b2Vec2();
-function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
-  const count1 = poly1.m_count;
-  const normals1 = poly1.m_normals;
+function b2FindMaxSeparation(edgeIndex: number[], poly1: b2PolygonShape, xf1: b2Transform, poly2: b2PolygonShape, xf2: b2Transform): number {
+  const count1: number = poly1.m_count;
+  const normals1: b2Vec2[] = poly1.m_normals;
 
   // Vector pointing from the centroid of poly1 to the centroid of poly2.
   const d: b2Vec2 = b2Vec2.SubVV(b2Transform.MulXV(xf2, poly2.m_centroid, b2Vec2.s_t0), b2Transform.MulXV(xf1, poly1.m_centroid, b2Vec2.s_t1), b2FindMaxSeparation_s_d);
@@ -51,7 +52,7 @@ function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
 
   // Find edge normal on poly1 that has the largest projection onto d.
   let edge: number = 0;
-  let maxDot = (-b2_maxFloat);
+  let maxDot: number = (-b2_maxFloat);
   for (let i: number = 0; i < count1; ++i) {
     const dot: number = b2Vec2.DotVV(normals1[i], dLocal1);
     if (dot > maxDot) {
@@ -61,7 +62,7 @@ function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
   }
 
   // Get the separation for the edge normal.
-  let s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
+  let s: number = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
 
   // Check the separation for the previous edge normal.
   const prevEdge = (edge + count1 - 1) % count1;
@@ -110,13 +111,13 @@ function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
 }
 
 const b2FindIncidentEdge_s_normal1: b2Vec2 = new b2Vec2();
-function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
-  const count1 = poly1.m_count;
-  const normals1 = poly1.m_normals;
+function b2FindIncidentEdge(c: b2ClipVertex[], poly1: b2PolygonShape, xf1: b2Transform, edge1: number, poly2: b2PolygonShape, xf2: b2Transform): void {
+  ///const count1: number = poly1.m_count;
+  const normals1: b2Vec2[] = poly1.m_normals;
 
-  const count2 = poly2.m_count;
-  const vertices2 = poly2.m_vertices;
-  const normals2 = poly2.m_normals;
+  const count2: number = poly2.m_count;
+  const vertices2: b2Vec2[] = poly2.m_vertices;
+  const normals2: b2Vec2[] = poly2.m_normals;
 
   ///b2Assert(0 <= edge1 && edge1 < count1);
 
@@ -125,7 +126,7 @@ function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
 
   // Find the incident edge on poly2.
   let index: number = 0;
-  let minDot = b2_maxFloat;
+  let minDot: number = b2_maxFloat;
   for (let i: number = 0; i < count2; ++i) {
     const dot: number = b2Vec2.DotVV(normal1, normals2[i]);
     if (dot < minDot) {
@@ -135,20 +136,20 @@ function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
   }
 
   // Build the clip vertices for the incident edge.
-  const i1 = index;
-  const i2 = (i1 + 1) % count2;
+  const i1: number = index;
+  const i2: number = (i1 + 1) % count2;
 
-  const c0 = c[0];
+  const c0: b2ClipVertex = c[0];
   b2Transform.MulXV(xf2, vertices2[i1], c0.v);
-  const cf0 = c0.id.cf;
+  const cf0: b2ContactFeature = c0.id.cf;
   cf0.indexA = edge1;
   cf0.indexB = i1;
   cf0.typeA = b2ContactFeatureType.e_face;
   cf0.typeB = b2ContactFeatureType.e_vertex;
 
-  const c1 = c[1];
+  const c1: b2ClipVertex = c[1];
   b2Transform.MulXV(xf2, vertices2[i2], c1.v);
-  const cf1 = c1.id.cf;
+  const cf1: b2ContactFeature = c1.id.cf;
   cf1.indexA = edge1;
   cf1.indexB = i2;
   cf1.typeA = b2ContactFeatureType.e_face;
@@ -168,23 +169,23 @@ const b2CollidePolygons_s_tangent: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_ntangent: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_v11: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_v12: b2Vec2 = new b2Vec2();
-export function b2CollidePolygons(manifold, polyA, xfA, polyB, xfB) {
+export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, xfA: b2Transform, polyB: b2PolygonShape, xfB: b2Transform): void {
   manifold.pointCount = 0;
-  const totalRadius = polyA.m_radius + polyB.m_radius;
+  const totalRadius: number = polyA.m_radius + polyB.m_radius;
 
-  const edgeA = b2CollidePolygons_s_edgeA; edgeA[0] = 0;
-  const separationA = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
+  const edgeA: number[] = b2CollidePolygons_s_edgeA; edgeA[0] = 0;
+  const separationA: number = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
   if (separationA > totalRadius)
     return;
 
-  const edgeB = b2CollidePolygons_s_edgeB; edgeB[0] = 0;
-  const separationB = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
+  const edgeB: number[] = b2CollidePolygons_s_edgeB; edgeB[0] = 0;
+  const separationB: number = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
   if (separationB > totalRadius)
     return;
 
-  let poly1; // reference polygon
-  let poly2; // incident polygon
-  let xf1, xf2;
+  let poly1: b2PolygonShape; // reference polygon
+  let poly2: b2PolygonShape; // incident polygon
+  let xf1: b2Transform, xf2: b2Transform;
   let edge1: number = 0; // reference edge
   let flip: number = 0;
   const k_relativeTol: number = 0.98;
@@ -208,17 +209,17 @@ export function b2CollidePolygons(manifold, polyA, xfA, polyB, xfB) {
     flip = 0;
   }
 
-  const incidentEdge = b2CollidePolygons_s_incidentEdge;
+  const incidentEdge: b2ClipVertex[] = b2CollidePolygons_s_incidentEdge;
   b2FindIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
 
-  const count1 = poly1.m_count;
-  const vertices1 = poly1.m_vertices;
+  const count1: number = poly1.m_count;
+  const vertices1: b2Vec2[] = poly1.m_vertices;
 
-  const iv1 = edge1;
-  const iv2 = (edge1 + 1) % count1;
+  const iv1: number = edge1;
+  const iv2: number = (edge1 + 1) % count1;
 
-  const local_v11 = vertices1[iv1];
-  const local_v12 = vertices1[iv2];
+  const local_v11: b2Vec2 = vertices1[iv1];
+  const local_v12: b2Vec2 = vertices1[iv2];
 
   const localTangent: b2Vec2 = b2Vec2.SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
   localTangent.Normalize();
@@ -240,12 +241,12 @@ export function b2CollidePolygons(manifold, polyA, xfA, polyB, xfB) {
   const sideOffset2: number = b2Vec2.DotVV(tangent, v12) + totalRadius;
 
   // Clip incident edge against extruded edge1 side edges.
-  const clipPoints1 = b2CollidePolygons_s_clipPoints1;
-  const clipPoints2 = b2CollidePolygons_s_clipPoints2;
-  let np;
+  const clipPoints1: b2ClipVertex[] = b2CollidePolygons_s_clipPoints1;
+  const clipPoints2: b2ClipVertex[] = b2CollidePolygons_s_clipPoints2;
+  let np: number;
 
   // Clip to box side 1
-  const ntangent = b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
+  const ntangent: b2Vec2 = b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
   np = b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
 
   if (np < 2)
@@ -264,11 +265,11 @@ export function b2CollidePolygons(manifold, polyA, xfA, polyB, xfB) {
 
   let pointCount: number = 0;
   for (let i: number = 0; i < b2_maxManifoldPoints; ++i) {
-    const cv = clipPoints2[i];
+    const cv: b2ClipVertex = clipPoints2[i];
     const separation: number = b2Vec2.DotVV(normal, cv.v) - frontOffset;
 
     if (separation <= totalRadius) {
-      const cp = manifold.points[pointCount];
+      const cp: b2ManifoldPoint = manifold.points[pointCount];
       b2Transform.MulTXV(xf2, cv.v, cp.localPoint);
       cp.id.Copy(cv.id);
       if (flip) {

@@ -17,20 +17,19 @@
 */
 
 import { b2_pi, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Atan2, b2Vec2, b2Transform } from "../Common/b2Math";
-import { b2Color } from "../Common/b2Draw";
-import { b2Draw } from "../Common/b2Draw";
+import { b2Atan2, b2Vec2 } from "../Common/b2Math";
+import { b2Color, b2Draw } from "../Common/b2Draw";
 
 ///
 export class b2RopeDef {
   ///
-  public vertices: b2Vec2[] = new Array();
+  public vertices: b2Vec2[] = [];
 
   ///
   public count: number = 0;
 
   ///
-  public masses: number[] = new Array();
+  public masses: number[] = [];
 
   ///
   public gravity: b2Vec2 = new b2Vec2(0, 0);
@@ -189,7 +188,7 @@ export class b2Rope {
     }
   }
 
-  public SetAngleRadians(angle: number): void {
+  public SetAngle(angle: number): void {
     const count3: number = this.m_count - 2;
     for (let i: number = 0; i < count3; ++i) {
       this.m_as[i] = angle;
@@ -217,8 +216,8 @@ export class b2Rope {
       const d1: b2Vec2 = b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
       const d2: b2Vec2 = b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
 
-      const L1sqr: number = d1.GetLengthSquared();
-      const L2sqr: number = d2.GetLengthSquared();
+      const L1sqr: number = d1.GetLength();
+      const L2sqr: number = d2.GetLength();
 
       if (L1sqr * L2sqr === 0) {
         continue;

@@ -1,18 +1,19 @@
 import { b2_maxFloat, b2_epsilon } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
-import { b2ContactFeatureType, b2ContactFeature, b2ContactID } from "./b2Collision";
-import { b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
+import { b2Manifold, b2ManifoldType } from "./b2Collision";
+import { b2CircleShape } from "./Shapes/b2CircleShape";
+import { b2PolygonShape } from "./Shapes/b2PolygonShape";
 
 const b2CollideCircles_s_pA: b2Vec2 = new b2Vec2();
 const b2CollideCircles_s_pB: b2Vec2 = new b2Vec2();
-export function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
+export function b2CollideCircles(manifold: b2Manifold, circleA: b2CircleShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void {
   manifold.pointCount = 0;
 
   const pA: b2Vec2 = b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
   const pB: b2Vec2 = b2Transform.MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
 
-  const distSqr = b2Vec2.DistanceSquaredVV(pA, pB);
-  const radius = circleA.m_radius + circleB.m_radius;
+  const distSqr: number = b2Vec2.DistanceSquaredVV(pA, pB);
+  const radius: number = circleA.m_radius + circleB.m_radius;
   if (distSqr > radius * radius) {
     return;
   }
@@ -29,7 +30,7 @@ export function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
 const b2CollidePolygonAndCircle_s_c: b2Vec2 = new b2Vec2();
 const b2CollidePolygonAndCircle_s_cLocal: b2Vec2 = new b2Vec2();
 const b2CollidePolygonAndCircle_s_faceCenter: b2Vec2 = new b2Vec2();
-export function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB) {
+export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2PolygonShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void {
   manifold.pointCount = 0;
 
   // Compute circle position in the frame of the polygon.
@@ -38,11 +39,11 @@ export function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB)
 
   // Find the min separating edge.
   let normalIndex: number = 0;
-  let separation = (-b2_maxFloat);
-  const radius = polygonA.m_radius + circleB.m_radius;
-  const vertexCount = polygonA.m_count;
-  const vertices = polygonA.m_vertices;
-  const normals = polygonA.m_normals;
+  let separation: number = (-b2_maxFloat);
+  const radius: number = polygonA.m_radius + circleB.m_radius;
+  const vertexCount: number = polygonA.m_count;
+  const vertices: b2Vec2[] = polygonA.m_vertices;
+  const normals: b2Vec2[] = polygonA.m_normals;
 
   for (let i: number = 0; i < vertexCount; ++i) {
     const s: number = b2Vec2.DotVV(normals[i], b2Vec2.SubVV(cLocal, vertices[i], b2Vec2.s_t0));
@@ -59,10 +60,10 @@ export function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB)
   }
 
   // Vertices that subtend the incident face.
-  const vertIndex1 = normalIndex;
-  const vertIndex2 = (vertIndex1 + 1) % vertexCount;
-  const v1 = vertices[vertIndex1];
-  const v2 = vertices[vertIndex2];
+  const vertIndex1: number = normalIndex;
+  const vertIndex2: number = (vertIndex1 + 1) % vertexCount;
+  const v1: b2Vec2 = vertices[vertIndex1];
+  const v2: b2Vec2 = vertices[vertIndex2];
 
   // If the center is inside the polygon ...
   if (separation < b2_epsilon) {

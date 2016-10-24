@@ -1,138 +1,9 @@
 import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import { g_debugDraw } from "./DebugDraw";
 
-export const DRAW_STRING_NEW_LINE: number = 25;
-
-export const enum KeyCode {
-  WIN_KEY_FF_LINUX = 0,
-  MAC_ENTER = 3,
-  BACKSPACE = 8,
-  TAB = 9,
-  NUM_CENTER = 12, // NUMLOCK on FF/Safari Mac
-  ENTER = 13,
-  SHIFT = 16,
-  CTRL = 17,
-  ALT = 18,
-  PAUSE = 19,
-  CAPS_LOCK = 20,
-  ESC = 27,
-  SPACE = 32,
-  PAGE_UP = 33,   // also NUM_NORTH_EAST
-  PAGE_DOWN = 34, // also NUM_SOUTH_EAST
-  END = 35,       // also NUM_SOUTH_WEST
-  HOME = 36,      // also NUM_NORTH_WEST
-  LEFT = 37,      // also NUM_WEST
-  UP = 38,        // also NUM_NORTH
-  RIGHT = 39,     // also NUM_EAST
-  DOWN = 40,      // also NUM_SOUTH
-  PRINT_SCREEN = 44,
-  INSERT = 45,    // also NUM_INSERT
-  DELETE = 46,    // also NUM_DELETE
-  ZERO = 48,
-  ONE = 49,
-  TWO = 50,
-  THREE = 51,
-  FOUR = 52,
-  FIVE = 53,
-  SIX = 54,
-  SEVEN = 55,
-  EIGHT = 56,
-  NINE = 57,
-  FF_SEMICOLON = 59, // Firefox (Gecko) fires this for semicolon instead of 186
-  FF_EQUALS = 61, // Firefox (Gecko) fires this for equals instead of 187
-  QUESTION_MARK = 63, // needs localization
-  A = 65,
-  B = 66,
-  C = 67,
-  D = 68,
-  E = 69,
-  F = 70,
-  G = 71,
-  H = 72,
-  I = 73,
-  J = 74,
-  K = 75,
-  L = 76,
-  M = 77,
-  N = 78,
-  O = 79,
-  P = 80,
-  Q = 81,
-  R = 82,
-  S = 83,
-  T = 84,
-  U = 85,
-  V = 86,
-  W = 87,
-  X = 88,
-  Y = 89,
-  Z = 90,
-  META = 91, // WIN_KEY_LEFT
-  WIN_KEY_RIGHT = 92,
-  CONTEXT_MENU = 93,
-  NUM_ZERO = 96,
-  NUM_ONE = 97,
-  NUM_TWO = 98,
-  NUM_THREE = 99,
-  NUM_FOUR = 100,
-  NUM_FIVE = 101,
-  NUM_SIX = 102,
-  NUM_SEVEN = 103,
-  NUM_EIGHT = 104,
-  NUM_NINE = 105,
-  NUM_MULTIPLY = 106,
-  NUM_PLUS = 107,
-  NUM_MINUS = 109,
-  NUM_PERIOD = 110,
-  NUM_DIVISION = 111,
-  F1 = 112,
-  F2 = 113,
-  F3 = 114,
-  F4 = 115,
-  F5 = 116,
-  F6 = 117,
-  F7 = 118,
-  F8 = 119,
-  F9 = 120,
-  F10 = 121,
-  F11 = 122,
-  F12 = 123,
-  NUMLOCK = 144,
-  SCROLL_LOCK = 145,
-
-  // OS-specific media keys like volume controls and browser controls.
-  FIRST_MEDIA_KEY = 166,
-  LAST_MEDIA_KEY = 183,
-
-  SEMICOLON = 186,            // needs localization
-  DASH = 189,                 // needs localization
-  EQUALS = 187,               // needs localization
-  COMMA = 188,                // needs localization
-  PERIOD = 190,               // needs localization
-  SLASH = 191,                // needs localization
-  APOSTROPHE = 192,           // needs localization
-  TILDE = 192,                // needs localization
-  SINGLE_QUOTE = 222,         // needs localization
-  OPEN_SQUARE_BRACKET = 219,  // needs localization
-  BACKSLASH = 220,            // needs localization
-  CLOSE_SQUARE_BRACKET = 221, // needs localization
-  WIN_KEY = 224,
-  MAC_FF_META = 224, // Firefox (Gecko) fires this for the meta key instead of 91
-  WIN_IME = 229,
-
-  // We've seen users whose machines fire this keycode at regular one
-  // second intervals. The common thread among these users is that
-  // they're all using Dell Inspiron laptops, so we suspect that this
-  // indicates a hardware/bios problem.
-  // http://en.community.dell.com/support-forums/laptop/f/3518/p/19285957/19523128.aspx
-  PHANTOM = 255
-}
+export const DRAW_STRING_NEW_LINE: number = 16;
 
 export class Settings {
-  public canvasScale: number = 10;
-  public viewZoom: number = 1;
-  public viewCenter: box2d.b2Vec2 = new box2d.b2Vec2(0, 20);
-  public viewRotation: box2d.b2Rot = new box2d.b2Rot(box2d.b2DegToRad(0));
   public hz: number = 60;
   public velocityIterations: number = 8;
   public positionIterations: number = 3;
@@ -157,9 +28,9 @@ export class Settings {
 
 export class TestEntry {
   public name: string = "unknown";
-  public createFcn = function (canvas, settings): Test { return null; };
+  public createFcn: () => Test = function(): Test { return null; };
 
-  constructor(name: string, createFcn) {
+  constructor(name: string, createFcn: () => Test) {
     this.name = name;
     this.createFcn = createFcn;
   }
@@ -168,8 +39,8 @@ export class TestEntry {
 export class DestructionListener extends box2d.b2DestructionListener {
   public test: Test = null;
 
-  constructor(test) {
-    super(); // base class constructor
+  constructor(test: Test) {
+    super();
 
     this.test = test;
   }
@@ -193,6 +64,7 @@ export class ContactPoint {
   public state: box2d.b2PointState = box2d.b2PointState.b2_nullState;
   public normalImpulse: number = 0;
   public tangentImpulse: number = 0;
+  public separation: number = 0;
 }
 
 export class Test extends box2d.b2ContactListener {
@@ -202,46 +74,30 @@ export class Test extends box2d.b2ContactListener {
   public m_bomb: box2d.b2Body = null;
   public m_textLine: number = 30;
   public m_mouseJoint: box2d.b2MouseJoint = null;
-  public m_points: ContactPoint[] = null;
+  public m_points: ContactPoint[] = box2d.b2MakeArray(Test.k_maxContactPoints, function(i) { return new ContactPoint(); });
   public m_pointCount: number = 0;
-  public m_destructionListener: DestructionListener = null;
-  public m_debugDraw: testbed.DebugDraw = null;
-  public m_bombSpawnPoint: box2d.b2Vec2 = null;
+  public m_destructionListener: DestructionListener;
+  public m_bombSpawnPoint: box2d.b2Vec2 = new box2d.b2Vec2();
   public m_bombSpawning: boolean = false;
-  public m_mouseWorld: box2d.b2Vec2 = null;
+  public m_mouseWorld: box2d.b2Vec2 = new box2d.b2Vec2();
   public m_stepCount: number = 0;
-  public m_maxProfile: box2d.b2Profile = null;
-  public m_totalProfile: box2d.b2Profile = null;
-  public m_groundBody: box2d.b2Body = null;
+  public m_maxProfile: box2d.b2Profile = new box2d.b2Profile();
+  public m_totalProfile: box2d.b2Profile = new box2d.b2Profile();
+  public m_groundBody: box2d.b2Body;
 
-  constructor(canvas: HTMLCanvasElement, settings: Settings) {
-    super(); // base class constructor
+  constructor() {
+    super();
 
     const gravity: box2d.b2Vec2 = new box2d.b2Vec2(0, -10);
     this.m_world = new box2d.b2World(gravity);
     this.m_bomb = null;
     this.m_textLine = 30;
     this.m_mouseJoint = null;
-    this.m_points = new Array(Test.k_maxContactPoints);
-    for (let i: number = 0; i < Test.k_maxContactPoints; ++i) {
-      this.m_points[i] = new ContactPoint();
-    }
-    this.m_pointCount = 0;
 
     this.m_destructionListener = new DestructionListener(this);
     this.m_world.SetDestructionListener(this.m_destructionListener);
     this.m_world.SetContactListener(this);
-    this.m_debugDraw = new testbed.DebugDraw(canvas, settings);
-    this.m_world.SetDebugDraw(this.m_debugDraw);
-
-    this.m_bombSpawnPoint = new box2d.b2Vec2();
-    this.m_bombSpawning = false;
-    this.m_mouseWorld = new box2d.b2Vec2();
-
-    this.m_stepCount = 0;
-
-    this.m_maxProfile = new box2d.b2Profile();
-    this.m_totalProfile = new box2d.b2Profile();
+    this.m_world.SetDebugDraw(g_debugDraw);
 
     const bodyDef: box2d.b2BodyDef = new box2d.b2BodyDef();
     this.m_groundBody = this.m_world.CreateBody(bodyDef);
@@ -253,11 +109,11 @@ export class Test extends box2d.b2ContactListener {
 
   public EndContact(contact: box2d.b2Contact): void {}
 
-  private static PreSolve_s_state1: box2d.b2PointState[] = new Array(box2d.b2_maxManifoldPoints);
-  private static PreSolve_s_state2: box2d.b2PointState[] = new Array(box2d.b2_maxManifoldPoints);
+  private static PreSolve_s_state1: box2d.b2PointState[] = [/*box2d.b2_maxManifoldPoints*/];
+  private static PreSolve_s_state2: box2d.b2PointState[] = [/*box2d.b2_maxManifoldPoints*/];
   private static PreSolve_s_worldManifold: box2d.b2WorldManifold = new box2d.b2WorldManifold();
   public PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void {
-    const manifold = contact.GetManifold();
+    const manifold: box2d.b2Manifold = contact.GetManifold();
 
     if (manifold.pointCount === 0) {
       return;
@@ -282,23 +138,24 @@ export class Test extends box2d.b2ContactListener {
       cp.state = state2[i];
       cp.normalImpulse = manifold.points[i].normalImpulse;
       cp.tangentImpulse = manifold.points[i].tangentImpulse;
+      cp.separation = worldManifold.separations[i];
       ++this.m_pointCount;
     }
   }
 
   public PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void {}
 
-  public Keyboard(key: KeyCode): void {}
+  public Keyboard(key: string): void {}
 
-  public KeyboardUp(key: KeyCode): void {}
+  public KeyboardUp(key: string): void {}
 
   public SetTextLine(line: number): void {
     this.m_textLine = line;
   }
 
   public DrawTitle(title: string): void {
-    this.m_debugDraw.DrawString(5, DRAW_STRING_NEW_LINE, title);
-    this.m_textLine = 2 * DRAW_STRING_NEW_LINE;
+    g_debugDraw.DrawString(5, DRAW_STRING_NEW_LINE, title);
+    this.m_textLine = 3 * DRAW_STRING_NEW_LINE;
   }
 
   public MouseDown(p: box2d.b2Vec2): void {
@@ -311,15 +168,15 @@ export class Test extends box2d.b2ContactListener {
     // Make a small box.
     const aabb: box2d.b2AABB = new box2d.b2AABB();
     const d: box2d.b2Vec2 = new box2d.b2Vec2();
-    d.SetXY(0.001, 0.001);
+    d.Set(0.001, 0.001);
     box2d.b2Vec2.SubVV(p, d, aabb.lowerBound);
     box2d.b2Vec2.AddVV(p, d, aabb.upperBound);
 
-    const that = this;
-    let hit_fixture = null;
+    const that: Test = this;
+    let hit_fixture: box2d.b2Fixture = null;
 
     // Query the world for overlapping shapes.
-    const callback = function (fixture) {
+    function callback(fixture: box2d.b2Fixture): boolean {
       const body = fixture.GetBody();
       if (body.GetType() === box2d.b2BodyType.b2_dynamicBody) {
         const inside = fixture.TestPoint(that.m_mouseWorld);
@@ -355,7 +212,7 @@ export class Test extends box2d.b2ContactListener {
   }
 
   public CompleteBombSpawn(p: box2d.b2Vec2): void {
-    if (this.m_bombSpawning === false) {
+    if (!this.m_bombSpawning) {
       return;
     }
 
@@ -442,7 +299,7 @@ export class Test extends box2d.b2ContactListener {
         timeStep = 0;
       }
 
-      this.m_debugDraw.DrawString(5, this.m_textLine, "****PAUSED****");
+      g_debugDraw.DrawString(5, this.m_textLine, "****PAUSED****");
       this.m_textLine += DRAW_STRING_NEW_LINE;
     }
 
@@ -452,7 +309,7 @@ export class Test extends box2d.b2ContactListener {
     if (settings.drawAABBs ) { flags |= box2d.b2DrawFlags.e_aabbBit;         }
     if (settings.drawCOMs  ) { flags |= box2d.b2DrawFlags.e_centerOfMassBit; }
     if (settings.drawControllers  ) { flags |= box2d.b2DrawFlags.e_controllerBit; }
-    this.m_debugDraw.SetFlags(flags);
+    g_debugDraw.SetFlags(flags);
 
     this.m_world.SetAllowSleeping(settings.enableSleep);
     this.m_world.SetWarmStarting(settings.enableWarmStarting);
@@ -473,19 +330,19 @@ export class Test extends box2d.b2ContactListener {
       const bodyCount = this.m_world.GetBodyCount();
       const contactCount = this.m_world.GetContactCount();
       const jointCount = this.m_world.GetJointCount();
-      this.m_debugDraw.DrawString(5, this.m_textLine, "bodies/contacts/joints = " + bodyCount + "/" + contactCount + "/" + jointCount);
+      g_debugDraw.DrawString(5, this.m_textLine, "bodies/contacts/joints = " + bodyCount + "/" + contactCount + "/" + jointCount);
       this.m_textLine += DRAW_STRING_NEW_LINE;
 
       const proxyCount = this.m_world.GetProxyCount();
       const height = this.m_world.GetTreeHeight();
       const balance = this.m_world.GetTreeBalance();
       const quality = this.m_world.GetTreeQuality();
-      this.m_debugDraw.DrawString(5, this.m_textLine, "proxies/height/balance/quality = " + proxyCount + "/" + height + "/" + balance + "/" + quality.toFixed(2));
+      g_debugDraw.DrawString(5, this.m_textLine, "proxies/height/balance/quality = " + proxyCount + "/" + height + "/" + balance + "/" + quality.toFixed(2));
       this.m_textLine += DRAW_STRING_NEW_LINE;
     }
 
     // Track maximum profile times
-    if (true) {
+    {
       const p = this.m_world.GetProfile();
       this.m_maxProfile.step = box2d.b2Max(this.m_maxProfile.step, p.step);
       this.m_maxProfile.collide = box2d.b2Max(this.m_maxProfile.collide, p.collide);
@@ -522,21 +379,21 @@ export class Test extends box2d.b2ContactListener {
         aveProfile.broadphase = scale * this.m_totalProfile.broadphase;
       }
 
-      this.m_debugDraw.DrawString(5, this.m_textLine, "step [ave] (max) = " + p.step.toFixed(2) + " [" + aveProfile.step.toFixed(2) + "] (" + this.m_maxProfile.step.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "step [ave] (max) = " + p.step.toFixed(2) + " [" + aveProfile.step.toFixed(2) + "] (" + this.m_maxProfile.step.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "collide [ave] (max) = " + p.collide.toFixed(2) + " [" + aveProfile.collide.toFixed(2) + "] (" + this.m_maxProfile.collide.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "collide [ave] (max) = " + p.collide.toFixed(2) + " [" + aveProfile.collide.toFixed(2) + "] (" + this.m_maxProfile.collide.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "solve [ave] (max) = " + p.solve.toFixed(2) + " [" + aveProfile.solve.toFixed(2) + "] (" + this.m_maxProfile.solve.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "solve [ave] (max) = " + p.solve.toFixed(2) + " [" + aveProfile.solve.toFixed(2) + "] (" + this.m_maxProfile.solve.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "solve init [ave] (max) = " + p.solveInit.toFixed(2) + " [" + aveProfile.solveInit.toFixed(2) + "] (" + this.m_maxProfile.solveInit.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "solve init [ave] (max) = " + p.solveInit.toFixed(2) + " [" + aveProfile.solveInit.toFixed(2) + "] (" + this.m_maxProfile.solveInit.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "solve velocity [ave] (max) = " + p.solveVelocity.toFixed(2) + " [" + aveProfile.solveVelocity.toFixed(2) + "] (" + this.m_maxProfile.solveVelocity.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "solve velocity [ave] (max) = " + p.solveVelocity.toFixed(2) + " [" + aveProfile.solveVelocity.toFixed(2) + "] (" + this.m_maxProfile.solveVelocity.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "solve position [ave] (max) = " + p.solvePosition.toFixed(2) + " [" + aveProfile.solvePosition.toFixed(2) + "] (" + this.m_maxProfile.solvePosition.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "solve position [ave] (max) = " + p.solvePosition.toFixed(2) + " [" + aveProfile.solvePosition.toFixed(2) + "] (" + this.m_maxProfile.solvePosition.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "solveTOI [ave] (max) = " + p.solveTOI.toFixed(2) + " [" + aveProfile.solveTOI.toFixed(2) + "] (" + this.m_maxProfile.solveTOI.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "solveTOI [ave] (max) = " + p.solveTOI.toFixed(2) + " [" + aveProfile.solveTOI.toFixed(2) + "] (" + this.m_maxProfile.solveTOI.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      this.m_debugDraw.DrawString(5, this.m_textLine, "broad-phase [ave] (max) = " + p.broadphase.toFixed(2) + " [" + aveProfile.broadphase.toFixed(2) + "] (" + this.m_maxProfile.broadphase.toFixed(2) + ")");
+      g_debugDraw.DrawString(5, this.m_textLine, "broad-phase [ave] (max) = " + p.broadphase.toFixed(2) + " [" + aveProfile.broadphase.toFixed(2) + "] (" + this.m_maxProfile.broadphase.toFixed(2) + ")");
       this.m_textLine += DRAW_STRING_NEW_LINE;
     }
 
@@ -545,19 +402,19 @@ export class Test extends box2d.b2ContactListener {
       const p2 = this.m_mouseJoint.GetTarget();
 
       const c: box2d.b2Color = new box2d.b2Color(0, 1, 0);
-      this.m_debugDraw.DrawPoint(p1, 4, c);
-      this.m_debugDraw.DrawPoint(p2, 4, c);
+      g_debugDraw.DrawPoint(p1, 4, c);
+      g_debugDraw.DrawPoint(p2, 4, c);
 
       c.SetRGB(0.8, 0.8, 0.8);
-      this.m_debugDraw.DrawSegment(p1, p2, c);
+      g_debugDraw.DrawSegment(p1, p2, c);
     }
 
     if (this.m_bombSpawning) {
       const c: box2d.b2Color = new box2d.b2Color(0, 0, 1);
-      this.m_debugDraw.DrawPoint(this.m_bombSpawnPoint, 4, c);
+      g_debugDraw.DrawPoint(this.m_bombSpawnPoint, 4, c);
 
       c.SetRGB(0.8, 0.8, 0.8);
-      this.m_debugDraw.DrawSegment(this.m_mouseWorld, this.m_bombSpawnPoint, c);
+      g_debugDraw.DrawSegment(this.m_mouseWorld, this.m_bombSpawnPoint, c);
     }
 
     if (settings.drawContactPoints) {
@@ -569,27 +426,27 @@ export class Test extends box2d.b2ContactListener {
 
         if (point.state === box2d.b2PointState.b2_addState) {
           // Add
-          this.m_debugDraw.DrawPoint(point.position, 10, new box2d.b2Color(0.3, 0.95, 0.3));
+          g_debugDraw.DrawPoint(point.position, 10, new box2d.b2Color(0.3, 0.95, 0.3));
         } else if (point.state === box2d.b2PointState.b2_persistState) {
           // Persist
-          this.m_debugDraw.DrawPoint(point.position, 5, new box2d.b2Color(0.3, 0.3, 0.95));
+          g_debugDraw.DrawPoint(point.position, 5, new box2d.b2Color(0.3, 0.3, 0.95));
         }
 
         if (settings.drawContactNormals) {
           const p1 = point.position;
           const p2: box2d.b2Vec2 = box2d.b2Vec2.AddVV(p1, box2d.b2Vec2.MulSV(k_axisScale, point.normal, box2d.b2Vec2.s_t0), new box2d.b2Vec2());
-          this.m_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.9));
+          g_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.9));
         } else if (settings.drawContactImpulse) {
           const p1 = point.position;
           const p2: box2d.b2Vec2 = box2d.b2Vec2.AddVMulSV(p1, k_impulseScale * point.normalImpulse, point.normal, new box2d.b2Vec2());
-          this.m_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.3));
+          g_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.3));
         }
 
         if (settings.drawFrictionImpulse) {
           const tangent: box2d.b2Vec2 = box2d.b2Vec2.CrossVOne(point.normal, new box2d.b2Vec2());
           const p1 = point.position;
           const p2: box2d.b2Vec2 = box2d.b2Vec2.AddVMulSV(p1, k_impulseScale * point.tangentImpulse, tangent, new box2d.b2Vec2());
-          this.m_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.3));
+          g_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.3));
         }
       }
     }
@@ -597,5 +454,9 @@ export class Test extends box2d.b2ContactListener {
 
   public ShiftOrigin(newOrigin: box2d.b2Vec2): void {
     this.m_world.ShiftOrigin(newOrigin);
+  }
+
+  public GetDefaultViewZoom(): number {
+    return 1.0;
   }
 }

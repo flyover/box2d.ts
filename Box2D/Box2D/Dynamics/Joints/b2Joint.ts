@@ -17,7 +17,7 @@
 */
 
 import { b2Vec2 } from "../../Common/b2Math";
-import { b2Body, b2BodyDef } from "../b2Body";
+import { b2Body } from "../b2Body";
 import { b2SolverData } from "../b2TimeStep";
 
 export const enum b2JointType {

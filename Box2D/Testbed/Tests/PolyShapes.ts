@@ -16,27 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-/// <reference path="../../Box2D/Box2D.ts"/>
-/// <reference path="../Framework/Render.ts"/>
+///import * as box2d from "../../Box2D/Box2D";
+import * as testbed from "../Testbed";
 
-namespace box2d.Testbed {
-
-export class PolyShapes extends Test
-{
-  constructor(canvas: HTMLCanvasElement, settings: Settings)
-  {
-    super(canvas, settings); // base class constructor
+export class PolyShapes extends testbed.Test {
+  constructor() {
+    super();
   }
 
-  public Step(settings: Settings): void
-  {
+  public Step(settings: testbed.Settings): void {
     super.Step(settings);
   }
 
-  public static Create(canvas: HTMLCanvasElement, settings: Settings): Test
-  {
-    return new PolyShapes(canvas, settings);
+  public static Create(): testbed.Test {
+    return new PolyShapes();
   }
 }
-
-} // namespace box2d.Testbed

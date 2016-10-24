@@ -16,15 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2IsValid, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
-import { b2MassData } from "../Collision/Shapes/b2Shape";
-import { b2Shape } from "../Collision/Shapes/b2Shape";
+import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
 import { b2ContactEdge } from "./Contacts/b2Contact";
 import { b2JointEdge } from "./Joints/b2Joint";
 import { b2Fixture, b2FixtureDef } from "./b2Fixture";
 import { b2World } from "./b2World";
-import { b2WorldFlag } from "./b2World";
 
 /// The body type.
 /// static: zero mass, zero velocity, may be manually moved
@@ -96,22 +94,17 @@ export class b2BodyDef {
   public gravityScale: number = 1;
 }
 
-export const enum b2BodyFlag {
-  e_none = 0,
-  e_islandFlag = 0x0001,
-  e_awakeFlag = 0x0002,
-  e_autoSleepFlag = 0x0004,
-  e_bulletFlag = 0x0008,
-  e_fixedRotationFlag = 0x0010,
-  e_activeFlag = 0x0020,
-  e_toiFlag = 0x0040
-}
-
 /// A rigid body. These are created via b2World::CreateBody.
 export class b2Body {
   public m_type: b2BodyType = b2BodyType.b2_staticBody;
 
-  public m_flags: b2BodyFlag = b2BodyFlag.e_none;
+  public m_islandFlag: boolean = false;
+  public m_awakeFlag: boolean = false;
+  public m_autoSleepFlag: boolean = false;
+  public m_bulletFlag: boolean = false;
+  public m_fixedRotationFlag: boolean = false;
+  public m_activeFlag: boolean = false;
+  public m_toiFlag: boolean = false;
 
   public m_islandIndex: number = 0;
 
@@ -161,28 +154,26 @@ export class b2Body {
     ///b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
     ///b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
 
-    this.m_flags = b2BodyFlag.e_none;
-
     if (bd.bullet) {
-      this.m_flags |= b2BodyFlag.e_bulletFlag;
+      this.m_bulletFlag = true;
     }
     if (bd.fixedRotation) {
-      this.m_flags |= b2BodyFlag.e_fixedRotationFlag;
+      this.m_fixedRotationFlag = true;
     }
     if (bd.allowSleep) {
-      this.m_flags |= b2BodyFlag.e_autoSleepFlag;
+      this.m_autoSleepFlag = true;
     }
     if (bd.awake) {
-      this.m_flags |= b2BodyFlag.e_awakeFlag;
+      this.m_awakeFlag = true;
     }
     if (bd.active) {
-      this.m_flags |= b2BodyFlag.e_activeFlag;
+      this.m_activeFlag = true;
     }
 
     this.m_world = world;
 
     this.m_xf.p.Copy(bd.position);
-    this.m_xf.q.SetAngleRadians(bd.angle);
+    this.m_xf.q.SetAngle(bd.angle);
 
     this.m_sweep.localCenter.SetZero();
     this.m_sweep.c0.Copy(this.m_xf.p);
@@ -225,6 +216,16 @@ export class b2Body {
     // this.m_controllerCount = 0;
   }
 
+  public CreateFixture(a: b2FixtureDef | b2Shape, b?: number): b2Fixture {
+    if (a instanceof b2FixtureDef) {
+      return this.CreateFixtureDef(a);
+    } else if ((a instanceof b2Shape) && (typeof(b) === "number")) {
+      return this.CreateFixtureShapeDensity(a, b);
+    } else {
+      throw new Error();
+    }
+  }
+
   /// Creates a fixture and attach it to this body. Use this function if you need
   /// to set some fixture parameters, like friction. Otherwise you can create the
   /// fixture directly from a shape.
@@ -232,16 +233,16 @@ export class b2Body {
   /// Contacts are not created until the next time step.
   /// @param def the fixture definition.
   /// @warning This function is locked during callbacks.
-  public CreateFixture(def: b2FixtureDef): b2Fixture {
-    ///b2Assert(this.m_world.IsLocked() === false);
-    if (this.m_world.IsLocked() === true) {
+  public CreateFixtureDef(def: b2FixtureDef): b2Fixture {
+    ///b2Assert(!this.m_world.IsLocked());
+    if (this.m_world.IsLocked()) {
       return null;
     }
 
     const fixture: b2Fixture = new b2Fixture();
     fixture.Create(this, def);
 
-    if (this.m_flags & b2BodyFlag.e_activeFlag) {
+    if (this.m_activeFlag) {
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
       fixture.CreateProxies(broadPhase, this.m_xf);
     }
@@ -259,7 +260,7 @@ export class b2Body {
 
     // Let the world know we have a new fixture. This will cause new contacts
     // to be created at the beginning of the next time step.
-    this.m_world.m_flags |= b2WorldFlag.e_newFixture;
+    this.m_world.m_newFixture = true;
 
     return fixture;
   }
@@ -271,12 +272,12 @@ export class b2Body {
   /// @param shape the shape to be cloned.
   /// @param density the shape density (set to zero for static bodies).
   /// @warning This function is locked during callbacks.
-  private static CreateFixture2_s_def: b2FixtureDef = new b2FixtureDef();
-  public CreateFixture2(shape: b2Shape, density: number = 0): b2Fixture {
-    const def: b2FixtureDef = b2Body.CreateFixture2_s_def;
+  private static CreateFixtureShapeDensity_s_def: b2FixtureDef = new b2FixtureDef();
+  public CreateFixtureShapeDensity(shape: b2Shape, density: number = 0): b2Fixture {
+    const def: b2FixtureDef = b2Body.CreateFixtureShapeDensity_s_def;
     def.shape = shape;
     def.density = density;
-    return this.CreateFixture(def);
+    return this.CreateFixtureDef(def);
   }
 
   /// Destroy a fixture. This removes the fixture from the broad-phase and
@@ -287,8 +288,8 @@ export class b2Body {
   /// @param fixture the fixture to be removed.
   /// @warning This function is locked during callbacks.
   public DestroyFixture(fixture: b2Fixture): void {
-    ///b2Assert(this.m_world.IsLocked() === false);
-    if (this.m_world.IsLocked() === true) {
+    ///b2Assert(!this.m_world.IsLocked());
+    if (this.m_world.IsLocked()) {
       return;
     }
 
@@ -332,7 +333,7 @@ export class b2Body {
       }
     }
 
-    if (this.m_flags & b2BodyFlag.e_activeFlag) {
+    if (this.m_activeFlag) {
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
       fixture.DestroyProxies(broadPhase);
     }
@@ -352,18 +353,18 @@ export class b2Body {
   /// Manipulating a body's transform may cause non-physical behavior.
   /// @param position the world position of the body's local origin.
   /// @param angle the world rotation in radians.
-  public SetTransformVecRadians(position: b2Vec2, angle: number): void {
-    this.SetTransformXYRadians(position.x, position.y, angle);
+  public SetTransformVec(position: b2Vec2, angle: number): void {
+    this.SetTransformXY(position.x, position.y, angle);
   }
 
-  public SetTransformXYRadians(x: number, y: number, angle: number): void {
-    ///b2Assert(this.m_world.IsLocked() === false);
-    if (this.m_world.IsLocked() === true) {
+  public SetTransformXY(x: number, y: number, angle: number): void {
+    ///b2Assert(!this.m_world.IsLocked());
+    if (this.m_world.IsLocked()) {
       return;
     }
 
-    this.m_xf.q.SetAngleRadians(angle);
-    this.m_xf.p.SetXY(x, y);
+    this.m_xf.q.SetAngle(angle);
+    this.m_xf.p.Set(x, y);
 
     b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
     this.m_sweep.a = angle;
@@ -380,7 +381,7 @@ export class b2Body {
   }
 
   public SetTransform(xf: b2Transform): void {
-    this.SetTransformVecRadians(xf.p, xf.GetAngleRadians());
+    this.SetTransformVec(xf.p, xf.GetAngle());
   }
 
   /// Get the body transform for the body's origin.
@@ -396,21 +397,21 @@ export class b2Body {
   }
 
   public SetPosition(position: b2Vec2): void {
-    this.SetTransformVecRadians(position, this.GetAngleRadians());
+    this.SetTransformVec(position, this.GetAngle());
   }
 
   public SetPositionXY(x: number, y: number): void {
-    this.SetTransformXYRadians(x, y, this.GetAngleRadians());
+    this.SetTransformXY(x, y, this.GetAngle());
   }
 
   /// Get the angle in radians.
   /// @return the current world rotation angle in radians.
-  public GetAngleRadians(): number {
+  public GetAngle(): number {
     return this.m_sweep.a;
   }
 
-  public SetAngleRadians(angle: number): void {
-    this.SetTransformVecRadians(this.GetPosition(), angle);
+  public SetAngle(angle: number): void {
+    this.SetTransformVec(this.GetPosition(), angle);
   }
 
   /// Get the world position of the center of mass.
@@ -465,14 +466,14 @@ export class b2Body {
 
   public GetDefinition(bd: b2BodyDef): b2BodyDef {
     bd.type = this.GetType();
-    bd.allowSleep = (this.m_flags & b2BodyFlag.e_autoSleepFlag) === b2BodyFlag.e_autoSleepFlag;
-    bd.angle = this.GetAngleRadians();
+    bd.allowSleep = this.m_autoSleepFlag;
+    bd.angle = this.GetAngle();
     bd.angularDamping = this.m_angularDamping;
     bd.gravityScale = this.m_gravityScale;
     bd.angularVelocity = this.m_angularVelocity;
-    bd.fixedRotation = (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === b2BodyFlag.e_fixedRotationFlag;
-    bd.bullet = (this.m_flags & b2BodyFlag.e_bulletFlag) === b2BodyFlag.e_bulletFlag;
-    bd.awake = (this.m_flags & b2BodyFlag.e_awakeFlag) === b2BodyFlag.e_awakeFlag;
+    bd.fixedRotation = this.m_fixedRotationFlag;
+    bd.bullet = this.m_bulletFlag;
+    bd.awake = this.m_awakeFlag;
     bd.linearDamping = this.m_linearDamping;
     bd.linearVelocity.Copy(this.GetLinearVelocity());
     bd.position.Copy(this.GetPosition());
@@ -486,17 +487,17 @@ export class b2Body {
   /// @param force the world force vector, usually in Newtons (N).
   /// @param point the world position of the point of application.
   /// @param wake also wake up the body
-  public ApplyForce(force, point, wake: boolean = true): void {
+  public ApplyForce(force: b2Vec2, point: b2Vec2, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
 
-    if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+    if (wake && !this.m_awakeFlag) {
       this.SetAwake(true);
     }
 
     // Don't accumulate a force if the body is sleeping.
-    if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+    if (this.m_awakeFlag) {
       this.m_force.x += force.x;
       this.m_force.y += force.y;
       this.m_torque += ((point.x - this.m_sweep.c.x) * force.y - (point.y - this.m_sweep.c.y) * force.x);
@@ -506,17 +507,17 @@ export class b2Body {
   /// Apply a force to the center of mass. This wakes up the body.
   /// @param force the world force vector, usually in Newtons (N).
   /// @param wake also wake up the body
-  public ApplyForceToCenter(force, wake: boolean = true): void {
+  public ApplyForceToCenter(force: b2Vec2, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
 
-    if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+    if (wake && !this.m_awakeFlag) {
       this.SetAwake(true);
     }
 
     // Don't accumulate a force if the body is sleeping.
-    if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+    if (this.m_awakeFlag) {
       this.m_force.x += force.x;
       this.m_force.y += force.y;
     }
@@ -527,17 +528,17 @@ export class b2Body {
   /// This wakes up the body.
   /// @param torque about the z-axis (out of the screen), usually in N-m.
   /// @param wake also wake up the body
-  public ApplyTorque(torque, wake: boolean = true): void {
+  public ApplyTorque(torque: number, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
 
-    if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+    if (wake && !this.m_awakeFlag) {
       this.SetAwake(true);
     }
 
     // Don't accumulate a force if the body is sleeping.
-    if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+    if (this.m_awakeFlag) {
       this.m_torque += torque;
     }
   }
@@ -548,37 +549,56 @@ export class b2Body {
   /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
   /// @param point the world position of the point of application.
   /// @param wake also wake up the body
-  public ApplyLinearImpulse(impulse, point, wake: boolean = true): void {
+  public ApplyLinearImpulse(impulse: b2Vec2, point: b2Vec2, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
 
-    if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+    if (wake && !this.m_awakeFlag) {
       this.SetAwake(true);
     }
 
     // Don't accumulate a force if the body is sleeping.
-    if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+    if (this.m_awakeFlag) {
       this.m_linearVelocity.x += this.m_invMass * impulse.x;
       this.m_linearVelocity.y += this.m_invMass * impulse.y;
       this.m_angularVelocity += this.m_invI * ((point.x - this.m_sweep.c.x) * impulse.y - (point.y - this.m_sweep.c.y) * impulse.x);
     }
   }
 
-  /// Apply an angular impulse.
-  /// @param impulse the angular impulse in units of kg*m*m/s
+  /// Apply an impulse at the center of gravity. This immediately modifies the velocity.
+  /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
   /// @param wake also wake up the body
-  public ApplyAngularImpulse(impulse, wake: boolean = true): void {
+  public ApplyLinearImpulseToCenter(impulse: b2Vec2, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
 
-    if (wake && (this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
+    if (wake && !this.m_awakeFlag) {
       this.SetAwake(true);
     }
 
     // Don't accumulate a force if the body is sleeping.
-    if (this.m_flags & b2BodyFlag.e_awakeFlag) {
+    if (this.m_awakeFlag) {
+      this.m_linearVelocity.x += this.m_invMass * impulse.x;
+      this.m_linearVelocity.y += this.m_invMass * impulse.y;
+    }
+  }
+
+  /// Apply an angular impulse.
+  /// @param impulse the angular impulse in units of kg*m*m/s
+  /// @param wake also wake up the body
+  public ApplyAngularImpulse(impulse: number, wake: boolean = true): void {
+    if (this.m_type !== b2BodyType.b2_dynamicBody) {
+      return;
+    }
+
+    if (wake && !this.m_awakeFlag) {
+      this.SetAwake(true);
+    }
+
+    // Don't accumulate a force if the body is sleeping.
+    if (this.m_awakeFlag) {
       this.m_angularVelocity += this.m_invI * impulse;
     }
   }
@@ -611,8 +631,8 @@ export class b2Body {
   /// @param massData the mass properties.
   private static SetMassData_s_oldCenter: b2Vec2 = new b2Vec2();
   public SetMassData(massData: b2MassData): void {
-    ///b2Assert(this.m_world.IsLocked() === false);
-    if (this.m_world.IsLocked() === true) {
+    ///b2Assert(!this.m_world.IsLocked());
+    if (this.m_world.IsLocked()) {
       return;
     }
 
@@ -631,7 +651,7 @@ export class b2Body {
 
     this.m_invMass = 1 / this.m_mass;
 
-    if (massData.I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
+    if (massData.I > 0 && !this.m_fixedRotationFlag) {
       this.m_I = massData.I - this.m_mass * b2Vec2.DotVV(massData.center, massData.center);
       ///b2Assert(this.m_I > 0);
       this.m_invI = 1 / this.m_I;
@@ -696,7 +716,7 @@ export class b2Body {
       this.m_invMass = 1;
     }
 
-    if (this.m_I > 0 && (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === 0) {
+    if (this.m_I > 0 && !this.m_fixedRotationFlag) {
       // Center the inertia about the center of mass.
       this.m_I -= this.m_mass * b2Vec2.DotVV(localCenter, localCenter);
       ///b2Assert(this.m_I > 0);
@@ -790,8 +810,8 @@ export class b2Body {
 
   /// Set the type of this body. This may alter the mass and velocity.
   public SetType(type: b2BodyType): void {
-    ///b2Assert(this.m_world.IsLocked() === false);
-    if (this.m_world.IsLocked() === true) {
+    ///b2Assert(!this.m_world.IsLocked());
+    if (this.m_world.IsLocked()) {
       return;
     }
 
@@ -842,32 +862,26 @@ export class b2Body {
 
   /// Should this body be treated like a bullet for continuous collision detection?
   public SetBullet(flag: boolean): void {
-    if (flag) {
-      this.m_flags |= b2BodyFlag.e_bulletFlag;
-    } else {
-      this.m_flags &= ~b2BodyFlag.e_bulletFlag;
-    }
+    this.m_bulletFlag = flag;
   }
 
   /// Is this body treated like a bullet for continuous collision detection?
   public IsBullet(): boolean {
-    return (this.m_flags & b2BodyFlag.e_bulletFlag) === b2BodyFlag.e_bulletFlag;
+    return this.m_bulletFlag;
   }
 
   /// You can disable sleeping on this body. If you disable sleeping, the
   /// body will be woken.
   public SetSleepingAllowed(flag: boolean): void {
-    if (flag) {
-      this.m_flags |= b2BodyFlag.e_autoSleepFlag;
-    } else {
-      this.m_flags &= ~b2BodyFlag.e_autoSleepFlag;
+    this.m_autoSleepFlag = flag;
+    if (!flag) {
       this.SetAwake(true);
     }
   }
 
   /// Is this body allowed to sleep
   public IsSleepingAllowed(): boolean {
-    return (this.m_flags & b2BodyFlag.e_autoSleepFlag) === b2BodyFlag.e_autoSleepFlag;
+    return this.m_autoSleepFlag;
   }
 
   /// Set the sleep state of the body. A sleeping body has very
@@ -875,12 +889,12 @@ export class b2Body {
   /// @param flag set to true to wake the body, false to put it to sleep.
   public SetAwake(flag: boolean): void {
     if (flag) {
-      if ((this.m_flags & b2BodyFlag.e_awakeFlag) === 0) {
-        this.m_flags |= b2BodyFlag.e_awakeFlag;
+      if (!this.m_awakeFlag) {
+        this.m_awakeFlag = true;
         this.m_sleepTime = 0;
       }
     } else {
-      this.m_flags &= ~b2BodyFlag.e_awakeFlag;
+      this.m_awakeFlag = false;
       this.m_sleepTime = 0;
       this.m_linearVelocity.SetZero();
       this.m_angularVelocity = 0;
@@ -892,7 +906,7 @@ export class b2Body {
   /// Get the sleeping state of this body.
   /// @return true if the body is sleeping.
   public IsAwake(): boolean {
-    return (this.m_flags & b2BodyFlag.e_awakeFlag) === b2BodyFlag.e_awakeFlag;
+    return this.m_awakeFlag;
   }
 
   /// Set the active state of the body. An inactive body is not
@@ -909,31 +923,27 @@ export class b2Body {
   /// An inactive body is still owned by a b2World object and remains
   /// in the body list.
   public SetActive(flag: boolean): void {
-    ///b2Assert(this.m_world.IsLocked() === false);
+    ///b2Assert(!this.m_world.IsLocked());
 
     if (flag === this.IsActive()) {
       return;
     }
 
-    if (flag) {
-      this.m_flags |= b2BodyFlag.e_activeFlag;
+    this.m_activeFlag = flag;
 
+    if (flag) {
       // Create all proxies.
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
       for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
         f.CreateProxies(broadPhase, this.m_xf);
       }
-
       // Contacts are created the next time step.
     } else {
-      this.m_flags &= ~b2BodyFlag.e_activeFlag;
-
       // Destroy all proxies.
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
       for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
         f.DestroyProxies(broadPhase);
       }
-
       // Destroy the attached contacts.
       let ce: b2ContactEdge = this.m_contactList;
       while (ce) {
@@ -947,22 +957,17 @@ export class b2Body {
 
   /// Get the active state of the body.
   public IsActive(): boolean {
-    return (this.m_flags & b2BodyFlag.e_activeFlag) === b2BodyFlag.e_activeFlag;
+    return this.m_activeFlag;
   }
 
   /// Set this body to have fixed rotation. This causes the mass
   /// to be reset.
   public SetFixedRotation(flag: boolean): void {
-    const status: boolean = (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === b2BodyFlag.e_fixedRotationFlag;
-    if (status === flag) {
+    if (this.m_fixedRotationFlag === flag) {
       return;
     }
 
-    if (flag) {
-      this.m_flags |= b2BodyFlag.e_fixedRotationFlag;
-    } else {
-      this.m_flags &= ~b2BodyFlag.e_fixedRotationFlag;
-    }
+    this.m_fixedRotationFlag = flag;
 
     this.m_angularVelocity = 0;
 
@@ -971,7 +976,7 @@ export class b2Body {
 
   /// Does this body have fixed rotation?
   public IsFixedRotation(): boolean {
-    return (this.m_flags & b2BodyFlag.e_fixedRotationFlag) === b2BodyFlag.e_fixedRotationFlag;
+    return this.m_fixedRotationFlag;
   }
 
   /// Get the list of all fixtures attached to this body.
@@ -1033,17 +1038,17 @@ export class b2Body {
       break;
     }
     log("  bd.type = %s;\n", type_str);
-    log("  bd.position.SetXY(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
+    log("  bd.position.Set(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
     log("  bd.angle = %.15f;\n", this.m_sweep.a);
-    log("  bd.linearVelocity.SetXY(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
+    log("  bd.linearVelocity.Set(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
     log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
     log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
     log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
-    log("  bd.allowSleep = %s;\n", (this.m_flags & b2BodyFlag.e_autoSleepFlag) ? ("true") : ("false"));
-    log("  bd.awake = %s;\n", (this.m_flags & b2BodyFlag.e_awakeFlag) ? ("true") : ("false"));
-    log("  bd.fixedRotation = %s;\n", (this.m_flags & b2BodyFlag.e_fixedRotationFlag) ? ("true") : ("false"));
-    log("  bd.bullet = %s;\n", (this.m_flags & b2BodyFlag.e_bulletFlag) ? ("true") : ("false"));
-    log("  bd.active = %s;\n", (this.m_flags & b2BodyFlag.e_activeFlag) ? ("true") : ("false"));
+    log("  bd.allowSleep = %s;\n", (this.m_autoSleepFlag) ? ("true") : ("false"));
+    log("  bd.awake = %s;\n", (this.m_awakeFlag) ? ("true") : ("false"));
+    log("  bd.fixedRotation = %s;\n", (this.m_fixedRotationFlag) ? ("true") : ("false"));
+    log("  bd.bullet = %s;\n", (this.m_bulletFlag) ? ("true") : ("false"));
+    log("  bd.active = %s;\n", (this.m_activeFlag) ? ("true") : ("false"));
     log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
     log("\n");
     log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
@@ -1059,7 +1064,7 @@ export class b2Body {
   private static SynchronizeFixtures_s_xf1: b2Transform = new b2Transform();
   public SynchronizeFixtures(): void {
     const xf1: b2Transform = b2Body.SynchronizeFixtures_s_xf1;
-    xf1.q.SetAngleRadians(this.m_sweep.a0);
+    xf1.q.SetAngle(this.m_sweep.a0);
     b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
     b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
@@ -1070,7 +1075,7 @@ export class b2Body {
   }
 
   public SynchronizeTransform(): void {
-    this.m_xf.q.SetAngleRadians(this.m_sweep.a);
+    this.m_xf.q.SetAngle(this.m_sweep.a);
     b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
     b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
   }
@@ -1078,15 +1083,18 @@ export class b2Body {
   // This is used to prevent connected bodies from colliding.
   // It may lie, depending on the collideConnected flag.
   public ShouldCollide(other: b2Body): boolean {
-    // At least one body should be dynamic.
-    if (this.m_type !== b2BodyType.b2_dynamicBody && other.m_type !== b2BodyType.b2_dynamicBody) {
+    // At least one body should be dynamic or kinematic.
+    if (this.m_type === b2BodyType.b2_staticBody && other.m_type === b2BodyType.b2_staticBody) {
       return false;
     }
+    return this.ShouldCollideConnected(other);
+  }
 
+  public ShouldCollideConnected(other: b2Body): boolean {
     // Does a joint prevent collision?
     for (let jn: b2JointEdge = this.m_jointList; jn; jn = jn.next) {
       if (jn.other === other) {
-        if (jn.joint.m_collideConnected === false) {
+        if (!jn.joint.m_collideConnected) {
           return false;
         }
       }
@@ -1100,7 +1108,7 @@ export class b2Body {
     this.m_sweep.Advance(alpha);
     this.m_sweep.c.Copy(this.m_sweep.c0);
     this.m_sweep.a = this.m_sweep.a0;
-    this.m_xf.q.SetAngleRadians(this.m_sweep.a);
+    this.m_xf.q.SetAngle(this.m_sweep.a);
     b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
     b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
   }

@@ -39,7 +39,7 @@ export class b2EdgeShape extends b2Shape {
   }
 
   /// Set this as an isolated edge.
-  public SetAsEdge(v1: b2Vec2, v2: b2Vec2): b2EdgeShape {
+  public Set(v1: b2Vec2, v2: b2Vec2): b2EdgeShape {
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
     this.m_hasVertex0 = false;
@@ -94,10 +94,10 @@ export class b2EdgeShape extends b2Shape {
     const p2: b2Vec2 = b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
     const d: b2Vec2 = b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
 
-    const v1 = this.m_vertex1;
-    const v2 = this.m_vertex2;
+    const v1: b2Vec2 = this.m_vertex1;
+    const v2: b2Vec2 = this.m_vertex2;
     const e: b2Vec2 = b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
-    const normal = output.normal.SetXY(e.y, -e.x).SelfNormalize();
+    const normal: b2Vec2 = output.normal.Set(e.y, -e.x).SelfNormalize();
 
     // q = p1 + t * d
     // dot(normal, q - v1) = 0
@@ -109,7 +109,7 @@ export class b2EdgeShape extends b2Shape {
       return false;
     }
 
-    const t = numerator / denominator;
+    const t: number = numerator / denominator;
     if (t < 0 || input.maxFraction < t) {
       return false;
     }
@@ -146,7 +146,7 @@ export class b2EdgeShape extends b2Shape {
     b2Vec2.MinV(v1, v2, aabb.lowerBound);
     b2Vec2.MaxV(v1, v2, aabb.upperBound);
 
-    const r = this.m_radius;
+    const r: number = this.m_radius;
     aabb.lowerBound.SelfSubXY(r, r);
     aabb.upperBound.SelfAddXY(r, r);
   }
@@ -159,9 +159,9 @@ export class b2EdgeShape extends b2Shape {
   }
 
   public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
-    proxy.m_vertices = new Array(2);
-    proxy.m_vertices[0] = this.m_vertex1;
-    proxy.m_vertices[1] = this.m_vertex2;
+    proxy.m_vertices = proxy.m_buffer;
+    proxy.m_vertices[0].Copy(this.m_vertex1);
+    proxy.m_vertices[1].Copy(this.m_vertex2);
     proxy.m_count = 2;
     proxy.m_radius = this.m_radius;
   }
@@ -174,10 +174,10 @@ export class b2EdgeShape extends b2Shape {
   public Dump(log: (format: string, ...args: any[]) => void): void {
     log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
     log("    shape.m_radius = %.15f;\n", this.m_radius);
-    log("    shape.m_vertex0.SetXY(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
-    log("    shape.m_vertex1.SetXY(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
-    log("    shape.m_vertex2.SetXY(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
-    log("    shape.m_vertex3.SetXY(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
+    log("    shape.m_vertex0.Set(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
+    log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
+    log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
+    log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
     log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
     log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
   }

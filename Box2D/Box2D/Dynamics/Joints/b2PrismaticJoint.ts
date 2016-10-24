@@ -17,11 +17,10 @@
 */
 
 import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef } from "./b2Joint";
-import { b2JointType } from "./b2Joint";
-import { b2LimitState } from "./b2Joint";
-import { b2Body, b2BodyDef } from "../b2Body";
+import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
+import { b2Body } from "../b2Body";
+import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
+import { b2SolverData } from "../b2TimeStep";
 
 /// Prismatic joint definition. This requires defining a line of
 /// motion using an axis and an anchor point. The definition uses local
@@ -30,11 +29,11 @@ import { b2Body, b2BodyDef } from "../b2Body";
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
 export class b2PrismaticJointDef extends b2JointDef {
-  public localAnchorA = null;
+  public localAnchorA: b2Vec2 = null;
 
-  public localAnchorB = null;
+  public localAnchorB: b2Vec2 = null;
 
-  public localAxisA = null;
+  public localAxisA: b2Vec2 = null;
 
   public referenceAngle: number = 0;
 
@@ -51,31 +50,31 @@ export class b2PrismaticJointDef extends b2JointDef {
   public motorSpeed: number = 0;
 
   constructor() {
-    super(b2JointType.e_prismaticJoint); // base class constructor
+    super(b2JointType.e_prismaticJoint);
 
     this.localAnchorA = new b2Vec2();
     this.localAnchorB = new b2Vec2();
     this.localAxisA = new b2Vec2(1, 0);
   }
 
-  public Initialize(bA, bB, anchor, axis) {
+  public Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void {
     this.bodyA = bA;
     this.bodyB = bB;
     this.bodyA.GetLocalPoint(anchor, this.localAnchorA);
     this.bodyB.GetLocalPoint(anchor, this.localAnchorB);
     this.bodyA.GetLocalVector(axis, this.localAxisA);
-    this.referenceAngle = this.bodyB.GetAngleRadians() - this.bodyA.GetAngleRadians();
+    this.referenceAngle = this.bodyB.GetAngle() - this.bodyA.GetAngle();
   }
 }
 
 export class b2PrismaticJoint extends b2Joint {
   // Solver shared
-  public m_localAnchorA: b2Vec2 = null;
-  public m_localAnchorB: b2Vec2 = null;
-  public m_localXAxisA: b2Vec2 = null;
-  public m_localYAxisA: b2Vec2 = null;
+  public m_localAnchorA: b2Vec2 = new b2Vec2();
+  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public m_localXAxisA: b2Vec2 = new b2Vec2();
+  public m_localYAxisA: b2Vec2 = new b2Vec2();
   public m_referenceAngle: number = 0;
-  public m_impulse: b2Vec3 = null;
+  public m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
   public m_motorImpulse: number = 0;
   public m_lowerTranslation: number = 0;
   public m_upperTranslation: number = 0;
@@ -88,65 +87,49 @@ export class b2PrismaticJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_localCenterA: b2Vec2 = null;
-  public m_localCenterB: b2Vec2 = null;
+  public m_localCenterA: b2Vec2 = new b2Vec2();
+  public m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_axis: b2Vec2 = null;
-  public m_perp: b2Vec2 = null;
+  public m_axis: b2Vec2 = new b2Vec2(0, 0);
+  public m_perp: b2Vec2 = new b2Vec2(0, 0);
   public m_s1: number = 0;
   public m_s2: number = 0;
   public m_a1: number = 0;
   public m_a2: number = 0;
-  public m_K: b2Mat33 = null;
-  public m_K3: b2Mat33 = null;
-  public m_K2: b2Mat22 = null;
+  public m_K: b2Mat33 = new b2Mat33();
+  public m_K3: b2Mat33 = new b2Mat33();
+  public m_K2: b2Mat22 = new b2Mat22();
   public m_motorMass: number = 0;
 
-  public m_qA: b2Rot = null;
-  public m_qB: b2Rot = null;
-  public m_lalcA: b2Vec2 = null;
-  public m_lalcB: b2Vec2 = null;
-  public m_rA: b2Vec2 = null;
-  public m_rB: b2Vec2 = null;
+  public m_qA: b2Rot = new b2Rot();
+  public m_qB: b2Rot = new b2Rot();
+  public m_lalcA: b2Vec2 = new b2Vec2();
+  public m_lalcB: b2Vec2 = new b2Vec2();
+  public m_rA: b2Vec2 = new b2Vec2();
+  public m_rB: b2Vec2 = new b2Vec2();
 
-  constructor(def) {
-    super(def); // base class constructor
+  constructor(def: b2PrismaticJointDef) {
+    super(def);
 
-    this.m_localAnchorA = def.localAnchorA.Clone();
-    this.m_localAnchorB = def.localAnchorB.Clone();
-    this.m_localXAxisA = def.localAxisA.Clone().SelfNormalize();
-    this.m_localYAxisA = b2Vec2.CrossOneV(this.m_localXAxisA, new b2Vec2());
+    this.m_localAnchorA.Copy(def.localAnchorA);
+    this.m_localAnchorB.Copy(def.localAnchorB);
+    this.m_localXAxisA.Copy(def.localAxisA).SelfNormalize();
+    b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
     this.m_referenceAngle = def.referenceAngle;
-    this.m_impulse = new b2Vec3(0, 0, 0);
     this.m_lowerTranslation = def.lowerTranslation;
     this.m_upperTranslation = def.upperTranslation;
     this.m_maxMotorForce = def.maxMotorForce;
     this.m_motorSpeed = def.motorSpeed;
     this.m_enableLimit = def.enableLimit;
     this.m_enableMotor = def.enableMotor;
-
-    this.m_localCenterA = new b2Vec2();
-    this.m_localCenterB = new b2Vec2();
-    this.m_axis = new b2Vec2(0, 0);
-    this.m_perp = new b2Vec2(0, 0);
-    this.m_K = new b2Mat33();
-    this.m_K3 = new b2Mat33();
-    this.m_K2 = new b2Mat22();
-
-    this.m_qA = new b2Rot();
-    this.m_qB = new b2Rot();
-    this.m_lalcA = new b2Vec2();
-    this.m_lalcB = new b2Vec2();
-    this.m_rA = new b2Vec2();
-    this.m_rB = new b2Vec2();
   }
 
   private static InitVelocityConstraints_s_d = new b2Vec2();
   private static InitVelocityConstraints_s_P = new b2Vec2();
-  public InitVelocityConstraints(data) {
+  public InitVelocityConstraints(data: b2SolverData): void {
     this.m_indexA = this.m_bodyA.m_islandIndex;
     this.m_indexB = this.m_bodyB.m_islandIndex;
     this.m_localCenterA.Copy(this.m_bodyA.m_sweep.localCenter);
@@ -166,7 +149,7 @@ export class b2PrismaticJoint extends b2Joint {
     const vB: b2Vec2 = data.velocities[this.m_indexB].v;
     let wB: number = data.velocities[this.m_indexB].w;
 
-    const qA: b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Rot = this.m_qB.SetAngleRadians(aB);
+    const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
     // Compute the effective masses.
     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
@@ -259,7 +242,7 @@ export class b2PrismaticJoint extends b2Joint {
       this.m_impulse.z = 0;
     }
 
-    if (this.m_enableMotor === false) {
+    if (!this.m_enableMotor) {
       this.m_motorImpulse = 0;
     }
 
@@ -302,7 +285,7 @@ export class b2PrismaticJoint extends b2Joint {
   private static SolveVelocityConstraints_s_f1 = new b2Vec3();
   private static SolveVelocityConstraints_s_df3 = new b2Vec3();
   private static SolveVelocityConstraints_s_df2 = new b2Vec2();
-  public SolveVelocityConstraints(data) {
+  public SolveVelocityConstraints(data: b2SolverData): void {
     const vA: b2Vec2 = data.velocities[this.m_indexA].v;
     let wA: number = data.velocities[this.m_indexA].w;
     const vB: b2Vec2 = data.velocities[this.m_indexB].v;
@@ -429,13 +412,13 @@ export class b2PrismaticJoint extends b2Joint {
   private static SolvePositionConstraints_s_impulse = new b2Vec3();
   private static SolvePositionConstraints_s_impulse1 = new b2Vec2();
   private static SolvePositionConstraints_s_P = new b2Vec2();
-  public SolvePositionConstraints(data) {
+  public SolvePositionConstraints(data: b2SolverData): boolean {
     const cA: b2Vec2 = data.positions[this.m_indexA].c;
     let aA: number = data.positions[this.m_indexA].a;
     const cB: b2Vec2 = data.positions[this.m_indexB].c;
     let aB: number = data.positions[this.m_indexB].a;
 
-    const qA: b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Rot = this.m_qB.SetAngleRadians(aB);
+    const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
     const mA: number = this.m_invMassA, mB: number = this.m_invMassB;
     const iA: number = this.m_invIA, iB: number = this.m_invIB;
@@ -546,9 +529,9 @@ export class b2PrismaticJoint extends b2Joint {
       // b2Mat22 K;
       const K2 = this.m_K2;
       // K.ex.Set(k11, k12);
-      K2.ex.SetXY(k11, k12);
+      K2.ex.Set(k11, k12);
       // K.ey.Set(k12, k22);
-      K2.ey.SetXY(k12, k22);
+      K2.ey.Set(k12, k22);
 
       // b2Vec2 impulse1 = K.Solve(-C1);
       const impulse1 = K2.Solve((-C1_x), (-C1_y), b2PrismaticJoint.SolvePositionConstraints_s_impulse1);
@@ -592,7 +575,7 @@ export class b2PrismaticJoint extends b2Joint {
 
   public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
     // return inv_dt * (m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis);
-    return out.SetXY(inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.x), inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.y));
+    return out.Set(inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.x), inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.y));
   }
 
   public GetReactionTorque(inv_dt: number): number {
@@ -666,7 +649,7 @@ export class b2PrismaticJoint extends b2Joint {
     return this.m_enableLimit;
   }
 
-  public EnableLimit(flag) {
+  public EnableLimit(flag: boolean) {
     if (flag !== this.m_enableLimit) {
       this.m_bodyA.SetAwake(true);
       this.m_bodyB.SetAwake(true);
@@ -683,7 +666,7 @@ export class b2PrismaticJoint extends b2Joint {
     return this.m_upperTranslation;
   }
 
-  public SetLimits(lower, upper) {
+  public SetLimits(lower: number, upper: number): void {
     if (lower !== this.m_lowerTranslation || upper !== this.m_upperTranslation) {
       this.m_bodyA.SetAwake(true);
       this.m_bodyB.SetAwake(true);
@@ -693,17 +676,17 @@ export class b2PrismaticJoint extends b2Joint {
     }
   }
 
-  public IsMotorEnabled() {
+  public IsMotorEnabled(): boolean {
     return this.m_enableMotor;
   }
 
-  public EnableMotor(flag) {
+  public EnableMotor(flag: boolean): void {
     this.m_bodyA.SetAwake(true);
     this.m_bodyB.SetAwake(true);
     this.m_enableMotor = flag;
   }
 
-  public SetMotorSpeed(speed) {
+  public SetMotorSpeed(speed: number): void {
     this.m_bodyA.SetAwake(true);
     this.m_bodyB.SetAwake(true);
     this.m_motorSpeed = speed;
@@ -713,15 +696,15 @@ export class b2PrismaticJoint extends b2Joint {
     return this.m_motorSpeed;
   }
 
-  public SetMaxMotorForce(force) {
+  public SetMaxMotorForce(force: number): void {
     this.m_bodyA.SetAwake(true);
     this.m_bodyB.SetAwake(true);
     this.m_maxMotorForce = force;
   }
 
-  public GetMaxMotorForce() { return this.m_maxMotorForce; }
+  public GetMaxMotorForce(): number { return this.m_maxMotorForce; }
 
-  public GetMotorForce(inv_dt) {
+  public GetMotorForce(inv_dt: number): number {
     return inv_dt * this.m_motorImpulse;
   }
 
@@ -733,9 +716,9 @@ export class b2PrismaticJoint extends b2Joint {
     log("  jd.bodyA = bodies[%d];\n", indexA);
     log("  jd.bodyB = bodies[%d];\n", indexB);
     log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
-    log("  jd.localAxisA.SetXY(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
+    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.localAxisA.Set(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
     log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
     log("  jd.enableLimit = %s;\n", (this.m_enableLimit) ? ("true") : ("false"));
     log("  jd.lowerTranslation = %.15f;\n", this.m_lowerTranslation);

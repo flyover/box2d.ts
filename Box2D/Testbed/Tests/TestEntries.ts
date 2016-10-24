@@ -16,124 +16,123 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as testbed from "../Testbed";
+import { TestEntry } from "../Framework/Test";
 
-// goog.require('box2d.Testbed.AddPair');
-// goog.require('box2d.Testbed.ApplyForce');
-// goog.require('box2d.Testbed.BodyTypes');
-// goog.require('box2d.Testbed.Breakable');
-// goog.require('box2d.Testbed.Bridge');
-// goog.require('box2d.Testbed.BulletTest');
-// goog.require('box2d.Testbed.Cantilever');
+///import { AddPair } from "./AddPair";
+///import { ApplyForce } from "./ApplyForce";
+///import { BodyTypes } from "./BodyTypes";
+///import { Breakable } from "./Breakable";
+///import { Bridge } from "./Bridge";
+///import { BulletTest } from "./BulletTest";
+///import { Cantilever } from "./Cantilever";
 import { Car } from "./Car";
-// goog.require('box2d.Testbed.ContinuousTest');
-// goog.require('box2d.Testbed.Chain');
-// goog.require('box2d.Testbed.CharacterCollision');
-// goog.require('box2d.Testbed.CollisionFiltering');
-// goog.require('box2d.Testbed.CollisionProcessing');
-// goog.require('box2d.Testbed.CompoundShapes');
-// goog.require('box2d.Testbed.Confined');
-// goog.require('box2d.Testbed.ConvexHull');
-// goog.require('box2d.Testbed.ConveyorBelt');
-// goog.require('box2d.Testbed.DistanceTest');
-// goog.require('box2d.Testbed.Dominos');
-// goog.require('box2d.Testbed.DumpShell');
-// goog.require('box2d.Testbed.DynamicTreeTest');
-// goog.require('box2d.Testbed.EdgeShapes');
-// goog.require('box2d.Testbed.EdgeTest');
-// goog.require('box2d.Testbed.Gears');
-// goog.require('box2d.Testbed.Mobile');
-// goog.require('box2d.Testbed.MobileBalanced');
-// goog.require('box2d.Testbed.MotorJoint');
-// goog.require('box2d.Testbed.OneSidedPlatform');
-// goog.require('box2d.Testbed.Pinball');
-// goog.require('box2d.Testbed.PolyCollision');
-// goog.require('box2d.Testbed.PolyShapes');
-// goog.require('box2d.Testbed.Prismatic');
-// goog.require('box2d.Testbed.Pulleys');
-// goog.require('box2d.Testbed.Pyramid');
-// goog.require('box2d.Testbed.RayCast');
-// goog.require('box2d.Testbed.Revolute');
-// goog.require('box2d.Testbed.Rope');
-// goog.require('box2d.Testbed.RopeJoint');
-// goog.require('box2d.Testbed.SensorTest');
-// goog.require('box2d.Testbed.ShapeEditing');
-// goog.require('box2d.Testbed.SliderCrank');
+///import { ContinuousTest } from "./ContinuousTest";
+///import { Chain } from "./Chain";
+///import { CharacterCollision } from "./CharacterCollision";
+///import { CollisionFiltering } from "./CollisionFiltering";
+///import { CollisionProcessing } from "./CollisionProcessing";
+///import { CompoundShapes } from "./CompoundShapes";
+///import { Confined } from "./Confined";
+///import { ConvexHull } from "./ConvexHull";
+///import { ConveyorBelt } from "./ConveyorBelt";
+///import { DistanceTest } from "./DistanceTest";
+///import { Dominos } from "./Dominos";
+///import { DumpShell } from "./DumpShell";
+///import { DynamicTreeTest } from "./DynamicTreeTest";
+///import { EdgeShapes } from "./EdgeShapes";
+///import { EdgeTest } from "./EdgeTest";
+///import { Gears } from "./Gears";
+///import { Mobile } from "./Mobile";
+///import { MobileBalanced } from "./MobileBalanced";
+///import { MotorJoint } from "./MotorJoint";
+///import { OneSidedPlatform } from "./OneSidedPlatform";
+///import { Pinball } from "./Pinball";
+///import { PolyCollision } from "./PolyCollision";
+///import { PolyShapes } from "./PolyShapes";
+///import { Prismatic } from "./Prismatic";
+///import { Pulleys } from "./Pulleys";
+///import { Pyramid } from "./Pyramid";
+import { RayCast } from "./RayCast";
+///import { Revolute } from "./Revolute";
+///import { Rope } from "./Rope";
+///import { RopeJoint } from "./RopeJoint";
+///import { SensorTest } from "./SensorTest";
+///import { ShapeEditing } from "./ShapeEditing";
+///import { SliderCrank } from "./SliderCrank";
 import { SphereStack } from "./SphereStack";
-// goog.require('box2d.Testbed.TheoJansen');
-// goog.require('box2d.Testbed.Tiles');
-// goog.require('box2d.Testbed.TimeOfImpact');
-// goog.require('box2d.Testbed.Tumbler');
-// goog.require('box2d.Testbed.constyingFriction');
-// goog.require('box2d.Testbed.constyingRestitution');
-// goog.require('box2d.Testbed.VerticalStack');
-// goog.require('box2d.Testbed.Web');
+///import { TheoJansen } from "./TheoJansen";
+///import { Tiles } from "./Tiles";
+///import { TimeOfImpact } from "./TimeOfImpact";
+///import { Tumbler } from "./Tumbler";
+///import { VaryingFriction } from "./VaryingFriction";
+///import { VaryingRestitution } from "./VaryingRestitution";
+///import { VerticalStack } from "./VerticalStack";
+///import { Web } from "./Web";
 
-// goog.require('box2d.Testbed.BlobTest');
-// goog.require('box2d.Testbed.BuoyancyTest');
+///import { BlobTest } from "./BlobTest";
+///import { BuoyancyTest } from "./BuoyancyTest";
 
-// goog.require('box2d.Testbed.TestCCD');
-// goog.require('box2d.Testbed.TestRagdoll');
-// goog.require('box2d.Testbed.TestStack');
+///import { TestCCD } from "./TestCCD";
+///import { TestRagdoll } from "./TestRagdoll";
+///import { TestStack } from "./TestStack";
 
-export function GetTestEntries(entries: testbed.TestEntry[]): testbed.TestEntry[] {
-//  entries.push(new box2d.Testbed.TestEntry("Continuous Test", box2d.Testbed.ContinuousTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Time of Impact", box2d.Testbed.TimeOfImpact.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Motor Joint", box2d.Testbed.MotorJoint.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Mobile", box2d.Testbed.Mobile.Create));
-//  entries.push(new box2d.Testbed.TestEntry("MobileBalanced", box2d.Testbed.MobileBalanced.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Ray-Cast", box2d.Testbed.RayCast.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Conveyor Belt", box2d.Testbed.ConveyorBelt.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Gears", box2d.Testbed.Gears.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Convex Hull", box2d.Testbed.ConvexHull.Create));
-//  entries.push(new box2d.Testbed.TestEntry("constying Restitution", box2d.Testbed.constyingRestitution.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Tumbler", box2d.Testbed.Tumbler.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Tiles", box2d.Testbed.Tiles.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Dump Shell", box2d.Testbed.DumpShell.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Cantilever", box2d.Testbed.Cantilever.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Character Collision", box2d.Testbed.CharacterCollision.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Edge Test", box2d.Testbed.EdgeTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Body Types", box2d.Testbed.BodyTypes.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Shape Editing", box2d.Testbed.ShapeEditing.Create));
-  entries.push(new testbed.TestEntry("Car", Car.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Apply Force", box2d.Testbed.ApplyForce.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Prismatic", box2d.Testbed.Prismatic.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Vertical Stack", box2d.Testbed.VerticalStack.Create));
-  entries.push(new testbed.TestEntry("SphereStack", SphereStack.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Revolute", box2d.Testbed.Revolute.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Pulleys", box2d.Testbed.Pulleys.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Polygon Shapes", box2d.Testbed.PolyShapes.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Rope", box2d.Testbed.Rope.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Web", box2d.Testbed.Web.Create));
-//  entries.push(new box2d.Testbed.TestEntry("RopeJoint", box2d.Testbed.RopeJoint.Create));
-//  entries.push(new box2d.Testbed.TestEntry("One-Sided Platform", box2d.Testbed.OneSidedPlatform.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Pinball", box2d.Testbed.Pinball.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Bullet Test", box2d.Testbed.BulletTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Confined", box2d.Testbed.Confined.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Pyramid", box2d.Testbed.Pyramid.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Theo Jansen's Walker", box2d.Testbed.TheoJansen.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Edge Shapes", box2d.Testbed.EdgeShapes.Create));
-//  entries.push(new box2d.Testbed.TestEntry("PolyCollision", box2d.Testbed.PolyCollision.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Bridge", box2d.Testbed.Bridge.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Breakable", box2d.Testbed.Breakable.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Chain", box2d.Testbed.Chain.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Collision Filtering", box2d.Testbed.CollisionFiltering.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Collision Processing", box2d.Testbed.CollisionProcessing.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Compound Shapes", box2d.Testbed.CompoundShapes.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Distance Test", box2d.Testbed.DistanceTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Dominos", box2d.Testbed.Dominos.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Dynamic Tree", box2d.Testbed.DynamicTreeTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Sensor Test", box2d.Testbed.SensorTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Slider Crank", box2d.Testbed.SliderCrank.Create));
-//  entries.push(new box2d.Testbed.TestEntry("constying Friction", box2d.Testbed.constyingFriction.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Add Pair Stress Test", box2d.Testbed.AddPair.Create));
+export const g_testEntries: TestEntry[] = [
+  ///new TestEntry("Continuous Test", ContinuousTest.Create),
+  ///new TestEntry("Time of Impact", TimeOfImpact.Create),
+  ///new TestEntry("Motor Joint", MotorJoint.Create),
+  ///new TestEntry("Mobile", Mobile.Create),
+  ///new TestEntry("MobileBalanced", MobileBalanced.Create),
+  ///new TestEntry("Ray-Cast", RayCast.Create),
+  new TestEntry("Ray-Cast", RayCast.Create),
+  ///new TestEntry("Conveyor Belt", ConveyorBelt.Create),
+  ///new TestEntry("Gears", Gears.Create),
+  ///new TestEntry("Convex Hull", ConvexHull.Create),
+  ///new TestEntry("constying Restitution", constyingRestitution.Create),
+  ///new TestEntry("Tumbler", Tumbler.Create),
+  ///new TestEntry("Tiles", Tiles.Create),
+  ///new TestEntry("Dump Shell", DumpShell.Create),
+  ///new TestEntry("Cantilever", Cantilever.Create),
+  ///new TestEntry("Character Collision", CharacterCollision.Create),
+  ///new TestEntry("Edge Test", EdgeTest.Create),
+  ///new TestEntry("Body Types", BodyTypes.Create),
+  ///new TestEntry("Shape Editing", ShapeEditing.Create),
+  new TestEntry("Car", Car.Create),
+  ///new TestEntry("Apply Force", ApplyForce.Create),
+  ///new TestEntry("Prismatic", Prismatic.Create),
+  ///new TestEntry("Vertical Stack", VerticalStack.Create),
+  new TestEntry("SphereStack", SphereStack.Create),
+  ///new TestEntry("Revolute", Revolute.Create),
+  ///new TestEntry("Pulleys", Pulleys.Create),
+  ///new TestEntry("Polygon Shapes", PolyShapes.Create),
+  ///new TestEntry("Rope", Rope.Create),
+  ///new TestEntry("Web", Web.Create),
+  ///new TestEntry("RopeJoint", RopeJoint.Create),
+  ///new TestEntry("One-Sided Platform", OneSidedPlatform.Create),
+  ///new TestEntry("Pinball", Pinball.Create),
+  ///new TestEntry("Bullet Test", BulletTest.Create),
+  ///new TestEntry("Confined", Confined.Create),
+  ///new TestEntry("Pyramid", Pyramid.Create),
+  ///new TestEntry("Theo Jansen's Walker", TheoJansen.Create),
+  ///new TestEntry("Edge Shapes", EdgeShapes.Create),
+  ///new TestEntry("PolyCollision", PolyCollision.Create),
+  ///new TestEntry("Bridge", Bridge.Create),
+  ///new TestEntry("Breakable", Breakable.Create),
+  ///new TestEntry("Chain", Chain.Create),
+  ///new TestEntry("Collision Filtering", CollisionFiltering.Create),
+  ///new TestEntry("Collision Processing", CollisionProcessing.Create),
+  ///new TestEntry("Compound Shapes", CompoundShapes.Create),
+  ///new TestEntry("Distance Test", DistanceTest.Create),
+  ///new TestEntry("Dominos", Dominos.Create),
+  ///new TestEntry("Dynamic Tree", DynamicTreeTest.Create),
+  ///new TestEntry("Sensor Test", SensorTest.Create),
+  ///new TestEntry("Slider Crank", SliderCrank.Create),
+  ///new TestEntry("constying Friction", constyingFriction.Create),
+  ///new TestEntry("Add Pair Stress Test", AddPair.Create),
 
-//  entries.push(new box2d.Testbed.TestEntry("Blob Test", box2d.Testbed.BlobTest.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Buoyancy Test", box2d.Testbed.BuoyancyTest.Create));
+  ///new TestEntry("Blob Test", BlobTest.Create),
+  ///new TestEntry("Buoyancy Test", BuoyancyTest.Create),
 
-//  entries.push(new box2d.Testbed.TestEntry("Continuous Collision", box2d.Testbed.TestCCD.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Ragdolls", box2d.Testbed.TestRagdoll.Create));
-//  entries.push(new box2d.Testbed.TestEntry("Stacked Boxes", box2d.Testbed.TestStack.Create));
-
-  return entries;
-}
+  ///new TestEntry("Continuous Collision", TestCCD.Create),
+  ///new TestEntry("Ragdolls", TestRagdoll.Create),
+  ///new TestEntry("Stacked Boxes", TestStack.Create)
+];

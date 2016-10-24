@@ -1,5 +1,4 @@
-import { b2Joint, b2JointDef } from "./b2Joint";
-import { b2JointType } from "./b2Joint";
+import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
 import { b2AreaJoint, b2AreaJointDef } from "./b2AreaJoint";
 import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
 import { b2FrictionJoint, b2FrictionJointDef } from "./b2FrictionJoint";

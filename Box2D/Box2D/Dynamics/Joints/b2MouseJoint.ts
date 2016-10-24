@@ -16,10 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
-import { b2IsValid, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef } from "./b2Joint";
-import { b2JointType } from "./b2Joint";
+import { b2_pi } from "../../Common/b2Settings";
+import { b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2SolverData } from "../b2TimeStep";
 
 /// Mouse joint definition. This requires a world target point,
 /// tuning parameters, and the time step.
@@ -33,7 +33,7 @@ export class b2MouseJointDef extends b2JointDef {
   public dampingRatio: number = 0.7;
 
   constructor() {
-    super(b2JointType.e_mouseJoint); // base class constructor
+    super(b2JointType.e_mouseJoint);
   }
 }
 
@@ -62,8 +62,8 @@ export class b2MouseJoint extends b2Joint {
   public m_lalcB: b2Vec2 = null;
   public m_K: b2Mat22 = null;
 
-  constructor(def) {
-    super(def); // base class constructor
+  constructor(def: b2MouseJointDef) {
+    super(def);
 
     this.m_localAnchorB = new b2Vec2();
     this.m_targetA = new b2Vec2();
@@ -96,8 +96,8 @@ export class b2MouseJoint extends b2Joint {
     this.m_gamma = 0;
   }
 
-  public SetTarget(target) {
-    if (this.m_bodyB.IsAwake() === false) {
+  public SetTarget(target: b2Vec2): void {
+    if (!this.m_bodyB.IsAwake()) {
       this.m_bodyB.SetAwake(true);
     }
     this.m_targetA.Copy(target);
@@ -107,7 +107,7 @@ export class b2MouseJoint extends b2Joint {
     return this.m_targetA;
   }
 
-  public SetMaxForce(maxForce) {
+  public SetMaxForce(maxForce: number): void {
     this.m_maxForce = maxForce;
   }
 
@@ -115,7 +115,7 @@ export class b2MouseJoint extends b2Joint {
     return this.m_maxForce;
   }
 
-  public SetFrequency(hz) {
+  public SetFrequency(hz: number): void {
     this.m_frequencyHz = hz;
   }
 
@@ -123,7 +123,7 @@ export class b2MouseJoint extends b2Joint {
     return this.m_frequencyHz;
   }
 
-  public SetDampingRatio(ratio) {
+  public SetDampingRatio(ratio: number) {
     this.m_dampingRatio = ratio;
   }
 
@@ -131,7 +131,7 @@ export class b2MouseJoint extends b2Joint {
     return this.m_dampingRatio;
   }
 
-  public InitVelocityConstraints(data) {
+  public InitVelocityConstraints(data: b2SolverData): void {
     this.m_indexB = this.m_bodyB.m_islandIndex;
     this.m_localCenterB.Copy(this.m_bodyB.m_sweep.localCenter);
     this.m_invMassB = this.m_bodyB.m_invMass;
@@ -142,7 +142,7 @@ export class b2MouseJoint extends b2Joint {
     const vB: b2Vec2 = data.velocities[this.m_indexB].v;
     let wB: number = data.velocities[this.m_indexB].w;
 
-    const qB = this.m_qB.SetAngleRadians(aB);
+    const qB = this.m_qB.SetAngle(aB);
 
     const mass: number = this.m_bodyB.GetMass();
 
@@ -207,7 +207,7 @@ export class b2MouseJoint extends b2Joint {
   private static SolveVelocityConstraints_s_Cdot = new b2Vec2();
   private static SolveVelocityConstraints_s_impulse = new b2Vec2();
   private static SolveVelocityConstraints_s_oldImpulse = new b2Vec2();
-  public SolveVelocityConstraints(data) {
+  public SolveVelocityConstraints(data: b2SolverData): void {
     const vB: b2Vec2 = data.velocities[this.m_indexB].v;
     let wB: number = data.velocities[this.m_indexB].w;
 
@@ -230,8 +230,8 @@ export class b2MouseJoint extends b2Joint {
     // m_impulse += impulse;
     this.m_impulse.SelfAdd(impulse);
     const maxImpulse: number = data.step.dt * this.m_maxForce;
-    if (this.m_impulse.GetLengthSquared() > maxImpulse * maxImpulse) {
-      this.m_impulse.SelfMul(maxImpulse / this.m_impulse.GetLength());
+    if (this.m_impulse.GetLength() > maxImpulse * maxImpulse) {
+      this.m_impulse.SelfMul(maxImpulse / this.m_impulse.Length());
     }
     // impulse = m_impulse - oldImpulse;
     b2Vec2.SubVV(this.m_impulse, oldImpulse, impulse);
@@ -244,7 +244,7 @@ export class b2MouseJoint extends b2Joint {
     data.velocities[this.m_indexB].w = wB;
   }
 
-  public SolvePositionConstraints(data) {
+  public SolvePositionConstraints(data: b2SolverData): boolean {
     return true;
   }
 
@@ -268,7 +268,7 @@ export class b2MouseJoint extends b2Joint {
     log("Mouse joint dumping is not supported.\n");
   }
 
-  public ShiftOrigin(newOrigin) {
+  public ShiftOrigin(newOrigin: b2Vec2) {
     this.m_targetA.SelfSub(newOrigin);
   }
 }

@@ -17,10 +17,10 @@
 */
 
 import { b2_pi, b2_linearSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef } from "./b2Joint";
-import { b2JointType } from "./b2Joint";
-import { b2Body, b2BodyDef } from "../b2Body";
+import { b2Abs, b2Clamp, b2Vec2, b2Rot } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2SolverData } from "../b2TimeStep";
+import { b2Body } from "../b2Body";
 
 /// Wheel joint definition. This requires defining a line of
 /// motion using an axis and an anchor point. The definition uses local
@@ -46,10 +46,10 @@ export class b2WheelJointDef extends b2JointDef {
   public dampingRatio: number = 0.7;
 
   constructor() {
-    super(b2JointType.e_wheelJoint); // base class constructor
+    super(b2JointType.e_wheelJoint);
   }
 
-  public Initialize(bA, bB, anchor, axis) {
+  public Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void {
     this.bodyA = bA;
     this.bodyB = bB;
     this.bodyA.GetLocalPoint(anchor, this.localAnchorA);
@@ -107,8 +107,8 @@ export class b2WheelJoint extends b2Joint {
   public m_rA: b2Vec2 = new b2Vec2();
   public m_rB: b2Vec2 = new b2Vec2();
 
-  constructor(def) {
-    super(def); // base class constructor
+  constructor(def: b2WheelJointDef) {
+    super(def);
 
     this.m_frequencyHz = def.frequencyHz;
     this.m_dampingRatio = def.dampingRatio;
@@ -126,33 +126,33 @@ export class b2WheelJoint extends b2Joint {
     this.m_ay.SetZero();
   }
 
-  public GetMotorSpeed() {
+  public GetMotorSpeed(): number {
     return this.m_motorSpeed;
   }
 
-  public GetMaxMotorTorque() {
+  public GetMaxMotorTorque(): number {
     return this.m_maxMotorTorque;
   }
 
-  public SetSpringFrequencyHz(hz) {
+  public SetSpringFrequencyHz(hz: number): void {
     this.m_frequencyHz = hz;
   }
 
-  public GetSpringFrequencyHz() {
+  public GetSpringFrequencyHz(): number {
     return this.m_frequencyHz;
   }
 
-  public SetSpringDampingRatio(ratio) {
+  public SetSpringDampingRatio(ratio: number): void {
     this.m_dampingRatio = ratio;
   }
 
-  public GetSpringDampingRatio() {
+  public GetSpringDampingRatio(): number {
     return this.m_dampingRatio;
   }
 
   private static InitVelocityConstraints_s_d = new b2Vec2();
   private static InitVelocityConstraints_s_P = new b2Vec2();
-  public InitVelocityConstraints(data) {
+  public InitVelocityConstraints(data: b2SolverData): void {
     this.m_indexA = this.m_bodyA.m_islandIndex;
     this.m_indexB = this.m_bodyB.m_islandIndex;
     this.m_localCenterA.Copy(this.m_bodyA.m_sweep.localCenter);
@@ -175,7 +175,7 @@ export class b2WheelJoint extends b2Joint {
     const vB: b2Vec2 = data.velocities[this.m_indexB].v;
     let wB: number = data.velocities[this.m_indexB].w;
 
-    const qA: b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Rot = this.m_qB.SetAngleRadians(aB);
+    const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
     // Compute the effective masses.
     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
@@ -299,7 +299,7 @@ export class b2WheelJoint extends b2Joint {
   }
 
   private static SolveVelocityConstraints_s_P = new b2Vec2();
-  public SolveVelocityConstraints(data) {
+  public SolveVelocityConstraints(data: b2SolverData): void {
     const mA: number = this.m_invMassA, mB: number = this.m_invMassB;
     const iA: number = this.m_invIA, iB: number = this.m_invIB;
 
@@ -309,7 +309,7 @@ export class b2WheelJoint extends b2Joint {
     let wB: number = data.velocities[this.m_indexB].w;
 
     // Solve spring constraint
-    if (true) {
+    {
       const Cdot: number = b2Vec2.DotVV(this.m_ax, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_sBx * wB - this.m_sAx * wA;
       const impulse: number = -this.m_springMass * (Cdot + this.m_bias + this.m_gamma * this.m_springImpulse);
       this.m_springImpulse += impulse;
@@ -329,7 +329,7 @@ export class b2WheelJoint extends b2Joint {
     }
 
     // Solve rotational motor constraint
-    if (true) {
+    {
       const Cdot: number = wB - wA - this.m_motorSpeed;
       let impulse: number = -this.m_motorMass * Cdot;
 
@@ -343,7 +343,7 @@ export class b2WheelJoint extends b2Joint {
     }
 
     // Solve point to line constraint
-    if (true) {
+    {
       const Cdot: number = b2Vec2.DotVV(this.m_ay, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_sBy * wB - this.m_sAy * wA;
       const impulse: number = -this.m_mass * Cdot;
       this.m_impulse += impulse;
@@ -370,13 +370,13 @@ export class b2WheelJoint extends b2Joint {
 
   private static SolvePositionConstraints_s_d = new b2Vec2();
   private static SolvePositionConstraints_s_P = new b2Vec2();
-  public SolvePositionConstraints(data) {
+  public SolvePositionConstraints(data: b2SolverData): boolean {
     const cA: b2Vec2 = data.positions[this.m_indexA].c;
     let aA: number = data.positions[this.m_indexA].a;
     const cB: b2Vec2 = data.positions[this.m_indexB].c;
     let aB: number = data.positions[this.m_indexB].a;
 
-    const qA: b2Rot = this.m_qA.SetAngleRadians(aA), qB: b2Rot = this.m_qB.SetAngleRadians(aB);
+    const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
     b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
@@ -430,7 +430,7 @@ export class b2WheelJoint extends b2Joint {
     return b2Abs(C) <= b2_linearSlop;
   }
 
-  public GetDefinition(def) {
+  public GetDefinition(def: b2WheelJointDef): b2WheelJointDef {
     ///b2Assert(false); // TODO
     return def;
   }
@@ -461,6 +461,14 @@ export class b2WheelJoint extends b2Joint {
   public GetLocalAxisA(): b2Vec2 { return this.m_localXAxisA; }
 
   public GetJointTranslation(): number {
+    return this.GetPrismaticJointTranslation();
+  }
+
+  public GetJointSpeed(): number {
+    return this.GetRevoluteJointSpeed();
+  }
+
+  public GetPrismaticJointTranslation(): number {
     const bA: b2Body = this.m_bodyA;
     const bB: b2Body = this.m_bodyB;
 
@@ -473,7 +481,50 @@ export class b2WheelJoint extends b2Joint {
     return translation;
   }
 
-  public GetJointSpeed(): number {
+  public GetPrismaticJointSpeed(): number {
+    const bA: b2Body = this.m_bodyA;
+    const bB: b2Body = this.m_bodyB;
+
+    // b2Vec2 rA = b2Mul(bA->m_xf.q, m_localAnchorA - bA->m_sweep.localCenter);
+    b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
+    const rA = b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
+    // b2Vec2 rB = b2Mul(bB->m_xf.q, m_localAnchorB - bB->m_sweep.localCenter);
+    b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
+    const rB = b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
+    // b2Vec2 pA = bA->m_sweep.c + rA;
+    const pA = b2Vec2.AddVV(bA.m_sweep.c, rA, b2Vec2.s_t0); // pA uses s_t0
+    // b2Vec2 pB = bB->m_sweep.c + rB;
+    const pB = b2Vec2.AddVV(bB.m_sweep.c, rB, b2Vec2.s_t1); // pB uses s_t1
+    // b2Vec2 d = pB - pA;
+    const d = b2Vec2.SubVV(pB, pA, b2Vec2.s_t2); // d uses s_t2
+    // b2Vec2 axis = b2Mul(bA.m_xf.q, m_localXAxisA);
+    const axis = bA.GetWorldVector(this.m_localXAxisA, new b2Vec2());
+
+    const vA = bA.m_linearVelocity;
+    const vB = bB.m_linearVelocity;
+    const wA = bA.m_angularVelocity;
+    const wB = bB.m_angularVelocity;
+
+    // float32 speed = b2Dot(d, b2Cross(wA, axis)) + b2Dot(axis, vB + b2Cross(wB, rB) - vA - b2Cross(wA, rA));
+    const speed =
+      b2Vec2.DotVV(d, b2Vec2.CrossSV(wA, axis, b2Vec2.s_t0)) +
+      b2Vec2.DotVV(
+        axis,
+        b2Vec2.SubVV(
+          b2Vec2.AddVCrossSV(vB, wB, rB, b2Vec2.s_t0),
+          b2Vec2.AddVCrossSV(vA, wA, rA, b2Vec2.s_t1),
+          b2Vec2.s_t0));
+    return speed;
+  }
+
+  public GetRevoluteJointAngle(): number {
+    // b2Body* bA = this.m_bodyA;
+    // b2Body* bB = this.m_bodyB;
+    // return bB->this.m_sweep.a - bA->this.m_sweep.a;
+    return this.m_bodyB.m_sweep.a - this.m_bodyA.m_sweep.a;
+  }
+
+  public GetRevoluteJointSpeed(): number {
     const wA: number = this.m_bodyA.m_angularVelocity;
     const wB: number = this.m_bodyB.m_angularVelocity;
     return wB - wA;
@@ -513,8 +564,8 @@ export class b2WheelJoint extends b2Joint {
     log("  jd.bodyA = bodies[%d];\n", indexA);
     log("  jd.bodyB = bodies[%d];\n", indexB);
     log("  jd.collideConnected = %s;\n", (this.m_collideConnected) ? ("true") : ("false"));
-    log("  jd.localAnchorA.SetXY(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
-    log("  jd.localAnchorB.SetXY(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
+    log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
+    log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
     log("  jd.localAxisA.Set(%.15f, %.15f);\n", this.m_localXAxisA.x, this.m_localXAxisA.y);
     log("  jd.enableMotor = %s;\n", (this.m_enableMotor) ? ("true") : ("false"));
     log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);

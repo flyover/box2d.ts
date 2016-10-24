@@ -19,14 +19,10 @@
 import { b2MakeArray } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
-import { b2AABB } from "../Collision/b2Collision";
-import { b2RayCastInput } from "../Collision/b2Collision";
-import { b2RayCastOutput } from "../Collision/b2Collision";
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
-import { b2MassData } from "../Collision/Shapes/b2Shape";
-import { b2Shape } from "../Collision/Shapes/b2Shape";
-import { b2ShapeType } from "../Collision/Shapes/b2Shape";
-import { b2Body, b2BodyDef } from "./b2Body";
+import { b2Shape, b2ShapeType, b2MassData } from "../Collision/Shapes/b2Shape";
+import { b2Body } from "./b2Body";
 
 /// This holds contact filtering data.
 export class b2Filter {

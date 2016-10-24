@@ -17,7 +17,7 @@
 */
 
 import { b2_linearSlop, b2_maxPolygonVertices, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
+import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
 
@@ -67,11 +67,11 @@ export const enum b2SeparationFunctionType {
 }
 
 export class b2SeparationFunction {
-  public m_proxyA = null;
-  public m_proxyB = null;
+  public m_proxyA: b2DistanceProxy;
+  public m_proxyB: b2DistanceProxy;
   public m_sweepA: b2Sweep = new b2Sweep();
   public m_sweepB: b2Sweep = new b2Sweep();
-  public m_type = b2SeparationFunctionType.e_unknown;
+  public m_type: b2SeparationFunctionType = b2SeparationFunctionType.e_unknown;
   public m_localPoint: b2Vec2 = new b2Vec2();
   public m_axis: b2Vec2 = new b2Vec2();
 

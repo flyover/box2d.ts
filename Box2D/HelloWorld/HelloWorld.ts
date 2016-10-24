@@ -30,8 +30,6 @@ import { b2PolygonShape } from "../Box2D/Collision/Shapes/b2PolygonShape";
 // There are no graphics for this example. Box2D is meant to be used
 // with your rendering engine in your game engine.
 export function main(): number {
-  // const pre = document.body.appendChild(document.createElement('pre'));
-
   // Define the gravity vector.
   const gravity: b2Vec2 = new b2Vec2(0, -10);
 
@@ -40,7 +38,7 @@ export function main(): number {
 
   // Define the ground body.
   const groundBodyDef: b2BodyDef = new b2BodyDef();
-  groundBodyDef.position.SetXY(0, -10);
+  groundBodyDef.position.Set(0, -10);
 
   // Call the body factory which allocates memory for the ground body
   // from a pool and creates the ground box shape (also from a pool).
@@ -54,12 +52,12 @@ export function main(): number {
   groundBox.SetAsBox(50, 10);
 
   // Add the ground fixture to the ground body.
-  groundBody.CreateFixture2(groundBox, 0);
+  groundBody.CreateFixture(groundBox, 0);
 
   // Define the dynamic body. We set its position and call the body factory.
   const bodyDef: b2BodyDef = new b2BodyDef();
   bodyDef.type = b2BodyType.b2_dynamicBody;
-  bodyDef.position.SetXY(0, 4);
+  bodyDef.position.Set(0, 4);
   const body: b2Body = world.CreateBody(bodyDef);
 
   // Define another box shape for our dynamic body.
@@ -77,7 +75,7 @@ export function main(): number {
   fixtureDef.friction = 0.3;
 
   // Add the shape to the body.
-  body.CreateFixture(fixtureDef);
+  const fixture: b2Fixture = body.CreateFixture(fixtureDef);
 
   // Prepare for simulation. Typically we use a time step of 1/60 of a
   // second (60Hz) and 10 iterations. This provides a high quality simulation
@@ -94,16 +92,17 @@ export function main(): number {
 
     // Now print the position and angle of the body.
     const position: b2Vec2 = body.GetPosition();
-    const angle: number = body.GetAngleRadians();
+    const angle: number = body.GetAngle();
 
     console.log(position.x.toFixed(2), position.y.toFixed(2), angle.toFixed(2));
-    // const s = goog.string.format("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-    // console.log(s);
-    // pre.innerHTML += s;
   }
 
   // When the world destructor is called, all bodies and joints are freed. This can
   // create orphaned pointers, so be careful about your world management.
+
+  body.DestroyFixture(fixture);
+
+  world.DestroyBody(body);
 
   return 0;
 }

@@ -16,19 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Transform } from "../../Common/b2Math";
 import { b2CollideEdgeAndPolygon } from "../../Collision/b2CollideEdge";
 import { b2Manifold } from "../../Collision/b2Collision";
-import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
+import { b2Shape } from "../../Collision/Shapes/b2Shape";
 import { b2ChainShape } from "../../Collision/Shapes/b2ChainShape";
 import { b2EdgeShape } from "../../Collision/Shapes/b2EdgeShape";
 import { b2PolygonShape } from "../../Collision/Shapes/b2PolygonShape";
 import { b2Contact } from "./b2Contact";
-import { b2Fixture, b2FixtureDef } from "../b2Fixture";
+import { b2Fixture } from "../b2Fixture";
 
 export class b2ChainAndPolygonContact extends b2Contact {
   constructor() {
-    super(); // base class constructor
+    super();
   }
 
   public static Create(allocator: any): b2Contact {
@@ -46,12 +46,12 @@ export class b2ChainAndPolygonContact extends b2Contact {
 
   private static Evaluate_s_edge = new b2EdgeShape();
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
-    const shapeA = this.m_fixtureA.GetShape();
-    const shapeB = this.m_fixtureB.GetShape();
+    const shapeA: b2Shape = this.m_fixtureA.GetShape();
+    const shapeB: b2Shape = this.m_fixtureB.GetShape();
     ///b2Assert(shapeA instanceof b2ChainShape);
     ///b2Assert(shapeB instanceof b2PolygonShape);
-    const chain = <b2ChainShape> shapeA;
-    const edge = b2ChainAndPolygonContact.Evaluate_s_edge;
+    const chain: b2ChainShape = <b2ChainShape> shapeA;
+    const edge: b2EdgeShape = b2ChainAndPolygonContact.Evaluate_s_edge;
     chain.GetChildEdge(edge, this.m_indexA);
     b2CollideEdgeAndPolygon(
       manifold,

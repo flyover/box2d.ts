@@ -19,17 +19,17 @@
 /// Timer for profiling. This has platform specific code and may
 /// not work on every platform.
 export class b2Timer {
-  public m_start: number = new Date().getTime();
+  public m_start: number = Date.now();
 
   /// Reset the timer.
   public Reset(): b2Timer {
-    this.m_start = new Date().getTime();
+    this.m_start = Date.now();
     return this;
   }
 
   /// Get the time since construction or the last reset.
   public GetMilliseconds(): number {
-    return new Date().getTime() - this.m_start;
+    return Date.now() - this.m_start;
   }
 }
 

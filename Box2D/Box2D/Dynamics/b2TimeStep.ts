@@ -45,9 +45,9 @@ export class b2Profile {
 
 /// This is an internal structure.
 export class b2TimeStep {
-  public dt: number = 0;    // time step
-  public inv_dt: number = 0;  // inverse time step (0 if dt == 0).
-  public dtRatio: number = 0;  // dt * inv_dt0
+  public dt: number = 0; // time step
+  public inv_dt: number = 0; // inverse time step (0 if dt == 0).
+  public dtRatio: number = 0; // dt * inv_dt0
   public velocityIterations: number = 0;
   public positionIterations: number = 0;
   public warmStarting: boolean = false;

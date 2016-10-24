@@ -1,14 +1,14 @@
 import { b2MakeArray } from "../../Common/b2Settings";
 import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Contact } from "./b2Contact";
-import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact";
-import { b2ChainAndPolygonContact } from "./b2ChainAndPolygonContact";
 import { b2CircleContact } from "./b2CircleContact";
+import { b2PolygonContact } from "./b2PolygonContact";
+import { b2PolygonAndCircleContact } from "./b2PolygonAndCircleContact";
 import { b2EdgeAndCircleContact } from "./b2EdgeAndCircleContact";
 import { b2EdgeAndPolygonContact } from "./b2EdgeAndPolygonContact";
-import { b2PolygonAndCircleContact } from "./b2PolygonAndCircleContact";
-import { b2PolygonContact } from "./b2PolygonContact";
-import { b2Fixture, b2FixtureDef } from "../b2Fixture";
+import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact";
+import { b2ChainAndPolygonContact } from "./b2ChainAndPolygonContact";
+import { b2Fixture } from "../b2Fixture";
 
 export class b2ContactRegister {
   public pool: b2Contact[] = null;
@@ -26,12 +26,12 @@ export class b2ContactFactory {
     this.InitializeRegisters();
   }
 
-  private AddType(createFcn, destroyFcn, type1: b2ShapeType, type2: b2ShapeType): void {
-    const that = this;
+  private AddType(createFcn: (allocator: any) => b2Contact, destroyFcn: (contact: b2Contact, allocator: any) => void, type1: b2ShapeType, type2: b2ShapeType): void {
+    const that: b2ContactFactory = this;
 
-    const pool = b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
+    const pool: b2Contact[] = b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
 
-    const poolCreateFcn = function (allocator) {
+    function poolCreateFcn(allocator: any): b2Contact {
       if (pool.length > 0) {
         return pool.pop();
       }
@@ -39,7 +39,7 @@ export class b2ContactFactory {
       return createFcn(allocator);
     };
 
-    const poolDestroyFcn = function (contact, allocator) {
+    function poolDestroyFcn(contact: b2Contact, allocator: any): void {
       pool.push(contact);
     };
 
@@ -69,10 +69,10 @@ export class b2ContactFactory {
   }
 
   private InitializeRegisters(): void {
-    this.m_registers = new Array(b2ShapeType.e_shapeTypeCount);
+    this.m_registers = [/*b2ShapeType.e_shapeTypeCount*/];
 
     for (let i: number = 0; i < b2ShapeType.e_shapeTypeCount; i++) {
-      this.m_registers[i] = new Array(b2ShapeType.e_shapeTypeCount);
+      this.m_registers[i] = [/*b2ShapeType.e_shapeTypeCount*/];
 
       for (let j: number = 0; j < b2ShapeType.e_shapeTypeCount; j++) {
         this.m_registers[i][j] = new b2ContactRegister();
@@ -97,15 +97,13 @@ export class b2ContactFactory {
 
     const reg: b2ContactRegister = this.m_registers[type1][type2];
 
+    const c: b2Contact = reg.createFcn(this.m_allocator);
     if (reg.primary) {
-      const c: b2Contact = reg.createFcn(this.m_allocator);
       c.Reset(fixtureA, indexA, fixtureB, indexB);
-      return c;
     } else {
-      const c: b2Contact = reg.createFcn(this.m_allocator);
       c.Reset(fixtureB, indexB, fixtureA, indexA);
-      return c;
     }
+    return c;
   }
 
   public Destroy(contact: b2Contact): void {
@@ -113,8 +111,8 @@ export class b2ContactFactory {
     const fixtureB: b2Fixture = contact.m_fixtureB;
 
     if (contact.m_manifold.pointCount > 0 &&
-      fixtureA.IsSensor() === false &&
-      fixtureB.IsSensor() === false) {
+      !fixtureA.IsSensor() &&
+      !fixtureB.IsSensor()) {
       fixtureA.GetBody().SetAwake(true);
       fixtureB.GetBody().SetAwake(true);
     }

@@ -2,12 +2,16 @@
   <head>
     <meta charset="utf-8" />
     <title>Box2D Testbed</title>
+    <style>
+    @font-face { font-family: DroidSans; src: url('Data/DroidSans.ttf'); }
+    body { font-family: DroidSans; font-size: 15px; }
+    </style>
     <script type="text/javascript" src="../../node_modules/systemjs/dist/system.src.js"></script>
     <script type="text/javascript" src="../../node_modules/typescript/lib/typescript.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
-      if (false && window.ts) {
+      if (!false && window.ts) {
         System.config({
           transpiler: "typescript",
           typescriptOptions: {},

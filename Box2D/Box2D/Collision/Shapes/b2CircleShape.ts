@@ -101,13 +101,13 @@ export class b2CircleShape extends b2Shape {
   private static ComputeAABB_s_p = new b2Vec2();
   public ComputeAABB(aabb: b2AABB, transform: b2Transform, childIndex: number): void {
     const p: b2Vec2 = b2Transform.MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
-    aabb.lowerBound.SetXY(p.x - this.m_radius, p.y - this.m_radius);
-    aabb.upperBound.SetXY(p.x + this.m_radius, p.y + this.m_radius);
+    aabb.lowerBound.Set(p.x - this.m_radius, p.y - this.m_radius);
+    aabb.upperBound.Set(p.x + this.m_radius, p.y + this.m_radius);
   }
 
   /// @see b2Shape::ComputeMass
   public ComputeMass(massData: b2MassData, density: number): void {
-    const radius_sq = b2Sq(this.m_radius);
+    const radius_sq: number = b2Sq(this.m_radius);
     massData.mass = density * b2_pi * radius_sq;
     massData.center.Copy(this.m_p);
 
@@ -116,8 +116,8 @@ export class b2CircleShape extends b2Shape {
   }
 
   public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
-    proxy.m_vertices = [];
-    proxy.m_vertices[0] = this.m_p;
+    proxy.m_vertices = proxy.m_buffer;
+    proxy.m_vertices[0].Copy(this.m_p);
     proxy.m_count = 1;
     proxy.m_radius = this.m_radius;
   }
@@ -151,6 +151,6 @@ export class b2CircleShape extends b2Shape {
   public Dump(log: (format: string, ...args: any[]) => void): void {
     log("    const shape: b2CircleShape = new b2CircleShape();\n");
     log("    shape.m_radius = %.15f;\n", this.m_radius);
-    log("    shape.m_p.SetXY(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
+    log("    shape.m_p.Set(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
   }
 }

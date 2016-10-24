@@ -31,7 +31,7 @@ import { b2EdgeShape } from "./b2EdgeShape";
 /// Connectivity information is used to create smooth collisions.
 /// WARNING: The chain will not collide properly if there are self-intersections.
 export class b2ChainShape extends b2Shape {
-  public m_vertices: b2Vec2[] = null;
+  public m_vertices: b2Vec2[];
   public m_count: number = 0;
   public m_prevVertex: b2Vec2 = new b2Vec2();
   public m_nextVertex: b2Vec2 = new b2Vec2();
@@ -46,7 +46,6 @@ export class b2ChainShape extends b2Shape {
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
   public CreateLoop(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
-    count = count || vertices.length;
     ///b2Assert(this.m_vertices === null && this.m_count === 0);
     ///b2Assert(count >= 3);
     ///for (let i: number = 1; i < count; ++i) {
@@ -73,7 +72,6 @@ export class b2ChainShape extends b2Shape {
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
   public CreateChain(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
-    count = count || vertices.length;
     ///b2Assert(this.m_vertices === null && this.m_count === 0);
     ///b2Assert(count >= 2);
     ///for (let i: number = 1; i < count; ++i) {
@@ -90,6 +88,10 @@ export class b2ChainShape extends b2Shape {
     }
     this.m_hasPrevVertex = false;
     this.m_hasNextVertex = false;
+
+  this.m_prevVertex.SetZero();
+  this.m_nextVertex.SetZero();
+
     return this;
   }
 
@@ -206,14 +208,13 @@ export class b2ChainShape extends b2Shape {
   public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
     ///b2Assert(0 <= index && index < this.m_count);
 
-    proxy.m_buffer[0].Copy(this.m_vertices[index]);
-    if (index + 1 < this.m_count) {
-      proxy.m_buffer[1].Copy(this.m_vertices[index + 1]);
-    } else {
-      proxy.m_buffer[1].Copy(this.m_vertices[0]);
-    }
-
     proxy.m_vertices = proxy.m_buffer;
+    proxy.m_vertices[0].Copy(this.m_vertices[index]);
+    if (index + 1 < this.m_count) {
+      proxy.m_vertices[1].Copy(this.m_vertices[index + 1]);
+    } else {
+      proxy.m_vertices[1].Copy(this.m_vertices[0]);
+    }
     proxy.m_count = 2;
     proxy.m_radius = this.m_radius;
   }
@@ -227,11 +228,11 @@ export class b2ChainShape extends b2Shape {
     log("    const shape: b2ChainShape = new b2ChainShape();\n");
     log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
     for (let i: number = 0; i < this.m_count; ++i) {
-      log("    vs[%d].SetXY(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+      log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
     }
     log("    shape.CreateChain(vs, %d);\n", this.m_count);
-    log("    shape.m_prevVertex.SetXY(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
-    log("    shape.m_nextVertex.SetXY(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
+    log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
+    log("    shape.m_nextVertex.Set(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
     log("    shape.m_hasPrevVertex = %s;\n", (this.m_hasPrevVertex) ? ("true") : ("false"));
     log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
   }

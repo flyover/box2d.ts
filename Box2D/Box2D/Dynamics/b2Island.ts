@@ -16,24 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_maxFloat, b2_linearSlop, b2_timeToSleep } from "../Common/b2Settings";
+import { b2_maxFloat, b2_timeToSleep } from "../Common/b2Settings";
 import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
 import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";
 import { b2_linearSleepTolerance, b2_angularSleepTolerance } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Vec2 } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Contact } from "./Contacts/b2Contact";
 import { b2ContactSolver, b2ContactSolverDef } from "./Contacts/b2ContactSolver";
 import { b2ContactVelocityConstraint } from "./Contacts/b2ContactSolver";
-import { b2Joint, b2JointDef } from "./Joints/b2Joint";
-import { b2Body, b2BodyDef } from "./b2Body";
-import { b2BodyFlag } from "./b2Body";
-import { b2BodyType } from "./b2Body";
-import { b2Position } from "./b2TimeStep";
-import { b2SolverData } from "./b2TimeStep";
-import { b2Velocity } from "./b2TimeStep";
-import { b2ContactImpulse } from "./b2WorldCallbacks";
-import { b2ContactListener } from "./b2WorldCallbacks";
+import { b2Joint } from "./Joints/b2Joint";
+import { b2Body, b2BodyType } from "./b2Body";
+import { b2TimeStep, b2Profile, b2SolverData, b2Position, b2Velocity } from "./b2TimeStep";
+import { b2ContactImpulse, b2ContactListener } from "./b2WorldCallbacks";
 
 /*
 Position Correction Notes
@@ -154,12 +149,12 @@ However, we can compute sin+cos of the same angle fast.
 */
 
 export class b2Island {
-  public m_allocator = null;
+  public m_allocator: any = null;
   public m_listener: b2ContactListener = null;
 
-  public m_bodies: b2Body[] = new Array(1024); // TODO: b2Settings
-  public m_contacts: b2Contact[] = new Array(1024); // TODO: b2Settings
-  public m_joints: b2Joint[] = new Array(1024); // TODO: b2Settings
+  public m_bodies: b2Body[] = [/*1024*/]; // TODO: b2Settings
+  public m_contacts: b2Contact[] = [/*1024*/]; // TODO: b2Settings
+  public m_joints: b2Joint[] = [/*1024*/]; // TODO: b2Settings
 
   public m_positions: b2Position[] = b2Position.MakeArray(1024); // TODO: b2Settings
   public m_velocities: b2Velocity[] = b2Velocity.MakeArray(1024); // TODO: b2Settings
@@ -172,7 +167,7 @@ export class b2Island {
   public m_contactCapacity: number = 0;
   public m_jointCapacity: number = 0;
 
-  public Initialize(bodyCapacity, contactCapacity, jointCapacity, allocator, listener) {
+  public Initialize(bodyCapacity: number, contactCapacity: number, jointCapacity: number, allocator: any, listener: b2ContactListener): void {
     this.m_bodyCapacity = bodyCapacity;
     this.m_contactCapacity = contactCapacity;
     this.m_jointCapacity = jointCapacity;
@@ -212,24 +207,24 @@ export class b2Island {
     }
   }
 
-  public Clear() {
+  public Clear(): void {
     this.m_bodyCount = 0;
     this.m_contactCount = 0;
     this.m_jointCount = 0;
   }
 
-  public AddBody(body) {
+  public AddBody(body: b2Body): void {
     ///b2Assert(this.m_bodyCount < this.m_bodyCapacity);
     body.m_islandIndex = this.m_bodyCount;
     this.m_bodies[this.m_bodyCount++] = body;
   }
 
-  public AddContact(contact) {
+  public AddContact(contact: b2Contact): void {
     ///b2Assert(this.m_contactCount < this.m_contactCapacity);
     this.m_contacts[this.m_contactCount++] = contact;
   }
 
-  public AddJoint(joint) {
+  public AddJoint(joint: b2Joint): void {
     ///b2Assert(this.m_jointCount < this.m_jointCapacity);
     this.m_joints[this.m_jointCount++] = joint;
   }
@@ -239,7 +234,7 @@ export class b2Island {
   private static s_contactSolverDef = new b2ContactSolverDef();
   private static s_contactSolver = new b2ContactSolver();
   private static s_translation = new b2Vec2();
-  public Solve(profile, step, gravity, allowSleep) {
+  public Solve(profile: b2Profile, step: b2TimeStep, gravity: b2Vec2, allowSleep: boolean): void {
     const timer: b2Timer = b2Island.s_timer.Reset();
 
     const h: number = step.dt;
@@ -248,7 +243,7 @@ export class b2Island {
     for (let i: number = 0; i < this.m_bodyCount; ++i) {
       const b: b2Body = this.m_bodies[i];
 
-      const c: b2Vec2 = this.m_positions[i].c.Copy(b.m_sweep.c);
+      /*const c: b2Vec2 =*/ this.m_positions[i].c.Copy(b.m_sweep.c);
       const a: number = b.m_sweep.a;
       const v: b2Vec2 = this.m_velocities[i].v.Copy(b.m_linearVelocity);
       let w: number = b.m_angularVelocity;
@@ -268,10 +263,10 @@ export class b2Island {
         // Solution: v(t) = v0 * exp(-c * t)
         // Time step: v(t + dt) = v0 * exp(-c * (t + dt)) = v0 * exp(-c * t) * exp(-c * dt) = v * exp(-c * dt)
         // v2 = exp(-c * dt) * v1
-        // Taylor expansion:
-        // v2 = (1.0f - c * dt) * v1
-        v.SelfMul(b2Clamp(1 - h * b.m_linearDamping, 0, 1));
-        w *= b2Clamp(1 - h * b.m_angularDamping, 0, 1);
+        // Pade approximation:
+        // v2 = v1 * 1 / (1 + c * dt)
+        v.SelfMul(1.0 / (1.0 + h * b.m_linearDamping));
+        w *= 1.0 / (1.0 + h * b.m_angularDamping);
       }
 
       // this.m_positions[i].c = c;
@@ -334,7 +329,7 @@ export class b2Island {
       // Check for large velocities
       const translation: b2Vec2 = b2Vec2.MulSV(h, v, b2Island.s_translation);
       if (b2Vec2.DotVV(translation, translation) > b2_maxTranslationSquared) {
-        const ratio: number = b2_maxTranslation / translation.GetLength();
+        const ratio: number = b2_maxTranslation / translation.Length();
         v.SelfMul(ratio);
       }
 
@@ -400,7 +395,7 @@ export class b2Island {
           continue;
         }
 
-        if ((b.m_flags & b2BodyFlag.e_autoSleepFlag) === 0 ||
+        if (!b.m_autoSleepFlag ||
           b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
           b2Vec2.DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
           b.m_sleepTime = 0;
@@ -420,7 +415,7 @@ export class b2Island {
     }
   }
 
-  public SolveTOI(subStep, toiIndexA, toiIndexB) {
+  public SolveTOI(subStep: b2TimeStep, toiIndexA: number, toiIndexB: number): void {
     ///b2Assert(toiIndexA < this.m_bodyCount);
     ///b2Assert(toiIndexB < this.m_bodyCount);
 
@@ -513,7 +508,7 @@ export class b2Island {
       // Check for large velocities
       const translation: b2Vec2 = b2Vec2.MulSV(h, v, b2Island.s_translation);
       if (b2Vec2.DotVV(translation, translation) > b2_maxTranslationSquared) {
-        const ratio: number = b2_maxTranslation / translation.GetLength();
+        const ratio: number = b2_maxTranslation / translation.Length();
         v.SelfMul(ratio);
       }
 
@@ -545,7 +540,7 @@ export class b2Island {
   }
 
   private static s_impulse = new b2ContactImpulse();
-  public Report(constraints) {
+  public Report(constraints: b2ContactVelocityConstraint[]): void {
     if (this.m_listener === null) {
       return;
     }

@@ -22,33 +22,32 @@ import * as testbed from "../Testbed";
 export class SphereStack extends testbed.Test {
   public static e_count: number = 10;
 
-  public m_bodies: box2d.b2Body[] = null;
+  public m_bodies: box2d.b2Body[] = [];
 
-  constructor(canvas: HTMLCanvasElement, settings: testbed.Settings) {
-    super(canvas, settings); // base class constructor
+  constructor() {
+    super();
 
-    this.m_bodies = new Array(SphereStack.e_count);
     {
       const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
       const ground: box2d.b2Body = this.m_world.CreateBody(bd);
 
-      const edge_shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
-      edge_shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
-      ground.CreateFixture2(edge_shape, 0.0);
+      const shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
+      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      ground.CreateFixture(shape, 0.0);
     }
 
     {
-      const circle_shape: box2d.b2CircleShape = new box2d.b2CircleShape();
-      circle_shape.m_radius = 1.0;
+      const shape: box2d.b2CircleShape = new box2d.b2CircleShape();
+      shape.m_radius = 1.0;
 
       for (let i: number = 0; i < SphereStack.e_count; ++i) {
         const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
-        bd.position.SetXY(0.0, 4.0 + 3.0 * i);
+        bd.position.Set(0.0, 4.0 + 3.0 * i);
 
         this.m_bodies[i] = this.m_world.CreateBody(bd);
 
-        this.m_bodies[i].CreateFixture2(circle_shape, 1.0);
+        this.m_bodies[i].CreateFixture(shape, 1.0);
 
         this.m_bodies[i].SetLinearVelocity(new box2d.b2Vec2(0.0, -50.0));
       }
@@ -71,9 +70,7 @@ export class SphereStack extends testbed.Test {
     // printf("\n");
   }
 
-  public static Create(canvas: HTMLCanvasElement, settings: testbed.Settings): testbed.Test {
-    return new SphereStack(canvas, settings);
+  public static Create(): testbed.Test {
+    return new SphereStack();
   }
 }
-
-///} // namespace box2d.Testbed

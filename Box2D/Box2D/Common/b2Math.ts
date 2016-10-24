@@ -146,7 +146,7 @@ export class b2Vec2 {
     return this;
   }
 
-  public SetXY(x: number, y: number): b2Vec2 {
+  public Set(x: number, y: number): b2Vec2 {
     this.x = x;
     this.y = y;
     return this;
@@ -209,18 +209,18 @@ export class b2Vec2 {
     return this.x * v.y - this.y * v.x;
   }
 
-  public GetLength(): number {
+  public Length(): number {
     const x: number = this.x, y: number = this.y;
     return Math.sqrt(x * x + y * y);
   }
 
-  public GetLengthSquared(): number {
+  public GetLength(): number {
     const x: number = this.x, y: number = this.y;
     return (x * x + y * y);
   }
 
   public Normalize(): number {
-    const length: number = this.GetLength();
+    const length: number = this.Length();
     if (length >= b2_epsilon) {
       const inv_length: number = 1 / length;
       this.x *= inv_length;
@@ -230,7 +230,7 @@ export class b2Vec2 {
   }
 
   public SelfNormalize(): b2Vec2 {
-    const length: number = this.GetLength();
+    const length: number = this.Length();
     if (length >= b2_epsilon) {
       const inv_length: number = 1 / length;
       this.x *= inv_length;
@@ -555,13 +555,13 @@ export class b2Mat22 {
     return new b2Mat22().SetSSSS(r1c1, r1c2, r2c1, r2c2);
   }
 
-  public static FromAngleRadians(radians: number): b2Mat22 {
-    return new b2Mat22().SetAngleRadians(radians);
+  public static FromAngle(radians: number): b2Mat22 {
+    return new b2Mat22().SetAngle(radians);
   }
 
   public SetSSSS(r1c1: number, r1c2: number, r2c1: number, r2c2: number): b2Mat22 {
-    this.ex.SetXY(r1c1, r2c1);
-    this.ey.SetXY(r1c2, r2c2);
+    this.ex.Set(r1c1, r2c1);
+    this.ey.Set(r1c2, r2c2);
     return this;
   }
 
@@ -571,11 +571,11 @@ export class b2Mat22 {
     return this;
   }
 
-  public SetAngleRadians(radians: number): b2Mat22 {
+  public SetAngle(radians: number): b2Mat22 {
     const c: number = Math.cos(radians);
     const s: number = Math.sin(radians);
-    this.ex.SetXY( c, s);
-    this.ey.SetXY(-s, c);
+    this.ex.Set( c, s);
+    this.ey.Set(-s, c);
     return this;
   }
 
@@ -587,8 +587,8 @@ export class b2Mat22 {
   }
 
   public SetIdentity(): b2Mat22 {
-    this.ex.SetXY(1, 0);
-    this.ey.SetXY(0, 1);
+    this.ex.Set(1, 0);
+    this.ey.Set(0, 1);
     return this;
   }
 
@@ -598,7 +598,7 @@ export class b2Mat22 {
     return this;
   }
 
-  public GetAngleRadians(): number {
+  public GetAngle(): number {
     return Math.atan2(this.ex.y, this.ex.x);
   }
 
@@ -883,7 +883,7 @@ export class b2Rot {
     return this;
   }
 
-  public SetAngleRadians(angle: number): b2Rot {
+  public SetAngle(angle: number): b2Rot {
     this.s = Math.sin(angle);
     this.c = Math.cos(angle);
     return this;
@@ -895,7 +895,7 @@ export class b2Rot {
     return this;
   }
 
-  public GetAngleRadians(): number {
+  public GetAngle(): number {
     return Math.atan2(this.s, this.c);
   }
 
@@ -988,9 +988,9 @@ export class b2Transform {
     return this;
   }
 
-  public SetPositionAngleRadians(pos: b2Vec2, a: number): b2Transform {
+  public SetPositionAngle(pos: b2Vec2, a: number): b2Transform {
     this.p.Copy(pos);
-    this.q.SetAngleRadians(a);
+    this.q.SetAngle(a);
     return this;
   }
 
@@ -1000,7 +1000,7 @@ export class b2Transform {
   }
 
   public SetPositionXY(x: number, y: number): b2Transform {
-    this.p.SetXY(x, y);
+    this.p.Set(x, y);
     return this;
   }
 
@@ -1009,8 +1009,8 @@ export class b2Transform {
     return this;
   }
 
-  public SetRotationAngleRadians(radians: number): b2Transform {
-    this.q.SetAngleRadians(radians);
+  public SetRotationAngle(radians: number): b2Transform {
+    this.q.SetAngle(radians);
     return this;
   }
 
@@ -1022,12 +1022,12 @@ export class b2Transform {
     return this.q;
   }
 
-  public GetRotationAngleRadians(): number {
-    return this.q.GetAngleRadians();
+  public GetRotationAngle(): number {
+    return this.q.GetAngle();
   }
 
-  public GetAngleRadians(): number {
-    return this.q.GetAngleRadians();
+  public GetAngle(): number {
+    return this.q.GetAngle();
   }
 
   public static MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulXV(T, v, out); }
@@ -1107,7 +1107,7 @@ export class b2Sweep {
     xf.p.x = one_minus_beta * this.c0.x + beta * this.c.x;
     xf.p.y = one_minus_beta * this.c0.y + beta * this.c.y;
     const angle: number = one_minus_beta * this.a0 + beta * this.a;
-    xf.q.SetAngleRadians(angle);
+    xf.q.SetAngle(angle);
 
     xf.p.SelfSub(b2MulRV(xf.q, this.localCenter, b2Vec2.s_t0));
     return xf;

@@ -24,12 +24,12 @@ import { b2Shape } from "./Shapes/b2Shape";
 /// It encapsulates any shape.
 export class b2DistanceProxy {
   public m_buffer: b2Vec2[] = b2Vec2.MakeArray(2);
-  public m_vertices: b2Vec2[] = null;
+  public m_vertices: b2Vec2[] = this.m_buffer;
   public m_count: number = 0;
   public m_radius: number = 0;
 
   public Reset(): b2DistanceProxy {
-    this.m_vertices = null;
+    this.m_vertices = this.m_buffer;
     this.m_count = 0;
     this.m_radius = 0;
     return this;
@@ -150,7 +150,7 @@ export class b2Simplex {
   public m_v1: b2SimplexVertex = new b2SimplexVertex();
   public m_v2: b2SimplexVertex = new b2SimplexVertex();
   public m_v3: b2SimplexVertex = new b2SimplexVertex();
-  public m_vertices: b2SimplexVertex[] = new Array(3);
+  public m_vertices: b2SimplexVertex[] = [/*3*/];
   public m_count: number = 0;
 
   constructor() {
@@ -246,7 +246,7 @@ export class b2Simplex {
       return out.Copy(this.m_v1.w);
 
     case 2:
-      return out.SetXY(
+      return out.Set(
         this.m_v1.a * this.m_v1.w.x + this.m_v2.a * this.m_v2.w.x,
         this.m_v1.a * this.m_v1.w.y + this.m_v2.a * this.m_v2.w.y);
 
@@ -457,11 +457,11 @@ const b2Distance_s_supportB: b2Vec2 = new b2Vec2();
 export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void {
   ++b2_gjkCalls;
 
-  const proxyA = input.proxyA;
-  const proxyB = input.proxyB;
+  const proxyA: b2DistanceProxy = input.proxyA;
+  const proxyB: b2DistanceProxy = input.proxyB;
 
-  const transformA = input.transformA;
-  const transformB = input.transformB;
+  const transformA: b2Transform = input.transformA;
+  const transformB: b2Transform = input.transformB;
 
   // Initialize the simplex.
   const simplex: b2Simplex = b2Distance_s_simplex;
@@ -514,7 +514,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
 
     // Compute closest point.
     const p: b2Vec2 = simplex.GetClosestPoint(b2Distance_s_p);
-    distanceSqr2 = p.GetLengthSquared();
+    distanceSqr2 = p.GetLength();
 
     // Ensure progress
     /*
@@ -529,7 +529,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     const d: b2Vec2 = simplex.GetSearchDirection(b2Distance_s_d);
 
     // Ensure the search direction is numerically fit.
-    if (d.GetLengthSquared() < b2_epsilon_sq) {
+    if (d.GetLength() < b2_epsilon_sq) {
       // The origin is probably contained by a line segment
       // or triangle. Thus the shapes are overlapped.
 

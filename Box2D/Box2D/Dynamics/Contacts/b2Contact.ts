@@ -17,15 +17,13 @@
 */
 
 import { b2_linearSlop } from "../../Common/b2Settings";
-import { b2Sqrt, b2Vec2, b2Transform, b2Sweep } from "../../Common/b2Math";
-import { b2Manifold } from "../../Collision/b2Collision";
-import { b2WorldManifold } from "../../Collision/b2Collision";
+import { b2Sqrt, b2Transform, b2Sweep } from "../../Common/b2Math";
+import { b2Manifold, b2WorldManifold, b2ManifoldPoint, b2ContactID } from "../../Collision/b2Collision";
 import { b2TestOverlapShape } from "../../Collision/b2Collision";
-import { b2TOIInput } from "../../Collision/b2TimeOfImpact";
-import { b2TOIOutput } from "../../Collision/b2TimeOfImpact";
-import { b2TimeOfImpact } from "../../Collision/b2TimeOfImpact";
-import { b2Body, b2BodyDef } from "../b2Body";
-import { b2Fixture, b2FixtureDef } from "../b2Fixture";
+import { b2TimeOfImpact, b2TOIInput, b2TOIOutput } from "../../Collision/b2TimeOfImpact";
+import { b2Body } from "../b2Body";
+import { b2Fixture } from "../b2Fixture";
+import { b2Shape } from "../../Collision/Shapes/b2Shape";
 import { b2ContactListener } from "../b2WorldCallbacks";
 
 /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
@@ -41,33 +39,28 @@ export function b2MixRestitution(restitution1: number, restitution2: number): nu
 }
 
 export class b2ContactEdge {
-  public other: b2Body = null; ///< provides quick access to the other body attached.
-  public contact: b2Contact = null; ///< the contact
-  public prev: b2ContactEdge = null; ///< the previous contact edge in the body's contact list
-  public next: b2ContactEdge = null; ///< the next contact edge in the body's contact list
-}
-
-export const enum b2ContactFlag {
-  e_none = 0,
-  e_islandFlag = 0x0001, /// Used when crawling contact graph when forming islands.
-  e_touchingFlag = 0x0002, /// Set when the shapes are touching.
-  e_enabledFlag = 0x0004, /// This contact can be disabled (by user)
-  e_filterFlag = 0x0008, /// This contact needs filtering because a fixture filter was changed.
-  e_bulletHitFlag = 0x0010, /// This bullet contact had a TOI event
-  e_toiFlag = 0x0020  /// This contact has a valid TOI in m_toi
+  public other: b2Body|null = null; ///< provides quick access to the other body attached.
+  public contact: b2Contact|null = null; ///< the contact
+  public prev: b2ContactEdge|null = null; ///< the previous contact edge in the body's contact list
+  public next: b2ContactEdge|null = null; ///< the next contact edge in the body's contact list
 }
 
 export class b2Contact {
-  public m_flags: b2ContactFlag = b2ContactFlag.e_none;
+  public m_islandFlag: boolean = false; /// Used when crawling contact graph when forming islands.
+  public m_touchingFlag: boolean = false; /// Set when the shapes are touching.
+  public m_enabledFlag: boolean = false; /// This contact can be disabled (by user)
+  public m_filterFlag: boolean = false; /// This contact needs filtering because a fixture filter was changed.
+  public m_bulletHitFlag: boolean = false; /// This bullet contact had a TOI event
+  public m_toiFlag: boolean = false; /// This contact has a valid TOI in m_toi
 
-  public m_prev: b2Contact = null;
-  public m_next: b2Contact = null;
+  public m_prev: b2Contact|null = null;
+  public m_next: b2Contact|null = null;
 
   public m_nodeA: b2ContactEdge = new b2ContactEdge();
   public m_nodeB: b2ContactEdge = new b2ContactEdge();
 
-  public m_fixtureA: b2Fixture = null;
-  public m_fixtureB: b2Fixture = null;
+  public m_fixtureA: b2Fixture|null = null;
+  public m_fixtureB: b2Fixture|null = null;
 
   public m_indexA: number = 0;
   public m_indexB: number = 0;
@@ -89,34 +82,30 @@ export class b2Contact {
   }
 
   public GetWorldManifold(worldManifold: b2WorldManifold): void {
-    const bodyA = this.m_fixtureA.GetBody();
-    const bodyB = this.m_fixtureB.GetBody();
-    const shapeA = this.m_fixtureA.GetShape();
-    const shapeB = this.m_fixtureB.GetShape();
+    const bodyA: b2Body = this.m_fixtureA.GetBody();
+    const bodyB: b2Body = this.m_fixtureB.GetBody();
+    const shapeA: b2Shape = this.m_fixtureA.GetShape();
+    const shapeB: b2Shape = this.m_fixtureB.GetShape();
     worldManifold.Initialize(this.m_manifold, bodyA.GetTransform(), shapeA.m_radius, bodyB.GetTransform(), shapeB.m_radius);
   }
 
   public IsTouching(): boolean {
-    return (this.m_flags & b2ContactFlag.e_touchingFlag) === b2ContactFlag.e_touchingFlag;
+    return this.m_touchingFlag;
   }
 
   public SetEnabled(flag: boolean): void {
-    if (flag) {
-      this.m_flags |= b2ContactFlag.e_enabledFlag;
-    } else {
-      this.m_flags &= ~b2ContactFlag.e_enabledFlag;
-    }
+    this.m_enabledFlag = flag;
   }
 
   public IsEnabled(): boolean {
-    return (this.m_flags & b2ContactFlag.e_enabledFlag) === b2ContactFlag.e_enabledFlag;
+    return this.m_enabledFlag;
   }
 
-  public GetNext(): b2Contact {
+  public GetNext(): b2Contact|null {
     return this.m_next;
   }
 
-  public GetFixtureA(): b2Fixture {
+  public GetFixtureA(): b2Fixture|null {
     return this.m_fixtureA;
   }
 
@@ -124,7 +113,7 @@ export class b2Contact {
     return this.m_indexA;
   }
 
-  public GetFixtureB(): b2Fixture {
+  public GetFixtureB(): b2Fixture|null {
     return this.m_fixtureB;
   }
 
@@ -136,7 +125,7 @@ export class b2Contact {
   }
 
   public FlagForFiltering(): void {
-    this.m_flags |= b2ContactFlag.e_filterFlag;
+    this.m_filterFlag = true;
   }
 
   public SetFriction(friction: number): void {
@@ -172,7 +161,12 @@ export class b2Contact {
   }
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
-    this.m_flags = b2ContactFlag.e_enabledFlag;
+    this.m_islandFlag = false;
+    this.m_touchingFlag = false;
+    this.m_enabledFlag = true;
+    this.m_filterFlag = false;
+    this.m_bulletHitFlag = false;
+    this.m_toiFlag = false;
 
     this.m_fixtureA = fixtureA;
     this.m_fixtureB = fixtureB;
@@ -202,54 +196,54 @@ export class b2Contact {
   }
 
   public Update(listener: b2ContactListener): void {
-    const tManifold = this.m_oldManifold;
+    const tManifold: b2Manifold = this.m_oldManifold;
     this.m_oldManifold = this.m_manifold;
     this.m_manifold = tManifold;
 
     // Re-enable this contact.
-    this.m_flags |= b2ContactFlag.e_enabledFlag;
+    this.m_enabledFlag = true;
 
-    let touching = false;
-    const wasTouching = (this.m_flags & b2ContactFlag.e_touchingFlag) === b2ContactFlag.e_touchingFlag;
+    let touching: boolean = false;
+    const wasTouching: boolean = this.m_touchingFlag;
 
-    const sensorA = this.m_fixtureA.IsSensor();
-    const sensorB = this.m_fixtureB.IsSensor();
-    const sensor = sensorA || sensorB;
+    const sensorA: boolean = this.m_fixtureA.IsSensor();
+    const sensorB: boolean = this.m_fixtureB.IsSensor();
+    const sensor: boolean = sensorA || sensorB;
 
-    const bodyA = this.m_fixtureA.GetBody();
-    const bodyB = this.m_fixtureB.GetBody();
-    const xfA = bodyA.GetTransform();
-    const xfB = bodyB.GetTransform();
+    const bodyA: b2Body = this.m_fixtureA.GetBody();
+    const bodyB: b2Body = this.m_fixtureB.GetBody();
+    const xfA: b2Transform = bodyA.GetTransform();
+    const xfB: b2Transform = bodyB.GetTransform();
 
-    // const aabbOverlap = b2TestOverlapAABB(this.m_fixtureA.GetAABB(0), this.m_fixtureB.GetAABB(0));
+    ///const aabbOverlap = b2TestOverlapAABB(this.m_fixtureA.GetAABB(0), this.m_fixtureB.GetAABB(0));
 
     // Is this contact a sensor?
     if (sensor) {
-      // if (aabbOverlap)
-      // {
-        const shapeA = this.m_fixtureA.GetShape();
-        const shapeB = this.m_fixtureB.GetShape();
+      ///if (aabbOverlap)
+      ///{
+        const shapeA: b2Shape = this.m_fixtureA.GetShape();
+        const shapeB: b2Shape = this.m_fixtureB.GetShape();
         touching = b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
-      // }
+      ///}
 
       // Sensors don't generate manifolds.
       this.m_manifold.pointCount = 0;
     } else {
-      // if (aabbOverlap)
-      // {
+      ///if (aabbOverlap)
+      ///{
         this.Evaluate(this.m_manifold, xfA, xfB);
         touching = this.m_manifold.pointCount > 0;
 
         // Match old contact ids to new contact ids and copy the
         // stored impulses to warm start the solver.
         for (let i: number = 0; i < this.m_manifold.pointCount; ++i) {
-          const mp2 = this.m_manifold.points[i];
+          const mp2: b2ManifoldPoint = this.m_manifold.points[i];
           mp2.normalImpulse = 0;
           mp2.tangentImpulse = 0;
-          const id2 = mp2.id;
+          const id2: b2ContactID = mp2.id;
 
           for (let j: number = 0; j < this.m_oldManifold.pointCount; ++j) {
-            const mp1 = this.m_oldManifold.points[j];
+            const mp1: b2ManifoldPoint = this.m_oldManifold.points[j];
 
             if (mp1.id.key === id2.key) {
               mp2.normalImpulse = mp1.normalImpulse;
@@ -258,11 +252,11 @@ export class b2Contact {
             }
           }
         }
-      // }
-      // else
-      // {
-      //   this.m_manifold.pointCount = 0;
-      // }
+      ///}
+      ///else
+      ///{
+      ///  this.m_manifold.pointCount = 0;
+      ///}
 
       if (touching !== wasTouching) {
         bodyA.SetAwake(true);
@@ -270,21 +264,17 @@ export class b2Contact {
       }
     }
 
-    if (touching) {
-      this.m_flags |= b2ContactFlag.e_touchingFlag;
-    } else {
-      this.m_flags &= ~b2ContactFlag.e_touchingFlag;
-    }
+    this.m_touchingFlag = touching;
 
-    if (wasTouching === false && touching === true && listener) {
+    if (!wasTouching && touching && listener) {
       listener.BeginContact(this);
     }
 
-    if (wasTouching === true && touching === false && listener) {
+    if (wasTouching && !touching && listener) {
       listener.EndContact(this);
     }
 
-    if (sensor === false && touching && listener) {
+    if (!sensor && touching && listener) {
       listener.PreSolve(this, this.m_oldManifold);
     }
   }
@@ -292,14 +282,14 @@ export class b2Contact {
   private static ComputeTOI_s_input = new b2TOIInput();
   private static ComputeTOI_s_output = new b2TOIOutput();
   public ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number {
-    const input = b2Contact.ComputeTOI_s_input;
+    const input: b2TOIInput = b2Contact.ComputeTOI_s_input;
     input.proxyA.SetShape(this.m_fixtureA.GetShape(), this.m_indexA);
     input.proxyB.SetShape(this.m_fixtureB.GetShape(), this.m_indexB);
     input.sweepA.Copy(sweepA);
     input.sweepB.Copy(sweepB);
     input.tMax = b2_linearSlop;
 
-    const output = b2Contact.ComputeTOI_s_output;
+    const output: b2TOIOutput = b2Contact.ComputeTOI_s_output;
 
     b2TimeOfImpact(output, input);
 
