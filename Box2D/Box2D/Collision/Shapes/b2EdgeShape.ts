@@ -17,7 +17,7 @@
 */
 
 import { b2_polygonRadius } from "../../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -130,6 +130,7 @@ export class b2EdgeShape extends b2Shape {
     }
 
     output.fraction = t;
+    b2Rot.MulRV(xf.q, output.normal, output.normal);
     if (numerator > 0) {
       output.normal.SelfNeg();
     }
