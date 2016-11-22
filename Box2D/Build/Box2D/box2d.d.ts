@@ -95,7 +95,7 @@ declare module "Common/b2Math" {
         Dot(v: b2Vec2): number;
         Cross(v: b2Vec2): number;
         Length(): number;
-        GetLength(): number;
+        LengthSquared(): number;
         Normalize(): number;
         SelfNormalize(): b2Vec2;
         SelfRotate(radians: number): b2Vec2;

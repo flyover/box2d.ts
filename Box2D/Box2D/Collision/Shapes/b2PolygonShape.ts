@@ -141,7 +141,7 @@ export class b2PolygonShape extends b2Shape {
         }
 
         // Collinearity check
-        if (c === 0 && v.GetLength() > r.GetLength()) {
+        if (c === 0 && v.LengthSquared() > r.LengthSquared()) {
           ie = j;
         }
       }
@@ -166,7 +166,7 @@ export class b2PolygonShape extends b2Shape {
       const vertexi1: b2Vec2 = this.m_vertices[i];
       const vertexi2: b2Vec2 = this.m_vertices[(i + 1) % m];
       const edge: b2Vec2 = b2Vec2.SubVV(vertexi2, vertexi1, b2Vec2.s_t0); // edge uses s_t0
-      ///b2Assert(edge.GetLength() > b2_epsilon_sq);
+      ///b2Assert(edge.LengthSquared() > b2_epsilon_sq);
       b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
     }
 

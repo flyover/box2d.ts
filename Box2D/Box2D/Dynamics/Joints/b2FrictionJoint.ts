@@ -215,7 +215,7 @@ export class b2FrictionJoint extends b2Joint {
 
       const maxImpulse: number = h * this.m_maxForce;
 
-      if (this.m_linearImpulse.GetLength() > maxImpulse * maxImpulse) {
+      if (this.m_linearImpulse.LengthSquared() > maxImpulse * maxImpulse) {
         this.m_linearImpulse.Normalize();
         this.m_linearImpulse.SelfMul(maxImpulse);
       }

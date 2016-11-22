@@ -165,7 +165,7 @@ export class b2AreaJoint extends b2Joint {
       const body_v: b2Vec2 = data.velocities[body.m_islandIndex].v;
       const delta: b2Vec2 = this.m_deltas[i];
 
-      dotMassSum += delta.GetLength() / body.GetMass();
+      dotMassSum += delta.LengthSquared() / body.GetMass();
       crossMassSum += b2Vec2.CrossVV(body_v, delta);
     }
 
@@ -223,7 +223,7 @@ export class b2AreaJoint extends b2Joint {
       const delta: b2Vec2 = b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
       delta.SelfMul(toExtrude);
 
-      const norm_sq: number = delta.GetLength();
+      const norm_sq: number = delta.LengthSquared();
       if (norm_sq > b2Sq(b2_maxLinearCorrection)) {
         delta.SelfMul(b2_maxLinearCorrection / b2Sqrt(norm_sq));
       }

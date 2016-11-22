@@ -514,7 +514,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
 
     // Compute closest point.
     const p: b2Vec2 = simplex.GetClosestPoint(b2Distance_s_p);
-    distanceSqr2 = p.GetLength();
+    distanceSqr2 = p.LengthSquared();
 
     // Ensure progress
     /*
@@ -529,7 +529,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     const d: b2Vec2 = simplex.GetSearchDirection(b2Distance_s_d);
 
     // Ensure the search direction is numerically fit.
-    if (d.GetLength() < b2_epsilon_sq) {
+    if (d.LengthSquared() < b2_epsilon_sq) {
       // The origin is probably contained by a line segment
       // or triangle. Thus the shapes are overlapped.
 

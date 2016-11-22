@@ -104,7 +104,7 @@ export class b2DynamicTree {
     const p1: b2Vec2 = input.p1;
     const p2: b2Vec2 = input.p2;
     const r: b2Vec2 = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
-    ///b2Assert(r.GetLength() > 0);
+    ///b2Assert(r.LengthSquared() > 0);
     r.Normalize();
 
     // v is perpendicular to the segment.

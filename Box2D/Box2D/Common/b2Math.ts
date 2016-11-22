@@ -214,7 +214,7 @@ export class b2Vec2 {
     return Math.sqrt(x * x + y * y);
   }
 
-  public GetLength(): number {
+  public LengthSquared(): number {
     const x: number = this.x, y: number = this.y;
     return (x * x + y * y);
   }

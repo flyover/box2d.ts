@@ -216,8 +216,8 @@ export class b2Rope {
       const d1: b2Vec2 = b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
       const d2: b2Vec2 = b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
 
-      const L1sqr: number = d1.GetLength();
-      const L2sqr: number = d2.GetLength();
+      const L1sqr: number = d1.LengthSquared();
+      const L2sqr: number = d2.LengthSquared();
 
       if (L1sqr * L2sqr === 0) {
         continue;

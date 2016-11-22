@@ -230,7 +230,7 @@ export class b2MouseJoint extends b2Joint {
     // m_impulse += impulse;
     this.m_impulse.SelfAdd(impulse);
     const maxImpulse: number = data.step.dt * this.m_maxForce;
-    if (this.m_impulse.GetLength() > maxImpulse * maxImpulse) {
+    if (this.m_impulse.LengthSquared() > maxImpulse * maxImpulse) {
       this.m_impulse.SelfMul(maxImpulse / this.m_impulse.Length());
     }
     // impulse = m_impulse - oldImpulse;
