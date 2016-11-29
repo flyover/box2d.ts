@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Clamp, b2Vec2, b2Transform } from "./b2Math";
+import { b2Vec2, b2Transform } from "./b2Math";
 
 /// Color for debug drawing. Each value has the range [0,1].
 export class b2Color {
@@ -24,29 +24,35 @@ export class b2Color {
   public static GREEN: b2Color = new b2Color(0, 1, 0);
   public static BLUE: b2Color = new b2Color(0, 0, 1);
 
-  private _r: number = 0x7f;
-  private _g: number = 0x7f;
-  private _b: number = 0x7f;
+  public r: number = 0.5;
+  public g: number = 0.5;
+  public b: number = 0.5;
+  public a: number = 1.0;
 
-  constructor(rr: number, gg: number, bb: number) {
-    this._r = b2Clamp(Math.round(rr * 255), 0, 255);
-    this._g = b2Clamp(Math.round(gg * 255), 0, 255);
-    this._b = b2Clamp(Math.round(bb * 255), 0, 255);
+  constructor(rr: number, gg: number, bb: number, aa: number = 1.0) {
+    this.r = rr;
+    this.g = gg;
+    this.b = bb;
+    this.a = aa;
   }
 
   public SetRGB(rr: number, gg: number, bb: number): b2Color {
-    this._r = b2Clamp(Math.round(rr * 255), 0, 255);
-    this._g = b2Clamp(Math.round(gg * 255), 0, 255);
-    this._b = b2Clamp(Math.round(bb * 255), 0, 255);
+    this.r = rr;
+    this.g = gg;
+    this.b = bb;
     return this;
   }
 
-  public MakeStyleString(alpha: number = 1): string {
-    return b2Color.MakeStyleString(this._r, this._g, this._b, alpha);
+  public MakeStyleString(alpha: number = this.a): string {
+    const r = Math.round(Math.max(0, Math.min(255, this.r * 255)));
+    const g = Math.round(Math.max(0, Math.min(255, this.g * 255)));
+    const b = Math.round(Math.max(0, Math.min(255, this.b * 255)));
+    const a = Math.max(0, Math.min(1, alpha));
+    return b2Color.MakeStyleString(r, g, b, a);
   }
 
-  public static MakeStyleString(r: number, g: number, b: number, a: number = 1): string {
-    if (a < 1) {
+  public static MakeStyleString(r: number, g: number, b: number, a: number = 1.0): string {
+    if (a < 1.0) {
       return "rgba(" + r + "," + g + "," + b + "," + a + ")";
     } else {
       return "rgb(" + r + "," + g + "," + b + ")";
