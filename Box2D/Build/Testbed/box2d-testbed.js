@@ -22612,7 +22612,7 @@ System.register("Testbed/Framework/Test", ["Box2D/Box2D", "Testbed/Framework/Deb
     "use strict";
     var __moduleName = context_61 && context_61.id;
     var box2d, DebugDraw_1, ParticleParameter_1, Main_1;
-    var DRAW_STRING_NEW_LINE, Settings, TestEntry, DestructionListener, ContactPoint, Test;
+    var DRAW_STRING_NEW_LINE, Settings, TestEntry, DestructionListener, ContactPoint, QueryCallback2, Test;
     function RandomFloat(lo = -1, hi = 1) {
         let r = Math.random();
         r = (hi - lo) * r + lo;
@@ -22715,6 +22715,35 @@ System.register("Testbed/Framework/Test", ["Box2D/Box2D", "Testbed/Framework/Deb
                 }
             };
             exports_61("ContactPoint", ContactPoint);
+            ///#if B2_ENABLE_PARTICLE
+            QueryCallback2 = class QueryCallback2 extends box2d.b2QueryCallback {
+                constructor(particleSystem, shape, velocity) {
+                    super();
+                    this.m_particleSystem = particleSystem;
+                    this.m_shape = shape;
+                    this.m_velocity = velocity;
+                }
+                ReportFixture(fixture) {
+                    return false;
+                }
+                /**
+                 * @return {boolean}
+                 * @param {box2d.b2ParticleSystem} particleSystem
+                 * @param {number} index
+                 */
+                ReportParticle(particleSystem, index) {
+                    if (particleSystem !== this.m_particleSystem)
+                        return false;
+                    const xf = box2d.b2Transform.IDENTITY;
+                    const p = this.m_particleSystem.GetPositionBuffer()[index];
+                    if (this.m_shape.TestPoint(xf, p)) {
+                        const v = this.m_particleSystem.GetVelocityBuffer()[index];
+                        v.Copy(this.m_velocity);
+                    }
+                    return true;
+                }
+            };
+            ///#endif
             Test = class Test extends box2d.b2ContactListener {
                 ///#endif
                 constructor() {
@@ -23056,10 +23085,7 @@ System.register("Testbed/Framework/Test", ["Box2D/Box2D", "Testbed/Framework/Deb
                         shape.m_p.Copy(this.m_mouseTracerPosition);
                         shape.m_radius = 2 * this.GetDefaultViewZoom();
                         ///QueryCallback2 callback(m_particleSystem, &shape, m_mouseTracerVelocity);
-                        ///let callback = new box2d.Testbed.Test.QueryCallback2(this.m_particleSystem, shape, this.m_mouseTracerVelocity);
-                        let callback = function (fixture) {
-                            return false; // TODO
-                        };
+                        let callback = new QueryCallback2(this.m_particleSystem, shape, this.m_mouseTracerVelocity);
                         let aabb = new box2d.b2AABB();
                         let xf = new box2d.b2Transform();
                         xf.SetIdentity();
