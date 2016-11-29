@@ -315,6 +315,7 @@ export class b2Vec2 {
   public static AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2AddVV(a, b, out); }
   public static SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2SubVV(a, b, out); }
   public static MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulSV(s, v, out); }
+  public static MulVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 { return b2MulVS(v, s, out); }
   public static AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2AddVMulSV(a, s, b, out); }
   public static SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2SubVMulSV(a, s, b, out); }
   public static AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2AddVCrossSV(a, s, v, out); }
@@ -402,6 +403,7 @@ function b2AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + b.x;
 function b2SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
 
 function b2MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = v.x * s; out.y = v.y * s; return out; }
+function b2MulVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 { out.x = v.x * s; out.y = v.y * s; return out; }
 
 function b2AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
 function b2SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }

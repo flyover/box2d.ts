@@ -18,14 +18,12 @@
 
 ///#if B2_ENABLE_PARTICLE
 
-///goog.provide('b2StackQueue');
-
 import { b2MakeArray } from "../Common/b2Settings";
 
 function b2Assert(condition: boolean) {}
 
 export class b2StackQueue<T> {
-  m_buffer: T[] = null;
+  m_buffer: T[];
   m_front: number = 0;
   m_back: number = 0;
   m_capacity: number = 0;
@@ -57,7 +55,7 @@ export class b2StackQueue<T> {
   }
   Pop(): void {
     b2Assert(this.m_front < this.m_back);
-    this.m_buffer[this.m_front] = null;
+    delete this.m_buffer[this.m_front];
     this.m_front++;
   }
   Empty(): boolean {

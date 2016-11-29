@@ -22,6 +22,16 @@ declare module "Box2D/Common/b2Settings" {
     export const b2_maxRotationSquared: number;
     export const b2_baumgarte: number;
     export const b2_toiBaumgarte: number;
+    export const b2_invalidParticleIndex: number;
+    export const b2_maxParticleIndex: number;
+    export const b2_particleStride: number;
+    export const b2_minParticleWeight: number;
+    export const b2_maxParticlePressure: number;
+    export const b2_maxParticleForce: number;
+    export const b2_maxTriadDistance: number;
+    export const b2_maxTriadDistanceSquared: number;
+    export const b2_minParticleSystemBufferCapacity: number;
+    export const b2_barrierCollisionTime: number;
     export const b2_timeToSleep: number;
     export const b2_linearSleepTolerance: number;
     export const b2_angularSleepTolerance: number;
@@ -122,6 +132,7 @@ declare module "Box2D/Common/b2Math" {
         static AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
         static SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2;
         static MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
+        static MulVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2;
         static AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2;
         static SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2;
         static AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2;
@@ -254,85 +265,6 @@ declare module "Box2D/Common/b2Math" {
         Normalize(): void;
     }
 }
-declare module "Box2D/Common/b2Draw" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    export class b2Color {
-        static RED: b2Color;
-        static GREEN: b2Color;
-        static BLUE: b2Color;
-        private _r;
-        private _g;
-        private _b;
-        constructor(rr: number, gg: number, bb: number);
-        SetRGB(rr: number, gg: number, bb: number): b2Color;
-        MakeStyleString(alpha?: number): string;
-        static MakeStyleString(r: number, g: number, b: number, a?: number): string;
-    }
-    export const enum b2DrawFlags {
-        e_none = 0,
-        e_shapeBit = 1,
-        e_jointBit = 2,
-        e_aabbBit = 4,
-        e_pairBit = 8,
-        e_centerOfMassBit = 16,
-        e_controllerBit = 32,
-        e_all = 63,
-    }
-    export class b2Draw {
-        m_drawFlags: b2DrawFlags;
-        SetFlags(flags: b2DrawFlags): void;
-        GetFlags(): b2DrawFlags;
-        AppendFlags(flags: b2DrawFlags): void;
-        ClearFlags(flags: b2DrawFlags): void;
-        PushTransform(xf: b2Transform): void;
-        PopTransform(xf: b2Transform): void;
-        DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
-        DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
-        DrawCircle(center: b2Vec2, radius: number, color: b2Color): void;
-        DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void;
-        DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void;
-        DrawTransform(xf: b2Transform): void;
-    }
-}
-declare module "Box2D/Common/b2Timer" {
-    export class b2Timer {
-        m_start: number;
-        Reset(): b2Timer;
-        GetMilliseconds(): number;
-    }
-    export class b2Counter {
-        m_count: number;
-        m_min_count: number;
-        m_max_count: number;
-        GetCount(): number;
-        GetMinCount(): number;
-        GetMaxCount(): number;
-        ResetCount(): number;
-        ResetMinCount(): void;
-        ResetMaxCount(): void;
-        Increment(): void;
-        Decrement(): void;
-    }
-}
-declare module "Box2D/Common/b2GrowableStack" {
-    export class b2GrowableStack {
-        m_stack: any[];
-        m_count: number;
-        constructor(N: number);
-        Reset(): b2GrowableStack;
-        Push(element: any): void;
-        Pop(): any;
-        GetCount(): number;
-    }
-}
-declare module "Box2D/Common/b2BlockAllocator" {
-    export class b2BlockAllocator {
-    }
-}
-declare module "Box2D/Common/b2StackAllocator" {
-    export class b2StackAllocator {
-    }
-}
 declare module "Box2D/Collision/b2Distance" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
     import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
@@ -402,40 +334,6 @@ declare module "Box2D/Collision/b2Distance" {
         private static s_e23;
     }
     export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
-}
-declare module "Box2D/Collision/Shapes/b2Shape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    export class b2MassData {
-        mass: number;
-        center: b2Vec2;
-        I: number;
-    }
-    export const enum b2ShapeType {
-        e_unknown = -1,
-        e_circleShape = 0,
-        e_edgeShape = 1,
-        e_polygonShape = 2,
-        e_chainShape = 3,
-        e_shapeTypeCount = 4,
-    }
-    export class b2Shape {
-        m_type: b2ShapeType;
-        m_radius: number;
-        constructor(type: b2ShapeType, radius: number);
-        Clone(): b2Shape;
-        Copy(other: b2Shape): b2Shape;
-        GetType(): b2ShapeType;
-        GetChildCount(): number;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
 }
 declare module "Box2D/Collision/b2Collision" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
@@ -546,6 +444,168 @@ declare module "Box2D/Collision/b2Collision" {
     export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number;
     export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean;
 }
+declare module "Box2D/Collision/Shapes/b2Shape" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    export class b2MassData {
+        mass: number;
+        center: b2Vec2;
+        I: number;
+    }
+    export const enum b2ShapeType {
+        e_unknown = -1,
+        e_circleShape = 0,
+        e_edgeShape = 1,
+        e_polygonShape = 2,
+        e_chainShape = 3,
+        e_shapeTypeCount = 4,
+    }
+    export class b2Shape {
+        m_type: b2ShapeType;
+        m_radius: number;
+        constructor(type: b2ShapeType, radius: number);
+        Clone(): b2Shape;
+        Copy(other: b2Shape): b2Shape;
+        GetType(): b2ShapeType;
+        GetChildCount(): number;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Collision/Shapes/b2EdgeShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+    export class b2EdgeShape extends b2Shape {
+        m_vertex1: b2Vec2;
+        m_vertex2: b2Vec2;
+        m_vertex0: b2Vec2;
+        m_vertex3: b2Vec2;
+        m_hasVertex0: boolean;
+        m_hasVertex3: boolean;
+        constructor();
+        Set(v1: b2Vec2, v2: b2Vec2): b2EdgeShape;
+        Clone(): b2EdgeShape;
+        Copy(other: b2EdgeShape): b2EdgeShape;
+        GetChildCount(): number;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_v1;
+        private static ComputeDistance_s_v2;
+        private static ComputeDistance_s_d;
+        private static ComputeDistance_s_s;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_p1;
+        private static RayCast_s_p2;
+        private static RayCast_s_d;
+        private static RayCast_s_e;
+        private static RayCast_s_q;
+        private static RayCast_s_r;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_v1;
+        private static ComputeAABB_s_v2;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Collision/Shapes/b2ChainShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+    export class b2ChainShape extends b2Shape {
+        m_vertices: b2Vec2[];
+        m_count: number;
+        m_prevVertex: b2Vec2;
+        m_nextVertex: b2Vec2;
+        m_hasPrevVertex: boolean;
+        m_hasNextVertex: boolean;
+        constructor();
+        CreateLoop(vertices: b2Vec2[], count?: number): b2ChainShape;
+        CreateChain(vertices: b2Vec2[], count?: number): b2ChainShape;
+        SetPrevVertex(prevVertex: b2Vec2): b2ChainShape;
+        SetNextVertex(nextVertex: b2Vec2): b2ChainShape;
+        Clone(): b2ChainShape;
+        Copy(other: b2ChainShape): b2ChainShape;
+        GetChildCount(): number;
+        GetChildEdge(edge: b2EdgeShape, index: number): void;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_edgeShape;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_edgeShape;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_v1;
+        private static ComputeAABB_s_v2;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Dynamics/b2TimeStep" {
+    import { b2Vec2 } from "Box2D/Common/b2Math";
+    export class b2Profile {
+        step: number;
+        collide: number;
+        solve: number;
+        solveInit: number;
+        solveVelocity: number;
+        solvePosition: number;
+        broadphase: number;
+        solveTOI: number;
+        Reset(): this;
+    }
+    export class b2TimeStep {
+        dt: number;
+        inv_dt: number;
+        dtRatio: number;
+        velocityIterations: number;
+        positionIterations: number;
+        particleIterations: number;
+        warmStarting: boolean;
+        Copy(step: b2TimeStep): b2TimeStep;
+    }
+    export class b2Position {
+        c: b2Vec2;
+        a: number;
+        static MakeArray(length: number): b2Position[];
+    }
+    export class b2Velocity {
+        v: b2Vec2;
+        w: number;
+        static MakeArray(length: number): b2Velocity[];
+    }
+    export class b2SolverData {
+        step: b2TimeStep;
+        positions: b2Position[];
+        velocities: b2Velocity[];
+    }
+}
+declare module "Box2D/Common/b2GrowableStack" {
+    export class b2GrowableStack {
+        m_stack: any[];
+        m_count: number;
+        constructor(N: number);
+        Reset(): b2GrowableStack;
+        Push(element: any): void;
+        Pop(): any;
+        GetCount(): number;
+    }
+}
 declare module "Box2D/Collision/b2DynamicTree" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
     import { b2GrowableStack } from "Box2D/Common/b2GrowableStack";
@@ -602,6 +662,26 @@ declare module "Box2D/Collision/b2DynamicTree" {
         ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
+declare module "Box2D/Common/b2Timer" {
+    export class b2Timer {
+        m_start: number;
+        Reset(): b2Timer;
+        GetMilliseconds(): number;
+    }
+    export class b2Counter {
+        m_count: number;
+        m_min_count: number;
+        m_max_count: number;
+        GetCount(): number;
+        GetMinCount(): number;
+        GetMaxCount(): number;
+        ResetCount(): number;
+        ResetMinCount(): void;
+        ResetMaxCount(): void;
+        Increment(): void;
+        Decrement(): void;
+    }
+}
 declare module "Box2D/Collision/b2TimeOfImpact" {
     import { b2Vec2, b2Sweep } from "Box2D/Common/b2Math";
     import { b2DistanceProxy, b2SimplexCache } from "Box2D/Collision/b2Distance";
@@ -649,44 +729,6 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         Evaluate(indexA: number, indexB: number, t: number): number;
     }
     export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void;
-}
-declare module "Box2D/Dynamics/b2TimeStep" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    export class b2Profile {
-        step: number;
-        collide: number;
-        solve: number;
-        solveInit: number;
-        solveVelocity: number;
-        solvePosition: number;
-        broadphase: number;
-        solveTOI: number;
-        Reset(): this;
-    }
-    export class b2TimeStep {
-        dt: number;
-        inv_dt: number;
-        dtRatio: number;
-        velocityIterations: number;
-        positionIterations: number;
-        warmStarting: boolean;
-        Copy(step: b2TimeStep): b2TimeStep;
-    }
-    export class b2Position {
-        c: b2Vec2;
-        a: number;
-        static MakeArray(length: number): b2Position[];
-    }
-    export class b2Velocity {
-        v: b2Vec2;
-        w: number;
-        static MakeArray(length: number): b2Velocity[];
-    }
-    export class b2SolverData {
-        step: b2TimeStep;
-        positions: b2Position[];
-        velocities: b2Velocity[];
-    }
 }
 declare module "Box2D/Dynamics/Joints/b2Joint" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
@@ -766,150 +808,6 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         SolvePositionConstraints(data: b2SolverData): boolean;
     }
 }
-declare module "Box2D/Dynamics/b2Fixture" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode } from "Box2D/Collision/b2DynamicTree";
-    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    export class b2Filter {
-        categoryBits: number;
-        maskBits: number;
-        groupIndex: number;
-        Clone(): b2Filter;
-        Copy(other: b2Filter): b2Filter;
-    }
-    export class b2FixtureDef {
-        shape: b2Shape;
-        userData: any;
-        friction: number;
-        restitution: number;
-        density: number;
-        isSensor: boolean;
-        filter: b2Filter;
-    }
-    export class b2FixtureProxy {
-        aabb: b2AABB;
-        fixture: b2Fixture;
-        childIndex: number;
-        proxy: b2TreeNode;
-        static MakeArray(length: number): b2FixtureProxy[];
-    }
-    export class b2Fixture {
-        m_density: number;
-        m_next: b2Fixture;
-        m_body: b2Body;
-        m_shape: b2Shape;
-        m_friction: number;
-        m_restitution: number;
-        m_proxies: b2FixtureProxy[];
-        m_proxyCount: number;
-        m_filter: b2Filter;
-        m_isSensor: boolean;
-        m_userData: any;
-        GetType(): b2ShapeType;
-        GetShape(): b2Shape;
-        SetSensor(sensor: boolean): void;
-        IsSensor(): boolean;
-        SetFilterData(filter: b2Filter): void;
-        GetFilterData(): b2Filter;
-        Refilter(): void;
-        GetBody(): b2Body;
-        GetNext(): b2Fixture;
-        GetUserData(): any;
-        SetUserData(data: any): void;
-        TestPoint(p: b2Vec2): boolean;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, childIndex: number): boolean;
-        GetMassData(massData?: b2MassData): b2MassData;
-        SetDensity(density: number): void;
-        GetDensity(): number;
-        GetFriction(): number;
-        SetFriction(friction: number): void;
-        GetRestitution(): number;
-        SetRestitution(restitution: number): void;
-        GetAABB(childIndex: number): b2AABB;
-        Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
-        Create(body: b2Body, def: b2FixtureDef): void;
-        Destroy(): void;
-        CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
-        DestroyProxies(broadPhase: b2BroadPhase): void;
-        private static Synchronize_s_aabb1;
-        private static Synchronize_s_aabb2;
-        private static Synchronize_s_displacement;
-        Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2EdgeShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export class b2EdgeShape extends b2Shape {
-        m_vertex1: b2Vec2;
-        m_vertex2: b2Vec2;
-        m_vertex0: b2Vec2;
-        m_vertex3: b2Vec2;
-        m_hasVertex0: boolean;
-        m_hasVertex3: boolean;
-        constructor();
-        Set(v1: b2Vec2, v2: b2Vec2): b2EdgeShape;
-        Clone(): b2EdgeShape;
-        Copy(other: b2EdgeShape): b2EdgeShape;
-        GetChildCount(): number;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        private static RayCast_s_p1;
-        private static RayCast_s_p2;
-        private static RayCast_s_d;
-        private static RayCast_s_e;
-        private static RayCast_s_q;
-        private static RayCast_s_r;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_v1;
-        private static ComputeAABB_s_v2;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2ChainShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
-    export class b2ChainShape extends b2Shape {
-        m_vertices: b2Vec2[];
-        m_count: number;
-        m_prevVertex: b2Vec2;
-        m_nextVertex: b2Vec2;
-        m_hasPrevVertex: boolean;
-        m_hasNextVertex: boolean;
-        constructor();
-        CreateLoop(vertices: b2Vec2[], count?: number): b2ChainShape;
-        CreateChain(vertices: b2Vec2[], count?: number): b2ChainShape;
-        SetPrevVertex(prevVertex: b2Vec2): b2ChainShape;
-        SetNextVertex(nextVertex: b2Vec2): b2ChainShape;
-        Clone(): b2ChainShape;
-        Copy(other: b2ChainShape): b2ChainShape;
-        GetChildCount(): number;
-        GetChildEdge(edge: b2EdgeShape, index: number): void;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        private static RayCast_s_edgeShape;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_v1;
-        private static ComputeAABB_s_v2;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
 declare module "Box2D/Collision/Shapes/b2CircleShape" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
     import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
@@ -925,6 +823,8 @@ declare module "Box2D/Collision/Shapes/b2CircleShape" {
         private static TestPoint_s_center;
         private static TestPoint_s_d;
         TestPoint(transform: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_center;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
         private static RayCast_s_position;
         private static RayCast_s_s;
         private static RayCast_s_r;
@@ -958,10 +858,14 @@ declare module "Box2D/Collision/Shapes/b2PolygonShape" {
         private static Set_s_v;
         Set(vertices: b2Vec2[], count?: number, start?: number): b2PolygonShape;
         SetAsArray(vertices: b2Vec2[], count?: number): b2PolygonShape;
-        SetAsBox(hx: number, hy: number): b2PolygonShape;
-        SetAsOrientedBox(hx: number, hy: number, center: b2Vec2, angle: number): b2PolygonShape;
+        SetAsBox(hx: number, hy: number, center?: b2Vec2, angle?: number): b2PolygonShape;
         private static TestPoint_s_pLocal;
         TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_pLocal;
+        private static ComputeDistance_s_normalForMaxDistance;
+        private static ComputeDistance_s_minDistance;
+        private static ComputeDistance_s_distance;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
         private static RayCast_s_p1;
         private static RayCast_s_p2;
         private static RayCast_s_d;
@@ -1951,12 +1855,18 @@ declare module "Box2D/Dynamics/b2WorldCallbacks" {
     import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
     import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
     import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
+    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Particle/b2ParticleSystem";
     export class b2DestructionListener {
         SayGoodbyeJoint(joint: b2Joint): void;
         SayGoodbyeFixture(fixture: b2Fixture): void;
+        SayGoodbyeParticleGroup(group: b2ParticleGroup): void;
+        SayGoodbyeParticle(system: b2ParticleSystem, index: number): void;
     }
     export class b2ContactFilter {
         ShouldCollide(fixtureA: b2Fixture, fixtureB: b2Fixture): boolean;
+        ShouldCollideFixtureParticle(fixture: b2Fixture, system: b2ParticleSystem, index: number): boolean;
+        ShouldCollideParticleParticle(system: b2ParticleSystem, indexA: number, indexB: number): boolean;
         static b2_defaultFilter: b2ContactFilter;
     }
     export class b2ContactImpulse {
@@ -1967,18 +1877,26 @@ declare module "Box2D/Dynamics/b2WorldCallbacks" {
     export class b2ContactListener {
         BeginContact(contact: b2Contact): void;
         EndContact(contact: b2Contact): void;
+        BeginContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void;
+        EndContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void;
+        BeginContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void;
+        EndContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void;
         PreSolve(contact: b2Contact, oldManifold: b2Manifold): void;
         PostSolve(contact: b2Contact, impulse: b2ContactImpulse): void;
         static b2_defaultListener: b2ContactListener;
     }
     export class b2QueryCallback {
         ReportFixture(fixture: b2Fixture): boolean;
+        ReportParticle(system: b2ParticleSystem, index: number): boolean;
+        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
     }
     export type b2QueryCallbackFunction = {
         (fixture: b2Fixture): boolean;
     };
     export class b2RayCastCallback {
         ReportFixture(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
+        ReportParticle(system: b2ParticleSystem, index: number, point: b2Vec2, normal: b2Vec2, fraction: number): number;
+        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
     }
     export type b2RayCastCallbackFunction = {
         (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
@@ -2039,6 +1957,7 @@ declare module "Box2D/Dynamics/b2World" {
     import { b2DestructionListener } from "Box2D/Dynamics/b2WorldCallbacks";
     import { b2QueryCallback, b2QueryCallbackFunction } from "Box2D/Dynamics/b2WorldCallbacks";
     import { b2RayCastCallback, b2RayCastCallbackFunction } from "Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ParticleSystemDef, b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
     export class b2World {
         m_newFixture: boolean;
         m_locked: boolean;
@@ -2046,6 +1965,7 @@ declare module "Box2D/Dynamics/b2World" {
         m_contactManager: b2ContactManager;
         m_bodyList: b2Body;
         m_jointList: b2Joint;
+        m_particleSystemList: b2ParticleSystem;
         m_bodyCount: number;
         m_jointCount: number;
         m_gravity: b2Vec2;
@@ -2069,11 +1989,15 @@ declare module "Box2D/Dynamics/b2World" {
         DestroyBody(b: b2Body): void;
         CreateJoint(def: b2JointDef): b2Joint;
         DestroyJoint(j: b2Joint): void;
+        CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem;
+        DestroyParticleSystem(p: b2ParticleSystem): void;
+        CalculateReasonableParticleIterations(timeStep: number): number;
         private static Step_s_step;
         private static Step_s_stepTimer;
         private static Step_s_timer;
-        Step(dt: number, velocityIterations: number, positionIterations: number): void;
+        Step(dt: number, velocityIterations: number, positionIterations: number, particleIterations?: number): void;
         ClearForces(): void;
+        DrawParticleSystem(system: b2ParticleSystem): void;
         private static DrawDebugData_s_color;
         private static DrawDebugData_s_vs;
         private static DrawDebugData_s_xf;
@@ -2091,6 +2015,7 @@ declare module "Box2D/Dynamics/b2World" {
         RayCastAll(point1: b2Vec2, point2: b2Vec2, out?: b2Fixture[]): b2Fixture[];
         GetBodyList(): b2Body;
         GetJointList(): b2Joint;
+        GetParticleSystemList(): b2ParticleSystem;
         GetContactList(): b2Contact;
         SetAllowSleeping(flag: boolean): void;
         GetAllowSleeping(): boolean;
@@ -2171,6 +2096,7 @@ declare module "Box2D/Dynamics/b2Body" {
         m_toiFlag: boolean;
         m_islandIndex: number;
         m_xf: b2Transform;
+        m_xf0: b2Transform;
         m_sweep: b2Sweep;
         m_linearVelocity: b2Vec2;
         m_angularVelocity: number;
@@ -2527,6 +2453,1636 @@ declare module "Box2D/Collision/b2BroadPhase" {
     }
     export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
 }
+declare module "Box2D/Dynamics/b2Fixture" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2TreeNode } from "Box2D/Collision/b2DynamicTree";
+    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Body } from "Box2D/Dynamics/b2Body";
+    export class b2Filter {
+        categoryBits: number;
+        maskBits: number;
+        groupIndex: number;
+        Clone(): b2Filter;
+        Copy(other: b2Filter): b2Filter;
+    }
+    export class b2FixtureDef {
+        shape: b2Shape;
+        userData: any;
+        friction: number;
+        restitution: number;
+        density: number;
+        isSensor: boolean;
+        filter: b2Filter;
+    }
+    export class b2FixtureProxy {
+        aabb: b2AABB;
+        fixture: b2Fixture;
+        childIndex: number;
+        proxy: b2TreeNode;
+        static MakeArray(length: number): b2FixtureProxy[];
+    }
+    export class b2Fixture {
+        m_density: number;
+        m_next: b2Fixture;
+        m_body: b2Body;
+        m_shape: b2Shape;
+        m_friction: number;
+        m_restitution: number;
+        m_proxies: b2FixtureProxy[];
+        m_proxyCount: number;
+        m_filter: b2Filter;
+        m_isSensor: boolean;
+        m_userData: any;
+        GetType(): b2ShapeType;
+        GetShape(): b2Shape;
+        SetSensor(sensor: boolean): void;
+        IsSensor(): boolean;
+        SetFilterData(filter: b2Filter): void;
+        GetFilterData(): b2Filter;
+        Refilter(): void;
+        GetBody(): b2Body;
+        GetNext(): b2Fixture;
+        GetUserData(): any;
+        SetUserData(data: any): void;
+        TestPoint(p: b2Vec2): boolean;
+        ComputeDistance(p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, childIndex: number): boolean;
+        GetMassData(massData?: b2MassData): b2MassData;
+        SetDensity(density: number): void;
+        GetDensity(): number;
+        GetFriction(): number;
+        SetFriction(friction: number): void;
+        GetRestitution(): number;
+        SetRestitution(restitution: number): void;
+        GetAABB(childIndex: number): b2AABB;
+        Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
+        Create(body: b2Body, def: b2FixtureDef): void;
+        Destroy(): void;
+        CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
+        DestroyProxies(broadPhase: b2BroadPhase): void;
+        private static Synchronize_s_aabb1;
+        private static Synchronize_s_aabb2;
+        private static Synchronize_s_displacement;
+        Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
+    }
+}
+declare module "Box2D/Particle/b2StackQueue" {
+    export class b2StackQueue<T> {
+        m_buffer: T[];
+        m_front: number;
+        m_back: number;
+        m_capacity: number;
+        constructor(capacity: number);
+        Push(item: T): void;
+        Pop(): void;
+        Empty(): boolean;
+        Front(): T;
+    }
+}
+declare module "Box2D/Particle/b2VoronoiDiagram" {
+    import { b2Vec2 } from "Box2D/Common/b2Math";
+    /**
+     * A field representing the nearest generator from each point.
+     */
+    export class b2VoronoiDiagram {
+        m_generatorBuffer: b2VoronoiDiagram.Generator[];
+        m_generatorCapacity: number;
+        m_generatorCount: number;
+        m_countX: number;
+        m_countY: number;
+        m_diagram: b2VoronoiDiagram.Generator[];
+        constructor(generatorCapacity: number);
+        /**
+         * Add a generator.
+         *
+         * @param center the position of the generator.
+         * @param tag a tag used to identify the generator in callback functions.
+         * @param necessary whether to callback for nodes associated with the generator.
+         */
+        AddGenerator(center: b2Vec2, tag: number, necessary: boolean): void;
+        /**
+         * Generate the Voronoi diagram. It is rasterized with a given
+         * interval in the same range as the necessary generators exist.
+         *
+         * @param radius the interval of the diagram.
+         * @param margin margin for which the range of the diagram is extended.
+         */
+        Generate(radius: number, margin: number): void;
+        /**
+         * Enumerate all nodes that contain at least one necessary
+         * generator.
+         */
+        GetNodes(callback: b2VoronoiDiagram.NodeCallback): void;
+    }
+    export namespace b2VoronoiDiagram {
+        /**
+         * Callback used by GetNodes().
+         *
+         * Receive tags for generators associated with a node.
+         */
+        type NodeCallback = (a: number, b: number, c: number) => void;
+        class Generator {
+            center: b2Vec2;
+            tag: number;
+            necessary: boolean;
+        }
+        class Task {
+            m_x: number;
+            m_y: number;
+            m_i: number;
+            m_generator: b2VoronoiDiagram.Generator;
+            constructor(x: number, y: number, i: number, g: b2VoronoiDiagram.Generator);
+        }
+    }
+}
+declare module "Box2D/Particle/b2ParticleSystem" {
+    import { b2Vec2, b2Rot, b2Transform } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2Shape, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+    import { b2TimeStep } from "Box2D/Dynamics/b2TimeStep";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    import { b2Body } from "Box2D/Dynamics/b2Body";
+    import { b2World } from "Box2D/Dynamics/b2World";
+    import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ParticleFlag, b2ParticleColor, b2ParticleDef, b2ParticleHandle } from "Box2D/Particle/b2Particle";
+    import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
+    export class b2GrowableBuffer<T> {
+        data: T[];
+        count: number;
+        capacity: number;
+        allocator: () => T;
+        constructor(allocator: () => T);
+        Append(): number;
+        Reserve(newCapacity: number): void;
+        Grow(): void;
+        Free(): void;
+        Shorten(newEnd: number): void;
+        Data(): T[];
+        GetCount(): number;
+        SetCount(newCount: number): void;
+        GetCapacity(): number;
+        RemoveIf(pred: (t: T) => boolean): void;
+        Unique(pred: (a: T, b: T) => boolean): void;
+    }
+    export type b2ParticleIndex = number;
+    export class b2FixtureParticleQueryCallback extends b2QueryCallback {
+        m_system: b2ParticleSystem;
+        constructor(system: b2ParticleSystem);
+        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
+        ReportFixture(fixture: b2Fixture): boolean;
+        ReportParticle(system: b2ParticleSystem, index: number): boolean;
+        ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, index: number): void;
+    }
+    export class b2ParticleContact {
+        indexA: number;
+        indexB: number;
+        weight: number;
+        normal: b2Vec2;
+        flags: b2ParticleFlag;
+        SetIndices(a: number, b: number): void;
+        SetWeight(w: number): void;
+        SetNormal(n: b2Vec2): void;
+        SetFlags(f: b2ParticleFlag): void;
+        GetIndexA(): number;
+        GetIndexB(): number;
+        GetWeight(): number;
+        GetNormal(): b2Vec2;
+        GetFlags(): b2ParticleFlag;
+        IsEqual(rhs: b2ParticleContact): boolean;
+        IsNotEqual(rhs: b2ParticleContact): boolean;
+        ApproximatelyEqual(rhs: b2ParticleContact): boolean;
+    }
+    export class b2ParticleBodyContact {
+        index: number;
+        body: b2Body;
+        fixture: b2Fixture;
+        weight: number;
+        normal: b2Vec2;
+        mass: number;
+    }
+    export class b2ParticlePair {
+        indexA: number;
+        indexB: number;
+        flags: b2ParticleFlag;
+        strength: number;
+        distance: number;
+    }
+    export class b2ParticleTriad {
+        indexA: number;
+        indexB: number;
+        indexC: number;
+        flags: b2ParticleFlag;
+        strength: number;
+        pa: b2Vec2;
+        pb: b2Vec2;
+        pc: b2Vec2;
+        ka: number;
+        kb: number;
+        kc: number;
+        s: number;
+    }
+    export class b2ParticleSystemDef {
+        /**
+         * Enable strict Particle/Body contact check.
+         * See SetStrictContactCheck for details.
+         */
+        strictContactCheck: boolean;
+        /**
+         * Set the particle density.
+         * See SetDensity for details.
+         */
+        density: number;
+        /**
+         * Change the particle gravity scale. Adjusts the effect of the
+         * global gravity vector on particles. Default value is 1.0f.
+         */
+        gravityScale: number;
+        /**
+         * Particles behave as circles with this radius. In Box2D units.
+         */
+        radius: number;
+        /**
+         * Set the maximum number of particles.
+         * By default, there is no maximum. The particle buffers can
+         * continue to grow while b2World's block allocator still has
+         * memory.
+         * See SetMaxParticleCount for details.
+         */
+        maxCount: number;
+        /**
+         * Increases pressure in response to compression
+         * Smaller values allow more compression
+         */
+        pressureStrength: number;
+        /**
+         * Reduces velocity along the collision normal
+         * Smaller value reduces less
+         */
+        dampingStrength: number;
+        /**
+         * Restores shape of elastic particle groups
+         * Larger values increase elastic particle velocity
+         */
+        elasticStrength: number;
+        /**
+         * Restores length of spring particle groups
+         * Larger values increase spring particle velocity
+         */
+        springStrength: number;
+        /**
+         * Reduces relative velocity of viscous particles
+         * Larger values slow down viscous particles more
+         */
+        viscousStrength: number;
+        /**
+         * Produces pressure on tensile particles
+         * 0~0.2. Larger values increase the amount of surface tension.
+         */
+        surfaceTensionPressureStrength: number;
+        /**
+         * Smoothes outline of tensile particles
+         * 0~0.2. Larger values result in rounder, smoother,
+         * water-drop-like clusters of particles.
+         */
+        surfaceTensionNormalStrength: number;
+        /**
+         * Produces additional pressure on repulsive particles
+         * Larger values repulse more
+         * Negative values mean attraction. The range where particles
+         * behave stably is about -0.2 to 2.0.
+         */
+        repulsiveStrength: number;
+        /**
+         * Produces repulsion between powder particles
+         * Larger values repulse more
+         */
+        powderStrength: number;
+        /**
+         * Pushes particles out of solid particle group
+         * Larger values repulse more
+         */
+        ejectionStrength: number;
+        /**
+         * Produces static pressure
+         * Larger values increase the pressure on neighboring partilces
+         * For a description of static pressure, see
+         * http://en.wikipedia.org/wiki/Static_pressure#Static_pressure_in_fluid_dynamics
+         */
+        staticPressureStrength: number;
+        /**
+         * Reduces instability in static pressure calculation
+         * Larger values make stabilize static pressure with fewer
+         * iterations
+         */
+        staticPressureRelaxation: number;
+        /**
+         * Computes static pressure more precisely
+         * See SetStaticPressureIterations for details
+         */
+        staticPressureIterations: number;
+        /**
+         * Determines how fast colors are mixed
+         * 1.0f ==> mixed immediately
+         * 0.5f ==> mixed half way each simulation step (see
+         * b2World::Step())
+         */
+        colorMixingStrength: number;
+        /**
+         * Whether to destroy particles by age when no more particles
+         * can be created.  See #b2ParticleSystem::SetDestructionByAge()
+         * for more information.
+         */
+        destroyByAge: boolean;
+        /**
+         * Granularity of particle lifetimes in seconds.  By default
+         * this is set to (1.0f / 60.0f) seconds.  b2ParticleSystem uses
+         * a 32-bit signed value to track particle lifetimes so the
+         * maximum lifetime of a particle is (2^32 - 1) / (1.0f /
+         * lifetimeGranularity) seconds. With the value set to 1/60 the
+         * maximum lifetime or age of a particle is 2.27 years.
+         */
+        lifetimeGranularity: number;
+        Copy(def: b2ParticleSystemDef): b2ParticleSystemDef;
+        Clone(): b2ParticleSystemDef;
+    }
+    export class b2ParticleSystem {
+        m_paused: boolean;
+        m_timestamp: number;
+        m_allParticleFlags: b2ParticleFlag;
+        m_needsUpdateAllParticleFlags: boolean;
+        m_allGroupFlags: b2ParticleGroupFlag;
+        m_needsUpdateAllGroupFlags: boolean;
+        m_hasForce: boolean;
+        m_iterationIndex: number;
+        m_inverseDensity: number;
+        m_particleDiameter: number;
+        m_inverseDiameter: number;
+        m_squaredDiameter: number;
+        m_count: number;
+        m_internalAllocatedCapacity: number;
+        /**
+         * Allocator for b2ParticleHandle instances.
+         */
+        /**
+         * Maps particle indicies to handles.
+         */
+        m_handleIndexBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleHandle>;
+        m_flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>;
+        m_positionBuffer: b2ParticleSystem.UserOverridableBuffer<b2Vec2>;
+        m_velocityBuffer: b2ParticleSystem.UserOverridableBuffer<b2Vec2>;
+        m_forceBuffer: b2Vec2[];
+        /**
+         * this.m_weightBuffer is populated in ComputeWeight and used in
+         * ComputeDepth(), SolveStaticPressure() and SolvePressure().
+         */
+        m_weightBuffer: number[];
+        /**
+         * When any particles have the flag b2_staticPressureParticle,
+         * this.m_staticPressureBuffer is first allocated and used in
+         * SolveStaticPressure() and SolvePressure().  It will be
+         * reallocated on subsequent CreateParticle() calls.
+         */
+        m_staticPressureBuffer: number[];
+        /**
+         * this.m_accumulationBuffer is used in many functions as a temporary
+         * buffer for scalar values.
+         */
+        m_accumulationBuffer: number[];
+        /**
+         * When any particles have the flag b2_tensileParticle,
+         * this.m_accumulation2Buffer is first allocated and used in
+         * SolveTensile() as a temporary buffer for vector values.  It
+         * will be reallocated on subsequent CreateParticle() calls.
+         */
+        m_accumulation2Buffer: b2Vec2[];
+        /**
+         * When any particle groups have the flag b2_solidParticleGroup,
+         * this.m_depthBuffer is first allocated and populated in
+         * ComputeDepth() and used in SolveSolid(). It will be
+         * reallocated on subsequent CreateParticle() calls.
+         */
+        m_depthBuffer: number[];
+        m_colorBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleColor>;
+        m_groupBuffer: b2ParticleGroup[];
+        m_userDataBuffer: b2ParticleSystem.UserOverridableBuffer<any>;
+        /**
+         * Stuck particle detection parameters and record keeping
+         */
+        m_stuckThreshold: number;
+        m_lastBodyContactStepBuffer: b2ParticleSystem.UserOverridableBuffer<number>;
+        m_bodyContactCountBuffer: b2ParticleSystem.UserOverridableBuffer<number>;
+        m_consecutiveContactStepsBuffer: b2ParticleSystem.UserOverridableBuffer<number>;
+        m_stuckParticleBuffer: b2GrowableBuffer<number>;
+        m_proxyBuffer: b2GrowableBuffer<b2ParticleSystem.Proxy>;
+        m_contactBuffer: b2GrowableBuffer<b2ParticleContact>;
+        m_bodyContactBuffer: b2GrowableBuffer<b2ParticleBodyContact>;
+        m_pairBuffer: b2GrowableBuffer<b2ParticlePair>;
+        m_triadBuffer: b2GrowableBuffer<b2ParticleTriad>;
+        /**
+         * Time each particle should be destroyed relative to the last
+         * time this.m_timeElapsed was initialized.  Each unit of time
+         * corresponds to b2ParticleSystemDef::lifetimeGranularity
+         * seconds.
+         */
+        m_expirationTimeBuffer: b2ParticleSystem.UserOverridableBuffer<number>;
+        /**
+         * List of particle indices sorted by expiration time.
+         */
+        m_indexByExpirationTimeBuffer: b2ParticleSystem.UserOverridableBuffer<number>;
+        /**
+         * Time elapsed in 32:32 fixed point.  Each non-fractional unit
+         * of time corresponds to
+         * b2ParticleSystemDef::lifetimeGranularity seconds.
+         */
+        m_timeElapsed: number;
+        /**
+         * Whether the expiration time buffer has been modified and
+         * needs to be resorted.
+         */
+        m_expirationTimeBufferRequiresSorting: boolean;
+        m_groupCount: number;
+        m_groupList: b2ParticleGroup;
+        m_def: b2ParticleSystemDef;
+        m_world: b2World;
+        m_prev: b2ParticleSystem;
+        m_next: b2ParticleSystem;
+        static xTruncBits: number;
+        static yTruncBits: number;
+        static tagBits: number;
+        static yOffset: number;
+        static yShift: number;
+        static xShift: number;
+        static xScale: number;
+        static xOffset: number;
+        static yMask: number;
+        static xMask: number;
+        static computeTag(x: number, y: number): number;
+        static computeRelativeTag(tag: number, x: number, y: number): number;
+        constructor(def: b2ParticleSystemDef, world: b2World);
+        Drop(): void;
+        /**
+         * Create a particle whose properties have been defined.
+         *
+         * No reference to the definition is retained.
+         *
+         * A simulation step must occur before it's possible to interact
+         * with a newly created particle.  For example,
+         * DestroyParticleInShape() will not destroy a particle until
+         * b2World::Step() has been called.
+         *
+         * warning: This function is locked during callbacks.
+         */
+        CreateParticle(def: b2ParticleDef): number;
+        /**
+         * Retrieve a handle to the particle at the specified index.
+         *
+         * Please see #b2ParticleHandle for why you might want a handle.
+         */
+        GetParticleHandleFromIndex(index: number): b2ParticleHandle;
+        /**
+         * Destroy a particle.
+         *
+         * The particle is removed after the next simulation step (see
+         * b2World::Step()).
+         *
+         * @param index Index of the particle to destroy.
+         * @param callDestructionListener Whether to call the
+         *      destruction listener just before the particle is
+         *      destroyed.
+         */
+        DestroyParticle(index: number, callDestructionListener?: boolean): void;
+        /**
+         * Destroy the Nth oldest particle in the system.
+         *
+         * The particle is removed after the next b2World::Step().
+         *
+         * @param index Index of the Nth oldest particle to
+         *      destroy, 0 will destroy the oldest particle in the
+         *      system, 1 will destroy the next oldest particle etc.
+         * @param callDestructionListener Whether to call the
+         *      destruction listener just before the particle is
+         *      destroyed.
+         */
+        DestroyOldestParticle(index: number, callDestructionListener?: boolean): void;
+        /**
+         * Destroy particles inside a shape.
+         *
+         * warning: This function is locked during callbacks.
+         *
+         * In addition, this function immediately destroys particles in
+         * the shape in constrast to DestroyParticle() which defers the
+         * destruction until the next simulation step.
+         *
+         * @return Number of particles destroyed.
+         * @param shape Shape which encloses particles
+         *      that should be destroyed.
+         * @param xf Transform applied to the shape.
+         * @param callDestructionListener Whether to call the
+         *      world b2DestructionListener for each particle
+         *      destroyed.
+         */
+        DestroyParticlesInShape(shape: b2Shape, xf: b2Transform, callDestructionListener?: boolean): number;
+        static DestroyParticlesInShape_s_aabb: b2AABB;
+        /**
+         * Create a particle group whose properties have been defined.
+         *
+         * No reference to the definition is retained.
+         *
+         * warning: This function is locked during callbacks.
+         */
+        CreateParticleGroup(groupDef: b2ParticleGroupDef): b2ParticleGroup;
+        static CreateParticleGroup_s_transform: b2Transform;
+        /**
+         * Join two particle groups.
+         *
+         * warning: This function is locked during callbacks.
+         *
+         * @param groupA the first group. Expands to encompass the second group.
+         * @param groupB the second group. It is destroyed.
+         */
+        JoinParticleGroups(groupA: b2ParticleGroup, groupB: b2ParticleGroup): void;
+        /**
+         * Split particle group into multiple disconnected groups.
+         *
+         * warning: This function is locked during callbacks.
+         *
+         * @param group the group to be split.
+         */
+        SplitParticleGroup(group: b2ParticleGroup): void;
+        /**
+         * Get the world particle group list. With the returned group,
+         * use b2ParticleGroup::GetNext to get the next group in the
+         * world list.
+         *
+         * A null group indicates the end of the list.
+         *
+         * @return the head of the world particle group list.
+         */
+        GetParticleGroupList(): b2ParticleGroup;
+        /**
+         * Get the number of particle groups.
+         */
+        GetParticleGroupCount(): number;
+        /**
+         * Get the number of particles.
+         */
+        GetParticleCount(): number;
+        /**
+         * Get the maximum number of particles.
+         */
+        GetMaxParticleCount(): number;
+        /**
+         * Set the maximum number of particles.
+         *
+         * A value of 0 means there is no maximum. The particle buffers
+         * can continue to grow while b2World's block allocator still
+         * has memory.
+         *
+         * Note: If you try to CreateParticle() with more than this
+         * count, b2_invalidParticleIndex is returned unless
+         * SetDestructionByAge() is used to enable the destruction of
+         * the oldest particles in the system.
+         */
+        SetMaxParticleCount(count: number): void;
+        /**
+         * Get all existing particle flags.
+         */
+        GetAllParticleFlags(): b2ParticleFlag;
+        /**
+         * Get all existing particle group flags.
+         */
+        GetAllGroupFlags(): b2ParticleGroupFlag;
+        /**
+         * Pause or unpause the particle system. When paused,
+         * b2World::Step() skips over this particle system. All
+         * b2ParticleSystem function calls still work.
+         *
+         * @param paused paused is true to pause, false to un-pause.
+         */
+        SetPaused(paused: boolean): void;
+        /**
+         * Initially, true, then, the last value passed into
+         * SetPaused().
+         *
+         * @return true if the particle system is being updated in b2World::Step().
+         */
+        GetPaused(): boolean;
+        /**
+         * Change the particle density.
+         *
+         * Particle density affects the mass of the particles, which in
+         * turn affects how the particles interact with b2Bodies. Note
+         * that the density does not affect how the particles interact
+         * with each other.
+         */
+        SetDensity(density: number): void;
+        /**
+         * Get the particle density.
+         */
+        GetDensity(): number;
+        /**
+         * Change the particle gravity scale. Adjusts the effect of the
+         * global gravity vector on particles.
+         */
+        SetGravityScale(gravityScale: number): void;
+        /**
+         * Get the particle gravity scale.
+         */
+        GetGravityScale(): number;
+        /**
+         * Damping is used to reduce the velocity of particles. The
+         * damping parameter can be larger than 1.0f but the damping
+         * effect becomes sensitive to the time step when the damping
+         * parameter is large.
+         */
+        SetDamping(damping: number): void;
+        /**
+         * Get damping for particles
+         */
+        GetDamping(): number;
+        /**
+         * Change the number of iterations when calculating the static
+         * pressure of particles. By default, 8 iterations. You can
+         * reduce the number of iterations down to 1 in some situations,
+         * but this may cause instabilities when many particles come
+         * together. If you see particles popping away from each other
+         * like popcorn, you may have to increase the number of
+         * iterations.
+         *
+         * For a description of static pressure, see
+         * http://en.wikipedia.org/wiki/Static_pressure#Static_pressure_in_fluid_dynamics
+         */
+        SetStaticPressureIterations(iterations: number): void;
+        /**
+         * Get the number of iterations for static pressure of
+         * particles.
+         */
+        GetStaticPressureIterations(): number;
+        /**
+         * Change the particle radius.
+         *
+         * You should set this only once, on world start.
+         * If you change the radius during execution, existing particles
+         * may explode, shrink, or behave unexpectedly.
+         */
+        SetRadius(radius: number): void;
+        /**
+         * Get the particle radius.
+         */
+        GetRadius(): number;
+        /**
+         * Get the position of each particle
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle positions array.
+         */
+        GetPositionBuffer(): b2Vec2[];
+        /**
+         * Get the velocity of each particle
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle velocities array.
+         */
+        GetVelocityBuffer(): b2Vec2[];
+        /**
+         * Get the color of each particle
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle colors array.
+         */
+        GetColorBuffer(): b2ParticleColor[];
+        /**
+         * Get the particle-group of each particle.
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle group array.
+         */
+        GetGroupBuffer(): b2ParticleGroup[];
+        /**
+         * Get the weight of each particle
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle positions array.
+         */
+        GetWeightBuffer(): number[];
+        /**
+         * Get the user-specified data of each particle.
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle user-data array.
+         */
+        GetUserDataBuffer(): any[];
+        /**
+         * Get the flags for each particle. See the b2ParticleFlag enum.
+         *
+         * Array is length GetParticleCount()
+         *
+         * @return the pointer to the head of the particle-flags array.
+         */
+        GetFlagsBuffer(): b2ParticleFlag[];
+        /**
+         * Set flags for a particle. See the b2ParticleFlag enum.
+         */
+        SetParticleFlags(index: number, newFlags: b2ParticleFlag): void;
+        /**
+         * Get flags for a particle. See the b2ParticleFlag enum.
+         */
+        GetParticleFlags(index: number): b2ParticleFlag;
+        /**
+         * Set an external buffer for particle data.
+         *
+         * Normally, the b2World's block allocator is used for particle
+         * data. However, sometimes you may have an OpenGL or Java
+         * buffer for particle data. To avoid data duplication, you may
+         * supply this external buffer.
+         *
+         * Note that, when b2World's block allocator is used, the
+         * particle data buffers can grow as required. However, when
+         * external buffers are used, the maximum number of particles is
+         * clamped to the size of the smallest external buffer.
+         *
+         * @param buffer a pointer to a block of memory.
+         * @param capacity the number of values in the block.
+         */
+        SetFlagsBuffer(buffer: b2ParticleFlag[], capacity: number): void;
+        SetPositionBuffer(buffer: b2Vec2[], capacity: number): void;
+        SetVelocityBuffer(buffer: b2Vec2[], capacity: number): void;
+        SetColorBuffer(buffer: b2ParticleColor[], capacity: number): void;
+        SetUserDataBuffer(buffer: any[], capacity: number): void;
+        /**
+         * Get contacts between particles
+         * Contact data can be used for many reasons, for example to
+         * trigger rendering or audio effects.
+         */
+        GetContacts(): b2ParticleContact[];
+        GetContactCount(): number;
+        /**
+         * Get contacts between particles and bodies
+         *
+         * Contact data can be used for many reasons, for example to
+         * trigger rendering or audio effects.
+         */
+        GetBodyContacts(): b2ParticleBodyContact[];
+        GetBodyContactCount(): number;
+        /**
+         * Get array of particle pairs. The particles in a pair:
+         *   (1) are contacting,
+         *   (2) are in the same particle group,
+         *   (3) are part of a rigid particle group, or are spring, elastic,
+         *       or wall particles.
+         *   (4) have at least one particle that is a spring or barrier
+         *       particle (i.e. one of the types in k_pairFlags),
+         *   (5) have at least one particle that returns true for
+         *       ConnectionFilter::IsNecessary,
+         *   (6) are not zombie particles.
+         *
+         * Essentially, this is an array of spring or barrier particles
+         * that are interacting. The array is sorted by b2ParticlePair's
+         * indexA, and then indexB. There are no duplicate entries.
+         */
+        GetPairs(): b2ParticlePair[];
+        GetPairCount(): number;
+        /**
+         * Get array of particle triads. The particles in a triad:
+         *   (1) are in the same particle group,
+         *   (2) are in a Voronoi triangle together,
+         *   (3) are within b2_maxTriadDistance particle diameters of each
+         *       other,
+         *   (4) return true for ConnectionFilter::ShouldCreateTriad
+         *   (5) have at least one particle of type elastic (i.e. one of the
+         *       types in k_triadFlags),
+         *   (6) are part of a rigid particle group, or are spring, elastic,
+         *       or wall particles.
+         *   (7) are not zombie particles.
+         *
+         * Essentially, this is an array of elastic particles that are
+         * interacting. The array is sorted by b2ParticleTriad's indexA,
+         * then indexB, then indexC. There are no duplicate entries.
+         */
+        GetTriads(): b2ParticleTriad[];
+        GetTriadCount(): number;
+        /**
+         * Set an optional threshold for the maximum number of
+         * consecutive particle iterations that a particle may contact
+         * multiple bodies before it is considered a candidate for being
+         * "stuck". Setting to zero or less disables.
+         */
+        SetStuckThreshold(steps: number): void;
+        /**
+         * Get potentially stuck particles from the last step; the user
+         * must decide if they are stuck or not, and if so, delete or
+         * move them
+         */
+        GetStuckCandidates(): number[];
+        /**
+         * Get the number of stuck particle candidates from the last
+         * step.
+         */
+        GetStuckCandidateCount(): number;
+        /**
+         * Compute the kinetic energy that can be lost by damping force
+         */
+        ComputeCollisionEnergy(): number;
+        static ComputeCollisionEnergy_s_v: b2Vec2;
+        /**
+         * Set strict Particle/Body contact check.
+         *
+         * This is an option that will help ensure correct behavior if
+         * there are corners in the world model where Particle/Body
+         * contact is ambiguous. This option scales at n*log(n) of the
+         * number of Particle/Body contacts, so it is best to only
+         * enable if it is necessary for your geometry. Enable if you
+         * see strange particle behavior around b2Body intersections.
+         */
+        SetStrictContactCheck(enabled: boolean): void;
+        /**
+         * Get the status of the strict contact check.
+         */
+        GetStrictContactCheck(): boolean;
+        /**
+         * Set the lifetime (in seconds) of a particle relative to the
+         * current time.  A lifetime of less than or equal to 0.0f
+         * results in the particle living forever until it's manually
+         * destroyed by the application.
+         */
+        SetParticleLifetime(index: number, lifetime: number): void;
+        /**
+         * Get the lifetime (in seconds) of a particle relative to the
+         * current time.  A value > 0.0f is returned if the particle is
+         * scheduled to be destroyed in the future, values <= 0.0f
+         * indicate the particle has an infinite lifetime.
+         */
+        GetParticleLifetime(index: number): number;
+        /**
+         * Enable / disable destruction of particles in CreateParticle()
+         * when no more particles can be created due to a prior call to
+         * SetMaxParticleCount().  When this is enabled, the oldest
+         * particle is destroyed in CreateParticle() favoring the
+         * destruction of particles with a finite lifetime over
+         * particles with infinite lifetimes. This feature is enabled by
+         * default when particle lifetimes are tracked.  Explicitly
+         * enabling this feature using this function enables particle
+         * lifetime tracking.
+         */
+        SetDestructionByAge(enable: boolean): void;
+        /**
+         * Get whether the oldest particle will be destroyed in
+         * CreateParticle() when the maximum number of particles are
+         * present in the system.
+         */
+        GetDestructionByAge(): boolean;
+        /**
+         * Get the array of particle expiration times indexed by
+         * particle index.
+         *
+         * GetParticleCount() items are in the returned array.
+         */
+        GetExpirationTimeBuffer(): number[];
+        /**
+         * Convert a expiration time value in returned by
+         * GetExpirationTimeBuffer() to a time in seconds relative to
+         * the current simulation time.
+         */
+        ExpirationTimeToLifetime(expirationTime: number): number;
+        /**
+         * Get the array of particle indices ordered by reverse
+         * lifetime. The oldest particle indexes are at the end of the
+         * array with the newest at the start.  Particles with infinite
+         * lifetimes (i.e expiration times less than or equal to 0) are
+         * placed at the start of the array.
+         * ExpirationTimeToLifetime(GetExpirationTimeBuffer()[index]) is
+         * equivalent to GetParticleLifetime(index).
+         *
+         * GetParticleCount() items are in the returned array.
+         */
+        GetIndexByExpirationTimeBuffer(): number[];
+        /**
+         * Apply an impulse to one particle. This immediately modifies
+         * the velocity. Similar to b2Body::ApplyLinearImpulse.
+         *
+         * @param index the particle that will be modified.
+         * @param impulse impulse the world impulse vector, usually in N-seconds or kg-m/s.
+         */
+        ParticleApplyLinearImpulse(index: number, impulse: b2Vec2): void;
+        /**
+         * Apply an impulse to all particles between 'firstIndex' and
+         * 'lastIndex'. This immediately modifies the velocity. Note
+         * that the impulse is applied to the total mass of all
+         * particles. So, calling ParticleApplyLinearImpulse(0, impulse)
+         * and ParticleApplyLinearImpulse(1, impulse) will impart twice
+         * as much velocity as calling just ApplyLinearImpulse(0, 1,
+         * impulse).
+         *
+         * @param firstIndex the first particle to be modified.
+         * @param lastIndex the last particle to be modified.
+         * @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
+         */
+        ApplyLinearImpulse(firstIndex: number, lastIndex: number, impulse: b2Vec2): void;
+        static IsSignificantForce(force: b2Vec2): boolean;
+        /**
+         * Apply a force to the center of a particle.
+         *
+         * @param index the particle that will be modified.
+         * @param force the world force vector, usually in Newtons (N).
+         */
+        ParticleApplyForce(index: number, force: b2Vec2): void;
+        /**
+         * Distribute a force across several particles. The particles
+         * must not be wall particles. Note that the force is
+         * distributed across all the particles, so calling this
+         * function for indices 0..N is not the same as calling
+         * ParticleApplyForce(i, force) for i in 0..N.
+         *
+         * @param firstIndex the first particle to be modified.
+         * @param lastIndex the last particle to be modified.
+         * @param force the world force vector, usually in Newtons (N).
+         */
+        ApplyForce(firstIndex: number, lastIndex: number, force: b2Vec2): void;
+        /**
+         * Get the next particle-system in the world's particle-system
+         * list.
+         */
+        GetNext(): b2ParticleSystem;
+        /**
+         * Query the particle system for all particles that potentially
+         * overlap the provided AABB.
+         * b2QueryCallback::ShouldQueryParticleSystem is ignored.
+         *
+         * @param callback a user implemented callback class.
+         * @param aabb the query box.
+         */
+        QueryAABB(callback: b2QueryCallback, aabb: b2AABB): void;
+        /**
+         * Query the particle system for all particles that potentially
+         * overlap the provided shape's AABB. Calls QueryAABB
+         * internally. b2QueryCallback::ShouldQueryParticleSystem is
+         * ignored.
+         *
+         * @param callback a user implemented callback class.
+         * @param shape the query shape
+         * @param xf the transform of the AABB
+         * @param childIndex
+         */
+        QueryShapeAABB(callback: b2QueryCallback, shape: b2Shape, xf: b2Transform, childIndex?: number): void;
+        static QueryShapeAABB_s_aabb: b2AABB;
+        QueryPointAABB(callback: b2QueryCallback, point: b2Vec2, slop?: number): void;
+        static QueryPointAABB_s_aabb: b2AABB;
+        /**
+         * Ray-cast the particle system for all particles in the path of
+         * the ray. Your callback controls whether you get the closest
+         * point, any point, or n-points. The ray-cast ignores particles
+         * that contain the starting point.
+         * b2RayCastCallback::ShouldQueryParticleSystem is ignored.
+         *
+         * @export
+         * @return {void}
+         * @param {b2RayCastCallback} callback a user implemented
+         *      callback class.
+         * @param {b2Vec2} point1 the ray starting point
+         * @param {b2Vec2} point2 the ray ending point
+         */
+        RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void;
+        static RayCast_s_aabb: b2AABB;
+        static RayCast_s_p: b2Vec2;
+        static RayCast_s_v: b2Vec2;
+        static RayCast_s_n: b2Vec2;
+        static RayCast_s_point: b2Vec2;
+        /**
+         * Compute the axis-aligned bounding box for all particles
+         * contained within this particle system.
+         *
+         * @export
+         * @return {void}
+         * @param {b2AABB} aabb Returns the axis-aligned bounding
+         *      box of the system.
+         */
+        ComputeAABB(aabb: b2AABB): void;
+        /**
+         * All particle types that require creating pairs
+         */
+        static k_pairFlags: number;
+        /**
+         * All particle types that require creating triads
+         *
+         * @type {number}
+         */
+        static k_triadFlags: b2ParticleFlag;
+        /**
+         * All particle types that do not produce dynamic pressure
+         *
+         * @type {number}
+         */
+        static k_noPressureFlags: number;
+        /**
+         * All particle types that apply extra damping force with bodies
+         *
+         * @type {number}
+         */
+        static k_extraDampingFlags: b2ParticleFlag;
+        /**
+         * @type {number}
+         */
+        static k_barrierWallFlags: number;
+        FreeBuffer(b: any, capacity: number): void;
+        FreeUserOverridableBuffer(b: b2ParticleSystem.UserOverridableBuffer<any>): void;
+        /**
+         * Reallocate a buffer
+         */
+        ReallocateBuffer3(oldBuffer: any[], oldCapacity: number, newCapacity: number): any[];
+        /**
+         * Reallocate a buffer
+         */
+        ReallocateBuffer5(buffer: any[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): any[];
+        /**
+         * Reallocate a buffer
+         */
+        ReallocateBuffer4(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): any[];
+        RequestBuffer(buffer: any[]): any[];
+        /**
+         * Reallocate the handle / index map and schedule the allocation
+         * of a new pool for handle allocation.
+         */
+        ReallocateHandleBuffers(newCapacity: number): void;
+        ReallocateInternalAllocatedBuffers(capacity: number): void;
+        CreateParticleForGroup(groupDef: b2ParticleGroupDef, xf: b2Transform, p: b2Vec2): void;
+        CreateParticlesStrokeShapeForGroup(shape: b2Shape, groupDef: b2ParticleGroupDef, xf: b2Transform): void;
+        static CreateParticlesStrokeShapeForGroup_s_edge: b2EdgeShape;
+        static CreateParticlesStrokeShapeForGroup_s_d: b2Vec2;
+        static CreateParticlesStrokeShapeForGroup_s_p: b2Vec2;
+        CreateParticlesFillShapeForGroup(shape: b2Shape, groupDef: b2ParticleGroupDef, xf: b2Transform): void;
+        static CreateParticlesFillShapeForGroup_s_aabb: b2AABB;
+        static CreateParticlesFillShapeForGroup_s_p: b2Vec2;
+        CreateParticlesWithShapeForGroup(shape: b2Shape, groupDef: b2ParticleGroupDef, xf: b2Transform): void;
+        CreateParticlesWithShapesForGroup(shapes: b2Shape[], shapeCount: number, groupDef: b2ParticleGroupDef, xf: b2Transform): void;
+        CloneParticle(oldIndex: number, group: b2ParticleGroup): number;
+        DestroyParticlesInGroup(group: b2ParticleGroup, callDestructionListener?: boolean): void;
+        DestroyParticleGroup(group: b2ParticleGroup): void;
+        static ParticleCanBeConnected(flags: b2ParticleFlag, group: b2ParticleGroup): boolean;
+        UpdatePairsAndTriads(firstIndex: number, lastIndex: number, filter: b2ParticleSystem.ConnectionFilter): void;
+        private static UpdatePairsAndTriads_s_dab;
+        private static UpdatePairsAndTriads_s_dbc;
+        private static UpdatePairsAndTriads_s_dca;
+        UpdatePairsAndTriadsWithReactiveParticles(): void;
+        static ComparePairIndices(a: b2ParticlePair, b: b2ParticlePair): boolean;
+        static MatchPairIndices(a: b2ParticlePair, b: b2ParticlePair): boolean;
+        static CompareTriadIndices(a: b2ParticleTriad, b: b2ParticleTriad): boolean;
+        static MatchTriadIndices(a: b2ParticleTriad, b: b2ParticleTriad): boolean;
+        static InitializeParticleLists(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem.ParticleListNode[]): void;
+        MergeParticleListsInContact(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem.ParticleListNode[]): void;
+        static MergeParticleLists(listA: b2ParticleSystem.ParticleListNode, listB: b2ParticleSystem.ParticleListNode): void;
+        static FindLongestParticleList(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem.ParticleListNode[]): b2ParticleSystem.ParticleListNode;
+        MergeZombieParticleListNodes(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem.ParticleListNode[], survivingList: b2ParticleSystem.ParticleListNode): void;
+        static MergeParticleListAndNode(list: b2ParticleSystem.ParticleListNode, node: b2ParticleSystem.ParticleListNode): void;
+        CreateParticleGroupsFromParticleList(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem.ParticleListNode[], survivingList: b2ParticleSystem.ParticleListNode): void;
+        UpdatePairsAndTriadsWithParticleList(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem.ParticleListNode[]): void;
+        ComputeDepth(): void;
+        GetInsideBoundsEnumerator(aabb: b2AABB): b2ParticleSystem.InsideBoundsEnumerator;
+        UpdateAllParticleFlags(): void;
+        UpdateAllGroupFlags(): void;
+        AddContact(a: number, b: number, contacts: b2GrowableBuffer<b2ParticleContact>): void;
+        static AddContact_s_d: b2Vec2;
+        FindContacts_Reference(contacts: b2GrowableBuffer<b2ParticleContact>): void;
+        FindContacts(contacts: b2GrowableBuffer<b2ParticleContact>): void;
+        UpdateProxies_Reference(proxies: b2GrowableBuffer<b2ParticleSystem.Proxy>): void;
+        UpdateProxies(proxies: b2GrowableBuffer<b2ParticleSystem.Proxy>): void;
+        SortProxies(proxies: b2GrowableBuffer<b2ParticleSystem.Proxy>): void;
+        FilterContacts(contacts: b2GrowableBuffer<b2ParticleContact>): void;
+        NotifyContactListenerPreContact(particlePairs: b2ParticleSystem.b2ParticlePairSet): void;
+        NotifyContactListenerPostContact(particlePairs: b2ParticleSystem.b2ParticlePairSet): void;
+        static b2ParticleContactIsZombie(contact: b2ParticleContact): boolean;
+        UpdateContacts(exceptZombie: boolean): void;
+        NotifyBodyContactListenerPreContact(fixtureSet: b2ParticleSystem.FixtureParticleSet): void;
+        NotifyBodyContactListenerPostContact(fixtureSet: b2ParticleSystem.FixtureParticleSet): void;
+        UpdateBodyContacts(): void;
+        static UpdateBodyContacts_s_aabb: b2AABB;
+        Solve(step: b2TimeStep): void;
+        static Solve_s_subStep: b2TimeStep;
+        SolveCollision(step: b2TimeStep): void;
+        static SolveCollision_s_aabb: b2AABB;
+        LimitVelocity(step: b2TimeStep): void;
+        SolveGravity(step: b2TimeStep): void;
+        static SolveGravity_s_gravity: b2Vec2;
+        SolveBarrier(step: b2TimeStep): void;
+        static SolveBarrier_s_aabb: b2AABB;
+        static SolveBarrier_s_va: b2Vec2;
+        static SolveBarrier_s_vb: b2Vec2;
+        static SolveBarrier_s_pba: b2Vec2;
+        static SolveBarrier_s_vba: b2Vec2;
+        static SolveBarrier_s_vc: b2Vec2;
+        static SolveBarrier_s_pca: b2Vec2;
+        static SolveBarrier_s_vca: b2Vec2;
+        static SolveBarrier_s_qba: b2Vec2;
+        static SolveBarrier_s_qca: b2Vec2;
+        static SolveBarrier_s_dv: b2Vec2;
+        static SolveBarrier_s_f: b2Vec2;
+        SolveStaticPressure(step: b2TimeStep): void;
+        ComputeWeight(): void;
+        SolvePressure(step: b2TimeStep): void;
+        static SolvePressure_s_f: b2Vec2;
+        SolveDamping(step: b2TimeStep): void;
+        static SolveDamping_s_v: b2Vec2;
+        static SolveDamping_s_f: b2Vec2;
+        SolveRigidDamping(): void;
+        static SolveRigidDamping_s_t0: b2Vec2;
+        static SolveRigidDamping_s_t1: b2Vec2;
+        static SolveRigidDamping_s_p: b2Vec2;
+        static SolveRigidDamping_s_v: b2Vec2;
+        SolveExtraDamping(): void;
+        static SolveExtraDamping_s_v: b2Vec2;
+        static SolveExtraDamping_s_f: b2Vec2;
+        SolveWall(): void;
+        SolveRigid(step: b2TimeStep): void;
+        static SolveRigid_s_position: b2Vec2;
+        static SolveRigid_s_rotation: b2Rot;
+        static SolveRigid_s_transform: b2Transform;
+        static SolveRigid_s_velocityTransform: b2Transform;
+        SolveElastic(step: b2TimeStep): void;
+        static SolveElastic_s_pa: b2Vec2;
+        static SolveElastic_s_pb: b2Vec2;
+        static SolveElastic_s_pc: b2Vec2;
+        static SolveElastic_s_r: b2Rot;
+        static SolveElastic_s_t0: b2Vec2;
+        SolveSpring(step: b2TimeStep): void;
+        static SolveSpring_s_pa: b2Vec2;
+        static SolveSpring_s_pb: b2Vec2;
+        static SolveSpring_s_d: b2Vec2;
+        static SolveSpring_s_f: b2Vec2;
+        SolveTensile(step: b2TimeStep): void;
+        static SolveTensile_s_weightedNormal: b2Vec2;
+        static SolveTensile_s_s: b2Vec2;
+        static SolveTensile_s_f: b2Vec2;
+        SolveViscous(): void;
+        static SolveViscous_s_v: b2Vec2;
+        static SolveViscous_s_f: b2Vec2;
+        SolveRepulsive(step: b2TimeStep): void;
+        static SolveRepulsive_s_f: b2Vec2;
+        SolvePowder(step: b2TimeStep): void;
+        static SolvePowder_s_f: b2Vec2;
+        SolveSolid(step: b2TimeStep): void;
+        static SolveSolid_s_f: b2Vec2;
+        SolveForce(step: b2TimeStep): void;
+        SolveColorMixing(): void;
+        SolveZombie(): void;
+        /**
+         * Destroy all particles which have outlived their lifetimes set
+         * by SetParticleLifetime().
+         */
+        SolveLifetimes(step: b2TimeStep): void;
+        RotateBuffer(start: number, mid: number, end: number): void;
+        GetCriticalVelocity(step: b2TimeStep): number;
+        GetCriticalVelocitySquared(step: b2TimeStep): number;
+        GetCriticalPressure(step: b2TimeStep): number;
+        GetParticleStride(): number;
+        GetParticleMass(): number;
+        GetParticleInvMass(): number;
+        /**
+         * Get the world's contact filter if any particles with the
+         * b2_contactFilterParticle flag are present in the system.
+         */
+        GetFixtureContactFilter(): b2ContactFilter;
+        /**
+         * Get the world's contact filter if any particles with the
+         * b2_particleContactFilterParticle flag are present in the
+         * system.
+         */
+        GetParticleContactFilter(): b2ContactFilter;
+        /**
+         * Get the world's contact listener if any particles with the
+         * b2_fixtureContactListenerParticle flag are present in the
+         * system.
+         */
+        GetFixtureContactListener(): b2ContactListener;
+        /**
+         * Get the world's contact listener if any particles with the
+         * b2_particleContactListenerParticle flag are present in the
+         * system.
+         */
+        GetParticleContactListener(): b2ContactListener;
+        SetUserOverridableBuffer(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: any[], newCapacity: number): void;
+        SetGroupFlags(group: b2ParticleGroup, newFlags: b2ParticleGroupFlag): void;
+        static BodyContactCompare(lhs: b2ParticleBodyContact, rhs: b2ParticleBodyContact): boolean;
+        RemoveSpuriousBodyContacts(): void;
+        private static RemoveSpuriousBodyContacts_s_n;
+        private static RemoveSpuriousBodyContacts_s_pos;
+        private static RemoveSpuriousBodyContacts_s_normal;
+        DetectStuckParticle(particle: number): void;
+        /**
+         * Determine whether a particle index is valid.
+         */
+        ValidateParticleIndex(index: number): boolean;
+        /**
+         * Get the time elapsed in
+         * b2ParticleSystemDef::lifetimeGranularity.
+         */
+        GetQuantizedTimeElapsed(): number;
+        /**
+         * Convert a lifetime in seconds to an expiration time.
+         */
+        LifetimeToExpirationTime(lifetime: number): number;
+        ForceCanBeApplied(flags: b2ParticleFlag): boolean;
+        PrepareForceBuffer(): void;
+        IsRigidGroup(group: b2ParticleGroup): boolean;
+        GetLinearVelocity(group: b2ParticleGroup, particleIndex: number, point: b2Vec2, out: b2Vec2): b2Vec2;
+        InitDampingParameter(invMass: number[], invInertia: number[], tangentDistance: number[], mass: number, inertia: number, center: b2Vec2, point: b2Vec2, normal: b2Vec2): void;
+        InitDampingParameterWithRigidGroupOrParticle(invMass: number[], invInertia: number[], tangentDistance: number[], isRigidGroup: boolean, group: b2ParticleGroup, particleIndex: number, point: b2Vec2, normal: b2Vec2): void;
+        ComputeDampingImpulse(invMassA: number, invInertiaA: number, tangentDistanceA: number, invMassB: number, invInertiaB: number, tangentDistanceB: number, normalVelocity: number): number;
+        ApplyDamping(invMass: number, invInertia: number, tangentDistance: number, isRigidGroup: boolean, group: b2ParticleGroup, particleIndex: number, impulse: number, normal: b2Vec2): void;
+    }
+    export namespace b2ParticleSystem {
+        class UserOverridableBuffer<T> {
+            data: T[];
+            userSuppliedCapacity: number;
+        }
+        class Proxy {
+            index: number;
+            tag: number;
+            static CompareProxyProxy(a: Proxy, b: Proxy): boolean;
+            static CompareTagProxy(a: number, b: Proxy): boolean;
+            static CompareProxyTag(a: Proxy, b: number): boolean;
+        }
+        class InsideBoundsEnumerator {
+            m_system: b2ParticleSystem;
+            m_xLower: number;
+            m_xUpper: number;
+            m_yLower: number;
+            m_yUpper: number;
+            m_first: number;
+            m_last: number;
+            /**
+             * InsideBoundsEnumerator enumerates all particles inside the
+             * given bounds.
+             *
+             * Construct an enumerator with bounds of tags and a range of
+             * proxies.
+             */
+            constructor(system: b2ParticleSystem, lower: number, upper: number, first: number, last: number);
+            /**
+             * Get index of the next particle. Returns
+             * b2_invalidParticleIndex if there are no more particles.
+             */
+            GetNext(): number;
+        }
+        class ParticleListNode {
+            /**
+             * The head of the list.
+             */
+            list: b2ParticleSystem.ParticleListNode;
+            /**
+             * The next node in the list.
+             */
+            next: b2ParticleSystem.ParticleListNode;
+            /**
+             * Number of entries in the list. Valid only for the node at the
+             * head of the list.
+             */
+            count: number;
+            /**
+             * Particle index.
+             */
+            index: number;
+        }
+        /**
+         * @constructor
+         */
+        class FixedSetAllocator {
+            Allocate(itemSize: number, count: number): number;
+            Clear(): void;
+            GetCount(): number;
+            Invalidate(itemIndex: number): void;
+            GetValidBuffer(): boolean[];
+            GetBuffer(): any[];
+            SetCount(count: number): void;
+        }
+        class FixtureParticle {
+            first: b2Fixture;
+            second: number;
+            constructor(fixture: b2Fixture, particle: number);
+        }
+        class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
+            Initialize(bodyContactBuffer: b2GrowableBuffer<b2ParticleBodyContact>, flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>): void;
+            Find(pair: b2ParticleSystem.FixtureParticle): number;
+        }
+        class ParticlePair {
+            first: number;
+            second: number;
+            constructor(particleA: number, particleB: number);
+        }
+        class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
+            Initialize(contactBuffer: b2GrowableBuffer<b2ParticleContact>, flagsBuffer: UserOverridableBuffer<b2ParticleFlag>): void;
+            /**
+             * @return {number}
+             * @param {b2ParticleSystem.ParticlePair} pair
+             */
+            Find(pair: b2ParticleSystem.ParticlePair): number;
+        }
+        class ConnectionFilter {
+            /**
+             * Is the particle necessary for connection?
+             * A pair or a triad should contain at least one 'necessary'
+             * particle.
+             */
+            IsNecessary(index: number): boolean;
+            /**
+             * An additional condition for creating a pair.
+             */
+            ShouldCreatePair(a: number, b: number): boolean;
+            /**
+             * An additional condition for creating a triad.
+             */
+            ShouldCreateTriad(a: number, b: number, c: number): boolean;
+        }
+        class DestroyParticlesInShapeCallback extends b2QueryCallback {
+            m_system: b2ParticleSystem;
+            m_shape: b2Shape;
+            m_xf: b2Transform;
+            m_callDestructionListener: boolean;
+            m_destroyed: number;
+            constructor(system: b2ParticleSystem, shape: b2Shape, xf: b2Transform, callDestructionListener: boolean);
+            ReportFixture(fixture: b2Fixture): boolean;
+            ReportParticle(particleSystem: b2ParticleSystem, index: number): boolean;
+            Destroyed(): number;
+        }
+        class JoinParticleGroupsFilter extends b2ParticleSystem.ConnectionFilter {
+            m_threshold: number;
+            constructor(threshold: number);
+            /**
+             * An additional condition for creating a pair.
+             */
+            ShouldCreatePair(a: number, b: number): boolean;
+            /**
+             * An additional condition for creating a triad.
+             */
+            ShouldCreateTriad(a: number, b: number, c: number): boolean;
+        }
+        class CompositeShape extends b2Shape {
+            constructor(shapes: b2Shape[], shapeCount: number);
+            m_shapes: b2Shape[];
+            m_shapeCount: number;
+            Clone(): b2Shape;
+            GetChildCount(): number;
+            /**
+             * @see b2Shape::TestPoint
+             */
+            TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+            /**
+             * @see b2Shape::ComputeDistance
+             */
+            ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+            /**
+             * Implement b2Shape.
+             */
+            RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+            /**
+             * @see b2Shape::ComputeAABB
+             */
+            ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+            /**
+             * @see b2Shape::ComputeMass
+             */
+            ComputeMass(massData: b2MassData, density: number): void;
+        }
+        class ReactiveFilter extends b2ParticleSystem.ConnectionFilter {
+            m_flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>;
+            constructor(flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>);
+            IsNecessary(index: number): boolean;
+        }
+        class UpdateBodyContactsCallback extends b2FixtureParticleQueryCallback {
+            m_contactFilter: b2ContactFilter;
+            constructor(system: b2ParticleSystem, contactFilter: b2ContactFilter);
+            ShouldCollideFixtureParticle(fixture: b2Fixture, particleSystem: b2ParticleSystem, particleIndex: number): boolean;
+            ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void;
+            static ReportFixtureAndParticle_s_n: b2Vec2;
+            static ReportFixtureAndParticle_s_rp: b2Vec2;
+        }
+        class SolveCollisionCallback extends b2FixtureParticleQueryCallback {
+            m_step: b2TimeStep;
+            constructor(system: b2ParticleSystem, step: b2TimeStep);
+            ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void;
+            static ReportFixtureAndParticle_s_p1: b2Vec2;
+            static ReportFixtureAndParticle_s_output: b2RayCastOutput;
+            static ReportFixtureAndParticle_s_input: b2RayCastInput;
+            static ReportFixtureAndParticle_s_p: b2Vec2;
+            static ReportFixtureAndParticle_s_v: b2Vec2;
+            static ReportFixtureAndParticle_s_f: b2Vec2;
+            /**
+             * @export
+             * @return {boolean}
+             * @param {b2ParticleSystem} system
+             * @param {number} index
+             */
+            ReportParticle(system: b2ParticleSystem, index: number): boolean;
+        }
+    }
+}
+declare module "Box2D/Particle/b2ParticleGroup" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2ParticleFlag, b2ParticleColor } from "Box2D/Particle/b2Particle";
+    import { b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
+    export const enum b2ParticleGroupFlag {
+        b2_solidParticleGroup = 1,
+        b2_rigidParticleGroup = 2,
+        b2_particleGroupCanBeEmpty = 4,
+        b2_particleGroupWillBeDestroyed = 8,
+        b2_particleGroupNeedsUpdateDepth = 16,
+        b2_particleGroupInternalMask = 24,
+    }
+    export class b2ParticleGroupDef {
+        flags: b2ParticleFlag;
+        groupFlags: b2ParticleGroupFlag;
+        position: b2Vec2;
+        angle: number;
+        linearVelocity: b2Vec2;
+        angularVelocity: number;
+        color: b2ParticleColor;
+        strength: number;
+        shape: b2Shape;
+        shapes: b2Shape[];
+        shapeCount: number;
+        stride: number;
+        particleCount: number;
+        positionData: b2Vec2[];
+        lifetime: number;
+        userData: any;
+        group: b2ParticleGroup;
+    }
+    export class b2ParticleGroup {
+        m_system: b2ParticleSystem;
+        m_firstIndex: number;
+        m_lastIndex: number;
+        m_groupFlags: b2ParticleGroupFlag;
+        m_strength: number;
+        m_prev: b2ParticleGroup;
+        m_next: b2ParticleGroup;
+        m_timestamp: number;
+        m_mass: number;
+        m_inertia: number;
+        m_center: b2Vec2;
+        m_linearVelocity: b2Vec2;
+        m_angularVelocity: number;
+        m_transform: b2Transform;
+        m_userData: any;
+        GetNext(): b2ParticleGroup;
+        GetParticleSystem(): b2ParticleSystem;
+        GetParticleCount(): number;
+        GetBufferIndex(): number;
+        ContainsParticle(index: number): boolean;
+        GetAllParticleFlags(): b2ParticleFlag;
+        GetGroupFlags(): b2ParticleGroupFlag;
+        SetGroupFlags(flags: number): void;
+        GetMass(): number;
+        GetInertia(): number;
+        GetCenter(): b2Vec2;
+        GetLinearVelocity(): b2Vec2;
+        GetAngularVelocity(): number;
+        GetTransform(): b2Transform;
+        GetPosition(): b2Vec2;
+        GetAngle(): number;
+        GetLinearVelocityFromWorldPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2;
+        static GetLinearVelocityFromWorldPoint_s_t0: b2Vec2;
+        GetUserData(): void;
+        SetUserData(data: any): void;
+        ApplyForce(force: b2Vec2): void;
+        ApplyLinearImpulse(impulse: b2Vec2): void;
+        DestroyParticles(callDestructionListener: boolean): void;
+        UpdateStatistics(): void;
+    }
+}
+declare module "Box2D/Particle/b2Particle" {
+    import { b2Vec2 } from "Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Common/b2Draw";
+    import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
+    /**
+     * The particle type. Can be combined with the | operator.
+     */
+    export const enum b2ParticleFlag {
+        b2_waterParticle = 0,
+        b2_zombieParticle = 2,
+        b2_wallParticle = 4,
+        b2_springParticle = 8,
+        b2_elasticParticle = 16,
+        b2_viscousParticle = 32,
+        b2_powderParticle = 64,
+        b2_tensileParticle = 128,
+        b2_colorMixingParticle = 256,
+        b2_destructionListenerParticle = 512,
+        b2_barrierParticle = 1024,
+        b2_staticPressureParticle = 2048,
+        b2_reactiveParticle = 4096,
+        b2_repulsiveParticle = 8192,
+        b2_fixtureContactListenerParticle = 16384,
+        b2_particleContactListenerParticle = 32768,
+        b2_fixtureContactFilterParticle = 65536,
+        b2_particleContactFilterParticle = 131072,
+    }
+    export const B2PARTICLECOLOR_BITS_PER_COMPONENT: number;
+    export const B2PARTICLECOLOR_MAX_VALUE: number;
+    export class b2ParticleColor {
+        r: number;
+        g: number;
+        b: number;
+        a: number;
+        static k_maxValue: number;
+        static k_inverseMaxValue: number;
+        static k_bitsPerComponent: number;
+        constructor(a0?: number | b2Color, a1?: number, a2?: number, a3?: number);
+        IsZero(): boolean;
+        GetColor(out: b2Color): b2Color;
+        Set(a0: number | b2Color, a1?: number, a2?: number, a3?: number): void;
+        SetRGBA(r: number, g: number, b: number, a?: number): void;
+        SetColor(color: b2Color): void;
+        Copy(color: b2ParticleColor): b2ParticleColor;
+        Clone(): b2ParticleColor;
+        SelfMul_0_1(s: number): b2ParticleColor;
+        SelfMul_0_255(s: number): b2ParticleColor;
+        Mul_0_1(s: number, out: b2ParticleColor): b2ParticleColor;
+        Mul_0_255(s: number, out: b2ParticleColor): b2ParticleColor;
+        SelfAdd(color: b2ParticleColor): b2ParticleColor;
+        Add(color: b2ParticleColor, out: b2ParticleColor): b2ParticleColor;
+        SelfSub(color: b2ParticleColor): b2ParticleColor;
+        Sub(color: b2ParticleColor, out: b2ParticleColor): b2ParticleColor;
+        IsEqual(color: b2ParticleColor): boolean;
+        Mix(mixColor: b2ParticleColor, strength: number): void;
+        static MixColors(colorA: b2ParticleColor, colorB: b2ParticleColor, strength: number): void;
+    }
+    export const b2ParticleColor_zero: b2ParticleColor;
+    export class b2ParticleDef {
+        flags: b2ParticleFlag;
+        position: b2Vec2;
+        velocity: b2Vec2;
+        color: b2ParticleColor;
+        lifetime: number;
+        userData: any;
+        group: b2ParticleGroup;
+    }
+    export function b2CalculateParticleIterations(gravity: number, radius: number, timeStep: number): number;
+    export class b2ParticleHandle {
+        m_index: number;
+        GetIndex(): number;
+        SetIndex(index: number): void;
+    }
+}
+declare module "Box2D/Common/b2Draw" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2ParticleColor } from "Box2D/Particle/b2Particle";
+    export class b2Color {
+        static RED: b2Color;
+        static GREEN: b2Color;
+        static BLUE: b2Color;
+        r: number;
+        g: number;
+        b: number;
+        a: number;
+        constructor(rr: number, gg: number, bb: number, aa?: number);
+        SetRGB(rr: number, gg: number, bb: number): b2Color;
+        MakeStyleString(alpha?: number): string;
+        static MakeStyleString(r: number, g: number, b: number, a?: number): string;
+    }
+    export const enum b2DrawFlags {
+        e_none = 0,
+        e_shapeBit = 1,
+        e_jointBit = 2,
+        e_aabbBit = 4,
+        e_pairBit = 8,
+        e_centerOfMassBit = 16,
+        e_particleBit = 32,
+        e_controllerBit = 64,
+        e_all = 63,
+    }
+    export class b2Draw {
+        m_drawFlags: b2DrawFlags;
+        SetFlags(flags: b2DrawFlags): void;
+        GetFlags(): b2DrawFlags;
+        AppendFlags(flags: b2DrawFlags): void;
+        ClearFlags(flags: b2DrawFlags): void;
+        PushTransform(xf: b2Transform): void;
+        PopTransform(xf: b2Transform): void;
+        DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
+        DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
+        DrawCircle(center: b2Vec2, radius: number, color: b2Color): void;
+        DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void;
+        DrawParticles(centers: b2Vec2[], radius: number, colors: b2ParticleColor[], count: number): void;
+        DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void;
+        DrawTransform(xf: b2Transform): void;
+    }
+}
+declare module "Box2D/Common/b2BlockAllocator" {
+    export class b2BlockAllocator {
+    }
+}
+declare module "Box2D/Common/b2StackAllocator" {
+    export class b2StackAllocator {
+    }
+}
 declare module "Box2D/Rope/b2Rope" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
     import { b2Draw } from "Box2D/Common/b2Draw";
@@ -2629,6 +4185,9 @@ declare module "Box2D/Box2D" {
     export * from "Box2D/Dynamics/Joints/b2RopeJoint";
     export * from "Box2D/Dynamics/Joints/b2WeldJoint";
     export * from "Box2D/Dynamics/Joints/b2WheelJoint";
+    export * from "Box2D/Particle/b2Particle";
+    export * from "Box2D/Particle/b2ParticleGroup";
+    export * from "Box2D/Particle/b2ParticleSystem";
     export * from "Box2D/Rope/b2Rope";
 }
 declare module "Testbed/Framework/DebugDraw" {
@@ -2660,6 +4219,7 @@ declare module "Testbed/Framework/DebugDraw" {
         DrawSolidPolygon(vertices: box2d.b2Vec2[], vertexCount: number, color: box2d.b2Color): void;
         DrawCircle(center: box2d.b2Vec2, radius: number, color: box2d.b2Color): void;
         DrawSolidCircle(center: box2d.b2Vec2, radius: number, axis: box2d.b2Vec2, color: box2d.b2Color): void;
+        DrawParticles(centers: box2d.b2Vec2[], radius: number, colors: box2d.b2ParticleColor[], count: number): void;
         DrawSegment(p1: box2d.b2Vec2, p2: box2d.b2Vec2, color: box2d.b2Color): void;
         DrawTransform(xf: box2d.b2Transform): void;
         DrawPoint(p: box2d.b2Vec2, size: number, color: box2d.b2Color): void;
@@ -2674,14 +4234,96 @@ declare module "Testbed/Framework/DebugDraw" {
     export const g_debugDraw: DebugDraw;
     export const g_camera: Camera;
 }
+declare module "Testbed/Framework/ParticleParameter" {
+    export enum ParticleParameterOptions {
+        OptionStrictContacts = 1,
+        OptionDrawShapes = 2,
+        OptionDrawParticles = 4,
+        OptionDrawJoints = 8,
+        OptionDrawAABBs = 16,
+        OptionDrawContactPoints = 32,
+        OptionDrawContactNormals = 64,
+        OptionDrawContactImpulse = 128,
+        OptionDrawFrictionImpulse = 256,
+        OptionDrawCOMs = 512,
+        OptionDrawStats = 1024,
+        OptionDrawProfile = 2048,
+    }
+    export class ParticleParameterValue {
+        /**
+         * ParticleParameterValue of a particle parameter.
+         */
+        constructor(value: number, options: ParticleParameterOptions, name: string);
+        /**
+         * ParticleParameterValue associated with the parameter.
+         */
+        value: number;
+        /**
+         * Any global (non particle-specific) options associated with
+         * this parameter
+         */
+        options: ParticleParameterOptions;
+        /**
+         * Name to display when this parameter is selected.
+         */
+        name: string;
+    }
+    export class ParticleParameterDefinition {
+        /**
+         * Particle parameter definition.
+         */
+        constructor(values: ParticleParameterValue[], numValues?: number);
+        values: ParticleParameterValue[];
+        numValues: number;
+        CalculateValueMask(): number;
+    }
+    export class ParticleParameter {
+        static k_DefaultOptions: ParticleParameterOptions;
+        static k_particleTypes: ParticleParameterValue[];
+        static k_defaultDefinition: ParticleParameterDefinition[];
+        m_index: number;
+        m_changed: boolean;
+        m_restartOnChange: boolean;
+        m_value: ParticleParameterValue;
+        m_definition: ParticleParameterDefinition[];
+        m_definitionCount: number;
+        m_valueCount: number;
+        constructor();
+        Reset(): void;
+        SetDefinition(definition: ParticleParameterDefinition[], definitionCount?: number): void;
+        Get(): number;
+        Set(index: number): void;
+        Increment(): void;
+        Decrement(): void;
+        Changed(restart: boolean[]): boolean;
+        GetValue(): number;
+        GetName(): string;
+        GetOptions(): ParticleParameterOptions;
+        SetRestartOnChange(enable: boolean): void;
+        GetRestartOnChange(): boolean;
+        FindIndexByValue(value: number): number;
+        FindParticleParameterValue(): ParticleParameterValue;
+    }
+    export namespace ParticleParameter {
+        const Options: typeof ParticleParameterOptions;
+        class Value extends ParticleParameterValue {
+        }
+        class Definition extends ParticleParameterDefinition {
+        }
+    }
+}
 declare module "Testbed/Framework/Test" {
     import * as box2d from "Box2D/Box2D";
+    import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
     export const DRAW_STRING_NEW_LINE: number;
+    export function RandomFloat(lo?: number, hi?: number): number;
     export class Settings {
         hz: number;
         velocityIterations: number;
         positionIterations: number;
+        particleIterations: number;
         drawShapes: boolean;
+        drawParticles: boolean;
         drawJoints: boolean;
         drawAABBs: boolean;
         drawContactPoints: boolean;
@@ -2698,6 +4340,7 @@ declare module "Testbed/Framework/Test" {
         enableSleep: boolean;
         pause: boolean;
         singleStep: boolean;
+        strictContacts: boolean;
     }
     export class TestEntry {
         name: string;
@@ -2709,6 +4352,7 @@ declare module "Testbed/Framework/Test" {
         constructor(test: Test);
         SayGoodbyeJoint(joint: box2d.b2Joint): void;
         SayGoodbyeFixture(fixture: box2d.b2Fixture): void;
+        SayGoodbyeParticleGroup(group: any): void;
     }
     export class ContactPoint {
         fixtureA: box2d.b2Fixture;
@@ -2723,6 +4367,7 @@ declare module "Testbed/Framework/Test" {
     export class Test extends box2d.b2ContactListener {
         static k_maxContactPoints: number;
         m_world: box2d.b2World;
+        m_particleSystem: box2d.b2ParticleSystem;
         m_bomb: box2d.b2Body;
         m_textLine: number;
         m_mouseJoint: box2d.b2MouseJoint;
@@ -2732,12 +4377,18 @@ declare module "Testbed/Framework/Test" {
         m_bombSpawnPoint: box2d.b2Vec2;
         m_bombSpawning: boolean;
         m_mouseWorld: box2d.b2Vec2;
+        m_mouseTracing: boolean;
+        m_mouseTracerPosition: box2d.b2Vec2;
+        m_mouseTracerVelocity: box2d.b2Vec2;
         m_stepCount: number;
         m_maxProfile: box2d.b2Profile;
         m_totalProfile: box2d.b2Profile;
         m_groundBody: box2d.b2Body;
+        m_particleParameters: ParticleParameter.Value[];
+        m_particleParameterDef: ParticleParameter.Definition;
         constructor();
         JointDestroyed(joint: box2d.b2Joint): void;
+        ParticleGroupDestroyed(group: any): void;
         BeginContact(contact: box2d.b2Contact): void;
         EndContact(contact: box2d.b2Contact): void;
         private static PreSolve_s_state1;
@@ -2760,6 +4411,38 @@ declare module "Testbed/Framework/Test" {
         Step(settings: Settings): void;
         ShiftOrigin(newOrigin: box2d.b2Vec2): void;
         GetDefaultViewZoom(): number;
+        static k_ParticleColors: box2d.b2ParticleColor[];
+        static k_ParticleColorsCount: number;
+        /**
+         * Apply a preset range of colors to a particle group.
+         *
+         * A different color out of k_ParticleColors is applied to each
+         * particlesPerColor particles in the specified group.
+         *
+         * If particlesPerColor is 0, the particles in the group are
+         * divided into k_ParticleColorsCount equal sets of colored
+         * particles.
+         *
+         * @export
+         * @return {void}
+         * @param {box2d.b2ParticleGroup} group
+         * @param {number} particlesPerColor
+         */
+        ColorParticleGroup(group: box2d.b2ParticleGroup, particlesPerColor: number): void;
+        /**
+         * Remove particle parameters matching "filterMask" from the set
+         * of particle parameters available for this test.
+         * @export
+         * @return {void}
+         * @param {number} filterMask
+         */
+        InitializeParticleParameters(filterMask: any): void;
+        /**
+         * Restore default particle parameters.
+         * @export
+         * @return void
+         */
+        RestoreParticleParameters(): void;
     }
 }
 declare module "Testbed/Tests/Car" {
@@ -2810,14 +4493,345 @@ declare module "Testbed/Tests/SphereStack" {
         static Create(): testbed.Test;
     }
 }
+declare module "Testbed/Tests/ElasticParticles" {
+    import * as testbed from "Testbed/Testbed";
+    export class ElasticParticles extends testbed.Test {
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): ElasticParticles;
+    }
+}
+declare module "Testbed/Framework/ParticleEmitter" {
+    import * as box2d from "Box2D/Box2D";
+    export class EmittedParticleCallback {
+        /**
+         * Called for each created particle.
+         */
+        ParticleCreated(system: box2d.b2ParticleSystem, particleIndex: number): void;
+    }
+    /**
+     * Emit particles from a circular region.
+     */
+    export class RadialEmitter {
+        /**
+         * Pointer to global world
+         */
+        m_particleSystem: box2d.b2ParticleSystem;
+        /**
+         * Called for each created particle.
+         */
+        m_callback: EmittedParticleCallback;
+        /**
+         * Center of particle emitter
+         */
+        m_origin: box2d.b2Vec2;
+        /**
+         * Launch direction.
+         */
+        m_startingVelocity: box2d.b2Vec2;
+        /**
+         * Speed particles are emitted
+         */
+        m_speed: number;
+        /**
+         * Half width / height of particle emitter
+         */
+        m_halfSize: box2d.b2Vec2;
+        /**
+         * Particles per second
+         */
+        m_emitRate: number;
+        /**
+         * Initial color of particle emitted.
+         */
+        m_color: box2d.b2ParticleColor;
+        /**
+         * Number particles to emit on the next frame
+         */
+        m_emitRemainder: number;
+        /**
+         * Flags for created particles, see b2ParticleFlag.
+         */
+        m_flags: box2d.b2ParticleFlag;
+        /**
+         * Group to put newly created particles in.
+         */
+        m_group: box2d.b2ParticleGroup;
+        /**
+         * Calculate a random number 0.0..1.0.
+         */
+        static Random(): number;
+        _dtor_(): void;
+        /**
+         * Set the center of the emitter.
+         */
+        SetPosition(origin: box2d.b2Vec2): void;
+        /**
+         * Get the center of the emitter.
+         */
+        GetPosition(out: box2d.b2Vec2): box2d.b2Vec2;
+        /**
+         * Set the size of the circle which emits particles.
+         */
+        SetSize(size: box2d.b2Vec2): void;
+        /**
+         * Get the size of the circle which emits particles.
+         */
+        GetSize(out: box2d.b2Vec2): box2d.b2Vec2;
+        /**
+         * Set the starting velocity of emitted particles.
+         */
+        SetVelocity(velocity: box2d.b2Vec2): void;
+        /**
+         * Get the starting velocity.
+         */
+        GetVelocity(out: box2d.b2Vec2): box2d.b2Vec2;
+        /**
+         * Set the speed of particles along the direction from the
+         * center of the emitter.
+         */
+        SetSpeed(speed: number): void;
+        /**
+         * Get the speed of particles along the direction from the
+         * center of the emitter.
+         */
+        GetSpeed(): number;
+        /**
+         * Set the flags for created particles.
+         */
+        SetParticleFlags(flags: box2d.b2ParticleFlag): void;
+        /**
+         * Get the flags for created particles.
+         */
+        GetParticleFlags(): box2d.b2ParticleFlag;
+        /**
+         * Set the color of particles.
+         */
+        SetColor(color: box2d.b2ParticleColor): void;
+        /**
+         * Get the color of particles emitter.
+         */
+        GetColor(out: box2d.b2ParticleColor): box2d.b2ParticleColor;
+        /**
+         * Set the emit rate in particles per second.
+         */
+        SetEmitRate(emitRate: number): void;
+        /**
+         * Get the current emit rate.
+         */
+        GetEmitRate(): number;
+        /**
+         * Set the particle system this emitter is adding particles to.
+         */
+        SetParticleSystem(particleSystem: box2d.b2ParticleSystem): void;
+        /**
+         * Get the particle system this emitter is adding particle to.
+         */
+        GetParticleSystem(): box2d.b2ParticleSystem;
+        /**
+         * Set the callback that is called on the creation of each
+         * particle.
+         */
+        SetCallback(callback: EmittedParticleCallback): void;
+        /**
+         * Get the callback that is called on the creation of each
+         * particle.
+         */
+        GetCallback(): EmittedParticleCallback;
+        /**
+         * This class sets the group flags to b2_particleGroupCanBeEmpty
+         * so that it isn't destroyed and clears the
+         * b2_particleGroupCanBeEmpty on the group when the emitter no
+         * longer references it so that the group can potentially be
+         * cleaned up.
+         */
+        SetGroup(group: box2d.b2ParticleGroup): void;
+        /**
+         * Get the group particles should be created within.
+         */
+        GetGroup(): box2d.b2ParticleGroup;
+        /**
+         * dt is seconds that have passed, particleIndices is an
+         * optional pointer to an array which tracks which particles
+         * have been created and particleIndicesCount is the size of the
+         * particleIndices array. This function returns the number of
+         * particles created during this simulation step.
+         */
+        Step(dt: number, particleIndices?: number[], particleIndicesCount?: number): number;
+    }
+}
+declare module "Testbed/Tests/Faucet" {
+    import * as box2d from "Box2D/Box2D";
+    import * as testbed from "Testbed/Testbed";
+    import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
+    import { EmittedParticleCallback, RadialEmitter } from "Testbed/Framework/ParticleEmitter";
+    export class ParticleLifetimeRandomizer extends EmittedParticleCallback {
+        m_minLifetime: number;
+        m_maxLifetime: number;
+        constructor(minLifetime: number, maxLifetime: number);
+        /**
+         * Called for each created particle.
+         */
+        ParticleCreated(system: box2d.b2ParticleSystem, particleIndex: number): void;
+    }
+    /**
+     * Faucet test creates a container from boxes and continually
+     * spawning particles with finite lifetimes that pour into the
+     * box.
+     */
+    export class Faucet extends testbed.Test {
+        /**
+         * Used to cycle through particle colors.
+         */
+        m_particleColorOffset: number;
+        /**
+         * Particle emitter.
+         */
+        m_emitter: RadialEmitter;
+        /**
+         * Callback which sets the lifetime of emitted particles.
+         */
+        m_lifetimeRandomizer: ParticleLifetimeRandomizer;
+        /**
+         * Minimum lifetime of particles in seconds.
+         */
+        static k_particleLifetimeMin: number;
+        /**
+         * Maximum lifetime of particles in seconds.
+         */
+        static k_particleLifetimeMax: number;
+        /**
+         * Height of the container.
+         */
+        static k_containerHeight: number;
+        /**
+         * Width of the container.
+         */
+        static k_containerWidth: number;
+        /**
+         * Thickness of the container's walls and bottom.
+         */
+        static k_containerThickness: number;
+        /**
+         * Width of the faucet relative to the container width.
+         */
+        static k_faucetWidth: number;
+        /**
+         * Height of the faucet relative to the base as a fraction of
+         * the container height.
+         */
+        static k_faucetHeight: number;
+        /**
+         * Length of the faucet as a fraction of the particle diameter.
+         */
+        static k_faucetLength: number;
+        /**
+         * Spout height as a fraction of the faucet length.  This should
+         * be greater than 1.0f).
+         */
+        static k_spoutLength: number;
+        /**
+         * Spout width as a fraction of the *faucet* width.  This should
+         * be greater than 1.0).
+         */
+        static k_spoutWidth: number;
+        /**
+         * Maximum number of particles in the system.
+         */
+        static k_maxParticleCount: number;
+        /**
+         * Factor that is used to increase / decrease the emit rate.
+         * This should be greater than 1.0.
+         */
+        static k_emitRateChangeFactor: number;
+        /**
+         * Minimum emit rate of the faucet in particles per second.
+         */
+        static k_emitRateMin: number;
+        /**
+         * Maximum emit rate of the faucet in particles per second.
+         */
+        static k_emitRateMax: number;
+        /**
+         * Selection of particle types for this test.
+         */
+        static k_paramValues: ParticleParameter.Value[];
+        static k_paramDef: ParticleParameter.Definition[];
+        static k_paramDefCount: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        Keyboard(key: string): void;
+        GetDefaultViewZoom(): number;
+        /**
+         * Create the faucet test.
+         */
+        static Create(): Faucet;
+    }
+}
+declare module "Testbed/Tests/ParticlesSurfaceTension" {
+    import * as testbed from "Testbed/Testbed";
+    export class ParticlesSurfaceTension extends testbed.Test {
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): ParticlesSurfaceTension;
+    }
+}
+declare module "Testbed/Tests/Sparky" {
+    import * as box2d from "Box2D/Box2D";
+    import * as testbed from "Testbed/Testbed";
+    export class Sparky extends testbed.Test {
+        private static c_maxCircles;
+        private static c_maxVFX;
+        private static SHAPE_HEIGHT_OFFSET;
+        private static SHAPE_OFFSET;
+        private m_VFXIndex;
+        private m_VFX;
+        private m_contact;
+        private m_contactPoint;
+        constructor();
+        BeginContact(contact: box2d.b2Contact): void;
+        Step(settings: testbed.Settings): void;
+        AddVFX(p: box2d.b2Vec2, particleFlags: box2d.b2ParticleFlag): void;
+        CreateWalls(): void;
+        static Create(): testbed.Test;
+    }
+}
 declare module "Testbed/Tests/TestEntries" {
     import { TestEntry } from "Testbed/Framework/Test";
     export const g_testEntries: TestEntry[];
 }
+declare module "Testbed/Framework/FullscreenUI" {
+    /**
+     * Handles drawing and selection of full screen UI.
+     */
+    export class FullScreenUI {
+        constructor();
+        /**
+         * Whether particle parameters are enabled.
+         */
+        m_particleParameterSelectionEnabled: boolean;
+        /**
+         * Reset the UI to it's initial state.
+         */
+        Reset(): void;
+        /**
+         * Enable / disable particle parameter selection.
+         */
+        SetParticleParameterSelectionEnabled(enable: boolean): void;
+        /**
+         * Get whether particle parameter selection is enabled.
+         */
+        GetParticleParameterSelectionEnabled(): boolean;
+    }
+}
 declare module "Testbed/Framework/Main" {
     import * as box2d from "Box2D/Box2D";
     import { Settings, Test } from "Testbed/Framework/Test";
+    import { FullScreenUI } from "Testbed/Framework/FullscreenUI";
+    import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
     export class Main {
+        static fullscreenUI: FullScreenUI;
+        static particleParameter: ParticleParameter;
         m_time_last: number;
         m_fps_time: number;
         m_fps_frames: number;
@@ -2863,11 +4877,35 @@ declare module "Testbed/Framework/Main" {
         SingleStep(): void;
         ToggleDemo(): void;
         SimulationLoop(): void;
+        /**
+         * Set whether to restart the test on particle parameter
+         * changes. This parameter is re-enabled when the test changes.
+         */
+        static SetRestartOnParticleParameterChange(enable: boolean): void;
+        /**
+         * Set the currently selected particle parameter value.  This
+         * value must match one of the values in
+         * Main::k_particleTypes or one of the values referenced by
+         * particleParameterDef passed to SetParticleParameters().
+         */
+        static SetParticleParameterValue(value: number): number;
+        /**
+         * Get the currently selected particle parameter value and
+         * enable particle parameter selection arrows on Android.
+         */
+        static GetParticleParameterValue(): number;
+        /**
+         * Override the default particle parameters for the test.
+         */
+        static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount?: number): void;
     }
 }
 declare module "Testbed/Testbed" {
     export * from "Testbed/Framework/Main";
     export * from "Testbed/Framework/DebugDraw";
+    export * from "Testbed/Framework/FullscreenUI";
+    export * from "Testbed/Framework/ParticleEmitter";
+    export * from "Testbed/Framework/ParticleParameter";
     export * from "Testbed/Framework/Test";
     export * from "Testbed/Tests/TestEntries";
 }

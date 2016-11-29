@@ -217,6 +217,12 @@ export class b2Fixture {
     return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
   }
 
+  ///#if B2_ENABLE_PARTICLE
+  public ComputeDistance(p: b2Vec2, normal: b2Vec2, childIndex: number): number {
+    return this.m_shape.ComputeDistance(this.m_body.GetTransform(), p, normal, childIndex);
+  }
+  ///#endif
+
   /// Cast a ray against this shape.
   /// @param output the ray-cast results.
   /// @param input the ray-cast input parameters.

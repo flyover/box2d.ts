@@ -2,8 +2,16 @@ import * as box2d from "../../Box2D/Box2D";
 import { Settings, Test } from "./Test";
 import { g_debugDraw, g_camera } from "./DebugDraw";
 import { g_testEntries } from "../Tests/TestEntries";
+///#if B2_ENABLE_PARTICLE
+import { FullScreenUI } from "./FullscreenUI";
+import { ParticleParameter } from "./ParticleParameter";
+///#endif
 
 export class Main {
+  ///#if B2_ENABLE_PARTICLE
+  public static fullscreenUI = new FullScreenUI();
+  public static particleParameter = new ParticleParameter();
+  ///#endif
   public m_time_last: number = 0;
   public m_fps_time: number = 0;
   public m_fps_frames: number = 0;
@@ -151,6 +159,9 @@ export class Main {
     const number_input_table: HTMLTableElement = <HTMLTableElement> controls_div.appendChild(document.createElement("table"));
     connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, function(value: number): void { that.m_settings.velocityIterations = value; }, 1, 20, 1);
     connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, function(value: number): void { that.m_settings.positionIterations = value; }, 1, 20, 1);
+    ///#if B2_ENABLE_PARTICLE
+    connect_number_input(number_input_table, "Pcl Iters", that.m_settings.particleIterations, function(value: number): void { that.m_settings.particleIterations = value; }, 1, 100, 1);
+    ///#endif
     connect_number_input(number_input_table, "Hertz", this.m_settings.hz, function(value: number): void { that.m_settings.hz = value; }, 10, 120, 1);
 
     // simulation checkbox inputs
@@ -171,12 +182,18 @@ export class Main {
     connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.enableWarmStarting, function(value: boolean): void { that.m_settings.enableWarmStarting = value; });
     connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.enableContinuous, function(value: boolean): void { that.m_settings.enableContinuous = value; });
     connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.enableSubStepping, function(value: boolean): void { that.m_settings.enableSubStepping = value; });
+    ///#if B2_ENABLE_PARTICLE
+    connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", that.m_settings.strictContacts, function(value: boolean): void { that.m_settings.strictContacts = value; });
+    ///#endif
 
     // draw checkbox inputs
     const draw_fieldset: HTMLFieldSetElement = <HTMLFieldSetElement> controls_div.appendChild(document.createElement("fieldset"));
     const draw_legend: HTMLLegendElement = <HTMLLegendElement> draw_fieldset.appendChild(document.createElement("legend"));
     draw_legend.appendChild(document.createTextNode("Draw"));
     connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, function(value: boolean): void { that.m_settings.drawShapes = value; });
+    ///#if B2_ENABLE_PARTICLE
+    connect_checkbox_input(draw_fieldset, "Particles", that.m_settings.drawParticles, function(value: boolean): void { that.m_settings.drawParticles = value; });
+    ///#endif
     connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.drawJoints, function(value: boolean): void { that.m_settings.drawJoints = value; });
     connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.drawAABBs, function(value: boolean): void { that.m_settings.drawAABBs = value; });
     connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.drawContactPoints, function(value: boolean): void { that.m_settings.drawContactPoints = value; });
@@ -411,9 +428,26 @@ export class Main {
     case "]":
       this.IncrementTest();
       break;
-    case ".":
-      this.SingleStep();
+    ///#if B2_ENABLE_PARTICLE
+    case ",":
+      if (this.m_shift) {
+        // Press < to select the previous particle parameter setting.
+        Main.particleParameter.Decrement();
+      }
       break;
+    case ".":
+      if (this.m_shift) {
+        // Press > to select the next particle parameter setting.
+        Main.particleParameter.Increment();
+      } else {
+        this.SingleStep();
+      }
+      break;
+    ///#else
+    ///case ".":
+    ///  this.SingleStep();
+    ///  break;
+    ///#endif
     default:
       // console.log(e.keyCode);
       break;
@@ -476,7 +510,16 @@ export class Main {
   }
 
   public LoadTest(restartTest: boolean = false): void {
+    ///#if B2_ENABLE_PARTICLE
+    Main.fullscreenUI.Reset();
+    if (!restartTest) Main.particleParameter.Reset();
+    ///#endif
     this.m_demo_time = 0;
+    ///#if B2_ENABLE_PARTICLE
+    if (this.m_test) {
+      this.m_test.RestoreParticleParameters();
+    }
+    ///#endif
     this.m_test = g_testEntries[this.m_test_index].createFcn();
     if (!restartTest) {
       this.HomeCamera();
@@ -546,14 +589,78 @@ export class Main {
 
         this.m_test.Step(this.m_settings);
 
-        this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
+        ///#if B2_ENABLE_PARTICLE
+        // Update the state of the particle parameter.
+        let restartTest = [false];
+        Main.particleParameter.Changed(restartTest);
+        ///#endif
+
+        ///#if B2_ENABLE_PARTICLE
+        let msg = g_testEntries[this.m_test_index].name;
+        if (Main.fullscreenUI.GetParticleParameterSelectionEnabled()) {
+          msg += " : ";
+          msg += Main.particleParameter.GetName();
+        }
+        this.m_test.DrawTitle(msg);
+        ///#else
+        ///this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
+        ///#endif
 
         ctx.strokeStyle = "yellow";
         ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
 
       ctx.restore();
 
+      ///#if B2_ENABLE_PARTICLE
+      if (restartTest[0]) {
+        this.LoadTest(true);
+      }
+      ///#endif
+
       this.UpdateTest(time_elapsed);
     }
   }
+
+  ///#if B2_ENABLE_PARTICLE
+
+  /**
+   * Set whether to restart the test on particle parameter
+   * changes. This parameter is re-enabled when the test changes.
+   */
+  static SetRestartOnParticleParameterChange(enable: boolean): void {
+    Main.particleParameter.SetRestartOnChange(enable);
+  }
+
+  /**
+   * Set the currently selected particle parameter value.  This
+   * value must match one of the values in
+   * Main::k_particleTypes or one of the values referenced by
+   * particleParameterDef passed to SetParticleParameters().
+   */
+  static SetParticleParameterValue(value: number): number {
+    const index = Main.particleParameter.FindIndexByValue(value);
+    // If the particle type isn't found, so fallback to the first entry in the
+    // parameter.
+    Main.particleParameter.Set(index >= 0 ? index : 0);
+    return Main.particleParameter.GetValue();
+  }
+
+  /**
+   * Get the currently selected particle parameter value and
+   * enable particle parameter selection arrows on Android.
+   */
+  static GetParticleParameterValue(): number {
+    // Enable display of particle type selection arrows.
+    Main.fullscreenUI.SetParticleParameterSelectionEnabled(true);
+    return Main.particleParameter.GetValue();
+  }
+
+  /**
+   * Override the default particle parameters for the test.
+   */
+  static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount: number = particleParameterDef.length) {
+    Main.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
+  }
+
+  ///#endif
 }

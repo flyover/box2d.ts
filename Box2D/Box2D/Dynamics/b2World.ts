@@ -43,6 +43,11 @@ import { b2ContactListener } from "./b2WorldCallbacks";
 import { b2DestructionListener } from "./b2WorldCallbacks";
 import { b2QueryCallback, b2QueryCallbackFunction } from "./b2WorldCallbacks";
 import { b2RayCastCallback, b2RayCastCallbackFunction } from "./b2WorldCallbacks";
+///#if B2_ENABLE_PARTICLE
+import { b2_maxFloat } from "../Common/b2Settings";
+import { b2CalculateParticleIterations } from "../Particle/b2Particle";
+import { b2ParticleSystemDef, b2ParticleSystem } from "../Particle/b2ParticleSystem";
+///#endif
 ///import { b2Controller } from "../../../Contributions/Enhancements/Controllers/b2Controller";
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -60,6 +65,10 @@ export class b2World {
 
   public m_bodyList: b2Body = null;
   public m_jointList: b2Joint = null;
+
+  ///#if B2_ENABLE_PARTICLE
+  public m_particleSystemList: b2ParticleSystem = null;
+  ///#endif
 
   public m_bodyCount: number = 0;
   public m_jointCount: number = 0;
@@ -364,6 +373,66 @@ export class b2World {
     }
   }
 
+  ///#if B2_ENABLE_PARTICLE
+
+  CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem {
+    ///b2Assert(!this.IsLocked());
+    if (this.IsLocked()) {
+      return null;
+    }
+
+    const p = new b2ParticleSystem(def, this);
+
+    // Add to world doubly linked list.
+    p.m_prev = null;
+    p.m_next = this.m_particleSystemList;
+    if (this.m_particleSystemList) {
+      this.m_particleSystemList.m_prev = p;
+    }
+    this.m_particleSystemList = p;
+
+    return p;
+  }
+
+  DestroyParticleSystem(p: b2ParticleSystem): void {
+    ///b2Assert(!this.IsLocked());
+    if (this.IsLocked()) {
+      return;
+    }
+
+    // Remove world particleSystem list.
+    if (p.m_prev) {
+      p.m_prev.m_next = p.m_next;
+    }
+
+    if (p.m_next) {
+      p.m_next.m_prev = p.m_prev;
+    }
+
+    if (p === this.m_particleSystemList) {
+      this.m_particleSystemList = p.m_next;
+    }
+  }
+
+  CalculateReasonableParticleIterations(timeStep: number): number {
+    if (this.m_particleSystemList === null) {
+      return 1;
+    }
+
+    function GetSmallestRadius(world: b2World): number {
+      let smallestRadius = b2_maxFloat;
+      for (let system = world.GetParticleSystemList(); system !== null; system = system.m_next) {
+        smallestRadius = b2Min(smallestRadius, system.GetRadius());
+      }
+      return smallestRadius;
+    }
+
+    // Use the smallest radius, since that represents the worst-case.
+    return b2CalculateParticleIterations(this.m_gravity.Length(), GetSmallestRadius(this), timeStep);
+  }
+
+  ///#endif
+
   /// Take a time step. This performs collision detection, integration,
   /// and constraint solution.
   /// @param timeStep the amount of time to simulate, this should not vary.
@@ -372,7 +441,11 @@ export class b2World {
   private static Step_s_step = new b2TimeStep();
   private static Step_s_stepTimer = new b2Timer();
   private static Step_s_timer = new b2Timer();
-  public Step(dt: number, velocityIterations: number, positionIterations: number): void {
+  ///#if B2_ENABLE_PARTICLE
+  public Step(dt: number, velocityIterations: number, positionIterations: number, particleIterations: number = this.CalculateReasonableParticleIterations(dt)): void {
+  ///#else
+  ///public Step(dt: number, velocityIterations: number, positionIterations: number): void {
+  ///#endif
     const stepTimer: b2Timer = b2World.Step_s_stepTimer.Reset();
 
     // If new fixtures were added, we need to find the new contacts.
@@ -387,6 +460,9 @@ export class b2World {
     step.dt = dt;
     step.velocityIterations = velocityIterations;
     step.positionIterations = positionIterations;
+    ///#if B2_ENABLE_PARTICLE
+    step.particleIterations = particleIterations;
+    ///#endif
     if (dt > 0) {
       step.inv_dt = 1 / dt;
     } else {
@@ -405,6 +481,11 @@ export class b2World {
     // Integrate velocities, solve velocity constraints, and integrate positions.
     if (this.m_stepComplete && step.dt > 0) {
       const timer: b2Timer = b2World.Step_s_timer.Reset();
+      ///#if B2_ENABLE_PARTICLE
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        p.Solve(step); // Particle Simulation
+      }
+      ///#endif
       this.Solve(step);
       this.m_profile.solve = timer.GetMilliseconds();
     }
@@ -442,6 +523,24 @@ export class b2World {
       body.m_torque = 0;
     }
   }
+
+  ///#if B2_ENABLE_PARTICLE
+
+  DrawParticleSystem(system: b2ParticleSystem): void {
+    const particleCount = system.GetParticleCount();
+    if (particleCount) {
+      const radius = system.GetRadius();
+      const positionBuffer = system.GetPositionBuffer();
+      if (system.m_colorBuffer.data) {
+        const colorBuffer = system.GetColorBuffer();
+        this.m_debugDraw.DrawParticles(positionBuffer, radius, colorBuffer, particleCount);
+      } else {
+        this.m_debugDraw.DrawParticles(positionBuffer, radius, null, particleCount);
+      }
+    }
+  }
+
+  ///#endif
 
   /// Call this to draw shapes and other debug draw data.
   private static DrawDebugData_s_color = new b2Color(0, 0, 0);
@@ -483,6 +582,14 @@ export class b2World {
         this.m_debugDraw.PopTransform(xf);
       }
     }
+
+    ///#if B2_ENABLE_PARTICLE
+    if (flags & b2DrawFlags.e_particleBit) {
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        this.DrawParticleSystem(p);
+      }
+    }
+    ///#endif
 
     if (flags & b2DrawFlags.e_jointBit) {
       for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
@@ -566,6 +673,15 @@ export class b2World {
       }
     };
     broadPhase.Query(WorldQueryWrapper, aabb);
+    ///#if B2_ENABLE_PARTICLE
+    if (callback instanceof b2QueryCallback) {
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        if (callback.ShouldQueryParticleSystem(p)) {
+          p.QueryAABB(callback, aabb);
+        }
+      }
+    }
+    ///#endif
   }
 
   private static QueryShape_s_aabb = new b2AABB();
@@ -588,6 +704,15 @@ export class b2World {
     const aabb: b2AABB = b2World.QueryShape_s_aabb;
     shape.ComputeAABB(aabb, transform, 0); // TODO
     broadPhase.Query(WorldQueryWrapper, aabb);
+    ///#if B2_ENABLE_PARTICLE
+    if (callback instanceof b2QueryCallback) {
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        if (callback.ShouldQueryParticleSystem(p)) {
+          p.QueryAABB(callback, aabb);
+        }
+      }
+    }
+    ///#endif
   }
 
   private static QueryPoint_s_aabb = new b2AABB();
@@ -611,6 +736,15 @@ export class b2World {
     aabb.lowerBound.Set(point.x - b2_linearSlop, point.y - b2_linearSlop);
     aabb.upperBound.Set(point.x + b2_linearSlop, point.y + b2_linearSlop);
     broadPhase.Query(WorldQueryWrapper, aabb);
+    ///#if B2_ENABLE_PARTICLE
+    if (callback instanceof b2QueryCallback) {
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        if (callback.ShouldQueryParticleSystem(p)) {
+          p.QueryAABB(callback, aabb);
+        }
+      }
+    }
+    ///#endif
   }
 
   /// Ray-cast the world for all fixtures in the path of the ray. Your callback
@@ -648,6 +782,15 @@ export class b2World {
     input.p1.Copy(point1);
     input.p2.Copy(point2);
     broadPhase.RayCast(WorldRayCastWrapper, input);
+    ///#if B2_ENABLE_PARTICLE
+    if (callback instanceof b2RayCastCallback) {
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        if (callback.ShouldQueryParticleSystem(p)) {
+          p.RayCast(callback, point1, point2);
+        }
+      }
+    }
+    ///#endif
   }
 
   public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture {
@@ -686,6 +829,12 @@ export class b2World {
   public GetJointList(): b2Joint {
     return this.m_jointList;
   }
+
+  ///#if B2_ENABLE_PARTICLE
+  GetParticleSystemList() {
+    return this.m_particleSystemList;
+  }
+  ///#endif
 
   /// Get the world contact list. With the returned contact, use b2Contact::GetNext to get
   /// the next contact in the world list. A NULL contact indicates the end of the list.
@@ -979,6 +1128,13 @@ export class b2World {
   }
 
   public Solve(step: b2TimeStep): void {
+    ///#if B2_ENABLE_PARTICLE
+    // update previous transforms
+    for (let b = this.m_bodyList; b; b = b.m_next) {
+      b.m_xf0.Copy(b.m_xf);
+    }
+    ///#endif
+
     /// @see b2Controller list
 //    for (let controller = this.m_controllerList; controller; controller = controller.m_next) {
 //      controller.Step(step);
@@ -1409,6 +1565,9 @@ export class b2World {
       subStep.dtRatio = 1;
       subStep.positionIterations = 20;
       subStep.velocityIterations = step.velocityIterations;
+      ///#if B2_ENABLE_PARTICLE
+      subStep.particleIterations = step.particleIterations;
+      ///#endif
       subStep.warmStarting = false;
       island.SolveTOI(subStep, bA.m_islandIndex, bB.m_islandIndex);
 

@@ -109,6 +109,9 @@ export class b2Body {
   public m_islandIndex: number = 0;
 
   public m_xf: b2Transform = new b2Transform();  // the body origin transform
+  ///#if B2_ENABLE_PARTICLE
+  public m_xf0: b2Transform = new b2Transform();
+  ///#endif
   public m_sweep: b2Sweep = new b2Sweep();    // the swept motion for CCD
 
   public m_linearVelocity: b2Vec2 = new b2Vec2();
@@ -174,6 +177,9 @@ export class b2Body {
 
     this.m_xf.p.Copy(bd.position);
     this.m_xf.q.SetAngle(bd.angle);
+    ///#if B2_ENABLE_PARTICLE
+    this.m_xf0.Copy(this.m_xf);
+    ///#endif
 
     this.m_sweep.localCenter.SetZero();
     this.m_sweep.c0.Copy(this.m_xf.p);
@@ -365,6 +371,9 @@ export class b2Body {
 
     this.m_xf.q.SetAngle(angle);
     this.m_xf.p.Set(x, y);
+    ///#if B2_ENABLE_PARTICLE
+    this.m_xf0.Copy(this.m_xf);
+    ///#endif
 
     b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
     this.m_sweep.a = angle;

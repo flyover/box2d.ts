@@ -77,6 +77,32 @@ export class b2EdgeShape extends b2Shape {
     return false;
   }
 
+  ///#if B2_ENABLE_PARTICLE
+  /// @see b2Shape::ComputeDistance
+  private static ComputeDistance_s_v1 = new b2Vec2();
+  private static ComputeDistance_s_v2 = new b2Vec2();
+  private static ComputeDistance_s_d = new b2Vec2();
+  private static ComputeDistance_s_s = new b2Vec2();
+  public ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number {
+    const v1 = b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeDistance_s_v1);
+    const v2 = b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeDistance_s_v2);
+
+    const d = b2Vec2.SubVV(p, v1, b2EdgeShape.ComputeDistance_s_d);
+    const s = b2Vec2.SubVV(v2, v1, b2EdgeShape.ComputeDistance_s_s);
+    const ds = b2Vec2.DotVV(d, s);
+    if (ds > 0) {
+      const s2 = b2Vec2.DotVV(s, s);
+      if (ds > s2) {
+        b2Vec2.SubVV(p, v2, d);
+      } else {
+        d.SelfMulSub(ds / s2, s);
+      }
+    }
+    normal.Copy(d);
+    return normal.Normalize();
+  }
+  ///#endif
+
   /// Implement b2Shape.
   // p = p1 + t * d
   // v = v1 + s * e

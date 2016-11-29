@@ -18,7 +18,7 @@
 System.register("Common/b2Settings", [], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_pi, b2_maxManifoldPoints, b2_maxPolygonVertices, b2_aabbExtension, b2_aabbMultiplier, b2_linearSlop, b2_angularSlop, b2_polygonRadius, b2_maxSubSteps, b2_maxTOIContacts, b2_velocityThreshold, b2_maxLinearCorrection, b2_maxAngularCorrection, b2_maxTranslation, b2_maxTranslationSquared, b2_maxRotation, b2_maxRotationSquared, b2_baumgarte, b2_toiBaumgarte, b2_timeToSleep, b2_linearSleepTolerance, b2_angularSleepTolerance, b2Version, b2_version, b2_changelist;
+    var b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_pi, b2_maxManifoldPoints, b2_maxPolygonVertices, b2_aabbExtension, b2_aabbMultiplier, b2_linearSlop, b2_angularSlop, b2_polygonRadius, b2_maxSubSteps, b2_maxTOIContacts, b2_velocityThreshold, b2_maxLinearCorrection, b2_maxAngularCorrection, b2_maxTranslation, b2_maxTranslationSquared, b2_maxRotation, b2_maxRotationSquared, b2_baumgarte, b2_toiBaumgarte, b2_invalidParticleIndex, b2_maxParticleIndex, b2_particleStride, b2_minParticleWeight, b2_maxParticlePressure, b2_maxParticleForce, b2_maxTriadDistance, b2_maxTriadDistanceSquared, b2_minParticleSystemBufferCapacity, b2_barrierCollisionTime, b2_timeToSleep, b2_linearSleepTolerance, b2_angularSleepTolerance, b2Version, b2_version, b2_changelist;
     function b2Assert(condition, ...args) {
         if (!condition) {
             debugger;
@@ -136,6 +136,27 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
             /// to overshoot.
             exports_1("b2_baumgarte", b2_baumgarte = 0.2);
             exports_1("b2_toiBaumgarte", b2_toiBaumgarte = 0.75);
+            ///#if B2_ENABLE_PARTICLE
+            // Particle
+            /// A symbolic constant that stands for particle allocation error.
+            exports_1("b2_invalidParticleIndex", b2_invalidParticleIndex = -1);
+            exports_1("b2_maxParticleIndex", b2_maxParticleIndex = 0x7FFFFFFF);
+            /// The default distance between particles, multiplied by the particle diameter.
+            exports_1("b2_particleStride", b2_particleStride = 0.75);
+            /// The minimum particle weight that produces pressure.
+            exports_1("b2_minParticleWeight", b2_minParticleWeight = 1.0);
+            /// The upper limit for particle pressure.
+            exports_1("b2_maxParticlePressure", b2_maxParticlePressure = 0.25);
+            /// The upper limit for force between particles.
+            exports_1("b2_maxParticleForce", b2_maxParticleForce = 0.5);
+            /// The maximum distance between particles in a triad, multiplied by the particle diameter.
+            exports_1("b2_maxTriadDistance", b2_maxTriadDistance = 2.0);
+            exports_1("b2_maxTriadDistanceSquared", b2_maxTriadDistanceSquared = (b2_maxTriadDistance * b2_maxTriadDistance));
+            /// The initial size of particle data buffers.
+            exports_1("b2_minParticleSystemBufferCapacity", b2_minParticleSystemBufferCapacity = 256);
+            /// The time into the future that collisions against barrier particles will be detected.
+            exports_1("b2_barrierCollisionTime", b2_barrierCollisionTime = 2.5);
+            ///#endif
             // Sleep
             /// The time that a body must be still before it will go to sleep.
             exports_1("b2_timeToSleep", b2_timeToSleep = 0.5);
@@ -343,6 +364,7 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
     function b2AddVV(a, b, out) { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
     function b2SubVV(a, b, out) { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
     function b2MulSV(s, v, out) { out.x = v.x * s; out.y = v.y * s; return out; }
+    function b2MulVS(v, s, out) { out.x = v.x * s; out.y = v.y * s; return out; }
     function b2AddVMulSV(a, s, b, out) { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
     function b2SubVMulSV(a, s, b, out) { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
     function b2AddVCrossSV(a, s, v, out) {
@@ -605,7 +627,7 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
                     const x = this.x, y = this.y;
                     return Math.sqrt(x * x + y * y);
                 }
-                GetLength() {
+                LengthSquared() {
                     const x = this.x, y = this.y;
                     return (x * x + y * y);
                 }
@@ -693,6 +715,7 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
                 static AddVV(a, b, out) { return b2AddVV(a, b, out); }
                 static SubVV(a, b, out) { return b2SubVV(a, b, out); }
                 static MulSV(s, v, out) { return b2MulSV(s, v, out); }
+                static MulVS(v, s, out) { return b2MulVS(v, s, out); }
                 static AddVMulSV(a, s, b, out) { return b2AddVMulSV(a, s, b, out); }
                 static SubVMulSV(a, s, b, out) { return b2SubVMulSV(a, s, b, out); }
                 static AddVCrossSV(a, s, v, out) { return b2AddVCrossSV(a, s, v, out); }
@@ -1165,7 +1188,7 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
     }
 });
 /*
-* Copyright (c) 2011 Erin Catto http://box2d.org
+* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -1181,305 +1204,13 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2Draw", ["Common/b2Math"], function(exports_3, context_3) {
+System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], function(exports_3, context_3) {
     "use strict";
     var __moduleName = context_3 && context_3.id;
-    var b2Math_1;
-    var b2Color, b2Draw;
-    return {
-        setters:[
-            function (b2Math_1_1) {
-                b2Math_1 = b2Math_1_1;
-            }],
-        execute: function() {
-            /// Color for debug drawing. Each value has the range [0,1].
-            b2Color = class b2Color {
-                constructor(rr, gg, bb) {
-                    this._r = 0x7f;
-                    this._g = 0x7f;
-                    this._b = 0x7f;
-                    this._r = b2Math_1.b2Clamp(Math.round(rr * 255), 0, 255);
-                    this._g = b2Math_1.b2Clamp(Math.round(gg * 255), 0, 255);
-                    this._b = b2Math_1.b2Clamp(Math.round(bb * 255), 0, 255);
-                }
-                SetRGB(rr, gg, bb) {
-                    this._r = b2Math_1.b2Clamp(Math.round(rr * 255), 0, 255);
-                    this._g = b2Math_1.b2Clamp(Math.round(gg * 255), 0, 255);
-                    this._b = b2Math_1.b2Clamp(Math.round(bb * 255), 0, 255);
-                    return this;
-                }
-                MakeStyleString(alpha = 1) {
-                    return b2Color.MakeStyleString(this._r, this._g, this._b, alpha);
-                }
-                static MakeStyleString(r, g, b, a = 1) {
-                    if (a < 1) {
-                        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-                    }
-                    else {
-                        return "rgb(" + r + "," + g + "," + b + ")";
-                    }
-                }
-            };
-            b2Color.RED = new b2Color(1, 0, 0);
-            b2Color.GREEN = new b2Color(0, 1, 0);
-            b2Color.BLUE = new b2Color(0, 0, 1);
-            exports_3("b2Color", b2Color);
-            /// Implement and register this class with a b2World to provide debug drawing of physics
-            /// entities in your game.
-            b2Draw = class b2Draw {
-                constructor() {
-                    this.m_drawFlags = 0;
-                }
-                SetFlags(flags) {
-                    this.m_drawFlags = flags;
-                }
-                GetFlags() {
-                    return this.m_drawFlags;
-                }
-                AppendFlags(flags) {
-                    this.m_drawFlags |= flags;
-                }
-                ClearFlags(flags) {
-                    this.m_drawFlags &= ~flags;
-                }
-                PushTransform(xf) { }
-                PopTransform(xf) { }
-                DrawPolygon(vertices, vertexCount, color) { }
-                DrawSolidPolygon(vertices, vertexCount, color) { }
-                DrawCircle(center, radius, color) { }
-                DrawSolidCircle(center, radius, axis, color) { }
-                DrawSegment(p1, p2, color) { }
-                DrawTransform(xf) { }
-            };
-            exports_3("b2Draw", b2Draw);
-        }
-    }
-});
-/*
-* Copyright (c) 2011 Erin Catto http://box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Common/b2Timer", [], function(exports_4, context_4) {
-    "use strict";
-    var __moduleName = context_4 && context_4.id;
-    var b2Timer, b2Counter;
-    return {
-        setters:[],
-        execute: function() {
-            /// Timer for profiling. This has platform specific code and may
-            /// not work on every platform.
-            b2Timer = class b2Timer {
-                constructor() {
-                    this.m_start = Date.now();
-                }
-                /// Reset the timer.
-                Reset() {
-                    this.m_start = Date.now();
-                    return this;
-                }
-                /// Get the time since construction or the last reset.
-                GetMilliseconds() {
-                    return Date.now() - this.m_start;
-                }
-            };
-            exports_4("b2Timer", b2Timer);
-            b2Counter = class b2Counter {
-                constructor() {
-                    this.m_count = 0;
-                    this.m_min_count = 0;
-                    this.m_max_count = 0;
-                }
-                GetCount() {
-                    return this.m_count;
-                }
-                GetMinCount() {
-                    return this.m_min_count;
-                }
-                GetMaxCount() {
-                    return this.m_max_count;
-                }
-                ResetCount() {
-                    const count = this.m_count;
-                    this.m_count = 0;
-                    return count;
-                }
-                ResetMinCount() {
-                    this.m_min_count = 0;
-                }
-                ResetMaxCount() {
-                    this.m_max_count = 0;
-                }
-                Increment() {
-                    this.m_count++;
-                    if (this.m_max_count < this.m_count) {
-                        this.m_max_count = this.m_count;
-                    }
-                }
-                Decrement() {
-                    this.m_count--;
-                    if (this.m_min_count > this.m_count) {
-                        this.m_min_count = this.m_count;
-                    }
-                }
-            };
-            exports_4("b2Counter", b2Counter);
-        }
-    }
-});
-/*
-* Copyright (c) 2010 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Common/b2GrowableStack", [], function(exports_5, context_5) {
-    "use strict";
-    var __moduleName = context_5 && context_5.id;
-    var b2GrowableStack;
-    return {
-        setters:[],
-        execute: function() {
-            /// This is a growable LIFO stack with an initial capacity of N.
-            /// If the stack size exceeds the initial capacity, the heap is used
-            /// to increase the size of the stack.
-            b2GrowableStack = class b2GrowableStack {
-                constructor(N) {
-                    this.m_stack = [];
-                    this.m_count = 0;
-                    this.m_stack = [];
-                    this.m_count = 0;
-                }
-                Reset() {
-                    this.m_count = 0;
-                    return this;
-                }
-                Push(element) {
-                    this.m_stack[this.m_count] = element;
-                    this.m_count++;
-                }
-                Pop() {
-                    ///b2Assert(this.m_count > 0);
-                    this.m_count--;
-                    const element = this.m_stack[this.m_count];
-                    this.m_stack[this.m_count] = null;
-                    return element;
-                }
-                GetCount() {
-                    return this.m_count;
-                }
-            };
-            exports_5("b2GrowableStack", b2GrowableStack);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Common/b2BlockAllocator", [], function(exports_6, context_6) {
-    "use strict";
-    var __moduleName = context_6 && context_6.id;
-    var b2BlockAllocator;
-    return {
-        setters:[],
-        execute: function() {
-            b2BlockAllocator = class b2BlockAllocator {
-            };
-            exports_6("b2BlockAllocator", b2BlockAllocator);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Common/b2StackAllocator", [], function(exports_7, context_7) {
-    "use strict";
-    var __moduleName = context_7 && context_7.id;
-    var b2StackAllocator;
-    return {
-        setters:[],
-        execute: function() {
-            b2StackAllocator = class b2StackAllocator {
-            };
-            exports_7("b2StackAllocator", b2StackAllocator);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], function(exports_8, context_8) {
-    "use strict";
-    var __moduleName = context_8 && context_8.id;
-    var b2Settings_2, b2Math_2;
+    var b2Settings_2, b2Math_1;
     var b2DistanceProxy, b2SimplexCache, b2DistanceInput, b2DistanceOutput, b2_gjkCalls, b2_gjkIters, b2_gjkMaxIters, b2SimplexVertex, b2Simplex, b2Distance_s_simplex, b2Distance_s_saveA, b2Distance_s_saveB, b2Distance_s_p, b2Distance_s_d, b2Distance_s_normal, b2Distance_s_supportA, b2Distance_s_supportB;
     function b2Distance(output, cache, input) {
-        exports_8("b2_gjkCalls", ++b2_gjkCalls);
+        exports_3("b2_gjkCalls", ++b2_gjkCalls);
         const proxyA = input.proxyA;
         const proxyB = input.proxyB;
         const transformA = input.transformA;
@@ -1525,7 +1256,7 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
             }
             // Compute closest point.
             const p = simplex.GetClosestPoint(b2Distance_s_p);
-            distanceSqr2 = p.GetLength();
+            distanceSqr2 = p.LengthSquared();
             // Ensure progress
             /*
             TODO: to fix compile warning
@@ -1537,7 +1268,7 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
             // Get search direction.
             const d = simplex.GetSearchDirection(b2Distance_s_d);
             // Ensure the search direction is numerically fit.
-            if (d.GetLength() < b2Settings_2.b2_epsilon_sq) {
+            if (d.LengthSquared() < b2Settings_2.b2_epsilon_sq) {
                 // The origin is probably contained by a line segment
                 // or triangle. Thus the shapes are overlapped.
                 // We can't return zero here even though there may be overlap.
@@ -1547,14 +1278,14 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
             }
             // Compute a tentative new simplex vertex using support points.
             const vertex = vertices[simplex.m_count];
-            vertex.indexA = proxyA.GetSupport(b2Math_2.b2Rot.MulTRV(transformA.q, b2Math_2.b2Vec2.NegV(d, b2Math_2.b2Vec2.s_t0), b2Distance_s_supportA));
-            b2Math_2.b2Transform.MulXV(transformA, proxyA.GetVertex(vertex.indexA), vertex.wA);
-            vertex.indexB = proxyB.GetSupport(b2Math_2.b2Rot.MulTRV(transformB.q, d, b2Distance_s_supportB));
-            b2Math_2.b2Transform.MulXV(transformB, proxyB.GetVertex(vertex.indexB), vertex.wB);
-            b2Math_2.b2Vec2.SubVV(vertex.wB, vertex.wA, vertex.w);
+            vertex.indexA = proxyA.GetSupport(b2Math_1.b2Rot.MulTRV(transformA.q, b2Math_1.b2Vec2.NegV(d, b2Math_1.b2Vec2.s_t0), b2Distance_s_supportA));
+            b2Math_1.b2Transform.MulXV(transformA, proxyA.GetVertex(vertex.indexA), vertex.wA);
+            vertex.indexB = proxyB.GetSupport(b2Math_1.b2Rot.MulTRV(transformB.q, d, b2Distance_s_supportB));
+            b2Math_1.b2Transform.MulXV(transformB, proxyB.GetVertex(vertex.indexB), vertex.wB);
+            b2Math_1.b2Vec2.SubVV(vertex.wB, vertex.wA, vertex.w);
             // Iteration count is equated to the number of support point calls.
             ++iter;
-            exports_8("b2_gjkIters", ++b2_gjkIters);
+            exports_3("b2_gjkIters", ++b2_gjkIters);
             // Check for duplicate support points. This is the main termination criteria.
             let duplicate = false;
             for (let i = 0; i < saveCount; ++i) {
@@ -1570,10 +1301,10 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
             // New vertex is ok and needed.
             ++simplex.m_count;
         }
-        exports_8("b2_gjkMaxIters", b2_gjkMaxIters = b2Math_2.b2Max(b2_gjkMaxIters, iter));
+        exports_3("b2_gjkMaxIters", b2_gjkMaxIters = b2Math_1.b2Max(b2_gjkMaxIters, iter));
         // Prepare output.
         simplex.GetWitnessPoints(output.pointA, output.pointB);
-        output.distance = b2Math_2.b2Vec2.DistanceVV(output.pointA, output.pointB);
+        output.distance = b2Math_1.b2Vec2.DistanceVV(output.pointA, output.pointB);
         output.iterations = iter;
         // Cache the simplex.
         simplex.WriteCache(cache);
@@ -1585,7 +1316,7 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                 // Shapes are still no overlapped.
                 // Move the witness points to the outer surface.
                 output.distance -= rA + rB;
-                const normal = b2Math_2.b2Vec2.SubVV(output.pointB, output.pointA, b2Distance_s_normal);
+                const normal = b2Math_1.b2Vec2.SubVV(output.pointB, output.pointA, b2Distance_s_normal);
                 normal.Normalize();
                 output.pointA.SelfMulAdd(rA, normal);
                 output.pointB.SelfMulSub(rB, normal);
@@ -1593,28 +1324,28 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
             else {
                 // Shapes are overlapped when radii are considered.
                 // Move the witness points to the middle.
-                const p = b2Math_2.b2Vec2.MidVV(output.pointA, output.pointB, b2Distance_s_p);
+                const p = b2Math_1.b2Vec2.MidVV(output.pointA, output.pointB, b2Distance_s_p);
                 output.pointA.Copy(p);
                 output.pointB.Copy(p);
                 output.distance = 0;
             }
         }
     }
-    exports_8("b2Distance", b2Distance);
+    exports_3("b2Distance", b2Distance);
     return {
         setters:[
             function (b2Settings_2_1) {
                 b2Settings_2 = b2Settings_2_1;
             },
-            function (b2Math_2_1) {
-                b2Math_2 = b2Math_2_1;
+            function (b2Math_1_1) {
+                b2Math_1 = b2Math_1_1;
             }],
         execute: function() {
             /// A distance proxy is used by the GJK algorithm.
             /// It encapsulates any shape.
             b2DistanceProxy = class b2DistanceProxy {
                 constructor() {
-                    this.m_buffer = b2Math_2.b2Vec2.MakeArray(2);
+                    this.m_buffer = b2Math_1.b2Vec2.MakeArray(2);
                     this.m_vertices = this.m_buffer;
                     this.m_count = 0;
                     this.m_radius = 0;
@@ -1630,9 +1361,9 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                 }
                 GetSupport(d) {
                     let bestIndex = 0;
-                    let bestValue = b2Math_2.b2Vec2.DotVV(this.m_vertices[0], d);
+                    let bestValue = b2Math_1.b2Vec2.DotVV(this.m_vertices[0], d);
                     for (let i = 1; i < this.m_count; ++i) {
-                        const value = b2Math_2.b2Vec2.DotVV(this.m_vertices[i], d);
+                        const value = b2Math_1.b2Vec2.DotVV(this.m_vertices[i], d);
                         if (value > bestValue) {
                             bestIndex = i;
                             bestValue = value;
@@ -1642,9 +1373,9 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                 }
                 GetSupportVertex(d) {
                     let bestIndex = 0;
-                    let bestValue = b2Math_2.b2Vec2.DotVV(this.m_vertices[0], d);
+                    let bestValue = b2Math_1.b2Vec2.DotVV(this.m_vertices[0], d);
                     for (let i = 1; i < this.m_count; ++i) {
-                        const value = b2Math_2.b2Vec2.DotVV(this.m_vertices[i], d);
+                        const value = b2Math_1.b2Vec2.DotVV(this.m_vertices[i], d);
                         if (value > bestValue) {
                             bestIndex = i;
                             bestValue = value;
@@ -1660,7 +1391,7 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     return this.m_vertices[index];
                 }
             };
-            exports_8("b2DistanceProxy", b2DistanceProxy);
+            exports_3("b2DistanceProxy", b2DistanceProxy);
             b2SimplexCache = class b2SimplexCache {
                 constructor() {
                     this.metric = 0;
@@ -1674,13 +1405,13 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     return this;
                 }
             };
-            exports_8("b2SimplexCache", b2SimplexCache);
+            exports_3("b2SimplexCache", b2SimplexCache);
             b2DistanceInput = class b2DistanceInput {
                 constructor() {
                     this.proxyA = new b2DistanceProxy();
                     this.proxyB = new b2DistanceProxy();
-                    this.transformA = new b2Math_2.b2Transform();
-                    this.transformB = new b2Math_2.b2Transform();
+                    this.transformA = new b2Math_1.b2Transform();
+                    this.transformB = new b2Math_1.b2Transform();
                     this.useRadii = false;
                 }
                 Reset() {
@@ -1692,11 +1423,11 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     return this;
                 }
             };
-            exports_8("b2DistanceInput", b2DistanceInput);
+            exports_3("b2DistanceInput", b2DistanceInput);
             b2DistanceOutput = class b2DistanceOutput {
                 constructor() {
-                    this.pointA = new b2Math_2.b2Vec2();
-                    this.pointB = new b2Math_2.b2Vec2();
+                    this.pointA = new b2Math_1.b2Vec2();
+                    this.pointB = new b2Math_1.b2Vec2();
                     this.distance = 0;
                     this.iterations = 0; ///< number of GJK iterations used
                 }
@@ -1708,15 +1439,15 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     return this;
                 }
             };
-            exports_8("b2DistanceOutput", b2DistanceOutput);
-            exports_8("b2_gjkCalls", b2_gjkCalls = 0);
-            exports_8("b2_gjkIters", b2_gjkIters = 0);
-            exports_8("b2_gjkMaxIters", b2_gjkMaxIters = 0);
+            exports_3("b2DistanceOutput", b2DistanceOutput);
+            exports_3("b2_gjkCalls", b2_gjkCalls = 0);
+            exports_3("b2_gjkIters", b2_gjkIters = 0);
+            exports_3("b2_gjkMaxIters", b2_gjkMaxIters = 0);
             b2SimplexVertex = class b2SimplexVertex {
                 constructor() {
-                    this.wA = new b2Math_2.b2Vec2(); // support point in proxyA
-                    this.wB = new b2Math_2.b2Vec2(); // support point in proxyB
-                    this.w = new b2Math_2.b2Vec2(); // wB - wA
+                    this.wA = new b2Math_1.b2Vec2(); // support point in proxyA
+                    this.wB = new b2Math_1.b2Vec2(); // support point in proxyB
+                    this.w = new b2Math_1.b2Vec2(); // wB - wA
                     this.a = 0; // barycentric coordinate for closest point
                     this.indexA = 0; // wA index
                     this.indexB = 0; // wB index
@@ -1731,7 +1462,7 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     return this;
                 }
             };
-            exports_8("b2SimplexVertex", b2SimplexVertex);
+            exports_3("b2SimplexVertex", b2SimplexVertex);
             b2Simplex = class b2Simplex {
                 constructor() {
                     this.m_v1 = new b2SimplexVertex();
@@ -1754,9 +1485,9 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                         v.indexB = cache.indexB[i];
                         const wALocal = proxyA.GetVertex(v.indexA);
                         const wBLocal = proxyB.GetVertex(v.indexB);
-                        b2Math_2.b2Transform.MulXV(transformA, wALocal, v.wA);
-                        b2Math_2.b2Transform.MulXV(transformB, wBLocal, v.wB);
-                        b2Math_2.b2Vec2.SubVV(v.wB, v.wA, v.w);
+                        b2Math_1.b2Transform.MulXV(transformA, wALocal, v.wA);
+                        b2Math_1.b2Transform.MulXV(transformB, wBLocal, v.wB);
+                        b2Math_1.b2Vec2.SubVV(v.wB, v.wA, v.w);
                         v.a = 0;
                     }
                     // Compute the new simplex metric, if it is substantially different than
@@ -1776,9 +1507,9 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                         v.indexB = 0;
                         const wALocal = proxyA.GetVertex(0);
                         const wBLocal = proxyB.GetVertex(0);
-                        b2Math_2.b2Transform.MulXV(transformA, wALocal, v.wA);
-                        b2Math_2.b2Transform.MulXV(transformB, wBLocal, v.wB);
-                        b2Math_2.b2Vec2.SubVV(v.wB, v.wA, v.w);
+                        b2Math_1.b2Transform.MulXV(transformA, wALocal, v.wA);
+                        b2Math_1.b2Transform.MulXV(transformB, wBLocal, v.wB);
+                        b2Math_1.b2Vec2.SubVV(v.wB, v.wA, v.w);
                         v.a = 1;
                         this.m_count = 1;
                     }
@@ -1795,17 +1526,17 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                 GetSearchDirection(out) {
                     switch (this.m_count) {
                         case 1:
-                            return b2Math_2.b2Vec2.NegV(this.m_v1.w, out);
+                            return b2Math_1.b2Vec2.NegV(this.m_v1.w, out);
                         case 2: {
-                            const e12 = b2Math_2.b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, out);
-                            const sgn = b2Math_2.b2Vec2.CrossVV(e12, b2Math_2.b2Vec2.NegV(this.m_v1.w, b2Math_2.b2Vec2.s_t0));
+                            const e12 = b2Math_1.b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, out);
+                            const sgn = b2Math_1.b2Vec2.CrossVV(e12, b2Math_1.b2Vec2.NegV(this.m_v1.w, b2Math_1.b2Vec2.s_t0));
                             if (sgn > 0) {
                                 // Origin is left of e12.
-                                return b2Math_2.b2Vec2.CrossOneV(e12, out);
+                                return b2Math_1.b2Vec2.CrossOneV(e12, out);
                             }
                             else {
                                 // Origin is right of e12.
-                                return b2Math_2.b2Vec2.CrossVOne(e12, out);
+                                return b2Math_1.b2Vec2.CrossVOne(e12, out);
                             }
                         }
                         default:
@@ -1861,9 +1592,9 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                         case 1:
                             return 0;
                         case 2:
-                            return b2Math_2.b2Vec2.DistanceVV(this.m_v1.w, this.m_v2.w);
+                            return b2Math_1.b2Vec2.DistanceVV(this.m_v1.w, this.m_v2.w);
                         case 3:
-                            return b2Math_2.b2Vec2.CrossVV(b2Math_2.b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Math_2.b2Vec2.s_t0), b2Math_2.b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Math_2.b2Vec2.s_t1));
+                            return b2Math_1.b2Vec2.CrossVV(b2Math_1.b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Math_1.b2Vec2.s_t0), b2Math_1.b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Math_1.b2Vec2.s_t1));
                         default:
                             ///b2Assert(false);
                             return 0;
@@ -1872,9 +1603,9 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                 Solve2() {
                     const w1 = this.m_v1.w;
                     const w2 = this.m_v2.w;
-                    const e12 = b2Math_2.b2Vec2.SubVV(w2, w1, b2Simplex.s_e12);
+                    const e12 = b2Math_1.b2Vec2.SubVV(w2, w1, b2Simplex.s_e12);
                     // w1 region
-                    const d12_2 = (-b2Math_2.b2Vec2.DotVV(w1, e12));
+                    const d12_2 = (-b2Math_1.b2Vec2.DotVV(w1, e12));
                     if (d12_2 <= 0) {
                         // a2 <= 0, so we clamp it to 0
                         this.m_v1.a = 1;
@@ -1882,7 +1613,7 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                         return;
                     }
                     // w2 region
-                    const d12_1 = b2Math_2.b2Vec2.DotVV(w2, e12);
+                    const d12_1 = b2Math_1.b2Vec2.DotVV(w2, e12);
                     if (d12_1 <= 0) {
                         // a1 <= 0, so we clamp it to 0
                         this.m_v2.a = 1;
@@ -1904,34 +1635,34 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     // [1      1     ][a1] = [1]
                     // [w1.e12 w2.e12][a2] = [0]
                     // a3 = 0
-                    const e12 = b2Math_2.b2Vec2.SubVV(w2, w1, b2Simplex.s_e12);
-                    const w1e12 = b2Math_2.b2Vec2.DotVV(w1, e12);
-                    const w2e12 = b2Math_2.b2Vec2.DotVV(w2, e12);
+                    const e12 = b2Math_1.b2Vec2.SubVV(w2, w1, b2Simplex.s_e12);
+                    const w1e12 = b2Math_1.b2Vec2.DotVV(w1, e12);
+                    const w2e12 = b2Math_1.b2Vec2.DotVV(w2, e12);
                     const d12_1 = w2e12;
                     const d12_2 = (-w1e12);
                     // Edge13
                     // [1      1     ][a1] = [1]
                     // [w1.e13 w3.e13][a3] = [0]
                     // a2 = 0
-                    const e13 = b2Math_2.b2Vec2.SubVV(w3, w1, b2Simplex.s_e13);
-                    const w1e13 = b2Math_2.b2Vec2.DotVV(w1, e13);
-                    const w3e13 = b2Math_2.b2Vec2.DotVV(w3, e13);
+                    const e13 = b2Math_1.b2Vec2.SubVV(w3, w1, b2Simplex.s_e13);
+                    const w1e13 = b2Math_1.b2Vec2.DotVV(w1, e13);
+                    const w3e13 = b2Math_1.b2Vec2.DotVV(w3, e13);
                     const d13_1 = w3e13;
                     const d13_2 = (-w1e13);
                     // Edge23
                     // [1      1     ][a2] = [1]
                     // [w2.e23 w3.e23][a3] = [0]
                     // a1 = 0
-                    const e23 = b2Math_2.b2Vec2.SubVV(w3, w2, b2Simplex.s_e23);
-                    const w2e23 = b2Math_2.b2Vec2.DotVV(w2, e23);
-                    const w3e23 = b2Math_2.b2Vec2.DotVV(w3, e23);
+                    const e23 = b2Math_1.b2Vec2.SubVV(w3, w2, b2Simplex.s_e23);
+                    const w2e23 = b2Math_1.b2Vec2.DotVV(w2, e23);
+                    const w3e23 = b2Math_1.b2Vec2.DotVV(w3, e23);
                     const d23_1 = w3e23;
                     const d23_2 = (-w2e23);
                     // Triangle123
-                    const n123 = b2Math_2.b2Vec2.CrossVV(e12, e13);
-                    const d123_1 = n123 * b2Math_2.b2Vec2.CrossVV(w2, w3);
-                    const d123_2 = n123 * b2Math_2.b2Vec2.CrossVV(w3, w1);
-                    const d123_3 = n123 * b2Math_2.b2Vec2.CrossVV(w1, w2);
+                    const n123 = b2Math_1.b2Vec2.CrossVV(e12, e13);
+                    const d123_1 = n123 * b2Math_1.b2Vec2.CrossVV(w2, w3);
+                    const d123_2 = n123 * b2Math_1.b2Vec2.CrossVV(w3, w1);
+                    const d123_3 = n123 * b2Math_1.b2Vec2.CrossVV(w1, w2);
                     // w1 region
                     if (d12_2 <= 0 && d13_2 <= 0) {
                         this.m_v1.a = 1;
@@ -1986,18 +1717,18 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                     this.m_count = 3;
                 }
             };
-            b2Simplex.s_e12 = new b2Math_2.b2Vec2();
-            b2Simplex.s_e13 = new b2Math_2.b2Vec2();
-            b2Simplex.s_e23 = new b2Math_2.b2Vec2();
-            exports_8("b2Simplex", b2Simplex);
+            b2Simplex.s_e12 = new b2Math_1.b2Vec2();
+            b2Simplex.s_e13 = new b2Math_1.b2Vec2();
+            b2Simplex.s_e23 = new b2Math_1.b2Vec2();
+            exports_3("b2Simplex", b2Simplex);
             b2Distance_s_simplex = new b2Simplex();
             b2Distance_s_saveA = b2Settings_2.b2MakeNumberArray(3);
             b2Distance_s_saveB = b2Settings_2.b2MakeNumberArray(3);
-            b2Distance_s_p = new b2Math_2.b2Vec2();
-            b2Distance_s_d = new b2Math_2.b2Vec2();
-            b2Distance_s_normal = new b2Math_2.b2Vec2();
-            b2Distance_s_supportA = new b2Math_2.b2Vec2();
-            b2Distance_s_supportB = new b2Math_2.b2Vec2();
+            b2Distance_s_p = new b2Math_1.b2Vec2();
+            b2Distance_s_d = new b2Math_1.b2Vec2();
+            b2Distance_s_normal = new b2Math_1.b2Vec2();
+            b2Distance_s_supportA = new b2Math_1.b2Vec2();
+            b2Distance_s_supportB = new b2Math_1.b2Vec2();
         }
     }
 });
@@ -2018,125 +1749,10 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function(exports_9, context_9) {
+System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", "Collision/b2Distance"], function(exports_4, context_4) {
     "use strict";
-    var __moduleName = context_9 && context_9.id;
-    var b2Math_3;
-    var b2MassData, b2Shape;
-    return {
-        setters:[
-            function (b2Math_3_1) {
-                b2Math_3 = b2Math_3_1;
-            }],
-        execute: function() {
-            /// This holds the mass data computed for a shape.
-            b2MassData = class b2MassData {
-                constructor() {
-                    /// The mass of the shape, usually in kilograms.
-                    this.mass = 0;
-                    /// The position of the shape's centroid relative to the shape's origin.
-                    this.center = new b2Math_3.b2Vec2(0, 0);
-                    /// The rotational inertia of the shape about the local origin.
-                    this.I = 0;
-                }
-            };
-            exports_9("b2MassData", b2MassData);
-            /// A shape is used for collision detection. You can create a shape however you like.
-            /// Shapes used for simulation in b2World are created automatically when a b2Fixture
-            /// is created. Shapes may encapsulate a one or more child shapes.
-            b2Shape = class b2Shape {
-                constructor(type, radius) {
-                    this.m_type = -1 /* e_unknown */;
-                    this.m_radius = 0;
-                    this.m_type = type;
-                    this.m_radius = radius;
-                }
-                /// Clone the concrete shape using the provided allocator.
-                Clone() {
-                    ///b2Assert(false);
-                    return null;
-                }
-                Copy(other) {
-                    ///b2Assert(this.m_type === other.m_type);
-                    this.m_radius = other.m_radius;
-                    return this;
-                }
-                /// Get the type of this shape. You can use this to down cast to the concrete shape.
-                /// @return the shape type.
-                GetType() {
-                    return this.m_type;
-                }
-                /// Get the number of child primitives.
-                GetChildCount() {
-                    ///b2Assert(false, "pure virtual");
-                    return 0;
-                }
-                /// Test a point for containment in this shape. This only works for convex shapes.
-                /// @param xf the shape world transform.
-                /// @param p a point in world coordinates.
-                TestPoint(xf, p) {
-                    ///b2Assert(false, "pure virtual");
-                    return false;
-                }
-                /// Cast a ray against a child shape.
-                /// @param output the ray-cast results.
-                /// @param input the ray-cast input parameters.
-                /// @param transform the transform to be applied to the shape.
-                /// @param childIndex the child shape index
-                RayCast(output, input, transform, childIndex) {
-                    ///b2Assert(false, "pure virtual");
-                    return false;
-                }
-                /// Given a transform, compute the associated axis aligned bounding box for a child shape.
-                /// @param aabb returns the axis aligned box.
-                /// @param xf the world transform of the shape.
-                /// @param childIndex the child shape
-                ComputeAABB(aabb, xf, childIndex) {
-                    ///b2Assert(false, "pure virtual");
-                }
-                /// Compute the mass properties of this shape using its dimensions and density.
-                /// The inertia tensor is computed about the local origin.
-                /// @param massData returns the mass data for this shape.
-                /// @param density the density in kilograms per meter squared.
-                ComputeMass(massData, density) {
-                    ///b2Assert(false, "pure virtual");
-                }
-                SetupDistanceProxy(proxy, index) {
-                    ///b2Assert(false, "pure virtual");
-                }
-                ComputeSubmergedArea(normal, offset, xf, c) {
-                    ///b2Assert(false, "pure virtual");
-                    c.SetZero();
-                    return 0;
-                }
-                Dump(log) {
-                }
-            };
-            exports_9("b2Shape", b2Shape);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", "Collision/b2Distance"], function(exports_10, context_10) {
-    "use strict";
-    var __moduleName = context_10 && context_10.id;
-    var b2Settings_3, b2Math_4, b2Distance_1;
+    var __moduleName = context_4 && context_4.id;
+    var b2Settings_3, b2Math_2, b2Distance_1;
     var b2ContactFeature, b2ContactID, b2ManifoldPoint, b2Manifold, b2WorldManifold, b2ClipVertex, b2RayCastInput, b2RayCastOutput, b2AABB, b2TestOverlapShape_s_input, b2TestOverlapShape_s_simplexCache, b2TestOverlapShape_s_output;
     /// Compute the point states given two manifolds. The states pertain to the transition from manifold1
     /// to manifold2. So state1 is either persist or remove while state2 is either add or persist.
@@ -2173,7 +1789,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
             state2[i] = 0 /* b2_nullState */;
         }
     }
-    exports_10("b2GetPointStates", b2GetPointStates);
+    exports_4("b2GetPointStates", b2GetPointStates);
     function b2TestOverlapAABB(a, b) {
         const d1_x = b.lowerBound.x - a.upperBound.x;
         const d1_y = b.lowerBound.y - a.upperBound.y;
@@ -2185,7 +1801,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
             return false;
         return true;
     }
-    exports_10("b2TestOverlapAABB", b2TestOverlapAABB);
+    exports_4("b2TestOverlapAABB", b2TestOverlapAABB);
     /// Clipping for contact manifolds.
     function b2ClipSegmentToLine(vOut, vIn, normal, offset, vertexIndexA) {
         // Start with no output points
@@ -2193,8 +1809,8 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
         const vIn0 = vIn[0];
         const vIn1 = vIn[1];
         // Calculate the distance of end points to the line
-        const distance0 = b2Math_4.b2Vec2.DotVV(normal, vIn0.v) - offset;
-        const distance1 = b2Math_4.b2Vec2.DotVV(normal, vIn1.v) - offset;
+        const distance0 = b2Math_2.b2Vec2.DotVV(normal, vIn0.v) - offset;
+        const distance1 = b2Math_2.b2Vec2.DotVV(normal, vIn1.v) - offset;
         // If the points are behind the plane
         if (distance0 <= 0)
             vOut[numOut++].Copy(vIn0);
@@ -2217,7 +1833,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
         }
         return numOut;
     }
-    exports_10("b2ClipSegmentToLine", b2ClipSegmentToLine);
+    exports_4("b2ClipSegmentToLine", b2ClipSegmentToLine);
     function b2TestOverlapShape(shapeA, indexA, shapeB, indexB, xfA, xfB) {
         const input = b2TestOverlapShape_s_input.Reset();
         input.proxyA.SetShape(shapeA, indexA);
@@ -2231,14 +1847,14 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
         b2Distance_1.b2Distance(output, simplexCache, input);
         return output.distance < 10 * b2Settings_3.b2_epsilon;
     }
-    exports_10("b2TestOverlapShape", b2TestOverlapShape);
+    exports_4("b2TestOverlapShape", b2TestOverlapShape);
     return {
         setters:[
             function (b2Settings_3_1) {
                 b2Settings_3 = b2Settings_3_1;
             },
-            function (b2Math_4_1) {
-                b2Math_4 = b2Math_4_1;
+            function (b2Math_2_1) {
+                b2Math_2 = b2Math_2_1;
             },
             function (b2Distance_1_1) {
                 b2Distance_1 = b2Distance_1_1;
@@ -2299,7 +1915,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     this._key_invalid = true;
                 }
             };
-            exports_10("b2ContactFeature", b2ContactFeature);
+            exports_4("b2ContactFeature", b2ContactFeature);
             /// Contact ids to facilitate warm starting.
             b2ContactID = class b2ContactID {
                 constructor() {
@@ -2319,7 +1935,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     this.cf.key = value;
                 }
             };
-            exports_10("b2ContactID", b2ContactID);
+            exports_4("b2ContactID", b2ContactID);
             /// A manifold point is a contact point belonging to a contact
             /// manifold. It holds details related to the geometry and dynamics
             /// of the contact points.
@@ -2332,7 +1948,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
             /// provide reliable contact forces, especially for high speed collisions.
             b2ManifoldPoint = class b2ManifoldPoint {
                 constructor() {
-                    this.localPoint = new b2Math_4.b2Vec2(); ///< usage depends on manifold type
+                    this.localPoint = new b2Math_2.b2Vec2(); ///< usage depends on manifold type
                     this.normalImpulse = 0; ///< the non-penetration impulse
                     this.tangentImpulse = 0; ///< the friction impulse
                     this.id = new b2ContactID(); ///< uniquely identifies a contact point between two shapes
@@ -2354,7 +1970,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     return this;
                 }
             };
-            exports_10("b2ManifoldPoint", b2ManifoldPoint);
+            exports_4("b2ManifoldPoint", b2ManifoldPoint);
             /// A manifold for two touching convex shapes.
             /// Box2D supports multiple types of contact:
             /// - clip point versus plane with radius
@@ -2374,8 +1990,8 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
             b2Manifold = class b2Manifold {
                 constructor() {
                     this.points = b2ManifoldPoint.MakeArray(b2Settings_3.b2_maxManifoldPoints);
-                    this.localNormal = new b2Math_4.b2Vec2();
-                    this.localPoint = new b2Math_4.b2Vec2();
+                    this.localNormal = new b2Math_2.b2Vec2();
+                    this.localPoint = new b2Math_2.b2Vec2();
                     this.type = -1 /* e_unknown */;
                     this.pointCount = 0;
                 }
@@ -2404,11 +2020,11 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     return new b2Manifold().Copy(this);
                 }
             };
-            exports_10("b2Manifold", b2Manifold);
+            exports_4("b2Manifold", b2Manifold);
             b2WorldManifold = class b2WorldManifold {
                 constructor() {
-                    this.normal = new b2Math_4.b2Vec2();
-                    this.points = b2Math_4.b2Vec2.MakeArray(b2Settings_3.b2_maxManifoldPoints);
+                    this.normal = new b2Math_2.b2Vec2();
+                    this.points = b2Math_2.b2Vec2.MakeArray(b2Settings_3.b2_maxManifoldPoints);
                     this.separations = b2Settings_3.b2MakeNumberArray(b2Settings_3.b2_maxManifoldPoints);
                 }
                 Initialize(manifold, xfA, radiusA, xfB, radiusB) {
@@ -2419,42 +2035,42 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                         case 0 /* e_circles */:
                             {
                                 this.normal.Set(1, 0);
-                                const pointA = b2Math_4.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
-                                const pointB = b2Math_4.b2Transform.MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
-                                if (b2Math_4.b2Vec2.DistanceSquaredVV(pointA, pointB) > b2Settings_3.b2_epsilon_sq) {
-                                    b2Math_4.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
+                                const pointA = b2Math_2.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_pointA);
+                                const pointB = b2Math_2.b2Transform.MulXV(xfB, manifold.points[0].localPoint, b2WorldManifold.Initialize_s_pointB);
+                                if (b2Math_2.b2Vec2.DistanceSquaredVV(pointA, pointB) > b2Settings_3.b2_epsilon_sq) {
+                                    b2Math_2.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
                                 }
-                                const cA = b2Math_4.b2Vec2.AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-                                const cB = b2Math_4.b2Vec2.SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-                                b2Math_4.b2Vec2.MidVV(cA, cB, this.points[0]);
-                                this.separations[0] = b2Math_4.b2Vec2.DotVV(b2Math_4.b2Vec2.SubVV(cB, cA, b2Math_4.b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
+                                const cA = b2Math_2.b2Vec2.AddVMulSV(pointA, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+                                const cB = b2Math_2.b2Vec2.SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+                                b2Math_2.b2Vec2.MidVV(cA, cB, this.points[0]);
+                                this.separations[0] = b2Math_2.b2Vec2.DotVV(b2Math_2.b2Vec2.SubVV(cB, cA, b2Math_2.b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
                             }
                             break;
                         case 1 /* e_faceA */:
                             {
-                                b2Math_4.b2Rot.MulRV(xfA.q, manifold.localNormal, this.normal);
-                                const planePoint = b2Math_4.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+                                b2Math_2.b2Rot.MulRV(xfA.q, manifold.localNormal, this.normal);
+                                const planePoint = b2Math_2.b2Transform.MulXV(xfA, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
                                 for (let i = 0; i < manifold.pointCount; ++i) {
-                                    const clipPoint = b2Math_4.b2Transform.MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-                                    const s = radiusA - b2Math_4.b2Vec2.DotVV(b2Math_4.b2Vec2.SubVV(clipPoint, planePoint, b2Math_4.b2Vec2.s_t0), this.normal);
-                                    const cA = b2Math_4.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
-                                    const cB = b2Math_4.b2Vec2.SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
-                                    b2Math_4.b2Vec2.MidVV(cA, cB, this.points[i]);
-                                    this.separations[i] = b2Math_4.b2Vec2.DotVV(b2Math_4.b2Vec2.SubVV(cB, cA, b2Math_4.b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
+                                    const clipPoint = b2Math_2.b2Transform.MulXV(xfB, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+                                    const s = radiusA - b2Math_2.b2Vec2.DotVV(b2Math_2.b2Vec2.SubVV(clipPoint, planePoint, b2Math_2.b2Vec2.s_t0), this.normal);
+                                    const cA = b2Math_2.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cA);
+                                    const cB = b2Math_2.b2Vec2.SubVMulSV(clipPoint, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
+                                    b2Math_2.b2Vec2.MidVV(cA, cB, this.points[i]);
+                                    this.separations[i] = b2Math_2.b2Vec2.DotVV(b2Math_2.b2Vec2.SubVV(cB, cA, b2Math_2.b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
                                 }
                             }
                             break;
                         case 2 /* e_faceB */:
                             {
-                                b2Math_4.b2Rot.MulRV(xfB.q, manifold.localNormal, this.normal);
-                                const planePoint = b2Math_4.b2Transform.MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
+                                b2Math_2.b2Rot.MulRV(xfB.q, manifold.localNormal, this.normal);
+                                const planePoint = b2Math_2.b2Transform.MulXV(xfB, manifold.localPoint, b2WorldManifold.Initialize_s_planePoint);
                                 for (let i = 0; i < manifold.pointCount; ++i) {
-                                    const clipPoint = b2Math_4.b2Transform.MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
-                                    const s = radiusB - b2Math_4.b2Vec2.DotVV(b2Math_4.b2Vec2.SubVV(clipPoint, planePoint, b2Math_4.b2Vec2.s_t0), this.normal);
-                                    const cB = b2Math_4.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
-                                    const cA = b2Math_4.b2Vec2.SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
-                                    b2Math_4.b2Vec2.MidVV(cA, cB, this.points[i]);
-                                    this.separations[i] = b2Math_4.b2Vec2.DotVV(b2Math_4.b2Vec2.SubVV(cA, cB, b2Math_4.b2Vec2.s_t0), this.normal); // b2Dot(cA - cB, normal);
+                                    const clipPoint = b2Math_2.b2Transform.MulXV(xfA, manifold.points[i].localPoint, b2WorldManifold.Initialize_s_clipPoint);
+                                    const s = radiusB - b2Math_2.b2Vec2.DotVV(b2Math_2.b2Vec2.SubVV(clipPoint, planePoint, b2Math_2.b2Vec2.s_t0), this.normal);
+                                    const cB = b2Math_2.b2Vec2.AddVMulSV(clipPoint, s, this.normal, b2WorldManifold.Initialize_s_cB);
+                                    const cA = b2Math_2.b2Vec2.SubVMulSV(clipPoint, radiusA, this.normal, b2WorldManifold.Initialize_s_cA);
+                                    b2Math_2.b2Vec2.MidVV(cA, cB, this.points[i]);
+                                    this.separations[i] = b2Math_2.b2Vec2.DotVV(b2Math_2.b2Vec2.SubVV(cA, cB, b2Math_2.b2Vec2.s_t0), this.normal); // b2Dot(cA - cB, normal);
                                 }
                                 // Ensure normal points from A to B.
                                 this.normal.SelfNeg();
@@ -2463,17 +2079,17 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     }
                 }
             };
-            b2WorldManifold.Initialize_s_pointA = new b2Math_4.b2Vec2();
-            b2WorldManifold.Initialize_s_pointB = new b2Math_4.b2Vec2();
-            b2WorldManifold.Initialize_s_cA = new b2Math_4.b2Vec2();
-            b2WorldManifold.Initialize_s_cB = new b2Math_4.b2Vec2();
-            b2WorldManifold.Initialize_s_planePoint = new b2Math_4.b2Vec2();
-            b2WorldManifold.Initialize_s_clipPoint = new b2Math_4.b2Vec2();
-            exports_10("b2WorldManifold", b2WorldManifold);
+            b2WorldManifold.Initialize_s_pointA = new b2Math_2.b2Vec2();
+            b2WorldManifold.Initialize_s_pointB = new b2Math_2.b2Vec2();
+            b2WorldManifold.Initialize_s_cA = new b2Math_2.b2Vec2();
+            b2WorldManifold.Initialize_s_cB = new b2Math_2.b2Vec2();
+            b2WorldManifold.Initialize_s_planePoint = new b2Math_2.b2Vec2();
+            b2WorldManifold.Initialize_s_clipPoint = new b2Math_2.b2Vec2();
+            exports_4("b2WorldManifold", b2WorldManifold);
             /// Used for computing contact manifolds.
             b2ClipVertex = class b2ClipVertex {
                 constructor() {
-                    this.v = new b2Math_4.b2Vec2();
+                    this.v = new b2Math_2.b2Vec2();
                     this.id = new b2ContactID();
                 }
                 static MakeArray(length) {
@@ -2485,12 +2101,12 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     return this;
                 }
             };
-            exports_10("b2ClipVertex", b2ClipVertex);
+            exports_4("b2ClipVertex", b2ClipVertex);
             /// Ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
             b2RayCastInput = class b2RayCastInput {
                 constructor() {
-                    this.p1 = new b2Math_4.b2Vec2();
-                    this.p2 = new b2Math_4.b2Vec2();
+                    this.p1 = new b2Math_2.b2Vec2();
+                    this.p2 = new b2Math_2.b2Vec2();
                     this.maxFraction = 1;
                 }
                 Copy(o) {
@@ -2500,12 +2116,12 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     return this;
                 }
             };
-            exports_10("b2RayCastInput", b2RayCastInput);
+            exports_4("b2RayCastInput", b2RayCastInput);
             /// Ray-cast output data. The ray hits at p1 + fraction * (p2 - p1), where p1 and p2
             /// come from b2RayCastInput.
             b2RayCastOutput = class b2RayCastOutput {
                 constructor() {
-                    this.normal = new b2Math_4.b2Vec2();
+                    this.normal = new b2Math_2.b2Vec2();
                     this.fraction = 0;
                 }
                 Copy(o) {
@@ -2514,14 +2130,14 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     return this;
                 }
             };
-            exports_10("b2RayCastOutput", b2RayCastOutput);
+            exports_4("b2RayCastOutput", b2RayCastOutput);
             /// An axis aligned bounding box.
             b2AABB = class b2AABB {
                 constructor() {
-                    this.lowerBound = new b2Math_4.b2Vec2(); ///< the lower vertex
-                    this.upperBound = new b2Math_4.b2Vec2(); ///< the upper vertex
-                    this.m_cache_center = new b2Math_4.b2Vec2(); // access using GetCenter()
-                    this.m_cache_extent = new b2Math_4.b2Vec2(); // access using GetExtents()
+                    this.lowerBound = new b2Math_2.b2Vec2(); ///< the lower vertex
+                    this.upperBound = new b2Math_2.b2Vec2(); ///< the upper vertex
+                    this.m_cache_center = new b2Math_2.b2Vec2(); // access using GetCenter()
+                    this.m_cache_extent = new b2Math_2.b2Vec2(); // access using GetExtents()
                 }
                 Copy(o) {
                     this.lowerBound.Copy(o.lowerBound);
@@ -2538,11 +2154,11 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                 }
                 /// Get the center of the AABB.
                 GetCenter() {
-                    return b2Math_4.b2Vec2.MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
+                    return b2Math_2.b2Vec2.MidVV(this.lowerBound, this.upperBound, this.m_cache_center);
                 }
                 /// Get the extents of the AABB (half-widths).
                 GetExtents() {
-                    return b2Math_4.b2Vec2.ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
+                    return b2Math_2.b2Vec2.ExtVV(this.lowerBound, this.upperBound, this.m_cache_extent);
                 }
                 /// Get the perimeter length
                 GetPerimeter() {
@@ -2552,18 +2168,18 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                 }
                 /// Combine an AABB into this one.
                 Combine1(aabb) {
-                    this.lowerBound.x = b2Math_4.b2Min(this.lowerBound.x, aabb.lowerBound.x);
-                    this.lowerBound.y = b2Math_4.b2Min(this.lowerBound.y, aabb.lowerBound.y);
-                    this.upperBound.x = b2Math_4.b2Max(this.upperBound.x, aabb.upperBound.x);
-                    this.upperBound.y = b2Math_4.b2Max(this.upperBound.y, aabb.upperBound.y);
+                    this.lowerBound.x = b2Math_2.b2Min(this.lowerBound.x, aabb.lowerBound.x);
+                    this.lowerBound.y = b2Math_2.b2Min(this.lowerBound.y, aabb.lowerBound.y);
+                    this.upperBound.x = b2Math_2.b2Max(this.upperBound.x, aabb.upperBound.x);
+                    this.upperBound.y = b2Math_2.b2Max(this.upperBound.y, aabb.upperBound.y);
                     return this;
                 }
                 /// Combine two AABBs into this one.
                 Combine2(aabb1, aabb2) {
-                    this.lowerBound.x = b2Math_4.b2Min(aabb1.lowerBound.x, aabb2.lowerBound.x);
-                    this.lowerBound.y = b2Math_4.b2Min(aabb1.lowerBound.y, aabb2.lowerBound.y);
-                    this.upperBound.x = b2Math_4.b2Max(aabb1.upperBound.x, aabb2.upperBound.x);
-                    this.upperBound.y = b2Math_4.b2Max(aabb1.upperBound.y, aabb2.upperBound.y);
+                    this.lowerBound.x = b2Math_2.b2Min(aabb1.lowerBound.x, aabb2.lowerBound.x);
+                    this.lowerBound.y = b2Math_2.b2Min(aabb1.lowerBound.y, aabb2.lowerBound.y);
+                    this.upperBound.x = b2Math_2.b2Max(aabb1.upperBound.x, aabb2.upperBound.x);
+                    this.upperBound.y = b2Math_2.b2Max(aabb1.upperBound.y, aabb2.upperBound.y);
                     return this;
                 }
                 static Combine(aabb1, aabb2, out) {
@@ -2587,8 +2203,8 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     const p_y = input.p1.y;
                     const d_x = input.p2.x - input.p1.x;
                     const d_y = input.p2.y - input.p1.y;
-                    const absD_x = b2Math_4.b2Abs(d_x);
-                    const absD_y = b2Math_4.b2Abs(d_y);
+                    const absD_x = b2Math_2.b2Abs(d_x);
+                    const absD_y = b2Math_2.b2Abs(d_y);
                     const normal = output.normal;
                     if (absD_x < b2Settings_3.b2_epsilon) {
                         // Parallel.
@@ -2615,7 +2231,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                             tmin = t1;
                         }
                         // Pull the max down
-                        tmax = b2Math_4.b2Min(tmax, t2);
+                        tmax = b2Math_2.b2Min(tmax, t2);
                         if (tmin > tmax) {
                             return false;
                         }
@@ -2645,7 +2261,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                             tmin = t1;
                         }
                         // Pull the max down
-                        tmax = b2Math_4.b2Min(tmax, t2);
+                        tmax = b2Math_2.b2Min(tmax, t2);
                         if (tmin > tmax) {
                             return false;
                         }
@@ -2671,11 +2287,738 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
                     return true;
                 }
             };
-            exports_10("b2AABB", b2AABB);
+            exports_4("b2AABB", b2AABB);
             /// Determine if two generic shapes overlap.
             b2TestOverlapShape_s_input = new b2Distance_1.b2DistanceInput();
             b2TestOverlapShape_s_simplexCache = new b2Distance_1.b2SimplexCache();
             b2TestOverlapShape_s_output = new b2Distance_1.b2DistanceOutput();
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function(exports_5, context_5) {
+    "use strict";
+    var __moduleName = context_5 && context_5.id;
+    var b2Math_3;
+    var b2MassData, b2Shape;
+    return {
+        setters:[
+            function (b2Math_3_1) {
+                b2Math_3 = b2Math_3_1;
+            }],
+        execute: function() {
+            /// This holds the mass data computed for a shape.
+            b2MassData = class b2MassData {
+                constructor() {
+                    /// The mass of the shape, usually in kilograms.
+                    this.mass = 0;
+                    /// The position of the shape's centroid relative to the shape's origin.
+                    this.center = new b2Math_3.b2Vec2(0, 0);
+                    /// The rotational inertia of the shape about the local origin.
+                    this.I = 0;
+                }
+            };
+            exports_5("b2MassData", b2MassData);
+            /// A shape is used for collision detection. You can create a shape however you like.
+            /// Shapes used for simulation in b2World are created automatically when a b2Fixture
+            /// is created. Shapes may encapsulate a one or more child shapes.
+            b2Shape = class b2Shape {
+                constructor(type, radius) {
+                    this.m_type = -1 /* e_unknown */;
+                    this.m_radius = 0;
+                    this.m_type = type;
+                    this.m_radius = radius;
+                }
+                /// Clone the concrete shape using the provided allocator.
+                Clone() {
+                    ///b2Assert(false);
+                    return null;
+                }
+                Copy(other) {
+                    ///b2Assert(this.m_type === other.m_type);
+                    this.m_radius = other.m_radius;
+                    return this;
+                }
+                /// Get the type of this shape. You can use this to down cast to the concrete shape.
+                /// @return the shape type.
+                GetType() {
+                    return this.m_type;
+                }
+                /// Get the number of child primitives.
+                GetChildCount() {
+                    ///b2Assert(false, "pure virtual");
+                    return 0;
+                }
+                /// Test a point for containment in this shape. This only works for convex shapes.
+                /// @param xf the shape world transform.
+                /// @param p a point in world coordinates.
+                TestPoint(xf, p) {
+                    ///b2Assert(false, "pure virtual");
+                    return false;
+                }
+                ///#if B2_ENABLE_PARTICLE
+                /// Compute the distance from the current shape to the specified point. This only works for convex shapes.
+                /// @param xf the shape world transform.
+                /// @param p a point in world coordinates.
+                /// @param distance returns the distance from the current shape.
+                /// @param normal returns the direction in which the distance increases.
+                ComputeDistance(xf, p, normal, childIndex) {
+                    ///b2Assert(false, "pure virtual");
+                    return 0;
+                }
+                ///#endif
+                /// Cast a ray against a child shape.
+                /// @param output the ray-cast results.
+                /// @param input the ray-cast input parameters.
+                /// @param transform the transform to be applied to the shape.
+                /// @param childIndex the child shape index
+                RayCast(output, input, transform, childIndex) {
+                    ///b2Assert(false, "pure virtual");
+                    return false;
+                }
+                /// Given a transform, compute the associated axis aligned bounding box for a child shape.
+                /// @param aabb returns the axis aligned box.
+                /// @param xf the world transform of the shape.
+                /// @param childIndex the child shape
+                ComputeAABB(aabb, xf, childIndex) {
+                    ///b2Assert(false, "pure virtual");
+                }
+                /// Compute the mass properties of this shape using its dimensions and density.
+                /// The inertia tensor is computed about the local origin.
+                /// @param massData returns the mass data for this shape.
+                /// @param density the density in kilograms per meter squared.
+                ComputeMass(massData, density) {
+                    ///b2Assert(false, "pure virtual");
+                }
+                SetupDistanceProxy(proxy, index) {
+                    ///b2Assert(false, "pure virtual");
+                }
+                ComputeSubmergedArea(normal, offset, xf, c) {
+                    ///b2Assert(false, "pure virtual");
+                    c.SetZero();
+                    return 0;
+                }
+                Dump(log) {
+                }
+            };
+            exports_5("b2Shape", b2Shape);
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_6, context_6) {
+    "use strict";
+    var __moduleName = context_6 && context_6.id;
+    var b2Settings_4, b2Math_4, b2Shape_1;
+    var b2EdgeShape;
+    return {
+        setters:[
+            function (b2Settings_4_1) {
+                b2Settings_4 = b2Settings_4_1;
+            },
+            function (b2Math_4_1) {
+                b2Math_4 = b2Math_4_1;
+            },
+            function (b2Shape_1_1) {
+                b2Shape_1 = b2Shape_1_1;
+            }],
+        execute: function() {
+            /// A line segment (edge) shape. These can be connected in chains or loops
+            /// to other edge shapes. The connectivity information is used to ensure
+            /// correct contact normals.
+            b2EdgeShape = class b2EdgeShape extends b2Shape_1.b2Shape {
+                constructor() {
+                    super(1 /* e_edgeShape */, b2Settings_4.b2_polygonRadius);
+                    this.m_vertex1 = new b2Math_4.b2Vec2();
+                    this.m_vertex2 = new b2Math_4.b2Vec2();
+                    this.m_vertex0 = new b2Math_4.b2Vec2();
+                    this.m_vertex3 = new b2Math_4.b2Vec2();
+                    this.m_hasVertex0 = false;
+                    this.m_hasVertex3 = false;
+                }
+                /// Set this as an isolated edge.
+                Set(v1, v2) {
+                    this.m_vertex1.Copy(v1);
+                    this.m_vertex2.Copy(v2);
+                    this.m_hasVertex0 = false;
+                    this.m_hasVertex3 = false;
+                    return this;
+                }
+                /// Implement b2Shape.
+                Clone() {
+                    return new b2EdgeShape().Copy(this);
+                }
+                Copy(other) {
+                    super.Copy(other);
+                    ///b2Assert(other instanceof b2EdgeShape);
+                    this.m_vertex1.Copy(other.m_vertex1);
+                    this.m_vertex2.Copy(other.m_vertex2);
+                    this.m_vertex0.Copy(other.m_vertex0);
+                    this.m_vertex3.Copy(other.m_vertex3);
+                    this.m_hasVertex0 = other.m_hasVertex0;
+                    this.m_hasVertex3 = other.m_hasVertex3;
+                    return this;
+                }
+                /// @see b2Shape::GetChildCount
+                GetChildCount() {
+                    return 1;
+                }
+                /// @see b2Shape::TestPoint
+                TestPoint(xf, p) {
+                    return false;
+                }
+                ComputeDistance(xf, p, normal, childIndex) {
+                    const v1 = b2Math_4.b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeDistance_s_v1);
+                    const v2 = b2Math_4.b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeDistance_s_v2);
+                    const d = b2Math_4.b2Vec2.SubVV(p, v1, b2EdgeShape.ComputeDistance_s_d);
+                    const s = b2Math_4.b2Vec2.SubVV(v2, v1, b2EdgeShape.ComputeDistance_s_s);
+                    const ds = b2Math_4.b2Vec2.DotVV(d, s);
+                    if (ds > 0) {
+                        const s2 = b2Math_4.b2Vec2.DotVV(s, s);
+                        if (ds > s2) {
+                            b2Math_4.b2Vec2.SubVV(p, v2, d);
+                        }
+                        else {
+                            d.SelfMulSub(ds / s2, s);
+                        }
+                    }
+                    normal.Copy(d);
+                    return normal.Normalize();
+                }
+                RayCast(output, input, xf, childIndex) {
+                    // Put the ray into the edge's frame of reference.
+                    const p1 = b2Math_4.b2Transform.MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
+                    const p2 = b2Math_4.b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
+                    const d = b2Math_4.b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
+                    const v1 = this.m_vertex1;
+                    const v2 = this.m_vertex2;
+                    const e = b2Math_4.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
+                    const normal = output.normal.Set(e.y, -e.x).SelfNormalize();
+                    // q = p1 + t * d
+                    // dot(normal, q - v1) = 0
+                    // dot(normal, p1 - v1) + t * dot(normal, d) = 0
+                    const numerator = b2Math_4.b2Vec2.DotVV(normal, b2Math_4.b2Vec2.SubVV(v1, p1, b2Math_4.b2Vec2.s_t0));
+                    const denominator = b2Math_4.b2Vec2.DotVV(normal, d);
+                    if (denominator === 0) {
+                        return false;
+                    }
+                    const t = numerator / denominator;
+                    if (t < 0 || input.maxFraction < t) {
+                        return false;
+                    }
+                    const q = b2Math_4.b2Vec2.AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
+                    // q = v1 + s * r
+                    // s = dot(q - v1, r) / dot(r, r)
+                    const r = b2Math_4.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
+                    const rr = b2Math_4.b2Vec2.DotVV(r, r);
+                    if (rr === 0) {
+                        return false;
+                    }
+                    const s = b2Math_4.b2Vec2.DotVV(b2Math_4.b2Vec2.SubVV(q, v1, b2Math_4.b2Vec2.s_t0), r) / rr;
+                    if (s < 0 || 1 < s) {
+                        return false;
+                    }
+                    output.fraction = t;
+                    b2Math_4.b2Rot.MulRV(xf.q, output.normal, output.normal);
+                    if (numerator > 0) {
+                        output.normal.SelfNeg();
+                    }
+                    return true;
+                }
+                ComputeAABB(aabb, xf, childIndex) {
+                    const v1 = b2Math_4.b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
+                    const v2 = b2Math_4.b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
+                    b2Math_4.b2Vec2.MinV(v1, v2, aabb.lowerBound);
+                    b2Math_4.b2Vec2.MaxV(v1, v2, aabb.upperBound);
+                    const r = this.m_radius;
+                    aabb.lowerBound.SelfSubXY(r, r);
+                    aabb.upperBound.SelfAddXY(r, r);
+                }
+                /// @see b2Shape::ComputeMass
+                ComputeMass(massData, density) {
+                    massData.mass = 0;
+                    b2Math_4.b2Vec2.MidVV(this.m_vertex1, this.m_vertex2, massData.center);
+                    massData.I = 0;
+                }
+                SetupDistanceProxy(proxy, index) {
+                    proxy.m_vertices = proxy.m_buffer;
+                    proxy.m_vertices[0].Copy(this.m_vertex1);
+                    proxy.m_vertices[1].Copy(this.m_vertex2);
+                    proxy.m_count = 2;
+                    proxy.m_radius = this.m_radius;
+                }
+                ComputeSubmergedArea(normal, offset, xf, c) {
+                    c.SetZero();
+                    return 0;
+                }
+                Dump(log) {
+                    log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
+                    log("    shape.m_radius = %.15f;\n", this.m_radius);
+                    log("    shape.m_vertex0.Set(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
+                    log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
+                    log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
+                    log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
+                    log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
+                    log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
+                }
+            };
+            ///#if B2_ENABLE_PARTICLE
+            /// @see b2Shape::ComputeDistance
+            b2EdgeShape.ComputeDistance_s_v1 = new b2Math_4.b2Vec2();
+            b2EdgeShape.ComputeDistance_s_v2 = new b2Math_4.b2Vec2();
+            b2EdgeShape.ComputeDistance_s_d = new b2Math_4.b2Vec2();
+            b2EdgeShape.ComputeDistance_s_s = new b2Math_4.b2Vec2();
+            ///#endif
+            /// Implement b2Shape.
+            // p = p1 + t * d
+            // v = v1 + s * e
+            // p1 + t * d = v1 + s * e
+            // s * e - t * d = p1 - v1
+            b2EdgeShape.RayCast_s_p1 = new b2Math_4.b2Vec2();
+            b2EdgeShape.RayCast_s_p2 = new b2Math_4.b2Vec2();
+            b2EdgeShape.RayCast_s_d = new b2Math_4.b2Vec2();
+            b2EdgeShape.RayCast_s_e = new b2Math_4.b2Vec2();
+            b2EdgeShape.RayCast_s_q = new b2Math_4.b2Vec2();
+            b2EdgeShape.RayCast_s_r = new b2Math_4.b2Vec2();
+            /// @see b2Shape::ComputeAABB
+            b2EdgeShape.ComputeAABB_s_v1 = new b2Math_4.b2Vec2();
+            b2EdgeShape.ComputeAABB_s_v2 = new b2Math_4.b2Vec2();
+            exports_6("b2EdgeShape", b2EdgeShape);
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape"], function(exports_7, context_7) {
+    "use strict";
+    var __moduleName = context_7 && context_7.id;
+    var b2Settings_5, b2Math_5, b2Shape_2, b2EdgeShape_1;
+    var b2ChainShape;
+    return {
+        setters:[
+            function (b2Settings_5_1) {
+                b2Settings_5 = b2Settings_5_1;
+            },
+            function (b2Math_5_1) {
+                b2Math_5 = b2Math_5_1;
+            },
+            function (b2Shape_2_1) {
+                b2Shape_2 = b2Shape_2_1;
+            },
+            function (b2EdgeShape_1_1) {
+                b2EdgeShape_1 = b2EdgeShape_1_1;
+            }],
+        execute: function() {
+            /// A chain shape is a free form sequence of line segments.
+            /// The chain has two-sided collision, so you can use inside and outside collision.
+            /// Therefore, you may use any winding order.
+            /// Since there may be many vertices, they are allocated using b2Alloc.
+            /// Connectivity information is used to create smooth collisions.
+            /// WARNING: The chain will not collide properly if there are self-intersections.
+            b2ChainShape = class b2ChainShape extends b2Shape_2.b2Shape {
+                constructor() {
+                    super(3 /* e_chainShape */, b2Settings_5.b2_polygonRadius);
+                    this.m_count = 0;
+                    this.m_prevVertex = new b2Math_5.b2Vec2();
+                    this.m_nextVertex = new b2Math_5.b2Vec2();
+                    this.m_hasPrevVertex = false;
+                    this.m_hasNextVertex = false;
+                }
+                /// Create a loop. This automatically adjusts connectivity.
+                /// @param vertices an array of vertices, these are copied
+                /// @param count the vertex count
+                CreateLoop(vertices, count = vertices.length) {
+                    ///b2Assert(this.m_vertices === null && this.m_count === 0);
+                    ///b2Assert(count >= 3);
+                    ///for (let i: number = 1; i < count; ++i) {
+                    ///  const v1 = vertices[i - 1];
+                    ///  const v2 = vertices[i];
+                    ///  // If the code crashes here, it means your vertices are too close together.
+                    ///  b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
+                    ///}
+                    this.m_count = count + 1;
+                    this.m_vertices = b2Math_5.b2Vec2.MakeArray(this.m_count);
+                    for (let i = 0; i < count; ++i) {
+                        this.m_vertices[i].Copy(vertices[i]);
+                    }
+                    this.m_vertices[count].Copy(this.m_vertices[0]);
+                    this.m_prevVertex.Copy(this.m_vertices[this.m_count - 2]);
+                    this.m_nextVertex.Copy(this.m_vertices[1]);
+                    this.m_hasPrevVertex = true;
+                    this.m_hasNextVertex = true;
+                    return this;
+                }
+                /// Create a chain with isolated end vertices.
+                /// @param vertices an array of vertices, these are copied
+                /// @param count the vertex count
+                CreateChain(vertices, count = vertices.length) {
+                    ///b2Assert(this.m_vertices === null && this.m_count === 0);
+                    ///b2Assert(count >= 2);
+                    ///for (let i: number = 1; i < count; ++i) {
+                    ///  const v1 = vertices[i - 1];
+                    ///  const v2 = vertices[i];
+                    ///  // If the code crashes here, it means your vertices are too close together.
+                    ///  b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
+                    ///}
+                    this.m_count = count;
+                    this.m_vertices = b2Math_5.b2Vec2.MakeArray(count);
+                    for (let i = 0; i < count; ++i) {
+                        this.m_vertices[i].Copy(vertices[i]);
+                    }
+                    this.m_hasPrevVertex = false;
+                    this.m_hasNextVertex = false;
+                    this.m_prevVertex.SetZero();
+                    this.m_nextVertex.SetZero();
+                    return this;
+                }
+                /// Establish connectivity to a vertex that precedes the first vertex.
+                /// Don't call this for loops.
+                SetPrevVertex(prevVertex) {
+                    this.m_prevVertex.Copy(prevVertex);
+                    this.m_hasPrevVertex = true;
+                    return this;
+                }
+                /// Establish connectivity to a vertex that follows the last vertex.
+                /// Don't call this for loops.
+                SetNextVertex(nextVertex) {
+                    this.m_nextVertex.Copy(nextVertex);
+                    this.m_hasNextVertex = true;
+                    return this;
+                }
+                /// Implement b2Shape. Vertices are cloned using b2Alloc.
+                Clone() {
+                    return new b2ChainShape().Copy(this);
+                }
+                Copy(other) {
+                    super.Copy(other);
+                    ///b2Assert(other instanceof b2ChainShape);
+                    this.CreateChain(other.m_vertices, other.m_count);
+                    this.m_prevVertex.Copy(other.m_prevVertex);
+                    this.m_nextVertex.Copy(other.m_nextVertex);
+                    this.m_hasPrevVertex = other.m_hasPrevVertex;
+                    this.m_hasNextVertex = other.m_hasNextVertex;
+                    return this;
+                }
+                /// @see b2Shape::GetChildCount
+                GetChildCount() {
+                    // edge count = vertex count - 1
+                    return this.m_count - 1;
+                }
+                /// Get a child edge.
+                GetChildEdge(edge, index) {
+                    ///b2Assert(0 <= index && index < this.m_count - 1);
+                    edge.m_type = 1 /* e_edgeShape */;
+                    edge.m_radius = this.m_radius;
+                    edge.m_vertex1.Copy(this.m_vertices[index]);
+                    edge.m_vertex2.Copy(this.m_vertices[index + 1]);
+                    if (index > 0) {
+                        edge.m_vertex0.Copy(this.m_vertices[index - 1]);
+                        edge.m_hasVertex0 = true;
+                    }
+                    else {
+                        edge.m_vertex0.Copy(this.m_prevVertex);
+                        edge.m_hasVertex0 = this.m_hasPrevVertex;
+                    }
+                    if (index < this.m_count - 2) {
+                        edge.m_vertex3.Copy(this.m_vertices[index + 2]);
+                        edge.m_hasVertex3 = true;
+                    }
+                    else {
+                        edge.m_vertex3.Copy(this.m_nextVertex);
+                        edge.m_hasVertex3 = this.m_hasNextVertex;
+                    }
+                }
+                /// This always return false.
+                /// @see b2Shape::TestPoint
+                TestPoint(xf, p) {
+                    return false;
+                }
+                ComputeDistance(xf, p, normal, childIndex) {
+                    const edge = b2ChainShape.ComputeDistance_s_edgeShape;
+                    this.GetChildEdge(edge, childIndex);
+                    return edge.ComputeDistance(xf, p, normal, 0);
+                }
+                RayCast(output, input, xf, childIndex) {
+                    ///b2Assert(childIndex < this.m_count);
+                    const edgeShape = b2ChainShape.RayCast_s_edgeShape;
+                    edgeShape.m_vertex1.Copy(this.m_vertices[childIndex]);
+                    edgeShape.m_vertex2.Copy(this.m_vertices[(childIndex + 1) % this.m_count]);
+                    return edgeShape.RayCast(output, input, xf, 0);
+                }
+                ComputeAABB(aabb, xf, childIndex) {
+                    ///b2Assert(childIndex < this.m_count);
+                    const vertexi1 = this.m_vertices[childIndex];
+                    const vertexi2 = this.m_vertices[(childIndex + 1) % this.m_count];
+                    const v1 = b2Math_5.b2Transform.MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
+                    const v2 = b2Math_5.b2Transform.MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
+                    b2Math_5.b2Vec2.MinV(v1, v2, aabb.lowerBound);
+                    b2Math_5.b2Vec2.MaxV(v1, v2, aabb.upperBound);
+                }
+                /// Chains have zero mass.
+                /// @see b2Shape::ComputeMass
+                ComputeMass(massData, density) {
+                    massData.mass = 0;
+                    massData.center.SetZero();
+                    massData.I = 0;
+                }
+                SetupDistanceProxy(proxy, index) {
+                    ///b2Assert(0 <= index && index < this.m_count);
+                    proxy.m_vertices = proxy.m_buffer;
+                    proxy.m_vertices[0].Copy(this.m_vertices[index]);
+                    if (index + 1 < this.m_count) {
+                        proxy.m_vertices[1].Copy(this.m_vertices[index + 1]);
+                    }
+                    else {
+                        proxy.m_vertices[1].Copy(this.m_vertices[0]);
+                    }
+                    proxy.m_count = 2;
+                    proxy.m_radius = this.m_radius;
+                }
+                ComputeSubmergedArea(normal, offset, xf, c) {
+                    c.SetZero();
+                    return 0;
+                }
+                Dump(log) {
+                    log("    const shape: b2ChainShape = new b2ChainShape();\n");
+                    log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2Settings_5.b2_maxPolygonVertices);
+                    for (let i = 0; i < this.m_count; ++i) {
+                        log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+                    }
+                    log("    shape.CreateChain(vs, %d);\n", this.m_count);
+                    log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
+                    log("    shape.m_nextVertex.Set(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
+                    log("    shape.m_hasPrevVertex = %s;\n", (this.m_hasPrevVertex) ? ("true") : ("false"));
+                    log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
+                }
+            };
+            ///#if B2_ENABLE_PARTICLE
+            /// @see b2Shape::ComputeDistance
+            b2ChainShape.ComputeDistance_s_edgeShape = new b2EdgeShape_1.b2EdgeShape();
+            ///#endif
+            /// Implement b2Shape.
+            b2ChainShape.RayCast_s_edgeShape = new b2EdgeShape_1.b2EdgeShape();
+            /// @see b2Shape::ComputeAABB
+            b2ChainShape.ComputeAABB_s_v1 = new b2Math_5.b2Vec2();
+            b2ChainShape.ComputeAABB_s_v2 = new b2Math_5.b2Vec2();
+            exports_7("b2ChainShape", b2ChainShape);
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], function(exports_8, context_8) {
+    "use strict";
+    var __moduleName = context_8 && context_8.id;
+    var b2Settings_6, b2Math_6;
+    var b2Profile, b2TimeStep, b2Position, b2Velocity, b2SolverData;
+    return {
+        setters:[
+            function (b2Settings_6_1) {
+                b2Settings_6 = b2Settings_6_1;
+            },
+            function (b2Math_6_1) {
+                b2Math_6 = b2Math_6_1;
+            }],
+        execute: function() {
+            /// Profiling data. Times are in milliseconds.
+            b2Profile = class b2Profile {
+                constructor() {
+                    this.step = 0;
+                    this.collide = 0;
+                    this.solve = 0;
+                    this.solveInit = 0;
+                    this.solveVelocity = 0;
+                    this.solvePosition = 0;
+                    this.broadphase = 0;
+                    this.solveTOI = 0;
+                }
+                Reset() {
+                    this.step = 0;
+                    this.collide = 0;
+                    this.solve = 0;
+                    this.solveInit = 0;
+                    this.solveVelocity = 0;
+                    this.solvePosition = 0;
+                    this.broadphase = 0;
+                    this.solveTOI = 0;
+                    return this;
+                }
+            };
+            exports_8("b2Profile", b2Profile);
+            /// This is an internal structure.
+            b2TimeStep = class b2TimeStep {
+                constructor() {
+                    this.dt = 0; // time step
+                    this.inv_dt = 0; // inverse time step (0 if dt == 0).
+                    this.dtRatio = 0; // dt * inv_dt0
+                    this.velocityIterations = 0;
+                    this.positionIterations = 0;
+                    ///#if B2_ENABLE_PARTICLE
+                    this.particleIterations = 0;
+                    ///#endif
+                    this.warmStarting = false;
+                }
+                Copy(step) {
+                    this.dt = step.dt;
+                    this.inv_dt = step.inv_dt;
+                    this.dtRatio = step.dtRatio;
+                    this.positionIterations = step.positionIterations;
+                    this.velocityIterations = step.velocityIterations;
+                    ///#if B2_ENABLE_PARTICLE
+                    this.particleIterations = step.particleIterations;
+                    ///#endif
+                    this.warmStarting = step.warmStarting;
+                    return this;
+                }
+            };
+            exports_8("b2TimeStep", b2TimeStep);
+            b2Position = class b2Position {
+                constructor() {
+                    this.c = new b2Math_6.b2Vec2();
+                    this.a = 0;
+                }
+                static MakeArray(length) {
+                    return b2Settings_6.b2MakeArray(length, function (i) { return new b2Position(); });
+                }
+            };
+            exports_8("b2Position", b2Position);
+            b2Velocity = class b2Velocity {
+                constructor() {
+                    this.v = new b2Math_6.b2Vec2();
+                    this.w = 0;
+                }
+                static MakeArray(length) {
+                    return b2Settings_6.b2MakeArray(length, function (i) { return new b2Velocity(); });
+                }
+            };
+            exports_8("b2Velocity", b2Velocity);
+            b2SolverData = class b2SolverData {
+                constructor() {
+                    this.step = new b2TimeStep();
+                    this.positions = null;
+                    this.velocities = null;
+                }
+            };
+            exports_8("b2SolverData", b2SolverData);
+        }
+    }
+});
+/*
+* Copyright (c) 2010 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Common/b2GrowableStack", [], function(exports_9, context_9) {
+    "use strict";
+    var __moduleName = context_9 && context_9.id;
+    var b2GrowableStack;
+    return {
+        setters:[],
+        execute: function() {
+            /// This is a growable LIFO stack with an initial capacity of N.
+            /// If the stack size exceeds the initial capacity, the heap is used
+            /// to increase the size of the stack.
+            b2GrowableStack = class b2GrowableStack {
+                constructor(N) {
+                    this.m_stack = [];
+                    this.m_count = 0;
+                    this.m_stack = [];
+                    this.m_count = 0;
+                }
+                Reset() {
+                    this.m_count = 0;
+                    return this;
+                }
+                Push(element) {
+                    this.m_stack[this.m_count] = element;
+                    this.m_count++;
+                }
+                Pop() {
+                    ///b2Assert(this.m_count > 0);
+                    this.m_count--;
+                    const element = this.m_stack[this.m_count];
+                    this.m_stack[this.m_count] = null;
+                    return element;
+                }
+                GetCount() {
+                    return this.m_count;
+                }
+            };
+            exports_9("b2GrowableStack", b2GrowableStack);
         }
     }
 });
@@ -2696,18 +3039,18 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math", "Common/b2GrowableStack", "Collision/b2Collision"], function(exports_11, context_11) {
+System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math", "Common/b2GrowableStack", "Collision/b2Collision"], function(exports_10, context_10) {
     "use strict";
-    var __moduleName = context_11 && context_11.id;
-    var b2Settings_4, b2Math_5, b2GrowableStack_1, b2Collision_1;
+    var __moduleName = context_10 && context_10.id;
+    var b2Settings_7, b2Math_7, b2GrowableStack_1, b2Collision_1;
     var b2TreeNode, b2DynamicTree;
     return {
         setters:[
-            function (b2Settings_4_1) {
-                b2Settings_4 = b2Settings_4_1;
+            function (b2Settings_7_1) {
+                b2Settings_7 = b2Settings_7_1;
             },
-            function (b2Math_5_1) {
-                b2Math_5 = b2Math_5_1;
+            function (b2Math_7_1) {
+                b2Math_7 = b2Math_7_1;
             },
             function (b2GrowableStack_1_1) {
                 b2GrowableStack_1 = b2GrowableStack_1_1;
@@ -2732,7 +3075,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                     return this.child1 === null;
                 }
             };
-            exports_11("b2TreeNode", b2TreeNode);
+            exports_10("b2TreeNode", b2TreeNode);
             b2DynamicTree = class b2DynamicTree {
                 constructor() {
                     this.m_root = null;
@@ -2780,12 +3123,12 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                         return;
                     const p1 = input.p1;
                     const p2 = input.p2;
-                    const r = b2Math_5.b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
-                    ///b2Assert(r.GetLength() > 0);
+                    const r = b2Math_7.b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
+                    ///b2Assert(r.LengthSquared() > 0);
                     r.Normalize();
                     // v is perpendicular to the segment.
-                    const v = b2Math_5.b2Vec2.CrossOneV(r, b2DynamicTree.s_v);
-                    const abs_v = b2Math_5.b2Vec2.AbsV(v, b2DynamicTree.s_abs_v);
+                    const v = b2Math_7.b2Vec2.CrossOneV(r, b2DynamicTree.s_v);
+                    const abs_v = b2Math_7.b2Vec2.AbsV(v, b2DynamicTree.s_abs_v);
                     // Separating axis for segment (Gino, p80).
                     // |dot(v, p1 - c)| > dot(|v|, h)
                     let maxFraction = input.maxFraction;
@@ -2793,10 +3136,10 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                     const segmentAABB = b2DynamicTree.s_segmentAABB;
                     let t_x = p1.x + maxFraction * (p2.x - p1.x);
                     let t_y = p1.y + maxFraction * (p2.y - p1.y);
-                    segmentAABB.lowerBound.x = b2Math_5.b2Min(p1.x, t_x);
-                    segmentAABB.lowerBound.y = b2Math_5.b2Min(p1.y, t_y);
-                    segmentAABB.upperBound.x = b2Math_5.b2Max(p1.x, t_x);
-                    segmentAABB.upperBound.y = b2Math_5.b2Max(p1.y, t_y);
+                    segmentAABB.lowerBound.x = b2Math_7.b2Min(p1.x, t_x);
+                    segmentAABB.lowerBound.y = b2Math_7.b2Min(p1.y, t_y);
+                    segmentAABB.upperBound.x = b2Math_7.b2Max(p1.x, t_x);
+                    segmentAABB.upperBound.y = b2Math_7.b2Max(p1.y, t_y);
                     const stack = b2DynamicTree.s_stack.Reset();
                     stack.Push(this.m_root);
                     while (stack.GetCount() > 0) {
@@ -2811,7 +3154,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                         // |dot(v, p1 - c)| > dot(|v|, h)
                         const c = node.aabb.GetCenter();
                         const h = node.aabb.GetExtents();
-                        const separation = b2Math_5.b2Abs(b2Math_5.b2Vec2.DotVV(v, b2Math_5.b2Vec2.SubVV(p1, c, b2Math_5.b2Vec2.s_t0))) - b2Math_5.b2Vec2.DotVV(abs_v, h);
+                        const separation = b2Math_7.b2Abs(b2Math_7.b2Vec2.DotVV(v, b2Math_7.b2Vec2.SubVV(p1, c, b2Math_7.b2Vec2.s_t0))) - b2Math_7.b2Vec2.DotVV(abs_v, h);
                         if (separation > 0) {
                             continue;
                         }
@@ -2830,10 +3173,10 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                                 maxFraction = value;
                                 t_x = p1.x + maxFraction * (p2.x - p1.x);
                                 t_y = p1.y + maxFraction * (p2.y - p1.y);
-                                segmentAABB.lowerBound.x = b2Math_5.b2Min(p1.x, t_x);
-                                segmentAABB.lowerBound.y = b2Math_5.b2Min(p1.y, t_y);
-                                segmentAABB.upperBound.x = b2Math_5.b2Max(p1.x, t_x);
-                                segmentAABB.upperBound.y = b2Math_5.b2Max(p1.y, t_y);
+                                segmentAABB.lowerBound.x = b2Math_7.b2Min(p1.x, t_x);
+                                segmentAABB.lowerBound.y = b2Math_7.b2Min(p1.y, t_y);
+                                segmentAABB.upperBound.x = b2Math_7.b2Max(p1.x, t_x);
+                                segmentAABB.upperBound.y = b2Math_7.b2Max(p1.y, t_y);
                             }
                         }
                         else {
@@ -2864,8 +3207,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                 CreateProxy(aabb, userData) {
                     const node = this.AllocateNode();
                     // Fatten the aabb.
-                    const r_x = b2Settings_4.b2_aabbExtension;
-                    const r_y = b2Settings_4.b2_aabbExtension;
+                    const r_x = b2Settings_7.b2_aabbExtension;
+                    const r_y = b2Settings_7.b2_aabbExtension;
                     node.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
                     node.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
                     node.aabb.upperBound.x = aabb.upperBound.x + r_x;
@@ -2888,8 +3231,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                     this.RemoveLeaf(proxy);
                     // Extend AABB.
                     // Predict AABB displacement.
-                    const r_x = b2Settings_4.b2_aabbExtension + b2Settings_4.b2_aabbMultiplier * (displacement.x > 0 ? displacement.x : (-displacement.x));
-                    const r_y = b2Settings_4.b2_aabbExtension + b2Settings_4.b2_aabbMultiplier * (displacement.y > 0 ? displacement.y : (-displacement.y));
+                    const r_x = b2Settings_7.b2_aabbExtension + b2Settings_7.b2_aabbMultiplier * (displacement.x > 0 ? displacement.x : (-displacement.x));
+                    const r_y = b2Settings_7.b2_aabbExtension + b2Settings_7.b2_aabbMultiplier * (displacement.y > 0 ? displacement.y : (-displacement.y));
                     proxy.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
                     proxy.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
                     proxy.aabb.upperBound.x = aabb.upperBound.x + r_x;
@@ -2997,7 +3340,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                         child2 = index.child2;
                         ///b2Assert(child1 !== null);
                         ///b2Assert(child2 !== null);
-                        index.height = 1 + b2Math_5.b2Max(child1.height, child2.height);
+                        index.height = 1 + b2Math_7.b2Max(child1.height, child2.height);
                         index.aabb.Combine2(child1.aabb, child2.aabb);
                         index = index.parent;
                     }
@@ -3034,7 +3377,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                             const child1 = index.child1;
                             const child2 = index.child2;
                             index.aabb.Combine2(child1.aabb, child2.aabb);
-                            index.height = 1 + b2Math_5.b2Max(child1.height, child2.height);
+                            index.height = 1 + b2Math_7.b2Max(child1.height, child2.height);
                             index = index.parent;
                         }
                     }
@@ -3081,8 +3424,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                             G.parent = A;
                             A.aabb.Combine2(B.aabb, G.aabb);
                             C.aabb.Combine2(A.aabb, F.aabb);
-                            A.height = 1 + b2Math_5.b2Max(B.height, G.height);
-                            C.height = 1 + b2Math_5.b2Max(A.height, F.height);
+                            A.height = 1 + b2Math_7.b2Max(B.height, G.height);
+                            C.height = 1 + b2Math_7.b2Max(A.height, F.height);
                         }
                         else {
                             C.child2 = G;
@@ -3090,8 +3433,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                             F.parent = A;
                             A.aabb.Combine2(B.aabb, F.aabb);
                             C.aabb.Combine2(A.aabb, G.aabb);
-                            A.height = 1 + b2Math_5.b2Max(B.height, F.height);
-                            C.height = 1 + b2Math_5.b2Max(A.height, G.height);
+                            A.height = 1 + b2Math_7.b2Max(B.height, F.height);
+                            C.height = 1 + b2Math_7.b2Max(A.height, G.height);
                         }
                         return C;
                     }
@@ -3123,8 +3466,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                             E.parent = A;
                             A.aabb.Combine2(C.aabb, E.aabb);
                             B.aabb.Combine2(A.aabb, D.aabb);
-                            A.height = 1 + b2Math_5.b2Max(C.height, E.height);
-                            B.height = 1 + b2Math_5.b2Max(A.height, D.height);
+                            A.height = 1 + b2Math_7.b2Max(C.height, E.height);
+                            B.height = 1 + b2Math_7.b2Max(A.height, D.height);
                         }
                         else {
                             B.child2 = E;
@@ -3132,8 +3475,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                             D.parent = A;
                             A.aabb.Combine2(C.aabb, D.aabb);
                             B.aabb.Combine2(A.aabb, E.aabb);
-                            A.height = 1 + b2Math_5.b2Max(C.height, D.height);
-                            B.height = 1 + b2Math_5.b2Max(A.height, E.height);
+                            A.height = 1 + b2Math_7.b2Max(C.height, D.height);
+                            B.height = 1 + b2Math_7.b2Max(A.height, E.height);
                         }
                         return B;
                     }
@@ -3184,7 +3527,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                     }
                     const height1 = this.ComputeHeightNode(node.child1);
                     const height2 = this.ComputeHeightNode(node.child2);
-                    return 1 + b2Math_5.b2Max(height1, height2);
+                    return 1 + b2Math_7.b2Max(height1, height2);
                 }
                 ComputeHeight() {
                     const height = this.ComputeHeightNode(this.m_root);
@@ -3255,8 +3598,8 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                     ///b2Assert(!node.IsLeaf());
                     const child1 = node.child1;
                     const child2 = node.child2;
-                    const balance = b2Math_5.b2Abs(child2.height - child1.height);
-                    return b2Math_5.b2Max(maxBalance, balance);
+                    const balance = b2Math_7.b2Abs(child2.height - child1.height);
+                    return b2Math_7.b2Max(maxBalance, balance);
                 }
                 ;
                 GetMaxBalance() {
@@ -3372,15 +3715,99 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                 }
             };
             b2DynamicTree.s_stack = new b2GrowableStack_1.b2GrowableStack(256);
-            b2DynamicTree.s_r = new b2Math_5.b2Vec2();
-            b2DynamicTree.s_v = new b2Math_5.b2Vec2();
-            b2DynamicTree.s_abs_v = new b2Math_5.b2Vec2();
+            b2DynamicTree.s_r = new b2Math_7.b2Vec2();
+            b2DynamicTree.s_v = new b2Math_7.b2Vec2();
+            b2DynamicTree.s_abs_v = new b2Math_7.b2Vec2();
             b2DynamicTree.s_segmentAABB = new b2Collision_1.b2AABB();
             b2DynamicTree.s_subInput = new b2Collision_1.b2RayCastInput();
             b2DynamicTree.s_combinedAABB = new b2Collision_1.b2AABB();
             b2DynamicTree.s_aabb = new b2Collision_1.b2AABB();
             b2DynamicTree.s_node_id = 0;
-            exports_11("b2DynamicTree", b2DynamicTree);
+            exports_10("b2DynamicTree", b2DynamicTree);
+        }
+    }
+});
+/*
+* Copyright (c) 2011 Erin Catto http://box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Common/b2Timer", [], function(exports_11, context_11) {
+    "use strict";
+    var __moduleName = context_11 && context_11.id;
+    var b2Timer, b2Counter;
+    return {
+        setters:[],
+        execute: function() {
+            /// Timer for profiling. This has platform specific code and may
+            /// not work on every platform.
+            b2Timer = class b2Timer {
+                constructor() {
+                    this.m_start = Date.now();
+                }
+                /// Reset the timer.
+                Reset() {
+                    this.m_start = Date.now();
+                    return this;
+                }
+                /// Get the time since construction or the last reset.
+                GetMilliseconds() {
+                    return Date.now() - this.m_start;
+                }
+            };
+            exports_11("b2Timer", b2Timer);
+            b2Counter = class b2Counter {
+                constructor() {
+                    this.m_count = 0;
+                    this.m_min_count = 0;
+                    this.m_max_count = 0;
+                }
+                GetCount() {
+                    return this.m_count;
+                }
+                GetMinCount() {
+                    return this.m_min_count;
+                }
+                GetMaxCount() {
+                    return this.m_max_count;
+                }
+                ResetCount() {
+                    const count = this.m_count;
+                    this.m_count = 0;
+                    return count;
+                }
+                ResetMinCount() {
+                    this.m_min_count = 0;
+                }
+                ResetMaxCount() {
+                    this.m_max_count = 0;
+                }
+                Increment() {
+                    this.m_count++;
+                    if (this.m_max_count < this.m_count) {
+                        this.m_max_count = this.m_count;
+                    }
+                }
+                Decrement() {
+                    this.m_count--;
+                    if (this.m_min_count > this.m_count) {
+                        this.m_min_count = this.m_count;
+                    }
+                }
+            };
+            exports_11("b2Counter", b2Counter);
         }
     }
 });
@@ -3404,7 +3831,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
 System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Collision/b2Distance"], function(exports_12, context_12) {
     "use strict";
     var __moduleName = context_12 && context_12.id;
-    var b2Settings_5, b2Math_6, b2Timer_1, b2Distance_2;
+    var b2Settings_8, b2Math_8, b2Timer_1, b2Distance_2;
     var b2_toiTime, b2_toiMaxTime, b2_toiCalls, b2_toiIters, b2_toiMaxIters, b2_toiRootIters, b2_toiMaxRootIters, b2TimeOfImpact_s_xfA, b2TimeOfImpact_s_xfB, b2TimeOfImpact_s_pointA, b2TimeOfImpact_s_pointB, b2TimeOfImpact_s_normal, b2TimeOfImpact_s_axisA, b2TimeOfImpact_s_axisB, b2TOIInput, b2TOIOutput, b2SeparationFunction, b2TimeOfImpact_s_timer, b2TimeOfImpact_s_cache, b2TimeOfImpact_s_distanceInput, b2TimeOfImpact_s_distanceOutput, b2TimeOfImpact_s_fcn, b2TimeOfImpact_s_indexA, b2TimeOfImpact_s_indexB, b2TimeOfImpact_s_sweepA, b2TimeOfImpact_s_sweepB;
     function b2TimeOfImpact(output, input) {
         const timer = b2TimeOfImpact_s_timer.Reset();
@@ -3421,8 +3848,8 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
         sweepB.Normalize();
         const tMax = input.tMax;
         const totalRadius = proxyA.m_radius + proxyB.m_radius;
-        const target = b2Math_6.b2Max(b2Settings_5.b2_linearSlop, totalRadius - 3 * b2Settings_5.b2_linearSlop);
-        const tolerance = 0.25 * b2Settings_5.b2_linearSlop;
+        const target = b2Math_8.b2Max(b2Settings_8.b2_linearSlop, totalRadius - 3 * b2Settings_8.b2_linearSlop);
+        const tolerance = 0.25 * b2Settings_8.b2_linearSlop;
         ///b2Assert(target > tolerance);
         let t1 = 0;
         const k_maxIterations = 20; // TODO_ERIN b2Settings
@@ -3548,7 +3975,7 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                     ++rootIterCount;
                     exports_12("b2_toiRootIters", ++b2_toiRootIters);
                     const s = fcn.Evaluate(indexA[0], indexB[0], t);
-                    if (b2Math_6.b2Abs(s - target) < tolerance) {
+                    if (b2Math_8.b2Abs(s - target) < tolerance) {
                         // t2 holds a tentative value for t1
                         t2 = t;
                         break;
@@ -3566,9 +3993,9 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                         break;
                     }
                 }
-                exports_12("b2_toiMaxRootIters", b2_toiMaxRootIters = b2Math_6.b2Max(b2_toiMaxRootIters, rootIterCount));
+                exports_12("b2_toiMaxRootIters", b2_toiMaxRootIters = b2Math_8.b2Max(b2_toiMaxRootIters, rootIterCount));
                 ++pushBackIter;
-                if (pushBackIter === b2Settings_5.b2_maxPolygonVertices) {
+                if (pushBackIter === b2Settings_8.b2_maxPolygonVertices) {
                     break;
                 }
             }
@@ -3584,19 +4011,19 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                 break;
             }
         }
-        exports_12("b2_toiMaxIters", b2_toiMaxIters = b2Math_6.b2Max(b2_toiMaxIters, iter));
+        exports_12("b2_toiMaxIters", b2_toiMaxIters = b2Math_8.b2Max(b2_toiMaxIters, iter));
         const time = timer.GetMilliseconds();
-        exports_12("b2_toiMaxTime", b2_toiMaxTime = b2Math_6.b2Max(b2_toiMaxTime, time));
+        exports_12("b2_toiMaxTime", b2_toiMaxTime = b2Math_8.b2Max(b2_toiMaxTime, time));
         exports_12("b2_toiTime", b2_toiTime += time);
     }
     exports_12("b2TimeOfImpact", b2TimeOfImpact);
     return {
         setters:[
-            function (b2Settings_5_1) {
-                b2Settings_5 = b2Settings_5_1;
+            function (b2Settings_8_1) {
+                b2Settings_8 = b2Settings_8_1;
             },
-            function (b2Math_6_1) {
-                b2Math_6 = b2Math_6_1;
+            function (b2Math_8_1) {
+                b2Math_8 = b2Math_8_1;
             },
             function (b2Timer_1_1) {
                 b2Timer_1 = b2Timer_1_1;
@@ -3612,20 +4039,20 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
             exports_12("b2_toiMaxIters", b2_toiMaxIters = 0);
             exports_12("b2_toiRootIters", b2_toiRootIters = 0);
             exports_12("b2_toiMaxRootIters", b2_toiMaxRootIters = 0);
-            b2TimeOfImpact_s_xfA = new b2Math_6.b2Transform();
-            b2TimeOfImpact_s_xfB = new b2Math_6.b2Transform();
-            b2TimeOfImpact_s_pointA = new b2Math_6.b2Vec2();
-            b2TimeOfImpact_s_pointB = new b2Math_6.b2Vec2();
-            b2TimeOfImpact_s_normal = new b2Math_6.b2Vec2();
-            b2TimeOfImpact_s_axisA = new b2Math_6.b2Vec2();
-            b2TimeOfImpact_s_axisB = new b2Math_6.b2Vec2();
+            b2TimeOfImpact_s_xfA = new b2Math_8.b2Transform();
+            b2TimeOfImpact_s_xfB = new b2Math_8.b2Transform();
+            b2TimeOfImpact_s_pointA = new b2Math_8.b2Vec2();
+            b2TimeOfImpact_s_pointB = new b2Math_8.b2Vec2();
+            b2TimeOfImpact_s_normal = new b2Math_8.b2Vec2();
+            b2TimeOfImpact_s_axisA = new b2Math_8.b2Vec2();
+            b2TimeOfImpact_s_axisB = new b2Math_8.b2Vec2();
             /// Input parameters for b2TimeOfImpact
             b2TOIInput = class b2TOIInput {
                 constructor() {
                     this.proxyA = new b2Distance_2.b2DistanceProxy();
                     this.proxyB = new b2Distance_2.b2DistanceProxy();
-                    this.sweepA = new b2Math_6.b2Sweep();
-                    this.sweepB = new b2Math_6.b2Sweep();
+                    this.sweepA = new b2Math_8.b2Sweep();
+                    this.sweepB = new b2Math_8.b2Sweep();
                     this.tMax = 0; // defines sweep interval [0, tMax]
                 }
             };
@@ -3639,11 +4066,11 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
             exports_12("b2TOIOutput", b2TOIOutput);
             b2SeparationFunction = class b2SeparationFunction {
                 constructor() {
-                    this.m_sweepA = new b2Math_6.b2Sweep();
-                    this.m_sweepB = new b2Math_6.b2Sweep();
+                    this.m_sweepA = new b2Math_8.b2Sweep();
+                    this.m_sweepB = new b2Math_8.b2Sweep();
                     this.m_type = -1 /* e_unknown */;
-                    this.m_localPoint = new b2Math_6.b2Vec2();
-                    this.m_axis = new b2Math_6.b2Vec2();
+                    this.m_localPoint = new b2Math_8.b2Vec2();
+                    this.m_axis = new b2Math_8.b2Vec2();
                 }
                 Initialize(cache, proxyA, sweepA, proxyB, sweepB, t1) {
                     this.m_proxyA = proxyA;
@@ -3660,10 +4087,13 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                         this.m_type = 0 /* e_points */;
                         const localPointA = this.m_proxyA.GetVertex(cache.indexA[0]);
                         const localPointB = this.m_proxyB.GetVertex(cache.indexB[0]);
-                        const pointA = b2Math_6.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                        const pointB = b2Math_6.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                        b2Math_6.b2Vec2.SubVV(pointB, pointA, this.m_axis);
+                        const pointA = b2Math_8.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                        const pointB = b2Math_8.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                        b2Math_8.b2Vec2.SubVV(pointB, pointA, this.m_axis);
                         const s = this.m_axis.Normalize();
+                        ///#if B2_ENABLE_PARTICLE
+                        this.m_localPoint.SetZero();
+                        ///#endif
                         return s;
                     }
                     else if (cache.indexA[0] === cache.indexA[1]) {
@@ -3671,13 +4101,13 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                         this.m_type = 2 /* e_faceB */;
                         const localPointB1 = this.m_proxyB.GetVertex(cache.indexB[0]);
                         const localPointB2 = this.m_proxyB.GetVertex(cache.indexB[1]);
-                        b2Math_6.b2Vec2.CrossVOne(b2Math_6.b2Vec2.SubVV(localPointB2, localPointB1, b2Math_6.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-                        const normal = b2Math_6.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-                        b2Math_6.b2Vec2.MidVV(localPointB1, localPointB2, this.m_localPoint);
-                        const pointB = b2Math_6.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+                        b2Math_8.b2Vec2.CrossVOne(b2Math_8.b2Vec2.SubVV(localPointB2, localPointB1, b2Math_8.b2Vec2.s_t0), this.m_axis).SelfNormalize();
+                        const normal = b2Math_8.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+                        b2Math_8.b2Vec2.MidVV(localPointB1, localPointB2, this.m_localPoint);
+                        const pointB = b2Math_8.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
                         const localPointA = this.m_proxyA.GetVertex(cache.indexA[0]);
-                        const pointA = b2Math_6.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                        let s = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointA, pointB, b2Math_6.b2Vec2.s_t0), normal);
+                        const pointA = b2Math_8.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                        let s = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointA, pointB, b2Math_8.b2Vec2.s_t0), normal);
                         if (s < 0) {
                             this.m_axis.SelfNeg();
                             s = -s;
@@ -3689,13 +4119,13 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                         this.m_type = 1 /* e_faceA */;
                         const localPointA1 = this.m_proxyA.GetVertex(cache.indexA[0]);
                         const localPointA2 = this.m_proxyA.GetVertex(cache.indexA[1]);
-                        b2Math_6.b2Vec2.CrossVOne(b2Math_6.b2Vec2.SubVV(localPointA2, localPointA1, b2Math_6.b2Vec2.s_t0), this.m_axis).SelfNormalize();
-                        const normal = b2Math_6.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-                        b2Math_6.b2Vec2.MidVV(localPointA1, localPointA2, this.m_localPoint);
-                        const pointA = b2Math_6.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+                        b2Math_8.b2Vec2.CrossVOne(b2Math_8.b2Vec2.SubVV(localPointA2, localPointA1, b2Math_8.b2Vec2.s_t0), this.m_axis).SelfNormalize();
+                        const normal = b2Math_8.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+                        b2Math_8.b2Vec2.MidVV(localPointA1, localPointA2, this.m_localPoint);
+                        const pointA = b2Math_8.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
                         const localPointB = this.m_proxyB.GetVertex(cache.indexB[0]);
-                        const pointB = b2Math_6.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                        let s = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointB, pointA, b2Math_6.b2Vec2.s_t0), normal);
+                        const pointB = b2Math_8.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                        let s = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointB, pointA, b2Math_8.b2Vec2.s_t0), normal);
                         if (s < 0) {
                             this.m_axis.SelfNeg();
                             s = -s;
@@ -3710,37 +4140,37 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                     this.m_sweepB.GetTransform(xfB, t);
                     switch (this.m_type) {
                         case 0 /* e_points */: {
-                            const axisA = b2Math_6.b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
-                            const axisB = b2Math_6.b2Rot.MulTRV(xfB.q, b2Math_6.b2Vec2.NegV(this.m_axis, b2Math_6.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+                            const axisA = b2Math_8.b2Rot.MulTRV(xfA.q, this.m_axis, b2TimeOfImpact_s_axisA);
+                            const axisB = b2Math_8.b2Rot.MulTRV(xfB.q, b2Math_8.b2Vec2.NegV(this.m_axis, b2Math_8.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
                             indexA[0] = this.m_proxyA.GetSupport(axisA);
                             indexB[0] = this.m_proxyB.GetSupport(axisB);
                             const localPointA = this.m_proxyA.GetVertex(indexA[0]);
                             const localPointB = this.m_proxyB.GetVertex(indexB[0]);
-                            const pointA = b2Math_6.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const pointB = b2Math_6.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointB, pointA, b2Math_6.b2Vec2.s_t0), this.m_axis);
+                            const pointA = b2Math_8.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const pointB = b2Math_8.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointB, pointA, b2Math_8.b2Vec2.s_t0), this.m_axis);
                             return separation;
                         }
                         case 1 /* e_faceA */: {
-                            const normal = b2Math_6.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointA = b2Math_6.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
-                            const axisB = b2Math_6.b2Rot.MulTRV(xfB.q, b2Math_6.b2Vec2.NegV(normal, b2Math_6.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
+                            const normal = b2Math_8.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointA = b2Math_8.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+                            const axisB = b2Math_8.b2Rot.MulTRV(xfB.q, b2Math_8.b2Vec2.NegV(normal, b2Math_8.b2Vec2.s_t0), b2TimeOfImpact_s_axisB);
                             indexA[0] = -1;
                             indexB[0] = this.m_proxyB.GetSupport(axisB);
                             const localPointB = this.m_proxyB.GetVertex(indexB[0]);
-                            const pointB = b2Math_6.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointB, pointA, b2Math_6.b2Vec2.s_t0), normal);
+                            const pointB = b2Math_8.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointB, pointA, b2Math_8.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         case 2 /* e_faceB */: {
-                            const normal = b2Math_6.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointB = b2Math_6.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
-                            const axisA = b2Math_6.b2Rot.MulTRV(xfA.q, b2Math_6.b2Vec2.NegV(normal, b2Math_6.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
+                            const normal = b2Math_8.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointB = b2Math_8.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+                            const axisA = b2Math_8.b2Rot.MulTRV(xfA.q, b2Math_8.b2Vec2.NegV(normal, b2Math_8.b2Vec2.s_t0), b2TimeOfImpact_s_axisA);
                             indexB[0] = -1;
                             indexA[0] = this.m_proxyA.GetSupport(axisA);
                             const localPointA = this.m_proxyA.GetVertex(indexA[0]);
-                            const pointA = b2Math_6.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const separation = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointA, pointB, b2Math_6.b2Vec2.s_t0), normal);
+                            const pointA = b2Math_8.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const separation = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointA, pointB, b2Math_8.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         default:
@@ -3759,25 +4189,25 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
                         case 0 /* e_points */: {
                             const localPointA = this.m_proxyA.GetVertex(indexA);
                             const localPointB = this.m_proxyB.GetVertex(indexB);
-                            const pointA = b2Math_6.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const pointB = b2Math_6.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointB, pointA, b2Math_6.b2Vec2.s_t0), this.m_axis);
+                            const pointA = b2Math_8.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const pointB = b2Math_8.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointB, pointA, b2Math_8.b2Vec2.s_t0), this.m_axis);
                             return separation;
                         }
                         case 1 /* e_faceA */: {
-                            const normal = b2Math_6.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointA = b2Math_6.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
+                            const normal = b2Math_8.b2Rot.MulRV(xfA.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointA = b2Math_8.b2Transform.MulXV(xfA, this.m_localPoint, b2TimeOfImpact_s_pointA);
                             const localPointB = this.m_proxyB.GetVertex(indexB);
-                            const pointB = b2Math_6.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
-                            const separation = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointB, pointA, b2Math_6.b2Vec2.s_t0), normal);
+                            const pointB = b2Math_8.b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
+                            const separation = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointB, pointA, b2Math_8.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         case 2 /* e_faceB */: {
-                            const normal = b2Math_6.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
-                            const pointB = b2Math_6.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
+                            const normal = b2Math_8.b2Rot.MulRV(xfB.q, this.m_axis, b2TimeOfImpact_s_normal);
+                            const pointB = b2Math_8.b2Transform.MulXV(xfB, this.m_localPoint, b2TimeOfImpact_s_pointB);
                             const localPointA = this.m_proxyA.GetVertex(indexA);
-                            const pointA = b2Math_6.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
-                            const separation = b2Math_6.b2Vec2.DotVV(b2Math_6.b2Vec2.SubVV(pointA, pointB, b2Math_6.b2Vec2.s_t0), normal);
+                            const pointA = b2Math_8.b2Transform.MulXV(xfA, localPointA, b2TimeOfImpact_s_pointA);
+                            const separation = b2Math_8.b2Vec2.DotVV(b2Math_8.b2Vec2.SubVV(pointA, pointB, b2Math_8.b2Vec2.s_t0), normal);
                             return separation;
                         }
                         default:
@@ -3792,118 +4222,10 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
             b2TimeOfImpact_s_distanceInput = new b2Distance_2.b2DistanceInput();
             b2TimeOfImpact_s_distanceOutput = new b2Distance_2.b2DistanceOutput();
             b2TimeOfImpact_s_fcn = new b2SeparationFunction();
-            b2TimeOfImpact_s_indexA = b2Settings_5.b2MakeNumberArray(1);
-            b2TimeOfImpact_s_indexB = b2Settings_5.b2MakeNumberArray(1);
-            b2TimeOfImpact_s_sweepA = new b2Math_6.b2Sweep();
-            b2TimeOfImpact_s_sweepB = new b2Math_6.b2Sweep();
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], function(exports_13, context_13) {
-    "use strict";
-    var __moduleName = context_13 && context_13.id;
-    var b2Settings_6, b2Math_7;
-    var b2Profile, b2TimeStep, b2Position, b2Velocity, b2SolverData;
-    return {
-        setters:[
-            function (b2Settings_6_1) {
-                b2Settings_6 = b2Settings_6_1;
-            },
-            function (b2Math_7_1) {
-                b2Math_7 = b2Math_7_1;
-            }],
-        execute: function() {
-            /// Profiling data. Times are in milliseconds.
-            b2Profile = class b2Profile {
-                constructor() {
-                    this.step = 0;
-                    this.collide = 0;
-                    this.solve = 0;
-                    this.solveInit = 0;
-                    this.solveVelocity = 0;
-                    this.solvePosition = 0;
-                    this.broadphase = 0;
-                    this.solveTOI = 0;
-                }
-                Reset() {
-                    this.step = 0;
-                    this.collide = 0;
-                    this.solve = 0;
-                    this.solveInit = 0;
-                    this.solveVelocity = 0;
-                    this.solvePosition = 0;
-                    this.broadphase = 0;
-                    this.solveTOI = 0;
-                    return this;
-                }
-            };
-            exports_13("b2Profile", b2Profile);
-            /// This is an internal structure.
-            b2TimeStep = class b2TimeStep {
-                constructor() {
-                    this.dt = 0; // time step
-                    this.inv_dt = 0; // inverse time step (0 if dt == 0).
-                    this.dtRatio = 0; // dt * inv_dt0
-                    this.velocityIterations = 0;
-                    this.positionIterations = 0;
-                    this.warmStarting = false;
-                }
-                Copy(step) {
-                    this.dt = step.dt;
-                    this.inv_dt = step.inv_dt;
-                    this.dtRatio = step.dtRatio;
-                    this.positionIterations = step.positionIterations;
-                    this.velocityIterations = step.velocityIterations;
-                    this.warmStarting = step.warmStarting;
-                    return this;
-                }
-            };
-            exports_13("b2TimeStep", b2TimeStep);
-            b2Position = class b2Position {
-                constructor() {
-                    this.c = new b2Math_7.b2Vec2();
-                    this.a = 0;
-                }
-                static MakeArray(length) {
-                    return b2Settings_6.b2MakeArray(length, function (i) { return new b2Position(); });
-                }
-            };
-            exports_13("b2Position", b2Position);
-            b2Velocity = class b2Velocity {
-                constructor() {
-                    this.v = new b2Math_7.b2Vec2();
-                    this.w = 0;
-                }
-                static MakeArray(length) {
-                    return b2Settings_6.b2MakeArray(length, function (i) { return new b2Velocity(); });
-                }
-            };
-            exports_13("b2Velocity", b2Velocity);
-            b2SolverData = class b2SolverData {
-                constructor() {
-                    this.step = new b2TimeStep();
-                    this.positions = null;
-                    this.velocities = null;
-                }
-            };
-            exports_13("b2SolverData", b2SolverData);
+            b2TimeOfImpact_s_indexA = b2Settings_8.b2MakeNumberArray(1);
+            b2TimeOfImpact_s_indexB = b2Settings_8.b2MakeNumberArray(1);
+            b2TimeOfImpact_s_sweepA = new b2Math_8.b2Sweep();
+            b2TimeOfImpact_s_sweepB = new b2Math_8.b2Sweep();
         }
     }
 });
@@ -3924,20 +4246,20 @@ System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], f
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_14, context_14) {
+System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_13, context_13) {
     "use strict";
-    var __moduleName = context_14 && context_14.id;
-    var b2Math_8;
+    var __moduleName = context_13 && context_13.id;
+    var b2Math_9;
     var b2Jacobian, b2JointEdge, b2JointDef, b2Joint;
     return {
         setters:[
-            function (b2Math_8_1) {
-                b2Math_8 = b2Math_8_1;
+            function (b2Math_9_1) {
+                b2Math_9 = b2Math_9_1;
             }],
         execute: function() {
             b2Jacobian = class b2Jacobian {
                 constructor() {
-                    this.linear = new b2Math_8.b2Vec2();
+                    this.linear = new b2Math_9.b2Vec2();
                     this.angularA = 0;
                     this.angularB = 0;
                 }
@@ -3954,7 +4276,7 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
                     return this;
                 }
             };
-            exports_14("b2Jacobian", b2Jacobian);
+            exports_13("b2Jacobian", b2Jacobian);
             /// A joint edge is used to connect bodies and joints together
             /// in a joint graph where each body is a node and each joint
             /// is an edge. A joint edge belongs to a doubly linked list
@@ -3968,7 +4290,7 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
                     this.next = null; ///< the next joint edge in the body's joint list
                 }
             };
-            exports_14("b2JointEdge", b2JointEdge);
+            exports_13("b2JointEdge", b2JointEdge);
             /// Joint definitions are used to construct joints.
             b2JointDef = class b2JointDef {
                 constructor(type) {
@@ -3985,7 +4307,7 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
                     this.type = type;
                 }
             };
-            exports_14("b2JointDef", b2JointDef);
+            exports_13("b2JointDef", b2JointDef);
             /// The base joint class. Joints are used to constraint two bodies together in
             /// various fashions. Some joints also feature limits and motors.
             b2Joint = class b2Joint {
@@ -4074,7 +4396,7 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
                     return false;
                 }
             };
-            exports_14("b2Joint", b2Joint);
+            exports_13("b2Joint", b2Joint);
         }
     }
 });
@@ -4095,765 +4417,28 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/Shapes/b2Shape"], function(exports_15, context_15) {
+System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_14, context_14) {
     "use strict";
-    var __moduleName = context_15 && context_15.id;
-    var b2Settings_7, b2Math_9, b2Collision_2, b2Shape_1;
-    var b2Filter, b2FixtureDef, b2FixtureProxy, b2Fixture;
-    return {
-        setters:[
-            function (b2Settings_7_1) {
-                b2Settings_7 = b2Settings_7_1;
-            },
-            function (b2Math_9_1) {
-                b2Math_9 = b2Math_9_1;
-            },
-            function (b2Collision_2_1) {
-                b2Collision_2 = b2Collision_2_1;
-            },
-            function (b2Shape_1_1) {
-                b2Shape_1 = b2Shape_1_1;
-            }],
-        execute: function() {
-            /// This holds contact filtering data.
-            b2Filter = class b2Filter {
-                constructor() {
-                    /// The collision category bits. Normally you would just set one bit.
-                    this.categoryBits = 0x0001;
-                    /// The collision mask bits. This states the categories that this
-                    /// shape would accept for collision.
-                    this.maskBits = 0xFFFF;
-                    /// Collision groups allow a certain group of objects to never collide (negative)
-                    /// or always collide (positive). Zero means no collision group. Non-zero group
-                    /// filtering always wins against the mask bits.
-                    this.groupIndex = 0;
-                }
-                Clone() {
-                    return new b2Filter().Copy(this);
-                }
-                Copy(other) {
-                    ///b2Assert(this !== other);
-                    this.categoryBits = other.categoryBits;
-                    this.maskBits = other.maskBits;
-                    this.groupIndex = other.groupIndex;
-                    return this;
-                }
-            };
-            exports_15("b2Filter", b2Filter);
-            /// A fixture definition is used to create a fixture. This class defines an
-            /// abstract fixture definition. You can reuse fixture definitions safely.
-            b2FixtureDef = class b2FixtureDef {
-                constructor() {
-                    /// The shape, this must be set. The shape will be cloned, so you
-                    /// can create the shape on the stack.
-                    this.shape = null;
-                    /// Use this to store application specific fixture data.
-                    this.userData = null;
-                    /// The friction coefficient, usually in the range [0,1].
-                    this.friction = 0.2;
-                    /// The restitution (elasticity) usually in the range [0,1].
-                    this.restitution = 0;
-                    /// The density, usually in kg/m^2.
-                    this.density = 0;
-                    /// A sensor shape collects contact information but never generates a collision
-                    /// response.
-                    this.isSensor = false;
-                    /// Contact filtering data.
-                    this.filter = new b2Filter();
-                }
-            };
-            exports_15("b2FixtureDef", b2FixtureDef);
-            /// This proxy is used internally to connect fixtures to the broad-phase.
-            b2FixtureProxy = class b2FixtureProxy {
-                constructor() {
-                    this.aabb = new b2Collision_2.b2AABB();
-                    this.fixture = null;
-                    this.childIndex = 0;
-                    this.proxy = null;
-                }
-                static MakeArray(length) {
-                    return b2Settings_7.b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
-                }
-            };
-            exports_15("b2FixtureProxy", b2FixtureProxy);
-            /// A fixture is used to attach a shape to a body for collision detection. A fixture
-            /// inherits its transform from its parent. Fixtures hold additional non-geometric data
-            /// such as friction, collision filters, etc.
-            /// Fixtures are created via b2Body::CreateFixture.
-            /// @warning you cannot reuse fixtures.
-            b2Fixture = class b2Fixture {
-                constructor() {
-                    this.m_density = 0;
-                    this.m_next = null;
-                    this.m_body = null;
-                    this.m_shape = null;
-                    this.m_friction = 0;
-                    this.m_restitution = 0;
-                    this.m_proxies = null;
-                    this.m_proxyCount = 0;
-                    this.m_filter = new b2Filter();
-                    this.m_isSensor = false;
-                    this.m_userData = null;
-                }
-                /// Get the type of the child shape. You can use this to down cast to the concrete shape.
-                /// @return the shape type.
-                GetType() {
-                    return this.m_shape.GetType();
-                }
-                /// Get the child shape. You can modify the child shape, however you should not change the
-                /// number of vertices because this will crash some collision caching mechanisms.
-                /// Manipulating the shape may lead to non-physical behavior.
-                GetShape() {
-                    return this.m_shape;
-                }
-                /// Set if this fixture is a sensor.
-                SetSensor(sensor) {
-                    if (sensor !== this.m_isSensor) {
-                        this.m_body.SetAwake(true);
-                        this.m_isSensor = sensor;
-                    }
-                }
-                /// Is this fixture a sensor (non-solid)?
-                /// @return the true if the shape is a sensor.
-                IsSensor() {
-                    return this.m_isSensor;
-                }
-                /// Set the contact filtering data. This will not update contacts until the next time
-                /// step when either parent body is active and awake.
-                /// This automatically calls Refilter.
-                SetFilterData(filter) {
-                    this.m_filter.Copy(filter);
-                    this.Refilter();
-                }
-                /// Get the contact filtering data.
-                GetFilterData() {
-                    return this.m_filter;
-                }
-                /// Call this if you want to establish collision that was previously disabled by b2ContactFilter::ShouldCollide.
-                Refilter() {
-                    if (this.m_body) {
-                        return;
-                    }
-                    // Flag associated contacts for filtering.
-                    let edge = this.m_body.GetContactList();
-                    while (edge) {
-                        const contact = edge.contact;
-                        const fixtureA = contact.GetFixtureA();
-                        const fixtureB = contact.GetFixtureB();
-                        if (fixtureA === this || fixtureB === this) {
-                            contact.FlagForFiltering();
-                        }
-                        edge = edge.next;
-                    }
-                    const world = this.m_body.GetWorld();
-                    if (world === null) {
-                        return;
-                    }
-                    // Touch each proxy so that new pairs may be created
-                    const broadPhase = world.m_contactManager.m_broadPhase;
-                    for (let i = 0; i < this.m_proxyCount; ++i) {
-                        broadPhase.TouchProxy(this.m_proxies[i].proxy);
-                    }
-                }
-                /// Get the parent body of this fixture. This is NULL if the fixture is not attached.
-                /// @return the parent body.
-                GetBody() {
-                    return this.m_body;
-                }
-                /// Get the next fixture in the parent body's fixture list.
-                /// @return the next shape.
-                GetNext() {
-                    return this.m_next;
-                }
-                /// Get the user data that was assigned in the fixture definition. Use this to
-                /// store your application specific data.
-                GetUserData() {
-                    return this.m_userData;
-                }
-                /// Set the user data. Use this to store your application specific data.
-                SetUserData(data) {
-                    this.m_userData = data;
-                }
-                /// Test a point for containment in this fixture.
-                /// @param p a point in world coordinates.
-                TestPoint(p) {
-                    return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
-                }
-                /// Cast a ray against this shape.
-                /// @param output the ray-cast results.
-                /// @param input the ray-cast input parameters.
-                RayCast(output, input, childIndex) {
-                    return this.m_shape.RayCast(output, input, this.m_body.GetTransform(), childIndex);
-                }
-                /// Get the mass data for this fixture. The mass data is based on the density and
-                /// the shape. The rotational inertia is about the shape's origin. This operation
-                /// may be expensive.
-                GetMassData(massData = new b2Shape_1.b2MassData()) {
-                    this.m_shape.ComputeMass(massData, this.m_density);
-                    return massData;
-                }
-                /// Set the density of this fixture. This will _not_ automatically adjust the mass
-                /// of the body. You must call b2Body::ResetMassData to update the body's mass.
-                SetDensity(density) {
-                    this.m_density = density;
-                }
-                /// Get the density of this fixture.
-                GetDensity() {
-                    return this.m_density;
-                }
-                /// Get the coefficient of friction.
-                GetFriction() {
-                    return this.m_friction;
-                }
-                /// Set the coefficient of friction. This will _not_ change the friction of
-                /// existing contacts.
-                SetFriction(friction) {
-                    this.m_friction = friction;
-                }
-                /// Get the coefficient of restitution.
-                GetRestitution() {
-                    return this.m_restitution;
-                }
-                /// Set the coefficient of restitution. This will _not_ change the restitution of
-                /// existing contacts.
-                SetRestitution(restitution) {
-                    this.m_restitution = restitution;
-                }
-                /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
-                /// If you need a more accurate AABB, compute it using the shape and
-                /// the body transform.
-                GetAABB(childIndex) {
-                    ///b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
-                    return this.m_proxies[childIndex].aabb;
-                }
-                /// Dump this fixture to the log file.
-                Dump(log, bodyIndex) {
-                    log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
-                    log("    fd.friction = %.15f;\n", this.m_friction);
-                    log("    fd.restitution = %.15f;\n", this.m_restitution);
-                    log("    fd.density = %.15f;\n", this.m_density);
-                    log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
-                    log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
-                    log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
-                    log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
-                    this.m_shape.Dump(log);
-                    log("\n");
-                    log("    fd.shape = shape;\n");
-                    log("\n");
-                    log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
-                }
-                // We need separation create/destroy functions from the constructor/destructor because
-                // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-                Create(body, def) {
-                    this.m_userData = def.userData;
-                    this.m_friction = def.friction;
-                    this.m_restitution = def.restitution;
-                    this.m_body = body;
-                    this.m_next = null;
-                    this.m_filter.Copy(def.filter);
-                    this.m_isSensor = def.isSensor;
-                    this.m_shape = def.shape.Clone();
-                    // Reserve proxy space
-                    // const childCount = m_shape->GetChildCount();
-                    // m_proxies = (b2FixtureProxy*)allocator->Allocate(childCount * sizeof(b2FixtureProxy));
-                    // for (int32 i = 0; i < childCount; ++i)
-                    // {
-                    //   m_proxies[i].fixture = NULL;
-                    //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
-                    // }
-                    this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
-                    this.m_proxyCount = 0;
-                    this.m_density = def.density;
-                }
-                Destroy() {
-                    // The proxies must be destroyed before calling this.
-                    ///b2Assert(this.m_proxyCount === 0);
-                    // Free the proxy array.
-                    // int32 childCount = m_shape->GetChildCount();
-                    // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
-                    // m_proxies = NULL;
-                    this.m_shape = null;
-                }
-                // These support body activation/deactivation.
-                CreateProxies(broadPhase, xf) {
-                    ///b2Assert(this.m_proxyCount === 0);
-                    // Create proxies in the broad-phase.
-                    this.m_proxyCount = this.m_shape.GetChildCount();
-                    for (let i = 0; i < this.m_proxyCount; ++i) {
-                        const proxy = this.m_proxies[i];
-                        this.m_shape.ComputeAABB(proxy.aabb, xf, i);
-                        proxy.proxy = broadPhase.CreateProxy(proxy.aabb, proxy);
-                        proxy.fixture = this;
-                        proxy.childIndex = i;
-                    }
-                }
-                DestroyProxies(broadPhase) {
-                    // Destroy proxies in the broad-phase.
-                    for (let i = 0; i < this.m_proxyCount; ++i) {
-                        const proxy = this.m_proxies[i];
-                        broadPhase.DestroyProxy(proxy.proxy);
-                        proxy.proxy = null;
-                    }
-                    this.m_proxyCount = 0;
-                }
-                Synchronize(broadPhase, transform1, transform2) {
-                    if (this.m_proxyCount === 0) {
-                        return;
-                    }
-                    for (let i = 0; i < this.m_proxyCount; ++i) {
-                        const proxy = this.m_proxies[i];
-                        // Compute an AABB that covers the swept shape (may miss some rotation effect).
-                        const aabb1 = b2Fixture.Synchronize_s_aabb1;
-                        const aabb2 = b2Fixture.Synchronize_s_aabb2;
-                        this.m_shape.ComputeAABB(aabb1, transform1, i);
-                        this.m_shape.ComputeAABB(aabb2, transform2, i);
-                        proxy.aabb.Combine2(aabb1, aabb2);
-                        const displacement = b2Math_9.b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
-                        broadPhase.MoveProxy(proxy.proxy, proxy.aabb, displacement);
-                    }
-                }
-            };
-            b2Fixture.Synchronize_s_aabb1 = new b2Collision_2.b2AABB();
-            b2Fixture.Synchronize_s_aabb2 = new b2Collision_2.b2AABB();
-            b2Fixture.Synchronize_s_displacement = new b2Math_9.b2Vec2();
-            exports_15("b2Fixture", b2Fixture);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_16, context_16) {
-    "use strict";
-    var __moduleName = context_16 && context_16.id;
-    var b2Settings_8, b2Math_10, b2Shape_2;
-    var b2EdgeShape;
-    return {
-        setters:[
-            function (b2Settings_8_1) {
-                b2Settings_8 = b2Settings_8_1;
-            },
-            function (b2Math_10_1) {
-                b2Math_10 = b2Math_10_1;
-            },
-            function (b2Shape_2_1) {
-                b2Shape_2 = b2Shape_2_1;
-            }],
-        execute: function() {
-            /// A line segment (edge) shape. These can be connected in chains or loops
-            /// to other edge shapes. The connectivity information is used to ensure
-            /// correct contact normals.
-            b2EdgeShape = class b2EdgeShape extends b2Shape_2.b2Shape {
-                constructor() {
-                    super(1 /* e_edgeShape */, b2Settings_8.b2_polygonRadius);
-                    this.m_vertex1 = new b2Math_10.b2Vec2();
-                    this.m_vertex2 = new b2Math_10.b2Vec2();
-                    this.m_vertex0 = new b2Math_10.b2Vec2();
-                    this.m_vertex3 = new b2Math_10.b2Vec2();
-                    this.m_hasVertex0 = false;
-                    this.m_hasVertex3 = false;
-                }
-                /// Set this as an isolated edge.
-                Set(v1, v2) {
-                    this.m_vertex1.Copy(v1);
-                    this.m_vertex2.Copy(v2);
-                    this.m_hasVertex0 = false;
-                    this.m_hasVertex3 = false;
-                    return this;
-                }
-                /// Implement b2Shape.
-                Clone() {
-                    return new b2EdgeShape().Copy(this);
-                }
-                Copy(other) {
-                    super.Copy(other);
-                    ///b2Assert(other instanceof b2EdgeShape);
-                    this.m_vertex1.Copy(other.m_vertex1);
-                    this.m_vertex2.Copy(other.m_vertex2);
-                    this.m_vertex0.Copy(other.m_vertex0);
-                    this.m_vertex3.Copy(other.m_vertex3);
-                    this.m_hasVertex0 = other.m_hasVertex0;
-                    this.m_hasVertex3 = other.m_hasVertex3;
-                    return this;
-                }
-                /// @see b2Shape::GetChildCount
-                GetChildCount() {
-                    return 1;
-                }
-                /// @see b2Shape::TestPoint
-                TestPoint(xf, p) {
-                    return false;
-                }
-                RayCast(output, input, xf, childIndex) {
-                    // Put the ray into the edge's frame of reference.
-                    const p1 = b2Math_10.b2Transform.MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
-                    const p2 = b2Math_10.b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
-                    const d = b2Math_10.b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
-                    const v1 = this.m_vertex1;
-                    const v2 = this.m_vertex2;
-                    const e = b2Math_10.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
-                    const normal = output.normal.Set(e.y, -e.x).SelfNormalize();
-                    // q = p1 + t * d
-                    // dot(normal, q - v1) = 0
-                    // dot(normal, p1 - v1) + t * dot(normal, d) = 0
-                    const numerator = b2Math_10.b2Vec2.DotVV(normal, b2Math_10.b2Vec2.SubVV(v1, p1, b2Math_10.b2Vec2.s_t0));
-                    const denominator = b2Math_10.b2Vec2.DotVV(normal, d);
-                    if (denominator === 0) {
-                        return false;
-                    }
-                    const t = numerator / denominator;
-                    if (t < 0 || input.maxFraction < t) {
-                        return false;
-                    }
-                    const q = b2Math_10.b2Vec2.AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
-                    // q = v1 + s * r
-                    // s = dot(q - v1, r) / dot(r, r)
-                    const r = b2Math_10.b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
-                    const rr = b2Math_10.b2Vec2.DotVV(r, r);
-                    if (rr === 0) {
-                        return false;
-                    }
-                    const s = b2Math_10.b2Vec2.DotVV(b2Math_10.b2Vec2.SubVV(q, v1, b2Math_10.b2Vec2.s_t0), r) / rr;
-                    if (s < 0 || 1 < s) {
-                        return false;
-                    }
-                    output.fraction = t;
-                    if (numerator > 0) {
-                        output.normal.SelfNeg();
-                    }
-                    return true;
-                }
-                ComputeAABB(aabb, xf, childIndex) {
-                    const v1 = b2Math_10.b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
-                    const v2 = b2Math_10.b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
-                    b2Math_10.b2Vec2.MinV(v1, v2, aabb.lowerBound);
-                    b2Math_10.b2Vec2.MaxV(v1, v2, aabb.upperBound);
-                    const r = this.m_radius;
-                    aabb.lowerBound.SelfSubXY(r, r);
-                    aabb.upperBound.SelfAddXY(r, r);
-                }
-                /// @see b2Shape::ComputeMass
-                ComputeMass(massData, density) {
-                    massData.mass = 0;
-                    b2Math_10.b2Vec2.MidVV(this.m_vertex1, this.m_vertex2, massData.center);
-                    massData.I = 0;
-                }
-                SetupDistanceProxy(proxy, index) {
-                    proxy.m_vertices = proxy.m_buffer;
-                    proxy.m_vertices[0].Copy(this.m_vertex1);
-                    proxy.m_vertices[1].Copy(this.m_vertex2);
-                    proxy.m_count = 2;
-                    proxy.m_radius = this.m_radius;
-                }
-                ComputeSubmergedArea(normal, offset, xf, c) {
-                    c.SetZero();
-                    return 0;
-                }
-                Dump(log) {
-                    log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-                    log("    shape.m_radius = %.15f;\n", this.m_radius);
-                    log("    shape.m_vertex0.Set(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
-                    log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
-                    log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
-                    log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
-                    log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
-                    log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
-                }
-            };
-            /// Implement b2Shape.
-            // p = p1 + t * d
-            // v = v1 + s * e
-            // p1 + t * d = v1 + s * e
-            // s * e - t * d = p1 - v1
-            b2EdgeShape.RayCast_s_p1 = new b2Math_10.b2Vec2();
-            b2EdgeShape.RayCast_s_p2 = new b2Math_10.b2Vec2();
-            b2EdgeShape.RayCast_s_d = new b2Math_10.b2Vec2();
-            b2EdgeShape.RayCast_s_e = new b2Math_10.b2Vec2();
-            b2EdgeShape.RayCast_s_q = new b2Math_10.b2Vec2();
-            b2EdgeShape.RayCast_s_r = new b2Math_10.b2Vec2();
-            /// @see b2Shape::ComputeAABB
-            b2EdgeShape.ComputeAABB_s_v1 = new b2Math_10.b2Vec2();
-            b2EdgeShape.ComputeAABB_s_v2 = new b2Math_10.b2Vec2();
-            exports_16("b2EdgeShape", b2EdgeShape);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape"], function(exports_17, context_17) {
-    "use strict";
-    var __moduleName = context_17 && context_17.id;
-    var b2Settings_9, b2Math_11, b2Shape_3, b2EdgeShape_1;
-    var b2ChainShape;
+    var __moduleName = context_14 && context_14.id;
+    var b2Settings_9, b2Math_10, b2Shape_3;
+    var b2CircleShape;
     return {
         setters:[
             function (b2Settings_9_1) {
                 b2Settings_9 = b2Settings_9_1;
             },
-            function (b2Math_11_1) {
-                b2Math_11 = b2Math_11_1;
+            function (b2Math_10_1) {
+                b2Math_10 = b2Math_10_1;
             },
             function (b2Shape_3_1) {
                 b2Shape_3 = b2Shape_3_1;
-            },
-            function (b2EdgeShape_1_1) {
-                b2EdgeShape_1 = b2EdgeShape_1_1;
-            }],
-        execute: function() {
-            /// A chain shape is a free form sequence of line segments.
-            /// The chain has two-sided collision, so you can use inside and outside collision.
-            /// Therefore, you may use any winding order.
-            /// Since there may be many vertices, they are allocated using b2Alloc.
-            /// Connectivity information is used to create smooth collisions.
-            /// WARNING: The chain will not collide properly if there are self-intersections.
-            b2ChainShape = class b2ChainShape extends b2Shape_3.b2Shape {
-                constructor() {
-                    super(3 /* e_chainShape */, b2Settings_9.b2_polygonRadius);
-                    this.m_count = 0;
-                    this.m_prevVertex = new b2Math_11.b2Vec2();
-                    this.m_nextVertex = new b2Math_11.b2Vec2();
-                    this.m_hasPrevVertex = false;
-                    this.m_hasNextVertex = false;
-                }
-                /// Create a loop. This automatically adjusts connectivity.
-                /// @param vertices an array of vertices, these are copied
-                /// @param count the vertex count
-                CreateLoop(vertices, count = vertices.length) {
-                    ///b2Assert(this.m_vertices === null && this.m_count === 0);
-                    ///b2Assert(count >= 3);
-                    ///for (let i: number = 1; i < count; ++i) {
-                    ///  const v1 = vertices[i - 1];
-                    ///  const v2 = vertices[i];
-                    ///  // If the code crashes here, it means your vertices are too close together.
-                    ///  b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
-                    ///}
-                    this.m_count = count + 1;
-                    this.m_vertices = b2Math_11.b2Vec2.MakeArray(this.m_count);
-                    for (let i = 0; i < count; ++i) {
-                        this.m_vertices[i].Copy(vertices[i]);
-                    }
-                    this.m_vertices[count].Copy(this.m_vertices[0]);
-                    this.m_prevVertex.Copy(this.m_vertices[this.m_count - 2]);
-                    this.m_nextVertex.Copy(this.m_vertices[1]);
-                    this.m_hasPrevVertex = true;
-                    this.m_hasNextVertex = true;
-                    return this;
-                }
-                /// Create a chain with isolated end vertices.
-                /// @param vertices an array of vertices, these are copied
-                /// @param count the vertex count
-                CreateChain(vertices, count = vertices.length) {
-                    ///b2Assert(this.m_vertices === null && this.m_count === 0);
-                    ///b2Assert(count >= 2);
-                    ///for (let i: number = 1; i < count; ++i) {
-                    ///  const v1 = vertices[i - 1];
-                    ///  const v2 = vertices[i];
-                    ///  // If the code crashes here, it means your vertices are too close together.
-                    ///  b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
-                    ///}
-                    this.m_count = count;
-                    this.m_vertices = b2Math_11.b2Vec2.MakeArray(count);
-                    for (let i = 0; i < count; ++i) {
-                        this.m_vertices[i].Copy(vertices[i]);
-                    }
-                    this.m_hasPrevVertex = false;
-                    this.m_hasNextVertex = false;
-                    this.m_prevVertex.SetZero();
-                    this.m_nextVertex.SetZero();
-                    return this;
-                }
-                /// Establish connectivity to a vertex that precedes the first vertex.
-                /// Don't call this for loops.
-                SetPrevVertex(prevVertex) {
-                    this.m_prevVertex.Copy(prevVertex);
-                    this.m_hasPrevVertex = true;
-                    return this;
-                }
-                /// Establish connectivity to a vertex that follows the last vertex.
-                /// Don't call this for loops.
-                SetNextVertex(nextVertex) {
-                    this.m_nextVertex.Copy(nextVertex);
-                    this.m_hasNextVertex = true;
-                    return this;
-                }
-                /// Implement b2Shape. Vertices are cloned using b2Alloc.
-                Clone() {
-                    return new b2ChainShape().Copy(this);
-                }
-                Copy(other) {
-                    super.Copy(other);
-                    ///b2Assert(other instanceof b2ChainShape);
-                    this.CreateChain(other.m_vertices, other.m_count);
-                    this.m_prevVertex.Copy(other.m_prevVertex);
-                    this.m_nextVertex.Copy(other.m_nextVertex);
-                    this.m_hasPrevVertex = other.m_hasPrevVertex;
-                    this.m_hasNextVertex = other.m_hasNextVertex;
-                    return this;
-                }
-                /// @see b2Shape::GetChildCount
-                GetChildCount() {
-                    // edge count = vertex count - 1
-                    return this.m_count - 1;
-                }
-                /// Get a child edge.
-                GetChildEdge(edge, index) {
-                    ///b2Assert(0 <= index && index < this.m_count - 1);
-                    edge.m_type = 1 /* e_edgeShape */;
-                    edge.m_radius = this.m_radius;
-                    edge.m_vertex1.Copy(this.m_vertices[index]);
-                    edge.m_vertex2.Copy(this.m_vertices[index + 1]);
-                    if (index > 0) {
-                        edge.m_vertex0.Copy(this.m_vertices[index - 1]);
-                        edge.m_hasVertex0 = true;
-                    }
-                    else {
-                        edge.m_vertex0.Copy(this.m_prevVertex);
-                        edge.m_hasVertex0 = this.m_hasPrevVertex;
-                    }
-                    if (index < this.m_count - 2) {
-                        edge.m_vertex3.Copy(this.m_vertices[index + 2]);
-                        edge.m_hasVertex3 = true;
-                    }
-                    else {
-                        edge.m_vertex3.Copy(this.m_nextVertex);
-                        edge.m_hasVertex3 = this.m_hasNextVertex;
-                    }
-                }
-                /// This always return false.
-                /// @see b2Shape::TestPoint
-                TestPoint(xf, p) {
-                    return false;
-                }
-                RayCast(output, input, xf, childIndex) {
-                    ///b2Assert(childIndex < this.m_count);
-                    const edgeShape = b2ChainShape.RayCast_s_edgeShape;
-                    edgeShape.m_vertex1.Copy(this.m_vertices[childIndex]);
-                    edgeShape.m_vertex2.Copy(this.m_vertices[(childIndex + 1) % this.m_count]);
-                    return edgeShape.RayCast(output, input, xf, 0);
-                }
-                ComputeAABB(aabb, xf, childIndex) {
-                    ///b2Assert(childIndex < this.m_count);
-                    const vertexi1 = this.m_vertices[childIndex];
-                    const vertexi2 = this.m_vertices[(childIndex + 1) % this.m_count];
-                    const v1 = b2Math_11.b2Transform.MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
-                    const v2 = b2Math_11.b2Transform.MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
-                    b2Math_11.b2Vec2.MinV(v1, v2, aabb.lowerBound);
-                    b2Math_11.b2Vec2.MaxV(v1, v2, aabb.upperBound);
-                }
-                /// Chains have zero mass.
-                /// @see b2Shape::ComputeMass
-                ComputeMass(massData, density) {
-                    massData.mass = 0;
-                    massData.center.SetZero();
-                    massData.I = 0;
-                }
-                SetupDistanceProxy(proxy, index) {
-                    ///b2Assert(0 <= index && index < this.m_count);
-                    proxy.m_vertices = proxy.m_buffer;
-                    proxy.m_vertices[0].Copy(this.m_vertices[index]);
-                    if (index + 1 < this.m_count) {
-                        proxy.m_vertices[1].Copy(this.m_vertices[index + 1]);
-                    }
-                    else {
-                        proxy.m_vertices[1].Copy(this.m_vertices[0]);
-                    }
-                    proxy.m_count = 2;
-                    proxy.m_radius = this.m_radius;
-                }
-                ComputeSubmergedArea(normal, offset, xf, c) {
-                    c.SetZero();
-                    return 0;
-                }
-                Dump(log) {
-                    log("    const shape: b2ChainShape = new b2ChainShape();\n");
-                    log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2Settings_9.b2_maxPolygonVertices);
-                    for (let i = 0; i < this.m_count; ++i) {
-                        log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
-                    }
-                    log("    shape.CreateChain(vs, %d);\n", this.m_count);
-                    log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
-                    log("    shape.m_nextVertex.Set(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
-                    log("    shape.m_hasPrevVertex = %s;\n", (this.m_hasPrevVertex) ? ("true") : ("false"));
-                    log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
-                }
-            };
-            /// Implement b2Shape.
-            b2ChainShape.RayCast_s_edgeShape = new b2EdgeShape_1.b2EdgeShape();
-            /// @see b2Shape::ComputeAABB
-            b2ChainShape.ComputeAABB_s_v1 = new b2Math_11.b2Vec2();
-            b2ChainShape.ComputeAABB_s_v2 = new b2Math_11.b2Vec2();
-            exports_17("b2ChainShape", b2ChainShape);
-        }
-    }
-});
-/*
-* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
-System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_18, context_18) {
-    "use strict";
-    var __moduleName = context_18 && context_18.id;
-    var b2Settings_10, b2Math_12, b2Shape_4;
-    var b2CircleShape;
-    return {
-        setters:[
-            function (b2Settings_10_1) {
-                b2Settings_10 = b2Settings_10_1;
-            },
-            function (b2Math_12_1) {
-                b2Math_12 = b2Math_12_1;
-            },
-            function (b2Shape_4_1) {
-                b2Shape_4 = b2Shape_4_1;
             }],
         execute: function() {
             /// A circle shape.
-            b2CircleShape = class b2CircleShape extends b2Shape_4.b2Shape {
+            b2CircleShape = class b2CircleShape extends b2Shape_3.b2Shape {
                 constructor(radius = 0) {
                     super(0 /* e_circleShape */, radius);
-                    this.m_p = new b2Math_12.b2Vec2();
+                    this.m_p = new b2Math_10.b2Vec2();
                 }
                 /// Implement b2Shape.
                 Clone() {
@@ -4870,46 +4455,51 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
                     return 1;
                 }
                 TestPoint(transform, p) {
-                    const center = b2Math_12.b2Transform.MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
-                    const d = b2Math_12.b2Vec2.SubVV(p, center, b2CircleShape.TestPoint_s_d);
-                    return b2Math_12.b2Vec2.DotVV(d, d) <= b2Math_12.b2Sq(this.m_radius);
+                    const center = b2Math_10.b2Transform.MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
+                    const d = b2Math_10.b2Vec2.SubVV(p, center, b2CircleShape.TestPoint_s_d);
+                    return b2Math_10.b2Vec2.DotVV(d, d) <= b2Math_10.b2Sq(this.m_radius);
+                }
+                ComputeDistance(xf, p, normal, childIndex) {
+                    const center = b2Math_10.b2Transform.MulXV(xf, this.m_p, b2CircleShape.ComputeDistance_s_center);
+                    b2Math_10.b2Vec2.SubVV(p, center, normal);
+                    return normal.Normalize() - this.m_radius;
                 }
                 RayCast(output, input, transform, childIndex) {
-                    const position = b2Math_12.b2Transform.MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
-                    const s = b2Math_12.b2Vec2.SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
-                    const b = b2Math_12.b2Vec2.DotVV(s, s) - b2Math_12.b2Sq(this.m_radius);
+                    const position = b2Math_10.b2Transform.MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
+                    const s = b2Math_10.b2Vec2.SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
+                    const b = b2Math_10.b2Vec2.DotVV(s, s) - b2Math_10.b2Sq(this.m_radius);
                     // Solve quadratic equation.
-                    const r = b2Math_12.b2Vec2.SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
-                    const c = b2Math_12.b2Vec2.DotVV(s, r);
-                    const rr = b2Math_12.b2Vec2.DotVV(r, r);
+                    const r = b2Math_10.b2Vec2.SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
+                    const c = b2Math_10.b2Vec2.DotVV(s, r);
+                    const rr = b2Math_10.b2Vec2.DotVV(r, r);
                     const sigma = c * c - rr * b;
                     // Check for negative discriminant and short segment.
-                    if (sigma < 0 || rr < b2Settings_10.b2_epsilon) {
+                    if (sigma < 0 || rr < b2Settings_9.b2_epsilon) {
                         return false;
                     }
                     // Find the point of intersection of the line with the circle.
-                    let a = (-(c + b2Math_12.b2Sqrt(sigma)));
+                    let a = (-(c + b2Math_10.b2Sqrt(sigma)));
                     // Is the intersection point on the segment?
                     if (0 <= a && a <= input.maxFraction * rr) {
                         a /= rr;
                         output.fraction = a;
-                        b2Math_12.b2Vec2.AddVMulSV(s, a, r, output.normal).SelfNormalize();
+                        b2Math_10.b2Vec2.AddVMulSV(s, a, r, output.normal).SelfNormalize();
                         return true;
                     }
                     return false;
                 }
                 ComputeAABB(aabb, transform, childIndex) {
-                    const p = b2Math_12.b2Transform.MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
+                    const p = b2Math_10.b2Transform.MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
                     aabb.lowerBound.Set(p.x - this.m_radius, p.y - this.m_radius);
                     aabb.upperBound.Set(p.x + this.m_radius, p.y + this.m_radius);
                 }
                 /// @see b2Shape::ComputeMass
                 ComputeMass(massData, density) {
-                    const radius_sq = b2Math_12.b2Sq(this.m_radius);
-                    massData.mass = density * b2Settings_10.b2_pi * radius_sq;
+                    const radius_sq = b2Math_10.b2Sq(this.m_radius);
+                    massData.mass = density * b2Settings_9.b2_pi * radius_sq;
                     massData.center.Copy(this.m_p);
                     // inertia about the local origin
-                    massData.I = massData.mass * (0.5 * radius_sq + b2Math_12.b2Vec2.DotVV(this.m_p, this.m_p));
+                    massData.I = massData.mass * (0.5 * radius_sq + b2Math_10.b2Vec2.DotVV(this.m_p, this.m_p));
                 }
                 SetupDistanceProxy(proxy, index) {
                     proxy.m_vertices = proxy.m_buffer;
@@ -4918,22 +4508,22 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
                     proxy.m_radius = this.m_radius;
                 }
                 ComputeSubmergedArea(normal, offset, xf, c) {
-                    const p = b2Math_12.b2Transform.MulXV(xf, this.m_p, new b2Math_12.b2Vec2());
-                    const l = (-(b2Math_12.b2Vec2.DotVV(normal, p) - offset));
-                    if (l < (-this.m_radius) + b2Settings_10.b2_epsilon) {
+                    const p = b2Math_10.b2Transform.MulXV(xf, this.m_p, new b2Math_10.b2Vec2());
+                    const l = (-(b2Math_10.b2Vec2.DotVV(normal, p) - offset));
+                    if (l < (-this.m_radius) + b2Settings_9.b2_epsilon) {
                         // Completely dry
                         return 0;
                     }
                     if (l > this.m_radius) {
                         // Completely wet
                         c.Copy(p);
-                        return b2Settings_10.b2_pi * this.m_radius * this.m_radius;
+                        return b2Settings_9.b2_pi * this.m_radius * this.m_radius;
                     }
                     // Magic
                     const r2 = this.m_radius * this.m_radius;
                     const l2 = l * l;
-                    const area = r2 * (b2Math_12.b2Asin(l / this.m_radius) + b2Settings_10.b2_pi / 2) + l * b2Math_12.b2Sqrt(r2 - l2);
-                    const com = (-2 / 3 * b2Math_12.b2Pow(r2 - l2, 1.5) / area);
+                    const area = r2 * (b2Math_10.b2Asin(l / this.m_radius) + b2Settings_9.b2_pi / 2) + l * b2Math_10.b2Sqrt(r2 - l2);
+                    const com = (-2 / 3 * b2Math_10.b2Pow(r2 - l2, 1.5) / area);
                     c.x = p.x + normal.x * com;
                     c.y = p.y + normal.y * com;
                     return area;
@@ -4945,19 +4535,23 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
                 }
             };
             /// Implement b2Shape.
-            b2CircleShape.TestPoint_s_center = new b2Math_12.b2Vec2();
-            b2CircleShape.TestPoint_s_d = new b2Math_12.b2Vec2();
+            b2CircleShape.TestPoint_s_center = new b2Math_10.b2Vec2();
+            b2CircleShape.TestPoint_s_d = new b2Math_10.b2Vec2();
+            ///#if B2_ENABLE_PARTICLE
+            /// @see b2Shape::ComputeDistance
+            b2CircleShape.ComputeDistance_s_center = new b2Math_10.b2Vec2();
+            ///#endif
             /// Implement b2Shape.
             // Collision Detection in Interactive 3D Environments by Gino van den Bergen
             // From Section 3.1.2
             // x = s + a * r
             // norm(x) = radius
-            b2CircleShape.RayCast_s_position = new b2Math_12.b2Vec2();
-            b2CircleShape.RayCast_s_s = new b2Math_12.b2Vec2();
-            b2CircleShape.RayCast_s_r = new b2Math_12.b2Vec2();
+            b2CircleShape.RayCast_s_position = new b2Math_10.b2Vec2();
+            b2CircleShape.RayCast_s_s = new b2Math_10.b2Vec2();
+            b2CircleShape.RayCast_s_r = new b2Math_10.b2Vec2();
             /// @see b2Shape::ComputeAABB
-            b2CircleShape.ComputeAABB_s_p = new b2Math_12.b2Vec2();
-            exports_18("b2CircleShape", b2CircleShape);
+            b2CircleShape.ComputeAABB_s_p = new b2Math_10.b2Vec2();
+            exports_14("b2CircleShape", b2CircleShape);
         }
     }
 });
@@ -4978,34 +4572,34 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_19, context_19) {
+System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_15, context_15) {
     "use strict";
-    var __moduleName = context_19 && context_19.id;
-    var b2Settings_11, b2Math_13, b2Shape_5, b2Shape_6;
+    var __moduleName = context_15 && context_15.id;
+    var b2Settings_10, b2Math_11, b2Shape_4, b2Shape_5;
     var b2PolygonShape;
     return {
         setters:[
-            function (b2Settings_11_1) {
-                b2Settings_11 = b2Settings_11_1;
+            function (b2Settings_10_1) {
+                b2Settings_10 = b2Settings_10_1;
             },
-            function (b2Math_13_1) {
-                b2Math_13 = b2Math_13_1;
+            function (b2Math_11_1) {
+                b2Math_11 = b2Math_11_1;
             },
-            function (b2Shape_5_1) {
-                b2Shape_5 = b2Shape_5_1;
-                b2Shape_6 = b2Shape_5_1;
+            function (b2Shape_4_1) {
+                b2Shape_4 = b2Shape_4_1;
+                b2Shape_5 = b2Shape_4_1;
             }],
         execute: function() {
             /// A convex polygon. It is assumed that the interior of the polygon is to
             /// the left of each edge.
             /// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
             /// In most cases you should not need many vertices for a convex polygon.
-            b2PolygonShape = class b2PolygonShape extends b2Shape_6.b2Shape {
+            b2PolygonShape = class b2PolygonShape extends b2Shape_5.b2Shape {
                 constructor() {
-                    super(2 /* e_polygonShape */, b2Settings_11.b2_polygonRadius);
-                    this.m_centroid = new b2Math_13.b2Vec2(0, 0);
-                    this.m_vertices = b2Math_13.b2Vec2.MakeArray(b2Settings_11.b2_maxPolygonVertices);
-                    this.m_normals = b2Math_13.b2Vec2.MakeArray(b2Settings_11.b2_maxPolygonVertices);
+                    super(2 /* e_polygonShape */, b2Settings_10.b2_polygonRadius);
+                    this.m_centroid = new b2Math_11.b2Vec2(0, 0);
+                    this.m_vertices = b2Math_11.b2Vec2.MakeArray(b2Settings_10.b2_maxPolygonVertices);
+                    this.m_normals = b2Math_11.b2Vec2.MakeArray(b2Settings_10.b2_maxPolygonVertices);
                     this.m_count = 0;
                 }
                 /// Implement b2Shape.
@@ -5032,7 +4626,7 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     if (count < 3) {
                         return this.SetAsBox(1, 1);
                     }
-                    let n = b2Math_13.b2Min(count, b2Settings_11.b2_maxPolygonVertices);
+                    let n = b2Math_11.b2Min(count, b2Settings_10.b2_maxPolygonVertices);
                     // Perform welding and copy vertices into local buffer.
                     const ps = b2PolygonShape.Set_s_ps;
                     let tempCount = 0;
@@ -5040,7 +4634,7 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                         const /*b2Vec2*/ v = vertices[start + i];
                         let /*bool*/ unique = true;
                         for (let /*int32*/ j = 0; j < tempCount; ++j) {
-                            if (b2Math_13.b2Vec2.DistanceSquaredVV(v, ps[j]) < ((0.5 * b2Settings_11.b2_linearSlop) * (0.5 * b2Settings_11.b2_linearSlop))) {
+                            if (b2Math_11.b2Vec2.DistanceSquaredVV(v, ps[j]) < ((0.5 * b2Settings_10.b2_linearSlop) * (0.5 * b2Settings_10.b2_linearSlop))) {
                                 unique = false;
                                 break;
                             }
@@ -5078,14 +4672,14 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                                 ie = j;
                                 continue;
                             }
-                            const r = b2Math_13.b2Vec2.SubVV(ps[ie], ps[hull[m]], b2PolygonShape.Set_s_r);
-                            const v = b2Math_13.b2Vec2.SubVV(ps[j], ps[hull[m]], b2PolygonShape.Set_s_v);
-                            const c = b2Math_13.b2Vec2.CrossVV(r, v);
+                            const r = b2Math_11.b2Vec2.SubVV(ps[ie], ps[hull[m]], b2PolygonShape.Set_s_r);
+                            const v = b2Math_11.b2Vec2.SubVV(ps[j], ps[hull[m]], b2PolygonShape.Set_s_v);
+                            const c = b2Math_11.b2Vec2.CrossVV(r, v);
                             if (c < 0) {
                                 ie = j;
                             }
                             // Collinearity check
-                            if (c === 0 && v.GetLength() > r.GetLength()) {
+                            if (c === 0 && v.LengthSquared() > r.LengthSquared()) {
                                 ie = j;
                             }
                         }
@@ -5104,9 +4698,9 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     for (let i = 0; i < m; ++i) {
                         const vertexi1 = this.m_vertices[i];
                         const vertexi2 = this.m_vertices[(i + 1) % m];
-                        const edge = b2Math_13.b2Vec2.SubVV(vertexi2, vertexi1, b2Math_13.b2Vec2.s_t0); // edge uses s_t0
-                        ///b2Assert(edge.GetLength() > b2_epsilon_sq);
-                        b2Math_13.b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
+                        const edge = b2Math_11.b2Vec2.SubVV(vertexi2, vertexi1, b2Math_11.b2Vec2.s_t0); // edge uses s_t0
+                        ///b2Assert(edge.LengthSquared() > b2_epsilon_sq);
+                        b2Math_11.b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
                     }
                     // Compute the polygon centroid.
                     b2PolygonShape.ComputeCentroid(this.m_vertices, m, this.m_centroid);
@@ -5115,10 +4709,12 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                 SetAsArray(vertices, count = vertices.length) {
                     return this.Set(vertices, count);
                 }
-                /// Build vertices to represent an axis-aligned box.
+                /// Build vertices to represent an axis-aligned box or an oriented box.
                 /// @param hx the half-width.
                 /// @param hy the half-height.
-                SetAsBox(hx, hy) {
+                /// @param center the center of the box in local coordinates.
+                /// @param angle the rotation of the box in local coordinates.
+                SetAsBox(hx, hy, center, angle = 0) {
                     this.m_count = 4;
                     this.m_vertices[0].Set((-hx), (-hy));
                     this.m_vertices[1].Set(hx, (-hy));
@@ -5129,57 +4725,73 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     this.m_normals[2].Set(0, 1);
                     this.m_normals[3].Set((-1), 0);
                     this.m_centroid.SetZero();
-                    return this;
-                }
-                /// Build vertices to represent an oriented box.
-                /// @param hx the half-width.
-                /// @param hy the half-height.
-                /// @param center the center of the box in local coordinates.
-                /// @param angle the rotation of the box in local coordinates.
-                SetAsOrientedBox(hx, hy, center, angle) {
-                    this.m_count = 4;
-                    this.m_vertices[0].Set((-hx), (-hy));
-                    this.m_vertices[1].Set(hx, (-hy));
-                    this.m_vertices[2].Set(hx, hy);
-                    this.m_vertices[3].Set((-hx), hy);
-                    this.m_normals[0].Set(0, (-1));
-                    this.m_normals[1].Set(1, 0);
-                    this.m_normals[2].Set(0, 1);
-                    this.m_normals[3].Set((-1), 0);
-                    this.m_centroid.Copy(center);
-                    const xf = new b2Math_13.b2Transform();
-                    xf.SetPosition(center);
-                    xf.SetRotationAngle(angle);
-                    // Transform vertices and normals.
-                    for (let i = 0; i < this.m_count; ++i) {
-                        b2Math_13.b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
-                        b2Math_13.b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
+                    if (center instanceof b2Math_11.b2Vec2) {
+                        this.m_centroid.Copy(center);
+                        const xf = new b2Math_11.b2Transform();
+                        xf.SetPosition(center);
+                        xf.SetRotationAngle(angle);
+                        // Transform vertices and normals.
+                        for (let i = 0; i < this.m_count; ++i) {
+                            b2Math_11.b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
+                            b2Math_11.b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
+                        }
                     }
                     return this;
                 }
                 TestPoint(xf, p) {
-                    const pLocal = b2Math_13.b2Transform.MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
+                    const pLocal = b2Math_11.b2Transform.MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
                     for (let i = 0; i < this.m_count; ++i) {
-                        const dot = b2Math_13.b2Vec2.DotVV(this.m_normals[i], b2Math_13.b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Math_13.b2Vec2.s_t0));
+                        const dot = b2Math_11.b2Vec2.DotVV(this.m_normals[i], b2Math_11.b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Math_11.b2Vec2.s_t0));
                         if (dot > 0) {
                             return false;
                         }
                     }
                     return true;
                 }
+                ComputeDistance(xf, p, normal, childIndex) {
+                    const pLocal = b2Math_11.b2Transform.MulTXV(xf, p, b2PolygonShape.ComputeDistance_s_pLocal);
+                    let maxDistance = -b2Settings_10.b2_maxFloat;
+                    const normalForMaxDistance = b2PolygonShape.ComputeDistance_s_normalForMaxDistance.Copy(pLocal);
+                    for (let i = 0; i < this.m_count; ++i) {
+                        const dot = b2Math_11.b2Vec2.DotVV(this.m_normals[i], b2Math_11.b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Math_11.b2Vec2.s_t0));
+                        if (dot > maxDistance) {
+                            maxDistance = dot;
+                            normalForMaxDistance.Copy(this.m_normals[i]);
+                        }
+                    }
+                    if (maxDistance > 0) {
+                        const minDistance = b2PolygonShape.ComputeDistance_s_minDistance.Copy(normalForMaxDistance);
+                        let minDistance2 = maxDistance * maxDistance;
+                        for (let i = 0; i < this.m_count; ++i) {
+                            const distance = b2Math_11.b2Vec2.SubVV(pLocal, this.m_vertices[i], b2PolygonShape.ComputeDistance_s_distance);
+                            const distance2 = distance.LengthSquared();
+                            if (minDistance2 > distance2) {
+                                minDistance.Copy(distance);
+                                minDistance2 = distance2;
+                            }
+                        }
+                        b2Math_11.b2Rot.MulRV(xf.q, minDistance, normal);
+                        normal.Normalize();
+                        return Math.sqrt(minDistance2);
+                    }
+                    else {
+                        b2Math_11.b2Rot.MulRV(xf.q, normalForMaxDistance, normal);
+                        return maxDistance;
+                    }
+                }
                 RayCast(output, input, xf, childIndex) {
                     // Put the ray into the polygon's frame of reference.
-                    const p1 = b2Math_13.b2Transform.MulTXV(xf, input.p1, b2PolygonShape.RayCast_s_p1);
-                    const p2 = b2Math_13.b2Transform.MulTXV(xf, input.p2, b2PolygonShape.RayCast_s_p2);
-                    const d = b2Math_13.b2Vec2.SubVV(p2, p1, b2PolygonShape.RayCast_s_d);
+                    const p1 = b2Math_11.b2Transform.MulTXV(xf, input.p1, b2PolygonShape.RayCast_s_p1);
+                    const p2 = b2Math_11.b2Transform.MulTXV(xf, input.p2, b2PolygonShape.RayCast_s_p2);
+                    const d = b2Math_11.b2Vec2.SubVV(p2, p1, b2PolygonShape.RayCast_s_d);
                     let lower = 0, upper = input.maxFraction;
                     let index = -1;
                     for (let i = 0; i < this.m_count; ++i) {
                         // p = p1 + a * d
                         // dot(normal, p - v) = 0
                         // dot(normal, p1 - v) + a * dot(normal, d) = 0
-                        const numerator = b2Math_13.b2Vec2.DotVV(this.m_normals[i], b2Math_13.b2Vec2.SubVV(this.m_vertices[i], p1, b2Math_13.b2Vec2.s_t0));
-                        const denominator = b2Math_13.b2Vec2.DotVV(this.m_normals[i], d);
+                        const numerator = b2Math_11.b2Vec2.DotVV(this.m_normals[i], b2Math_11.b2Vec2.SubVV(this.m_vertices[i], p1, b2Math_11.b2Vec2.s_t0));
+                        const denominator = b2Math_11.b2Vec2.DotVV(this.m_normals[i], d);
                         if (denominator === 0) {
                             if (numerator < 0) {
                                 return false;
@@ -5213,18 +4825,18 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     ///b2Assert(0 <= lower && lower <= input.maxFraction);
                     if (index >= 0) {
                         output.fraction = lower;
-                        b2Math_13.b2Rot.MulRV(xf.q, this.m_normals[index], output.normal);
+                        b2Math_11.b2Rot.MulRV(xf.q, this.m_normals[index], output.normal);
                         return true;
                     }
                     return false;
                 }
                 ComputeAABB(aabb, xf, childIndex) {
-                    const lower = b2Math_13.b2Transform.MulXV(xf, this.m_vertices[0], aabb.lowerBound);
+                    const lower = b2Math_11.b2Transform.MulXV(xf, this.m_vertices[0], aabb.lowerBound);
                     const upper = aabb.upperBound.Copy(lower);
                     for (let i = 0; i < this.m_count; ++i) {
-                        const v = b2Math_13.b2Transform.MulXV(xf, this.m_vertices[i], b2PolygonShape.ComputeAABB_s_v);
-                        b2Math_13.b2Vec2.MinV(v, lower, lower);
-                        b2Math_13.b2Vec2.MaxV(v, upper, upper);
+                        const v = b2Math_11.b2Transform.MulXV(xf, this.m_vertices[i], b2PolygonShape.ComputeAABB_s_v);
+                        b2Math_11.b2Vec2.MinV(v, lower, lower);
+                        b2Math_11.b2Vec2.MaxV(v, upper, upper);
                     }
                     const r = this.m_radius;
                     lower.SelfSubXY(r, r);
@@ -5269,13 +4881,13 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     const k_inv3 = 1 / 3;
                     for (let i = 0; i < this.m_count; ++i) {
                         // Triangle vertices.
-                        const e1 = b2Math_13.b2Vec2.SubVV(this.m_vertices[i], s, b2PolygonShape.ComputeMass_s_e1);
-                        const e2 = b2Math_13.b2Vec2.SubVV(this.m_vertices[(i + 1) % this.m_count], s, b2PolygonShape.ComputeMass_s_e2);
-                        const D = b2Math_13.b2Vec2.CrossVV(e1, e2);
+                        const e1 = b2Math_11.b2Vec2.SubVV(this.m_vertices[i], s, b2PolygonShape.ComputeMass_s_e1);
+                        const e2 = b2Math_11.b2Vec2.SubVV(this.m_vertices[(i + 1) % this.m_count], s, b2PolygonShape.ComputeMass_s_e2);
+                        const D = b2Math_11.b2Vec2.CrossVV(e1, e2);
                         const triangleArea = 0.5 * D;
                         area += triangleArea;
                         // Area weighted centroid
-                        center.SelfAdd(b2Math_13.b2Vec2.MulSV(triangleArea * k_inv3, b2Math_13.b2Vec2.AddVV(e1, e2, b2Math_13.b2Vec2.s_t0), b2Math_13.b2Vec2.s_t1));
+                        center.SelfAdd(b2Math_11.b2Vec2.MulSV(triangleArea * k_inv3, b2Math_11.b2Vec2.AddVV(e1, e2, b2Math_11.b2Vec2.s_t0), b2Math_11.b2Vec2.s_t1));
                         const ex1 = e1.x;
                         const ey1 = e1.y;
                         const ex2 = e2.x;
@@ -5289,24 +4901,24 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     // Center of mass
                     ///b2Assert(area > b2_epsilon);
                     center.SelfMul(1 / area);
-                    b2Math_13.b2Vec2.AddVV(center, s, massData.center);
+                    b2Math_11.b2Vec2.AddVV(center, s, massData.center);
                     // Inertia tensor relative to the local origin (point s).
                     massData.I = density * I;
                     // Shift to center of mass then to original body origin.
-                    massData.I += massData.mass * (b2Math_13.b2Vec2.DotVV(massData.center, massData.center) - b2Math_13.b2Vec2.DotVV(center, center));
+                    massData.I += massData.mass * (b2Math_11.b2Vec2.DotVV(massData.center, massData.center) - b2Math_11.b2Vec2.DotVV(center, center));
                 }
                 Validate() {
                     for (let i = 0; i < this.m_count; ++i) {
                         const i1 = i;
                         const i2 = (i + 1) % this.m_count;
                         const p = this.m_vertices[i1];
-                        const e = b2Math_13.b2Vec2.SubVV(this.m_vertices[i2], p, b2PolygonShape.Validate_s_e);
+                        const e = b2Math_11.b2Vec2.SubVV(this.m_vertices[i2], p, b2PolygonShape.Validate_s_e);
                         for (let j = 0; j < this.m_count; ++j) {
                             if (j === i1 || j === i2) {
                                 continue;
                             }
-                            const v = b2Math_13.b2Vec2.SubVV(this.m_vertices[j], p, b2PolygonShape.Validate_s_v);
-                            const c = b2Math_13.b2Vec2.CrossVV(e, v);
+                            const v = b2Math_11.b2Vec2.SubVV(this.m_vertices[j], p, b2PolygonShape.Validate_s_v);
+                            const c = b2Math_11.b2Vec2.CrossVV(e, v);
                             if (c < 0) {
                                 return false;
                             }
@@ -5321,16 +4933,16 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                 }
                 ComputeSubmergedArea(normal, offset, xf, c) {
                     // Transform plane into shape co-ordinates
-                    const normalL = b2Math_13.b2Rot.MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
-                    const offsetL = offset - b2Math_13.b2Vec2.DotVV(normal, xf.p);
+                    const normalL = b2Math_11.b2Rot.MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
+                    const offsetL = offset - b2Math_11.b2Vec2.DotVV(normal, xf.p);
                     const depths = b2PolygonShape.ComputeSubmergedArea_s_depths;
                     let diveCount = 0;
                     let intoIndex = -1;
                     let outoIndex = -1;
                     let lastSubmerged = false;
                     for (let i = 0; i < this.m_count; ++i) {
-                        depths[i] = b2Math_13.b2Vec2.DotVV(normalL, this.m_vertices[i]) - offsetL;
-                        const isSubmerged = depths[i] < (-b2Settings_11.b2_epsilon);
+                        depths[i] = b2Math_11.b2Vec2.DotVV(normalL, this.m_vertices[i]) - offsetL;
+                        const isSubmerged = depths[i] < (-b2Settings_10.b2_epsilon);
                         if (i > 0) {
                             if (isSubmerged) {
                                 if (!lastSubmerged) {
@@ -5353,7 +4965,7 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                                 // Completely submerged
                                 const md = b2PolygonShape.ComputeSubmergedArea_s_md;
                                 this.ComputeMass(md, 1);
-                                b2Math_13.b2Transform.MulXV(xf, md.center, c);
+                                b2Math_11.b2Transform.MulXV(xf, md.center, c);
                                 return md.mass;
                             }
                             else {
@@ -5397,12 +5009,12 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                     }
                     // Normalize and transform centroid
                     center.SelfMul(1 / area);
-                    b2Math_13.b2Transform.MulXV(xf, center, c);
+                    b2Math_11.b2Transform.MulXV(xf, center, c);
                     return area;
                 }
                 Dump(log) {
                     log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
-                    log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2Settings_11.b2_maxPolygonVertices);
+                    log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2Settings_10.b2_maxPolygonVertices);
                     for (let i = 0; i < this.m_count; ++i) {
                         log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
                     }
@@ -5431,9 +5043,9 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
                         const p1 = pRef;
                         const p2 = vs[i];
                         const p3 = vs[(i + 1) % count];
-                        const e1 = b2Math_13.b2Vec2.SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
-                        const e2 = b2Math_13.b2Vec2.SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
-                        const D = b2Math_13.b2Vec2.CrossVV(e1, e2);
+                        const e1 = b2Math_11.b2Vec2.SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
+                        const e2 = b2Math_11.b2Vec2.SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
+                        const D = b2Math_11.b2Vec2.CrossVV(e1, e2);
                         const triangleArea = 0.5 * D;
                         area += triangleArea;
                         // Area weighted centroid
@@ -5451,35 +5063,42 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
             /// @warning the points may be re-ordered, even if they form a convex polygon
             /// @warning collinear points are handled but not removed. Collinear points
             /// may lead to poor stacking behavior.
-            b2PolygonShape.Set_s_ps = b2Math_13.b2Vec2.MakeArray(b2Settings_11.b2_maxPolygonVertices);
-            b2PolygonShape.Set_s_hull = b2Settings_11.b2MakeNumberArray(b2Settings_11.b2_maxPolygonVertices);
-            b2PolygonShape.Set_s_r = new b2Math_13.b2Vec2();
-            b2PolygonShape.Set_s_v = new b2Math_13.b2Vec2();
+            b2PolygonShape.Set_s_ps = b2Math_11.b2Vec2.MakeArray(b2Settings_10.b2_maxPolygonVertices);
+            b2PolygonShape.Set_s_hull = b2Settings_10.b2MakeNumberArray(b2Settings_10.b2_maxPolygonVertices);
+            b2PolygonShape.Set_s_r = new b2Math_11.b2Vec2();
+            b2PolygonShape.Set_s_v = new b2Math_11.b2Vec2();
             /// @see b2Shape::TestPoint
-            b2PolygonShape.TestPoint_s_pLocal = new b2Math_13.b2Vec2();
+            b2PolygonShape.TestPoint_s_pLocal = new b2Math_11.b2Vec2();
+            ///#if B2_ENABLE_PARTICLE
+            /// @see b2Shape::ComputeDistance
+            b2PolygonShape.ComputeDistance_s_pLocal = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeDistance_s_normalForMaxDistance = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeDistance_s_minDistance = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeDistance_s_distance = new b2Math_11.b2Vec2();
+            ///#endif
             /// Implement b2Shape.
-            b2PolygonShape.RayCast_s_p1 = new b2Math_13.b2Vec2();
-            b2PolygonShape.RayCast_s_p2 = new b2Math_13.b2Vec2();
-            b2PolygonShape.RayCast_s_d = new b2Math_13.b2Vec2();
+            b2PolygonShape.RayCast_s_p1 = new b2Math_11.b2Vec2();
+            b2PolygonShape.RayCast_s_p2 = new b2Math_11.b2Vec2();
+            b2PolygonShape.RayCast_s_d = new b2Math_11.b2Vec2();
             /// @see b2Shape::ComputeAABB
-            b2PolygonShape.ComputeAABB_s_v = new b2Math_13.b2Vec2();
+            b2PolygonShape.ComputeAABB_s_v = new b2Math_11.b2Vec2();
             /// @see b2Shape::ComputeMass
-            b2PolygonShape.ComputeMass_s_center = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeMass_s_s = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeMass_s_e1 = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeMass_s_e2 = new b2Math_13.b2Vec2();
-            b2PolygonShape.Validate_s_e = new b2Math_13.b2Vec2();
-            b2PolygonShape.Validate_s_v = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeSubmergedArea_s_normalL = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeSubmergedArea_s_depths = b2Settings_11.b2MakeNumberArray(b2Settings_11.b2_maxPolygonVertices);
-            b2PolygonShape.ComputeSubmergedArea_s_md = new b2Shape_5.b2MassData();
-            b2PolygonShape.ComputeSubmergedArea_s_intoVec = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeSubmergedArea_s_outoVec = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeSubmergedArea_s_center = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeCentroid_s_pRef = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeCentroid_s_e1 = new b2Math_13.b2Vec2();
-            b2PolygonShape.ComputeCentroid_s_e2 = new b2Math_13.b2Vec2();
-            exports_19("b2PolygonShape", b2PolygonShape);
+            b2PolygonShape.ComputeMass_s_center = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeMass_s_s = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeMass_s_e1 = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeMass_s_e2 = new b2Math_11.b2Vec2();
+            b2PolygonShape.Validate_s_e = new b2Math_11.b2Vec2();
+            b2PolygonShape.Validate_s_v = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeSubmergedArea_s_normalL = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeSubmergedArea_s_depths = b2Settings_10.b2MakeNumberArray(b2Settings_10.b2_maxPolygonVertices);
+            b2PolygonShape.ComputeSubmergedArea_s_md = new b2Shape_4.b2MassData();
+            b2PolygonShape.ComputeSubmergedArea_s_intoVec = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeSubmergedArea_s_outoVec = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeSubmergedArea_s_center = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeCentroid_s_pRef = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeCentroid_s_e1 = new b2Math_11.b2Vec2();
+            b2PolygonShape.ComputeCentroid_s_e2 = new b2Math_11.b2Vec2();
+            exports_15("b2PolygonShape", b2PolygonShape);
         }
     }
 });
@@ -5500,18 +5119,18 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_20, context_20) {
+System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_16, context_16) {
     "use strict";
-    var __moduleName = context_20 && context_20.id;
-    var b2Settings_12, b2Math_14, b2Joint_1;
+    var __moduleName = context_16 && context_16.id;
+    var b2Settings_11, b2Math_12, b2Joint_1;
     var b2DistanceJointDef, b2DistanceJoint;
     return {
         setters:[
-            function (b2Settings_12_1) {
-                b2Settings_12 = b2Settings_12_1;
+            function (b2Settings_11_1) {
+                b2Settings_11 = b2Settings_11_1;
             },
-            function (b2Math_14_1) {
-                b2Math_14 = b2Math_14_1;
+            function (b2Math_12_1) {
+                b2Math_12 = b2Math_12_1;
             },
             function (b2Joint_1_1) {
                 b2Joint_1 = b2Joint_1_1;
@@ -5526,8 +5145,8 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
             b2DistanceJointDef = class b2DistanceJointDef extends b2Joint_1.b2JointDef {
                 constructor() {
                     super(3 /* e_distanceJoint */);
-                    this.localAnchorA = new b2Math_14.b2Vec2();
-                    this.localAnchorB = new b2Math_14.b2Vec2();
+                    this.localAnchorA = new b2Math_12.b2Vec2();
+                    this.localAnchorB = new b2Math_12.b2Vec2();
                     this.length = 1;
                     this.frequencyHz = 0;
                     this.dampingRatio = 0;
@@ -5537,12 +5156,12 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     this.bodyB = b2;
                     this.bodyA.GetLocalPoint(anchor1, this.localAnchorA);
                     this.bodyB.GetLocalPoint(anchor2, this.localAnchorB);
-                    this.length = b2Math_14.b2Vec2.DistanceVV(anchor1, anchor2);
+                    this.length = b2Math_12.b2Vec2.DistanceVV(anchor1, anchor2);
                     this.frequencyHz = 0;
                     this.dampingRatio = 0;
                 }
             };
-            exports_20("b2DistanceJointDef", b2DistanceJointDef);
+            exports_16("b2DistanceJointDef", b2DistanceJointDef);
             b2DistanceJoint = class b2DistanceJoint extends b2Joint_1.b2Joint {
                 constructor(def) {
                     super(def);
@@ -5550,28 +5169,28 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     this.m_dampingRatio = 0;
                     this.m_bias = 0;
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_14.b2Vec2();
-                    this.m_localAnchorB = new b2Math_14.b2Vec2();
+                    this.m_localAnchorA = new b2Math_12.b2Vec2();
+                    this.m_localAnchorB = new b2Math_12.b2Vec2();
                     this.m_gamma = 0;
                     this.m_impulse = 0;
                     this.m_length = 0;
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_u = new b2Math_14.b2Vec2();
-                    this.m_rA = new b2Math_14.b2Vec2();
-                    this.m_rB = new b2Math_14.b2Vec2();
-                    this.m_localCenterA = new b2Math_14.b2Vec2();
-                    this.m_localCenterB = new b2Math_14.b2Vec2();
+                    this.m_u = new b2Math_12.b2Vec2();
+                    this.m_rA = new b2Math_12.b2Vec2();
+                    this.m_rB = new b2Math_12.b2Vec2();
+                    this.m_localCenterA = new b2Math_12.b2Vec2();
+                    this.m_localCenterB = new b2Math_12.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
                     this.m_mass = 0;
-                    this.m_qA = new b2Math_14.b2Rot();
-                    this.m_qB = new b2Math_14.b2Rot();
-                    this.m_lalcA = new b2Math_14.b2Vec2();
-                    this.m_lalcB = new b2Math_14.b2Vec2();
+                    this.m_qA = new b2Math_12.b2Rot();
+                    this.m_qB = new b2Math_12.b2Rot();
+                    this.m_lalcA = new b2Math_12.b2Vec2();
+                    this.m_lalcB = new b2Math_12.b2Vec2();
                     this.m_frequencyHz = def.frequencyHz;
                     this.m_dampingRatio = def.dampingRatio;
                     this.m_localAnchorA.Copy(def.localAnchorA);
@@ -5644,26 +5263,26 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     // const qA: b2Rot = new b2Rot(aA), qB: b2Rot = new b2Rot(aB);
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_14.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math_14.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_12.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math_12.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_14.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math_14.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_12.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math_12.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // m_u = cB + m_rB - cA - m_rA;
                     this.m_u.x = cB.x + this.m_rB.x - cA.x - this.m_rA.x;
                     this.m_u.y = cB.y + this.m_rB.y - cA.y - this.m_rA.y;
                     // Handle singularity.
                     const length = this.m_u.Length();
-                    if (length > b2Settings_12.b2_linearSlop) {
+                    if (length > b2Settings_11.b2_linearSlop) {
                         this.m_u.SelfMul(1 / length);
                     }
                     else {
                         this.m_u.SetZero();
                     }
                     // float32 crAu = b2Cross(m_rA, m_u);
-                    const crAu = b2Math_14.b2Vec2.CrossVV(this.m_rA, this.m_u);
+                    const crAu = b2Math_12.b2Vec2.CrossVV(this.m_rA, this.m_u);
                     // float32 crBu = b2Cross(m_rB, m_u);
-                    const crBu = b2Math_14.b2Vec2.CrossVV(this.m_rB, this.m_u);
+                    const crBu = b2Math_12.b2Vec2.CrossVV(this.m_rB, this.m_u);
                     // float32 invMass = m_invMassA + m_invIA * crAu * crAu + m_invMassB + m_invIB * crBu * crBu;
                     let invMass = this.m_invMassA + this.m_invIA * crAu * crAu + this.m_invMassB + this.m_invIB * crBu * crBu;
                     // Compute the effective mass matrix.
@@ -5671,7 +5290,7 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     if (this.m_frequencyHz > 0) {
                         const C = length - this.m_length;
                         // Frequency
-                        const omega = 2 * b2Settings_12.b2_pi * this.m_frequencyHz;
+                        const omega = 2 * b2Settings_11.b2_pi * this.m_frequencyHz;
                         // Damping coefficient
                         const d = 2 * this.m_mass * this.m_dampingRatio * omega;
                         // Spring stiffness
@@ -5692,15 +5311,15 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                         // Scale the impulse to support a variable time step.
                         this.m_impulse *= data.step.dtRatio;
                         // b2Vec2 P = m_impulse * m_u;
-                        const P = b2Math_14.b2Vec2.MulSV(this.m_impulse, this.m_u, b2DistanceJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math_12.b2Vec2.MulSV(this.m_impulse, this.m_u, b2DistanceJoint.InitVelocityConstraints_s_P);
                         // vA -= m_invMassA * P;
                         vA.SelfMulSub(this.m_invMassA, P);
                         // wA -= m_invIA * b2Cross(m_rA, P);
-                        wA -= this.m_invIA * b2Math_14.b2Vec2.CrossVV(this.m_rA, P);
+                        wA -= this.m_invIA * b2Math_12.b2Vec2.CrossVV(this.m_rA, P);
                         // vB += m_invMassB * P;
                         vB.SelfMulAdd(this.m_invMassB, P);
                         // wB += m_invIB * b2Cross(m_rB, P);
-                        wB += this.m_invIB * b2Math_14.b2Vec2.CrossVV(this.m_rB, P);
+                        wB += this.m_invIB * b2Math_12.b2Vec2.CrossVV(this.m_rB, P);
                     }
                     else {
                         this.m_impulse = 0;
@@ -5716,23 +5335,23 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     const vB = data.velocities[this.m_indexB].v;
                     let wB = data.velocities[this.m_indexB].w;
                     // b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-                    const vpA = b2Math_14.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
+                    const vpA = b2Math_12.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2DistanceJoint.SolveVelocityConstraints_s_vpA);
                     // b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-                    const vpB = b2Math_14.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
+                    const vpB = b2Math_12.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2DistanceJoint.SolveVelocityConstraints_s_vpB);
                     // float32 Cdot = b2Dot(m_u, vpB - vpA);
-                    const Cdot = b2Math_14.b2Vec2.DotVV(this.m_u, b2Math_14.b2Vec2.SubVV(vpB, vpA, b2Math_14.b2Vec2.s_t0));
+                    const Cdot = b2Math_12.b2Vec2.DotVV(this.m_u, b2Math_12.b2Vec2.SubVV(vpB, vpA, b2Math_12.b2Vec2.s_t0));
                     const impulse = (-this.m_mass * (Cdot + this.m_bias + this.m_gamma * this.m_impulse));
                     this.m_impulse += impulse;
                     // b2Vec2 P = impulse * m_u;
-                    const P = b2Math_14.b2Vec2.MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
+                    const P = b2Math_12.b2Vec2.MulSV(impulse, this.m_u, b2DistanceJoint.SolveVelocityConstraints_s_P);
                     // vA -= m_invMassA * P;
                     vA.SelfMulSub(this.m_invMassA, P);
                     // wA -= m_invIA * b2Cross(m_rA, P);
-                    wA -= this.m_invIA * b2Math_14.b2Vec2.CrossVV(this.m_rA, P);
+                    wA -= this.m_invIA * b2Math_12.b2Vec2.CrossVV(this.m_rA, P);
                     // vB += m_invMassB * P;
                     vB.SelfMulAdd(this.m_invMassB, P);
                     // wB += m_invIB * b2Cross(m_rB, P);
-                    wB += this.m_invIB * b2Math_14.b2Vec2.CrossVV(this.m_rB, P);
+                    wB += this.m_invIB * b2Math_12.b2Vec2.CrossVV(this.m_rB, P);
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
                     // data.velocities[this.m_indexB].v = vB;
@@ -5750,9 +5369,9 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     // const qA: b2Rot = new b2Rot(aA), qB: b2Rot = new b2Rot(aB);
                     ///const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    const rA = b2Math_14.b2Rot.MulRV(this.m_qA, this.m_lalcA, this.m_rA); // use m_rA
+                    const rA = b2Math_12.b2Rot.MulRV(this.m_qA, this.m_lalcA, this.m_rA); // use m_rA
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    const rB = b2Math_14.b2Rot.MulRV(this.m_qB, this.m_lalcB, this.m_rB); // use m_rB
+                    const rB = b2Math_12.b2Rot.MulRV(this.m_qB, this.m_lalcB, this.m_rB); // use m_rB
                     // b2Vec2 u = cB + rB - cA - rA;
                     const u = this.m_u; // use m_u
                     u.x = cB.x + rB.x - cA.x - rA.x;
@@ -5761,46 +5380,46 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
                     const length = this.m_u.Normalize();
                     // float32 C = length - m_length;
                     let C = length - this.m_length;
-                    C = b2Math_14.b2Clamp(C, (-b2Settings_12.b2_maxLinearCorrection), b2Settings_12.b2_maxLinearCorrection);
+                    C = b2Math_12.b2Clamp(C, (-b2Settings_11.b2_maxLinearCorrection), b2Settings_11.b2_maxLinearCorrection);
                     const impulse = (-this.m_mass * C);
                     // b2Vec2 P = impulse * u;
-                    const P = b2Math_14.b2Vec2.MulSV(impulse, u, b2DistanceJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math_12.b2Vec2.MulSV(impulse, u, b2DistanceJoint.SolvePositionConstraints_s_P);
                     // cA -= m_invMassA * P;
                     cA.SelfMulSub(this.m_invMassA, P);
                     // aA -= m_invIA * b2Cross(rA, P);
-                    aA -= this.m_invIA * b2Math_14.b2Vec2.CrossVV(rA, P);
+                    aA -= this.m_invIA * b2Math_12.b2Vec2.CrossVV(rA, P);
                     // cB += m_invMassB * P;
                     cB.SelfMulAdd(this.m_invMassB, P);
                     // aB += m_invIB * b2Cross(rB, P);
-                    aB += this.m_invIB * b2Math_14.b2Vec2.CrossVV(rB, P);
+                    aB += this.m_invIB * b2Math_12.b2Vec2.CrossVV(rB, P);
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return b2Math_14.b2Abs(C) < b2Settings_12.b2_linearSlop;
+                    return b2Math_12.b2Abs(C) < b2Settings_11.b2_linearSlop;
                 }
             };
-            b2DistanceJoint.InitVelocityConstraints_s_P = new b2Math_14.b2Vec2();
-            b2DistanceJoint.SolveVelocityConstraints_s_vpA = new b2Math_14.b2Vec2();
-            b2DistanceJoint.SolveVelocityConstraints_s_vpB = new b2Math_14.b2Vec2();
-            b2DistanceJoint.SolveVelocityConstraints_s_P = new b2Math_14.b2Vec2();
-            b2DistanceJoint.SolvePositionConstraints_s_P = new b2Math_14.b2Vec2();
-            exports_20("b2DistanceJoint", b2DistanceJoint);
+            b2DistanceJoint.InitVelocityConstraints_s_P = new b2Math_12.b2Vec2();
+            b2DistanceJoint.SolveVelocityConstraints_s_vpA = new b2Math_12.b2Vec2();
+            b2DistanceJoint.SolveVelocityConstraints_s_vpB = new b2Math_12.b2Vec2();
+            b2DistanceJoint.SolveVelocityConstraints_s_P = new b2Math_12.b2Vec2();
+            b2DistanceJoint.SolvePositionConstraints_s_P = new b2Math_12.b2Vec2();
+            exports_16("b2DistanceJoint", b2DistanceJoint);
         }
     }
 });
-System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2DistanceJoint"], function(exports_21, context_21) {
+System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2DistanceJoint"], function(exports_17, context_17) {
     "use strict";
-    var __moduleName = context_21 && context_21.id;
-    var b2Settings_13, b2Math_15, b2Joint_2, b2DistanceJoint_1;
+    var __moduleName = context_17 && context_17.id;
+    var b2Settings_12, b2Math_13, b2Joint_2, b2DistanceJoint_1;
     var b2AreaJointDef, b2AreaJoint;
     return {
         setters:[
-            function (b2Settings_13_1) {
-                b2Settings_13 = b2Settings_13_1;
+            function (b2Settings_12_1) {
+                b2Settings_12 = b2Settings_12_1;
             },
-            function (b2Math_15_1) {
-                b2Math_15 = b2Math_15_1;
+            function (b2Math_13_1) {
+                b2Math_13 = b2Math_13_1;
             },
             function (b2Joint_2_1) {
                 b2Joint_2 = b2Joint_2_1;
@@ -5827,7 +5446,7 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                     }
                 }
             };
-            exports_21("b2AreaJointDef", b2AreaJointDef);
+            exports_17("b2AreaJointDef", b2AreaJointDef);
             b2AreaJoint = class b2AreaJoint extends b2Joint_2.b2Joint {
                 constructor(def) {
                     super(def);
@@ -5847,11 +5466,11 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                     this.m_bodies = def.bodies;
                     this.m_frequencyHz = def.frequencyHz;
                     this.m_dampingRatio = def.dampingRatio;
-                    this.m_targetLengths = b2Settings_13.b2MakeNumberArray(def.bodies.length);
-                    this.m_normals = b2Math_15.b2Vec2.MakeArray(def.bodies.length);
-                    this.m_joints = b2Settings_13.b2MakeNullArray(def.bodies.length);
-                    this.m_deltas = b2Math_15.b2Vec2.MakeArray(def.bodies.length);
-                    this.m_delta = new b2Math_15.b2Vec2();
+                    this.m_targetLengths = b2Settings_12.b2MakeNumberArray(def.bodies.length);
+                    this.m_normals = b2Math_13.b2Vec2.MakeArray(def.bodies.length);
+                    this.m_joints = b2Settings_12.b2MakeNullArray(def.bodies.length);
+                    this.m_deltas = b2Math_13.b2Vec2.MakeArray(def.bodies.length);
+                    this.m_delta = new b2Math_13.b2Vec2();
                     const djd = new b2DistanceJoint_1.b2DistanceJointDef();
                     djd.frequencyHz = def.frequencyHz;
                     djd.dampingRatio = def.dampingRatio;
@@ -5861,8 +5480,8 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                         const next = this.m_bodies[(i + 1) % this.m_bodies.length];
                         const body_c = body.GetWorldCenter();
                         const next_c = next.GetWorldCenter();
-                        this.m_targetLengths[i] = b2Math_15.b2Vec2.DistanceVV(body_c, next_c);
-                        this.m_targetArea += b2Math_15.b2Vec2.CrossVV(body_c, next_c);
+                        this.m_targetLengths[i] = b2Math_13.b2Vec2.DistanceVV(body_c, next_c);
+                        this.m_targetArea += b2Math_13.b2Vec2.CrossVV(body_c, next_c);
                         djd.Initialize(body, next, body_c, next_c);
                         this.m_joints[i] = def.world.CreateJoint(djd);
                     }
@@ -5908,7 +5527,7 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                         const prev_c = data.positions[prev.m_islandIndex].c;
                         const next_c = data.positions[next.m_islandIndex].c;
                         const delta = this.m_deltas[i];
-                        b2Math_15.b2Vec2.SubVV(next_c, prev_c, delta);
+                        b2Math_13.b2Vec2.SubVV(next_c, prev_c, delta);
                     }
                     if (data.step.warmStarting) {
                         this.m_impulse *= data.step.dtRatio;
@@ -5931,8 +5550,8 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                         const body = this.m_bodies[i];
                         const body_v = data.velocities[body.m_islandIndex].v;
                         const delta = this.m_deltas[i];
-                        dotMassSum += delta.GetLength() / body.GetMass();
-                        crossMassSum += b2Math_15.b2Vec2.CrossVV(body_v, delta);
+                        dotMassSum += delta.LengthSquared() / body.GetMass();
+                        crossMassSum += b2Math_13.b2Vec2.CrossVV(body_v, delta);
                     }
                     const lambda = -2 * crossMassSum / dotMassSum;
                     // lambda = b2Clamp(lambda, -b2_maxLinearCorrection, b2_maxLinearCorrection);
@@ -5953,15 +5572,15 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                         const next = this.m_bodies[(i + 1) % this.m_bodies.length];
                         const body_c = data.positions[body.m_islandIndex].c;
                         const next_c = data.positions[next.m_islandIndex].c;
-                        const delta = b2Math_15.b2Vec2.SubVV(next_c, body_c, this.m_delta);
+                        const delta = b2Math_13.b2Vec2.SubVV(next_c, body_c, this.m_delta);
                         let dist = delta.Length();
-                        if (dist < b2Settings_13.b2_epsilon) {
+                        if (dist < b2Settings_12.b2_epsilon) {
                             dist = 1;
                         }
                         this.m_normals[i].x = delta.y / dist;
                         this.m_normals[i].y = -delta.x / dist;
                         perimeter += dist;
-                        area += b2Math_15.b2Vec2.CrossVV(body_c, next_c);
+                        area += b2Math_13.b2Vec2.CrossVV(body_c, next_c);
                     }
                     area *= 0.5;
                     const deltaArea = this.m_targetArea - area;
@@ -5971,13 +5590,13 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                         const body = this.m_bodies[i];
                         const body_c = data.positions[body.m_islandIndex].c;
                         const next_i = (i + 1) % this.m_bodies.length;
-                        const delta = b2Math_15.b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
+                        const delta = b2Math_13.b2Vec2.AddVV(this.m_normals[i], this.m_normals[next_i], this.m_delta);
                         delta.SelfMul(toExtrude);
-                        const norm_sq = delta.GetLength();
-                        if (norm_sq > b2Math_15.b2Sq(b2Settings_13.b2_maxLinearCorrection)) {
-                            delta.SelfMul(b2Settings_13.b2_maxLinearCorrection / b2Math_15.b2Sqrt(norm_sq));
+                        const norm_sq = delta.LengthSquared();
+                        if (norm_sq > b2Math_13.b2Sq(b2Settings_12.b2_maxLinearCorrection)) {
+                            delta.SelfMul(b2Settings_12.b2_maxLinearCorrection / b2Math_13.b2Sqrt(norm_sq));
                         }
-                        if (norm_sq > b2Math_15.b2Sq(b2Settings_13.b2_linearSlop)) {
+                        if (norm_sq > b2Math_13.b2Sq(b2Settings_12.b2_linearSlop)) {
                             done = false;
                         }
                         body_c.x += delta.x;
@@ -5986,7 +5605,7 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
                     return done;
                 }
             };
-            exports_21("b2AreaJoint", b2AreaJoint);
+            exports_17("b2AreaJoint", b2AreaJoint);
         }
     }
 });
@@ -6007,15 +5626,15 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_22, context_22) {
+System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_18, context_18) {
     "use strict";
-    var __moduleName = context_22 && context_22.id;
-    var b2Math_16, b2Joint_3;
+    var __moduleName = context_18 && context_18.id;
+    var b2Math_14, b2Joint_3;
     var b2FrictionJointDef, b2FrictionJoint;
     return {
         setters:[
-            function (b2Math_16_1) {
-                b2Math_16 = b2Math_16_1;
+            function (b2Math_14_1) {
+                b2Math_14 = b2Math_14_1;
             },
             function (b2Joint_3_1) {
                 b2Joint_3 = b2Joint_3_1;
@@ -6025,8 +5644,8 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
             b2FrictionJointDef = class b2FrictionJointDef extends b2Joint_3.b2JointDef {
                 constructor() {
                     super(9 /* e_frictionJoint */);
-                    this.localAnchorA = new b2Math_16.b2Vec2();
-                    this.localAnchorB = new b2Math_16.b2Vec2();
+                    this.localAnchorA = new b2Math_14.b2Vec2();
+                    this.localAnchorB = new b2Math_14.b2Vec2();
                     this.maxForce = 0;
                     this.maxTorque = 0;
                 }
@@ -6037,35 +5656,35 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
                     this.bodyB.GetLocalPoint(anchor, this.localAnchorB);
                 }
             };
-            exports_22("b2FrictionJointDef", b2FrictionJointDef);
+            exports_18("b2FrictionJointDef", b2FrictionJointDef);
             b2FrictionJoint = class b2FrictionJoint extends b2Joint_3.b2Joint {
                 constructor(def) {
                     super(def);
-                    this.m_localAnchorA = new b2Math_16.b2Vec2();
-                    this.m_localAnchorB = new b2Math_16.b2Vec2();
+                    this.m_localAnchorA = new b2Math_14.b2Vec2();
+                    this.m_localAnchorB = new b2Math_14.b2Vec2();
                     // Solver shared
-                    this.m_linearImpulse = new b2Math_16.b2Vec2();
+                    this.m_linearImpulse = new b2Math_14.b2Vec2();
                     this.m_angularImpulse = 0;
                     this.m_maxForce = 0;
                     this.m_maxTorque = 0;
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_rA = new b2Math_16.b2Vec2();
-                    this.m_rB = new b2Math_16.b2Vec2();
-                    this.m_localCenterA = new b2Math_16.b2Vec2();
-                    this.m_localCenterB = new b2Math_16.b2Vec2();
+                    this.m_rA = new b2Math_14.b2Vec2();
+                    this.m_rB = new b2Math_14.b2Vec2();
+                    this.m_localCenterA = new b2Math_14.b2Vec2();
+                    this.m_localCenterB = new b2Math_14.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
-                    this.m_linearMass = new b2Math_16.b2Mat22();
+                    this.m_linearMass = new b2Math_14.b2Mat22();
                     this.m_angularMass = 0;
-                    this.m_qA = new b2Math_16.b2Rot();
-                    this.m_qB = new b2Math_16.b2Rot();
-                    this.m_lalcA = new b2Math_16.b2Vec2();
-                    this.m_lalcB = new b2Math_16.b2Vec2();
-                    this.m_K = new b2Math_16.b2Mat22();
+                    this.m_qA = new b2Math_14.b2Rot();
+                    this.m_qB = new b2Math_14.b2Rot();
+                    this.m_lalcA = new b2Math_14.b2Vec2();
+                    this.m_lalcB = new b2Math_14.b2Vec2();
+                    this.m_K = new b2Math_14.b2Mat22();
                     this.m_localAnchorA.Copy(def.localAnchorA);
                     this.m_localAnchorB.Copy(def.localAnchorB);
                     this.m_linearImpulse.SetZero();
@@ -6094,11 +5713,11 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // Compute the effective mass matrix.
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_16.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_16.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_14.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_14.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_16.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_16.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_14.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_14.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -6128,11 +5747,11 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
                         // wA -= iA * (b2Cross(m_rA, P) + m_angularImpulse);
-                        wA -= iA * (b2Math_16.b2Vec2.CrossVV(this.m_rA, P) + this.m_angularImpulse);
+                        wA -= iA * (b2Math_14.b2Vec2.CrossVV(this.m_rA, P) + this.m_angularImpulse);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
                         // wB += iB * (b2Cross(m_rB, P) + m_angularImpulse);
-                        wB += iB * (b2Math_16.b2Vec2.CrossVV(this.m_rB, P) + this.m_angularImpulse);
+                        wB += iB * (b2Math_14.b2Vec2.CrossVV(this.m_rB, P) + this.m_angularImpulse);
                     }
                     else {
                         this.m_linearImpulse.SetZero();
@@ -6157,7 +5776,7 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
                         let impulse = (-this.m_angularMass * Cdot);
                         const oldImpulse = this.m_angularImpulse;
                         const maxImpulse = h * this.m_maxTorque;
-                        this.m_angularImpulse = b2Math_16.b2Clamp(this.m_angularImpulse + impulse, (-maxImpulse), maxImpulse);
+                        this.m_angularImpulse = b2Math_14.b2Clamp(this.m_angularImpulse + impulse, (-maxImpulse), maxImpulse);
                         impulse = this.m_angularImpulse - oldImpulse;
                         wA -= iA * impulse;
                         wB += iB * impulse;
@@ -6165,28 +5784,28 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
                     // Solve linear friction
                     {
                         // b2Vec2 Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-                        const Cdot_v2 = b2Math_16.b2Vec2.SubVV(b2Math_16.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_16.b2Vec2.s_t0), b2Math_16.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_16.b2Vec2.s_t1), b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2);
+                        const Cdot_v2 = b2Math_14.b2Vec2.SubVV(b2Math_14.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_14.b2Vec2.s_t0), b2Math_14.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_14.b2Vec2.s_t1), b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2);
                         // b2Vec2 impulse = -b2Mul(m_linearMass, Cdot);
-                        const impulseV = b2Math_16.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2FrictionJoint.SolveVelocityConstraints_s_impulseV).SelfNeg();
+                        const impulseV = b2Math_14.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2FrictionJoint.SolveVelocityConstraints_s_impulseV).SelfNeg();
                         // b2Vec2 oldImpulse = m_linearImpulse;
                         const oldImpulseV = b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV.Copy(this.m_linearImpulse);
                         // m_linearImpulse += impulse;
                         this.m_linearImpulse.SelfAdd(impulseV);
                         const maxImpulse = h * this.m_maxForce;
-                        if (this.m_linearImpulse.GetLength() > maxImpulse * maxImpulse) {
+                        if (this.m_linearImpulse.LengthSquared() > maxImpulse * maxImpulse) {
                             this.m_linearImpulse.Normalize();
                             this.m_linearImpulse.SelfMul(maxImpulse);
                         }
                         // impulse = m_linearImpulse - oldImpulse;
-                        b2Math_16.b2Vec2.SubVV(this.m_linearImpulse, oldImpulseV, impulseV);
+                        b2Math_14.b2Vec2.SubVV(this.m_linearImpulse, oldImpulseV, impulseV);
                         // vA -= mA * impulse;
                         vA.SelfMulSub(mA, impulseV);
                         // wA -= iA * b2Cross(m_rA, impulse);
-                        wA -= iA * b2Math_16.b2Vec2.CrossVV(this.m_rA, impulseV);
+                        wA -= iA * b2Math_14.b2Vec2.CrossVV(this.m_rA, impulseV);
                         // vB += mB * impulse;
                         vB.SelfMulAdd(mB, impulseV);
                         // wB += iB * b2Cross(m_rB, impulse);
-                        wB += iB * b2Math_16.b2Vec2.CrossVV(this.m_rB, impulseV);
+                        wB += iB * b2Math_14.b2Vec2.CrossVV(this.m_rB, impulseV);
                     }
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
@@ -6236,10 +5855,10 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2 = new b2Math_16.b2Vec2();
-            b2FrictionJoint.SolveVelocityConstraints_s_impulseV = new b2Math_16.b2Vec2();
-            b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV = new b2Math_16.b2Vec2();
-            exports_22("b2FrictionJoint", b2FrictionJoint);
+            b2FrictionJoint.SolveVelocityConstraints_s_Cdot_v2 = new b2Math_14.b2Vec2();
+            b2FrictionJoint.SolveVelocityConstraints_s_impulseV = new b2Math_14.b2Vec2();
+            b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV = new b2Math_14.b2Vec2();
+            exports_18("b2FrictionJoint", b2FrictionJoint);
         }
     }
 });
@@ -6260,18 +5879,18 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_23, context_23) {
+System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_19, context_19) {
     "use strict";
-    var __moduleName = context_23 && context_23.id;
-    var b2Settings_14, b2Math_17, b2Joint_4;
+    var __moduleName = context_19 && context_19.id;
+    var b2Settings_13, b2Math_15, b2Joint_4;
     var b2PrismaticJointDef, b2PrismaticJoint;
     return {
         setters:[
-            function (b2Settings_14_1) {
-                b2Settings_14 = b2Settings_14_1;
+            function (b2Settings_13_1) {
+                b2Settings_13 = b2Settings_13_1;
             },
-            function (b2Math_17_1) {
-                b2Math_17 = b2Math_17_1;
+            function (b2Math_15_1) {
+                b2Math_15 = b2Math_15_1;
             },
             function (b2Joint_4_1) {
                 b2Joint_4 = b2Joint_4_1;
@@ -6296,9 +5915,9 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     this.enableMotor = false;
                     this.maxMotorForce = 0;
                     this.motorSpeed = 0;
-                    this.localAnchorA = new b2Math_17.b2Vec2();
-                    this.localAnchorB = new b2Math_17.b2Vec2();
-                    this.localAxisA = new b2Math_17.b2Vec2(1, 0);
+                    this.localAnchorA = new b2Math_15.b2Vec2();
+                    this.localAnchorB = new b2Math_15.b2Vec2();
+                    this.localAxisA = new b2Math_15.b2Vec2(1, 0);
                 }
                 Initialize(bA, bB, anchor, axis) {
                     this.bodyA = bA;
@@ -6309,17 +5928,17 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     this.referenceAngle = this.bodyB.GetAngle() - this.bodyA.GetAngle();
                 }
             };
-            exports_23("b2PrismaticJointDef", b2PrismaticJointDef);
+            exports_19("b2PrismaticJointDef", b2PrismaticJointDef);
             b2PrismaticJoint = class b2PrismaticJoint extends b2Joint_4.b2Joint {
                 constructor(def) {
                     super(def);
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_17.b2Vec2();
-                    this.m_localAnchorB = new b2Math_17.b2Vec2();
-                    this.m_localXAxisA = new b2Math_17.b2Vec2();
-                    this.m_localYAxisA = new b2Math_17.b2Vec2();
+                    this.m_localAnchorA = new b2Math_15.b2Vec2();
+                    this.m_localAnchorB = new b2Math_15.b2Vec2();
+                    this.m_localXAxisA = new b2Math_15.b2Vec2();
+                    this.m_localYAxisA = new b2Math_15.b2Vec2();
                     this.m_referenceAngle = 0;
-                    this.m_impulse = new b2Math_17.b2Vec3(0, 0, 0);
+                    this.m_impulse = new b2Math_15.b2Vec3(0, 0, 0);
                     this.m_motorImpulse = 0;
                     this.m_lowerTranslation = 0;
                     this.m_upperTranslation = 0;
@@ -6331,32 +5950,32 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_localCenterA = new b2Math_17.b2Vec2();
-                    this.m_localCenterB = new b2Math_17.b2Vec2();
+                    this.m_localCenterA = new b2Math_15.b2Vec2();
+                    this.m_localCenterB = new b2Math_15.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
-                    this.m_axis = new b2Math_17.b2Vec2(0, 0);
-                    this.m_perp = new b2Math_17.b2Vec2(0, 0);
+                    this.m_axis = new b2Math_15.b2Vec2(0, 0);
+                    this.m_perp = new b2Math_15.b2Vec2(0, 0);
                     this.m_s1 = 0;
                     this.m_s2 = 0;
                     this.m_a1 = 0;
                     this.m_a2 = 0;
-                    this.m_K = new b2Math_17.b2Mat33();
-                    this.m_K3 = new b2Math_17.b2Mat33();
-                    this.m_K2 = new b2Math_17.b2Mat22();
+                    this.m_K = new b2Math_15.b2Mat33();
+                    this.m_K3 = new b2Math_15.b2Mat33();
+                    this.m_K2 = new b2Math_15.b2Mat22();
                     this.m_motorMass = 0;
-                    this.m_qA = new b2Math_17.b2Rot();
-                    this.m_qB = new b2Math_17.b2Rot();
-                    this.m_lalcA = new b2Math_17.b2Vec2();
-                    this.m_lalcB = new b2Math_17.b2Vec2();
-                    this.m_rA = new b2Math_17.b2Vec2();
-                    this.m_rB = new b2Math_17.b2Vec2();
+                    this.m_qA = new b2Math_15.b2Rot();
+                    this.m_qB = new b2Math_15.b2Rot();
+                    this.m_lalcA = new b2Math_15.b2Vec2();
+                    this.m_lalcB = new b2Math_15.b2Vec2();
+                    this.m_rA = new b2Math_15.b2Vec2();
+                    this.m_rB = new b2Math_15.b2Vec2();
                     this.m_localAnchorA.Copy(def.localAnchorA);
                     this.m_localAnchorB.Copy(def.localAnchorB);
                     this.m_localXAxisA.Copy(def.localAxisA).SelfNormalize();
-                    b2Math_17.b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
+                    b2Math_15.b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
                     this.m_referenceAngle = def.referenceAngle;
                     this.m_lowerTranslation = def.lowerTranslation;
                     this.m_upperTranslation = def.upperTranslation;
@@ -6385,23 +6004,23 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // Compute the effective masses.
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_17.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_17.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_15.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_15.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_17.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_17.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_15.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_15.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Vec2 d = (cB - cA) + rB - rA;
-                    const d = b2Math_17.b2Vec2.AddVV(b2Math_17.b2Vec2.SubVV(cB, cA, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.SubVV(rB, rA, b2Math_17.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_d);
+                    const d = b2Math_15.b2Vec2.AddVV(b2Math_15.b2Vec2.SubVV(cB, cA, b2Math_15.b2Vec2.s_t0), b2Math_15.b2Vec2.SubVV(rB, rA, b2Math_15.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_d);
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
                     // Compute motor Jacobian and effective mass.
                     {
                         // m_axis = b2Mul(qA, m_localXAxisA);
-                        b2Math_17.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
+                        b2Math_15.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
                         // m_a1 = b2Cross(d + rA, m_axis);
-                        this.m_a1 = b2Math_17.b2Vec2.CrossVV(b2Math_17.b2Vec2.AddVV(d, rA, b2Math_17.b2Vec2.s_t0), this.m_axis);
+                        this.m_a1 = b2Math_15.b2Vec2.CrossVV(b2Math_15.b2Vec2.AddVV(d, rA, b2Math_15.b2Vec2.s_t0), this.m_axis);
                         // m_a2 = b2Cross(rB, m_axis);
-                        this.m_a2 = b2Math_17.b2Vec2.CrossVV(rB, this.m_axis);
+                        this.m_a2 = b2Math_15.b2Vec2.CrossVV(rB, this.m_axis);
                         this.m_motorMass = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
                         if (this.m_motorMass > 0) {
                             this.m_motorMass = 1 / this.m_motorMass;
@@ -6410,11 +6029,11 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     // Prismatic constraint.
                     {
                         // m_perp = b2Mul(qA, m_localYAxisA);
-                        b2Math_17.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
+                        b2Math_15.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
                         // m_s1 = b2Cross(d + rA, m_perp);
-                        this.m_s1 = b2Math_17.b2Vec2.CrossVV(b2Math_17.b2Vec2.AddVV(d, rA, b2Math_17.b2Vec2.s_t0), this.m_perp);
+                        this.m_s1 = b2Math_15.b2Vec2.CrossVV(b2Math_15.b2Vec2.AddVV(d, rA, b2Math_15.b2Vec2.s_t0), this.m_perp);
                         // m_s2 = b2Cross(rB, m_perp);
-                        this.m_s2 = b2Math_17.b2Vec2.CrossVV(rB, this.m_perp);
+                        this.m_s2 = b2Math_15.b2Vec2.CrossVV(rB, this.m_perp);
                         // float32 k11 = mA + mB + iA * m_s1 * m_s1 + iB * m_s2 * m_s2;
                         this.m_K.ex.x = mA + mB + iA * this.m_s1 * this.m_s1 + iB * this.m_s2 * this.m_s2;
                         // float32 k12 = iA * m_s1 + iB * m_s2;
@@ -6438,8 +6057,8 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     // Compute motor and limit terms.
                     if (this.m_enableLimit) {
                         // float32 jointTranslation = b2Dot(m_axis, d);
-                        const jointTranslation = b2Math_17.b2Vec2.DotVV(this.m_axis, d);
-                        if (b2Math_17.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings_14.b2_linearSlop) {
+                        const jointTranslation = b2Math_15.b2Vec2.DotVV(this.m_axis, d);
+                        if (b2Math_15.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings_13.b2_linearSlop) {
                             this.m_limitState = 3 /* e_equalLimits */;
                         }
                         else if (jointTranslation <= this.m_lowerTranslation) {
@@ -6472,7 +6091,7 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                         this.m_impulse.SelfMul(data.step.dtRatio);
                         this.m_motorImpulse *= data.step.dtRatio;
                         // b2Vec2 P = m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis;
-                        const P = b2Math_17.b2Vec2.AddVV(b2Math_17.b2Vec2.MulSV(this.m_impulse.x, this.m_perp, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Math_17.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math_15.b2Vec2.AddVV(b2Math_15.b2Vec2.MulSV(this.m_impulse.x, this.m_perp, b2Math_15.b2Vec2.s_t0), b2Math_15.b2Vec2.MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Math_15.b2Vec2.s_t1), b2PrismaticJoint.InitVelocityConstraints_s_P);
                         // float32 LA = m_impulse.x * m_s1 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a1;
                         const LA = this.m_impulse.x * this.m_s1 + this.m_impulse.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_a1;
                         // float32 LB = m_impulse.x * m_s2 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a2;
@@ -6503,14 +6122,14 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     // Solve linear motor constraint.
                     if (this.m_enableMotor && this.m_limitState !== 3 /* e_equalLimits */) {
                         // float32 Cdot = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-                        const Cdot = b2Math_17.b2Vec2.DotVV(this.m_axis, b2Math_17.b2Vec2.SubVV(vB, vA, b2Math_17.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+                        const Cdot = b2Math_15.b2Vec2.DotVV(this.m_axis, b2Math_15.b2Vec2.SubVV(vB, vA, b2Math_15.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
                         let impulse = this.m_motorMass * (this.m_motorSpeed - Cdot);
                         const oldImpulse = this.m_motorImpulse;
                         const maxImpulse = data.step.dt * this.m_maxMotorForce;
-                        this.m_motorImpulse = b2Math_17.b2Clamp(this.m_motorImpulse + impulse, (-maxImpulse), maxImpulse);
+                        this.m_motorImpulse = b2Math_15.b2Clamp(this.m_motorImpulse + impulse, (-maxImpulse), maxImpulse);
                         impulse = this.m_motorImpulse - oldImpulse;
                         // b2Vec2 P = impulse * m_axis;
-                        const P = b2Math_17.b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math_15.b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
                         const LA = impulse * this.m_a1;
                         const LB = impulse * this.m_a2;
                         // vA -= mA * P;
@@ -6522,14 +6141,14 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     }
                     // b2Vec2 Cdot1;
                     // Cdot1.x = b2Dot(m_perp, vB - vA) + m_s2 * wB - m_s1 * wA;
-                    const Cdot1_x = b2Math_17.b2Vec2.DotVV(this.m_perp, b2Math_17.b2Vec2.SubVV(vB, vA, b2Math_17.b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
+                    const Cdot1_x = b2Math_15.b2Vec2.DotVV(this.m_perp, b2Math_15.b2Vec2.SubVV(vB, vA, b2Math_15.b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
                     // Cdot1.y = wB - wA;
                     const Cdot1_y = wB - wA;
                     if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */) {
                         // Solve prismatic and limit constraint in block form.
                         // float32 Cdot2;
                         // Cdot2 = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-                        const Cdot2 = b2Math_17.b2Vec2.DotVV(this.m_axis, b2Math_17.b2Vec2.SubVV(vB, vA, b2Math_17.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+                        const Cdot2 = b2Math_15.b2Vec2.DotVV(this.m_axis, b2Math_15.b2Vec2.SubVV(vB, vA, b2Math_15.b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
                         // b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
                         // b2Vec3 f1 = m_impulse;
                         const f1 = b2PrismaticJoint.SolveVelocityConstraints_s_f1.Copy(this.m_impulse);
@@ -6538,10 +6157,10 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                         // m_impulse += df;
                         this.m_impulse.SelfAdd(df3);
                         if (this.m_limitState === 1 /* e_atLowerLimit */) {
-                            this.m_impulse.z = b2Math_17.b2Max(this.m_impulse.z, 0);
+                            this.m_impulse.z = b2Math_15.b2Max(this.m_impulse.z, 0);
                         }
                         else if (this.m_limitState === 2 /* e_atUpperLimit */) {
-                            this.m_impulse.z = b2Math_17.b2Min(this.m_impulse.z, 0);
+                            this.m_impulse.z = b2Math_15.b2Min(this.m_impulse.z, 0);
                         }
                         // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) + f1(1:2)
                         // b2Vec2 b = -Cdot1 - (m_impulse.z - f1.z) * b2Vec2(m_K.ez.x, m_K.ez.y);
@@ -6560,7 +6179,7 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                         df3.y = this.m_impulse.y - f1.y;
                         df3.z = this.m_impulse.z - f1.z;
                         // b2Vec2 P = df.x * m_perp + df.z * m_axis;
-                        const P = b2Math_17.b2Vec2.AddVV(b2Math_17.b2Vec2.MulSV(df3.x, this.m_perp, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.MulSV(df3.z, this.m_axis, b2Math_17.b2Vec2.s_t1), b2PrismaticJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math_15.b2Vec2.AddVV(b2Math_15.b2Vec2.MulSV(df3.x, this.m_perp, b2Math_15.b2Vec2.s_t0), b2Math_15.b2Vec2.MulSV(df3.z, this.m_axis, b2Math_15.b2Vec2.s_t1), b2PrismaticJoint.SolveVelocityConstraints_s_P);
                         // float32 LA = df.x * m_s1 + df.y + df.z * m_a1;
                         const LA = df3.x * this.m_s1 + df3.y + df3.z * this.m_a1;
                         // float32 LB = df.x * m_s2 + df.y + df.z * m_a2;
@@ -6579,7 +6198,7 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                         this.m_impulse.x += df2.x;
                         this.m_impulse.y += df2.y;
                         // b2Vec2 P = df.x * m_perp;
-                        const P = b2Math_17.b2Vec2.MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math_15.b2Vec2.MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
                         // float32 LA = df.x * m_s1 + df.y;
                         const LA = df2.x * this.m_s1 + df2.y;
                         // float32 LB = df.x * m_s2 + df.y;
@@ -6605,53 +6224,53 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    const rA = b2Math_17.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    const rA = b2Math_15.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    const rB = b2Math_17.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    const rB = b2Math_15.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Vec2 d = cB + rB - cA - rA;
-                    const d = b2Math_17.b2Vec2.SubVV(b2Math_17.b2Vec2.AddVV(cB, rB, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.AddVV(cA, rA, b2Math_17.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_d);
+                    const d = b2Math_15.b2Vec2.SubVV(b2Math_15.b2Vec2.AddVV(cB, rB, b2Math_15.b2Vec2.s_t0), b2Math_15.b2Vec2.AddVV(cA, rA, b2Math_15.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_d);
                     // b2Vec2 axis = b2Mul(qA, m_localXAxisA);
-                    const axis = b2Math_17.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
+                    const axis = b2Math_15.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_axis);
                     // float32 a1 = b2Cross(d + rA, axis);
-                    const a1 = b2Math_17.b2Vec2.CrossVV(b2Math_17.b2Vec2.AddVV(d, rA, b2Math_17.b2Vec2.s_t0), axis);
+                    const a1 = b2Math_15.b2Vec2.CrossVV(b2Math_15.b2Vec2.AddVV(d, rA, b2Math_15.b2Vec2.s_t0), axis);
                     // float32 a2 = b2Cross(rB, axis);
-                    const a2 = b2Math_17.b2Vec2.CrossVV(rB, axis);
+                    const a2 = b2Math_15.b2Vec2.CrossVV(rB, axis);
                     // b2Vec2 perp = b2Mul(qA, m_localYAxisA);
-                    const perp = b2Math_17.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
+                    const perp = b2Math_15.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_perp);
                     // float32 s1 = b2Cross(d + rA, perp);
-                    const s1 = b2Math_17.b2Vec2.CrossVV(b2Math_17.b2Vec2.AddVV(d, rA, b2Math_17.b2Vec2.s_t0), perp);
+                    const s1 = b2Math_15.b2Vec2.CrossVV(b2Math_15.b2Vec2.AddVV(d, rA, b2Math_15.b2Vec2.s_t0), perp);
                     // float32 s2 = b2Cross(rB, perp);
-                    const s2 = b2Math_17.b2Vec2.CrossVV(rB, perp);
+                    const s2 = b2Math_15.b2Vec2.CrossVV(rB, perp);
                     // b2Vec3 impulse;
                     let impulse = b2PrismaticJoint.SolvePositionConstraints_s_impulse;
                     // b2Vec2 C1;
                     // C1.x = b2Dot(perp, d);
-                    const C1_x = b2Math_17.b2Vec2.DotVV(perp, d);
+                    const C1_x = b2Math_15.b2Vec2.DotVV(perp, d);
                     // C1.y = aB - aA - m_referenceAngle;
                     const C1_y = aB - aA - this.m_referenceAngle;
-                    let linearError = b2Math_17.b2Abs(C1_x);
-                    let angularError = b2Math_17.b2Abs(C1_y);
+                    let linearError = b2Math_15.b2Abs(C1_x);
+                    let angularError = b2Math_15.b2Abs(C1_y);
                     let active = false;
                     let C2 = 0;
                     if (this.m_enableLimit) {
                         // float32 translation = b2Dot(axis, d);
-                        const translation = b2Math_17.b2Vec2.DotVV(axis, d);
-                        if (b2Math_17.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings_14.b2_linearSlop) {
+                        const translation = b2Math_15.b2Vec2.DotVV(axis, d);
+                        if (b2Math_15.b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2Settings_13.b2_linearSlop) {
                             // Prevent large angular corrections
-                            C2 = b2Math_17.b2Clamp(translation, (-b2Settings_14.b2_maxLinearCorrection), b2Settings_14.b2_maxLinearCorrection);
-                            linearError = b2Math_17.b2Max(linearError, b2Math_17.b2Abs(translation));
+                            C2 = b2Math_15.b2Clamp(translation, (-b2Settings_13.b2_maxLinearCorrection), b2Settings_13.b2_maxLinearCorrection);
+                            linearError = b2Math_15.b2Max(linearError, b2Math_15.b2Abs(translation));
                             active = true;
                         }
                         else if (translation <= this.m_lowerTranslation) {
                             // Prevent large linear corrections and allow some slop.
-                            C2 = b2Math_17.b2Clamp(translation - this.m_lowerTranslation + b2Settings_14.b2_linearSlop, (-b2Settings_14.b2_maxLinearCorrection), 0);
-                            linearError = b2Math_17.b2Max(linearError, this.m_lowerTranslation - translation);
+                            C2 = b2Math_15.b2Clamp(translation - this.m_lowerTranslation + b2Settings_13.b2_linearSlop, (-b2Settings_13.b2_maxLinearCorrection), 0);
+                            linearError = b2Math_15.b2Max(linearError, this.m_lowerTranslation - translation);
                             active = true;
                         }
                         else if (translation >= this.m_upperTranslation) {
                             // Prevent large linear corrections and allow some slop.
-                            C2 = b2Math_17.b2Clamp(translation - this.m_upperTranslation - b2Settings_14.b2_linearSlop, 0, b2Settings_14.b2_maxLinearCorrection);
-                            linearError = b2Math_17.b2Max(linearError, translation - this.m_upperTranslation);
+                            C2 = b2Math_15.b2Clamp(translation - this.m_upperTranslation - b2Settings_13.b2_linearSlop, 0, b2Settings_13.b2_maxLinearCorrection);
+                            linearError = b2Math_15.b2Max(linearError, translation - this.m_upperTranslation);
                             active = true;
                         }
                     }
@@ -6710,7 +6329,7 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                         impulse.z = 0;
                     }
                     // b2Vec2 P = impulse.x * perp + impulse.z * axis;
-                    const P = b2Math_17.b2Vec2.AddVV(b2Math_17.b2Vec2.MulSV(impulse.x, perp, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.MulSV(impulse.z, axis, b2Math_17.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math_15.b2Vec2.AddVV(b2Math_15.b2Vec2.MulSV(impulse.x, perp, b2Math_15.b2Vec2.s_t0), b2Math_15.b2Vec2.MulSV(impulse.z, axis, b2Math_15.b2Vec2.s_t1), b2PrismaticJoint.SolvePositionConstraints_s_P);
                     // float32 LA = impulse.x * s1 + impulse.y + impulse.z * a1;
                     const LA = impulse.x * s1 + impulse.y + impulse.z * a1;
                     // float32 LB = impulse.x * s2 + impulse.y + impulse.z * a2;
@@ -6725,7 +6344,7 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return linearError <= b2Settings_14.b2_linearSlop && angularError <= b2Settings_14.b2_angularSlop;
+                    return linearError <= b2Settings_13.b2_linearSlop && angularError <= b2Settings_13.b2_angularSlop;
                 }
                 GetAnchorA(out) {
                     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
@@ -6750,28 +6369,28 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     // b2Vec2 pB = m_bodyB.GetWorldPoint(m_localAnchorB);
                     const pB = this.m_bodyB.GetWorldPoint(this.m_localAnchorB, b2PrismaticJoint.GetJointTranslation_s_pB);
                     // b2Vec2 d = pB - pA;
-                    const d = b2Math_17.b2Vec2.SubVV(pB, pA, b2PrismaticJoint.GetJointTranslation_s_d);
+                    const d = b2Math_15.b2Vec2.SubVV(pB, pA, b2PrismaticJoint.GetJointTranslation_s_d);
                     // b2Vec2 axis = m_bodyA.GetWorldVector(m_localXAxisA);
                     const axis = this.m_bodyA.GetWorldVector(this.m_localXAxisA, b2PrismaticJoint.GetJointTranslation_s_axis);
                     // float32 translation = b2Dot(d, axis);
-                    const translation = b2Math_17.b2Vec2.DotVV(d, axis);
+                    const translation = b2Math_15.b2Vec2.DotVV(d, axis);
                     return translation;
                 }
                 GetJointSpeed() {
                     const bA = this.m_bodyA;
                     const bB = this.m_bodyB;
                     // b2Vec2 rA = b2Mul(bA->m_xf.q, m_localAnchorA - bA->m_sweep.localCenter);
-                    b2Math_17.b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
-                    const rA = b2Math_17.b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
+                    b2Math_15.b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
+                    const rA = b2Math_15.b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(bB->m_xf.q, m_localAnchorB - bB->m_sweep.localCenter);
-                    b2Math_17.b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
-                    const rB = b2Math_17.b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
+                    b2Math_15.b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
+                    const rB = b2Math_15.b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
                     // b2Vec2 pA = bA->m_sweep.c + rA;
-                    const pA = b2Math_17.b2Vec2.AddVV(bA.m_sweep.c, rA, b2Math_17.b2Vec2.s_t0); // pA uses s_t0
+                    const pA = b2Math_15.b2Vec2.AddVV(bA.m_sweep.c, rA, b2Math_15.b2Vec2.s_t0); // pA uses s_t0
                     // b2Vec2 pB = bB->m_sweep.c + rB;
-                    const pB = b2Math_17.b2Vec2.AddVV(bB.m_sweep.c, rB, b2Math_17.b2Vec2.s_t1); // pB uses s_t1
+                    const pB = b2Math_15.b2Vec2.AddVV(bB.m_sweep.c, rB, b2Math_15.b2Vec2.s_t1); // pB uses s_t1
                     // b2Vec2 d = pB - pA;
-                    const d = b2Math_17.b2Vec2.SubVV(pB, pA, b2Math_17.b2Vec2.s_t2); // d uses s_t2
+                    const d = b2Math_15.b2Vec2.SubVV(pB, pA, b2Math_15.b2Vec2.s_t2); // d uses s_t2
                     // b2Vec2 axis = b2Mul(bA.m_xf.q, m_localXAxisA);
                     const axis = bA.GetWorldVector(this.m_localXAxisA, this.m_axis);
                     const vA = bA.m_linearVelocity;
@@ -6779,8 +6398,8 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     const wA = bA.m_angularVelocity;
                     const wB = bB.m_angularVelocity;
                     // float32 speed = b2Dot(d, b2Cross(wA, axis)) + b2Dot(axis, vB + b2Cross(wB, rB) - vA - b2Cross(wA, rA));
-                    const speed = b2Math_17.b2Vec2.DotVV(d, b2Math_17.b2Vec2.CrossSV(wA, axis, b2Math_17.b2Vec2.s_t0)) +
-                        b2Math_17.b2Vec2.DotVV(axis, b2Math_17.b2Vec2.SubVV(b2Math_17.b2Vec2.AddVCrossSV(vB, wB, rB, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.AddVCrossSV(vA, wA, rA, b2Math_17.b2Vec2.s_t1), b2Math_17.b2Vec2.s_t0));
+                    const speed = b2Math_15.b2Vec2.DotVV(d, b2Math_15.b2Vec2.CrossSV(wA, axis, b2Math_15.b2Vec2.s_t0)) +
+                        b2Math_15.b2Vec2.DotVV(axis, b2Math_15.b2Vec2.SubVV(b2Math_15.b2Vec2.AddVCrossSV(vB, wB, rB, b2Math_15.b2Vec2.s_t0), b2Math_15.b2Vec2.AddVCrossSV(vA, wA, rA, b2Math_15.b2Vec2.s_t1), b2Math_15.b2Vec2.s_t0));
                     return speed;
                 }
                 IsLimitEnabled() {
@@ -6854,22 +6473,22 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2PrismaticJoint.InitVelocityConstraints_s_d = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.InitVelocityConstraints_s_P = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.SolveVelocityConstraints_s_P = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.SolveVelocityConstraints_s_f2r = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.SolveVelocityConstraints_s_f1 = new b2Math_17.b2Vec3();
-            b2PrismaticJoint.SolveVelocityConstraints_s_df3 = new b2Math_17.b2Vec3();
-            b2PrismaticJoint.SolveVelocityConstraints_s_df2 = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.SolvePositionConstraints_s_d = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.SolvePositionConstraints_s_impulse = new b2Math_17.b2Vec3();
-            b2PrismaticJoint.SolvePositionConstraints_s_impulse1 = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.SolvePositionConstraints_s_P = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.GetJointTranslation_s_pA = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.GetJointTranslation_s_pB = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.GetJointTranslation_s_d = new b2Math_17.b2Vec2();
-            b2PrismaticJoint.GetJointTranslation_s_axis = new b2Math_17.b2Vec2();
-            exports_23("b2PrismaticJoint", b2PrismaticJoint);
+            b2PrismaticJoint.InitVelocityConstraints_s_d = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.InitVelocityConstraints_s_P = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.SolveVelocityConstraints_s_P = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.SolveVelocityConstraints_s_f2r = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.SolveVelocityConstraints_s_f1 = new b2Math_15.b2Vec3();
+            b2PrismaticJoint.SolveVelocityConstraints_s_df3 = new b2Math_15.b2Vec3();
+            b2PrismaticJoint.SolveVelocityConstraints_s_df2 = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.SolvePositionConstraints_s_d = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.SolvePositionConstraints_s_impulse = new b2Math_15.b2Vec3();
+            b2PrismaticJoint.SolvePositionConstraints_s_impulse1 = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.SolvePositionConstraints_s_P = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.GetJointTranslation_s_pA = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.GetJointTranslation_s_pB = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.GetJointTranslation_s_d = new b2Math_15.b2Vec2();
+            b2PrismaticJoint.GetJointTranslation_s_axis = new b2Math_15.b2Vec2();
+            exports_19("b2PrismaticJoint", b2PrismaticJoint);
         }
     }
 });
@@ -6890,18 +6509,18 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_24, context_24) {
+System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_20, context_20) {
     "use strict";
-    var __moduleName = context_24 && context_24.id;
-    var b2Settings_15, b2Math_18, b2Joint_5;
+    var __moduleName = context_20 && context_20.id;
+    var b2Settings_14, b2Math_16, b2Joint_5;
     var b2RevoluteJointDef, b2RevoluteJoint;
     return {
         setters:[
-            function (b2Settings_15_1) {
-                b2Settings_15 = b2Settings_15_1;
+            function (b2Settings_14_1) {
+                b2Settings_14 = b2Settings_14_1;
             },
-            function (b2Math_18_1) {
-                b2Math_18 = b2Math_18_1;
+            function (b2Math_16_1) {
+                b2Math_16 = b2Math_16_1;
             },
             function (b2Joint_5_1) {
                 b2Joint_5 = b2Joint_5_1;
@@ -6921,8 +6540,8 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
             b2RevoluteJointDef = class b2RevoluteJointDef extends b2Joint_5.b2JointDef {
                 constructor() {
                     super(1 /* e_revoluteJoint */);
-                    this.localAnchorA = new b2Math_18.b2Vec2(0, 0);
-                    this.localAnchorB = new b2Math_18.b2Vec2(0, 0);
+                    this.localAnchorA = new b2Math_16.b2Vec2(0, 0);
+                    this.localAnchorB = new b2Math_16.b2Vec2(0, 0);
                     this.referenceAngle = 0;
                     this.enableLimit = false;
                     this.lowerAngle = 0;
@@ -6939,14 +6558,14 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                     this.referenceAngle = this.bodyB.GetAngle() - this.bodyA.GetAngle();
                 }
             };
-            exports_24("b2RevoluteJointDef", b2RevoluteJointDef);
+            exports_20("b2RevoluteJointDef", b2RevoluteJointDef);
             b2RevoluteJoint = class b2RevoluteJoint extends b2Joint_5.b2Joint {
                 constructor(def) {
                     super(def);
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_18.b2Vec2();
-                    this.m_localAnchorB = new b2Math_18.b2Vec2();
-                    this.m_impulse = new b2Math_18.b2Vec3();
+                    this.m_localAnchorA = new b2Math_16.b2Vec2();
+                    this.m_localAnchorB = new b2Math_16.b2Vec2();
+                    this.m_impulse = new b2Math_16.b2Vec3();
                     this.m_motorImpulse = 0;
                     this.m_enableMotor = false;
                     this.m_maxMotorTorque = 0;
@@ -6958,22 +6577,22 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_rA = new b2Math_18.b2Vec2();
-                    this.m_rB = new b2Math_18.b2Vec2();
-                    this.m_localCenterA = new b2Math_18.b2Vec2();
-                    this.m_localCenterB = new b2Math_18.b2Vec2();
+                    this.m_rA = new b2Math_16.b2Vec2();
+                    this.m_rB = new b2Math_16.b2Vec2();
+                    this.m_localCenterA = new b2Math_16.b2Vec2();
+                    this.m_localCenterB = new b2Math_16.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
-                    this.m_mass = new b2Math_18.b2Mat33(); // effective mass for point-to-point constraint.
+                    this.m_mass = new b2Math_16.b2Mat33(); // effective mass for point-to-point constraint.
                     this.m_motorMass = 0; // effective mass for motor/limit angular constraint.
                     this.m_limitState = 0 /* e_inactiveLimit */;
-                    this.m_qA = new b2Math_18.b2Rot();
-                    this.m_qB = new b2Math_18.b2Rot();
-                    this.m_lalcA = new b2Math_18.b2Vec2();
-                    this.m_lalcB = new b2Math_18.b2Vec2();
-                    this.m_K = new b2Math_18.b2Mat22();
+                    this.m_qA = new b2Math_16.b2Rot();
+                    this.m_qB = new b2Math_16.b2Rot();
+                    this.m_lalcA = new b2Math_16.b2Vec2();
+                    this.m_lalcB = new b2Math_16.b2Vec2();
+                    this.m_K = new b2Math_16.b2Mat22();
                     this.m_localAnchorA.Copy(def.localAnchorA);
                     this.m_localAnchorB.Copy(def.localAnchorB);
                     this.m_referenceAngle = def.referenceAngle;
@@ -7005,11 +6624,11 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                     // b2Rot qA(aA), qB(aB);
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_18.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math_18.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_16.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math_16.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_18.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math_18.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_16.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math_16.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -7038,7 +6657,7 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                     }
                     if (this.m_enableLimit && !fixedRotation) {
                         const jointAngle = aB - aA - this.m_referenceAngle;
-                        if (b2Math_18.b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2 * b2Settings_15.b2_angularSlop) {
+                        if (b2Math_16.b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2 * b2Settings_14.b2_angularSlop) {
                             this.m_limitState = 3 /* e_equalLimits */;
                         }
                         else if (jointAngle <= this.m_lowerAngle) {
@@ -7069,10 +6688,10 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                         const P = b2RevoluteJoint.InitVelocityConstraints_s_P.Set(this.m_impulse.x, this.m_impulse.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math_18.b2Vec2.CrossVV(this.m_rA, P) + this.m_motorImpulse + this.m_impulse.z);
+                        wA -= iA * (b2Math_16.b2Vec2.CrossVV(this.m_rA, P) + this.m_motorImpulse + this.m_impulse.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math_18.b2Vec2.CrossVV(this.m_rB, P) + this.m_motorImpulse + this.m_impulse.z);
+                        wB += iB * (b2Math_16.b2Vec2.CrossVV(this.m_rB, P) + this.m_motorImpulse + this.m_impulse.z);
                     }
                     else {
                         this.m_impulse.SetZero();
@@ -7097,7 +6716,7 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                         let impulse = -this.m_motorMass * Cdot;
                         const oldImpulse = this.m_motorImpulse;
                         const maxImpulse = data.step.dt * this.m_maxMotorTorque;
-                        this.m_motorImpulse = b2Math_18.b2Clamp(this.m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+                        this.m_motorImpulse = b2Math_16.b2Clamp(this.m_motorImpulse + impulse, -maxImpulse, maxImpulse);
                         impulse = this.m_motorImpulse - oldImpulse;
                         wA -= iA * impulse;
                         wB += iB * impulse;
@@ -7105,7 +6724,7 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                     // Solve limit constraint.
                     if (this.m_enableLimit && this.m_limitState !== 0 /* e_inactiveLimit */ && !fixedRotation) {
                         // b2Vec2 Cdot1 = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-                        const Cdot1 = b2Math_18.b2Vec2.SubVV(b2Math_18.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_18.b2Vec2.s_t0), b2Math_18.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_18.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1);
+                        const Cdot1 = b2Math_16.b2Vec2.SubVV(b2Math_16.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_16.b2Vec2.s_t0), b2Math_16.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_16.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1);
                         const Cdot2 = wB - wA;
                         // b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
                         // b2Vec3 impulse = -this.m_mass.Solve33(Cdot);
@@ -7153,25 +6772,25 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                         const P = b2RevoluteJoint.SolveVelocityConstraints_s_P.Set(impulse_v3.x, impulse_v3.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math_18.b2Vec2.CrossVV(this.m_rA, P) + impulse_v3.z);
+                        wA -= iA * (b2Math_16.b2Vec2.CrossVV(this.m_rA, P) + impulse_v3.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math_18.b2Vec2.CrossVV(this.m_rB, P) + impulse_v3.z);
+                        wB += iB * (b2Math_16.b2Vec2.CrossVV(this.m_rB, P) + impulse_v3.z);
                     }
                     else {
                         // Solve point-to-point constraint
                         // b2Vec2 Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
-                        const Cdot_v2 = b2Math_18.b2Vec2.SubVV(b2Math_18.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_18.b2Vec2.s_t0), b2Math_18.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_18.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2);
+                        const Cdot_v2 = b2Math_16.b2Vec2.SubVV(b2Math_16.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_16.b2Vec2.s_t0), b2Math_16.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_16.b2Vec2.s_t1), b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2);
                         // b2Vec2 impulse = m_mass.Solve22(-Cdot);
                         const impulse_v2 = this.m_mass.Solve22(-Cdot_v2.x, -Cdot_v2.y, b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v2);
                         this.m_impulse.x += impulse_v2.x;
                         this.m_impulse.y += impulse_v2.y;
                         // vA -= mA * impulse;
                         vA.SelfMulSub(mA, impulse_v2);
-                        wA -= iA * b2Math_18.b2Vec2.CrossVV(this.m_rA, impulse_v2);
+                        wA -= iA * b2Math_16.b2Vec2.CrossVV(this.m_rA, impulse_v2);
                         // vB += mB * impulse;
                         vB.SelfMulAdd(mB, impulse_v2);
-                        wB += iB * b2Math_18.b2Vec2.CrossVV(this.m_rB, impulse_v2);
+                        wB += iB * b2Math_16.b2Vec2.CrossVV(this.m_rB, impulse_v2);
                     }
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
@@ -7194,22 +6813,22 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                         let limitImpulse = 0;
                         if (this.m_limitState === 3 /* e_equalLimits */) {
                             // Prevent large angular corrections
-                            const C = b2Math_18.b2Clamp(angle - this.m_lowerAngle, -b2Settings_15.b2_maxAngularCorrection, b2Settings_15.b2_maxAngularCorrection);
+                            const C = b2Math_16.b2Clamp(angle - this.m_lowerAngle, -b2Settings_14.b2_maxAngularCorrection, b2Settings_14.b2_maxAngularCorrection);
                             limitImpulse = -this.m_motorMass * C;
-                            angularError = b2Math_18.b2Abs(C);
+                            angularError = b2Math_16.b2Abs(C);
                         }
                         else if (this.m_limitState === 1 /* e_atLowerLimit */) {
                             let C = angle - this.m_lowerAngle;
                             angularError = -C;
                             // Prevent large angular corrections and allow some slop.
-                            C = b2Math_18.b2Clamp(C + b2Settings_15.b2_angularSlop, -b2Settings_15.b2_maxAngularCorrection, 0);
+                            C = b2Math_16.b2Clamp(C + b2Settings_14.b2_angularSlop, -b2Settings_14.b2_maxAngularCorrection, 0);
                             limitImpulse = -this.m_motorMass * C;
                         }
                         else if (this.m_limitState === 2 /* e_atUpperLimit */) {
                             let C = angle - this.m_upperAngle;
                             angularError = C;
                             // Prevent large angular corrections and allow some slop.
-                            C = b2Math_18.b2Clamp(C - b2Settings_15.b2_angularSlop, 0, b2Settings_15.b2_maxAngularCorrection);
+                            C = b2Math_16.b2Clamp(C - b2Settings_14.b2_angularSlop, 0, b2Settings_14.b2_maxAngularCorrection);
                             limitImpulse = -this.m_motorMass * C;
                         }
                         aA -= this.m_invIA * limitImpulse;
@@ -7220,13 +6839,13 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                         qA.SetAngle(aA);
                         qB.SetAngle(aB);
                         // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                        b2Math_18.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                        const rA = b2Math_18.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                        b2Math_16.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                        const rA = b2Math_16.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                         // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                        b2Math_18.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                        const rB = b2Math_18.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                        b2Math_16.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                        const rB = b2Math_16.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                         // b2Vec2 C = cB + rB - cA - rA;
-                        const C_v2 = b2Math_18.b2Vec2.SubVV(b2Math_18.b2Vec2.AddVV(cB, rB, b2Math_18.b2Vec2.s_t0), b2Math_18.b2Vec2.AddVV(cA, rA, b2Math_18.b2Vec2.s_t1), b2RevoluteJoint.SolvePositionConstraints_s_C_v2);
+                        const C_v2 = b2Math_16.b2Vec2.SubVV(b2Math_16.b2Vec2.AddVV(cB, rB, b2Math_16.b2Vec2.s_t0), b2Math_16.b2Vec2.AddVV(cA, rA, b2Math_16.b2Vec2.s_t1), b2RevoluteJoint.SolvePositionConstraints_s_C_v2);
                         // positionError = C.Length();
                         positionError = C_v2.Length();
                         const mA = this.m_invMassA, mB = this.m_invMassB;
@@ -7240,16 +6859,16 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                         const impulse = K.Solve(C_v2.x, C_v2.y, b2RevoluteJoint.SolvePositionConstraints_s_impulse).SelfNeg();
                         // cA -= mA * impulse;
                         cA.SelfMulSub(mA, impulse);
-                        aA -= iA * b2Math_18.b2Vec2.CrossVV(rA, impulse);
+                        aA -= iA * b2Math_16.b2Vec2.CrossVV(rA, impulse);
                         // cB += mB * impulse;
                         cB.SelfMulAdd(mB, impulse);
-                        aB += iB * b2Math_18.b2Vec2.CrossVV(rB, impulse);
+                        aB += iB * b2Math_16.b2Vec2.CrossVV(rB, impulse);
                     }
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return positionError <= b2Settings_15.b2_linearSlop && angularError <= b2Settings_15.b2_angularSlop;
+                    return positionError <= b2Settings_14.b2_linearSlop && angularError <= b2Settings_14.b2_angularSlop;
                 }
                 GetAnchorA(out) {
                     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
@@ -7352,16 +6971,16 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2RevoluteJoint.InitVelocityConstraints_s_P = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolveVelocityConstraints_s_P = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2 = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1 = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v3 = new b2Math_18.b2Vec3();
-            b2RevoluteJoint.SolveVelocityConstraints_s_reduced_v2 = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v2 = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolvePositionConstraints_s_C_v2 = new b2Math_18.b2Vec2();
-            b2RevoluteJoint.SolvePositionConstraints_s_impulse = new b2Math_18.b2Vec2();
-            exports_24("b2RevoluteJoint", b2RevoluteJoint);
+            b2RevoluteJoint.InitVelocityConstraints_s_P = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolveVelocityConstraints_s_P = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolveVelocityConstraints_s_Cdot_v2 = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolveVelocityConstraints_s_Cdot1 = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v3 = new b2Math_16.b2Vec3();
+            b2RevoluteJoint.SolveVelocityConstraints_s_reduced_v2 = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolveVelocityConstraints_s_impulse_v2 = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolvePositionConstraints_s_C_v2 = new b2Math_16.b2Vec2();
+            b2RevoluteJoint.SolvePositionConstraints_s_impulse = new b2Math_16.b2Vec2();
+            exports_20("b2RevoluteJoint", b2RevoluteJoint);
         }
     }
 });
@@ -7382,18 +7001,18 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_25, context_25) {
+System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_21, context_21) {
     "use strict";
-    var __moduleName = context_25 && context_25.id;
-    var b2Settings_16, b2Math_19, b2Joint_6;
+    var __moduleName = context_21 && context_21.id;
+    var b2Settings_15, b2Math_17, b2Joint_6;
     var b2GearJointDef, b2GearJoint;
     return {
         setters:[
-            function (b2Settings_16_1) {
-                b2Settings_16 = b2Settings_16_1;
+            function (b2Settings_15_1) {
+                b2Settings_15 = b2Settings_15_1;
             },
-            function (b2Math_19_1) {
-                b2Math_19 = b2Math_19_1;
+            function (b2Math_17_1) {
+                b2Math_17 = b2Math_17_1;
             },
             function (b2Joint_6_1) {
                 b2Joint_6 = b2Joint_6_1;
@@ -7409,7 +7028,7 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     this.ratio = 1;
                 }
             };
-            exports_25("b2GearJointDef", b2GearJointDef);
+            exports_21("b2GearJointDef", b2GearJointDef);
             b2GearJoint = class b2GearJoint extends b2Joint_6.b2Joint {
                 constructor(def) {
                     super(def);
@@ -7422,12 +7041,12 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     this.m_bodyC = null;
                     this.m_bodyD = null;
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_19.b2Vec2();
-                    this.m_localAnchorB = new b2Math_19.b2Vec2();
-                    this.m_localAnchorC = new b2Math_19.b2Vec2();
-                    this.m_localAnchorD = new b2Math_19.b2Vec2();
-                    this.m_localAxisC = new b2Math_19.b2Vec2();
-                    this.m_localAxisD = new b2Math_19.b2Vec2();
+                    this.m_localAnchorA = new b2Math_17.b2Vec2();
+                    this.m_localAnchorB = new b2Math_17.b2Vec2();
+                    this.m_localAnchorC = new b2Math_17.b2Vec2();
+                    this.m_localAnchorD = new b2Math_17.b2Vec2();
+                    this.m_localAxisC = new b2Math_17.b2Vec2();
+                    this.m_localAxisD = new b2Math_17.b2Vec2();
                     this.m_referenceAngleA = 0;
                     this.m_referenceAngleB = 0;
                     this.m_constant = 0;
@@ -7438,10 +7057,10 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     this.m_indexB = 0;
                     this.m_indexC = 0;
                     this.m_indexD = 0;
-                    this.m_lcA = new b2Math_19.b2Vec2();
-                    this.m_lcB = new b2Math_19.b2Vec2();
-                    this.m_lcC = new b2Math_19.b2Vec2();
-                    this.m_lcD = new b2Math_19.b2Vec2();
+                    this.m_lcA = new b2Math_17.b2Vec2();
+                    this.m_lcB = new b2Math_17.b2Vec2();
+                    this.m_lcC = new b2Math_17.b2Vec2();
+                    this.m_lcD = new b2Math_17.b2Vec2();
                     this.m_mA = 0;
                     this.m_mB = 0;
                     this.m_mC = 0;
@@ -7450,21 +7069,21 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     this.m_iB = 0;
                     this.m_iC = 0;
                     this.m_iD = 0;
-                    this.m_JvAC = new b2Math_19.b2Vec2();
-                    this.m_JvBD = new b2Math_19.b2Vec2();
+                    this.m_JvAC = new b2Math_17.b2Vec2();
+                    this.m_JvBD = new b2Math_17.b2Vec2();
                     this.m_JwA = 0;
                     this.m_JwB = 0;
                     this.m_JwC = 0;
                     this.m_JwD = 0;
                     this.m_mass = 0;
-                    this.m_qA = new b2Math_19.b2Rot();
-                    this.m_qB = new b2Math_19.b2Rot();
-                    this.m_qC = new b2Math_19.b2Rot();
-                    this.m_qD = new b2Math_19.b2Rot();
-                    this.m_lalcA = new b2Math_19.b2Vec2();
-                    this.m_lalcB = new b2Math_19.b2Vec2();
-                    this.m_lalcC = new b2Math_19.b2Vec2();
-                    this.m_lalcD = new b2Math_19.b2Vec2();
+                    this.m_qA = new b2Math_17.b2Rot();
+                    this.m_qB = new b2Math_17.b2Rot();
+                    this.m_qC = new b2Math_17.b2Rot();
+                    this.m_qD = new b2Math_17.b2Rot();
+                    this.m_lalcA = new b2Math_17.b2Vec2();
+                    this.m_lalcB = new b2Math_17.b2Vec2();
+                    this.m_lalcC = new b2Math_17.b2Vec2();
+                    this.m_lalcD = new b2Math_17.b2Vec2();
                     this.m_joint1 = def.joint1;
                     this.m_joint2 = def.joint2;
                     this.m_typeA = this.m_joint1.GetType();
@@ -7497,9 +7116,9 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                         // b2Vec2 pC = m_localAnchorC;
                         const pC = this.m_localAnchorC;
                         // b2Vec2 pA = b2MulT(xfC.q, b2Mul(xfA.q, m_localAnchorA) + (xfA.p - xfC.p));
-                        const pA = b2Math_19.b2Rot.MulTRV(xfC.q, b2Math_19.b2Vec2.AddVV(b2Math_19.b2Rot.MulRV(xfA.q, this.m_localAnchorA, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.SubVV(xfA.p, xfC.p, b2Math_19.b2Vec2.s_t1), b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0); // pA uses s_t0
+                        const pA = b2Math_17.b2Rot.MulTRV(xfC.q, b2Math_17.b2Vec2.AddVV(b2Math_17.b2Rot.MulRV(xfA.q, this.m_localAnchorA, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.SubVV(xfA.p, xfC.p, b2Math_17.b2Vec2.s_t1), b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.s_t0); // pA uses s_t0
                         // coordinateA = b2Dot(pA - pC, m_localAxisC);
-                        coordinateA = b2Math_19.b2Vec2.DotVV(b2Math_19.b2Vec2.SubVV(pA, pC, b2Math_19.b2Vec2.s_t0), this.m_localAxisC);
+                        coordinateA = b2Math_17.b2Vec2.DotVV(b2Math_17.b2Vec2.SubVV(pA, pC, b2Math_17.b2Vec2.s_t0), this.m_localAxisC);
                     }
                     this.m_bodyD = this.m_joint2.GetBodyA();
                     this.m_bodyB = this.m_joint2.GetBodyB();
@@ -7525,9 +7144,9 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                         // b2Vec2 pD = m_localAnchorD;
                         const pD = this.m_localAnchorD;
                         // b2Vec2 pB = b2MulT(xfD.q, b2Mul(xfB.q, m_localAnchorB) + (xfB.p - xfD.p));
-                        const pB = b2Math_19.b2Rot.MulTRV(xfD.q, b2Math_19.b2Vec2.AddVV(b2Math_19.b2Rot.MulRV(xfB.q, this.m_localAnchorB, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.SubVV(xfB.p, xfD.p, b2Math_19.b2Vec2.s_t1), b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0); // pB uses s_t0
+                        const pB = b2Math_17.b2Rot.MulTRV(xfD.q, b2Math_17.b2Vec2.AddVV(b2Math_17.b2Rot.MulRV(xfB.q, this.m_localAnchorB, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.SubVV(xfB.p, xfD.p, b2Math_17.b2Vec2.s_t1), b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.s_t0); // pB uses s_t0
                         // coordinateB = b2Dot(pB - pD, m_localAxisD);
-                        coordinateB = b2Math_19.b2Vec2.DotVV(b2Math_19.b2Vec2.SubVV(pB, pD, b2Math_19.b2Vec2.s_t0), this.m_localAxisD);
+                        coordinateB = b2Math_17.b2Vec2.DotVV(b2Math_17.b2Vec2.SubVV(pB, pD, b2Math_17.b2Vec2.s_t0), this.m_localAxisD);
                     }
                     this.m_ratio = def.ratio;
                     this.m_constant = coordinateA + this.m_ratio * coordinateB;
@@ -7573,19 +7192,19 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     }
                     else {
                         // b2Vec2 u = b2Mul(qC, m_localAxisC);
-                        const u = b2Math_19.b2Rot.MulRV(qC, this.m_localAxisC, b2GearJoint.InitVelocityConstraints_s_u);
+                        const u = b2Math_17.b2Rot.MulRV(qC, this.m_localAxisC, b2GearJoint.InitVelocityConstraints_s_u);
                         // b2Vec2 rC = b2Mul(qC, m_localAnchorC - m_lcC);
-                        b2Math_19.b2Vec2.SubVV(this.m_localAnchorC, this.m_lcC, this.m_lalcC);
-                        const rC = b2Math_19.b2Rot.MulRV(qC, this.m_lalcC, b2GearJoint.InitVelocityConstraints_s_rC);
+                        b2Math_17.b2Vec2.SubVV(this.m_localAnchorC, this.m_lcC, this.m_lalcC);
+                        const rC = b2Math_17.b2Rot.MulRV(qC, this.m_lalcC, b2GearJoint.InitVelocityConstraints_s_rC);
                         // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_lcA);
-                        b2Math_19.b2Vec2.SubVV(this.m_localAnchorA, this.m_lcA, this.m_lalcA);
-                        const rA = b2Math_19.b2Rot.MulRV(qA, this.m_lalcA, b2GearJoint.InitVelocityConstraints_s_rA);
+                        b2Math_17.b2Vec2.SubVV(this.m_localAnchorA, this.m_lcA, this.m_lalcA);
+                        const rA = b2Math_17.b2Rot.MulRV(qA, this.m_lalcA, b2GearJoint.InitVelocityConstraints_s_rA);
                         // m_JvAC = u;
                         this.m_JvAC.Copy(u);
                         // m_JwC = b2Cross(rC, u);
-                        this.m_JwC = b2Math_19.b2Vec2.CrossVV(rC, u);
+                        this.m_JwC = b2Math_17.b2Vec2.CrossVV(rC, u);
                         // m_JwA = b2Cross(rA, u);
-                        this.m_JwA = b2Math_19.b2Vec2.CrossVV(rA, u);
+                        this.m_JwA = b2Math_17.b2Vec2.CrossVV(rA, u);
                         this.m_mass += this.m_mC + this.m_mA + this.m_iC * this.m_JwC * this.m_JwC + this.m_iA * this.m_JwA * this.m_JwA;
                     }
                     if (this.m_typeB === 1 /* e_revoluteJoint */) {
@@ -7596,19 +7215,19 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     }
                     else {
                         // b2Vec2 u = b2Mul(qD, m_localAxisD);
-                        const u = b2Math_19.b2Rot.MulRV(qD, this.m_localAxisD, b2GearJoint.InitVelocityConstraints_s_u);
+                        const u = b2Math_17.b2Rot.MulRV(qD, this.m_localAxisD, b2GearJoint.InitVelocityConstraints_s_u);
                         // b2Vec2 rD = b2Mul(qD, m_localAnchorD - m_lcD);
-                        b2Math_19.b2Vec2.SubVV(this.m_localAnchorD, this.m_lcD, this.m_lalcD);
-                        const rD = b2Math_19.b2Rot.MulRV(qD, this.m_lalcD, b2GearJoint.InitVelocityConstraints_s_rD);
+                        b2Math_17.b2Vec2.SubVV(this.m_localAnchorD, this.m_lcD, this.m_lalcD);
+                        const rD = b2Math_17.b2Rot.MulRV(qD, this.m_lalcD, b2GearJoint.InitVelocityConstraints_s_rD);
                         // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_lcB);
-                        b2Math_19.b2Vec2.SubVV(this.m_localAnchorB, this.m_lcB, this.m_lalcB);
-                        const rB = b2Math_19.b2Rot.MulRV(qB, this.m_lalcB, b2GearJoint.InitVelocityConstraints_s_rB);
+                        b2Math_17.b2Vec2.SubVV(this.m_localAnchorB, this.m_lcB, this.m_lalcB);
+                        const rB = b2Math_17.b2Rot.MulRV(qB, this.m_lalcB, b2GearJoint.InitVelocityConstraints_s_rB);
                         // m_JvBD = m_ratio * u;
-                        b2Math_19.b2Vec2.MulSV(this.m_ratio, u, this.m_JvBD);
+                        b2Math_17.b2Vec2.MulSV(this.m_ratio, u, this.m_JvBD);
                         // m_JwD = m_ratio * b2Cross(rD, u);
-                        this.m_JwD = this.m_ratio * b2Math_19.b2Vec2.CrossVV(rD, u);
+                        this.m_JwD = this.m_ratio * b2Math_17.b2Vec2.CrossVV(rD, u);
                         // m_JwB = m_ratio * b2Cross(rB, u);
-                        this.m_JwB = this.m_ratio * b2Math_19.b2Vec2.CrossVV(rB, u);
+                        this.m_JwB = this.m_ratio * b2Math_17.b2Vec2.CrossVV(rB, u);
                         this.m_mass += this.m_ratio * this.m_ratio * (this.m_mD + this.m_mB) + this.m_iD * this.m_JwD * this.m_JwD + this.m_iB * this.m_JwB * this.m_JwB;
                     }
                     // Compute effective mass.
@@ -7649,8 +7268,8 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     const vD = data.velocities[this.m_indexD].v;
                     let wD = data.velocities[this.m_indexD].w;
                     // float32 Cdot = b2Dot(m_JvAC, vA - vC) + b2Dot(m_JvBD, vB - vD);
-                    let Cdot = b2Math_19.b2Vec2.DotVV(this.m_JvAC, b2Math_19.b2Vec2.SubVV(vA, vC, b2Math_19.b2Vec2.s_t0)) +
-                        b2Math_19.b2Vec2.DotVV(this.m_JvBD, b2Math_19.b2Vec2.SubVV(vB, vD, b2Math_19.b2Vec2.s_t0));
+                    let Cdot = b2Math_17.b2Vec2.DotVV(this.m_JvAC, b2Math_17.b2Vec2.SubVV(vA, vC, b2Math_17.b2Vec2.s_t0)) +
+                        b2Math_17.b2Vec2.DotVV(this.m_JvBD, b2Math_17.b2Vec2.SubVV(vB, vD, b2Math_17.b2Vec2.s_t0));
                     Cdot += (this.m_JwA * wA - this.m_JwC * wC) + (this.m_JwB * wB - this.m_JwD * wD);
                     const impulse = -this.m_mass * Cdot;
                     this.m_impulse += impulse;
@@ -7700,24 +7319,24 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     }
                     else {
                         // b2Vec2 u = b2Mul(qC, m_localAxisC);
-                        const u = b2Math_19.b2Rot.MulRV(qC, this.m_localAxisC, b2GearJoint.SolvePositionConstraints_s_u);
+                        const u = b2Math_17.b2Rot.MulRV(qC, this.m_localAxisC, b2GearJoint.SolvePositionConstraints_s_u);
                         // b2Vec2 rC = b2Mul(qC, m_localAnchorC - m_lcC);
-                        const rC = b2Math_19.b2Rot.MulRV(qC, this.m_lalcC, b2GearJoint.SolvePositionConstraints_s_rC);
+                        const rC = b2Math_17.b2Rot.MulRV(qC, this.m_lalcC, b2GearJoint.SolvePositionConstraints_s_rC);
                         // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_lcA);
-                        const rA = b2Math_19.b2Rot.MulRV(qA, this.m_lalcA, b2GearJoint.SolvePositionConstraints_s_rA);
+                        const rA = b2Math_17.b2Rot.MulRV(qA, this.m_lalcA, b2GearJoint.SolvePositionConstraints_s_rA);
                         // JvAC = u;
                         JvAC.Copy(u);
                         // JwC = b2Cross(rC, u);
-                        JwC = b2Math_19.b2Vec2.CrossVV(rC, u);
+                        JwC = b2Math_17.b2Vec2.CrossVV(rC, u);
                         // JwA = b2Cross(rA, u);
-                        JwA = b2Math_19.b2Vec2.CrossVV(rA, u);
+                        JwA = b2Math_17.b2Vec2.CrossVV(rA, u);
                         mass += this.m_mC + this.m_mA + this.m_iC * JwC * JwC + this.m_iA * JwA * JwA;
                         // b2Vec2 pC = m_localAnchorC - m_lcC;
                         const pC = this.m_lalcC;
                         // b2Vec2 pA = b2MulT(qC, rA + (cA - cC));
-                        const pA = b2Math_19.b2Rot.MulTRV(qC, b2Math_19.b2Vec2.AddVV(rA, b2Math_19.b2Vec2.SubVV(cA, cC, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0); // pA uses s_t0
+                        const pA = b2Math_17.b2Rot.MulTRV(qC, b2Math_17.b2Vec2.AddVV(rA, b2Math_17.b2Vec2.SubVV(cA, cC, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.s_t0); // pA uses s_t0
                         // coordinateA = b2Dot(pA - pC, m_localAxisC);
-                        coordinateA = b2Math_19.b2Vec2.DotVV(b2Math_19.b2Vec2.SubVV(pA, pC, b2Math_19.b2Vec2.s_t0), this.m_localAxisC);
+                        coordinateA = b2Math_17.b2Vec2.DotVV(b2Math_17.b2Vec2.SubVV(pA, pC, b2Math_17.b2Vec2.s_t0), this.m_localAxisC);
                     }
                     if (this.m_typeB === 1 /* e_revoluteJoint */) {
                         JvBD.SetZero();
@@ -7728,24 +7347,24 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     }
                     else {
                         // b2Vec2 u = b2Mul(qD, m_localAxisD);
-                        const u = b2Math_19.b2Rot.MulRV(qD, this.m_localAxisD, b2GearJoint.SolvePositionConstraints_s_u);
+                        const u = b2Math_17.b2Rot.MulRV(qD, this.m_localAxisD, b2GearJoint.SolvePositionConstraints_s_u);
                         // b2Vec2 rD = b2Mul(qD, m_localAnchorD - m_lcD);
-                        const rD = b2Math_19.b2Rot.MulRV(qD, this.m_lalcD, b2GearJoint.SolvePositionConstraints_s_rD);
+                        const rD = b2Math_17.b2Rot.MulRV(qD, this.m_lalcD, b2GearJoint.SolvePositionConstraints_s_rD);
                         // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_lcB);
-                        const rB = b2Math_19.b2Rot.MulRV(qB, this.m_lalcB, b2GearJoint.SolvePositionConstraints_s_rB);
+                        const rB = b2Math_17.b2Rot.MulRV(qB, this.m_lalcB, b2GearJoint.SolvePositionConstraints_s_rB);
                         // JvBD = m_ratio * u;
-                        b2Math_19.b2Vec2.MulSV(this.m_ratio, u, JvBD);
+                        b2Math_17.b2Vec2.MulSV(this.m_ratio, u, JvBD);
                         // JwD = m_ratio * b2Cross(rD, u);
-                        JwD = this.m_ratio * b2Math_19.b2Vec2.CrossVV(rD, u);
+                        JwD = this.m_ratio * b2Math_17.b2Vec2.CrossVV(rD, u);
                         // JwB = m_ratio * b2Cross(rB, u);
-                        JwB = this.m_ratio * b2Math_19.b2Vec2.CrossVV(rB, u);
+                        JwB = this.m_ratio * b2Math_17.b2Vec2.CrossVV(rB, u);
                         mass += this.m_ratio * this.m_ratio * (this.m_mD + this.m_mB) + this.m_iD * JwD * JwD + this.m_iB * JwB * JwB;
                         // b2Vec2 pD = m_localAnchorD - m_lcD;
                         const pD = this.m_lalcD;
                         // b2Vec2 pB = b2MulT(qD, rB + (cB - cD));
-                        const pB = b2Math_19.b2Rot.MulTRV(qD, b2Math_19.b2Vec2.AddVV(rB, b2Math_19.b2Vec2.SubVV(cB, cD, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0); // pB uses s_t0
+                        const pB = b2Math_17.b2Rot.MulTRV(qD, b2Math_17.b2Vec2.AddVV(rB, b2Math_17.b2Vec2.SubVV(cB, cD, b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.s_t0), b2Math_17.b2Vec2.s_t0); // pB uses s_t0
                         // coordinateB = b2Dot(pB - pD, m_localAxisD);
-                        coordinateB = b2Math_19.b2Vec2.DotVV(b2Math_19.b2Vec2.SubVV(pB, pD, b2Math_19.b2Vec2.s_t0), this.m_localAxisD);
+                        coordinateB = b2Math_17.b2Vec2.DotVV(b2Math_17.b2Vec2.SubVV(pB, pD, b2Math_17.b2Vec2.s_t0), this.m_localAxisD);
                     }
                     const C = (coordinateA + this.m_ratio * coordinateB) - this.m_constant;
                     let impulse = 0;
@@ -7773,7 +7392,7 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     // data.positions[this.m_indexD].c = cD;
                     data.positions[this.m_indexD].a = aD;
                     // TODO_ERIN not implemented
-                    return linearError < b2Settings_16.b2_linearSlop;
+                    return linearError < b2Settings_15.b2_linearSlop;
                 }
                 GetAnchorA(out) {
                     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
@@ -7784,7 +7403,7 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                 GetReactionForce(inv_dt, out) {
                     // b2Vec2 P = m_impulse * m_JvAC;
                     // return inv_dt * P;
-                    return b2Math_19.b2Vec2.MulSV(inv_dt * this.m_impulse, this.m_JvAC, out);
+                    return b2Math_17.b2Vec2.MulSV(inv_dt * this.m_impulse, this.m_JvAC, out);
                 }
                 GetReactionTorque(inv_dt) {
                     // float32 L = m_impulse * m_JwA;
@@ -7815,29 +7434,29 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2GearJoint.InitVelocityConstraints_s_u = new b2Math_19.b2Vec2();
-            b2GearJoint.InitVelocityConstraints_s_rA = new b2Math_19.b2Vec2();
-            b2GearJoint.InitVelocityConstraints_s_rB = new b2Math_19.b2Vec2();
-            b2GearJoint.InitVelocityConstraints_s_rC = new b2Math_19.b2Vec2();
-            b2GearJoint.InitVelocityConstraints_s_rD = new b2Math_19.b2Vec2();
-            b2GearJoint.SolvePositionConstraints_s_u = new b2Math_19.b2Vec2();
-            b2GearJoint.SolvePositionConstraints_s_rA = new b2Math_19.b2Vec2();
-            b2GearJoint.SolvePositionConstraints_s_rB = new b2Math_19.b2Vec2();
-            b2GearJoint.SolvePositionConstraints_s_rC = new b2Math_19.b2Vec2();
-            b2GearJoint.SolvePositionConstraints_s_rD = new b2Math_19.b2Vec2();
-            exports_25("b2GearJoint", b2GearJoint);
+            b2GearJoint.InitVelocityConstraints_s_u = new b2Math_17.b2Vec2();
+            b2GearJoint.InitVelocityConstraints_s_rA = new b2Math_17.b2Vec2();
+            b2GearJoint.InitVelocityConstraints_s_rB = new b2Math_17.b2Vec2();
+            b2GearJoint.InitVelocityConstraints_s_rC = new b2Math_17.b2Vec2();
+            b2GearJoint.InitVelocityConstraints_s_rD = new b2Math_17.b2Vec2();
+            b2GearJoint.SolvePositionConstraints_s_u = new b2Math_17.b2Vec2();
+            b2GearJoint.SolvePositionConstraints_s_rA = new b2Math_17.b2Vec2();
+            b2GearJoint.SolvePositionConstraints_s_rB = new b2Math_17.b2Vec2();
+            b2GearJoint.SolvePositionConstraints_s_rC = new b2Math_17.b2Vec2();
+            b2GearJoint.SolvePositionConstraints_s_rD = new b2Math_17.b2Vec2();
+            exports_21("b2GearJoint", b2GearJoint);
         }
     }
 });
-System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_26, context_26) {
+System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_22, context_22) {
     "use strict";
-    var __moduleName = context_26 && context_26.id;
-    var b2Math_20, b2Joint_7;
+    var __moduleName = context_22 && context_22.id;
+    var b2Math_18, b2Joint_7;
     var b2MotorJointDef, b2MotorJoint;
     return {
         setters:[
-            function (b2Math_20_1) {
-                b2Math_20 = b2Math_20_1;
+            function (b2Math_18_1) {
+                b2Math_18 = b2Math_18_1;
             },
             function (b2Joint_7_1) {
                 b2Joint_7 = b2Joint_7_1;
@@ -7846,7 +7465,7 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
             b2MotorJointDef = class b2MotorJointDef extends b2Joint_7.b2JointDef {
                 constructor() {
                     super(11 /* e_motorJoint */);
-                    this.linearOffset = new b2Math_20.b2Vec2(0, 0);
+                    this.linearOffset = new b2Math_18.b2Vec2(0, 0);
                     this.angularOffset = 0;
                     this.maxForce = 1;
                     this.maxTorque = 1;
@@ -7863,14 +7482,14 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     this.angularOffset = angleB - angleA;
                 }
             };
-            exports_26("b2MotorJointDef", b2MotorJointDef);
+            exports_22("b2MotorJointDef", b2MotorJointDef);
             b2MotorJoint = class b2MotorJoint extends b2Joint_7.b2Joint {
                 constructor(def) {
                     super(def);
                     // Solver shared
-                    this.m_linearOffset = new b2Math_20.b2Vec2();
+                    this.m_linearOffset = new b2Math_18.b2Vec2();
                     this.m_angularOffset = 0;
-                    this.m_linearImpulse = new b2Math_20.b2Vec2();
+                    this.m_linearImpulse = new b2Math_18.b2Vec2();
                     this.m_angularImpulse = 0;
                     this.m_maxForce = 0;
                     this.m_maxTorque = 0;
@@ -7878,21 +7497,21 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_rA = new b2Math_20.b2Vec2();
-                    this.m_rB = new b2Math_20.b2Vec2();
-                    this.m_localCenterA = new b2Math_20.b2Vec2();
-                    this.m_localCenterB = new b2Math_20.b2Vec2();
-                    this.m_linearError = new b2Math_20.b2Vec2();
+                    this.m_rA = new b2Math_18.b2Vec2();
+                    this.m_rB = new b2Math_18.b2Vec2();
+                    this.m_localCenterA = new b2Math_18.b2Vec2();
+                    this.m_localCenterB = new b2Math_18.b2Vec2();
+                    this.m_linearError = new b2Math_18.b2Vec2();
                     this.m_angularError = 0;
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
-                    this.m_linearMass = new b2Math_20.b2Mat22();
+                    this.m_linearMass = new b2Math_18.b2Mat22();
                     this.m_angularMass = 0;
-                    this.m_qA = new b2Math_20.b2Rot();
-                    this.m_qB = new b2Math_20.b2Rot();
-                    this.m_K = new b2Math_20.b2Mat22();
+                    this.m_qA = new b2Math_18.b2Rot();
+                    this.m_qB = new b2Math_18.b2Rot();
+                    this.m_K = new b2Math_18.b2Mat22();
                     this.m_linearOffset.Copy(def.linearOffset);
                     this.m_linearImpulse.SetZero();
                     this.m_maxForce = def.maxForce;
@@ -7907,13 +7526,13 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                 }
                 GetReactionForce(inv_dt, out) {
                     // return inv_dt * m_linearImpulse;
-                    return b2Math_20.b2Vec2.MulSV(inv_dt, this.m_linearImpulse, out);
+                    return b2Math_18.b2Vec2.MulSV(inv_dt, this.m_linearImpulse, out);
                 }
                 GetReactionTorque(inv_dt) {
                     return inv_dt * this.m_angularImpulse;
                 }
                 SetLinearOffset(linearOffset) {
-                    if (!b2Math_20.b2Vec2.IsEqualToV(linearOffset, this.m_linearOffset)) {
+                    if (!b2Math_18.b2Vec2.IsEqualToV(linearOffset, this.m_linearOffset)) {
                         this.m_bodyA.SetAwake(true);
                         this.m_bodyB.SetAwake(true);
                         this.m_linearOffset.Copy(linearOffset);
@@ -7966,9 +7585,9 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // Compute the effective mass matrix.
                     // this.m_rA = b2Mul(qA, -this.m_localCenterA);
-                    const rA = b2Math_20.b2Rot.MulRV(qA, b2Math_20.b2Vec2.NegV(this.m_localCenterA, b2Math_20.b2Vec2.s_t0), this.m_rA);
+                    const rA = b2Math_18.b2Rot.MulRV(qA, b2Math_18.b2Vec2.NegV(this.m_localCenterA, b2Math_18.b2Vec2.s_t0), this.m_rA);
                     // this.m_rB = b2Mul(qB, -this.m_localCenterB);
-                    const rB = b2Math_20.b2Rot.MulRV(qB, b2Math_20.b2Vec2.NegV(this.m_localCenterB, b2Math_20.b2Vec2.s_t0), this.m_rB);
+                    const rB = b2Math_18.b2Rot.MulRV(qB, b2Math_18.b2Vec2.NegV(this.m_localCenterB, b2Math_18.b2Vec2.s_t0), this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -7990,7 +7609,7 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                         this.m_angularMass = 1 / this.m_angularMass;
                     }
                     // this.m_linearError = cB + rB - cA - rA - b2Mul(qA, this.m_linearOffset);
-                    b2Math_20.b2Vec2.SubVV(b2Math_20.b2Vec2.SubVV(b2Math_20.b2Vec2.AddVV(cB, rB, b2Math_20.b2Vec2.s_t0), b2Math_20.b2Vec2.AddVV(cA, rA, b2Math_20.b2Vec2.s_t1), b2Math_20.b2Vec2.s_t2), b2Math_20.b2Rot.MulRV(qA, this.m_linearOffset, b2Math_20.b2Vec2.s_t3), this.m_linearError);
+                    b2Math_18.b2Vec2.SubVV(b2Math_18.b2Vec2.SubVV(b2Math_18.b2Vec2.AddVV(cB, rB, b2Math_18.b2Vec2.s_t0), b2Math_18.b2Vec2.AddVV(cA, rA, b2Math_18.b2Vec2.s_t1), b2Math_18.b2Vec2.s_t2), b2Math_18.b2Rot.MulRV(qA, this.m_linearOffset, b2Math_18.b2Vec2.s_t3), this.m_linearError);
                     this.m_angularError = aB - aA - this.m_angularOffset;
                     if (data.step.warmStarting) {
                         // Scale impulses to support a variable time step.
@@ -8001,10 +7620,10 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                         const P = this.m_linearImpulse;
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math_20.b2Vec2.CrossVV(rA, P) + this.m_angularImpulse);
+                        wA -= iA * (b2Math_18.b2Vec2.CrossVV(rA, P) + this.m_angularImpulse);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math_20.b2Vec2.CrossVV(rB, P) + this.m_angularImpulse);
+                        wB += iB * (b2Math_18.b2Vec2.CrossVV(rB, P) + this.m_angularImpulse);
                     }
                     else {
                         this.m_linearImpulse.SetZero();
@@ -8030,7 +7649,7 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                         let impulse = -this.m_angularMass * Cdot;
                         const oldImpulse = this.m_angularImpulse;
                         const maxImpulse = h * this.m_maxTorque;
-                        this.m_angularImpulse = b2Math_20.b2Clamp(this.m_angularImpulse + impulse, -maxImpulse, maxImpulse);
+                        this.m_angularImpulse = b2Math_18.b2Clamp(this.m_angularImpulse + impulse, -maxImpulse, maxImpulse);
                         impulse = this.m_angularImpulse - oldImpulse;
                         wA -= iA * impulse;
                         wB += iB * impulse;
@@ -8040,29 +7659,29 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                         const rA = this.m_rA;
                         const rB = this.m_rB;
                         // b2Vec2 Cdot = vB + b2Vec2.CrossSV(wB, rB) - vA - b2Vec2.CrossSV(wA, rA) + inv_h * this.m_correctionFactor * this.m_linearError;
-                        const Cdot_v2 = b2Math_20.b2Vec2.AddVV(b2Math_20.b2Vec2.SubVV(b2Math_20.b2Vec2.AddVV(vB, b2Math_20.b2Vec2.CrossSV(wB, rB, b2Math_20.b2Vec2.s_t0), b2Math_20.b2Vec2.s_t0), b2Math_20.b2Vec2.AddVV(vA, b2Math_20.b2Vec2.CrossSV(wA, rA, b2Math_20.b2Vec2.s_t1), b2Math_20.b2Vec2.s_t1), b2Math_20.b2Vec2.s_t2), b2Math_20.b2Vec2.MulSV(inv_h * this.m_correctionFactor, this.m_linearError, b2Math_20.b2Vec2.s_t3), b2MotorJoint.SolveVelocityConstraints_s_Cdot_v2);
+                        const Cdot_v2 = b2Math_18.b2Vec2.AddVV(b2Math_18.b2Vec2.SubVV(b2Math_18.b2Vec2.AddVV(vB, b2Math_18.b2Vec2.CrossSV(wB, rB, b2Math_18.b2Vec2.s_t0), b2Math_18.b2Vec2.s_t0), b2Math_18.b2Vec2.AddVV(vA, b2Math_18.b2Vec2.CrossSV(wA, rA, b2Math_18.b2Vec2.s_t1), b2Math_18.b2Vec2.s_t1), b2Math_18.b2Vec2.s_t2), b2Math_18.b2Vec2.MulSV(inv_h * this.m_correctionFactor, this.m_linearError, b2Math_18.b2Vec2.s_t3), b2MotorJoint.SolveVelocityConstraints_s_Cdot_v2);
                         // b2Vec2 impulse = -b2Mul(this.m_linearMass, Cdot);
-                        const impulse_v2 = b2Math_20.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2MotorJoint.SolveVelocityConstraints_s_impulse_v2).SelfNeg();
+                        const impulse_v2 = b2Math_18.b2Mat22.MulMV(this.m_linearMass, Cdot_v2, b2MotorJoint.SolveVelocityConstraints_s_impulse_v2).SelfNeg();
                         // b2Vec2 oldImpulse = this.m_linearImpulse;
                         const oldImpulse_v2 = b2MotorJoint.SolveVelocityConstraints_s_oldImpulse_v2.Copy(this.m_linearImpulse);
                         // this.m_linearImpulse += impulse;
                         this.m_linearImpulse.SelfAdd(impulse_v2);
                         const maxImpulse = h * this.m_maxForce;
-                        if (this.m_linearImpulse.GetLength() > maxImpulse * maxImpulse) {
+                        if (this.m_linearImpulse.LengthSquared() > maxImpulse * maxImpulse) {
                             this.m_linearImpulse.Normalize();
                             // this.m_linearImpulse *= maxImpulse;
                             this.m_linearImpulse.SelfMul(maxImpulse);
                         }
                         // impulse = this.m_linearImpulse - oldImpulse;
-                        b2Math_20.b2Vec2.SubVV(this.m_linearImpulse, oldImpulse_v2, impulse_v2);
+                        b2Math_18.b2Vec2.SubVV(this.m_linearImpulse, oldImpulse_v2, impulse_v2);
                         // vA -= mA * impulse;
                         vA.SelfMulSub(mA, impulse_v2);
                         // wA -= iA * b2Vec2.CrossVV(rA, impulse);
-                        wA -= iA * b2Math_20.b2Vec2.CrossVV(rA, impulse_v2);
+                        wA -= iA * b2Math_18.b2Vec2.CrossVV(rA, impulse_v2);
                         // vB += mB * impulse;
                         vB.SelfMulAdd(mB, impulse_v2);
                         // wB += iB * b2Vec2.CrossVV(rB, impulse);
-                        wB += iB * b2Math_20.b2Vec2.CrossVV(rB, impulse_v2);
+                        wB += iB * b2Math_18.b2Vec2.CrossVV(rB, impulse_v2);
                     }
                     // data.velocities[this.m_indexA].v = vA; // vA is a reference
                     data.velocities[this.m_indexA].w = wA;
@@ -8087,10 +7706,10 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2MotorJoint.SolveVelocityConstraints_s_Cdot_v2 = new b2Math_20.b2Vec2();
-            b2MotorJoint.SolveVelocityConstraints_s_impulse_v2 = new b2Math_20.b2Vec2();
-            b2MotorJoint.SolveVelocityConstraints_s_oldImpulse_v2 = new b2Math_20.b2Vec2();
-            exports_26("b2MotorJoint", b2MotorJoint);
+            b2MotorJoint.SolveVelocityConstraints_s_Cdot_v2 = new b2Math_18.b2Vec2();
+            b2MotorJoint.SolveVelocityConstraints_s_impulse_v2 = new b2Math_18.b2Vec2();
+            b2MotorJoint.SolveVelocityConstraints_s_oldImpulse_v2 = new b2Math_18.b2Vec2();
+            exports_22("b2MotorJoint", b2MotorJoint);
         }
     }
 });
@@ -8111,18 +7730,18 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_27, context_27) {
+System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_23, context_23) {
     "use strict";
-    var __moduleName = context_27 && context_27.id;
-    var b2Settings_17, b2Math_21, b2Joint_8;
+    var __moduleName = context_23 && context_23.id;
+    var b2Settings_16, b2Math_19, b2Joint_8;
     var b2MouseJointDef, b2MouseJoint;
     return {
         setters:[
-            function (b2Settings_17_1) {
-                b2Settings_17 = b2Settings_17_1;
+            function (b2Settings_16_1) {
+                b2Settings_16 = b2Settings_16_1;
             },
-            function (b2Math_21_1) {
-                b2Math_21 = b2Math_21_1;
+            function (b2Math_19_1) {
+                b2Math_19 = b2Math_19_1;
             },
             function (b2Joint_8_1) {
                 b2Joint_8 = b2Joint_8_1;
@@ -8133,13 +7752,13 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
             b2MouseJointDef = class b2MouseJointDef extends b2Joint_8.b2JointDef {
                 constructor() {
                     super(5 /* e_mouseJoint */);
-                    this.target = new b2Math_21.b2Vec2();
+                    this.target = new b2Math_19.b2Vec2();
                     this.maxForce = 0;
                     this.frequencyHz = 5;
                     this.dampingRatio = 0.7;
                 }
             };
-            exports_27("b2MouseJointDef", b2MouseJointDef);
+            exports_23("b2MouseJointDef", b2MouseJointDef);
             b2MouseJoint = class b2MouseJoint extends b2Joint_8.b2Joint {
                 constructor(def) {
                     super(def);
@@ -8164,22 +7783,22 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                     this.m_qB = null;
                     this.m_lalcB = null;
                     this.m_K = null;
-                    this.m_localAnchorB = new b2Math_21.b2Vec2();
-                    this.m_targetA = new b2Math_21.b2Vec2();
-                    this.m_impulse = new b2Math_21.b2Vec2();
-                    this.m_rB = new b2Math_21.b2Vec2();
-                    this.m_localCenterB = new b2Math_21.b2Vec2();
-                    this.m_mass = new b2Math_21.b2Mat22();
-                    this.m_C = new b2Math_21.b2Vec2();
-                    this.m_qB = new b2Math_21.b2Rot();
-                    this.m_lalcB = new b2Math_21.b2Vec2();
-                    this.m_K = new b2Math_21.b2Mat22();
+                    this.m_localAnchorB = new b2Math_19.b2Vec2();
+                    this.m_targetA = new b2Math_19.b2Vec2();
+                    this.m_impulse = new b2Math_19.b2Vec2();
+                    this.m_rB = new b2Math_19.b2Vec2();
+                    this.m_localCenterB = new b2Math_19.b2Vec2();
+                    this.m_mass = new b2Math_19.b2Mat22();
+                    this.m_C = new b2Math_19.b2Vec2();
+                    this.m_qB = new b2Math_19.b2Rot();
+                    this.m_lalcB = new b2Math_19.b2Vec2();
+                    this.m_K = new b2Math_19.b2Mat22();
                     ///b2Assert(def.target.IsValid());
                     ///b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0);
                     ///b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0);
                     ///b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
                     this.m_targetA.Copy(def.target);
-                    b2Math_21.b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
+                    b2Math_19.b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
                     this.m_maxForce = def.maxForce;
                     this.m_impulse.SetZero();
                     this.m_frequencyHz = def.frequencyHz;
@@ -8226,7 +7845,7 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                     const qB = this.m_qB.SetAngle(aB);
                     const mass = this.m_bodyB.GetMass();
                     // Frequency
-                    const omega = 2 * b2Settings_17.b2_pi * this.m_frequencyHz;
+                    const omega = 2 * b2Settings_16.b2_pi * this.m_frequencyHz;
                     // Damping coefficient
                     const d = 2 * mass * this.m_dampingRatio * omega;
                     // Spring stiffness
@@ -8242,8 +7861,8 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                     }
                     this.m_beta = h * k * this.m_gamma;
                     // Compute the effective mass matrix.
-                    b2Math_21.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math_21.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_19.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math_19.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
                     //      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
                     //        [    0     1/m1+1/m2]           [-r1.x*r1.y r1.x*r1.x]           [-r1.x*r1.y r1.x*r1.x]
@@ -8265,7 +7884,7 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                         // vB += m_invMassB * m_impulse;
                         vB.x += this.m_invMassB * this.m_impulse.x;
                         vB.y += this.m_invMassB * this.m_impulse.y;
-                        wB += this.m_invIB * b2Math_21.b2Vec2.CrossVV(this.m_rB, this.m_impulse);
+                        wB += this.m_invIB * b2Math_19.b2Vec2.CrossVV(this.m_rB, this.m_impulse);
                     }
                     else {
                         this.m_impulse.SetZero();
@@ -8278,22 +7897,22 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                     let wB = data.velocities[this.m_indexB].w;
                     // Cdot = v + cross(w, r)
                     // b2Vec2 Cdot = vB + b2Cross(wB, m_rB);
-                    const Cdot = b2Math_21.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2MouseJoint.SolveVelocityConstraints_s_Cdot);
+                    const Cdot = b2Math_19.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2MouseJoint.SolveVelocityConstraints_s_Cdot);
                     //  b2Vec2 impulse = b2Mul(m_mass, -(Cdot + m_C + m_gamma * m_impulse));
-                    const impulse = b2Math_21.b2Mat22.MulMV(this.m_mass, b2Math_21.b2Vec2.AddVV(Cdot, b2Math_21.b2Vec2.AddVV(this.m_C, b2Math_21.b2Vec2.MulSV(this.m_gamma, this.m_impulse, b2Math_21.b2Vec2.s_t0), b2Math_21.b2Vec2.s_t0), b2Math_21.b2Vec2.s_t0).SelfNeg(), b2MouseJoint.SolveVelocityConstraints_s_impulse);
+                    const impulse = b2Math_19.b2Mat22.MulMV(this.m_mass, b2Math_19.b2Vec2.AddVV(Cdot, b2Math_19.b2Vec2.AddVV(this.m_C, b2Math_19.b2Vec2.MulSV(this.m_gamma, this.m_impulse, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.s_t0).SelfNeg(), b2MouseJoint.SolveVelocityConstraints_s_impulse);
                     // b2Vec2 oldImpulse = m_impulse;
                     const oldImpulse = b2MouseJoint.SolveVelocityConstraints_s_oldImpulse.Copy(this.m_impulse);
                     // m_impulse += impulse;
                     this.m_impulse.SelfAdd(impulse);
                     const maxImpulse = data.step.dt * this.m_maxForce;
-                    if (this.m_impulse.GetLength() > maxImpulse * maxImpulse) {
+                    if (this.m_impulse.LengthSquared() > maxImpulse * maxImpulse) {
                         this.m_impulse.SelfMul(maxImpulse / this.m_impulse.Length());
                     }
                     // impulse = m_impulse - oldImpulse;
-                    b2Math_21.b2Vec2.SubVV(this.m_impulse, oldImpulse, impulse);
+                    b2Math_19.b2Vec2.SubVV(this.m_impulse, oldImpulse, impulse);
                     // vB += m_invMassB * impulse;
                     vB.SelfMulAdd(this.m_invMassB, impulse);
-                    wB += this.m_invIB * b2Math_21.b2Vec2.CrossVV(this.m_rB, impulse);
+                    wB += this.m_invIB * b2Math_19.b2Vec2.CrossVV(this.m_rB, impulse);
                     // data.velocities[this.m_indexB].v = vB;
                     data.velocities[this.m_indexB].w = wB;
                 }
@@ -8307,7 +7926,7 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
                 }
                 GetReactionForce(inv_dt, out) {
-                    return b2Math_21.b2Vec2.MulSV(inv_dt, this.m_impulse, out);
+                    return b2Math_19.b2Vec2.MulSV(inv_dt, this.m_impulse, out);
                 }
                 GetReactionTorque(inv_dt) {
                     return 0;
@@ -8319,10 +7938,10 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
                     this.m_targetA.SelfSub(newOrigin);
                 }
             };
-            b2MouseJoint.SolveVelocityConstraints_s_Cdot = new b2Math_21.b2Vec2();
-            b2MouseJoint.SolveVelocityConstraints_s_impulse = new b2Math_21.b2Vec2();
-            b2MouseJoint.SolveVelocityConstraints_s_oldImpulse = new b2Math_21.b2Vec2();
-            exports_27("b2MouseJoint", b2MouseJoint);
+            b2MouseJoint.SolveVelocityConstraints_s_Cdot = new b2Math_19.b2Vec2();
+            b2MouseJoint.SolveVelocityConstraints_s_impulse = new b2Math_19.b2Vec2();
+            b2MouseJoint.SolveVelocityConstraints_s_oldImpulse = new b2Math_19.b2Vec2();
+            exports_23("b2MouseJoint", b2MouseJoint);
         }
     }
 });
@@ -8343,33 +7962,33 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_28, context_28) {
+System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_24, context_24) {
     "use strict";
-    var __moduleName = context_28 && context_28.id;
-    var b2Settings_18, b2Math_22, b2Joint_9;
+    var __moduleName = context_24 && context_24.id;
+    var b2Settings_17, b2Math_20, b2Joint_9;
     var b2_minPulleyLength, b2PulleyJointDef, b2PulleyJoint;
     return {
         setters:[
-            function (b2Settings_18_1) {
-                b2Settings_18 = b2Settings_18_1;
+            function (b2Settings_17_1) {
+                b2Settings_17 = b2Settings_17_1;
             },
-            function (b2Math_22_1) {
-                b2Math_22 = b2Math_22_1;
+            function (b2Math_20_1) {
+                b2Math_20 = b2Math_20_1;
             },
             function (b2Joint_9_1) {
                 b2Joint_9 = b2Joint_9_1;
             }],
         execute: function() {
-            exports_28("b2_minPulleyLength", b2_minPulleyLength = 2);
+            exports_24("b2_minPulleyLength", b2_minPulleyLength = 2);
             /// Pulley joint definition. This requires two ground anchors,
             /// two dynamic body anchor points, and a pulley ratio.
             b2PulleyJointDef = class b2PulleyJointDef extends b2Joint_9.b2JointDef {
                 constructor() {
                     super(4 /* e_pulleyJoint */);
-                    this.groundAnchorA = new b2Math_22.b2Vec2(-1, 1);
-                    this.groundAnchorB = new b2Math_22.b2Vec2(1, 1);
-                    this.localAnchorA = new b2Math_22.b2Vec2(-1, 0);
-                    this.localAnchorB = new b2Math_22.b2Vec2(1, 0);
+                    this.groundAnchorA = new b2Math_20.b2Vec2(-1, 1);
+                    this.groundAnchorB = new b2Math_20.b2Vec2(1, 1);
+                    this.localAnchorA = new b2Math_20.b2Vec2(-1, 0);
+                    this.localAnchorB = new b2Math_20.b2Vec2(1, 0);
                     this.lengthA = 0;
                     this.lengthB = 0;
                     this.ratio = 1;
@@ -8382,44 +8001,44 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     this.groundAnchorB.Copy(groundB);
                     this.bodyA.GetLocalPoint(anchorA, this.localAnchorA);
                     this.bodyB.GetLocalPoint(anchorB, this.localAnchorB);
-                    this.lengthA = b2Math_22.b2Vec2.DistanceVV(anchorA, groundA);
-                    this.lengthB = b2Math_22.b2Vec2.DistanceVV(anchorB, groundB);
+                    this.lengthA = b2Math_20.b2Vec2.DistanceVV(anchorA, groundA);
+                    this.lengthB = b2Math_20.b2Vec2.DistanceVV(anchorB, groundB);
                     this.ratio = r;
                     ///b2Assert(this.ratio > b2_epsilon);
                 }
             };
-            exports_28("b2PulleyJointDef", b2PulleyJointDef);
+            exports_24("b2PulleyJointDef", b2PulleyJointDef);
             b2PulleyJoint = class b2PulleyJoint extends b2Joint_9.b2Joint {
                 constructor(def) {
                     super(def);
-                    this.m_groundAnchorA = new b2Math_22.b2Vec2();
-                    this.m_groundAnchorB = new b2Math_22.b2Vec2();
+                    this.m_groundAnchorA = new b2Math_20.b2Vec2();
+                    this.m_groundAnchorB = new b2Math_20.b2Vec2();
                     this.m_lengthA = 0;
                     this.m_lengthB = 0;
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_22.b2Vec2();
-                    this.m_localAnchorB = new b2Math_22.b2Vec2();
+                    this.m_localAnchorA = new b2Math_20.b2Vec2();
+                    this.m_localAnchorB = new b2Math_20.b2Vec2();
                     this.m_constant = 0;
                     this.m_ratio = 0;
                     this.m_impulse = 0;
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_uA = new b2Math_22.b2Vec2();
-                    this.m_uB = new b2Math_22.b2Vec2();
-                    this.m_rA = new b2Math_22.b2Vec2();
-                    this.m_rB = new b2Math_22.b2Vec2();
-                    this.m_localCenterA = new b2Math_22.b2Vec2();
-                    this.m_localCenterB = new b2Math_22.b2Vec2();
+                    this.m_uA = new b2Math_20.b2Vec2();
+                    this.m_uB = new b2Math_20.b2Vec2();
+                    this.m_rA = new b2Math_20.b2Vec2();
+                    this.m_rB = new b2Math_20.b2Vec2();
+                    this.m_localCenterA = new b2Math_20.b2Vec2();
+                    this.m_localCenterB = new b2Math_20.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
                     this.m_mass = 0;
-                    this.m_qA = new b2Math_22.b2Rot();
-                    this.m_qB = new b2Math_22.b2Rot();
-                    this.m_lalcA = new b2Math_22.b2Vec2();
-                    this.m_lalcB = new b2Math_22.b2Vec2();
+                    this.m_qA = new b2Math_20.b2Rot();
+                    this.m_qB = new b2Math_20.b2Rot();
+                    this.m_lalcA = new b2Math_20.b2Vec2();
+                    this.m_lalcB = new b2Math_20.b2Vec2();
                     this.m_groundAnchorA.Copy(def.groundAnchorA);
                     this.m_groundAnchorB.Copy(def.groundAnchorB);
                     this.m_localAnchorA.Copy(def.localAnchorA);
@@ -8451,11 +8070,11 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     // b2Rot qA(aA), qB(aB);
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math_22.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_20.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math_20.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math_22.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_20.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math_20.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // Get the pulley axes.
                     // m_uA = cA + m_rA - m_groundAnchorA;
                     this.m_uA.Copy(cA).SelfAdd(this.m_rA).SelfSub(this.m_groundAnchorA);
@@ -8463,21 +8082,21 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     this.m_uB.Copy(cB).SelfAdd(this.m_rB).SelfSub(this.m_groundAnchorB);
                     const lengthA = this.m_uA.Length();
                     const lengthB = this.m_uB.Length();
-                    if (lengthA > 10 * b2Settings_18.b2_linearSlop) {
+                    if (lengthA > 10 * b2Settings_17.b2_linearSlop) {
                         this.m_uA.SelfMul(1 / lengthA);
                     }
                     else {
                         this.m_uA.SetZero();
                     }
-                    if (lengthB > 10 * b2Settings_18.b2_linearSlop) {
+                    if (lengthB > 10 * b2Settings_17.b2_linearSlop) {
                         this.m_uB.SelfMul(1 / lengthB);
                     }
                     else {
                         this.m_uB.SetZero();
                     }
                     // Compute effective mass.
-                    const ruA = b2Math_22.b2Vec2.CrossVV(this.m_rA, this.m_uA);
-                    const ruB = b2Math_22.b2Vec2.CrossVV(this.m_rB, this.m_uB);
+                    const ruA = b2Math_20.b2Vec2.CrossVV(this.m_rA, this.m_uA);
+                    const ruB = b2Math_20.b2Vec2.CrossVV(this.m_rB, this.m_uB);
                     const mA = this.m_invMassA + this.m_invIA * ruA * ruA;
                     const mB = this.m_invMassB + this.m_invIB * ruB * ruB;
                     this.m_mass = mA + this.m_ratio * this.m_ratio * mB;
@@ -8489,15 +8108,15 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                         this.m_impulse *= data.step.dtRatio;
                         // Warm starting.
                         // b2Vec2 PA = -(m_impulse) * m_uA;
-                        const PA = b2Math_22.b2Vec2.MulSV(-(this.m_impulse), this.m_uA, b2PulleyJoint.InitVelocityConstraints_s_PA);
+                        const PA = b2Math_20.b2Vec2.MulSV(-(this.m_impulse), this.m_uA, b2PulleyJoint.InitVelocityConstraints_s_PA);
                         // b2Vec2 PB = (-m_ratio * m_impulse) * m_uB;
-                        const PB = b2Math_22.b2Vec2.MulSV((-this.m_ratio * this.m_impulse), this.m_uB, b2PulleyJoint.InitVelocityConstraints_s_PB);
+                        const PB = b2Math_20.b2Vec2.MulSV((-this.m_ratio * this.m_impulse), this.m_uB, b2PulleyJoint.InitVelocityConstraints_s_PB);
                         // vA += m_invMassA * PA;
                         vA.SelfMulAdd(this.m_invMassA, PA);
-                        wA += this.m_invIA * b2Math_22.b2Vec2.CrossVV(this.m_rA, PA);
+                        wA += this.m_invIA * b2Math_20.b2Vec2.CrossVV(this.m_rA, PA);
                         // vB += m_invMassB * PB;
                         vB.SelfMulAdd(this.m_invMassB, PB);
-                        wB += this.m_invIB * b2Math_22.b2Vec2.CrossVV(this.m_rB, PB);
+                        wB += this.m_invIB * b2Math_20.b2Vec2.CrossVV(this.m_rB, PB);
                     }
                     else {
                         this.m_impulse = 0;
@@ -8513,22 +8132,22 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     const vB = data.velocities[this.m_indexB].v;
                     let wB = data.velocities[this.m_indexB].w;
                     // b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-                    const vpA = b2Math_22.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2PulleyJoint.SolveVelocityConstraints_s_vpA);
+                    const vpA = b2Math_20.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2PulleyJoint.SolveVelocityConstraints_s_vpA);
                     // b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-                    const vpB = b2Math_22.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2PulleyJoint.SolveVelocityConstraints_s_vpB);
-                    const Cdot = -b2Math_22.b2Vec2.DotVV(this.m_uA, vpA) - this.m_ratio * b2Math_22.b2Vec2.DotVV(this.m_uB, vpB);
+                    const vpB = b2Math_20.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2PulleyJoint.SolveVelocityConstraints_s_vpB);
+                    const Cdot = -b2Math_20.b2Vec2.DotVV(this.m_uA, vpA) - this.m_ratio * b2Math_20.b2Vec2.DotVV(this.m_uB, vpB);
                     const impulse = -this.m_mass * Cdot;
                     this.m_impulse += impulse;
                     // b2Vec2 PA = -impulse * m_uA;
-                    const PA = b2Math_22.b2Vec2.MulSV(-impulse, this.m_uA, b2PulleyJoint.SolveVelocityConstraints_s_PA);
+                    const PA = b2Math_20.b2Vec2.MulSV(-impulse, this.m_uA, b2PulleyJoint.SolveVelocityConstraints_s_PA);
                     // b2Vec2 PB = -m_ratio * impulse * m_uB;
-                    const PB = b2Math_22.b2Vec2.MulSV(-this.m_ratio * impulse, this.m_uB, b2PulleyJoint.SolveVelocityConstraints_s_PB);
+                    const PB = b2Math_20.b2Vec2.MulSV(-this.m_ratio * impulse, this.m_uB, b2PulleyJoint.SolveVelocityConstraints_s_PB);
                     // vA += m_invMassA * PA;
                     vA.SelfMulAdd(this.m_invMassA, PA);
-                    wA += this.m_invIA * b2Math_22.b2Vec2.CrossVV(this.m_rA, PA);
+                    wA += this.m_invIA * b2Math_20.b2Vec2.CrossVV(this.m_rA, PA);
                     // vB += m_invMassB * PB;
                     vB.SelfMulAdd(this.m_invMassB, PB);
-                    wB += this.m_invIB * b2Math_22.b2Vec2.CrossVV(this.m_rB, PB);
+                    wB += this.m_invIB * b2Math_20.b2Vec2.CrossVV(this.m_rB, PB);
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
                     // data.velocities[this.m_indexB].v = vB;
@@ -8542,11 +8161,11 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     // b2Rot qA(aA), qB(aB);
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_22.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_20.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_20.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_22.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_20.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_20.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // Get the pulley axes.
                     // b2Vec2 uA = cA + rA - m_groundAnchorA;
                     const uA = this.m_uA.Copy(cA).SelfAdd(rA).SelfSub(this.m_groundAnchorA);
@@ -8554,21 +8173,21 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     const uB = this.m_uB.Copy(cB).SelfAdd(rB).SelfSub(this.m_groundAnchorB);
                     const lengthA = uA.Length();
                     const lengthB = uB.Length();
-                    if (lengthA > 10 * b2Settings_18.b2_linearSlop) {
+                    if (lengthA > 10 * b2Settings_17.b2_linearSlop) {
                         uA.SelfMul(1 / lengthA);
                     }
                     else {
                         uA.SetZero();
                     }
-                    if (lengthB > 10 * b2Settings_18.b2_linearSlop) {
+                    if (lengthB > 10 * b2Settings_17.b2_linearSlop) {
                         uB.SelfMul(1 / lengthB);
                     }
                     else {
                         uB.SetZero();
                     }
                     // Compute effective mass.
-                    const ruA = b2Math_22.b2Vec2.CrossVV(rA, uA);
-                    const ruB = b2Math_22.b2Vec2.CrossVV(rB, uB);
+                    const ruA = b2Math_20.b2Vec2.CrossVV(rA, uA);
+                    const ruB = b2Math_20.b2Vec2.CrossVV(rB, uB);
                     const mA = this.m_invMassA + this.m_invIA * ruA * ruA;
                     const mB = this.m_invMassB + this.m_invIB * ruB * ruB;
                     let mass = mA + this.m_ratio * this.m_ratio * mB;
@@ -8576,23 +8195,23 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                         mass = 1 / mass;
                     }
                     const C = this.m_constant - lengthA - this.m_ratio * lengthB;
-                    const linearError = b2Math_22.b2Abs(C);
+                    const linearError = b2Math_20.b2Abs(C);
                     const impulse = -mass * C;
                     // b2Vec2 PA = -impulse * uA;
-                    const PA = b2Math_22.b2Vec2.MulSV(-impulse, uA, b2PulleyJoint.SolvePositionConstraints_s_PA);
+                    const PA = b2Math_20.b2Vec2.MulSV(-impulse, uA, b2PulleyJoint.SolvePositionConstraints_s_PA);
                     // b2Vec2 PB = -m_ratio * impulse * uB;
-                    const PB = b2Math_22.b2Vec2.MulSV(-this.m_ratio * impulse, uB, b2PulleyJoint.SolvePositionConstraints_s_PB);
+                    const PB = b2Math_20.b2Vec2.MulSV(-this.m_ratio * impulse, uB, b2PulleyJoint.SolvePositionConstraints_s_PB);
                     // cA += m_invMassA * PA;
                     cA.SelfMulAdd(this.m_invMassA, PA);
-                    aA += this.m_invIA * b2Math_22.b2Vec2.CrossVV(rA, PA);
+                    aA += this.m_invIA * b2Math_20.b2Vec2.CrossVV(rA, PA);
                     // cB += m_invMassB * PB;
                     cB.SelfMulAdd(this.m_invMassB, PB);
-                    aB += this.m_invIB * b2Math_22.b2Vec2.CrossVV(rB, PB);
+                    aB += this.m_invIB * b2Math_20.b2Vec2.CrossVV(rB, PB);
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return linearError < b2Settings_18.b2_linearSlop;
+                    return linearError < b2Settings_17.b2_linearSlop;
                 }
                 GetAnchorA(out) {
                     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
@@ -8630,7 +8249,7 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     // return d.Length();
                     const p = this.m_bodyA.GetWorldPoint(this.m_localAnchorA, b2PulleyJoint.GetCurrentLengthA_s_p);
                     const s = this.m_groundAnchorA;
-                    return b2Math_22.b2Vec2.DistanceVV(p, s);
+                    return b2Math_20.b2Vec2.DistanceVV(p, s);
                 }
                 GetCurrentLengthB() {
                     // b2Vec2 p = m_bodyB->GetWorldPoint(m_localAnchorB);
@@ -8639,7 +8258,7 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     // return d.Length();
                     const p = this.m_bodyB.GetWorldPoint(this.m_localAnchorB, b2PulleyJoint.GetCurrentLengthB_s_p);
                     const s = this.m_groundAnchorB;
-                    return b2Math_22.b2Vec2.DistanceVV(p, s);
+                    return b2Math_20.b2Vec2.DistanceVV(p, s);
                 }
                 Dump(log) {
                     const indexA = this.m_bodyA.m_islandIndex;
@@ -8662,17 +8281,17 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
                     this.m_groundAnchorB.SelfSub(newOrigin);
                 }
             };
-            b2PulleyJoint.InitVelocityConstraints_s_PA = new b2Math_22.b2Vec2();
-            b2PulleyJoint.InitVelocityConstraints_s_PB = new b2Math_22.b2Vec2();
-            b2PulleyJoint.SolveVelocityConstraints_s_vpA = new b2Math_22.b2Vec2();
-            b2PulleyJoint.SolveVelocityConstraints_s_vpB = new b2Math_22.b2Vec2();
-            b2PulleyJoint.SolveVelocityConstraints_s_PA = new b2Math_22.b2Vec2();
-            b2PulleyJoint.SolveVelocityConstraints_s_PB = new b2Math_22.b2Vec2();
-            b2PulleyJoint.SolvePositionConstraints_s_PA = new b2Math_22.b2Vec2();
-            b2PulleyJoint.SolvePositionConstraints_s_PB = new b2Math_22.b2Vec2();
-            b2PulleyJoint.GetCurrentLengthA_s_p = new b2Math_22.b2Vec2();
-            b2PulleyJoint.GetCurrentLengthB_s_p = new b2Math_22.b2Vec2();
-            exports_28("b2PulleyJoint", b2PulleyJoint);
+            b2PulleyJoint.InitVelocityConstraints_s_PA = new b2Math_20.b2Vec2();
+            b2PulleyJoint.InitVelocityConstraints_s_PB = new b2Math_20.b2Vec2();
+            b2PulleyJoint.SolveVelocityConstraints_s_vpA = new b2Math_20.b2Vec2();
+            b2PulleyJoint.SolveVelocityConstraints_s_vpB = new b2Math_20.b2Vec2();
+            b2PulleyJoint.SolveVelocityConstraints_s_PA = new b2Math_20.b2Vec2();
+            b2PulleyJoint.SolveVelocityConstraints_s_PB = new b2Math_20.b2Vec2();
+            b2PulleyJoint.SolvePositionConstraints_s_PA = new b2Math_20.b2Vec2();
+            b2PulleyJoint.SolvePositionConstraints_s_PB = new b2Math_20.b2Vec2();
+            b2PulleyJoint.GetCurrentLengthA_s_p = new b2Math_20.b2Vec2();
+            b2PulleyJoint.GetCurrentLengthB_s_p = new b2Math_20.b2Vec2();
+            exports_24("b2PulleyJoint", b2PulleyJoint);
         }
     }
 });
@@ -8693,18 +8312,18 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_29, context_29) {
+System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_25, context_25) {
     "use strict";
-    var __moduleName = context_29 && context_29.id;
-    var b2Settings_19, b2Math_23, b2Joint_10;
+    var __moduleName = context_25 && context_25.id;
+    var b2Settings_18, b2Math_21, b2Joint_10;
     var b2RopeJointDef, b2RopeJoint;
     return {
         setters:[
-            function (b2Settings_19_1) {
-                b2Settings_19 = b2Settings_19_1;
+            function (b2Settings_18_1) {
+                b2Settings_18 = b2Settings_18_1;
             },
-            function (b2Math_23_1) {
-                b2Math_23 = b2Math_23_1;
+            function (b2Math_21_1) {
+                b2Math_21 = b2Math_21_1;
             },
             function (b2Joint_10_1) {
                 b2Joint_10 = b2Joint_10_1;
@@ -8717,39 +8336,39 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
             b2RopeJointDef = class b2RopeJointDef extends b2Joint_10.b2JointDef {
                 constructor() {
                     super(10 /* e_ropeJoint */);
-                    this.localAnchorA = new b2Math_23.b2Vec2(-1, 0);
-                    this.localAnchorB = new b2Math_23.b2Vec2(1, 0);
+                    this.localAnchorA = new b2Math_21.b2Vec2(-1, 0);
+                    this.localAnchorB = new b2Math_21.b2Vec2(1, 0);
                     this.maxLength = 0;
                 }
             };
-            exports_29("b2RopeJointDef", b2RopeJointDef);
+            exports_25("b2RopeJointDef", b2RopeJointDef);
             b2RopeJoint = class b2RopeJoint extends b2Joint_10.b2Joint {
                 constructor(def) {
                     super(def);
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_23.b2Vec2();
-                    this.m_localAnchorB = new b2Math_23.b2Vec2();
+                    this.m_localAnchorA = new b2Math_21.b2Vec2();
+                    this.m_localAnchorB = new b2Math_21.b2Vec2();
                     this.m_maxLength = 0;
                     this.m_length = 0;
                     this.m_impulse = 0;
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_u = new b2Math_23.b2Vec2();
-                    this.m_rA = new b2Math_23.b2Vec2();
-                    this.m_rB = new b2Math_23.b2Vec2();
-                    this.m_localCenterA = new b2Math_23.b2Vec2();
-                    this.m_localCenterB = new b2Math_23.b2Vec2();
+                    this.m_u = new b2Math_21.b2Vec2();
+                    this.m_rA = new b2Math_21.b2Vec2();
+                    this.m_rB = new b2Math_21.b2Vec2();
+                    this.m_localCenterA = new b2Math_21.b2Vec2();
+                    this.m_localCenterB = new b2Math_21.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
                     this.m_mass = 0;
                     this.m_state = 0 /* e_inactiveLimit */;
-                    this.m_qA = new b2Math_23.b2Rot();
-                    this.m_qB = new b2Math_23.b2Rot();
-                    this.m_lalcA = new b2Math_23.b2Vec2();
-                    this.m_lalcB = new b2Math_23.b2Vec2();
+                    this.m_qA = new b2Math_21.b2Rot();
+                    this.m_qB = new b2Math_21.b2Rot();
+                    this.m_lalcA = new b2Math_21.b2Vec2();
+                    this.m_lalcB = new b2Math_21.b2Vec2();
                     this.m_localAnchorA.Copy(def.localAnchorA);
                     this.m_localAnchorB.Copy(def.localAnchorB);
                     this.m_maxLength = def.maxLength;
@@ -8773,11 +8392,11 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                     let wB = data.velocities[this.m_indexB].w;
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // this.m_rA = b2Mul(qA, this.m_localAnchorA - this.m_localCenterA);
-                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math_23.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_21.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math_21.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // this.m_rB = b2Mul(qB, this.m_localAnchorB - this.m_localCenterB);
-                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math_23.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_21.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math_21.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // this.m_u = cB + this.m_rB - cA - this.m_rA;
                     this.m_u.Copy(cB).SelfAdd(this.m_rB).SelfSub(cA).SelfSub(this.m_rA);
                     this.m_length = this.m_u.Length();
@@ -8788,7 +8407,7 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                     else {
                         this.m_state = 0 /* e_inactiveLimit */;
                     }
-                    if (this.m_length > b2Settings_19.b2_linearSlop) {
+                    if (this.m_length > b2Settings_18.b2_linearSlop) {
                         this.m_u.SelfMul(1 / this.m_length);
                     }
                     else {
@@ -8798,21 +8417,21 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                         return;
                     }
                     // Compute effective mass.
-                    const crA = b2Math_23.b2Vec2.CrossVV(this.m_rA, this.m_u);
-                    const crB = b2Math_23.b2Vec2.CrossVV(this.m_rB, this.m_u);
+                    const crA = b2Math_21.b2Vec2.CrossVV(this.m_rA, this.m_u);
+                    const crB = b2Math_21.b2Vec2.CrossVV(this.m_rB, this.m_u);
                     const invMass = this.m_invMassA + this.m_invIA * crA * crA + this.m_invMassB + this.m_invIB * crB * crB;
                     this.m_mass = invMass !== 0 ? 1 / invMass : 0;
                     if (data.step.warmStarting) {
                         // Scale the impulse to support a variable time step.
                         this.m_impulse *= data.step.dtRatio;
                         // b2Vec2 P = m_impulse * m_u;
-                        const P = b2Math_23.b2Vec2.MulSV(this.m_impulse, this.m_u, b2RopeJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math_21.b2Vec2.MulSV(this.m_impulse, this.m_u, b2RopeJoint.InitVelocityConstraints_s_P);
                         // vA -= m_invMassA * P;
                         vA.SelfMulSub(this.m_invMassA, P);
-                        wA -= this.m_invIA * b2Math_23.b2Vec2.CrossVV(this.m_rA, P);
+                        wA -= this.m_invIA * b2Math_21.b2Vec2.CrossVV(this.m_rA, P);
                         // vB += m_invMassB * P;
                         vB.SelfMulAdd(this.m_invMassB, P);
-                        wB += this.m_invIB * b2Math_23.b2Vec2.CrossVV(this.m_rB, P);
+                        wB += this.m_invIB * b2Math_21.b2Vec2.CrossVV(this.m_rB, P);
                     }
                     else {
                         this.m_impulse = 0;
@@ -8829,29 +8448,29 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                     let wB = data.velocities[this.m_indexB].w;
                     // Cdot = dot(u, v + cross(w, r))
                     // b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-                    const vpA = b2Math_23.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2RopeJoint.SolveVelocityConstraints_s_vpA);
+                    const vpA = b2Math_21.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2RopeJoint.SolveVelocityConstraints_s_vpA);
                     // b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-                    const vpB = b2Math_23.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2RopeJoint.SolveVelocityConstraints_s_vpB);
+                    const vpB = b2Math_21.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2RopeJoint.SolveVelocityConstraints_s_vpB);
                     // float32 C = m_length - m_maxLength;
                     const C = this.m_length - this.m_maxLength;
                     // float32 Cdot = b2Dot(m_u, vpB - vpA);
-                    let Cdot = b2Math_23.b2Vec2.DotVV(this.m_u, b2Math_23.b2Vec2.SubVV(vpB, vpA, b2Math_23.b2Vec2.s_t0));
+                    let Cdot = b2Math_21.b2Vec2.DotVV(this.m_u, b2Math_21.b2Vec2.SubVV(vpB, vpA, b2Math_21.b2Vec2.s_t0));
                     // Predictive constraint.
                     if (C < 0) {
                         Cdot += data.step.inv_dt * C;
                     }
                     let impulse = -this.m_mass * Cdot;
                     const oldImpulse = this.m_impulse;
-                    this.m_impulse = b2Math_23.b2Min(0, this.m_impulse + impulse);
+                    this.m_impulse = b2Math_21.b2Min(0, this.m_impulse + impulse);
                     impulse = this.m_impulse - oldImpulse;
                     // b2Vec2 P = impulse * m_u;
-                    const P = b2Math_23.b2Vec2.MulSV(impulse, this.m_u, b2RopeJoint.SolveVelocityConstraints_s_P);
+                    const P = b2Math_21.b2Vec2.MulSV(impulse, this.m_u, b2RopeJoint.SolveVelocityConstraints_s_P);
                     // vA -= m_invMassA * P;
                     vA.SelfMulSub(this.m_invMassA, P);
-                    wA -= this.m_invIA * b2Math_23.b2Vec2.CrossVV(this.m_rA, P);
+                    wA -= this.m_invIA * b2Math_21.b2Vec2.CrossVV(this.m_rA, P);
                     // vB += m_invMassB * P;
                     vB.SelfMulAdd(this.m_invMassB, P);
-                    wB += this.m_invIB * b2Math_23.b2Vec2.CrossVV(this.m_rB, P);
+                    wB += this.m_invIB * b2Math_21.b2Vec2.CrossVV(this.m_rB, P);
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
                     // data.velocities[this.m_indexB].v = vB;
@@ -8864,30 +8483,30 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                     let aB = data.positions[this.m_indexB].a;
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // b2Vec2 rA = b2Mul(qA, this.m_localAnchorA - this.m_localCenterA);
-                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_23.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_21.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_21.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, this.m_localAnchorB - this.m_localCenterB);
-                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_23.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_21.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_21.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Vec2 u = cB + rB - cA - rA;
                     const u = this.m_u.Copy(cB).SelfAdd(rB).SelfSub(cA).SelfSub(rA);
                     const length = u.Normalize();
                     let C = length - this.m_maxLength;
-                    C = b2Math_23.b2Clamp(C, 0, b2Settings_19.b2_maxLinearCorrection);
+                    C = b2Math_21.b2Clamp(C, 0, b2Settings_18.b2_maxLinearCorrection);
                     const impulse = -this.m_mass * C;
                     // b2Vec2 P = impulse * u;
-                    const P = b2Math_23.b2Vec2.MulSV(impulse, u, b2RopeJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math_21.b2Vec2.MulSV(impulse, u, b2RopeJoint.SolvePositionConstraints_s_P);
                     // cA -= m_invMassA * P;
                     cA.SelfMulSub(this.m_invMassA, P);
-                    aA -= this.m_invIA * b2Math_23.b2Vec2.CrossVV(rA, P);
+                    aA -= this.m_invIA * b2Math_21.b2Vec2.CrossVV(rA, P);
                     // cB += m_invMassB * P;
                     cB.SelfMulAdd(this.m_invMassB, P);
-                    aB += this.m_invIB * b2Math_23.b2Vec2.CrossVV(rB, P);
+                    aB += this.m_invIB * b2Math_21.b2Vec2.CrossVV(rB, P);
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return length - this.m_maxLength < b2Settings_19.b2_linearSlop;
+                    return length - this.m_maxLength < b2Settings_18.b2_linearSlop;
                 }
                 GetAnchorA(out) {
                     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
@@ -8896,7 +8515,7 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
                 }
                 GetReactionForce(inv_dt, out) {
-                    const F = b2Math_23.b2Vec2.MulSV((inv_dt * this.m_impulse), this.m_u, out);
+                    const F = b2Math_21.b2Vec2.MulSV((inv_dt * this.m_impulse), this.m_u, out);
                     return F;
                     // return out.Set(inv_dt * this.m_linearImpulse.x, inv_dt * this.m_linearImpulse.y);
                 }
@@ -8925,12 +8544,12 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2RopeJoint.InitVelocityConstraints_s_P = new b2Math_23.b2Vec2();
-            b2RopeJoint.SolveVelocityConstraints_s_vpA = new b2Math_23.b2Vec2();
-            b2RopeJoint.SolveVelocityConstraints_s_vpB = new b2Math_23.b2Vec2();
-            b2RopeJoint.SolveVelocityConstraints_s_P = new b2Math_23.b2Vec2();
-            b2RopeJoint.SolvePositionConstraints_s_P = new b2Math_23.b2Vec2();
-            exports_29("b2RopeJoint", b2RopeJoint);
+            b2RopeJoint.InitVelocityConstraints_s_P = new b2Math_21.b2Vec2();
+            b2RopeJoint.SolveVelocityConstraints_s_vpA = new b2Math_21.b2Vec2();
+            b2RopeJoint.SolveVelocityConstraints_s_vpB = new b2Math_21.b2Vec2();
+            b2RopeJoint.SolveVelocityConstraints_s_P = new b2Math_21.b2Vec2();
+            b2RopeJoint.SolvePositionConstraints_s_P = new b2Math_21.b2Vec2();
+            exports_25("b2RopeJoint", b2RopeJoint);
         }
     }
 });
@@ -8951,18 +8570,18 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_30, context_30) {
+System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_26, context_26) {
     "use strict";
-    var __moduleName = context_30 && context_30.id;
-    var b2Settings_20, b2Math_24, b2Joint_11;
+    var __moduleName = context_26 && context_26.id;
+    var b2Settings_19, b2Math_22, b2Joint_11;
     var b2WeldJointDef, b2WeldJoint;
     return {
         setters:[
-            function (b2Settings_20_1) {
-                b2Settings_20 = b2Settings_20_1;
+            function (b2Settings_19_1) {
+                b2Settings_19 = b2Settings_19_1;
             },
-            function (b2Math_24_1) {
-                b2Math_24 = b2Math_24_1;
+            function (b2Math_22_1) {
+                b2Math_22 = b2Math_22_1;
             },
             function (b2Joint_11_1) {
                 b2Joint_11 = b2Joint_11_1;
@@ -8974,8 +8593,8 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
             b2WeldJointDef = class b2WeldJointDef extends b2Joint_11.b2JointDef {
                 constructor() {
                     super(8 /* e_weldJoint */);
-                    this.localAnchorA = new b2Math_24.b2Vec2();
-                    this.localAnchorB = new b2Math_24.b2Vec2();
+                    this.localAnchorA = new b2Math_22.b2Vec2();
+                    this.localAnchorB = new b2Math_22.b2Vec2();
                     this.referenceAngle = 0;
                     this.frequencyHz = 0;
                     this.dampingRatio = 0;
@@ -8988,7 +8607,7 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                     this.referenceAngle = this.bodyB.GetAngle() - this.bodyA.GetAngle();
                 }
             };
-            exports_30("b2WeldJointDef", b2WeldJointDef);
+            exports_26("b2WeldJointDef", b2WeldJointDef);
             b2WeldJoint = class b2WeldJoint extends b2Joint_11.b2Joint {
                 constructor(def) {
                     super(def);
@@ -8996,28 +8615,28 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                     this.m_dampingRatio = 0;
                     this.m_bias = 0;
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_24.b2Vec2();
-                    this.m_localAnchorB = new b2Math_24.b2Vec2();
+                    this.m_localAnchorA = new b2Math_22.b2Vec2();
+                    this.m_localAnchorB = new b2Math_22.b2Vec2();
                     this.m_referenceAngle = 0;
                     this.m_gamma = 0;
-                    this.m_impulse = new b2Math_24.b2Vec3(0, 0, 0);
+                    this.m_impulse = new b2Math_22.b2Vec3(0, 0, 0);
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_rA = new b2Math_24.b2Vec2();
-                    this.m_rB = new b2Math_24.b2Vec2();
-                    this.m_localCenterA = new b2Math_24.b2Vec2();
-                    this.m_localCenterB = new b2Math_24.b2Vec2();
+                    this.m_rA = new b2Math_22.b2Vec2();
+                    this.m_rB = new b2Math_22.b2Vec2();
+                    this.m_localCenterA = new b2Math_22.b2Vec2();
+                    this.m_localCenterB = new b2Math_22.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
-                    this.m_mass = new b2Math_24.b2Mat33();
-                    this.m_qA = new b2Math_24.b2Rot();
-                    this.m_qB = new b2Math_24.b2Rot();
-                    this.m_lalcA = new b2Math_24.b2Vec2();
-                    this.m_lalcB = new b2Math_24.b2Vec2();
-                    this.m_K = new b2Math_24.b2Mat33();
+                    this.m_mass = new b2Math_22.b2Mat33();
+                    this.m_qA = new b2Math_22.b2Rot();
+                    this.m_qB = new b2Math_22.b2Rot();
+                    this.m_lalcA = new b2Math_22.b2Vec2();
+                    this.m_lalcB = new b2Math_22.b2Vec2();
+                    this.m_K = new b2Math_22.b2Mat33();
                     this.m_frequencyHz = def.frequencyHz;
                     this.m_dampingRatio = def.dampingRatio;
                     this.m_localAnchorA.Copy(def.localAnchorA);
@@ -9042,11 +8661,11 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                     let wB = data.velocities[this.m_indexB].w;
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_24.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    b2Math_24.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    b2Math_22.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_24.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    b2Math_24.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    b2Math_22.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
                     //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
@@ -9072,7 +8691,7 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                         const m = invM > 0 ? 1 / invM : 0;
                         const C = aB - aA - this.m_referenceAngle;
                         // Frequency
-                        const omega = 2 * b2Settings_20.b2_pi * this.m_frequencyHz;
+                        const omega = 2 * b2Settings_19.b2_pi * this.m_frequencyHz;
                         // Damping coefficient
                         const d = 2 * m * this.m_dampingRatio * omega;
                         // Spring stiffness
@@ -9097,10 +8716,10 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                         const P = b2WeldJoint.InitVelocityConstraints_s_P.Set(this.m_impulse.x, this.m_impulse.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math_24.b2Vec2.CrossVV(this.m_rA, P) + this.m_impulse.z);
+                        wA -= iA * (b2Math_22.b2Vec2.CrossVV(this.m_rA, P) + this.m_impulse.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math_24.b2Vec2.CrossVV(this.m_rB, P) + this.m_impulse.z);
+                        wB += iB * (b2Math_22.b2Vec2.CrossVV(this.m_rB, P) + this.m_impulse.z);
                     }
                     else {
                         this.m_impulse.SetZero();
@@ -9124,9 +8743,9 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                         wA -= iA * impulse2;
                         wB += iB * impulse2;
                         // b2Vec2 Cdot1 = vB + b2Vec2.CrossSV(wB, this.m_rB) - vA - b2Vec2.CrossSV(wA, this.m_rA);
-                        const Cdot1 = b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_24.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
+                        const Cdot1 = b2Math_22.b2Vec2.SubVV(b2Math_22.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_22.b2Vec2.s_t0), b2Math_22.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_22.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
                         // b2Vec2 impulse1 = -b2Mul22(m_mass, Cdot1);
-                        const impulse1 = b2Math_24.b2Mat33.MulM33XY(this.m_mass, Cdot1.x, Cdot1.y, b2WeldJoint.SolveVelocityConstraints_s_impulse1).SelfNeg();
+                        const impulse1 = b2Math_22.b2Mat33.MulM33XY(this.m_mass, Cdot1.x, Cdot1.y, b2WeldJoint.SolveVelocityConstraints_s_impulse1).SelfNeg();
                         this.m_impulse.x += impulse1.x;
                         this.m_impulse.y += impulse1.y;
                         // b2Vec2 P = impulse1;
@@ -9134,28 +8753,28 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
                         // wA -= iA * b2Cross(m_rA, P);
-                        wA -= iA * b2Math_24.b2Vec2.CrossVV(this.m_rA, P);
+                        wA -= iA * b2Math_22.b2Vec2.CrossVV(this.m_rA, P);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
                         // wB += iB * b2Cross(m_rB, P);
-                        wB += iB * b2Math_24.b2Vec2.CrossVV(this.m_rB, P);
+                        wB += iB * b2Math_22.b2Vec2.CrossVV(this.m_rB, P);
                     }
                     else {
                         // b2Vec2 Cdot1 = vB + b2Cross(wB, this.m_rB) - vA - b2Cross(wA, this.m_rA);
-                        const Cdot1 = b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_24.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
+                        const Cdot1 = b2Math_22.b2Vec2.SubVV(b2Math_22.b2Vec2.AddVCrossSV(vB, wB, this.m_rB, b2Math_22.b2Vec2.s_t0), b2Math_22.b2Vec2.AddVCrossSV(vA, wA, this.m_rA, b2Math_22.b2Vec2.s_t1), b2WeldJoint.SolveVelocityConstraints_s_Cdot1);
                         const Cdot2 = wB - wA;
                         // b2Vec3 const Cdot(Cdot1.x, Cdot1.y, Cdot2);
                         // b2Vec3 impulse = -b2Mul(m_mass, Cdot);
-                        const impulse = b2Math_24.b2Mat33.MulM33XYZ(this.m_mass, Cdot1.x, Cdot1.y, Cdot2, b2WeldJoint.SolveVelocityConstraints_s_impulse).SelfNeg();
+                        const impulse = b2Math_22.b2Mat33.MulM33XYZ(this.m_mass, Cdot1.x, Cdot1.y, Cdot2, b2WeldJoint.SolveVelocityConstraints_s_impulse).SelfNeg();
                         this.m_impulse.SelfAdd(impulse);
                         // b2Vec2 P(impulse.x, impulse.y);
                         const P = b2WeldJoint.SolveVelocityConstraints_s_P.Set(impulse.x, impulse.y);
                         // vA -= mA * P;
                         vA.SelfMulSub(mA, P);
-                        wA -= iA * (b2Math_24.b2Vec2.CrossVV(this.m_rA, P) + impulse.z);
+                        wA -= iA * (b2Math_22.b2Vec2.CrossVV(this.m_rA, P) + impulse.z);
                         // vB += mB * P;
                         vB.SelfMulAdd(mB, P);
-                        wB += iB * (b2Math_24.b2Vec2.CrossVV(this.m_rB, P) + impulse.z);
+                        wB += iB * (b2Math_22.b2Vec2.CrossVV(this.m_rB, P) + impulse.z);
                     }
                     // data.velocities[this.m_indexA].v = vA;
                     data.velocities[this.m_indexA].w = wA;
@@ -9171,11 +8790,11 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_24.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_24.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_22.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_24.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_24.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_22.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_22.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     let positionError, angularError;
                     const K = this.m_K;
                     K.ex.x = mA + mB + rA.y * rA.y * iA + rB.y * rB.y * iB;
@@ -9189,24 +8808,24 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                     K.ez.z = iA + iB;
                     if (this.m_frequencyHz > 0) {
                         // b2Vec2 C1 =  cB + rB - cA - rA;
-                        const C1 = b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVV(cB, rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVV(cA, rA, b2Math_24.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
+                        const C1 = b2Math_22.b2Vec2.SubVV(b2Math_22.b2Vec2.AddVV(cB, rB, b2Math_22.b2Vec2.s_t0), b2Math_22.b2Vec2.AddVV(cA, rA, b2Math_22.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
                         positionError = C1.Length();
                         angularError = 0;
                         // b2Vec2 P = -K.Solve22(C1);
                         const P = K.Solve22(C1.x, C1.y, b2WeldJoint.SolvePositionConstraints_s_P).SelfNeg();
                         // cA -= mA * P;
                         cA.SelfMulSub(mA, P);
-                        aA -= iA * b2Math_24.b2Vec2.CrossVV(rA, P);
+                        aA -= iA * b2Math_22.b2Vec2.CrossVV(rA, P);
                         // cB += mB * P;
                         cB.SelfMulAdd(mB, P);
-                        aB += iB * b2Math_24.b2Vec2.CrossVV(rB, P);
+                        aB += iB * b2Math_22.b2Vec2.CrossVV(rB, P);
                     }
                     else {
                         // b2Vec2 C1 =  cB + rB - cA - rA;
-                        const C1 = b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVV(cB, rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVV(cA, rA, b2Math_24.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
+                        const C1 = b2Math_22.b2Vec2.SubVV(b2Math_22.b2Vec2.AddVV(cB, rB, b2Math_22.b2Vec2.s_t0), b2Math_22.b2Vec2.AddVV(cA, rA, b2Math_22.b2Vec2.s_t1), b2WeldJoint.SolvePositionConstraints_s_C1);
                         const C2 = aB - aA - this.m_referenceAngle;
                         positionError = C1.Length();
-                        angularError = b2Math_24.b2Abs(C2);
+                        angularError = b2Math_22.b2Abs(C2);
                         // b2Vec3 C(C1.x, C1.y, C2);
                         // b2Vec3 impulse = -K.Solve33(C);
                         const impulse = K.Solve33(C1.x, C1.y, C2, b2WeldJoint.SolvePositionConstraints_s_impulse).SelfNeg();
@@ -9214,16 +8833,16 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                         const P = b2WeldJoint.SolvePositionConstraints_s_P.Set(impulse.x, impulse.y);
                         // cA -= mA * P;
                         cA.SelfMulSub(mA, P);
-                        aA -= iA * (b2Math_24.b2Vec2.CrossVV(this.m_rA, P) + impulse.z);
+                        aA -= iA * (b2Math_22.b2Vec2.CrossVV(this.m_rA, P) + impulse.z);
                         // cB += mB * P;
                         cB.SelfMulAdd(mB, P);
-                        aB += iB * (b2Math_24.b2Vec2.CrossVV(this.m_rB, P) + impulse.z);
+                        aB += iB * (b2Math_22.b2Vec2.CrossVV(this.m_rB, P) + impulse.z);
                     }
                     // data.positions[this.m_indexA].c = cA;
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return positionError <= b2Settings_20.b2_linearSlop && angularError <= b2Settings_20.b2_angularSlop;
+                    return positionError <= b2Settings_19.b2_linearSlop && angularError <= b2Settings_19.b2_angularSlop;
                 }
                 GetAnchorA(out) {
                     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
@@ -9261,15 +8880,15 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2WeldJoint.InitVelocityConstraints_s_P = new b2Math_24.b2Vec2();
-            b2WeldJoint.SolveVelocityConstraints_s_Cdot1 = new b2Math_24.b2Vec2();
-            b2WeldJoint.SolveVelocityConstraints_s_impulse1 = new b2Math_24.b2Vec2();
-            b2WeldJoint.SolveVelocityConstraints_s_impulse = new b2Math_24.b2Vec3();
-            b2WeldJoint.SolveVelocityConstraints_s_P = new b2Math_24.b2Vec2();
-            b2WeldJoint.SolvePositionConstraints_s_C1 = new b2Math_24.b2Vec2();
-            b2WeldJoint.SolvePositionConstraints_s_P = new b2Math_24.b2Vec2();
-            b2WeldJoint.SolvePositionConstraints_s_impulse = new b2Math_24.b2Vec3();
-            exports_30("b2WeldJoint", b2WeldJoint);
+            b2WeldJoint.InitVelocityConstraints_s_P = new b2Math_22.b2Vec2();
+            b2WeldJoint.SolveVelocityConstraints_s_Cdot1 = new b2Math_22.b2Vec2();
+            b2WeldJoint.SolveVelocityConstraints_s_impulse1 = new b2Math_22.b2Vec2();
+            b2WeldJoint.SolveVelocityConstraints_s_impulse = new b2Math_22.b2Vec3();
+            b2WeldJoint.SolveVelocityConstraints_s_P = new b2Math_22.b2Vec2();
+            b2WeldJoint.SolvePositionConstraints_s_C1 = new b2Math_22.b2Vec2();
+            b2WeldJoint.SolvePositionConstraints_s_P = new b2Math_22.b2Vec2();
+            b2WeldJoint.SolvePositionConstraints_s_impulse = new b2Math_22.b2Vec3();
+            exports_26("b2WeldJoint", b2WeldJoint);
         }
     }
 });
@@ -9290,18 +8909,18 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_31, context_31) {
+System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_27, context_27) {
     "use strict";
-    var __moduleName = context_31 && context_31.id;
-    var b2Settings_21, b2Math_25, b2Joint_12;
+    var __moduleName = context_27 && context_27.id;
+    var b2Settings_20, b2Math_23, b2Joint_12;
     var b2WheelJointDef, b2WheelJoint;
     return {
         setters:[
-            function (b2Settings_21_1) {
-                b2Settings_21 = b2Settings_21_1;
+            function (b2Settings_20_1) {
+                b2Settings_20 = b2Settings_20_1;
             },
-            function (b2Math_25_1) {
-                b2Math_25 = b2Math_25_1;
+            function (b2Math_23_1) {
+                b2Math_23 = b2Math_23_1;
             },
             function (b2Joint_12_1) {
                 b2Joint_12 = b2Joint_12_1;
@@ -9316,9 +8935,9 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
             b2WheelJointDef = class b2WheelJointDef extends b2Joint_12.b2JointDef {
                 constructor() {
                     super(7 /* e_wheelJoint */);
-                    this.localAnchorA = new b2Math_25.b2Vec2(0, 0);
-                    this.localAnchorB = new b2Math_25.b2Vec2(0, 0);
-                    this.localAxisA = new b2Math_25.b2Vec2(1, 0);
+                    this.localAnchorA = new b2Math_23.b2Vec2(0, 0);
+                    this.localAnchorB = new b2Math_23.b2Vec2(0, 0);
+                    this.localAxisA = new b2Math_23.b2Vec2(1, 0);
                     this.enableMotor = false;
                     this.maxMotorTorque = 0;
                     this.motorSpeed = 0;
@@ -9333,17 +8952,17 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     this.bodyA.GetLocalVector(axis, this.localAxisA);
                 }
             };
-            exports_31("b2WheelJointDef", b2WheelJointDef);
+            exports_27("b2WheelJointDef", b2WheelJointDef);
             b2WheelJoint = class b2WheelJoint extends b2Joint_12.b2Joint {
                 constructor(def) {
                     super(def);
                     this.m_frequencyHz = 0;
                     this.m_dampingRatio = 0;
                     // Solver shared
-                    this.m_localAnchorA = new b2Math_25.b2Vec2();
-                    this.m_localAnchorB = new b2Math_25.b2Vec2();
-                    this.m_localXAxisA = new b2Math_25.b2Vec2();
-                    this.m_localYAxisA = new b2Math_25.b2Vec2();
+                    this.m_localAnchorA = new b2Math_23.b2Vec2();
+                    this.m_localAnchorB = new b2Math_23.b2Vec2();
+                    this.m_localXAxisA = new b2Math_23.b2Vec2();
+                    this.m_localYAxisA = new b2Math_23.b2Vec2();
                     this.m_impulse = 0;
                     this.m_motorImpulse = 0;
                     this.m_springImpulse = 0;
@@ -9353,14 +8972,14 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     // Solver temp
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_localCenterA = new b2Math_25.b2Vec2();
-                    this.m_localCenterB = new b2Math_25.b2Vec2();
+                    this.m_localCenterA = new b2Math_23.b2Vec2();
+                    this.m_localCenterB = new b2Math_23.b2Vec2();
                     this.m_invMassA = 0;
                     this.m_invMassB = 0;
                     this.m_invIA = 0;
                     this.m_invIB = 0;
-                    this.m_ax = new b2Math_25.b2Vec2();
-                    this.m_ay = new b2Math_25.b2Vec2();
+                    this.m_ax = new b2Math_23.b2Vec2();
+                    this.m_ay = new b2Math_23.b2Vec2();
                     this.m_sAx = 0;
                     this.m_sBx = 0;
                     this.m_sAy = 0;
@@ -9370,18 +8989,18 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     this.m_springMass = 0;
                     this.m_bias = 0;
                     this.m_gamma = 0;
-                    this.m_qA = new b2Math_25.b2Rot();
-                    this.m_qB = new b2Math_25.b2Rot();
-                    this.m_lalcA = new b2Math_25.b2Vec2();
-                    this.m_lalcB = new b2Math_25.b2Vec2();
-                    this.m_rA = new b2Math_25.b2Vec2();
-                    this.m_rB = new b2Math_25.b2Vec2();
+                    this.m_qA = new b2Math_23.b2Rot();
+                    this.m_qB = new b2Math_23.b2Rot();
+                    this.m_lalcA = new b2Math_23.b2Vec2();
+                    this.m_lalcB = new b2Math_23.b2Vec2();
+                    this.m_rA = new b2Math_23.b2Vec2();
+                    this.m_rB = new b2Math_23.b2Vec2();
                     this.m_frequencyHz = def.frequencyHz;
                     this.m_dampingRatio = def.dampingRatio;
                     this.m_localAnchorA.Copy(def.localAnchorA);
                     this.m_localAnchorB.Copy(def.localAnchorB);
                     this.m_localXAxisA.Copy(def.localAxisA);
-                    b2Math_25.b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
+                    b2Math_23.b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
                     this.m_maxMotorTorque = def.maxMotorTorque;
                     this.m_motorSpeed = def.motorSpeed;
                     this.m_enableMotor = def.enableMotor;
@@ -9428,21 +9047,21 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // Compute the effective masses.
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_25.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_25.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_23.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_25.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_25.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_23.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Vec2 d = cB + rB - cA - rA;
-                    const d = b2Math_25.b2Vec2.SubVV(b2Math_25.b2Vec2.AddVV(cB, rB, b2Math_25.b2Vec2.s_t0), b2Math_25.b2Vec2.AddVV(cA, rA, b2Math_25.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_d);
+                    const d = b2Math_23.b2Vec2.SubVV(b2Math_23.b2Vec2.AddVV(cB, rB, b2Math_23.b2Vec2.s_t0), b2Math_23.b2Vec2.AddVV(cA, rA, b2Math_23.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_d);
                     // Point to line constraint
                     {
                         // m_ay = b2Mul(qA, m_localYAxisA);
-                        b2Math_25.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_ay);
+                        b2Math_23.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_ay);
                         // m_sAy = b2Cross(d + rA, m_ay);
-                        this.m_sAy = b2Math_25.b2Vec2.CrossVV(b2Math_25.b2Vec2.AddVV(d, rA, b2Math_25.b2Vec2.s_t0), this.m_ay);
+                        this.m_sAy = b2Math_23.b2Vec2.CrossVV(b2Math_23.b2Vec2.AddVV(d, rA, b2Math_23.b2Vec2.s_t0), this.m_ay);
                         // m_sBy = b2Cross(rB, m_ay);
-                        this.m_sBy = b2Math_25.b2Vec2.CrossVV(rB, this.m_ay);
+                        this.m_sBy = b2Math_23.b2Vec2.CrossVV(rB, this.m_ay);
                         this.m_mass = mA + mB + iA * this.m_sAy * this.m_sAy + iB * this.m_sBy * this.m_sBy;
                         if (this.m_mass > 0) {
                             this.m_mass = 1 / this.m_mass;
@@ -9454,17 +9073,17 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     this.m_gamma = 0;
                     if (this.m_frequencyHz > 0) {
                         // m_ax = b2Mul(qA, m_localXAxisA);
-                        b2Math_25.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_ax);
+                        b2Math_23.b2Rot.MulRV(qA, this.m_localXAxisA, this.m_ax);
                         // m_sAx = b2Cross(d + rA, m_ax);
-                        this.m_sAx = b2Math_25.b2Vec2.CrossVV(b2Math_25.b2Vec2.AddVV(d, rA, b2Math_25.b2Vec2.s_t0), this.m_ax);
+                        this.m_sAx = b2Math_23.b2Vec2.CrossVV(b2Math_23.b2Vec2.AddVV(d, rA, b2Math_23.b2Vec2.s_t0), this.m_ax);
                         // m_sBx = b2Cross(rB, m_ax);
-                        this.m_sBx = b2Math_25.b2Vec2.CrossVV(rB, this.m_ax);
+                        this.m_sBx = b2Math_23.b2Vec2.CrossVV(rB, this.m_ax);
                         const invMass = mA + mB + iA * this.m_sAx * this.m_sAx + iB * this.m_sBx * this.m_sBx;
                         if (invMass > 0) {
                             this.m_springMass = 1 / invMass;
-                            const C = b2Math_25.b2Vec2.DotVV(d, this.m_ax);
+                            const C = b2Math_23.b2Vec2.DotVV(d, this.m_ax);
                             // Frequency
-                            const omega = 2 * b2Settings_21.b2_pi * this.m_frequencyHz;
+                            const omega = 2 * b2Settings_20.b2_pi * this.m_frequencyHz;
                             // Damping coefficient
                             const dc = 2 * this.m_springMass * this.m_dampingRatio * omega;
                             // Spring stiffness
@@ -9502,7 +9121,7 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                         this.m_springImpulse *= data.step.dtRatio;
                         this.m_motorImpulse *= data.step.dtRatio;
                         // b2Vec2 P = m_impulse * m_ay + m_springImpulse * m_ax;
-                        const P = b2Math_25.b2Vec2.AddVV(b2Math_25.b2Vec2.MulSV(this.m_impulse, this.m_ay, b2Math_25.b2Vec2.s_t0), b2Math_25.b2Vec2.MulSV(this.m_springImpulse, this.m_ax, b2Math_25.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_P);
+                        const P = b2Math_23.b2Vec2.AddVV(b2Math_23.b2Vec2.MulSV(this.m_impulse, this.m_ay, b2Math_23.b2Vec2.s_t0), b2Math_23.b2Vec2.MulSV(this.m_springImpulse, this.m_ax, b2Math_23.b2Vec2.s_t1), b2WheelJoint.InitVelocityConstraints_s_P);
                         // float32 LA = m_impulse * m_sAy + m_springImpulse * m_sAx + m_motorImpulse;
                         const LA = this.m_impulse * this.m_sAy + this.m_springImpulse * this.m_sAx + this.m_motorImpulse;
                         // float32 LB = m_impulse * m_sBy + m_springImpulse * m_sBx + m_motorImpulse;
@@ -9533,11 +9152,11 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     let wB = data.velocities[this.m_indexB].w;
                     // Solve spring constraint
                     {
-                        const Cdot = b2Math_25.b2Vec2.DotVV(this.m_ax, b2Math_25.b2Vec2.SubVV(vB, vA, b2Math_25.b2Vec2.s_t0)) + this.m_sBx * wB - this.m_sAx * wA;
+                        const Cdot = b2Math_23.b2Vec2.DotVV(this.m_ax, b2Math_23.b2Vec2.SubVV(vB, vA, b2Math_23.b2Vec2.s_t0)) + this.m_sBx * wB - this.m_sAx * wA;
                         const impulse = -this.m_springMass * (Cdot + this.m_bias + this.m_gamma * this.m_springImpulse);
                         this.m_springImpulse += impulse;
                         // b2Vec2 P = impulse * m_ax;
-                        const P = b2Math_25.b2Vec2.MulSV(impulse, this.m_ax, b2WheelJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math_23.b2Vec2.MulSV(impulse, this.m_ax, b2WheelJoint.SolveVelocityConstraints_s_P);
                         const LA = impulse * this.m_sAx;
                         const LB = impulse * this.m_sBx;
                         // vA -= mA * P;
@@ -9553,18 +9172,18 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                         let impulse = -this.m_motorMass * Cdot;
                         const oldImpulse = this.m_motorImpulse;
                         const maxImpulse = data.step.dt * this.m_maxMotorTorque;
-                        this.m_motorImpulse = b2Math_25.b2Clamp(this.m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+                        this.m_motorImpulse = b2Math_23.b2Clamp(this.m_motorImpulse + impulse, -maxImpulse, maxImpulse);
                         impulse = this.m_motorImpulse - oldImpulse;
                         wA -= iA * impulse;
                         wB += iB * impulse;
                     }
                     // Solve point to line constraint
                     {
-                        const Cdot = b2Math_25.b2Vec2.DotVV(this.m_ay, b2Math_25.b2Vec2.SubVV(vB, vA, b2Math_25.b2Vec2.s_t0)) + this.m_sBy * wB - this.m_sAy * wA;
+                        const Cdot = b2Math_23.b2Vec2.DotVV(this.m_ay, b2Math_23.b2Vec2.SubVV(vB, vA, b2Math_23.b2Vec2.s_t0)) + this.m_sBy * wB - this.m_sAy * wA;
                         const impulse = -this.m_mass * Cdot;
                         this.m_impulse += impulse;
                         // b2Vec2 P = impulse * m_ay;
-                        const P = b2Math_25.b2Vec2.MulSV(impulse, this.m_ay, b2WheelJoint.SolveVelocityConstraints_s_P);
+                        const P = b2Math_23.b2Vec2.MulSV(impulse, this.m_ay, b2WheelJoint.SolveVelocityConstraints_s_P);
                         const LA = impulse * this.m_sAy;
                         const LB = impulse * this.m_sBy;
                         // vA -= mA * P;
@@ -9586,21 +9205,21 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     let aB = data.positions[this.m_indexB].a;
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-                    b2Math_25.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
-                    const rA = b2Math_25.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
+                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorA, this.m_localCenterA, this.m_lalcA);
+                    const rA = b2Math_23.b2Rot.MulRV(qA, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-                    b2Math_25.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
-                    const rB = b2Math_25.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
+                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorB, this.m_localCenterB, this.m_lalcB);
+                    const rB = b2Math_23.b2Rot.MulRV(qB, this.m_lalcB, this.m_rB);
                     // b2Vec2 d = (cB - cA) + rB - rA;
-                    const d = b2Math_25.b2Vec2.AddVV(b2Math_25.b2Vec2.SubVV(cB, cA, b2Math_25.b2Vec2.s_t0), b2Math_25.b2Vec2.SubVV(rB, rA, b2Math_25.b2Vec2.s_t1), b2WheelJoint.SolvePositionConstraints_s_d);
+                    const d = b2Math_23.b2Vec2.AddVV(b2Math_23.b2Vec2.SubVV(cB, cA, b2Math_23.b2Vec2.s_t0), b2Math_23.b2Vec2.SubVV(rB, rA, b2Math_23.b2Vec2.s_t1), b2WheelJoint.SolvePositionConstraints_s_d);
                     // b2Vec2 ay = b2Mul(qA, m_localYAxisA);
-                    const ay = b2Math_25.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_ay);
+                    const ay = b2Math_23.b2Rot.MulRV(qA, this.m_localYAxisA, this.m_ay);
                     // float32 sAy = b2Cross(d + rA, ay);
-                    const sAy = b2Math_25.b2Vec2.CrossVV(b2Math_25.b2Vec2.AddVV(d, rA, b2Math_25.b2Vec2.s_t0), ay);
+                    const sAy = b2Math_23.b2Vec2.CrossVV(b2Math_23.b2Vec2.AddVV(d, rA, b2Math_23.b2Vec2.s_t0), ay);
                     // float32 sBy = b2Cross(rB, ay);
-                    const sBy = b2Math_25.b2Vec2.CrossVV(rB, ay);
+                    const sBy = b2Math_23.b2Vec2.CrossVV(rB, ay);
                     // float32 C = b2Dot(d, ay);
-                    const C = b2Math_25.b2Vec2.DotVV(d, this.m_ay);
+                    const C = b2Math_23.b2Vec2.DotVV(d, this.m_ay);
                     const k = this.m_invMassA + this.m_invMassB + this.m_invIA * this.m_sAy * this.m_sAy + this.m_invIB * this.m_sBy * this.m_sBy;
                     let impulse;
                     if (k !== 0) {
@@ -9610,7 +9229,7 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                         impulse = 0;
                     }
                     // b2Vec2 P = impulse * ay;
-                    const P = b2Math_25.b2Vec2.MulSV(impulse, ay, b2WheelJoint.SolvePositionConstraints_s_P);
+                    const P = b2Math_23.b2Vec2.MulSV(impulse, ay, b2WheelJoint.SolvePositionConstraints_s_P);
                     const LA = impulse * sAy;
                     const LB = impulse * sBy;
                     // cA -= m_invMassA * P;
@@ -9623,7 +9242,7 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     data.positions[this.m_indexA].a = aA;
                     // data.positions[this.m_indexB].c = cB;
                     data.positions[this.m_indexB].a = aB;
-                    return b2Math_25.b2Abs(C) <= b2Settings_21.b2_linearSlop;
+                    return b2Math_23.b2Abs(C) <= b2Settings_20.b2_linearSlop;
                 }
                 GetDefinition(def) {
                     ///b2Assert(false); // TODO
@@ -9656,37 +9275,37 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                 GetPrismaticJointTranslation() {
                     const bA = this.m_bodyA;
                     const bB = this.m_bodyB;
-                    const pA = bA.GetWorldPoint(this.m_localAnchorA, new b2Math_25.b2Vec2());
-                    const pB = bB.GetWorldPoint(this.m_localAnchorB, new b2Math_25.b2Vec2());
-                    const d = b2Math_25.b2Vec2.SubVV(pB, pA, new b2Math_25.b2Vec2());
-                    const axis = bA.GetWorldVector(this.m_localXAxisA, new b2Math_25.b2Vec2());
-                    const translation = b2Math_25.b2Vec2.DotVV(d, axis);
+                    const pA = bA.GetWorldPoint(this.m_localAnchorA, new b2Math_23.b2Vec2());
+                    const pB = bB.GetWorldPoint(this.m_localAnchorB, new b2Math_23.b2Vec2());
+                    const d = b2Math_23.b2Vec2.SubVV(pB, pA, new b2Math_23.b2Vec2());
+                    const axis = bA.GetWorldVector(this.m_localXAxisA, new b2Math_23.b2Vec2());
+                    const translation = b2Math_23.b2Vec2.DotVV(d, axis);
                     return translation;
                 }
                 GetPrismaticJointSpeed() {
                     const bA = this.m_bodyA;
                     const bB = this.m_bodyB;
                     // b2Vec2 rA = b2Mul(bA->m_xf.q, m_localAnchorA - bA->m_sweep.localCenter);
-                    b2Math_25.b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
-                    const rA = b2Math_25.b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
+                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorA, bA.m_sweep.localCenter, this.m_lalcA);
+                    const rA = b2Math_23.b2Rot.MulRV(bA.m_xf.q, this.m_lalcA, this.m_rA);
                     // b2Vec2 rB = b2Mul(bB->m_xf.q, m_localAnchorB - bB->m_sweep.localCenter);
-                    b2Math_25.b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
-                    const rB = b2Math_25.b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
+                    b2Math_23.b2Vec2.SubVV(this.m_localAnchorB, bB.m_sweep.localCenter, this.m_lalcB);
+                    const rB = b2Math_23.b2Rot.MulRV(bB.m_xf.q, this.m_lalcB, this.m_rB);
                     // b2Vec2 pA = bA->m_sweep.c + rA;
-                    const pA = b2Math_25.b2Vec2.AddVV(bA.m_sweep.c, rA, b2Math_25.b2Vec2.s_t0); // pA uses s_t0
+                    const pA = b2Math_23.b2Vec2.AddVV(bA.m_sweep.c, rA, b2Math_23.b2Vec2.s_t0); // pA uses s_t0
                     // b2Vec2 pB = bB->m_sweep.c + rB;
-                    const pB = b2Math_25.b2Vec2.AddVV(bB.m_sweep.c, rB, b2Math_25.b2Vec2.s_t1); // pB uses s_t1
+                    const pB = b2Math_23.b2Vec2.AddVV(bB.m_sweep.c, rB, b2Math_23.b2Vec2.s_t1); // pB uses s_t1
                     // b2Vec2 d = pB - pA;
-                    const d = b2Math_25.b2Vec2.SubVV(pB, pA, b2Math_25.b2Vec2.s_t2); // d uses s_t2
+                    const d = b2Math_23.b2Vec2.SubVV(pB, pA, b2Math_23.b2Vec2.s_t2); // d uses s_t2
                     // b2Vec2 axis = b2Mul(bA.m_xf.q, m_localXAxisA);
-                    const axis = bA.GetWorldVector(this.m_localXAxisA, new b2Math_25.b2Vec2());
+                    const axis = bA.GetWorldVector(this.m_localXAxisA, new b2Math_23.b2Vec2());
                     const vA = bA.m_linearVelocity;
                     const vB = bB.m_linearVelocity;
                     const wA = bA.m_angularVelocity;
                     const wB = bB.m_angularVelocity;
                     // float32 speed = b2Dot(d, b2Cross(wA, axis)) + b2Dot(axis, vB + b2Cross(wB, rB) - vA - b2Cross(wA, rA));
-                    const speed = b2Math_25.b2Vec2.DotVV(d, b2Math_25.b2Vec2.CrossSV(wA, axis, b2Math_25.b2Vec2.s_t0)) +
-                        b2Math_25.b2Vec2.DotVV(axis, b2Math_25.b2Vec2.SubVV(b2Math_25.b2Vec2.AddVCrossSV(vB, wB, rB, b2Math_25.b2Vec2.s_t0), b2Math_25.b2Vec2.AddVCrossSV(vA, wA, rA, b2Math_25.b2Vec2.s_t1), b2Math_25.b2Vec2.s_t0));
+                    const speed = b2Math_23.b2Vec2.DotVV(d, b2Math_23.b2Vec2.CrossSV(wA, axis, b2Math_23.b2Vec2.s_t0)) +
+                        b2Math_23.b2Vec2.DotVV(axis, b2Math_23.b2Vec2.SubVV(b2Math_23.b2Vec2.AddVCrossSV(vB, wB, rB, b2Math_23.b2Vec2.s_t0), b2Math_23.b2Vec2.AddVCrossSV(vA, wA, rA, b2Math_23.b2Vec2.s_t1), b2Math_23.b2Vec2.s_t0));
                     return speed;
                 }
                 GetRevoluteJointAngle() {
@@ -9739,18 +9358,18 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
             };
-            b2WheelJoint.InitVelocityConstraints_s_d = new b2Math_25.b2Vec2();
-            b2WheelJoint.InitVelocityConstraints_s_P = new b2Math_25.b2Vec2();
-            b2WheelJoint.SolveVelocityConstraints_s_P = new b2Math_25.b2Vec2();
-            b2WheelJoint.SolvePositionConstraints_s_d = new b2Math_25.b2Vec2();
-            b2WheelJoint.SolvePositionConstraints_s_P = new b2Math_25.b2Vec2();
-            exports_31("b2WheelJoint", b2WheelJoint);
+            b2WheelJoint.InitVelocityConstraints_s_d = new b2Math_23.b2Vec2();
+            b2WheelJoint.InitVelocityConstraints_s_P = new b2Math_23.b2Vec2();
+            b2WheelJoint.SolveVelocityConstraints_s_P = new b2Math_23.b2Vec2();
+            b2WheelJoint.SolvePositionConstraints_s_d = new b2Math_23.b2Vec2();
+            b2WheelJoint.SolvePositionConstraints_s_P = new b2Math_23.b2Vec2();
+            exports_27("b2WheelJoint", b2WheelJoint);
         }
     }
 });
-System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint"], function(exports_32, context_32) {
+System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint"], function(exports_28, context_28) {
     "use strict";
-    var __moduleName = context_32 && context_32.id;
+    var __moduleName = context_28 && context_28.id;
     var b2AreaJoint_1, b2DistanceJoint_2, b2FrictionJoint_1, b2GearJoint_1, b2MotorJoint_1, b2MouseJoint_1, b2PrismaticJoint_1, b2PulleyJoint_1, b2RevoluteJoint_1, b2RopeJoint_1, b2WeldJoint_1, b2WheelJoint_1;
     var b2JointFactory;
     return {
@@ -9841,7 +9460,7 @@ System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint"
                 static Destroy(joint, allocator) {
                 }
             };
-            exports_32("b2JointFactory", b2JointFactory);
+            exports_28("b2JointFactory", b2JointFactory);
         }
     }
 });
@@ -9862,21 +9481,21 @@ System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint"
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Dynamics/b2TimeStep"], function(exports_33, context_33) {
+System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Dynamics/b2TimeStep"], function(exports_29, context_29) {
     "use strict";
-    var __moduleName = context_33 && context_33.id;
-    var b2Settings_22, b2Math_26, b2Collision_3, b2TimeStep_1;
+    var __moduleName = context_29 && context_29.id;
+    var b2Settings_21, b2Math_24, b2Collision_2, b2TimeStep_1;
     var b2VelocityConstraintPoint, b2ContactVelocityConstraint, b2ContactPositionConstraint, b2ContactSolverDef, b2PositionSolverManifold, b2ContactSolver;
     return {
         setters:[
-            function (b2Settings_22_1) {
-                b2Settings_22 = b2Settings_22_1;
+            function (b2Settings_21_1) {
+                b2Settings_21 = b2Settings_21_1;
             },
-            function (b2Math_26_1) {
-                b2Math_26 = b2Math_26_1;
+            function (b2Math_24_1) {
+                b2Math_24 = b2Math_24_1;
             },
-            function (b2Collision_3_1) {
-                b2Collision_3 = b2Collision_3_1;
+            function (b2Collision_2_1) {
+                b2Collision_2 = b2Collision_2_1;
             },
             function (b2TimeStep_1_1) {
                 b2TimeStep_1 = b2TimeStep_1_1;
@@ -9884,8 +9503,8 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
         execute: function() {
             b2VelocityConstraintPoint = class b2VelocityConstraintPoint {
                 constructor() {
-                    this.rA = new b2Math_26.b2Vec2();
-                    this.rB = new b2Math_26.b2Vec2();
+                    this.rA = new b2Math_24.b2Vec2();
+                    this.rB = new b2Math_24.b2Vec2();
                     this.normalImpulse = 0;
                     this.tangentImpulse = 0;
                     this.normalMass = 0;
@@ -9893,17 +9512,17 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     this.velocityBias = 0;
                 }
                 static MakeArray(length) {
-                    return b2Settings_22.b2MakeArray(length, function (i) { return new b2VelocityConstraintPoint(); });
+                    return b2Settings_21.b2MakeArray(length, function (i) { return new b2VelocityConstraintPoint(); });
                 }
             };
-            exports_33("b2VelocityConstraintPoint", b2VelocityConstraintPoint);
+            exports_29("b2VelocityConstraintPoint", b2VelocityConstraintPoint);
             b2ContactVelocityConstraint = class b2ContactVelocityConstraint {
                 constructor() {
-                    this.points = b2VelocityConstraintPoint.MakeArray(b2Settings_22.b2_maxManifoldPoints);
-                    this.normal = new b2Math_26.b2Vec2();
-                    this.tangent = new b2Math_26.b2Vec2();
-                    this.normalMass = new b2Math_26.b2Mat22();
-                    this.K = new b2Math_26.b2Mat22();
+                    this.points = b2VelocityConstraintPoint.MakeArray(b2Settings_21.b2_maxManifoldPoints);
+                    this.normal = new b2Math_24.b2Vec2();
+                    this.tangent = new b2Math_24.b2Vec2();
+                    this.normalMass = new b2Math_24.b2Mat22();
+                    this.K = new b2Math_24.b2Mat22();
                     this.indexA = 0;
                     this.indexB = 0;
                     this.invMassA = 0;
@@ -9917,21 +9536,21 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     this.contactIndex = 0;
                 }
                 static MakeArray(length) {
-                    return b2Settings_22.b2MakeArray(length, function (i) { return new b2ContactVelocityConstraint(); });
+                    return b2Settings_21.b2MakeArray(length, function (i) { return new b2ContactVelocityConstraint(); });
                 }
             };
-            exports_33("b2ContactVelocityConstraint", b2ContactVelocityConstraint);
+            exports_29("b2ContactVelocityConstraint", b2ContactVelocityConstraint);
             b2ContactPositionConstraint = class b2ContactPositionConstraint {
                 constructor() {
-                    this.localPoints = b2Math_26.b2Vec2.MakeArray(b2Settings_22.b2_maxManifoldPoints);
-                    this.localNormal = new b2Math_26.b2Vec2();
-                    this.localPoint = new b2Math_26.b2Vec2();
+                    this.localPoints = b2Math_24.b2Vec2.MakeArray(b2Settings_21.b2_maxManifoldPoints);
+                    this.localNormal = new b2Math_24.b2Vec2();
+                    this.localPoint = new b2Math_24.b2Vec2();
                     this.indexA = 0;
                     this.indexB = 0;
                     this.invMassA = 0;
                     this.invMassB = 0;
-                    this.localCenterA = new b2Math_26.b2Vec2();
-                    this.localCenterB = new b2Math_26.b2Vec2();
+                    this.localCenterA = new b2Math_24.b2Vec2();
+                    this.localCenterB = new b2Math_24.b2Vec2();
                     this.invIA = 0;
                     this.invIB = 0;
                     this.type = -1 /* e_unknown */;
@@ -9940,10 +9559,10 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     this.pointCount = 0;
                 }
                 static MakeArray(length) {
-                    return b2Settings_22.b2MakeArray(length, function (i) { return new b2ContactPositionConstraint(); });
+                    return b2Settings_21.b2MakeArray(length, function (i) { return new b2ContactPositionConstraint(); });
                 }
             };
-            exports_33("b2ContactPositionConstraint", b2ContactPositionConstraint);
+            exports_29("b2ContactPositionConstraint", b2ContactPositionConstraint);
             b2ContactSolverDef = class b2ContactSolverDef {
                 constructor() {
                     this.step = new b2TimeStep_1.b2TimeStep();
@@ -9954,11 +9573,11 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     this.allocator = null;
                 }
             };
-            exports_33("b2ContactSolverDef", b2ContactSolverDef);
+            exports_29("b2ContactSolverDef", b2ContactSolverDef);
             b2PositionSolverManifold = class b2PositionSolverManifold {
                 constructor() {
-                    this.normal = new b2Math_26.b2Vec2();
-                    this.point = new b2Math_26.b2Vec2();
+                    this.normal = new b2Math_24.b2Vec2();
+                    this.point = new b2Math_24.b2Vec2();
                     this.separation = 0;
                 }
                 Initialize(pc, xfA, xfB, index) {
@@ -9971,28 +9590,28 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         case 0 /* e_circles */:
                             {
                                 // b2Vec2 pointA = b2Mul(xfA, pc->localPoint);
-                                b2Math_26.b2Transform.MulXV(xfA, pc.localPoint, pointA);
+                                b2Math_24.b2Transform.MulXV(xfA, pc.localPoint, pointA);
                                 // b2Vec2 pointB = b2Mul(xfB, pc->localPoints[0]);
-                                b2Math_26.b2Transform.MulXV(xfB, pc.localPoints[0], pointB);
+                                b2Math_24.b2Transform.MulXV(xfB, pc.localPoints[0], pointB);
                                 // normal = pointB - pointA;
                                 // normal.Normalize();
-                                b2Math_26.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
+                                b2Math_24.b2Vec2.SubVV(pointB, pointA, this.normal).SelfNormalize();
                                 // point = 0.5f * (pointA + pointB);
-                                b2Math_26.b2Vec2.MidVV(pointA, pointB, this.point);
+                                b2Math_24.b2Vec2.MidVV(pointA, pointB, this.point);
                                 // separation = b2Dot(pointB - pointA, normal) - pc->radius;
-                                this.separation = b2Math_26.b2Vec2.DotVV(b2Math_26.b2Vec2.SubVV(pointB, pointA, b2Math_26.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+                                this.separation = b2Math_24.b2Vec2.DotVV(b2Math_24.b2Vec2.SubVV(pointB, pointA, b2Math_24.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                             }
                             break;
                         case 1 /* e_faceA */:
                             {
                                 // normal = b2Mul(xfA.q, pc->localNormal);
-                                b2Math_26.b2Rot.MulRV(xfA.q, pc.localNormal, this.normal);
+                                b2Math_24.b2Rot.MulRV(xfA.q, pc.localNormal, this.normal);
                                 // b2Vec2 planePoint = b2Mul(xfA, pc->localPoint);
-                                b2Math_26.b2Transform.MulXV(xfA, pc.localPoint, planePoint);
+                                b2Math_24.b2Transform.MulXV(xfA, pc.localPoint, planePoint);
                                 // b2Vec2 clipPoint = b2Mul(xfB, pc->localPoints[index]);
-                                b2Math_26.b2Transform.MulXV(xfB, pc.localPoints[index], clipPoint);
+                                b2Math_24.b2Transform.MulXV(xfB, pc.localPoints[index], clipPoint);
                                 // separation = b2Dot(clipPoint - planePoint, normal) - pc->radius;
-                                this.separation = b2Math_26.b2Vec2.DotVV(b2Math_26.b2Vec2.SubVV(clipPoint, planePoint, b2Math_26.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+                                this.separation = b2Math_24.b2Vec2.DotVV(b2Math_24.b2Vec2.SubVV(clipPoint, planePoint, b2Math_24.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                                 // point = clipPoint;
                                 this.point.Copy(clipPoint);
                             }
@@ -10000,13 +9619,13 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         case 2 /* e_faceB */:
                             {
                                 // normal = b2Mul(xfB.q, pc->localNormal);
-                                b2Math_26.b2Rot.MulRV(xfB.q, pc.localNormal, this.normal);
+                                b2Math_24.b2Rot.MulRV(xfB.q, pc.localNormal, this.normal);
                                 // b2Vec2 planePoint = b2Mul(xfB, pc->localPoint);
-                                b2Math_26.b2Transform.MulXV(xfB, pc.localPoint, planePoint);
+                                b2Math_24.b2Transform.MulXV(xfB, pc.localPoint, planePoint);
                                 // b2Vec2 clipPoint = b2Mul(xfA, pc->localPoints[index]);
-                                b2Math_26.b2Transform.MulXV(xfA, pc.localPoints[index], clipPoint);
+                                b2Math_24.b2Transform.MulXV(xfA, pc.localPoints[index], clipPoint);
                                 // separation = b2Dot(clipPoint - planePoint, normal) - pc->radius;
-                                this.separation = b2Math_26.b2Vec2.DotVV(b2Math_26.b2Vec2.SubVV(clipPoint, planePoint, b2Math_26.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+                                this.separation = b2Math_24.b2Vec2.DotVV(b2Math_24.b2Vec2.SubVV(clipPoint, planePoint, b2Math_24.b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
                                 // point = clipPoint;
                                 this.point.Copy(clipPoint);
                                 // Ensure normal points from A to B
@@ -10017,11 +9636,11 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     }
                 }
             };
-            b2PositionSolverManifold.Initialize_s_pointA = new b2Math_26.b2Vec2();
-            b2PositionSolverManifold.Initialize_s_pointB = new b2Math_26.b2Vec2();
-            b2PositionSolverManifold.Initialize_s_planePoint = new b2Math_26.b2Vec2();
-            b2PositionSolverManifold.Initialize_s_clipPoint = new b2Math_26.b2Vec2();
-            exports_33("b2PositionSolverManifold", b2PositionSolverManifold);
+            b2PositionSolverManifold.Initialize_s_pointA = new b2Math_24.b2Vec2();
+            b2PositionSolverManifold.Initialize_s_pointB = new b2Math_24.b2Vec2();
+            b2PositionSolverManifold.Initialize_s_planePoint = new b2Math_24.b2Vec2();
+            b2PositionSolverManifold.Initialize_s_clipPoint = new b2Math_24.b2Vec2();
+            exports_29("b2PositionSolverManifold", b2PositionSolverManifold);
             b2ContactSolver = class b2ContactSolver {
                 constructor() {
                     this.m_step = new b2TimeStep_1.b2TimeStep();
@@ -10039,14 +9658,14 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     this.m_count = def.count;
                     // TODO:
                     if (this.m_positionConstraints.length < this.m_count) {
-                        const new_length = b2Math_26.b2Max(this.m_positionConstraints.length * 2, this.m_count);
+                        const new_length = b2Math_24.b2Max(this.m_positionConstraints.length * 2, this.m_count);
                         while (this.m_positionConstraints.length < new_length) {
                             this.m_positionConstraints[this.m_positionConstraints.length] = new b2ContactPositionConstraint();
                         }
                     }
                     // TODO:
                     if (this.m_velocityConstraints.length < this.m_count) {
-                        const new_length = b2Math_26.b2Max(this.m_velocityConstraints.length * 2, this.m_count);
+                        const new_length = b2Math_24.b2Max(this.m_velocityConstraints.length * 2, this.m_count);
                         while (this.m_velocityConstraints.length < new_length) {
                             this.m_velocityConstraints[this.m_velocityConstraints.length] = new b2ContactVelocityConstraint();
                         }
@@ -10148,33 +9767,33 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         ///b2Assert(manifold.pointCount > 0);
                         xfA.q.SetAngle(aA);
                         xfB.q.SetAngle(aB);
-                        b2Math_26.b2Vec2.SubVV(cA, b2Math_26.b2Rot.MulRV(xfA.q, localCenterA, b2Math_26.b2Vec2.s_t0), xfA.p);
-                        b2Math_26.b2Vec2.SubVV(cB, b2Math_26.b2Rot.MulRV(xfB.q, localCenterB, b2Math_26.b2Vec2.s_t0), xfB.p);
+                        b2Math_24.b2Vec2.SubVV(cA, b2Math_24.b2Rot.MulRV(xfA.q, localCenterA, b2Math_24.b2Vec2.s_t0), xfA.p);
+                        b2Math_24.b2Vec2.SubVV(cB, b2Math_24.b2Rot.MulRV(xfB.q, localCenterB, b2Math_24.b2Vec2.s_t0), xfB.p);
                         worldManifold.Initialize(manifold, xfA, radiusA, xfB, radiusB);
                         vc.normal.Copy(worldManifold.normal);
-                        b2Math_26.b2Vec2.CrossVOne(vc.normal, vc.tangent); // compute from normal
+                        b2Math_24.b2Vec2.CrossVOne(vc.normal, vc.tangent); // compute from normal
                         const pointCount = vc.pointCount;
                         for (let j = 0; j < pointCount; ++j) {
                             const vcp = vc.points[j];
                             // vcp->rA = worldManifold.points[j] - cA;
-                            b2Math_26.b2Vec2.SubVV(worldManifold.points[j], cA, vcp.rA);
+                            b2Math_24.b2Vec2.SubVV(worldManifold.points[j], cA, vcp.rA);
                             // vcp->rB = worldManifold.points[j] - cB;
-                            b2Math_26.b2Vec2.SubVV(worldManifold.points[j], cB, vcp.rB);
-                            const rnA = b2Math_26.b2Vec2.CrossVV(vcp.rA, vc.normal);
-                            const rnB = b2Math_26.b2Vec2.CrossVV(vcp.rB, vc.normal);
+                            b2Math_24.b2Vec2.SubVV(worldManifold.points[j], cB, vcp.rB);
+                            const rnA = b2Math_24.b2Vec2.CrossVV(vcp.rA, vc.normal);
+                            const rnB = b2Math_24.b2Vec2.CrossVV(vcp.rB, vc.normal);
                             const kNormal = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             vcp.normalMass = kNormal > 0 ? 1 / kNormal : 0;
                             // b2Vec2 tangent = b2Cross(vc->normal, 1.0f);
                             const tangent = vc.tangent; // precomputed from normal
-                            const rtA = b2Math_26.b2Vec2.CrossVV(vcp.rA, tangent);
-                            const rtB = b2Math_26.b2Vec2.CrossVV(vcp.rB, tangent);
+                            const rtA = b2Math_24.b2Vec2.CrossVV(vcp.rA, tangent);
+                            const rtB = b2Math_24.b2Vec2.CrossVV(vcp.rB, tangent);
                             const kTangent = mA + mB + iA * rtA * rtA + iB * rtB * rtB;
                             vcp.tangentMass = kTangent > 0 ? 1 / kTangent : 0;
                             // Setup a velocity bias for restitution.
                             vcp.velocityBias = 0;
                             // float32 vRel = b2Dot(vc->normal, vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA));
-                            const vRel = b2Math_26.b2Vec2.DotVV(vc.normal, b2Math_26.b2Vec2.SubVV(b2Math_26.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math_26.b2Vec2.s_t0), b2Math_26.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math_26.b2Vec2.s_t1), b2Math_26.b2Vec2.s_t0));
-                            if (vRel < (-b2Settings_22.b2_velocityThreshold)) {
+                            const vRel = b2Math_24.b2Vec2.DotVV(vc.normal, b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math_24.b2Vec2.s_t1), b2Math_24.b2Vec2.s_t0));
+                            if (vRel < (-b2Settings_21.b2_velocityThreshold)) {
                                 vcp.velocityBias += (-vc.restitution * vRel);
                             }
                         }
@@ -10182,10 +9801,10 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         if (vc.pointCount === 2) {
                             const vcp1 = vc.points[0];
                             const vcp2 = vc.points[1];
-                            const rn1A = b2Math_26.b2Vec2.CrossVV(vcp1.rA, vc.normal);
-                            const rn1B = b2Math_26.b2Vec2.CrossVV(vcp1.rB, vc.normal);
-                            const rn2A = b2Math_26.b2Vec2.CrossVV(vcp2.rA, vc.normal);
-                            const rn2B = b2Math_26.b2Vec2.CrossVV(vcp2.rB, vc.normal);
+                            const rn1A = b2Math_24.b2Vec2.CrossVV(vcp1.rA, vc.normal);
+                            const rn1B = b2Math_24.b2Vec2.CrossVV(vcp1.rB, vc.normal);
+                            const rn2A = b2Math_24.b2Vec2.CrossVV(vcp2.rA, vc.normal);
+                            const rn2B = b2Math_24.b2Vec2.CrossVV(vcp2.rB, vc.normal);
                             const k11 = mA + mB + iA * rn1A * rn1A + iB * rn1B * rn1B;
                             const k22 = mA + mB + iA * rn2A * rn2A + iB * rn2B * rn2B;
                             const k12 = mA + mB + iA * rn1A * rn2A + iB * rn1B * rn2B;
@@ -10227,13 +9846,13 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         for (let j = 0; j < pointCount; ++j) {
                             const vcp = vc.points[j];
                             // b2Vec2 P = vcp->normalImpulse * normal + vcp->tangentImpulse * tangent;
-                            b2Math_26.b2Vec2.AddVV(b2Math_26.b2Vec2.MulSV(vcp.normalImpulse, normal, b2Math_26.b2Vec2.s_t0), b2Math_26.b2Vec2.MulSV(vcp.tangentImpulse, tangent, b2Math_26.b2Vec2.s_t1), P);
+                            b2Math_24.b2Vec2.AddVV(b2Math_24.b2Vec2.MulSV(vcp.normalImpulse, normal, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.MulSV(vcp.tangentImpulse, tangent, b2Math_24.b2Vec2.s_t1), P);
                             // wA -= iA * b2Cross(vcp->rA, P);
-                            wA -= iA * b2Math_26.b2Vec2.CrossVV(vcp.rA, P);
+                            wA -= iA * b2Math_24.b2Vec2.CrossVV(vcp.rA, P);
                             // vA -= mA * P;
                             vA.SelfMulSub(mA, P);
                             // wB += iB * b2Cross(vcp->rB, P);
-                            wB += iB * b2Math_26.b2Vec2.CrossVV(vcp.rB, P);
+                            wB += iB * b2Math_24.b2Vec2.CrossVV(vcp.rB, P);
                             // vB += mB * P;
                             vB.SelfMulAdd(mB, P);
                         }
@@ -10280,54 +9899,54 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                             const vcp = vc.points[j];
                             // Relative velocity at contact
                             // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-                            b2Math_26.b2Vec2.SubVV(b2Math_26.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math_26.b2Vec2.s_t0), b2Math_26.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math_26.b2Vec2.s_t1), dv);
+                            b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math_24.b2Vec2.s_t1), dv);
                             // Compute tangent force
                             // float32 vt = b2Dot(dv, tangent) - vc->tangentSpeed;
-                            const vt = b2Math_26.b2Vec2.DotVV(dv, tangent) - vc.tangentSpeed;
+                            const vt = b2Math_24.b2Vec2.DotVV(dv, tangent) - vc.tangentSpeed;
                             let lambda = vcp.tangentMass * (-vt);
                             // b2Clamp the accumulated force
                             const maxFriction = friction * vcp.normalImpulse;
-                            const newImpulse = b2Math_26.b2Clamp(vcp.tangentImpulse + lambda, (-maxFriction), maxFriction);
+                            const newImpulse = b2Math_24.b2Clamp(vcp.tangentImpulse + lambda, (-maxFriction), maxFriction);
                             lambda = newImpulse - vcp.tangentImpulse;
                             vcp.tangentImpulse = newImpulse;
                             // Apply contact impulse
                             // b2Vec2 P = lambda * tangent;
-                            b2Math_26.b2Vec2.MulSV(lambda, tangent, P);
+                            b2Math_24.b2Vec2.MulSV(lambda, tangent, P);
                             // vA -= mA * P;
                             vA.SelfMulSub(mA, P);
                             // wA -= iA * b2Cross(vcp->rA, P);
-                            wA -= iA * b2Math_26.b2Vec2.CrossVV(vcp.rA, P);
+                            wA -= iA * b2Math_24.b2Vec2.CrossVV(vcp.rA, P);
                             // vB += mB * P;
                             vB.SelfMulAdd(mB, P);
                             // wB += iB * b2Cross(vcp->rB, P);
-                            wB += iB * b2Math_26.b2Vec2.CrossVV(vcp.rB, P);
+                            wB += iB * b2Math_24.b2Vec2.CrossVV(vcp.rB, P);
                         }
                         // Solve normal constraints
                         if (vc.pointCount === 1) {
                             const vcp = vc.points[0];
                             // Relative velocity at contact
                             // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-                            b2Math_26.b2Vec2.SubVV(b2Math_26.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math_26.b2Vec2.s_t0), b2Math_26.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math_26.b2Vec2.s_t1), dv);
+                            b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Math_24.b2Vec2.s_t1), dv);
                             // Compute normal impulse
                             // float32 vn = b2Dot(dv, normal);
-                            const vn = b2Math_26.b2Vec2.DotVV(dv, normal);
+                            const vn = b2Math_24.b2Vec2.DotVV(dv, normal);
                             let lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
                             // b2Clamp the accumulated impulse
                             // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
-                            const newImpulse = b2Math_26.b2Max(vcp.normalImpulse + lambda, 0);
+                            const newImpulse = b2Math_24.b2Max(vcp.normalImpulse + lambda, 0);
                             lambda = newImpulse - vcp.normalImpulse;
                             vcp.normalImpulse = newImpulse;
                             // Apply contact impulse
                             // b2Vec2 P = lambda * normal;
-                            b2Math_26.b2Vec2.MulSV(lambda, normal, P);
+                            b2Math_24.b2Vec2.MulSV(lambda, normal, P);
                             // vA -= mA * P;
                             vA.SelfMulSub(mA, P);
                             // wA -= iA * b2Cross(vcp->rA, P);
-                            wA -= iA * b2Math_26.b2Vec2.CrossVV(vcp.rA, P);
+                            wA -= iA * b2Math_24.b2Vec2.CrossVV(vcp.rA, P);
                             // vB += mB * P;
                             vB.SelfMulAdd(mB, P);
                             // wB += iB * b2Cross(vcp->rB, P);
-                            wB += iB * b2Math_26.b2Vec2.CrossVV(vcp.rB, P);
+                            wB += iB * b2Math_24.b2Vec2.CrossVV(vcp.rB, P);
                         }
                         else {
                             // Block solver developed in collaboration with Dirk Gregorius (back in 01/07 on Box2D_Lite).
@@ -10369,20 +9988,20 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                             ///b2Assert(a.x >= 0 && a.y >= 0);
                             // Relative velocity at contact
                             // b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
-                            b2Math_26.b2Vec2.SubVV(b2Math_26.b2Vec2.AddVCrossSV(vB, wB, cp1.rB, b2Math_26.b2Vec2.s_t0), b2Math_26.b2Vec2.AddVCrossSV(vA, wA, cp1.rA, b2Math_26.b2Vec2.s_t1), dv1);
+                            b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, cp1.rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, cp1.rA, b2Math_24.b2Vec2.s_t1), dv1);
                             // b2Vec2 dv2 = vB + b2Cross(wB, cp2->rB) - vA - b2Cross(wA, cp2->rA);
-                            b2Math_26.b2Vec2.SubVV(b2Math_26.b2Vec2.AddVCrossSV(vB, wB, cp2.rB, b2Math_26.b2Vec2.s_t0), b2Math_26.b2Vec2.AddVCrossSV(vA, wA, cp2.rA, b2Math_26.b2Vec2.s_t1), dv2);
+                            b2Math_24.b2Vec2.SubVV(b2Math_24.b2Vec2.AddVCrossSV(vB, wB, cp2.rB, b2Math_24.b2Vec2.s_t0), b2Math_24.b2Vec2.AddVCrossSV(vA, wA, cp2.rA, b2Math_24.b2Vec2.s_t1), dv2);
                             // Compute normal velocity
                             // float32 vn1 = b2Dot(dv1, normal);
-                            let vn1 = b2Math_26.b2Vec2.DotVV(dv1, normal);
+                            let vn1 = b2Math_24.b2Vec2.DotVV(dv1, normal);
                             // float32 vn2 = b2Dot(dv2, normal);
-                            let vn2 = b2Math_26.b2Vec2.DotVV(dv2, normal);
+                            let vn2 = b2Math_24.b2Vec2.DotVV(dv2, normal);
                             // b2Vec2 b;
                             b.x = vn1 - cp1.velocityBias;
                             b.y = vn2 - cp2.velocityBias;
                             // Compute b'
                             // b -= b2Mul(vc->K, a);
-                            b.SelfSub(b2Math_26.b2Mat22.MulMV(vc.K, a, b2Math_26.b2Vec2.s_t0));
+                            b.SelfSub(b2Math_24.b2Mat22.MulMV(vc.K, a, b2Math_24.b2Vec2.s_t0));
                             /*
                             #if B2_DEBUG_SOLVER === 1
                             const k_errorTol: number = 0.001;
@@ -10399,25 +10018,25 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                                 // x = - inv(A) * b'
                                 //
                                 // b2Vec2 x = - b2Mul(vc->normalMass, b);
-                                b2Math_26.b2Mat22.MulMV(vc.normalMass, b, x).SelfNeg();
+                                b2Math_24.b2Mat22.MulMV(vc.normalMass, b, x).SelfNeg();
                                 if (x.x >= 0 && x.y >= 0) {
                                     // Get the incremental impulse
                                     // b2Vec2 d = x - a;
-                                    b2Math_26.b2Vec2.SubVV(x, a, d);
+                                    b2Math_24.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Vec2 P1 = d.x * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.x, normal, P1);
+                                    b2Math_24.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Vec2 P2 = d.y * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.y, normal, P2);
-                                    b2Math_26.b2Vec2.AddVV(P1, P2, P1P2);
+                                    b2Math_24.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math_24.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math_26.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math_24.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math_26.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math_24.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -10450,21 +10069,21 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                                 if (x.x >= 0 && vn2 >= 0) {
                                     // Get the incremental impulse
                                     // b2Vec2 d = x - a;
-                                    b2Math_26.b2Vec2.SubVV(x, a, d);
+                                    b2Math_24.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Vec2 P1 = d.x * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.x, normal, P1);
+                                    b2Math_24.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Vec2 P2 = d.y * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.y, normal, P2);
-                                    b2Math_26.b2Vec2.AddVV(P1, P2, P1P2);
+                                    b2Math_24.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math_24.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math_26.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math_24.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math_26.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math_24.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -10494,21 +10113,21 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                                 if (x.y >= 0 && vn1 >= 0) {
                                     // Resubstitute for the incremental impulse
                                     // b2Vec2 d = x - a;
-                                    b2Math_26.b2Vec2.SubVV(x, a, d);
+                                    b2Math_24.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Vec2 P1 = d.x * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.x, normal, P1);
+                                    b2Math_24.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Vec2 P2 = d.y * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.y, normal, P2);
-                                    b2Math_26.b2Vec2.AddVV(P1, P2, P1P2);
+                                    b2Math_24.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math_24.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math_26.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math_24.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math_26.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math_24.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -10537,21 +10156,21 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                                 if (vn1 >= 0 && vn2 >= 0) {
                                     // Resubstitute for the incremental impulse
                                     // b2Vec2 d = x - a;
-                                    b2Math_26.b2Vec2.SubVV(x, a, d);
+                                    b2Math_24.b2Vec2.SubVV(x, a, d);
                                     // Apply incremental impulse
                                     // b2Vec2 P1 = d.x * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.x, normal, P1);
+                                    b2Math_24.b2Vec2.MulSV(d.x, normal, P1);
                                     // b2Vec2 P2 = d.y * normal;
-                                    b2Math_26.b2Vec2.MulSV(d.y, normal, P2);
-                                    b2Math_26.b2Vec2.AddVV(P1, P2, P1P2);
+                                    b2Math_24.b2Vec2.MulSV(d.y, normal, P2);
+                                    b2Math_24.b2Vec2.AddVV(P1, P2, P1P2);
                                     // vA -= mA * (P1 + P2);
                                     vA.SelfMulSub(mA, P1P2);
                                     // wA -= iA * (b2Cross(cp1->rA, P1) + b2Cross(cp2->rA, P2));
-                                    wA -= iA * (b2Math_26.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rA, P2));
+                                    wA -= iA * (b2Math_24.b2Vec2.CrossVV(cp1.rA, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rA, P2));
                                     // vB += mB * (P1 + P2);
                                     vB.SelfMulAdd(mB, P1P2);
                                     // wB += iB * (b2Cross(cp1->rB, P1) + b2Cross(cp2->rB, P2));
-                                    wB += iB * (b2Math_26.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_26.b2Vec2.CrossVV(cp2.rB, P2));
+                                    wB += iB * (b2Math_24.b2Vec2.CrossVV(cp1.rB, P1) + b2Math_24.b2Vec2.CrossVV(cp2.rB, P2));
                                     // Accumulate
                                     cp1.normalImpulse = x.x;
                                     cp2.normalImpulse = x.y;
@@ -10604,39 +10223,39 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         for (let j = 0; j < pointCount; ++j) {
                             xfA.q.SetAngle(aA);
                             xfB.q.SetAngle(aB);
-                            b2Math_26.b2Vec2.SubVV(cA, b2Math_26.b2Rot.MulRV(xfA.q, localCenterA, b2Math_26.b2Vec2.s_t0), xfA.p);
-                            b2Math_26.b2Vec2.SubVV(cB, b2Math_26.b2Rot.MulRV(xfB.q, localCenterB, b2Math_26.b2Vec2.s_t0), xfB.p);
+                            b2Math_24.b2Vec2.SubVV(cA, b2Math_24.b2Rot.MulRV(xfA.q, localCenterA, b2Math_24.b2Vec2.s_t0), xfA.p);
+                            b2Math_24.b2Vec2.SubVV(cB, b2Math_24.b2Rot.MulRV(xfB.q, localCenterB, b2Math_24.b2Vec2.s_t0), xfB.p);
                             psm.Initialize(pc, xfA, xfB, j);
                             const normal = psm.normal;
                             const point = psm.point;
                             const separation = psm.separation;
                             // b2Vec2 rA = point - cA;
-                            b2Math_26.b2Vec2.SubVV(point, cA, rA);
+                            b2Math_24.b2Vec2.SubVV(point, cA, rA);
                             // b2Vec2 rB = point - cB;
-                            b2Math_26.b2Vec2.SubVV(point, cB, rB);
+                            b2Math_24.b2Vec2.SubVV(point, cB, rB);
                             // Track max constraint error.
-                            minSeparation = b2Math_26.b2Min(minSeparation, separation);
+                            minSeparation = b2Math_24.b2Min(minSeparation, separation);
                             // Prevent large corrections and allow slop.
-                            const C = b2Math_26.b2Clamp(b2Settings_22.b2_baumgarte * (separation + b2Settings_22.b2_linearSlop), (-b2Settings_22.b2_maxLinearCorrection), 0);
+                            const C = b2Math_24.b2Clamp(b2Settings_21.b2_baumgarte * (separation + b2Settings_21.b2_linearSlop), (-b2Settings_21.b2_maxLinearCorrection), 0);
                             // Compute the effective mass.
                             // float32 rnA = b2Cross(rA, normal);
-                            const rnA = b2Math_26.b2Vec2.CrossVV(rA, normal);
+                            const rnA = b2Math_24.b2Vec2.CrossVV(rA, normal);
                             // float32 rnB = b2Cross(rB, normal);
-                            const rnB = b2Math_26.b2Vec2.CrossVV(rB, normal);
+                            const rnB = b2Math_24.b2Vec2.CrossVV(rB, normal);
                             // float32 K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             const K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             // Compute normal impulse
                             const impulse = K > 0 ? -C / K : 0;
                             // b2Vec2 P = impulse * normal;
-                            b2Math_26.b2Vec2.MulSV(impulse, normal, P);
+                            b2Math_24.b2Vec2.MulSV(impulse, normal, P);
                             // cA -= mA * P;
                             cA.SelfMulSub(mA, P);
                             // aA -= iA * b2Cross(rA, P);
-                            aA -= iA * b2Math_26.b2Vec2.CrossVV(rA, P);
+                            aA -= iA * b2Math_24.b2Vec2.CrossVV(rA, P);
                             // cB += mB * P;
                             cB.SelfMulAdd(mB, P);
                             // aB += iB * b2Cross(rB, P);
-                            aB += iB * b2Math_26.b2Vec2.CrossVV(rB, P);
+                            aB += iB * b2Math_24.b2Vec2.CrossVV(rB, P);
                         }
                         // this.m_positions[indexA].c = cA;
                         this.m_positions[indexA].a = aA;
@@ -10645,7 +10264,7 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     }
                     // We can't expect minSpeparation >= -b2_linearSlop because we don't
                     // push the separation above -b2_linearSlop.
-                    return minSeparation > (-3 * b2Settings_22.b2_linearSlop);
+                    return minSeparation > (-3 * b2Settings_21.b2_linearSlop);
                 }
                 SolveTOIPositionConstraints(toiIndexA, toiIndexB) {
                     const xfA = b2ContactSolver.SolveTOIPositionConstraints_s_xfA;
@@ -10682,39 +10301,39 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                         for (let j = 0; j < pointCount; ++j) {
                             xfA.q.SetAngle(aA);
                             xfB.q.SetAngle(aB);
-                            b2Math_26.b2Vec2.SubVV(cA, b2Math_26.b2Rot.MulRV(xfA.q, localCenterA, b2Math_26.b2Vec2.s_t0), xfA.p);
-                            b2Math_26.b2Vec2.SubVV(cB, b2Math_26.b2Rot.MulRV(xfB.q, localCenterB, b2Math_26.b2Vec2.s_t0), xfB.p);
+                            b2Math_24.b2Vec2.SubVV(cA, b2Math_24.b2Rot.MulRV(xfA.q, localCenterA, b2Math_24.b2Vec2.s_t0), xfA.p);
+                            b2Math_24.b2Vec2.SubVV(cB, b2Math_24.b2Rot.MulRV(xfB.q, localCenterB, b2Math_24.b2Vec2.s_t0), xfB.p);
                             psm.Initialize(pc, xfA, xfB, j);
                             const normal = psm.normal;
                             const point = psm.point;
                             const separation = psm.separation;
                             // b2Vec2 rA = point - cA;
-                            b2Math_26.b2Vec2.SubVV(point, cA, rA);
+                            b2Math_24.b2Vec2.SubVV(point, cA, rA);
                             // b2Vec2 rB = point - cB;
-                            b2Math_26.b2Vec2.SubVV(point, cB, rB);
+                            b2Math_24.b2Vec2.SubVV(point, cB, rB);
                             // Track max constraint error.
-                            minSeparation = b2Math_26.b2Min(minSeparation, separation);
+                            minSeparation = b2Math_24.b2Min(minSeparation, separation);
                             // Prevent large corrections and allow slop.
-                            const C = b2Math_26.b2Clamp(b2Settings_22.b2_toiBaumgarte * (separation + b2Settings_22.b2_linearSlop), (-b2Settings_22.b2_maxLinearCorrection), 0);
+                            const C = b2Math_24.b2Clamp(b2Settings_21.b2_toiBaumgarte * (separation + b2Settings_21.b2_linearSlop), (-b2Settings_21.b2_maxLinearCorrection), 0);
                             // Compute the effective mass.
                             // float32 rnA = b2Cross(rA, normal);
-                            const rnA = b2Math_26.b2Vec2.CrossVV(rA, normal);
+                            const rnA = b2Math_24.b2Vec2.CrossVV(rA, normal);
                             // float32 rnB = b2Cross(rB, normal);
-                            const rnB = b2Math_26.b2Vec2.CrossVV(rB, normal);
+                            const rnB = b2Math_24.b2Vec2.CrossVV(rB, normal);
                             // float32 K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             const K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
                             // Compute normal impulse
                             const impulse = K > 0 ? -C / K : 0;
                             // b2Vec2 P = impulse * normal;
-                            b2Math_26.b2Vec2.MulSV(impulse, normal, P);
+                            b2Math_24.b2Vec2.MulSV(impulse, normal, P);
                             // cA -= mA * P;
                             cA.SelfMulSub(mA, P);
                             // aA -= iA * b2Cross(rA, P);
-                            aA -= iA * b2Math_26.b2Vec2.CrossVV(rA, P);
+                            aA -= iA * b2Math_24.b2Vec2.CrossVV(rA, P);
                             // cB += mB * P;
                             cB.SelfMulAdd(mB, P);
                             // aB += iB * b2Cross(rB, P);
-                            aB += iB * b2Math_26.b2Vec2.CrossVV(rB, P);
+                            aB += iB * b2Math_24.b2Vec2.CrossVV(rB, P);
                         }
                         // this.m_positions[indexA].c = cA;
                         this.m_positions[indexA].a = aA;
@@ -10723,37 +10342,37 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
                     }
                     // We can't expect minSpeparation >= -b2_linearSlop because we don't
                     // push the separation above -b2_linearSlop.
-                    return minSeparation >= -1.5 * b2Settings_22.b2_linearSlop;
+                    return minSeparation >= -1.5 * b2Settings_21.b2_linearSlop;
                 }
             };
-            b2ContactSolver.InitializeVelocityConstraints_s_xfA = new b2Math_26.b2Transform();
-            b2ContactSolver.InitializeVelocityConstraints_s_xfB = new b2Math_26.b2Transform();
-            b2ContactSolver.InitializeVelocityConstraints_s_worldManifold = new b2Collision_3.b2WorldManifold();
-            b2ContactSolver.WarmStart_s_P = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_dv = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_dv1 = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_dv2 = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_P = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_a = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_b = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_x = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_d = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_P1 = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_P2 = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveVelocityConstraints_s_P1P2 = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolvePositionConstraints_s_xfA = new b2Math_26.b2Transform();
-            b2ContactSolver.SolvePositionConstraints_s_xfB = new b2Math_26.b2Transform();
+            b2ContactSolver.InitializeVelocityConstraints_s_xfA = new b2Math_24.b2Transform();
+            b2ContactSolver.InitializeVelocityConstraints_s_xfB = new b2Math_24.b2Transform();
+            b2ContactSolver.InitializeVelocityConstraints_s_worldManifold = new b2Collision_2.b2WorldManifold();
+            b2ContactSolver.WarmStart_s_P = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_dv = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_dv1 = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_dv2 = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_P = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_a = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_b = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_x = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_d = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_P1 = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_P2 = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveVelocityConstraints_s_P1P2 = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolvePositionConstraints_s_xfA = new b2Math_24.b2Transform();
+            b2ContactSolver.SolvePositionConstraints_s_xfB = new b2Math_24.b2Transform();
             b2ContactSolver.SolvePositionConstraints_s_psm = new b2PositionSolverManifold();
-            b2ContactSolver.SolvePositionConstraints_s_rA = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolvePositionConstraints_s_rB = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolvePositionConstraints_s_P = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveTOIPositionConstraints_s_xfA = new b2Math_26.b2Transform();
-            b2ContactSolver.SolveTOIPositionConstraints_s_xfB = new b2Math_26.b2Transform();
+            b2ContactSolver.SolvePositionConstraints_s_rA = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolvePositionConstraints_s_rB = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolvePositionConstraints_s_P = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveTOIPositionConstraints_s_xfA = new b2Math_24.b2Transform();
+            b2ContactSolver.SolveTOIPositionConstraints_s_xfB = new b2Math_24.b2Transform();
             b2ContactSolver.SolveTOIPositionConstraints_s_psm = new b2PositionSolverManifold();
-            b2ContactSolver.SolveTOIPositionConstraints_s_rA = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveTOIPositionConstraints_s_rB = new b2Math_26.b2Vec2();
-            b2ContactSolver.SolveTOIPositionConstraints_s_P = new b2Math_26.b2Vec2();
-            exports_33("b2ContactSolver", b2ContactSolver);
+            b2ContactSolver.SolveTOIPositionConstraints_s_rA = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveTOIPositionConstraints_s_rB = new b2Math_24.b2Vec2();
+            b2ContactSolver.SolveTOIPositionConstraints_s_P = new b2Math_24.b2Vec2();
+            exports_29("b2ContactSolver", b2ContactSolver);
         }
     }
 });
@@ -10774,17 +10393,18 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exports_34, context_34) {
+System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exports_30, context_30) {
     "use strict";
-    var __moduleName = context_34 && context_34.id;
-    var b2Settings_23;
+    var __moduleName = context_30 && context_30.id;
+    var b2Settings_22;
     var b2DestructionListener, b2ContactFilter, b2ContactImpulse, b2ContactListener, b2QueryCallback, b2RayCastCallback;
     return {
         setters:[
-            function (b2Settings_23_1) {
-                b2Settings_23 = b2Settings_23_1;
+            function (b2Settings_22_1) {
+                b2Settings_22 = b2Settings_22_1;
             }],
         execute: function() {
+            ///#endif
             /// Joints and fixtures are destroyed when their associated
             /// body is destroyed. Implement this listener so that you
             /// may nullify references to these joints and shapes.
@@ -10795,8 +10415,17 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
                 /// Called when any fixture is about to be destroyed due
                 /// to the destruction of its parent body.
                 SayGoodbyeFixture(fixture) { }
+                ///#if B2_ENABLE_PARTICLE
+                /// Called when any particle group is about to be destroyed.
+                SayGoodbyeParticleGroup(group) { }
+                /// Called when a particle is about to be destroyed.
+                /// The index can be used in conjunction with
+                /// b2ParticleSystem::GetUserDataBuffer() or
+                /// b2ParticleSystem::GetParticleHandleFromIndex() to determine which
+                /// particle has been destroyed.
+                SayGoodbyeParticle(system, index) { }
             };
-            exports_34("b2DestructionListener", b2DestructionListener);
+            exports_30("b2DestructionListener", b2DestructionListener);
             /// Implement this class to provide collision filtering. In other words, you can implement
             /// this class if you want finer control over contact creation.
             b2ContactFilter = class b2ContactFilter {
@@ -10821,20 +10450,28 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
                     const collide = (((filter1.maskBits & filter2.categoryBits) !== 0) && ((filter1.categoryBits & filter2.maskBits) !== 0));
                     return collide;
                 }
+                ///#if B2_ENABLE_PARTICLE
+                ShouldCollideFixtureParticle(fixture, system, index) {
+                    return true;
+                }
+                ShouldCollideParticleParticle(system, indexA, indexB) {
+                    return true;
+                }
             };
+            ///#endif
             b2ContactFilter.b2_defaultFilter = new b2ContactFilter();
-            exports_34("b2ContactFilter", b2ContactFilter);
+            exports_30("b2ContactFilter", b2ContactFilter);
             /// Contact impulses for reporting. Impulses are used instead of forces because
             /// sub-step forces may approach infinity for rigid body collisions. These
             /// match up one-to-one with the contact points in b2Manifold.
             b2ContactImpulse = class b2ContactImpulse {
                 constructor() {
-                    this.normalImpulses = b2Settings_23.b2MakeNumberArray(b2Settings_23.b2_maxManifoldPoints);
-                    this.tangentImpulses = b2Settings_23.b2MakeNumberArray(b2Settings_23.b2_maxManifoldPoints);
+                    this.normalImpulses = b2Settings_22.b2MakeNumberArray(b2Settings_22.b2_maxManifoldPoints);
+                    this.tangentImpulses = b2Settings_22.b2MakeNumberArray(b2Settings_22.b2_maxManifoldPoints);
                     this.count = 0;
                 }
             };
-            exports_34("b2ContactImpulse", b2ContactImpulse);
+            exports_30("b2ContactImpulse", b2ContactImpulse);
             /// Implement this class to get contact information. You can use these results for
             /// things like sounds and game logic. You can also get contact results by
             /// traversing the contact lists after the time step. However, you might miss
@@ -10849,6 +10486,12 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
                 BeginContact(contact) { }
                 /// Called when two fixtures cease to touch.
                 EndContact(contact) { }
+                ///#if B2_ENABLE_PARTICLE
+                BeginContactFixtureParticle(system, contact) { }
+                EndContactFixtureParticle(system, contact) { }
+                BeginContactParticleParticle(system, contact) { }
+                EndContactParticleParticle(system, contact) { }
+                ///#endif
                 /// This is called after a contact is updated. This allows you to inspect a
                 /// contact before it goes to the solver. If you are careful, you can modify the
                 /// contact manifold (e.g. disable contact).
@@ -10869,7 +10512,7 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
                 PostSolve(contact, impulse) { }
             };
             b2ContactListener.b2_defaultListener = new b2ContactListener();
-            exports_34("b2ContactListener", b2ContactListener);
+            exports_30("b2ContactListener", b2ContactListener);
             /// Callback class for AABB queries.
             /// See b2World::Query
             b2QueryCallback = class b2QueryCallback {
@@ -10878,8 +10521,15 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
                 ReportFixture(fixture) {
                     return true;
                 }
+                ///#if B2_ENABLE_PARTICLE
+                ReportParticle(system, index) {
+                    return false;
+                }
+                ShouldQueryParticleSystem(system) {
+                    return true;
+                }
             };
-            exports_34("b2QueryCallback", b2QueryCallback);
+            exports_30("b2QueryCallback", b2QueryCallback);
             /// Callback class for ray casts.
             /// See b2World::RayCast
             b2RayCastCallback = class b2RayCastCallback {
@@ -10897,8 +10547,15 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
                 ReportFixture(fixture, point, normal, fraction) {
                     return fraction;
                 }
+                ///#if B2_ENABLE_PARTICLE
+                ReportParticle(system, index, point, normal, fraction) {
+                    return 0;
+                }
+                ShouldQueryParticleSystem(system) {
+                    return true;
+                }
             };
-            exports_34("b2RayCastCallback", b2RayCastCallback);
+            exports_30("b2RayCastCallback", b2RayCastCallback);
         }
     }
 });
@@ -10919,21 +10576,21 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Dynamics/Contacts/b2ContactSolver", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks"], function(exports_35, context_35) {
+System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Dynamics/Contacts/b2ContactSolver", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks"], function(exports_31, context_31) {
     "use strict";
-    var __moduleName = context_35 && context_35.id;
-    var b2Settings_24, b2Settings_25, b2Settings_26, b2Settings_27, b2Math_27, b2Timer_2, b2ContactSolver_1, b2TimeStep_2, b2WorldCallbacks_1;
+    var __moduleName = context_31 && context_31.id;
+    var b2Settings_23, b2Settings_24, b2Settings_25, b2Settings_26, b2Math_25, b2Timer_2, b2ContactSolver_1, b2TimeStep_2, b2WorldCallbacks_1;
     var b2Island;
     return {
         setters:[
-            function (b2Settings_24_1) {
-                b2Settings_24 = b2Settings_24_1;
-                b2Settings_25 = b2Settings_24_1;
-                b2Settings_26 = b2Settings_24_1;
-                b2Settings_27 = b2Settings_24_1;
+            function (b2Settings_23_1) {
+                b2Settings_23 = b2Settings_23_1;
+                b2Settings_24 = b2Settings_23_1;
+                b2Settings_25 = b2Settings_23_1;
+                b2Settings_26 = b2Settings_23_1;
             },
-            function (b2Math_27_1) {
-                b2Math_27 = b2Math_27_1;
+            function (b2Math_25_1) {
+                b2Math_25 = b2Math_25_1;
             },
             function (b2Timer_2_1) {
                 b2Timer_2 = b2Timer_2_1;
@@ -11102,14 +10759,14 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
                     }
                     // TODO:
                     if (this.m_positions.length < bodyCapacity) {
-                        const new_length = b2Math_27.b2Max(this.m_positions.length * 2, bodyCapacity);
+                        const new_length = b2Math_25.b2Max(this.m_positions.length * 2, bodyCapacity);
                         while (this.m_positions.length < new_length) {
                             this.m_positions[this.m_positions.length] = new b2TimeStep_2.b2Position();
                         }
                     }
                     // TODO:
                     if (this.m_velocities.length < bodyCapacity) {
-                        const new_length = b2Math_27.b2Max(this.m_velocities.length * 2, bodyCapacity);
+                        const new_length = b2Math_25.b2Max(this.m_velocities.length * 2, bodyCapacity);
                         while (this.m_velocities.length < new_length) {
                             this.m_velocities[this.m_velocities.length] = new b2TimeStep_2.b2Velocity();
                         }
@@ -11207,14 +10864,14 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
                         const v = this.m_velocities[i].v;
                         let w = this.m_velocities[i].w;
                         // Check for large velocities
-                        const translation = b2Math_27.b2Vec2.MulSV(h, v, b2Island.s_translation);
-                        if (b2Math_27.b2Vec2.DotVV(translation, translation) > b2Settings_25.b2_maxTranslationSquared) {
-                            const ratio = b2Settings_25.b2_maxTranslation / translation.Length();
+                        const translation = b2Math_25.b2Vec2.MulSV(h, v, b2Island.s_translation);
+                        if (b2Math_25.b2Vec2.DotVV(translation, translation) > b2Settings_24.b2_maxTranslationSquared) {
+                            const ratio = b2Settings_24.b2_maxTranslation / translation.Length();
                             v.SelfMul(ratio);
                         }
                         const rotation = h * w;
-                        if (rotation * rotation > b2Settings_26.b2_maxRotationSquared) {
-                            const ratio = b2Settings_26.b2_maxRotation / b2Math_27.b2Abs(rotation);
+                        if (rotation * rotation > b2Settings_25.b2_maxRotationSquared) {
+                            const ratio = b2Settings_25.b2_maxRotation / b2Math_25.b2Abs(rotation);
                             w *= ratio;
                         }
                         // Integrate
@@ -11254,9 +10911,9 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
                     profile.solvePosition = timer.GetMilliseconds();
                     this.Report(contactSolver.m_velocityConstraints);
                     if (allowSleep) {
-                        let minSleepTime = b2Settings_24.b2_maxFloat;
-                        const linTolSqr = b2Settings_27.b2_linearSleepTolerance * b2Settings_27.b2_linearSleepTolerance;
-                        const angTolSqr = b2Settings_27.b2_angularSleepTolerance * b2Settings_27.b2_angularSleepTolerance;
+                        let minSleepTime = b2Settings_23.b2_maxFloat;
+                        const linTolSqr = b2Settings_26.b2_linearSleepTolerance * b2Settings_26.b2_linearSleepTolerance;
+                        const angTolSqr = b2Settings_26.b2_angularSleepTolerance * b2Settings_26.b2_angularSleepTolerance;
                         for (let i = 0; i < this.m_bodyCount; ++i) {
                             const b = this.m_bodies[i];
                             if (b.GetType() === 0 /* b2_staticBody */) {
@@ -11264,16 +10921,16 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
                             }
                             if (!b.m_autoSleepFlag ||
                                 b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
-                                b2Math_27.b2Vec2.DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
+                                b2Math_25.b2Vec2.DotVV(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr) {
                                 b.m_sleepTime = 0;
                                 minSleepTime = 0;
                             }
                             else {
                                 b.m_sleepTime += h;
-                                minSleepTime = b2Math_27.b2Min(minSleepTime, b.m_sleepTime);
+                                minSleepTime = b2Math_25.b2Min(minSleepTime, b.m_sleepTime);
                             }
                         }
-                        if (minSleepTime >= b2Settings_24.b2_timeToSleep && positionSolved) {
+                        if (minSleepTime >= b2Settings_23.b2_timeToSleep && positionSolved) {
                             for (let i = 0; i < this.m_bodyCount; ++i) {
                                 const b = this.m_bodies[i];
                                 b.SetAwake(false);
@@ -11361,14 +11018,14 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
                         const v = this.m_velocities[i].v;
                         let w = this.m_velocities[i].w;
                         // Check for large velocities
-                        const translation = b2Math_27.b2Vec2.MulSV(h, v, b2Island.s_translation);
-                        if (b2Math_27.b2Vec2.DotVV(translation, translation) > b2Settings_25.b2_maxTranslationSquared) {
-                            const ratio = b2Settings_25.b2_maxTranslation / translation.Length();
+                        const translation = b2Math_25.b2Vec2.MulSV(h, v, b2Island.s_translation);
+                        if (b2Math_25.b2Vec2.DotVV(translation, translation) > b2Settings_24.b2_maxTranslationSquared) {
+                            const ratio = b2Settings_24.b2_maxTranslation / translation.Length();
                             v.SelfMul(ratio);
                         }
                         const rotation = h * w;
-                        if (rotation * rotation > b2Settings_26.b2_maxRotationSquared) {
-                            const ratio = b2Settings_26.b2_maxRotation / b2Math_27.b2Abs(rotation);
+                        if (rotation * rotation > b2Settings_25.b2_maxRotationSquared) {
+                            const ratio = b2Settings_25.b2_maxRotation / b2Math_25.b2Abs(rotation);
                             w *= ratio;
                         }
                         // Integrate
@@ -11412,9 +11069,9 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
             b2Island.s_solverData = new b2TimeStep_2.b2SolverData();
             b2Island.s_contactSolverDef = new b2ContactSolver_1.b2ContactSolverDef();
             b2Island.s_contactSolver = new b2ContactSolver_1.b2ContactSolver();
-            b2Island.s_translation = new b2Math_27.b2Vec2();
+            b2Island.s_translation = new b2Math_25.b2Vec2();
             b2Island.s_impulse = new b2WorldCallbacks_1.b2ContactImpulse();
-            exports_35("b2Island", b2Island);
+            exports_31("b2Island", b2Island);
         }
     }
 });
@@ -11435,18 +11092,19 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Common/b2Draw", "Collision/b2Collision", "Collision/b2TimeOfImpact", "Dynamics/Joints/b2JointFactory", "Dynamics/b2Body", "Dynamics/b2ContactManager", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks"], function(exports_36, context_36) {
+System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Common/b2Draw", "Collision/b2Collision", "Collision/b2TimeOfImpact", "Dynamics/Joints/b2JointFactory", "Dynamics/b2Body", "Dynamics/b2ContactManager", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks", "Particle/b2Particle", "Particle/b2ParticleSystem"], function(exports_32, context_32) {
     "use strict";
-    var __moduleName = context_36 && context_36.id;
-    var b2Settings_28, b2Math_28, b2Timer_3, b2Draw_1, b2Collision_4, b2TimeOfImpact_1, b2JointFactory_1, b2Body_1, b2ContactManager_1, b2Island_1, b2TimeStep_3, b2WorldCallbacks_2, b2WorldCallbacks_3;
+    var __moduleName = context_32 && context_32.id;
+    var b2Settings_27, b2Math_26, b2Timer_3, b2Draw_1, b2Collision_3, b2TimeOfImpact_1, b2JointFactory_1, b2Body_1, b2ContactManager_1, b2Island_1, b2TimeStep_3, b2WorldCallbacks_2, b2WorldCallbacks_3, b2Settings_28, b2Particle_1, b2ParticleSystem_1;
     var b2World;
     return {
         setters:[
-            function (b2Settings_28_1) {
-                b2Settings_28 = b2Settings_28_1;
+            function (b2Settings_27_1) {
+                b2Settings_27 = b2Settings_27_1;
+                b2Settings_28 = b2Settings_27_1;
             },
-            function (b2Math_28_1) {
-                b2Math_28 = b2Math_28_1;
+            function (b2Math_26_1) {
+                b2Math_26 = b2Math_26_1;
             },
             function (b2Timer_3_1) {
                 b2Timer_3 = b2Timer_3_1;
@@ -11454,8 +11112,8 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
             function (b2Draw_1_1) {
                 b2Draw_1 = b2Draw_1_1;
             },
-            function (b2Collision_4_1) {
-                b2Collision_4 = b2Collision_4_1;
+            function (b2Collision_3_1) {
+                b2Collision_3 = b2Collision_3_1;
             },
             function (b2TimeOfImpact_1_1) {
                 b2TimeOfImpact_1 = b2TimeOfImpact_1_1;
@@ -11478,8 +11136,15 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
             function (b2WorldCallbacks_2_1) {
                 b2WorldCallbacks_2 = b2WorldCallbacks_2_1;
                 b2WorldCallbacks_3 = b2WorldCallbacks_2_1;
+            },
+            function (b2Particle_1_1) {
+                b2Particle_1 = b2Particle_1_1;
+            },
+            function (b2ParticleSystem_1_1) {
+                b2ParticleSystem_1 = b2ParticleSystem_1_1;
             }],
         execute: function() {
+            ///#endif
             ///import { b2Controller } from "../../../Contributions/Enhancements/Controllers/b2Controller";
             /// The world class manages all physics entities, dynamic simulation,
             /// and asynchronous queries. The world also contains efficient memory
@@ -11498,9 +11163,12 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     this.m_contactManager = new b2ContactManager_1.b2ContactManager();
                     this.m_bodyList = null;
                     this.m_jointList = null;
+                    ///#if B2_ENABLE_PARTICLE
+                    this.m_particleSystemList = null;
+                    ///#endif
                     this.m_bodyCount = 0;
                     this.m_jointCount = 0;
-                    this.m_gravity = new b2Math_28.b2Vec2();
+                    this.m_gravity = new b2Math_26.b2Vec2();
                     this.m_allowSleep = true;
                     this.m_destructionListener = null;
                     this.m_debugDraw = null;
@@ -11735,7 +11403,57 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         }
                     }
                 }
-                Step(dt, velocityIterations, positionIterations) {
+                ///#if B2_ENABLE_PARTICLE
+                CreateParticleSystem(def) {
+                    ///b2Assert(!this.IsLocked());
+                    if (this.IsLocked()) {
+                        return null;
+                    }
+                    const p = new b2ParticleSystem_1.b2ParticleSystem(def, this);
+                    // Add to world doubly linked list.
+                    p.m_prev = null;
+                    p.m_next = this.m_particleSystemList;
+                    if (this.m_particleSystemList) {
+                        this.m_particleSystemList.m_prev = p;
+                    }
+                    this.m_particleSystemList = p;
+                    return p;
+                }
+                DestroyParticleSystem(p) {
+                    ///b2Assert(!this.IsLocked());
+                    if (this.IsLocked()) {
+                        return;
+                    }
+                    // Remove world particleSystem list.
+                    if (p.m_prev) {
+                        p.m_prev.m_next = p.m_next;
+                    }
+                    if (p.m_next) {
+                        p.m_next.m_prev = p.m_prev;
+                    }
+                    if (p === this.m_particleSystemList) {
+                        this.m_particleSystemList = p.m_next;
+                    }
+                }
+                CalculateReasonableParticleIterations(timeStep) {
+                    if (this.m_particleSystemList === null) {
+                        return 1;
+                    }
+                    function GetSmallestRadius(world) {
+                        let smallestRadius = b2Settings_28.b2_maxFloat;
+                        for (let system = world.GetParticleSystemList(); system !== null; system = system.m_next) {
+                            smallestRadius = b2Math_26.b2Min(smallestRadius, system.GetRadius());
+                        }
+                        return smallestRadius;
+                    }
+                    // Use the smallest radius, since that represents the worst-case.
+                    return b2Particle_1.b2CalculateParticleIterations(this.m_gravity.Length(), GetSmallestRadius(this), timeStep);
+                }
+                ///#if B2_ENABLE_PARTICLE
+                Step(dt, velocityIterations, positionIterations, particleIterations = this.CalculateReasonableParticleIterations(dt)) {
+                    ///#else
+                    ///public Step(dt: number, velocityIterations: number, positionIterations: number): void {
+                    ///#endif
                     const stepTimer = b2World.Step_s_stepTimer.Reset();
                     // If new fixtures were added, we need to find the new contacts.
                     if (this.m_newFixture) {
@@ -11747,6 +11465,9 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     step.dt = dt;
                     step.velocityIterations = velocityIterations;
                     step.positionIterations = positionIterations;
+                    ///#if B2_ENABLE_PARTICLE
+                    step.particleIterations = particleIterations;
+                    ///#endif
                     if (dt > 0) {
                         step.inv_dt = 1 / dt;
                     }
@@ -11762,6 +11483,11 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     // Integrate velocities, solve velocity constraints, and integrate positions.
                     if (this.m_stepComplete && step.dt > 0) {
                         const timer = b2World.Step_s_timer.Reset();
+                        ///#if B2_ENABLE_PARTICLE
+                        for (let p = this.m_particleSystemList; p; p = p.m_next) {
+                            p.Solve(step); // Particle Simulation
+                        }
+                        ///#endif
                         this.Solve(step);
                         this.m_profile.solve = timer.GetMilliseconds();
                     }
@@ -11791,6 +11517,21 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     for (let body = this.m_bodyList; body; body = body.m_next) {
                         body.m_force.SetZero();
                         body.m_torque = 0;
+                    }
+                }
+                ///#if B2_ENABLE_PARTICLE
+                DrawParticleSystem(system) {
+                    const particleCount = system.GetParticleCount();
+                    if (particleCount) {
+                        const radius = system.GetRadius();
+                        const positionBuffer = system.GetPositionBuffer();
+                        if (system.m_colorBuffer.data) {
+                            const colorBuffer = system.GetColorBuffer();
+                            this.m_debugDraw.DrawParticles(positionBuffer, radius, colorBuffer, particleCount);
+                        }
+                        else {
+                            this.m_debugDraw.DrawParticles(positionBuffer, radius, null, particleCount);
+                        }
                     }
                 }
                 DrawDebugData() {
@@ -11828,6 +11569,13 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                             this.m_debugDraw.PopTransform(xf);
                         }
                     }
+                    ///#if B2_ENABLE_PARTICLE
+                    if (flags & 32 /* e_particleBit */) {
+                        for (let p = this.m_particleSystemList; p; p = p.m_next) {
+                            this.DrawParticleSystem(p);
+                        }
+                    }
+                    ///#endif
                     if (flags & 2 /* e_jointBit */) {
                         for (let j = this.m_jointList; j; j = j.m_next) {
                             this.DrawJoint(j);
@@ -11903,6 +11651,15 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     }
                     ;
                     broadPhase.Query(WorldQueryWrapper, aabb);
+                    ///#if B2_ENABLE_PARTICLE
+                    if (callback instanceof b2WorldCallbacks_2.b2QueryCallback) {
+                        for (let p = this.m_particleSystemList; p; p = p.m_next) {
+                            if (callback.ShouldQueryParticleSystem(p)) {
+                                p.QueryAABB(callback, aabb);
+                            }
+                        }
+                    }
+                    ///#endif
                 }
                 QueryShape(callback, shape, transform) {
                     const broadPhase = this.m_contactManager.m_broadPhase;
@@ -11911,7 +11668,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
                         const fixture = fixture_proxy.fixture;
                         ///const index: number = fixture_proxy.childIndex;
-                        if (b2Collision_4.b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
+                        if (b2Collision_3.b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
                             if (callback instanceof b2WorldCallbacks_2.b2QueryCallback) {
                                 return callback.ReportFixture(fixture);
                             }
@@ -11925,6 +11682,15 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     const aabb = b2World.QueryShape_s_aabb;
                     shape.ComputeAABB(aabb, transform, 0); // TODO
                     broadPhase.Query(WorldQueryWrapper, aabb);
+                    ///#if B2_ENABLE_PARTICLE
+                    if (callback instanceof b2WorldCallbacks_2.b2QueryCallback) {
+                        for (let p = this.m_particleSystemList; p; p = p.m_next) {
+                            if (callback.ShouldQueryParticleSystem(p)) {
+                                p.QueryAABB(callback, aabb);
+                            }
+                        }
+                    }
+                    ///#endif
                 }
                 QueryPoint(callback, point) {
                     const broadPhase = this.m_contactManager.m_broadPhase;
@@ -11945,9 +11711,18 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     }
                     ;
                     const aabb = b2World.QueryPoint_s_aabb;
-                    aabb.lowerBound.Set(point.x - b2Settings_28.b2_linearSlop, point.y - b2Settings_28.b2_linearSlop);
-                    aabb.upperBound.Set(point.x + b2Settings_28.b2_linearSlop, point.y + b2Settings_28.b2_linearSlop);
+                    aabb.lowerBound.Set(point.x - b2Settings_27.b2_linearSlop, point.y - b2Settings_27.b2_linearSlop);
+                    aabb.upperBound.Set(point.x + b2Settings_27.b2_linearSlop, point.y + b2Settings_27.b2_linearSlop);
                     broadPhase.Query(WorldQueryWrapper, aabb);
+                    ///#if B2_ENABLE_PARTICLE
+                    if (callback instanceof b2WorldCallbacks_2.b2QueryCallback) {
+                        for (let p = this.m_particleSystemList; p; p = p.m_next) {
+                            if (callback.ShouldQueryParticleSystem(p)) {
+                                p.QueryAABB(callback, aabb);
+                            }
+                        }
+                    }
+                    ///#endif
                 }
                 RayCast(callback, point1, point2) {
                     const broadPhase = this.m_contactManager.m_broadPhase;
@@ -11977,6 +11752,15 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     input.p1.Copy(point1);
                     input.p2.Copy(point2);
                     broadPhase.RayCast(WorldRayCastWrapper, input);
+                    ///#if B2_ENABLE_PARTICLE
+                    if (callback instanceof b2WorldCallbacks_3.b2RayCastCallback) {
+                        for (let p = this.m_particleSystemList; p; p = p.m_next) {
+                            if (callback.ShouldQueryParticleSystem(p)) {
+                                p.RayCast(callback, point1, point2);
+                            }
+                        }
+                    }
+                    ///#endif
                 }
                 RayCastOne(point1, point2) {
                     let result = null;
@@ -12013,6 +11797,11 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                 GetJointList() {
                     return this.m_jointList;
                 }
+                ///#if B2_ENABLE_PARTICLE
+                GetParticleSystemList() {
+                    return this.m_particleSystemList;
+                }
+                ///#endif
                 /// Get the world contact list. With the returned contact, use b2Contact::GetNext to get
                 /// the next contact in the world list. A NULL contact indicates the end of the list.
                 /// @return the head of the world contact list.
@@ -12088,7 +11877,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                 }
                 /// Change the global gravity vector.
                 SetGravity(gravity, wake = true) {
-                    if (!b2Math_28.b2Vec2.IsEqualToV(this.m_gravity, gravity)) {
+                    if (!b2Math_26.b2Vec2.IsEqualToV(this.m_gravity, gravity)) {
                         this.m_gravity.Copy(gravity);
                         if (wake) {
                             for (let b = this.m_bodyList; b; b = b.m_next) {
@@ -12221,7 +12010,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                                 const circle = shape;
                                 const center = circle.m_p;
                                 const radius = circle.m_radius;
-                                const axis = b2Math_28.b2Vec2.UNITX;
+                                const axis = b2Math_26.b2Vec2.UNITX;
                                 this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
                             }
                             break;
@@ -12259,6 +12048,12 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     }
                 }
                 Solve(step) {
+                    ///#if B2_ENABLE_PARTICLE
+                    // update previous transforms
+                    for (let b = this.m_bodyList; b; b = b.m_next) {
+                        b.m_xf0.Copy(b.m_xf);
+                    }
+                    ///#endif
                     /// @see b2Controller list
                     //    for (let controller = this.m_controllerList; controller; controller = controller.m_next) {
                     //      controller.Step(step);
@@ -12399,7 +12194,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                 SolveTOI(step) {
                     // b2Island island(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, &m_stackAllocator, m_contactManager.m_contactListener);
                     const island = this.m_island;
-                    island.Initialize(2 * b2Settings_28.b2_maxTOIContacts, b2Settings_28.b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
+                    island.Initialize(2 * b2Settings_27.b2_maxTOIContacts, b2Settings_27.b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
                     if (this.m_stepComplete) {
                         for (let b = this.m_bodyList; b; b = b.m_next) {
                             b.m_islandFlag = false;
@@ -12424,7 +12219,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                                 continue;
                             }
                             // Prevent excessive sub-stepping.
-                            if (c.m_toiCount > b2Settings_28.b2_maxSubSteps) {
+                            if (c.m_toiCount > b2Settings_27.b2_maxSubSteps) {
                                 continue;
                             }
                             let alpha = 1;
@@ -12482,7 +12277,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                                 // Beta is the fraction of the remaining portion of the .
                                 const beta = output.t;
                                 if (output.state === 3 /* e_touching */) {
-                                    alpha = b2Math_28.b2Min(alpha0 + (1 - alpha0) * beta, 1);
+                                    alpha = b2Math_26.b2Min(alpha0 + (1 - alpha0) * beta, 1);
                                 }
                                 else {
                                     alpha = 1;
@@ -12496,7 +12291,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                                 minAlpha = alpha;
                             }
                         }
-                        if (minContact === null || 1 - 10 * b2Settings_28.b2_epsilon < minAlpha) {
+                        if (minContact === null || 1 - 10 * b2Settings_27.b2_epsilon < minAlpha) {
                             // No more TOI events. Done!
                             this.m_stepComplete = true;
                             break;
@@ -12604,6 +12399,9 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         subStep.dtRatio = 1;
                         subStep.positionIterations = 20;
                         subStep.velocityIterations = step.velocityIterations;
+                        ///#if B2_ENABLE_PARTICLE
+                        subStep.particleIterations = step.particleIterations;
+                        ///#endif
                         subStep.warmStarting = false;
                         island.SolveTOI(subStep, bA.m_islandIndex, bB.m_islandIndex);
                         // Reset island flags and synchronize broad-phase proxies.
@@ -12630,6 +12428,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                     }
                 }
             };
+            ///#endif
             /// Take a time step. This performs collision detection, integration,
             /// and constraint solution.
             /// @param timeStep the amount of time to simulate, this should not vary.
@@ -12638,31 +12437,32 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
             b2World.Step_s_step = new b2TimeStep_3.b2TimeStep();
             b2World.Step_s_stepTimer = new b2Timer_3.b2Timer();
             b2World.Step_s_timer = new b2Timer_3.b2Timer();
+            ///#endif
             /// Call this to draw shapes and other debug draw data.
             b2World.DrawDebugData_s_color = new b2Draw_1.b2Color(0, 0, 0);
-            b2World.DrawDebugData_s_vs = b2Math_28.b2Vec2.MakeArray(4);
-            b2World.DrawDebugData_s_xf = new b2Math_28.b2Transform();
-            b2World.QueryShape_s_aabb = new b2Collision_4.b2AABB();
-            b2World.QueryPoint_s_aabb = new b2Collision_4.b2AABB();
+            b2World.DrawDebugData_s_vs = b2Math_26.b2Vec2.MakeArray(4);
+            b2World.DrawDebugData_s_xf = new b2Math_26.b2Transform();
+            b2World.QueryShape_s_aabb = new b2Collision_3.b2AABB();
+            b2World.QueryPoint_s_aabb = new b2Collision_3.b2AABB();
             /// Ray-cast the world for all fixtures in the path of the ray. Your callback
             /// controls whether you get the closest point, any point, or n-points.
             /// The ray-cast ignores shapes that contain the starting point.
             /// @param callback a user implemented callback class.
             /// @param point1 the ray starting point
             /// @param point2 the ray ending point
-            b2World.RayCast_s_input = new b2Collision_4.b2RayCastInput();
-            b2World.RayCast_s_output = new b2Collision_4.b2RayCastOutput();
-            b2World.RayCast_s_point = new b2Math_28.b2Vec2();
-            b2World.DrawJoint_s_p1 = new b2Math_28.b2Vec2();
-            b2World.DrawJoint_s_p2 = new b2Math_28.b2Vec2();
+            b2World.RayCast_s_input = new b2Collision_3.b2RayCastInput();
+            b2World.RayCast_s_output = new b2Collision_3.b2RayCastOutput();
+            b2World.RayCast_s_point = new b2Math_26.b2Vec2();
+            b2World.DrawJoint_s_p1 = new b2Math_26.b2Vec2();
+            b2World.DrawJoint_s_p2 = new b2Math_26.b2Vec2();
             b2World.DrawJoint_s_color = new b2Draw_1.b2Color(0.5, 0.8, 0.8);
             b2World.SolveTOI_s_subStep = new b2TimeStep_3.b2TimeStep();
-            b2World.SolveTOI_s_backup = new b2Math_28.b2Sweep();
-            b2World.SolveTOI_s_backup1 = new b2Math_28.b2Sweep();
-            b2World.SolveTOI_s_backup2 = new b2Math_28.b2Sweep();
+            b2World.SolveTOI_s_backup = new b2Math_26.b2Sweep();
+            b2World.SolveTOI_s_backup1 = new b2Math_26.b2Sweep();
+            b2World.SolveTOI_s_backup2 = new b2Math_26.b2Sweep();
             b2World.SolveTOI_s_toi_input = new b2TimeOfImpact_1.b2TOIInput();
             b2World.SolveTOI_s_toi_output = new b2TimeOfImpact_1.b2TOIOutput();
-            exports_36("b2World", b2World);
+            exports_32("b2World", b2World);
         }
     }
 });
@@ -12683,18 +12483,18 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape", "Dynamics/b2Fixture"], function(exports_37, context_37) {
+System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape", "Dynamics/b2Fixture"], function(exports_33, context_33) {
     "use strict";
-    var __moduleName = context_37 && context_37.id;
-    var b2Math_29, b2Shape_7, b2Fixture_1;
+    var __moduleName = context_33 && context_33.id;
+    var b2Math_27, b2Shape_6, b2Fixture_1;
     var b2BodyDef, b2Body;
     return {
         setters:[
-            function (b2Math_29_1) {
-                b2Math_29 = b2Math_29_1;
+            function (b2Math_27_1) {
+                b2Math_27 = b2Math_27_1;
             },
-            function (b2Shape_7_1) {
-                b2Shape_7 = b2Shape_7_1;
+            function (b2Shape_6_1) {
+                b2Shape_6 = b2Shape_6_1;
             },
             function (b2Fixture_1_1) {
                 b2Fixture_1 = b2Fixture_1_1;
@@ -12709,11 +12509,11 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     this.type = 0 /* b2_staticBody */;
                     /// The world position of the body. Avoid creating bodies at the origin
                     /// since this can lead to many overlapping shapes.
-                    this.position = new b2Math_29.b2Vec2(0, 0);
+                    this.position = new b2Math_27.b2Vec2(0, 0);
                     /// The world angle of the body in radians.
                     this.angle = 0;
                     /// The linear velocity of the body's origin in world co-ordinates.
-                    this.linearVelocity = new b2Math_29.b2Vec2(0, 0);
+                    this.linearVelocity = new b2Math_27.b2Vec2(0, 0);
                     /// The angular velocity of the body.
                     this.angularVelocity = 0;
                     /// Linear damping is use to reduce the linear velocity. The damping parameter
@@ -12744,7 +12544,7 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     this.gravityScale = 1;
                 }
             };
-            exports_37("b2BodyDef", b2BodyDef);
+            exports_33("b2BodyDef", b2BodyDef);
             /// A rigid body. These are created via b2World::CreateBody.
             b2Body = class b2Body {
                 // public m_controllerList: b2ControllerEdge = null;
@@ -12766,11 +12566,14 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     this.m_activeFlag = false;
                     this.m_toiFlag = false;
                     this.m_islandIndex = 0;
-                    this.m_xf = new b2Math_29.b2Transform(); // the body origin transform
-                    this.m_sweep = new b2Math_29.b2Sweep(); // the swept motion for CCD
-                    this.m_linearVelocity = new b2Math_29.b2Vec2();
+                    this.m_xf = new b2Math_27.b2Transform(); // the body origin transform
+                    ///#if B2_ENABLE_PARTICLE
+                    this.m_xf0 = new b2Math_27.b2Transform();
+                    ///#endif
+                    this.m_sweep = new b2Math_27.b2Sweep(); // the swept motion for CCD
+                    this.m_linearVelocity = new b2Math_27.b2Vec2();
                     this.m_angularVelocity = 0;
-                    this.m_force = new b2Math_29.b2Vec2;
+                    this.m_force = new b2Math_27.b2Vec2;
                     this.m_torque = 0;
                     this.m_world = null;
                     this.m_prev = null;
@@ -12807,6 +12610,9 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     this.m_world = world;
                     this.m_xf.p.Copy(bd.position);
                     this.m_xf.q.SetAngle(bd.angle);
+                    ///#if B2_ENABLE_PARTICLE
+                    this.m_xf0.Copy(this.m_xf);
+                    ///#endif
                     this.m_sweep.localCenter.SetZero();
                     this.m_sweep.c0.Copy(this.m_xf.p);
                     this.m_sweep.c.Copy(this.m_xf.p);
@@ -12842,7 +12648,7 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     if (a instanceof b2Fixture_1.b2FixtureDef) {
                         return this.CreateFixtureDef(a);
                     }
-                    else if ((a instanceof b2Shape_7.b2Shape) && (typeof (b) === "number")) {
+                    else if ((a instanceof b2Shape_6.b2Shape) && (typeof (b) === "number")) {
                         return this.CreateFixtureShapeDensity(a, b);
                     }
                     else {
@@ -12957,7 +12763,10 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     }
                     this.m_xf.q.SetAngle(angle);
                     this.m_xf.p.Set(x, y);
-                    b2Math_29.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+                    ///#if B2_ENABLE_PARTICLE
+                    this.m_xf0.Copy(this.m_xf);
+                    ///#endif
+                    b2Math_27.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
                     this.m_sweep.a = angle;
                     this.m_sweep.c0.Copy(this.m_sweep.c);
                     this.m_sweep.a0 = angle;
@@ -13008,7 +12817,7 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     if (this.m_type === 0 /* b2_staticBody */) {
                         return;
                     }
-                    if (b2Math_29.b2Vec2.DotVV(v, v) > 0) {
+                    if (b2Math_27.b2Vec2.DotVV(v, v) > 0) {
                         this.SetAwake(true);
                     }
                     this.m_linearVelocity.Copy(v);
@@ -13162,13 +12971,13 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                 /// Get the rotational inertia of the body about the local origin.
                 /// @return the rotational inertia, usually in kg-m^2.
                 GetInertia() {
-                    return this.m_I + this.m_mass * b2Math_29.b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+                    return this.m_I + this.m_mass * b2Math_27.b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
                 }
                 /// Get the mass data of the body.
                 /// @return a struct containing the mass, inertia and center of the body.
                 GetMassData(data) {
                     data.mass = this.m_mass;
-                    data.I = this.m_I + this.m_mass * b2Math_29.b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+                    data.I = this.m_I + this.m_mass * b2Math_27.b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
                     data.center.Copy(this.m_sweep.localCenter);
                     return data;
                 }
@@ -13189,17 +12998,17 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     }
                     this.m_invMass = 1 / this.m_mass;
                     if (massData.I > 0 && !this.m_fixedRotationFlag) {
-                        this.m_I = massData.I - this.m_mass * b2Math_29.b2Vec2.DotVV(massData.center, massData.center);
+                        this.m_I = massData.I - this.m_mass * b2Math_27.b2Vec2.DotVV(massData.center, massData.center);
                         ///b2Assert(this.m_I > 0);
                         this.m_invI = 1 / this.m_I;
                     }
                     // Move center of mass.
                     const oldCenter = b2Body.SetMassData_s_oldCenter.Copy(this.m_sweep.c);
                     this.m_sweep.localCenter.Copy(massData.center);
-                    b2Math_29.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+                    b2Math_27.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
                     this.m_sweep.c0.Copy(this.m_sweep.c);
                     // Update center of mass velocity.
-                    b2Math_29.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_29.b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Math_29.b2Vec2.s_t0), this.m_linearVelocity);
+                    b2Math_27.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_27.b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Math_27.b2Vec2.s_t0), this.m_linearVelocity);
                 }
                 ResetMassData() {
                     // Compute mass data from shapes. Each shape has its own density.
@@ -13241,7 +13050,7 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     }
                     if (this.m_I > 0 && !this.m_fixedRotationFlag) {
                         // Center the inertia about the center of mass.
-                        this.m_I -= this.m_mass * b2Math_29.b2Vec2.DotVV(localCenter, localCenter);
+                        this.m_I -= this.m_mass * b2Math_27.b2Vec2.DotVV(localCenter, localCenter);
                         ///b2Assert(this.m_I > 0);
                         this.m_invI = 1 / this.m_I;
                     }
@@ -13252,40 +13061,40 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     // Move center of mass.
                     const oldCenter = b2Body.ResetMassData_s_oldCenter.Copy(this.m_sweep.c);
                     this.m_sweep.localCenter.Copy(localCenter);
-                    b2Math_29.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+                    b2Math_27.b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
                     this.m_sweep.c0.Copy(this.m_sweep.c);
                     // Update center of mass velocity.
-                    b2Math_29.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_29.b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Math_29.b2Vec2.s_t0), this.m_linearVelocity);
+                    b2Math_27.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_27.b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Math_27.b2Vec2.s_t0), this.m_linearVelocity);
                 }
                 /// Get the world coordinates of a point given the local coordinates.
                 /// @param localPoint a point on the body measured relative the the body's origin.
                 /// @return the same point expressed in world coordinates.
                 GetWorldPoint(localPoint, out) {
-                    return b2Math_29.b2Transform.MulXV(this.m_xf, localPoint, out);
+                    return b2Math_27.b2Transform.MulXV(this.m_xf, localPoint, out);
                 }
                 /// Get the world coordinates of a vector given the local coordinates.
                 /// @param localVector a vector fixed in the body.
                 /// @return the same vector expressed in world coordinates.
                 GetWorldVector(localVector, out) {
-                    return b2Math_29.b2Rot.MulRV(this.m_xf.q, localVector, out);
+                    return b2Math_27.b2Rot.MulRV(this.m_xf.q, localVector, out);
                 }
                 /// Gets a local point relative to the body's origin given a world point.
                 /// @param a point in world coordinates.
                 /// @return the corresponding local point relative to the body's origin.
                 GetLocalPoint(worldPoint, out) {
-                    return b2Math_29.b2Transform.MulTXV(this.m_xf, worldPoint, out);
+                    return b2Math_27.b2Transform.MulTXV(this.m_xf, worldPoint, out);
                 }
                 /// Gets a local vector given a world vector.
                 /// @param a vector in world coordinates.
                 /// @return the corresponding local vector.
                 GetLocalVector(worldVector, out) {
-                    return b2Math_29.b2Rot.MulTRV(this.m_xf.q, worldVector, out);
+                    return b2Math_27.b2Rot.MulTRV(this.m_xf.q, worldVector, out);
                 }
                 /// Get the world linear velocity of a world point attached to this body.
                 /// @param a point in world coordinates.
                 /// @return the world velocity of a point.
                 GetLinearVelocityFromWorldPoint(worldPoint, out) {
-                    return b2Math_29.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_29.b2Vec2.SubVV(worldPoint, this.m_sweep.c, b2Math_29.b2Vec2.s_t0), out);
+                    return b2Math_27.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_27.b2Vec2.SubVV(worldPoint, this.m_sweep.c, b2Math_27.b2Vec2.s_t0), out);
                 }
                 /// Get the world velocity of a local point.
                 /// @param a point in local coordinates.
@@ -13539,8 +13348,8 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                 SynchronizeFixtures() {
                     const xf1 = b2Body.SynchronizeFixtures_s_xf1;
                     xf1.q.SetAngle(this.m_sweep.a0);
-                    b2Math_29.b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
-                    b2Math_29.b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
+                    b2Math_27.b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
+                    b2Math_27.b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
                     const broadPhase = this.m_world.m_contactManager.m_broadPhase;
                     for (let f = this.m_fixtureList; f; f = f.m_next) {
                         f.Synchronize(broadPhase, xf1, this.m_xf);
@@ -13548,8 +13357,8 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                 }
                 SynchronizeTransform() {
                     this.m_xf.q.SetAngle(this.m_sweep.a);
-                    b2Math_29.b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-                    b2Math_29.b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+                    b2Math_27.b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+                    b2Math_27.b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
                 }
                 // This is used to prevent connected bodies from colliding.
                 // It may lie, depending on the collideConnected flag.
@@ -13577,8 +13386,8 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                     this.m_sweep.c.Copy(this.m_sweep.c0);
                     this.m_sweep.a = this.m_sweep.a0;
                     this.m_xf.q.SetAngle(this.m_sweep.a);
-                    b2Math_29.b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-                    b2Math_29.b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+                    b2Math_27.b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+                    b2Math_27.b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
                 }
             };
             /// Creates a fixture from a shape and attach it to this body.
@@ -13594,15 +13403,15 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
             /// Note that creating or destroying fixtures can also alter the mass.
             /// This function has no effect if the body isn't dynamic.
             /// @param massData the mass properties.
-            b2Body.SetMassData_s_oldCenter = new b2Math_29.b2Vec2();
+            b2Body.SetMassData_s_oldCenter = new b2Math_27.b2Vec2();
             /// This resets the mass properties to the sum of the mass properties of the fixtures.
             /// This normally does not need to be called unless you called SetMassData to override
             /// the mass and you later want to reset the mass.
-            b2Body.ResetMassData_s_localCenter = new b2Math_29.b2Vec2();
-            b2Body.ResetMassData_s_oldCenter = new b2Math_29.b2Vec2();
-            b2Body.ResetMassData_s_massData = new b2Shape_7.b2MassData();
-            b2Body.SynchronizeFixtures_s_xf1 = new b2Math_29.b2Transform();
-            exports_37("b2Body", b2Body);
+            b2Body.ResetMassData_s_localCenter = new b2Math_27.b2Vec2();
+            b2Body.ResetMassData_s_oldCenter = new b2Math_27.b2Vec2();
+            b2Body.ResetMassData_s_massData = new b2Shape_6.b2MassData();
+            b2Body.SynchronizeFixtures_s_xf1 = new b2Math_27.b2Transform();
+            exports_33("b2Body", b2Body);
         }
     }
 });
@@ -13623,34 +13432,34 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/b2TimeOfImpact"], function(exports_38, context_38) {
+System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/b2TimeOfImpact"], function(exports_34, context_34) {
     "use strict";
-    var __moduleName = context_38 && context_38.id;
-    var b2Settings_29, b2Math_30, b2Collision_5, b2Collision_6, b2TimeOfImpact_2;
+    var __moduleName = context_34 && context_34.id;
+    var b2Settings_29, b2Math_28, b2Collision_4, b2Collision_5, b2TimeOfImpact_2;
     var b2ContactEdge, b2Contact;
     /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
     /// For example, anything slides on ice.
     function b2MixFriction(friction1, friction2) {
-        return b2Math_30.b2Sqrt(friction1 * friction2);
+        return b2Math_28.b2Sqrt(friction1 * friction2);
     }
-    exports_38("b2MixFriction", b2MixFriction);
+    exports_34("b2MixFriction", b2MixFriction);
     /// Restitution mixing law. The idea is allow for anything to bounce off an inelastic surface.
     /// For example, a superball bounces on anything.
     function b2MixRestitution(restitution1, restitution2) {
         return restitution1 > restitution2 ? restitution1 : restitution2;
     }
-    exports_38("b2MixRestitution", b2MixRestitution);
+    exports_34("b2MixRestitution", b2MixRestitution);
     return {
         setters:[
             function (b2Settings_29_1) {
                 b2Settings_29 = b2Settings_29_1;
             },
-            function (b2Math_30_1) {
-                b2Math_30 = b2Math_30_1;
+            function (b2Math_28_1) {
+                b2Math_28 = b2Math_28_1;
             },
-            function (b2Collision_5_1) {
-                b2Collision_5 = b2Collision_5_1;
-                b2Collision_6 = b2Collision_5_1;
+            function (b2Collision_4_1) {
+                b2Collision_4 = b2Collision_4_1;
+                b2Collision_5 = b2Collision_4_1;
             },
             function (b2TimeOfImpact_2_1) {
                 b2TimeOfImpact_2 = b2TimeOfImpact_2_1;
@@ -13664,7 +13473,7 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
                     this.next = null; ///< the next contact edge in the body's contact list
                 }
             };
-            exports_38("b2ContactEdge", b2ContactEdge);
+            exports_34("b2ContactEdge", b2ContactEdge);
             b2Contact = class b2Contact {
                 constructor() {
                     this.m_islandFlag = false; /// Used when crawling contact graph when forming islands.
@@ -13681,13 +13490,13 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
                     this.m_fixtureB = null;
                     this.m_indexA = 0;
                     this.m_indexB = 0;
-                    this.m_manifold = new b2Collision_5.b2Manifold();
+                    this.m_manifold = new b2Collision_4.b2Manifold();
                     this.m_toiCount = 0;
                     this.m_toi = 0;
                     this.m_friction = 0;
                     this.m_restitution = 0;
                     this.m_tangentSpeed = 0;
-                    this.m_oldManifold = new b2Collision_5.b2Manifold();
+                    this.m_oldManifold = new b2Collision_4.b2Manifold();
                 }
                 GetManifold() {
                     return this.m_manifold;
@@ -13800,7 +13609,7 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
                         ///{
                         const shapeA = this.m_fixtureA.GetShape();
                         const shapeB = this.m_fixtureB.GetShape();
-                        touching = b2Collision_6.b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
+                        touching = b2Collision_5.b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
                         ///}
                         // Sensors don't generate manifolds.
                         this.m_manifold.pointCount = 0;
@@ -13861,20 +13670,20 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
             };
             b2Contact.ComputeTOI_s_input = new b2TimeOfImpact_2.b2TOIInput();
             b2Contact.ComputeTOI_s_output = new b2TimeOfImpact_2.b2TOIOutput();
-            exports_38("b2Contact", b2Contact);
+            exports_34("b2Contact", b2Contact);
         }
     }
 });
-System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Math"], function(exports_39, context_39) {
+System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Math"], function(exports_35, context_35) {
     "use strict";
-    var __moduleName = context_39 && context_39.id;
-    var b2Settings_30, b2Math_31;
+    var __moduleName = context_35 && context_35.id;
+    var b2Settings_30, b2Math_29;
     var b2CollideCircles_s_pA, b2CollideCircles_s_pB, b2CollidePolygonAndCircle_s_c, b2CollidePolygonAndCircle_s_cLocal, b2CollidePolygonAndCircle_s_faceCenter;
     function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
-        const pA = b2Math_31.b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
-        const pB = b2Math_31.b2Transform.MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
-        const distSqr = b2Math_31.b2Vec2.DistanceSquaredVV(pA, pB);
+        const pA = b2Math_29.b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
+        const pB = b2Math_29.b2Transform.MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
+        const distSqr = b2Math_29.b2Vec2.DistanceSquaredVV(pA, pB);
         const radius = circleA.m_radius + circleB.m_radius;
         if (distSqr > radius * radius) {
             return;
@@ -13886,12 +13695,12 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
         manifold.points[0].localPoint.Copy(circleB.m_p);
         manifold.points[0].id.key = 0;
     }
-    exports_39("b2CollideCircles", b2CollideCircles);
+    exports_35("b2CollideCircles", b2CollideCircles);
     function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
         // Compute circle position in the frame of the polygon.
-        const c = b2Math_31.b2Transform.MulXV(xfB, circleB.m_p, b2CollidePolygonAndCircle_s_c);
-        const cLocal = b2Math_31.b2Transform.MulTXV(xfA, c, b2CollidePolygonAndCircle_s_cLocal);
+        const c = b2Math_29.b2Transform.MulXV(xfB, circleB.m_p, b2CollidePolygonAndCircle_s_c);
+        const cLocal = b2Math_29.b2Transform.MulTXV(xfA, c, b2CollidePolygonAndCircle_s_cLocal);
         // Find the min separating edge.
         let normalIndex = 0;
         let separation = (-b2Settings_30.b2_maxFloat);
@@ -13900,7 +13709,7 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
         const vertices = polygonA.m_vertices;
         const normals = polygonA.m_normals;
         for (let i = 0; i < vertexCount; ++i) {
-            const s = b2Math_31.b2Vec2.DotVV(normals[i], b2Math_31.b2Vec2.SubVV(cLocal, vertices[i], b2Math_31.b2Vec2.s_t0));
+            const s = b2Math_29.b2Vec2.DotVV(normals[i], b2Math_29.b2Vec2.SubVV(cLocal, vertices[i], b2Math_29.b2Vec2.s_t0));
             if (s > radius) {
                 // Early out.
                 return;
@@ -13920,39 +13729,39 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
             manifold.pointCount = 1;
             manifold.type = 1 /* e_faceA */;
             manifold.localNormal.Copy(normals[normalIndex]);
-            b2Math_31.b2Vec2.MidVV(v1, v2, manifold.localPoint);
+            b2Math_29.b2Vec2.MidVV(v1, v2, manifold.localPoint);
             manifold.points[0].localPoint.Copy(circleB.m_p);
             manifold.points[0].id.key = 0;
             return;
         }
         // Compute barycentric coordinates
-        const u1 = b2Math_31.b2Vec2.DotVV(b2Math_31.b2Vec2.SubVV(cLocal, v1, b2Math_31.b2Vec2.s_t0), b2Math_31.b2Vec2.SubVV(v2, v1, b2Math_31.b2Vec2.s_t1));
-        const u2 = b2Math_31.b2Vec2.DotVV(b2Math_31.b2Vec2.SubVV(cLocal, v2, b2Math_31.b2Vec2.s_t0), b2Math_31.b2Vec2.SubVV(v1, v2, b2Math_31.b2Vec2.s_t1));
+        const u1 = b2Math_29.b2Vec2.DotVV(b2Math_29.b2Vec2.SubVV(cLocal, v1, b2Math_29.b2Vec2.s_t0), b2Math_29.b2Vec2.SubVV(v2, v1, b2Math_29.b2Vec2.s_t1));
+        const u2 = b2Math_29.b2Vec2.DotVV(b2Math_29.b2Vec2.SubVV(cLocal, v2, b2Math_29.b2Vec2.s_t0), b2Math_29.b2Vec2.SubVV(v1, v2, b2Math_29.b2Vec2.s_t1));
         if (u1 <= 0) {
-            if (b2Math_31.b2Vec2.DistanceSquaredVV(cLocal, v1) > radius * radius) {
+            if (b2Math_29.b2Vec2.DistanceSquaredVV(cLocal, v1) > radius * radius) {
                 return;
             }
             manifold.pointCount = 1;
             manifold.type = 1 /* e_faceA */;
-            b2Math_31.b2Vec2.SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
+            b2Math_29.b2Vec2.SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
             manifold.localPoint.Copy(v1);
             manifold.points[0].localPoint.Copy(circleB.m_p);
             manifold.points[0].id.key = 0;
         }
         else if (u2 <= 0) {
-            if (b2Math_31.b2Vec2.DistanceSquaredVV(cLocal, v2) > radius * radius) {
+            if (b2Math_29.b2Vec2.DistanceSquaredVV(cLocal, v2) > radius * radius) {
                 return;
             }
             manifold.pointCount = 1;
             manifold.type = 1 /* e_faceA */;
-            b2Math_31.b2Vec2.SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
+            b2Math_29.b2Vec2.SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
             manifold.localPoint.Copy(v2);
             manifold.points[0].localPoint.Copy(circleB.m_p);
             manifold.points[0].id.key = 0;
         }
         else {
-            const faceCenter = b2Math_31.b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
-            separation = b2Math_31.b2Vec2.DotVV(b2Math_31.b2Vec2.SubVV(cLocal, faceCenter, b2Math_31.b2Vec2.s_t1), normals[vertIndex1]);
+            const faceCenter = b2Math_29.b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
+            separation = b2Math_29.b2Vec2.DotVV(b2Math_29.b2Vec2.SubVV(cLocal, faceCenter, b2Math_29.b2Vec2.s_t1), normals[vertIndex1]);
             if (separation > radius) {
                 return;
             }
@@ -13964,21 +13773,21 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
             manifold.points[0].id.key = 0;
         }
     }
-    exports_39("b2CollidePolygonAndCircle", b2CollidePolygonAndCircle);
+    exports_35("b2CollidePolygonAndCircle", b2CollidePolygonAndCircle);
     return {
         setters:[
             function (b2Settings_30_1) {
                 b2Settings_30 = b2Settings_30_1;
             },
-            function (b2Math_31_1) {
-                b2Math_31 = b2Math_31_1;
+            function (b2Math_29_1) {
+                b2Math_29 = b2Math_29_1;
             }],
         execute: function() {
-            b2CollideCircles_s_pA = new b2Math_31.b2Vec2();
-            b2CollideCircles_s_pB = new b2Math_31.b2Vec2();
-            b2CollidePolygonAndCircle_s_c = new b2Math_31.b2Vec2();
-            b2CollidePolygonAndCircle_s_cLocal = new b2Math_31.b2Vec2();
-            b2CollidePolygonAndCircle_s_faceCenter = new b2Math_31.b2Vec2();
+            b2CollideCircles_s_pA = new b2Math_29.b2Vec2();
+            b2CollideCircles_s_pB = new b2Math_29.b2Vec2();
+            b2CollidePolygonAndCircle_s_c = new b2Math_29.b2Vec2();
+            b2CollidePolygonAndCircle_s_cLocal = new b2Math_29.b2Vec2();
+            b2CollidePolygonAndCircle_s_faceCenter = new b2Math_29.b2Vec2();
         }
     }
 });
@@ -13999,9 +13808,9 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2CircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function(exports_40, context_40) {
+System.register("Dynamics/Contacts/b2CircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function(exports_36, context_36) {
     "use strict";
-    var __moduleName = context_40 && context_40.id;
+    var __moduleName = context_36 && context_36.id;
     var b2CollideCircle_1, b2Contact_1;
     var b2CircleContact;
     return {
@@ -14033,14 +13842,14 @@ System.register("Dynamics/Contacts/b2CircleContact", ["Collision/b2CollideCircle
                     b2CollideCircle_1.b2CollideCircles(manifold, shapeA, xfA, shapeB, xfB);
                 }
             };
-            exports_40("b2CircleContact", b2CircleContact);
+            exports_36("b2CircleContact", b2CircleContact);
         }
     }
 });
-System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function(exports_41, context_41) {
+System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function(exports_37, context_37) {
     "use strict";
-    var __moduleName = context_41 && context_41.id;
-    var b2Settings_31, b2Math_32, b2Collision_7;
+    var __moduleName = context_37 && context_37.id;
+    var b2Settings_31, b2Math_30, b2Collision_6;
     var b2EdgeSeparation_s_normal1World, b2EdgeSeparation_s_normal1, b2EdgeSeparation_s_v1, b2EdgeSeparation_s_v2, b2FindMaxSeparation_s_d, b2FindMaxSeparation_s_dLocal1, b2FindIncidentEdge_s_normal1, b2CollidePolygons_s_incidentEdge, b2CollidePolygons_s_clipPoints1, b2CollidePolygons_s_clipPoints2, b2CollidePolygons_s_edgeA, b2CollidePolygons_s_edgeB, b2CollidePolygons_s_localTangent, b2CollidePolygons_s_localNormal, b2CollidePolygons_s_planePoint, b2CollidePolygons_s_normal, b2CollidePolygons_s_tangent, b2CollidePolygons_s_ntangent, b2CollidePolygons_s_v11, b2CollidePolygons_s_v12;
     function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
         ///const count1: number = poly1.m_count;
@@ -14050,34 +13859,34 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         const vertices2 = poly2.m_vertices;
         ///b2Assert(0 <= edge1 && edge1 < count1);
         // Convert normal from poly1's frame into poly2's frame.
-        const normal1World = b2Math_32.b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
-        const normal1 = b2Math_32.b2Rot.MulTRV(xf2.q, normal1World, b2EdgeSeparation_s_normal1);
+        const normal1World = b2Math_30.b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
+        const normal1 = b2Math_30.b2Rot.MulTRV(xf2.q, normal1World, b2EdgeSeparation_s_normal1);
         // Find support vertex on poly2 for -normal.
         let index = 0;
         let minDot = b2Settings_31.b2_maxFloat;
         for (let i = 0; i < count2; ++i) {
-            const dot = b2Math_32.b2Vec2.DotVV(vertices2[i], normal1);
+            const dot = b2Math_30.b2Vec2.DotVV(vertices2[i], normal1);
             if (dot < minDot) {
                 minDot = dot;
                 index = i;
             }
         }
-        const v1 = b2Math_32.b2Transform.MulXV(xf1, vertices1[edge1], b2EdgeSeparation_s_v1);
-        const v2 = b2Math_32.b2Transform.MulXV(xf2, vertices2[index], b2EdgeSeparation_s_v2);
-        const separation = b2Math_32.b2Vec2.DotVV(b2Math_32.b2Vec2.SubVV(v2, v1, b2Math_32.b2Vec2.s_t0), normal1World);
+        const v1 = b2Math_30.b2Transform.MulXV(xf1, vertices1[edge1], b2EdgeSeparation_s_v1);
+        const v2 = b2Math_30.b2Transform.MulXV(xf2, vertices2[index], b2EdgeSeparation_s_v2);
+        const separation = b2Math_30.b2Vec2.DotVV(b2Math_30.b2Vec2.SubVV(v2, v1, b2Math_30.b2Vec2.s_t0), normal1World);
         return separation;
     }
     function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
         const count1 = poly1.m_count;
         const normals1 = poly1.m_normals;
         // Vector pointing from the centroid of poly1 to the centroid of poly2.
-        const d = b2Math_32.b2Vec2.SubVV(b2Math_32.b2Transform.MulXV(xf2, poly2.m_centroid, b2Math_32.b2Vec2.s_t0), b2Math_32.b2Transform.MulXV(xf1, poly1.m_centroid, b2Math_32.b2Vec2.s_t1), b2FindMaxSeparation_s_d);
-        const dLocal1 = b2Math_32.b2Rot.MulTRV(xf1.q, d, b2FindMaxSeparation_s_dLocal1);
+        const d = b2Math_30.b2Vec2.SubVV(b2Math_30.b2Transform.MulXV(xf2, poly2.m_centroid, b2Math_30.b2Vec2.s_t0), b2Math_30.b2Transform.MulXV(xf1, poly1.m_centroid, b2Math_30.b2Vec2.s_t1), b2FindMaxSeparation_s_d);
+        const dLocal1 = b2Math_30.b2Rot.MulTRV(xf1.q, d, b2FindMaxSeparation_s_dLocal1);
         // Find edge normal on poly1 that has the largest projection onto d.
         let edge = 0;
         let maxDot = (-b2Settings_31.b2_maxFloat);
         for (let i = 0; i < count1; ++i) {
-            const dot = b2Math_32.b2Vec2.DotVV(normals1[i], dLocal1);
+            const dot = b2Math_30.b2Vec2.DotVV(normals1[i], dLocal1);
             if (dot > maxDot) {
                 maxDot = dot;
                 edge = i;
@@ -14135,12 +13944,12 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         const normals2 = poly2.m_normals;
         ///b2Assert(0 <= edge1 && edge1 < count1);
         // Get the normal of the reference edge in poly2's frame.
-        const normal1 = b2Math_32.b2Rot.MulTRV(xf2.q, b2Math_32.b2Rot.MulRV(xf1.q, normals1[edge1], b2Math_32.b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
+        const normal1 = b2Math_30.b2Rot.MulTRV(xf2.q, b2Math_30.b2Rot.MulRV(xf1.q, normals1[edge1], b2Math_30.b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
         // Find the incident edge on poly2.
         let index = 0;
         let minDot = b2Settings_31.b2_maxFloat;
         for (let i = 0; i < count2; ++i) {
-            const dot = b2Math_32.b2Vec2.DotVV(normal1, normals2[i]);
+            const dot = b2Math_30.b2Vec2.DotVV(normal1, normals2[i]);
             if (dot < minDot) {
                 minDot = dot;
                 index = i;
@@ -14150,14 +13959,14 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         const i1 = index;
         const i2 = (i1 + 1) % count2;
         const c0 = c[0];
-        b2Math_32.b2Transform.MulXV(xf2, vertices2[i1], c0.v);
+        b2Math_30.b2Transform.MulXV(xf2, vertices2[i1], c0.v);
         const cf0 = c0.id.cf;
         cf0.indexA = edge1;
         cf0.indexB = i1;
         cf0.typeA = 1 /* e_face */;
         cf0.typeB = 0 /* e_vertex */;
         const c1 = c[1];
-        b2Math_32.b2Transform.MulXV(xf2, vertices2[i2], c1.v);
+        b2Math_30.b2Transform.MulXV(xf2, vertices2[i2], c1.v);
         const cf1 = c1.id.cf;
         cf1.indexA = edge1;
         cf1.indexB = i2;
@@ -14210,30 +14019,30 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         const iv2 = (edge1 + 1) % count1;
         const local_v11 = vertices1[iv1];
         const local_v12 = vertices1[iv2];
-        const localTangent = b2Math_32.b2Vec2.SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
+        const localTangent = b2Math_30.b2Vec2.SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
         localTangent.Normalize();
-        const localNormal = b2Math_32.b2Vec2.CrossVOne(localTangent, b2CollidePolygons_s_localNormal);
-        const planePoint = b2Math_32.b2Vec2.MidVV(local_v11, local_v12, b2CollidePolygons_s_planePoint);
-        const tangent = b2Math_32.b2Rot.MulRV(xf1.q, localTangent, b2CollidePolygons_s_tangent);
-        const normal = b2Math_32.b2Vec2.CrossVOne(tangent, b2CollidePolygons_s_normal);
-        const v11 = b2Math_32.b2Transform.MulXV(xf1, local_v11, b2CollidePolygons_s_v11);
-        const v12 = b2Math_32.b2Transform.MulXV(xf1, local_v12, b2CollidePolygons_s_v12);
+        const localNormal = b2Math_30.b2Vec2.CrossVOne(localTangent, b2CollidePolygons_s_localNormal);
+        const planePoint = b2Math_30.b2Vec2.MidVV(local_v11, local_v12, b2CollidePolygons_s_planePoint);
+        const tangent = b2Math_30.b2Rot.MulRV(xf1.q, localTangent, b2CollidePolygons_s_tangent);
+        const normal = b2Math_30.b2Vec2.CrossVOne(tangent, b2CollidePolygons_s_normal);
+        const v11 = b2Math_30.b2Transform.MulXV(xf1, local_v11, b2CollidePolygons_s_v11);
+        const v12 = b2Math_30.b2Transform.MulXV(xf1, local_v12, b2CollidePolygons_s_v12);
         // Face offset.
-        const frontOffset = b2Math_32.b2Vec2.DotVV(normal, v11);
+        const frontOffset = b2Math_30.b2Vec2.DotVV(normal, v11);
         // Side offsets, extended by polytope skin thickness.
-        const sideOffset1 = -b2Math_32.b2Vec2.DotVV(tangent, v11) + totalRadius;
-        const sideOffset2 = b2Math_32.b2Vec2.DotVV(tangent, v12) + totalRadius;
+        const sideOffset1 = -b2Math_30.b2Vec2.DotVV(tangent, v11) + totalRadius;
+        const sideOffset2 = b2Math_30.b2Vec2.DotVV(tangent, v12) + totalRadius;
         // Clip incident edge against extruded edge1 side edges.
         const clipPoints1 = b2CollidePolygons_s_clipPoints1;
         const clipPoints2 = b2CollidePolygons_s_clipPoints2;
         let np;
         // Clip to box side 1
-        const ntangent = b2Math_32.b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
-        np = b2Collision_7.b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
+        const ntangent = b2Math_30.b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
+        np = b2Collision_6.b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
         if (np < 2)
             return;
         // Clip to negative box side 1
-        np = b2Collision_7.b2ClipSegmentToLine(clipPoints2, clipPoints1, tangent, sideOffset2, iv2);
+        np = b2Collision_6.b2ClipSegmentToLine(clipPoints2, clipPoints1, tangent, sideOffset2, iv2);
         if (np < 2) {
             return;
         }
@@ -14243,10 +14052,10 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         let pointCount = 0;
         for (let i = 0; i < b2Settings_31.b2_maxManifoldPoints; ++i) {
             const cv = clipPoints2[i];
-            const separation = b2Math_32.b2Vec2.DotVV(normal, cv.v) - frontOffset;
+            const separation = b2Math_30.b2Vec2.DotVV(normal, cv.v) - frontOffset;
             if (separation <= totalRadius) {
                 const cp = manifold.points[pointCount];
-                b2Math_32.b2Transform.MulTXV(xf2, cv.v, cp.localPoint);
+                b2Math_30.b2Transform.MulTXV(xf2, cv.v, cp.localPoint);
                 cp.id.Copy(cv.id);
                 if (flip) {
                     // Swap features
@@ -14261,39 +14070,39 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         }
         manifold.pointCount = pointCount;
     }
-    exports_41("b2CollidePolygons", b2CollidePolygons);
+    exports_37("b2CollidePolygons", b2CollidePolygons);
     return {
         setters:[
             function (b2Settings_31_1) {
                 b2Settings_31 = b2Settings_31_1;
             },
-            function (b2Math_32_1) {
-                b2Math_32 = b2Math_32_1;
+            function (b2Math_30_1) {
+                b2Math_30 = b2Math_30_1;
             },
-            function (b2Collision_7_1) {
-                b2Collision_7 = b2Collision_7_1;
+            function (b2Collision_6_1) {
+                b2Collision_6 = b2Collision_6_1;
             }],
         execute: function() {
-            b2EdgeSeparation_s_normal1World = new b2Math_32.b2Vec2();
-            b2EdgeSeparation_s_normal1 = new b2Math_32.b2Vec2();
-            b2EdgeSeparation_s_v1 = new b2Math_32.b2Vec2();
-            b2EdgeSeparation_s_v2 = new b2Math_32.b2Vec2();
-            b2FindMaxSeparation_s_d = new b2Math_32.b2Vec2();
-            b2FindMaxSeparation_s_dLocal1 = new b2Math_32.b2Vec2();
-            b2FindIncidentEdge_s_normal1 = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_incidentEdge = b2Collision_7.b2ClipVertex.MakeArray(2);
-            b2CollidePolygons_s_clipPoints1 = b2Collision_7.b2ClipVertex.MakeArray(2);
-            b2CollidePolygons_s_clipPoints2 = b2Collision_7.b2ClipVertex.MakeArray(2);
+            b2EdgeSeparation_s_normal1World = new b2Math_30.b2Vec2();
+            b2EdgeSeparation_s_normal1 = new b2Math_30.b2Vec2();
+            b2EdgeSeparation_s_v1 = new b2Math_30.b2Vec2();
+            b2EdgeSeparation_s_v2 = new b2Math_30.b2Vec2();
+            b2FindMaxSeparation_s_d = new b2Math_30.b2Vec2();
+            b2FindMaxSeparation_s_dLocal1 = new b2Math_30.b2Vec2();
+            b2FindIncidentEdge_s_normal1 = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_incidentEdge = b2Collision_6.b2ClipVertex.MakeArray(2);
+            b2CollidePolygons_s_clipPoints1 = b2Collision_6.b2ClipVertex.MakeArray(2);
+            b2CollidePolygons_s_clipPoints2 = b2Collision_6.b2ClipVertex.MakeArray(2);
             b2CollidePolygons_s_edgeA = b2Settings_31.b2MakeNumberArray(1);
             b2CollidePolygons_s_edgeB = b2Settings_31.b2MakeNumberArray(1);
-            b2CollidePolygons_s_localTangent = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_localNormal = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_planePoint = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_normal = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_tangent = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_ntangent = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_v11 = new b2Math_32.b2Vec2();
-            b2CollidePolygons_s_v12 = new b2Math_32.b2Vec2();
+            b2CollidePolygons_s_localTangent = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_localNormal = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_planePoint = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_normal = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_tangent = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_ntangent = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_v11 = new b2Math_30.b2Vec2();
+            b2CollidePolygons_s_v12 = new b2Math_30.b2Vec2();
         }
     }
 });
@@ -14314,9 +14123,9 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolygon", "Dynamics/Contacts/b2Contact"], function(exports_42, context_42) {
+System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolygon", "Dynamics/Contacts/b2Contact"], function(exports_38, context_38) {
     "use strict";
-    var __moduleName = context_42 && context_42.id;
+    var __moduleName = context_38 && context_38.id;
     var b2CollidePolygon_1, b2Contact_2;
     var b2PolygonContact;
     return {
@@ -14348,7 +14157,7 @@ System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolyg
                     b2CollidePolygon_1.b2CollidePolygons(manifold, shapeA, xfA, shapeB, xfB);
                 }
             };
-            exports_42("b2PolygonContact", b2PolygonContact);
+            exports_38("b2PolygonContact", b2PolygonContact);
         }
     }
 });
@@ -14369,9 +14178,9 @@ System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolyg
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2PolygonAndCircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function(exports_43, context_43) {
+System.register("Dynamics/Contacts/b2PolygonAndCircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function(exports_39, context_39) {
     "use strict";
-    var __moduleName = context_43 && context_43.id;
+    var __moduleName = context_39 && context_39.id;
     var b2CollideCircle_2, b2Contact_3;
     var b2PolygonAndCircleContact;
     return {
@@ -14405,25 +14214,25 @@ System.register("Dynamics/Contacts/b2PolygonAndCircleContact", ["Collision/b2Col
                     b2CollideCircle_2.b2CollidePolygonAndCircle(manifold, shapeA, xfA, shapeB, xfB);
                 }
             };
-            exports_43("b2PolygonAndCircleContact", b2PolygonAndCircleContact);
+            exports_39("b2PolygonAndCircleContact", b2PolygonAndCircleContact);
         }
     }
 });
-System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function(exports_44, context_44) {
+System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function(exports_40, context_40) {
     "use strict";
-    var __moduleName = context_44 && context_44.id;
-    var b2Settings_32, b2Math_33, b2Collision_8, b2Collision_9;
+    var __moduleName = context_40 && context_40.id;
+    var b2Settings_32, b2Math_31, b2Collision_7, b2Collision_8;
     var b2CollideEdgeAndCircle_s_Q, b2CollideEdgeAndCircle_s_e, b2CollideEdgeAndCircle_s_d, b2CollideEdgeAndCircle_s_e1, b2CollideEdgeAndCircle_s_e2, b2CollideEdgeAndCircle_s_P, b2CollideEdgeAndCircle_s_n, b2CollideEdgeAndCircle_s_id, b2EPAxis, b2TempPolygon, b2ReferenceFace, b2EPCollider, b2CollideEdgeAndPolygon_s_collider;
     function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
         // Compute circle in frame of edge
-        const Q = b2Math_33.b2Transform.MulTXV(xfA, b2Math_33.b2Transform.MulXV(xfB, circleB.m_p, b2Math_33.b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
+        const Q = b2Math_31.b2Transform.MulTXV(xfA, b2Math_31.b2Transform.MulXV(xfB, circleB.m_p, b2Math_31.b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
         const A = edgeA.m_vertex1;
         const B = edgeA.m_vertex2;
-        const e = b2Math_33.b2Vec2.SubVV(B, A, b2CollideEdgeAndCircle_s_e);
+        const e = b2Math_31.b2Vec2.SubVV(B, A, b2CollideEdgeAndCircle_s_e);
         // Barycentric coordinates
-        const u = b2Math_33.b2Vec2.DotVV(e, b2Math_33.b2Vec2.SubVV(B, Q, b2Math_33.b2Vec2.s_t0));
-        const v = b2Math_33.b2Vec2.DotVV(e, b2Math_33.b2Vec2.SubVV(Q, A, b2Math_33.b2Vec2.s_t0));
+        const u = b2Math_31.b2Vec2.DotVV(e, b2Math_31.b2Vec2.SubVV(B, Q, b2Math_31.b2Vec2.s_t0));
+        const v = b2Math_31.b2Vec2.DotVV(e, b2Math_31.b2Vec2.SubVV(Q, A, b2Math_31.b2Vec2.s_t0));
         const radius = edgeA.m_radius + circleB.m_radius;
         // const cf: b2ContactFeature = new b2ContactFeature();
         const id = b2CollideEdgeAndCircle_s_id;
@@ -14432,8 +14241,8 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
         // Region A
         if (v <= 0) {
             const P = A;
-            const d = b2Math_33.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-            const dd = b2Math_33.b2Vec2.DotVV(d, d);
+            const d = b2Math_31.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+            const dd = b2Math_31.b2Vec2.DotVV(d, d);
             if (dd > radius * radius) {
                 return;
             }
@@ -14441,8 +14250,8 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
             if (edgeA.m_hasVertex0) {
                 const A1 = edgeA.m_vertex0;
                 const B1 = A;
-                const e1 = b2Math_33.b2Vec2.SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
-                const u1 = b2Math_33.b2Vec2.DotVV(e1, b2Math_33.b2Vec2.SubVV(B1, Q, b2Math_33.b2Vec2.s_t0));
+                const e1 = b2Math_31.b2Vec2.SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
+                const u1 = b2Math_31.b2Vec2.DotVV(e1, b2Math_31.b2Vec2.SubVV(B1, Q, b2Math_31.b2Vec2.s_t0));
                 // Is the circle in Region AB of the previous edge?
                 if (u1 > 0) {
                     return;
@@ -14463,8 +14272,8 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
         // Region B
         if (u <= 0) {
             const P = B;
-            const d = b2Math_33.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-            const dd = b2Math_33.b2Vec2.DotVV(d, d);
+            const d = b2Math_31.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+            const dd = b2Math_31.b2Vec2.DotVV(d, d);
             if (dd > radius * radius) {
                 return;
             }
@@ -14472,8 +14281,8 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
             if (edgeA.m_hasVertex3) {
                 const B2 = edgeA.m_vertex3;
                 const A2 = B;
-                const e2 = b2Math_33.b2Vec2.SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
-                const v2 = b2Math_33.b2Vec2.DotVV(e2, b2Math_33.b2Vec2.SubVV(Q, A2, b2Math_33.b2Vec2.s_t0));
+                const e2 = b2Math_31.b2Vec2.SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
+                const v2 = b2Math_31.b2Vec2.DotVV(e2, b2Math_31.b2Vec2.SubVV(Q, A2, b2Math_31.b2Vec2.s_t0));
                 // Is the circle in Region AB of the next edge?
                 if (v2 > 0) {
                     return;
@@ -14492,18 +14301,18 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
             return;
         }
         // Region AB
-        const den = b2Math_33.b2Vec2.DotVV(e, e);
+        const den = b2Math_31.b2Vec2.DotVV(e, e);
         ///b2Assert(den > 0);
         const P = b2CollideEdgeAndCircle_s_P;
         P.x = (1 / den) * (u * A.x + v * B.x);
         P.y = (1 / den) * (u * A.y + v * B.y);
-        const d = b2Math_33.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-        const dd = b2Math_33.b2Vec2.DotVV(d, d);
+        const d = b2Math_31.b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+        const dd = b2Math_31.b2Vec2.DotVV(d, d);
         if (dd > radius * radius) {
             return;
         }
         const n = b2CollideEdgeAndCircle_s_n.Set(-e.y, e.x);
-        if (b2Math_33.b2Vec2.DotVV(n, b2Math_33.b2Vec2.SubVV(Q, A, b2Math_33.b2Vec2.s_t0)) < 0) {
+        if (b2Math_31.b2Vec2.DotVV(n, b2Math_31.b2Vec2.SubVV(Q, A, b2Math_31.b2Vec2.s_t0)) < 0) {
             n.Set(-n.x, -n.y);
         }
         n.Normalize();
@@ -14518,33 +14327,33 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
         // manifold.points[0].id.cf = cf;
         manifold.points[0].localPoint.Copy(circleB.m_p);
     }
-    exports_44("b2CollideEdgeAndCircle", b2CollideEdgeAndCircle);
+    exports_40("b2CollideEdgeAndCircle", b2CollideEdgeAndCircle);
     function b2CollideEdgeAndPolygon(manifold, edgeA, xfA, polygonB, xfB) {
         const collider = b2CollideEdgeAndPolygon_s_collider;
         collider.Collide(manifold, edgeA, xfA, polygonB, xfB);
     }
-    exports_44("b2CollideEdgeAndPolygon", b2CollideEdgeAndPolygon);
+    exports_40("b2CollideEdgeAndPolygon", b2CollideEdgeAndPolygon);
     return {
         setters:[
             function (b2Settings_32_1) {
                 b2Settings_32 = b2Settings_32_1;
             },
-            function (b2Math_33_1) {
-                b2Math_33 = b2Math_33_1;
+            function (b2Math_31_1) {
+                b2Math_31 = b2Math_31_1;
             },
-            function (b2Collision_8_1) {
-                b2Collision_8 = b2Collision_8_1;
-                b2Collision_9 = b2Collision_8_1;
+            function (b2Collision_7_1) {
+                b2Collision_7 = b2Collision_7_1;
+                b2Collision_8 = b2Collision_7_1;
             }],
         execute: function() {
-            b2CollideEdgeAndCircle_s_Q = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_e = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_d = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_e1 = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_e2 = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_P = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_n = new b2Math_33.b2Vec2();
-            b2CollideEdgeAndCircle_s_id = new b2Collision_8.b2ContactID();
+            b2CollideEdgeAndCircle_s_Q = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_e = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_d = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_e1 = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_e2 = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_P = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_n = new b2Math_31.b2Vec2();
+            b2CollideEdgeAndCircle_s_id = new b2Collision_7.b2ContactID();
             b2EPAxis = class b2EPAxis {
                 constructor() {
                     this.type = 0 /* e_unknown */;
@@ -14554,8 +14363,8 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
             };
             b2TempPolygon = class b2TempPolygon {
                 constructor() {
-                    this.vertices = b2Math_33.b2Vec2.MakeArray(b2Settings_32.b2_maxPolygonVertices);
-                    this.normals = b2Math_33.b2Vec2.MakeArray(b2Settings_32.b2_maxPolygonVertices);
+                    this.vertices = b2Math_31.b2Vec2.MakeArray(b2Settings_32.b2_maxPolygonVertices);
+                    this.normals = b2Math_31.b2Vec2.MakeArray(b2Settings_32.b2_maxPolygonVertices);
                     this.count = 0;
                 }
             };
@@ -14563,67 +14372,67 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                 constructor() {
                     this.i1 = 0;
                     this.i2 = 0;
-                    this.v1 = new b2Math_33.b2Vec2();
-                    this.v2 = new b2Math_33.b2Vec2();
-                    this.normal = new b2Math_33.b2Vec2();
-                    this.sideNormal1 = new b2Math_33.b2Vec2();
+                    this.v1 = new b2Math_31.b2Vec2();
+                    this.v2 = new b2Math_31.b2Vec2();
+                    this.normal = new b2Math_31.b2Vec2();
+                    this.sideNormal1 = new b2Math_31.b2Vec2();
                     this.sideOffset1 = 0;
-                    this.sideNormal2 = new b2Math_33.b2Vec2();
+                    this.sideNormal2 = new b2Math_31.b2Vec2();
                     this.sideOffset2 = 0;
                 }
             };
             b2EPCollider = class b2EPCollider {
                 constructor() {
                     this.m_polygonB = new b2TempPolygon();
-                    this.m_xf = new b2Math_33.b2Transform();
-                    this.m_centroidB = new b2Math_33.b2Vec2();
-                    this.m_v0 = new b2Math_33.b2Vec2();
-                    this.m_v1 = new b2Math_33.b2Vec2();
-                    this.m_v2 = new b2Math_33.b2Vec2();
-                    this.m_v3 = new b2Math_33.b2Vec2();
-                    this.m_normal0 = new b2Math_33.b2Vec2();
-                    this.m_normal1 = new b2Math_33.b2Vec2();
-                    this.m_normal2 = new b2Math_33.b2Vec2();
-                    this.m_normal = new b2Math_33.b2Vec2();
+                    this.m_xf = new b2Math_31.b2Transform();
+                    this.m_centroidB = new b2Math_31.b2Vec2();
+                    this.m_v0 = new b2Math_31.b2Vec2();
+                    this.m_v1 = new b2Math_31.b2Vec2();
+                    this.m_v2 = new b2Math_31.b2Vec2();
+                    this.m_v3 = new b2Math_31.b2Vec2();
+                    this.m_normal0 = new b2Math_31.b2Vec2();
+                    this.m_normal1 = new b2Math_31.b2Vec2();
+                    this.m_normal2 = new b2Math_31.b2Vec2();
+                    this.m_normal = new b2Math_31.b2Vec2();
                     this.m_type1 = 0 /* e_isolated */;
                     this.m_type2 = 0 /* e_isolated */;
-                    this.m_lowerLimit = new b2Math_33.b2Vec2();
-                    this.m_upperLimit = new b2Math_33.b2Vec2();
+                    this.m_lowerLimit = new b2Math_31.b2Vec2();
+                    this.m_upperLimit = new b2Math_31.b2Vec2();
                     this.m_radius = 0;
                     this.m_front = false;
                 }
                 Collide(manifold, edgeA, xfA, polygonB, xfB) {
-                    b2Math_33.b2Transform.MulTXX(xfA, xfB, this.m_xf);
-                    b2Math_33.b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
+                    b2Math_31.b2Transform.MulTXX(xfA, xfB, this.m_xf);
+                    b2Math_31.b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
                     this.m_v0.Copy(edgeA.m_vertex0);
                     this.m_v1.Copy(edgeA.m_vertex1);
                     this.m_v2.Copy(edgeA.m_vertex2);
                     this.m_v3.Copy(edgeA.m_vertex3);
                     const hasVertex0 = edgeA.m_hasVertex0;
                     const hasVertex3 = edgeA.m_hasVertex3;
-                    const edge1 = b2Math_33.b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
+                    const edge1 = b2Math_31.b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
                     edge1.Normalize();
                     this.m_normal1.Set(edge1.y, -edge1.x);
-                    const offset1 = b2Math_33.b2Vec2.DotVV(this.m_normal1, b2Math_33.b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Math_33.b2Vec2.s_t0));
+                    const offset1 = b2Math_31.b2Vec2.DotVV(this.m_normal1, b2Math_31.b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Math_31.b2Vec2.s_t0));
                     let offset0 = 0;
                     let offset2 = 0;
                     let convex1 = false;
                     let convex2 = false;
                     // Is there a preceding edge?
                     if (hasVertex0) {
-                        const edge0 = b2Math_33.b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
+                        const edge0 = b2Math_31.b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
                         edge0.Normalize();
                         this.m_normal0.Set(edge0.y, -edge0.x);
-                        convex1 = b2Math_33.b2Vec2.CrossVV(edge0, edge1) >= 0;
-                        offset0 = b2Math_33.b2Vec2.DotVV(this.m_normal0, b2Math_33.b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Math_33.b2Vec2.s_t0));
+                        convex1 = b2Math_31.b2Vec2.CrossVV(edge0, edge1) >= 0;
+                        offset0 = b2Math_31.b2Vec2.DotVV(this.m_normal0, b2Math_31.b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Math_31.b2Vec2.s_t0));
                     }
                     // Is there a following edge?
                     if (hasVertex3) {
-                        const edge2 = b2Math_33.b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
+                        const edge2 = b2Math_31.b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
                         edge2.Normalize();
                         this.m_normal2.Set(edge2.y, -edge2.x);
-                        convex2 = b2Math_33.b2Vec2.CrossVV(edge1, edge2) > 0;
-                        offset2 = b2Math_33.b2Vec2.DotVV(this.m_normal2, b2Math_33.b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Math_33.b2Vec2.s_t0));
+                        convex2 = b2Math_31.b2Vec2.CrossVV(edge1, edge2) > 0;
+                        offset2 = b2Math_31.b2Vec2.DotVV(this.m_normal2, b2Math_31.b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Math_31.b2Vec2.s_t0));
                     }
                     // Determine front or back collision. Determine collision normal limits.
                     if (hasVertex0 && hasVertex3) {
@@ -14752,8 +14561,8 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                     // Get polygonB in frameA
                     this.m_polygonB.count = polygonB.m_count;
                     for (let i = 0; i < polygonB.m_count; ++i) {
-                        b2Math_33.b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
-                        b2Math_33.b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
+                        b2Math_31.b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
+                        b2Math_31.b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
                     }
                     this.m_radius = 2 * b2Settings_32.b2_polygonRadius;
                     manifold.pointCount = 0;
@@ -14788,9 +14597,9 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                         manifold.type = 1 /* e_faceA */;
                         // Search for the polygon normal that is most anti-parallel to the edge normal.
                         let bestIndex = 0;
-                        let bestValue = b2Math_33.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
+                        let bestValue = b2Math_31.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
                         for (let i = 1; i < this.m_polygonB.count; ++i) {
-                            const value = b2Math_33.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
+                            const value = b2Math_31.b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
                             if (value < bestValue) {
                                 bestValue = value;
                                 bestIndex = i;
@@ -14847,19 +14656,19 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                     }
                     rf.sideNormal1.Set(rf.normal.y, -rf.normal.x);
                     rf.sideNormal2.Copy(rf.sideNormal1).SelfNeg();
-                    rf.sideOffset1 = b2Math_33.b2Vec2.DotVV(rf.sideNormal1, rf.v1);
-                    rf.sideOffset2 = b2Math_33.b2Vec2.DotVV(rf.sideNormal2, rf.v2);
+                    rf.sideOffset1 = b2Math_31.b2Vec2.DotVV(rf.sideNormal1, rf.v1);
+                    rf.sideOffset2 = b2Math_31.b2Vec2.DotVV(rf.sideNormal2, rf.v2);
                     // Clip incident edge against extruded edge1 side edges.
                     const clipPoints1 = b2EPCollider.s_clipPoints1;
                     const clipPoints2 = b2EPCollider.s_clipPoints2;
                     let np = 0;
                     // Clip to box side 1
-                    np = b2Collision_9.b2ClipSegmentToLine(clipPoints1, ie, rf.sideNormal1, rf.sideOffset1, rf.i1);
+                    np = b2Collision_8.b2ClipSegmentToLine(clipPoints1, ie, rf.sideNormal1, rf.sideOffset1, rf.i1);
                     if (np < b2Settings_32.b2_maxManifoldPoints) {
                         return;
                     }
                     // Clip to negative box side 1
-                    np = b2Collision_9.b2ClipSegmentToLine(clipPoints2, clipPoints1, rf.sideNormal2, rf.sideOffset2, rf.i2);
+                    np = b2Collision_8.b2ClipSegmentToLine(clipPoints2, clipPoints1, rf.sideNormal2, rf.sideOffset2, rf.i2);
                     if (np < b2Settings_32.b2_maxManifoldPoints) {
                         return;
                     }
@@ -14875,11 +14684,11 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                     let pointCount = 0;
                     for (let i = 0; i < b2Settings_32.b2_maxManifoldPoints; ++i) {
                         let separation;
-                        separation = b2Math_33.b2Vec2.DotVV(rf.normal, b2Math_33.b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Math_33.b2Vec2.s_t0));
+                        separation = b2Math_31.b2Vec2.DotVV(rf.normal, b2Math_31.b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Math_31.b2Vec2.s_t0));
                         if (separation <= this.m_radius) {
                             const cp = manifold.points[pointCount];
                             if (primaryAxis.type === 1 /* e_edgeA */) {
-                                b2Math_33.b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
+                                b2Math_31.b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
                                 cp.id = clipPoints2[i].id;
                             }
                             else {
@@ -14900,7 +14709,7 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                     axis.index = this.m_front ? 0 : 1;
                     axis.separation = b2Settings_32.b2_maxFloat;
                     for (let i = 0; i < this.m_polygonB.count; ++i) {
-                        const s = b2Math_33.b2Vec2.DotVV(this.m_normal, b2Math_33.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math_33.b2Vec2.s_t0));
+                        const s = b2Math_31.b2Vec2.DotVV(this.m_normal, b2Math_31.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math_31.b2Vec2.s_t0));
                         if (s < axis.separation) {
                             axis.separation = s;
                         }
@@ -14914,10 +14723,10 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                     axis.separation = -b2Settings_32.b2_maxFloat;
                     const perp = b2EPCollider.s_perp.Set(-this.m_normal.y, this.m_normal.x);
                     for (let i = 0; i < this.m_polygonB.count; ++i) {
-                        const n = b2Math_33.b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
-                        const s1 = b2Math_33.b2Vec2.DotVV(n, b2Math_33.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math_33.b2Vec2.s_t0));
-                        const s2 = b2Math_33.b2Vec2.DotVV(n, b2Math_33.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Math_33.b2Vec2.s_t0));
-                        const s = b2Math_33.b2Min(s1, s2);
+                        const n = b2Math_31.b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
+                        const s1 = b2Math_31.b2Vec2.DotVV(n, b2Math_31.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Math_31.b2Vec2.s_t0));
+                        const s2 = b2Math_31.b2Vec2.DotVV(n, b2Math_31.b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Math_31.b2Vec2.s_t0));
+                        const s = b2Math_31.b2Min(s1, s2);
                         if (s > this.m_radius) {
                             // No collision
                             axis.type = 2 /* e_edgeB */;
@@ -14926,13 +14735,13 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                             return axis;
                         }
                         // Adjacency
-                        if (b2Math_33.b2Vec2.DotVV(n, perp) >= 0) {
-                            if (b2Math_33.b2Vec2.DotVV(b2Math_33.b2Vec2.SubVV(n, this.m_upperLimit, b2Math_33.b2Vec2.s_t0), this.m_normal) < -b2Settings_32.b2_angularSlop) {
+                        if (b2Math_31.b2Vec2.DotVV(n, perp) >= 0) {
+                            if (b2Math_31.b2Vec2.DotVV(b2Math_31.b2Vec2.SubVV(n, this.m_upperLimit, b2Math_31.b2Vec2.s_t0), this.m_normal) < -b2Settings_32.b2_angularSlop) {
                                 continue;
                             }
                         }
                         else {
-                            if (b2Math_33.b2Vec2.DotVV(b2Math_33.b2Vec2.SubVV(n, this.m_lowerLimit, b2Math_33.b2Vec2.s_t0), this.m_normal) < -b2Settings_32.b2_angularSlop) {
+                            if (b2Math_31.b2Vec2.DotVV(b2Math_31.b2Vec2.SubVV(n, this.m_lowerLimit, b2Math_31.b2Vec2.s_t0), this.m_normal) < -b2Settings_32.b2_angularSlop) {
                                 continue;
                             }
                         }
@@ -14945,17 +14754,17 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
                     return axis;
                 }
             };
-            b2EPCollider.s_edge1 = new b2Math_33.b2Vec2();
-            b2EPCollider.s_edge0 = new b2Math_33.b2Vec2();
-            b2EPCollider.s_edge2 = new b2Math_33.b2Vec2();
-            b2EPCollider.s_ie = b2Collision_9.b2ClipVertex.MakeArray(2);
+            b2EPCollider.s_edge1 = new b2Math_31.b2Vec2();
+            b2EPCollider.s_edge0 = new b2Math_31.b2Vec2();
+            b2EPCollider.s_edge2 = new b2Math_31.b2Vec2();
+            b2EPCollider.s_ie = b2Collision_8.b2ClipVertex.MakeArray(2);
             b2EPCollider.s_rf = new b2ReferenceFace();
-            b2EPCollider.s_clipPoints1 = b2Collision_9.b2ClipVertex.MakeArray(2);
-            b2EPCollider.s_clipPoints2 = b2Collision_9.b2ClipVertex.MakeArray(2);
+            b2EPCollider.s_clipPoints1 = b2Collision_8.b2ClipVertex.MakeArray(2);
+            b2EPCollider.s_clipPoints2 = b2Collision_8.b2ClipVertex.MakeArray(2);
             b2EPCollider.s_edgeAxis = new b2EPAxis();
             b2EPCollider.s_polygonAxis = new b2EPAxis();
-            b2EPCollider.s_n = new b2Math_33.b2Vec2();
-            b2EPCollider.s_perp = new b2Math_33.b2Vec2();
+            b2EPCollider.s_n = new b2Math_31.b2Vec2();
+            b2EPCollider.s_perp = new b2Math_31.b2Vec2();
             b2CollideEdgeAndPolygon_s_collider = new b2EPCollider();
         }
     }
@@ -14977,9 +14786,9 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function(exports_45, context_45) {
+System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function(exports_41, context_41) {
     "use strict";
-    var __moduleName = context_45 && context_45.id;
+    var __moduleName = context_41 && context_41.id;
     var b2CollideEdge_1, b2Contact_4;
     var b2EdgeAndCircleContact;
     return {
@@ -15013,7 +14822,7 @@ System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2Collid
                     b2CollideEdge_1.b2CollideEdgeAndCircle(manifold, shapeA, xfA, shapeB, xfB);
                 }
             };
-            exports_45("b2EdgeAndCircleContact", b2EdgeAndCircleContact);
+            exports_41("b2EdgeAndCircleContact", b2EdgeAndCircleContact);
         }
     }
 });
@@ -15034,9 +14843,9 @@ System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2Collid
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function(exports_46, context_46) {
+System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function(exports_42, context_42) {
     "use strict";
-    var __moduleName = context_46 && context_46.id;
+    var __moduleName = context_42 && context_42.id;
     var b2CollideEdge_2, b2Contact_5;
     var b2EdgeAndPolygonContact;
     return {
@@ -15070,7 +14879,7 @@ System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2Colli
                     b2CollideEdge_2.b2CollideEdgeAndPolygon(manifold, shapeA, xfA, shapeB, xfB);
                 }
             };
-            exports_46("b2EdgeAndPolygonContact", b2EdgeAndPolygonContact);
+            exports_42("b2EdgeAndPolygonContact", b2EdgeAndPolygonContact);
         }
     }
 });
@@ -15091,9 +14900,9 @@ System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2Colli
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function(exports_47, context_47) {
+System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function(exports_43, context_43) {
     "use strict";
-    var __moduleName = context_47 && context_47.id;
+    var __moduleName = context_43 && context_43.id;
     var b2CollideEdge_3, b2EdgeShape_2, b2Contact_6;
     var b2ChainAndCircleContact;
     return {
@@ -15134,7 +14943,7 @@ System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2Colli
                 }
             };
             b2ChainAndCircleContact.Evaluate_s_edge = new b2EdgeShape_2.b2EdgeShape();
-            exports_47("b2ChainAndCircleContact", b2ChainAndCircleContact);
+            exports_43("b2ChainAndCircleContact", b2ChainAndCircleContact);
         }
     }
 });
@@ -15155,9 +14964,9 @@ System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2Colli
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function(exports_48, context_48) {
+System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function(exports_44, context_44) {
     "use strict";
-    var __moduleName = context_48 && context_48.id;
+    var __moduleName = context_44 && context_44.id;
     var b2CollideEdge_4, b2EdgeShape_3, b2Contact_7;
     var b2ChainAndPolygonContact;
     return {
@@ -15198,13 +15007,13 @@ System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2Coll
                 }
             };
             b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape_3.b2EdgeShape();
-            exports_48("b2ChainAndPolygonContact", b2ChainAndPolygonContact);
+            exports_44("b2ChainAndPolygonContact", b2ChainAndPolygonContact);
         }
     }
 });
-System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact"], function(exports_49, context_49) {
+System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact"], function(exports_45, context_45) {
     "use strict";
-    var __moduleName = context_49 && context_49.id;
+    var __moduleName = context_45 && context_45.id;
     var b2Settings_33, b2CircleContact_1, b2PolygonContact_1, b2PolygonAndCircleContact_1, b2EdgeAndCircleContact_1, b2EdgeAndPolygonContact_1, b2ChainAndCircleContact_1, b2ChainAndPolygonContact_1;
     var b2ContactRegister, b2ContactFactory;
     return {
@@ -15242,7 +15051,7 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
                     this.primary = false;
                 }
             };
-            exports_49("b2ContactRegister", b2ContactRegister);
+            exports_45("b2ContactRegister", b2ContactRegister);
             b2ContactFactory = class b2ContactFactory {
                 constructor(allocator) {
                     this.m_allocator = null;
@@ -15333,7 +15142,7 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
                     reg.destroyFcn(contact, this.m_allocator);
                 }
             };
-            exports_49("b2ContactFactory", b2ContactFactory);
+            exports_45("b2ContactFactory", b2ContactFactory);
         }
     }
 });
@@ -15354,9 +15163,9 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamics/Contacts/b2ContactFactory", "Dynamics/b2WorldCallbacks"], function(exports_50, context_50) {
+System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamics/Contacts/b2ContactFactory", "Dynamics/b2WorldCallbacks"], function(exports_46, context_46) {
     "use strict";
-    var __moduleName = context_50 && context_50.id;
+    var __moduleName = context_46 && context_46.id;
     var b2BroadPhase_1, b2ContactFactory_1, b2WorldCallbacks_4;
     var b2ContactManager;
     return {
@@ -15562,7 +15371,7 @@ System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamic
                     }
                 }
             };
-            exports_50("b2ContactManager", b2ContactManager);
+            exports_46("b2ContactManager", b2ContactManager);
         }
     }
 });
@@ -15583,10 +15392,10 @@ System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamic
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b2DynamicTree"], function(exports_51, context_51) {
+System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b2DynamicTree"], function(exports_47, context_47) {
     "use strict";
-    var __moduleName = context_51 && context_51.id;
-    var b2Collision_10, b2DynamicTree_1;
+    var __moduleName = context_47 && context_47.id;
+    var b2Collision_9, b2DynamicTree_1;
     var b2Pair, b2BroadPhase;
     /// This is used to sort pairs.
     function b2PairLessThan(pair1, pair2) {
@@ -15595,11 +15404,11 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
         }
         return pair1.proxyA.m_id - pair2.proxyA.m_id;
     }
-    exports_51("b2PairLessThan", b2PairLessThan);
+    exports_47("b2PairLessThan", b2PairLessThan);
     return {
         setters:[
-            function (b2Collision_10_1) {
-                b2Collision_10 = b2Collision_10_1;
+            function (b2Collision_9_1) {
+                b2Collision_9 = b2Collision_9_1;
             },
             function (b2DynamicTree_1_1) {
                 b2DynamicTree_1 = b2DynamicTree_1_1;
@@ -15611,7 +15420,7 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
                     this.proxyB = null;
                 }
             };
-            exports_51("b2Pair", b2Pair);
+            exports_47("b2Pair", b2Pair);
             /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
             /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
             /// It is up to the client to consume the new pairs and to track subsequent overlap.
@@ -15665,7 +15474,7 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
                 TestOverlap(proxyA, proxyB) {
                     const aabbA = this.m_tree.GetFatAABB(proxyA);
                     const aabbB = this.m_tree.GetFatAABB(proxyB);
-                    return b2Collision_10.b2TestOverlapAABB(aabbA, aabbB);
+                    return b2Collision_9.b2TestOverlapAABB(aabbA, aabbB);
                 }
                 /// Get the number of proxies.
                 GetProxyCount() {
@@ -15781,7 +15590,6082 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
                     this.m_moveBuffer[i] = null;
                 }
             };
-            exports_51("b2BroadPhase", b2BroadPhase);
+            exports_47("b2BroadPhase", b2BroadPhase);
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/Shapes/b2Shape"], function(exports_48, context_48) {
+    "use strict";
+    var __moduleName = context_48 && context_48.id;
+    var b2Settings_34, b2Math_32, b2Collision_10, b2Shape_7;
+    var b2Filter, b2FixtureDef, b2FixtureProxy, b2Fixture;
+    return {
+        setters:[
+            function (b2Settings_34_1) {
+                b2Settings_34 = b2Settings_34_1;
+            },
+            function (b2Math_32_1) {
+                b2Math_32 = b2Math_32_1;
+            },
+            function (b2Collision_10_1) {
+                b2Collision_10 = b2Collision_10_1;
+            },
+            function (b2Shape_7_1) {
+                b2Shape_7 = b2Shape_7_1;
+            }],
+        execute: function() {
+            /// This holds contact filtering data.
+            b2Filter = class b2Filter {
+                constructor() {
+                    /// The collision category bits. Normally you would just set one bit.
+                    this.categoryBits = 0x0001;
+                    /// The collision mask bits. This states the categories that this
+                    /// shape would accept for collision.
+                    this.maskBits = 0xFFFF;
+                    /// Collision groups allow a certain group of objects to never collide (negative)
+                    /// or always collide (positive). Zero means no collision group. Non-zero group
+                    /// filtering always wins against the mask bits.
+                    this.groupIndex = 0;
+                }
+                Clone() {
+                    return new b2Filter().Copy(this);
+                }
+                Copy(other) {
+                    ///b2Assert(this !== other);
+                    this.categoryBits = other.categoryBits;
+                    this.maskBits = other.maskBits;
+                    this.groupIndex = other.groupIndex;
+                    return this;
+                }
+            };
+            exports_48("b2Filter", b2Filter);
+            /// A fixture definition is used to create a fixture. This class defines an
+            /// abstract fixture definition. You can reuse fixture definitions safely.
+            b2FixtureDef = class b2FixtureDef {
+                constructor() {
+                    /// The shape, this must be set. The shape will be cloned, so you
+                    /// can create the shape on the stack.
+                    this.shape = null;
+                    /// Use this to store application specific fixture data.
+                    this.userData = null;
+                    /// The friction coefficient, usually in the range [0,1].
+                    this.friction = 0.2;
+                    /// The restitution (elasticity) usually in the range [0,1].
+                    this.restitution = 0;
+                    /// The density, usually in kg/m^2.
+                    this.density = 0;
+                    /// A sensor shape collects contact information but never generates a collision
+                    /// response.
+                    this.isSensor = false;
+                    /// Contact filtering data.
+                    this.filter = new b2Filter();
+                }
+            };
+            exports_48("b2FixtureDef", b2FixtureDef);
+            /// This proxy is used internally to connect fixtures to the broad-phase.
+            b2FixtureProxy = class b2FixtureProxy {
+                constructor() {
+                    this.aabb = new b2Collision_10.b2AABB();
+                    this.fixture = null;
+                    this.childIndex = 0;
+                    this.proxy = null;
+                }
+                static MakeArray(length) {
+                    return b2Settings_34.b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
+                }
+            };
+            exports_48("b2FixtureProxy", b2FixtureProxy);
+            /// A fixture is used to attach a shape to a body for collision detection. A fixture
+            /// inherits its transform from its parent. Fixtures hold additional non-geometric data
+            /// such as friction, collision filters, etc.
+            /// Fixtures are created via b2Body::CreateFixture.
+            /// @warning you cannot reuse fixtures.
+            b2Fixture = class b2Fixture {
+                constructor() {
+                    this.m_density = 0;
+                    this.m_next = null;
+                    this.m_body = null;
+                    this.m_shape = null;
+                    this.m_friction = 0;
+                    this.m_restitution = 0;
+                    this.m_proxies = null;
+                    this.m_proxyCount = 0;
+                    this.m_filter = new b2Filter();
+                    this.m_isSensor = false;
+                    this.m_userData = null;
+                }
+                /// Get the type of the child shape. You can use this to down cast to the concrete shape.
+                /// @return the shape type.
+                GetType() {
+                    return this.m_shape.GetType();
+                }
+                /// Get the child shape. You can modify the child shape, however you should not change the
+                /// number of vertices because this will crash some collision caching mechanisms.
+                /// Manipulating the shape may lead to non-physical behavior.
+                GetShape() {
+                    return this.m_shape;
+                }
+                /// Set if this fixture is a sensor.
+                SetSensor(sensor) {
+                    if (sensor !== this.m_isSensor) {
+                        this.m_body.SetAwake(true);
+                        this.m_isSensor = sensor;
+                    }
+                }
+                /// Is this fixture a sensor (non-solid)?
+                /// @return the true if the shape is a sensor.
+                IsSensor() {
+                    return this.m_isSensor;
+                }
+                /// Set the contact filtering data. This will not update contacts until the next time
+                /// step when either parent body is active and awake.
+                /// This automatically calls Refilter.
+                SetFilterData(filter) {
+                    this.m_filter.Copy(filter);
+                    this.Refilter();
+                }
+                /// Get the contact filtering data.
+                GetFilterData() {
+                    return this.m_filter;
+                }
+                /// Call this if you want to establish collision that was previously disabled by b2ContactFilter::ShouldCollide.
+                Refilter() {
+                    if (this.m_body) {
+                        return;
+                    }
+                    // Flag associated contacts for filtering.
+                    let edge = this.m_body.GetContactList();
+                    while (edge) {
+                        const contact = edge.contact;
+                        const fixtureA = contact.GetFixtureA();
+                        const fixtureB = contact.GetFixtureB();
+                        if (fixtureA === this || fixtureB === this) {
+                            contact.FlagForFiltering();
+                        }
+                        edge = edge.next;
+                    }
+                    const world = this.m_body.GetWorld();
+                    if (world === null) {
+                        return;
+                    }
+                    // Touch each proxy so that new pairs may be created
+                    const broadPhase = world.m_contactManager.m_broadPhase;
+                    for (let i = 0; i < this.m_proxyCount; ++i) {
+                        broadPhase.TouchProxy(this.m_proxies[i].proxy);
+                    }
+                }
+                /// Get the parent body of this fixture. This is NULL if the fixture is not attached.
+                /// @return the parent body.
+                GetBody() {
+                    return this.m_body;
+                }
+                /// Get the next fixture in the parent body's fixture list.
+                /// @return the next shape.
+                GetNext() {
+                    return this.m_next;
+                }
+                /// Get the user data that was assigned in the fixture definition. Use this to
+                /// store your application specific data.
+                GetUserData() {
+                    return this.m_userData;
+                }
+                /// Set the user data. Use this to store your application specific data.
+                SetUserData(data) {
+                    this.m_userData = data;
+                }
+                /// Test a point for containment in this fixture.
+                /// @param p a point in world coordinates.
+                TestPoint(p) {
+                    return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
+                }
+                ///#if B2_ENABLE_PARTICLE
+                ComputeDistance(p, normal, childIndex) {
+                    return this.m_shape.ComputeDistance(this.m_body.GetTransform(), p, normal, childIndex);
+                }
+                ///#endif
+                /// Cast a ray against this shape.
+                /// @param output the ray-cast results.
+                /// @param input the ray-cast input parameters.
+                RayCast(output, input, childIndex) {
+                    return this.m_shape.RayCast(output, input, this.m_body.GetTransform(), childIndex);
+                }
+                /// Get the mass data for this fixture. The mass data is based on the density and
+                /// the shape. The rotational inertia is about the shape's origin. This operation
+                /// may be expensive.
+                GetMassData(massData = new b2Shape_7.b2MassData()) {
+                    this.m_shape.ComputeMass(massData, this.m_density);
+                    return massData;
+                }
+                /// Set the density of this fixture. This will _not_ automatically adjust the mass
+                /// of the body. You must call b2Body::ResetMassData to update the body's mass.
+                SetDensity(density) {
+                    this.m_density = density;
+                }
+                /// Get the density of this fixture.
+                GetDensity() {
+                    return this.m_density;
+                }
+                /// Get the coefficient of friction.
+                GetFriction() {
+                    return this.m_friction;
+                }
+                /// Set the coefficient of friction. This will _not_ change the friction of
+                /// existing contacts.
+                SetFriction(friction) {
+                    this.m_friction = friction;
+                }
+                /// Get the coefficient of restitution.
+                GetRestitution() {
+                    return this.m_restitution;
+                }
+                /// Set the coefficient of restitution. This will _not_ change the restitution of
+                /// existing contacts.
+                SetRestitution(restitution) {
+                    this.m_restitution = restitution;
+                }
+                /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
+                /// If you need a more accurate AABB, compute it using the shape and
+                /// the body transform.
+                GetAABB(childIndex) {
+                    ///b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
+                    return this.m_proxies[childIndex].aabb;
+                }
+                /// Dump this fixture to the log file.
+                Dump(log, bodyIndex) {
+                    log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
+                    log("    fd.friction = %.15f;\n", this.m_friction);
+                    log("    fd.restitution = %.15f;\n", this.m_restitution);
+                    log("    fd.density = %.15f;\n", this.m_density);
+                    log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
+                    log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
+                    log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
+                    log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
+                    this.m_shape.Dump(log);
+                    log("\n");
+                    log("    fd.shape = shape;\n");
+                    log("\n");
+                    log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
+                }
+                // We need separation create/destroy functions from the constructor/destructor because
+                // the destructor cannot access the allocator (no destructor arguments allowed by C++).
+                Create(body, def) {
+                    this.m_userData = def.userData;
+                    this.m_friction = def.friction;
+                    this.m_restitution = def.restitution;
+                    this.m_body = body;
+                    this.m_next = null;
+                    this.m_filter.Copy(def.filter);
+                    this.m_isSensor = def.isSensor;
+                    this.m_shape = def.shape.Clone();
+                    // Reserve proxy space
+                    // const childCount = m_shape->GetChildCount();
+                    // m_proxies = (b2FixtureProxy*)allocator->Allocate(childCount * sizeof(b2FixtureProxy));
+                    // for (int32 i = 0; i < childCount; ++i)
+                    // {
+                    //   m_proxies[i].fixture = NULL;
+                    //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
+                    // }
+                    this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
+                    this.m_proxyCount = 0;
+                    this.m_density = def.density;
+                }
+                Destroy() {
+                    // The proxies must be destroyed before calling this.
+                    ///b2Assert(this.m_proxyCount === 0);
+                    // Free the proxy array.
+                    // int32 childCount = m_shape->GetChildCount();
+                    // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
+                    // m_proxies = NULL;
+                    this.m_shape = null;
+                }
+                // These support body activation/deactivation.
+                CreateProxies(broadPhase, xf) {
+                    ///b2Assert(this.m_proxyCount === 0);
+                    // Create proxies in the broad-phase.
+                    this.m_proxyCount = this.m_shape.GetChildCount();
+                    for (let i = 0; i < this.m_proxyCount; ++i) {
+                        const proxy = this.m_proxies[i];
+                        this.m_shape.ComputeAABB(proxy.aabb, xf, i);
+                        proxy.proxy = broadPhase.CreateProxy(proxy.aabb, proxy);
+                        proxy.fixture = this;
+                        proxy.childIndex = i;
+                    }
+                }
+                DestroyProxies(broadPhase) {
+                    // Destroy proxies in the broad-phase.
+                    for (let i = 0; i < this.m_proxyCount; ++i) {
+                        const proxy = this.m_proxies[i];
+                        broadPhase.DestroyProxy(proxy.proxy);
+                        proxy.proxy = null;
+                    }
+                    this.m_proxyCount = 0;
+                }
+                Synchronize(broadPhase, transform1, transform2) {
+                    if (this.m_proxyCount === 0) {
+                        return;
+                    }
+                    for (let i = 0; i < this.m_proxyCount; ++i) {
+                        const proxy = this.m_proxies[i];
+                        // Compute an AABB that covers the swept shape (may miss some rotation effect).
+                        const aabb1 = b2Fixture.Synchronize_s_aabb1;
+                        const aabb2 = b2Fixture.Synchronize_s_aabb2;
+                        this.m_shape.ComputeAABB(aabb1, transform1, i);
+                        this.m_shape.ComputeAABB(aabb2, transform2, i);
+                        proxy.aabb.Combine2(aabb1, aabb2);
+                        const displacement = b2Math_32.b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
+                        broadPhase.MoveProxy(proxy.proxy, proxy.aabb, displacement);
+                    }
+                }
+            };
+            b2Fixture.Synchronize_s_aabb1 = new b2Collision_10.b2AABB();
+            b2Fixture.Synchronize_s_aabb2 = new b2Collision_10.b2AABB();
+            b2Fixture.Synchronize_s_displacement = new b2Math_32.b2Vec2();
+            exports_48("b2Fixture", b2Fixture);
+        }
+    }
+});
+/*
+ * Copyright (c) 2013 Google, Inc.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty.  In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+System.register("Particle/b2StackQueue", ["Common/b2Settings"], function(exports_49, context_49) {
+    "use strict";
+    var __moduleName = context_49 && context_49.id;
+    var b2Settings_35;
+    var b2StackQueue;
+    function b2Assert(condition) { }
+    return {
+        setters:[
+            function (b2Settings_35_1) {
+                b2Settings_35 = b2Settings_35_1;
+            }],
+        execute: function() {
+            b2StackQueue = class b2StackQueue {
+                constructor(capacity) {
+                    this.m_front = 0;
+                    this.m_back = 0;
+                    this.m_capacity = 0;
+                    this.m_buffer = b2Settings_35.b2MakeArray(capacity, function (index) { return null; });
+                    ///this.m_end = capacity; // TODO: this was wrong!
+                    this.m_capacity = capacity;
+                }
+                Push(item) {
+                    if (this.m_back >= this.m_capacity) {
+                        for (let i = this.m_front; i < this.m_back; i++) {
+                            this.m_buffer[i - this.m_front] = this.m_buffer[i];
+                        }
+                        this.m_back -= this.m_front;
+                        this.m_front = 0;
+                        if (this.m_back >= this.m_capacity) {
+                            if (this.m_capacity > 0) {
+                                this.m_buffer.concat(b2Settings_35.b2MakeArray(this.m_capacity, function (index) { return null; }));
+                                this.m_capacity *= 2;
+                            }
+                            else {
+                                this.m_buffer.concat(b2Settings_35.b2MakeArray(1, function (index) { return null; }));
+                                this.m_capacity = 1;
+                            }
+                        }
+                    }
+                    this.m_buffer[this.m_back] = item;
+                    this.m_back++;
+                }
+                Pop() {
+                    b2Assert(this.m_front < this.m_back);
+                    delete this.m_buffer[this.m_front];
+                    this.m_front++;
+                }
+                Empty() {
+                    b2Assert(this.m_front <= this.m_back);
+                    return this.m_front === this.m_back;
+                }
+                Front() {
+                    return this.m_buffer[this.m_front];
+                }
+            };
+            exports_49("b2StackQueue", b2StackQueue);
+        }
+    }
+});
+///#endif
+/*
+ * Copyright (c) 2013 Google, Inc.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty.  In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+System.register("Particle/b2VoronoiDiagram", ["Common/b2Settings", "Common/b2Math", "Particle/b2StackQueue"], function(exports_50, context_50) {
+    "use strict";
+    var __moduleName = context_50 && context_50.id;
+    var b2Settings_36, b2Math_33, b2StackQueue_1;
+    var b2VoronoiDiagram;
+    function b2Assert(condition) { }
+    return {
+        setters:[
+            function (b2Settings_36_1) {
+                b2Settings_36 = b2Settings_36_1;
+            },
+            function (b2Math_33_1) {
+                b2Math_33 = b2Math_33_1;
+            },
+            function (b2StackQueue_1_1) {
+                b2StackQueue_1 = b2StackQueue_1_1;
+            }],
+        execute: function() {
+            /**
+             * A field representing the nearest generator from each point.
+             */
+            b2VoronoiDiagram = class b2VoronoiDiagram {
+                constructor(generatorCapacity) {
+                    this.m_generatorBuffer = null;
+                    this.m_generatorCapacity = 0;
+                    this.m_generatorCount = 0;
+                    this.m_countX = 0;
+                    this.m_countY = 0;
+                    this.m_diagram = null;
+                    this.m_generatorBuffer = b2Settings_36.b2MakeArray(generatorCapacity, function (index) {
+                        return new b2VoronoiDiagram.Generator();
+                    });
+                    this.m_generatorCapacity = generatorCapacity;
+                }
+                /**
+                 * Add a generator.
+                 *
+                 * @param center the position of the generator.
+                 * @param tag a tag used to identify the generator in callback functions.
+                 * @param necessary whether to callback for nodes associated with the generator.
+                 */
+                AddGenerator(center, tag, necessary) {
+                    b2Assert(this.m_generatorCount < this.m_generatorCapacity);
+                    let g = this.m_generatorBuffer[this.m_generatorCount++];
+                    g.center.Copy(center);
+                    g.tag = tag;
+                    g.necessary = necessary;
+                }
+                /**
+                 * Generate the Voronoi diagram. It is rasterized with a given
+                 * interval in the same range as the necessary generators exist.
+                 *
+                 * @param radius the interval of the diagram.
+                 * @param margin margin for which the range of the diagram is extended.
+                 */
+                Generate(radius, margin) {
+                    b2Assert(this.m_diagram === null);
+                    let inverseRadius = 1 / radius;
+                    let lower = new b2Math_33.b2Vec2(+b2Settings_36.b2_maxFloat, +b2Settings_36.b2_maxFloat);
+                    let upper = new b2Math_33.b2Vec2(-b2Settings_36.b2_maxFloat, -b2Settings_36.b2_maxFloat);
+                    let necessary_count = 0;
+                    for (let k = 0; k < this.m_generatorCount; k++) {
+                        let g = this.m_generatorBuffer[k];
+                        if (g.necessary) {
+                            b2Math_33.b2Vec2.MinV(lower, g.center, lower);
+                            b2Math_33.b2Vec2.MaxV(upper, g.center, upper);
+                            ++necessary_count;
+                        }
+                    }
+                    if (necessary_count === 0) {
+                        ///debugger;
+                        this.m_countX = 0;
+                        this.m_countY = 0;
+                        return;
+                    }
+                    lower.x -= margin;
+                    lower.y -= margin;
+                    upper.x += margin;
+                    upper.y += margin;
+                    this.m_countX = 1 + Math.floor(inverseRadius * (upper.x - lower.x));
+                    this.m_countY = 1 + Math.floor(inverseRadius * (upper.y - lower.y));
+                    ///  m_diagram = (Generator**) m_allocator->Allocate(sizeof(Generator*) * m_countX * m_countY);
+                    ///  for (int32 i = 0; i < m_countX * m_countY; i++)
+                    ///  {
+                    ///    m_diagram[i] = NULL;
+                    ///  }
+                    this.m_diagram = b2Settings_36.b2MakeArray(this.m_countX * this.m_countY, function (index) { return null; });
+                    // (4 * m_countX * m_countY) is the queue capacity that is experimentally
+                    // known to be necessary and sufficient for general particle distributions.
+                    let queue = new b2StackQueue_1.b2StackQueue(4 * this.m_countX * this.m_countY);
+                    for (let k = 0; k < this.m_generatorCount; k++) {
+                        let g = this.m_generatorBuffer[k];
+                        ///  g.center = inverseRadius * (g.center - lower);
+                        g.center.SelfSub(lower).SelfMul(inverseRadius);
+                        let x = Math.floor(g.center.x);
+                        let y = Math.floor(g.center.y);
+                        if (x >= 0 && y >= 0 && x < this.m_countX && y < this.m_countY) {
+                            queue.Push(new b2VoronoiDiagram.Task(x, y, x + y * this.m_countX, g));
+                        }
+                    }
+                    while (!queue.Empty()) {
+                        let task = queue.Front();
+                        let x = task.m_x;
+                        let y = task.m_y;
+                        let i = task.m_i;
+                        let g = task.m_generator;
+                        queue.Pop();
+                        if (!this.m_diagram[i]) {
+                            this.m_diagram[i] = g;
+                            if (x > 0) {
+                                queue.Push(new b2VoronoiDiagram.Task(x - 1, y, i - 1, g));
+                            }
+                            if (y > 0) {
+                                queue.Push(new b2VoronoiDiagram.Task(x, y - 1, i - this.m_countX, g));
+                            }
+                            if (x < this.m_countX - 1) {
+                                queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, g));
+                            }
+                            if (y < this.m_countY - 1) {
+                                queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, g));
+                            }
+                        }
+                    }
+                    for (let y = 0; y < this.m_countY; y++) {
+                        for (let x = 0; x < this.m_countX - 1; x++) {
+                            let i = x + y * this.m_countX;
+                            let a = this.m_diagram[i];
+                            let b = this.m_diagram[i + 1];
+                            if (a !== b) {
+                                queue.Push(new b2VoronoiDiagram.Task(x, y, i, b));
+                                queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, a));
+                            }
+                        }
+                    }
+                    for (let y = 0; y < this.m_countY - 1; y++) {
+                        for (let x = 0; x < this.m_countX; x++) {
+                            let i = x + y * this.m_countX;
+                            let a = this.m_diagram[i];
+                            let b = this.m_diagram[i + this.m_countX];
+                            if (a !== b) {
+                                queue.Push(new b2VoronoiDiagram.Task(x, y, i, b));
+                                queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, a));
+                            }
+                        }
+                    }
+                    while (!queue.Empty()) {
+                        let task = queue.Front();
+                        let x = task.m_x;
+                        let y = task.m_y;
+                        let i = task.m_i;
+                        let k = task.m_generator;
+                        queue.Pop();
+                        let a = this.m_diagram[i];
+                        let b = k;
+                        if (a !== b) {
+                            let ax = a.center.x - x;
+                            let ay = a.center.y - y;
+                            let bx = b.center.x - x;
+                            let by = b.center.y - y;
+                            let a2 = ax * ax + ay * ay;
+                            let b2 = bx * bx + by * by;
+                            if (a2 > b2) {
+                                this.m_diagram[i] = b;
+                                if (x > 0) {
+                                    queue.Push(new b2VoronoiDiagram.Task(x - 1, y, i - 1, b));
+                                }
+                                if (y > 0) {
+                                    queue.Push(new b2VoronoiDiagram.Task(x, y - 1, i - this.m_countX, b));
+                                }
+                                if (x < this.m_countX - 1) {
+                                    queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, b));
+                                }
+                                if (y < this.m_countY - 1) {
+                                    queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, b));
+                                }
+                            }
+                        }
+                    }
+                }
+                /**
+                 * Enumerate all nodes that contain at least one necessary
+                 * generator.
+                 */
+                GetNodes(callback) {
+                    for (let y = 0; y < this.m_countY - 1; y++) {
+                        for (let x = 0; x < this.m_countX - 1; x++) {
+                            let i = x + y * this.m_countX;
+                            let a = this.m_diagram[i];
+                            let b = this.m_diagram[i + 1];
+                            let c = this.m_diagram[i + this.m_countX];
+                            let d = this.m_diagram[i + 1 + this.m_countX];
+                            if (b !== c) {
+                                if (a !== b && a !== c &&
+                                    (a.necessary || b.necessary || c.necessary)) {
+                                    callback(a.tag, b.tag, c.tag);
+                                }
+                                if (d !== b && d !== c &&
+                                    (a.necessary || b.necessary || c.necessary)) {
+                                    callback(b.tag, d.tag, c.tag);
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            exports_50("b2VoronoiDiagram", b2VoronoiDiagram);
+            (function (b2VoronoiDiagram) {
+                class Generator {
+                    constructor() {
+                        this.center = new b2Math_33.b2Vec2();
+                        this.tag = 0;
+                        this.necessary = false;
+                    }
+                }
+                b2VoronoiDiagram.Generator = Generator;
+                class Task {
+                    constructor(x, y, i, g) {
+                        this.m_x = 0;
+                        this.m_y = 0;
+                        this.m_i = 0;
+                        this.m_generator = null;
+                        this.m_x = x;
+                        this.m_y = y;
+                        this.m_i = i;
+                        this.m_generator = g;
+                    }
+                }
+                b2VoronoiDiagram.Task = Task;
+            })(b2VoronoiDiagram = b2VoronoiDiagram || (b2VoronoiDiagram = {}));
+            exports_50("b2VoronoiDiagram", b2VoronoiDiagram); // namespace b2VoronoiDiagram
+        }
+    }
+});
+///#endif
+/*
+ * Copyright (c) 2013 Google, Inc.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty.  In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks", "Particle/b2Particle", "Particle/b2ParticleGroup", "Particle/b2VoronoiDiagram"], function(exports_51, context_51) {
+    "use strict";
+    var __moduleName = context_51 && context_51.id;
+    var b2Settings_37, b2Settings_38, b2Math_34, b2Collision_11, b2Shape_8, b2EdgeShape_4, b2TimeStep_4, b2WorldCallbacks_5, b2Particle_2, b2ParticleGroup_1, b2VoronoiDiagram_1;
+    var b2GrowableBuffer, b2FixtureParticleQueryCallback, b2ParticleContact, b2ParticleBodyContact, b2ParticlePair, b2ParticleTriad, b2ParticleSystemDef, b2ParticleSystem;
+    function b2Assert(condition) { }
+    function std_iter_swap(array, a, b) {
+        const tmp = array[a];
+        array[a] = array[b];
+        array[b] = tmp;
+    }
+    function default_compare(a, b) { return a < b; }
+    function std_sort(array, first = 0, len = array.length - first, cmp = default_compare) {
+        let left = first;
+        let stack = [];
+        let pos = 0;
+        for (;;) {
+            for (; left + 1 < len; len++) {
+                let pivot = array[left + Math.floor(Math.random() * (len - left))]; /* pick random pivot */
+                stack[pos++] = len; /* sort right part later */
+                for (let right = left - 1;;) {
+                    while (cmp(array[++right], pivot)) { } /* look for greater element */
+                    while (cmp(pivot, array[--len])) { } /* look for smaller element */
+                    if (right >= len)
+                        break; /* partition point found? */
+                    std_iter_swap(array, right, len); /* the only swap */
+                } /* partitioned, continue left part */
+            }
+            if (pos === 0)
+                break; /* stack empty? */
+            left = len; /* left to right is sorted */
+            len = stack[--pos]; /* get next range to sort */
+        }
+        return array;
+    }
+    function std_stable_sort(array, first = 0, len = array.length - first, cmp = default_compare) {
+        return std_sort(array, first, len, cmp);
+    }
+    function std_remove_if(array, predicate, length = array.length) {
+        let l = 0;
+        for (let c = 0; c < length; ++c) {
+            // if we can be collapsed, keep l where it is.
+            if (predicate(array[c]))
+                continue;
+            // this node can't be collapsed; push it back as far as we can.
+            if (c === l) {
+                ++l;
+                continue; // quick exit if we're already in the right spot
+            }
+            // array[l++] = array[c];
+            std_iter_swap(array, l++, c);
+        }
+        return l;
+    }
+    function std_lower_bound(array, first, last, val, cmp = default_compare) {
+        let count = last - first;
+        while (count > 0) {
+            let step = Math.floor(count / 2);
+            let it = first + step;
+            if (cmp(array[it], val)) {
+                first = ++it;
+                count -= step + 1;
+            }
+            else
+                count = step;
+        }
+        return first;
+    }
+    function std_upper_bound(array, first, last, val, cmp = default_compare) {
+        let count = last - first;
+        while (count > 0) {
+            let step = Math.floor(count / 2);
+            let it = first + step;
+            if (!cmp(val, array[it])) {
+                first = ++it;
+                count -= step + 1;
+            }
+            else
+                count = step;
+        }
+        return first;
+    }
+    function std_rotate(array, first, n_first, last) {
+        let next = n_first;
+        while (first !== next) {
+            std_iter_swap(array, first++, next++);
+            if (next === last)
+                next = n_first;
+            else if (first === n_first)
+                n_first = next;
+        }
+    }
+    function std_unique(array, first, last, cmp) {
+        if (first === last) {
+            return last;
+        }
+        let result = first;
+        while (++first !== last) {
+            if (!cmp(array[result], array[first])) {
+                ///array[++result] = array[first];
+                std_iter_swap(array, ++result, first);
+            }
+        }
+        return ++result;
+    }
+    return {
+        setters:[
+            function (b2Settings_37_1) {
+                b2Settings_37 = b2Settings_37_1;
+                b2Settings_38 = b2Settings_37_1;
+            },
+            function (b2Math_34_1) {
+                b2Math_34 = b2Math_34_1;
+            },
+            function (b2Collision_11_1) {
+                b2Collision_11 = b2Collision_11_1;
+            },
+            function (b2Shape_8_1) {
+                b2Shape_8 = b2Shape_8_1;
+            },
+            function (b2EdgeShape_4_1) {
+                b2EdgeShape_4 = b2EdgeShape_4_1;
+            },
+            function (b2TimeStep_4_1) {
+                b2TimeStep_4 = b2TimeStep_4_1;
+            },
+            function (b2WorldCallbacks_5_1) {
+                b2WorldCallbacks_5 = b2WorldCallbacks_5_1;
+            },
+            function (b2Particle_2_1) {
+                b2Particle_2 = b2Particle_2_1;
+            },
+            function (b2ParticleGroup_1_1) {
+                b2ParticleGroup_1 = b2ParticleGroup_1_1;
+            },
+            function (b2VoronoiDiagram_1_1) {
+                b2VoronoiDiagram_1 = b2VoronoiDiagram_1_1;
+            }],
+        execute: function() {
+            ;
+            ;
+            ;
+            ;
+            ;
+            b2GrowableBuffer = class b2GrowableBuffer {
+                constructor(allocator) {
+                    this.data = [];
+                    this.count = 0;
+                    this.capacity = 0;
+                    this.allocator = allocator;
+                }
+                Append() {
+                    if (this.count >= this.capacity) {
+                        this.Grow();
+                    }
+                    return this.count++;
+                }
+                Reserve(newCapacity) {
+                    if (this.capacity >= newCapacity)
+                        return;
+                    b2Assert(this.capacity === this.data.length);
+                    for (let i = this.capacity; i < newCapacity; ++i) {
+                        this.data[i] = this.allocator();
+                    }
+                    this.capacity = newCapacity;
+                }
+                Grow() {
+                    // Double the capacity.
+                    let newCapacity = this.capacity ? 2 * this.capacity : b2Settings_37.b2_minParticleSystemBufferCapacity;
+                    b2Assert(newCapacity > this.capacity);
+                    this.Reserve(newCapacity);
+                }
+                Free() {
+                    if (this.data.length === 0) {
+                        return;
+                    }
+                    this.data = [];
+                    this.capacity = 0;
+                    this.count = 0;
+                }
+                Shorten(newEnd) {
+                    b2Assert(false);
+                }
+                Data() {
+                    return this.data;
+                }
+                GetCount() {
+                    return this.count;
+                }
+                SetCount(newCount) {
+                    ///b2Assert(0 <= newCount && newCount <= this.capacity);
+                    this.count = newCount;
+                }
+                GetCapacity() {
+                    return this.capacity;
+                }
+                RemoveIf(pred) {
+                    let count = 0;
+                    for (let i = 0; i < this.count; ++i) {
+                        if (!pred(this.data[i])) {
+                            count++;
+                        }
+                    }
+                    this.count = std_remove_if(this.data, pred, this.count);
+                    b2Assert(count === this.count);
+                }
+                Unique(pred) {
+                    this.count = std_unique(this.data, 0, this.count, pred);
+                }
+            };
+            exports_51("b2GrowableBuffer", b2GrowableBuffer);
+            b2FixtureParticleQueryCallback = class b2FixtureParticleQueryCallback extends b2WorldCallbacks_5.b2QueryCallback {
+                constructor(system) {
+                    super();
+                    this.m_system = system;
+                }
+                ShouldQueryParticleSystem(system) {
+                    // Skip reporting particles.
+                    return false;
+                }
+                ReportFixture(fixture) {
+                    if (fixture.IsSensor()) {
+                        return true;
+                    }
+                    const shape = fixture.GetShape();
+                    const childCount = shape.GetChildCount();
+                    for (let childIndex = 0; childIndex < childCount; childIndex++) {
+                        const aabb = fixture.GetAABB(childIndex);
+                        const enumerator = this.m_system.GetInsideBoundsEnumerator(aabb);
+                        let index;
+                        while ((index = enumerator.GetNext()) >= 0) {
+                            this.ReportFixtureAndParticle(fixture, childIndex, index);
+                        }
+                    }
+                    return true;
+                }
+                ReportParticle(system, index) {
+                    return false;
+                }
+                ReportFixtureAndParticle(fixture, childIndex, index) {
+                    b2Assert(false); // pure virtual
+                }
+            };
+            exports_51("b2FixtureParticleQueryCallback", b2FixtureParticleQueryCallback);
+            b2ParticleContact = class b2ParticleContact {
+                constructor() {
+                    this.indexA = 0;
+                    this.indexB = 0;
+                    this.weight = 0;
+                    this.normal = new b2Math_34.b2Vec2();
+                    this.flags = 0;
+                }
+                SetIndices(a, b) {
+                    b2Assert(a <= b2Settings_37.b2_maxParticleIndex && b <= b2Settings_37.b2_maxParticleIndex);
+                    this.indexA = a;
+                    this.indexB = b;
+                }
+                SetWeight(w) {
+                    this.weight = w;
+                }
+                SetNormal(n) {
+                    this.normal.Copy(n);
+                }
+                SetFlags(f) {
+                    this.flags = f;
+                }
+                GetIndexA() {
+                    return this.indexA;
+                }
+                GetIndexB() {
+                    return this.indexB;
+                }
+                GetWeight() {
+                    return this.weight;
+                }
+                GetNormal() {
+                    return this.normal;
+                }
+                GetFlags() {
+                    return this.flags;
+                }
+                IsEqual(rhs) {
+                    return this.indexA === rhs.indexA && this.indexB === rhs.indexB && this.flags === rhs.flags && this.weight === rhs.weight && this.normal.x === rhs.normal.x && this.normal.y === rhs.normal.y;
+                }
+                IsNotEqual(rhs) {
+                    return !this.IsEqual(rhs);
+                }
+                ApproximatelyEqual(rhs) {
+                    const MAX_WEIGHT_DIFF = 0.01; // Weight 0 ~ 1, so about 1%
+                    const MAX_NORMAL_DIFF_SQ = 0.01 * 0.01; // Normal length = 1, so 1%
+                    return this.indexA === rhs.indexA && this.indexB === rhs.indexB && this.flags === rhs.flags && b2Math_34.b2Abs(this.weight - rhs.weight) < MAX_WEIGHT_DIFF && b2Math_34.b2Vec2.DistanceSquaredVV(this.normal, rhs.normal) < MAX_NORMAL_DIFF_SQ;
+                }
+            };
+            exports_51("b2ParticleContact", b2ParticleContact);
+            b2ParticleBodyContact = class b2ParticleBodyContact {
+                constructor() {
+                    this.index = 0; // Index of the particle making contact.
+                    this.body = null; // The body making contact.
+                    this.fixture = null; // The specific fixture making contact
+                    this.weight = 0.0; // Weight of the contact. A value between 0.0f and 1.0f.
+                    this.normal = new b2Math_34.b2Vec2(); // The normalized direction from the particle to the body.
+                    this.mass = 0.0; // The effective mass used in calculating force.
+                }
+            };
+            exports_51("b2ParticleBodyContact", b2ParticleBodyContact);
+            b2ParticlePair = class b2ParticlePair {
+                constructor() {
+                    this.indexA = 0; // Indices of the respective particles making pair.
+                    this.indexB = 0;
+                    this.flags = 0; // The logical sum of the particle flags. See the b2ParticleFlag enum.
+                    this.strength = 0.0; // The strength of cohesion among the particles.
+                    this.distance = 0.0; // The initial distance of the particles.
+                }
+            };
+            exports_51("b2ParticlePair", b2ParticlePair);
+            b2ParticleTriad = class b2ParticleTriad {
+                constructor() {
+                    this.indexA = 0; // Indices of the respective particles making triad.
+                    this.indexB = 0;
+                    this.indexC = 0;
+                    this.flags = 0; // The logical sum of the particle flags. See the b2ParticleFlag enum.
+                    this.strength = 0.0; // The strength of cohesion among the particles.
+                    this.pa = new b2Math_34.b2Vec2(0.0, 0.0); // Values used for calculation.
+                    this.pb = new b2Math_34.b2Vec2(0.0, 0.0);
+                    this.pc = new b2Math_34.b2Vec2(0.0, 0.0);
+                    this.ka = 0.0;
+                    this.kb = 0.0;
+                    this.kc = 0.0;
+                    this.s = 0.0;
+                }
+            };
+            exports_51("b2ParticleTriad", b2ParticleTriad);
+            b2ParticleSystemDef = class b2ParticleSystemDef {
+                constructor() {
+                    // Initialize physical coefficients to the maximum values that
+                    // maintain numerical stability.
+                    /**
+                     * Enable strict Particle/Body contact check.
+                     * See SetStrictContactCheck for details.
+                     */
+                    this.strictContactCheck = false;
+                    /**
+                     * Set the particle density.
+                     * See SetDensity for details.
+                     */
+                    this.density = 1.0;
+                    /**
+                     * Change the particle gravity scale. Adjusts the effect of the
+                     * global gravity vector on particles. Default value is 1.0f.
+                     */
+                    this.gravityScale = 1.0;
+                    /**
+                     * Particles behave as circles with this radius. In Box2D units.
+                     */
+                    this.radius = 1.0;
+                    /**
+                     * Set the maximum number of particles.
+                     * By default, there is no maximum. The particle buffers can
+                     * continue to grow while b2World's block allocator still has
+                     * memory.
+                     * See SetMaxParticleCount for details.
+                     */
+                    this.maxCount = 0;
+                    /**
+                     * Increases pressure in response to compression
+                     * Smaller values allow more compression
+                     */
+                    this.pressureStrength = 0.005;
+                    /**
+                     * Reduces velocity along the collision normal
+                     * Smaller value reduces less
+                     */
+                    this.dampingStrength = 1.0;
+                    /**
+                     * Restores shape of elastic particle groups
+                     * Larger values increase elastic particle velocity
+                     */
+                    this.elasticStrength = 0.25;
+                    /**
+                     * Restores length of spring particle groups
+                     * Larger values increase spring particle velocity
+                     */
+                    this.springStrength = 0.25;
+                    /**
+                     * Reduces relative velocity of viscous particles
+                     * Larger values slow down viscous particles more
+                     */
+                    this.viscousStrength = 0.25;
+                    /**
+                     * Produces pressure on tensile particles
+                     * 0~0.2. Larger values increase the amount of surface tension.
+                     */
+                    this.surfaceTensionPressureStrength = 0.2;
+                    /**
+                     * Smoothes outline of tensile particles
+                     * 0~0.2. Larger values result in rounder, smoother,
+                     * water-drop-like clusters of particles.
+                     */
+                    this.surfaceTensionNormalStrength = 0.2;
+                    /**
+                     * Produces additional pressure on repulsive particles
+                     * Larger values repulse more
+                     * Negative values mean attraction. The range where particles
+                     * behave stably is about -0.2 to 2.0.
+                     */
+                    this.repulsiveStrength = 1.0;
+                    /**
+                     * Produces repulsion between powder particles
+                     * Larger values repulse more
+                     */
+                    this.powderStrength = 0.5;
+                    /**
+                     * Pushes particles out of solid particle group
+                     * Larger values repulse more
+                     */
+                    this.ejectionStrength = 0.5;
+                    /**
+                     * Produces static pressure
+                     * Larger values increase the pressure on neighboring partilces
+                     * For a description of static pressure, see
+                     * http://en.wikipedia.org/wiki/Static_pressure#Static_pressure_in_fluid_dynamics
+                     */
+                    this.staticPressureStrength = 0.2;
+                    /**
+                     * Reduces instability in static pressure calculation
+                     * Larger values make stabilize static pressure with fewer
+                     * iterations
+                     */
+                    this.staticPressureRelaxation = 0.2;
+                    /**
+                     * Computes static pressure more precisely
+                     * See SetStaticPressureIterations for details
+                     */
+                    this.staticPressureIterations = 8;
+                    /**
+                     * Determines how fast colors are mixed
+                     * 1.0f ==> mixed immediately
+                     * 0.5f ==> mixed half way each simulation step (see
+                     * b2World::Step())
+                     */
+                    this.colorMixingStrength = 0.5;
+                    /**
+                     * Whether to destroy particles by age when no more particles
+                     * can be created.  See #b2ParticleSystem::SetDestructionByAge()
+                     * for more information.
+                     */
+                    this.destroyByAge = true;
+                    /**
+                     * Granularity of particle lifetimes in seconds.  By default
+                     * this is set to (1.0f / 60.0f) seconds.  b2ParticleSystem uses
+                     * a 32-bit signed value to track particle lifetimes so the
+                     * maximum lifetime of a particle is (2^32 - 1) / (1.0f /
+                     * lifetimeGranularity) seconds. With the value set to 1/60 the
+                     * maximum lifetime or age of a particle is 2.27 years.
+                     */
+                    this.lifetimeGranularity = 1.0 / 60.0;
+                }
+                Copy(def) {
+                    this.strictContactCheck = def.strictContactCheck;
+                    this.density = def.density;
+                    this.gravityScale = def.gravityScale;
+                    this.radius = def.radius;
+                    this.maxCount = def.maxCount;
+                    this.pressureStrength = def.pressureStrength;
+                    this.dampingStrength = def.dampingStrength;
+                    this.elasticStrength = def.elasticStrength;
+                    this.springStrength = def.springStrength;
+                    this.viscousStrength = def.viscousStrength;
+                    this.surfaceTensionPressureStrength = def.surfaceTensionPressureStrength;
+                    this.surfaceTensionNormalStrength = def.surfaceTensionNormalStrength;
+                    this.repulsiveStrength = def.repulsiveStrength;
+                    this.powderStrength = def.powderStrength;
+                    this.ejectionStrength = def.ejectionStrength;
+                    this.staticPressureStrength = def.staticPressureStrength;
+                    this.staticPressureRelaxation = def.staticPressureRelaxation;
+                    this.staticPressureIterations = def.staticPressureIterations;
+                    this.colorMixingStrength = def.colorMixingStrength;
+                    this.destroyByAge = def.destroyByAge;
+                    this.lifetimeGranularity = def.lifetimeGranularity;
+                    return this;
+                }
+                Clone() {
+                    return new b2ParticleSystemDef().Copy(this);
+                }
+            };
+            exports_51("b2ParticleSystemDef", b2ParticleSystemDef);
+            b2ParticleSystem = class b2ParticleSystem {
+                constructor(def, world) {
+                    this.m_paused = false;
+                    this.m_timestamp = 0;
+                    this.m_allParticleFlags = 0;
+                    this.m_needsUpdateAllParticleFlags = false;
+                    this.m_allGroupFlags = 0;
+                    this.m_needsUpdateAllGroupFlags = false;
+                    this.m_hasForce = false;
+                    this.m_iterationIndex = 0;
+                    this.m_inverseDensity = 0.0;
+                    this.m_particleDiameter = 0.0;
+                    this.m_inverseDiameter = 0.0;
+                    this.m_squaredDiameter = 0.0;
+                    this.m_count = 0;
+                    this.m_internalAllocatedCapacity = 0;
+                    /**
+                     * Allocator for b2ParticleHandle instances.
+                     */
+                    ///m_handleAllocator: any = null;
+                    /**
+                     * Maps particle indicies to handles.
+                     */
+                    this.m_handleIndexBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_flagsBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_positionBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_velocityBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_forceBuffer = [];
+                    /**
+                     * this.m_weightBuffer is populated in ComputeWeight and used in
+                     * ComputeDepth(), SolveStaticPressure() and SolvePressure().
+                     */
+                    this.m_weightBuffer = [];
+                    /**
+                     * When any particles have the flag b2_staticPressureParticle,
+                     * this.m_staticPressureBuffer is first allocated and used in
+                     * SolveStaticPressure() and SolvePressure().  It will be
+                     * reallocated on subsequent CreateParticle() calls.
+                     */
+                    this.m_staticPressureBuffer = [];
+                    /**
+                     * this.m_accumulationBuffer is used in many functions as a temporary
+                     * buffer for scalar values.
+                     */
+                    this.m_accumulationBuffer = [];
+                    /**
+                     * When any particles have the flag b2_tensileParticle,
+                     * this.m_accumulation2Buffer is first allocated and used in
+                     * SolveTensile() as a temporary buffer for vector values.  It
+                     * will be reallocated on subsequent CreateParticle() calls.
+                     */
+                    this.m_accumulation2Buffer = [];
+                    /**
+                     * When any particle groups have the flag b2_solidParticleGroup,
+                     * this.m_depthBuffer is first allocated and populated in
+                     * ComputeDepth() and used in SolveSolid(). It will be
+                     * reallocated on subsequent CreateParticle() calls.
+                     */
+                    this.m_depthBuffer = [];
+                    this.m_colorBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_groupBuffer = [];
+                    this.m_userDataBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    /**
+                     * Stuck particle detection parameters and record keeping
+                     */
+                    this.m_stuckThreshold = 0;
+                    this.m_lastBodyContactStepBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_bodyContactCountBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_consecutiveContactStepsBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    this.m_stuckParticleBuffer = new b2GrowableBuffer(function () { return 0; });
+                    this.m_proxyBuffer = new b2GrowableBuffer(function () { return new b2ParticleSystem.Proxy(); });
+                    this.m_contactBuffer = new b2GrowableBuffer(function () { return new b2ParticleContact(); });
+                    this.m_bodyContactBuffer = new b2GrowableBuffer(function () { return new b2ParticleBodyContact(); });
+                    this.m_pairBuffer = new b2GrowableBuffer(function () { return new b2ParticlePair(); });
+                    this.m_triadBuffer = new b2GrowableBuffer(function () { return new b2ParticleTriad(); });
+                    /**
+                     * Time each particle should be destroyed relative to the last
+                     * time this.m_timeElapsed was initialized.  Each unit of time
+                     * corresponds to b2ParticleSystemDef::lifetimeGranularity
+                     * seconds.
+                     */
+                    this.m_expirationTimeBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    /**
+                     * List of particle indices sorted by expiration time.
+                     */
+                    this.m_indexByExpirationTimeBuffer = new b2ParticleSystem.UserOverridableBuffer();
+                    /**
+                     * Time elapsed in 32:32 fixed point.  Each non-fractional unit
+                     * of time corresponds to
+                     * b2ParticleSystemDef::lifetimeGranularity seconds.
+                     */
+                    this.m_timeElapsed = 0;
+                    /**
+                     * Whether the expiration time buffer has been modified and
+                     * needs to be resorted.
+                     */
+                    this.m_expirationTimeBufferRequiresSorting = false;
+                    this.m_groupCount = 0;
+                    this.m_groupList = null;
+                    this.m_def = new b2ParticleSystemDef();
+                    this.m_world = null;
+                    this.m_prev = null;
+                    this.m_next = null;
+                    this.SetStrictContactCheck(def.strictContactCheck);
+                    this.SetDensity(def.density);
+                    this.SetGravityScale(def.gravityScale);
+                    this.SetRadius(def.radius);
+                    this.SetMaxParticleCount(def.maxCount);
+                    b2Assert(def.lifetimeGranularity > 0.0);
+                    this.m_def = def.Clone();
+                    this.m_world = world;
+                    this.SetDestructionByAge(this.m_def.destroyByAge);
+                }
+                static computeTag(x, y) {
+                    ///return ((uint32)(y + yOffset) << yShift) + (uint32)(xScale * x + xOffset);
+                    return ((((y + b2ParticleSystem.yOffset) >>> 0) << b2ParticleSystem.yShift) + ((b2ParticleSystem.xScale * x + b2ParticleSystem.xOffset) >>> 0)) >>> 0;
+                }
+                static computeRelativeTag(tag, x, y) {
+                    ///return tag + (y << yShift) + (x << xShift);
+                    return (tag + (y << b2ParticleSystem.yShift) + (x << b2ParticleSystem.xShift)) >>> 0;
+                }
+                Drop() {
+                    while (this.m_groupList) {
+                        this.DestroyParticleGroup(this.m_groupList);
+                    }
+                    this.FreeUserOverridableBuffer(this.m_handleIndexBuffer);
+                    this.FreeUserOverridableBuffer(this.m_flagsBuffer);
+                    this.FreeUserOverridableBuffer(this.m_lastBodyContactStepBuffer);
+                    this.FreeUserOverridableBuffer(this.m_bodyContactCountBuffer);
+                    this.FreeUserOverridableBuffer(this.m_consecutiveContactStepsBuffer);
+                    this.FreeUserOverridableBuffer(this.m_positionBuffer);
+                    this.FreeUserOverridableBuffer(this.m_velocityBuffer);
+                    this.FreeUserOverridableBuffer(this.m_colorBuffer);
+                    this.FreeUserOverridableBuffer(this.m_userDataBuffer);
+                    this.FreeUserOverridableBuffer(this.m_expirationTimeBuffer);
+                    this.FreeUserOverridableBuffer(this.m_indexByExpirationTimeBuffer);
+                    this.FreeBuffer(this.m_forceBuffer, this.m_internalAllocatedCapacity);
+                    this.FreeBuffer(this.m_weightBuffer, this.m_internalAllocatedCapacity);
+                    this.FreeBuffer(this.m_staticPressureBuffer, this.m_internalAllocatedCapacity);
+                    this.FreeBuffer(this.m_accumulationBuffer, this.m_internalAllocatedCapacity);
+                    this.FreeBuffer(this.m_accumulation2Buffer, this.m_internalAllocatedCapacity);
+                    this.FreeBuffer(this.m_depthBuffer, this.m_internalAllocatedCapacity);
+                    this.FreeBuffer(this.m_groupBuffer, this.m_internalAllocatedCapacity);
+                }
+                /**
+                 * Create a particle whose properties have been defined.
+                 *
+                 * No reference to the definition is retained.
+                 *
+                 * A simulation step must occur before it's possible to interact
+                 * with a newly created particle.  For example,
+                 * DestroyParticleInShape() will not destroy a particle until
+                 * b2World::Step() has been called.
+                 *
+                 * warning: This function is locked during callbacks.
+                 */
+                CreateParticle(def) {
+                    b2Assert(this.m_world.IsLocked() === false);
+                    if (this.m_world.IsLocked()) {
+                        return 0;
+                    }
+                    if (this.m_count >= this.m_internalAllocatedCapacity) {
+                        // Double the particle capacity.
+                        let capacity = this.m_count ? 2 * this.m_count : b2Settings_37.b2_minParticleSystemBufferCapacity;
+                        this.ReallocateInternalAllocatedBuffers(capacity);
+                    }
+                    if (this.m_count >= this.m_internalAllocatedCapacity) {
+                        // If the oldest particle should be destroyed...
+                        if (this.m_def.destroyByAge) {
+                            this.DestroyOldestParticle(0, false);
+                            // Need to destroy this particle *now* so that it's possible to
+                            // create a new particle.
+                            this.SolveZombie();
+                        }
+                        else {
+                            return b2Settings_37.b2_invalidParticleIndex;
+                        }
+                    }
+                    let index = this.m_count++;
+                    this.m_flagsBuffer.data[index] = 0;
+                    if (this.m_lastBodyContactStepBuffer.data) {
+                        this.m_lastBodyContactStepBuffer.data[index] = 0;
+                    }
+                    if (this.m_bodyContactCountBuffer.data) {
+                        this.m_bodyContactCountBuffer.data[index] = 0;
+                    }
+                    if (this.m_consecutiveContactStepsBuffer.data) {
+                        this.m_consecutiveContactStepsBuffer.data[index] = 0;
+                    }
+                    this.m_positionBuffer.data[index] = (this.m_positionBuffer.data[index] || new b2Math_34.b2Vec2()).Copy(def.position);
+                    this.m_velocityBuffer.data[index] = (this.m_velocityBuffer.data[index] || new b2Math_34.b2Vec2()).Copy(def.velocity);
+                    this.m_weightBuffer[index] = 0;
+                    this.m_forceBuffer[index] = (this.m_forceBuffer[index] || new b2Math_34.b2Vec2()).SetZero();
+                    if (this.m_staticPressureBuffer) {
+                        this.m_staticPressureBuffer[index] = 0;
+                    }
+                    if (this.m_depthBuffer) {
+                        this.m_depthBuffer[index] = 0;
+                    }
+                    if (this.m_colorBuffer.data || !def.color.IsZero()) {
+                        this.m_colorBuffer.data = this.RequestBuffer(this.m_colorBuffer.data);
+                        this.m_colorBuffer.data[index] = (this.m_colorBuffer.data[index] || new b2Particle_2.b2ParticleColor()).Copy(def.color);
+                    }
+                    if (this.m_userDataBuffer.data || def.userData) {
+                        this.m_userDataBuffer.data = this.RequestBuffer(this.m_userDataBuffer.data);
+                        this.m_userDataBuffer.data[index] = def.userData;
+                    }
+                    if (this.m_handleIndexBuffer.data) {
+                        this.m_handleIndexBuffer.data[index] = null;
+                    }
+                    ///Proxy& proxy = m_proxyBuffer.Append();
+                    let proxy = this.m_proxyBuffer.data[this.m_proxyBuffer.Append()];
+                    // If particle lifetimes are enabled or the lifetime is set in the particle
+                    // definition, initialize the lifetime.
+                    let finiteLifetime = def.lifetime > 0.0;
+                    if (this.m_expirationTimeBuffer.data || finiteLifetime) {
+                        this.SetParticleLifetime(index, finiteLifetime ? def.lifetime :
+                            this.ExpirationTimeToLifetime(-this.GetQuantizedTimeElapsed()));
+                        // Add a reference to the newly added particle to the end of the
+                        // queue.
+                        this.m_indexByExpirationTimeBuffer.data[index] = index;
+                    }
+                    proxy.index = index;
+                    let group = def.group;
+                    this.m_groupBuffer[index] = group;
+                    if (group) {
+                        if (group.m_firstIndex < group.m_lastIndex) {
+                            // Move particles in the group just before the new particle.
+                            this.RotateBuffer(group.m_firstIndex, group.m_lastIndex, index);
+                            b2Assert(group.m_lastIndex === index);
+                            // Update the index range of the group to contain the new particle.
+                            group.m_lastIndex = index + 1;
+                        }
+                        else {
+                            // If the group is empty, reset the index range to contain only the
+                            // new particle.
+                            group.m_firstIndex = index;
+                            group.m_lastIndex = index + 1;
+                        }
+                    }
+                    this.SetParticleFlags(index, def.flags);
+                    return index;
+                }
+                /**
+                 * Retrieve a handle to the particle at the specified index.
+                 *
+                 * Please see #b2ParticleHandle for why you might want a handle.
+                 */
+                GetParticleHandleFromIndex(index) {
+                    b2Assert(index >= 0 && index < this.GetParticleCount() && index !== b2Settings_37.b2_invalidParticleIndex);
+                    this.m_handleIndexBuffer.data = this.RequestBuffer(this.m_handleIndexBuffer.data);
+                    let handle = this.m_handleIndexBuffer.data[index];
+                    if (handle) {
+                        return handle;
+                    }
+                    // Create a handle.
+                    ///handle = m_handleAllocator.Allocate();
+                    handle = new b2Particle_2.b2ParticleHandle();
+                    b2Assert(handle !== null);
+                    handle.SetIndex(index);
+                    this.m_handleIndexBuffer.data[index] = handle;
+                    return handle;
+                }
+                /**
+                 * Destroy a particle.
+                 *
+                 * The particle is removed after the next simulation step (see
+                 * b2World::Step()).
+                 *
+                 * @param index Index of the particle to destroy.
+                 * @param callDestructionListener Whether to call the
+                 *      destruction listener just before the particle is
+                 *      destroyed.
+                 */
+                DestroyParticle(index, callDestructionListener = false) {
+                    let flags = 2 /* b2_zombieParticle */;
+                    if (callDestructionListener) {
+                        flags |= 512 /* b2_destructionListenerParticle */;
+                    }
+                    this.SetParticleFlags(index, this.m_flagsBuffer.data[index] | flags);
+                }
+                /**
+                 * Destroy the Nth oldest particle in the system.
+                 *
+                 * The particle is removed after the next b2World::Step().
+                 *
+                 * @param index Index of the Nth oldest particle to
+                 *      destroy, 0 will destroy the oldest particle in the
+                 *      system, 1 will destroy the next oldest particle etc.
+                 * @param callDestructionListener Whether to call the
+                 *      destruction listener just before the particle is
+                 *      destroyed.
+                 */
+                DestroyOldestParticle(index, callDestructionListener = false) {
+                    const particleCount = this.GetParticleCount();
+                    b2Assert(index >= 0 && index < particleCount);
+                    // Make sure particle lifetime tracking is enabled.
+                    b2Assert(this.m_indexByExpirationTimeBuffer.data !== null);
+                    // Destroy the oldest particle (preferring to destroy finite
+                    // lifetime particles first) to free a slot in the buffer.
+                    const oldestFiniteLifetimeParticle = this.m_indexByExpirationTimeBuffer.data[particleCount - (index + 1)];
+                    const oldestInfiniteLifetimeParticle = this.m_indexByExpirationTimeBuffer.data[index];
+                    this.DestroyParticle(this.m_expirationTimeBuffer.data[oldestFiniteLifetimeParticle] > 0.0 ?
+                        oldestFiniteLifetimeParticle : oldestInfiniteLifetimeParticle, callDestructionListener);
+                }
+                /**
+                 * Destroy particles inside a shape.
+                 *
+                 * warning: This function is locked during callbacks.
+                 *
+                 * In addition, this function immediately destroys particles in
+                 * the shape in constrast to DestroyParticle() which defers the
+                 * destruction until the next simulation step.
+                 *
+                 * @return Number of particles destroyed.
+                 * @param shape Shape which encloses particles
+                 *      that should be destroyed.
+                 * @param xf Transform applied to the shape.
+                 * @param callDestructionListener Whether to call the
+                 *      world b2DestructionListener for each particle
+                 *      destroyed.
+                 */
+                DestroyParticlesInShape(shape, xf, callDestructionListener = false) {
+                    const s_aabb = b2ParticleSystem.DestroyParticlesInShape_s_aabb;
+                    b2Assert(this.m_world.IsLocked() === false);
+                    if (this.m_world.IsLocked()) {
+                        return 0;
+                    }
+                    const callback = new b2ParticleSystem.DestroyParticlesInShapeCallback(this, shape, xf, callDestructionListener);
+                    const aabb = s_aabb;
+                    shape.ComputeAABB(aabb, xf, 0);
+                    this.m_world.QueryAABB(callback, aabb);
+                    return callback.Destroyed();
+                }
+                /**
+                 * Create a particle group whose properties have been defined.
+                 *
+                 * No reference to the definition is retained.
+                 *
+                 * warning: This function is locked during callbacks.
+                 */
+                CreateParticleGroup(groupDef) {
+                    let s_transform = b2ParticleSystem.CreateParticleGroup_s_transform;
+                    b2Assert(this.m_world.IsLocked() === false);
+                    if (this.m_world.IsLocked()) {
+                        return null;
+                    }
+                    let transform = s_transform;
+                    transform.SetPositionAngle(groupDef.position, groupDef.angle);
+                    let firstIndex = this.m_count;
+                    if (groupDef.shape) {
+                        this.CreateParticlesWithShapeForGroup(groupDef.shape, groupDef, transform);
+                    }
+                    if (groupDef.shapes) {
+                        this.CreateParticlesWithShapesForGroup(groupDef.shapes, groupDef.shapeCount, groupDef, transform);
+                    }
+                    if (groupDef.particleCount) {
+                        b2Assert(groupDef.positionData !== null);
+                        for (let i = 0; i < groupDef.particleCount; i++) {
+                            let p = groupDef.positionData[i];
+                            this.CreateParticleForGroup(groupDef, transform, p);
+                        }
+                    }
+                    let lastIndex = this.m_count;
+                    let group = new b2ParticleGroup_1.b2ParticleGroup();
+                    group.m_system = this;
+                    group.m_firstIndex = firstIndex;
+                    group.m_lastIndex = lastIndex;
+                    group.m_strength = groupDef.strength;
+                    group.m_userData = groupDef.userData;
+                    group.m_transform.Copy(transform);
+                    group.m_prev = null;
+                    group.m_next = this.m_groupList;
+                    if (this.m_groupList) {
+                        this.m_groupList.m_prev = group;
+                    }
+                    this.m_groupList = group;
+                    ++this.m_groupCount;
+                    for (let i = firstIndex; i < lastIndex; i++) {
+                        this.m_groupBuffer[i] = group;
+                    }
+                    this.SetGroupFlags(group, groupDef.groupFlags);
+                    // Create pairs and triads between particles in the group.
+                    let filter = new b2ParticleSystem.ConnectionFilter();
+                    this.UpdateContacts(true);
+                    this.UpdatePairsAndTriads(firstIndex, lastIndex, filter);
+                    if (groupDef.group) {
+                        this.JoinParticleGroups(groupDef.group, group);
+                        group = groupDef.group;
+                    }
+                    return group;
+                }
+                /**
+                 * Join two particle groups.
+                 *
+                 * warning: This function is locked during callbacks.
+                 *
+                 * @param groupA the first group. Expands to encompass the second group.
+                 * @param groupB the second group. It is destroyed.
+                 */
+                JoinParticleGroups(groupA, groupB) {
+                    b2Assert(this.m_world.IsLocked() === false);
+                    if (this.m_world.IsLocked()) {
+                        return;
+                    }
+                    b2Assert(groupA !== groupB);
+                    this.RotateBuffer(groupB.m_firstIndex, groupB.m_lastIndex, this.m_count);
+                    b2Assert(groupB.m_lastIndex === this.m_count);
+                    this.RotateBuffer(groupA.m_firstIndex, groupA.m_lastIndex, groupB.m_firstIndex);
+                    b2Assert(groupA.m_lastIndex === groupB.m_firstIndex);
+                    // Create pairs and triads connecting groupA and groupB.
+                    let filter = new b2ParticleSystem.JoinParticleGroupsFilter(groupB.m_firstIndex);
+                    this.UpdateContacts(true);
+                    this.UpdatePairsAndTriads(groupA.m_firstIndex, groupB.m_lastIndex, filter);
+                    for (let i = groupB.m_firstIndex; i < groupB.m_lastIndex; i++) {
+                        this.m_groupBuffer[i] = groupA;
+                    }
+                    let groupFlags = groupA.m_groupFlags | groupB.m_groupFlags;
+                    this.SetGroupFlags(groupA, groupFlags);
+                    groupA.m_lastIndex = groupB.m_lastIndex;
+                    groupB.m_firstIndex = groupB.m_lastIndex;
+                    this.DestroyParticleGroup(groupB);
+                }
+                /**
+                 * Split particle group into multiple disconnected groups.
+                 *
+                 * warning: This function is locked during callbacks.
+                 *
+                 * @param group the group to be split.
+                 */
+                SplitParticleGroup(group) {
+                    this.UpdateContacts(true);
+                    let particleCount = group.GetParticleCount();
+                    // We create several linked lists. Each list represents a set of connected particles.
+                    ///ParticleListNode* nodeBuffer = (ParticleListNode*) m_world.m_stackAllocator.Allocate(sizeof(ParticleListNode) * particleCount);
+                    let nodeBuffer = b2Settings_37.b2MakeArray(particleCount, function (index) {
+                        return new b2ParticleSystem.ParticleListNode();
+                    });
+                    b2ParticleSystem.InitializeParticleLists(group, nodeBuffer);
+                    this.MergeParticleListsInContact(group, nodeBuffer);
+                    let survivingList = b2ParticleSystem.FindLongestParticleList(group, nodeBuffer);
+                    this.MergeZombieParticleListNodes(group, nodeBuffer, survivingList);
+                    this.CreateParticleGroupsFromParticleList(group, nodeBuffer, survivingList);
+                    this.UpdatePairsAndTriadsWithParticleList(group, nodeBuffer);
+                    ///this.m_world.m_stackAllocator.Free(nodeBuffer);
+                }
+                /**
+                 * Get the world particle group list. With the returned group,
+                 * use b2ParticleGroup::GetNext to get the next group in the
+                 * world list.
+                 *
+                 * A null group indicates the end of the list.
+                 *
+                 * @return the head of the world particle group list.
+                 */
+                GetParticleGroupList() {
+                    return this.m_groupList;
+                }
+                /**
+                 * Get the number of particle groups.
+                 */
+                GetParticleGroupCount() {
+                    return this.m_groupCount;
+                }
+                /**
+                 * Get the number of particles.
+                 */
+                GetParticleCount() {
+                    return this.m_count;
+                }
+                /**
+                 * Get the maximum number of particles.
+                 */
+                GetMaxParticleCount() {
+                    return this.m_def.maxCount;
+                }
+                /**
+                 * Set the maximum number of particles.
+                 *
+                 * A value of 0 means there is no maximum. The particle buffers
+                 * can continue to grow while b2World's block allocator still
+                 * has memory.
+                 *
+                 * Note: If you try to CreateParticle() with more than this
+                 * count, b2_invalidParticleIndex is returned unless
+                 * SetDestructionByAge() is used to enable the destruction of
+                 * the oldest particles in the system.
+                 */
+                SetMaxParticleCount(count) {
+                    b2Assert(this.m_count <= count);
+                    this.m_def.maxCount = count;
+                }
+                /**
+                 * Get all existing particle flags.
+                 */
+                GetAllParticleFlags() {
+                    return this.m_allParticleFlags;
+                }
+                /**
+                 * Get all existing particle group flags.
+                 */
+                GetAllGroupFlags() {
+                    return this.m_allGroupFlags;
+                }
+                /**
+                 * Pause or unpause the particle system. When paused,
+                 * b2World::Step() skips over this particle system. All
+                 * b2ParticleSystem function calls still work.
+                 *
+                 * @param paused paused is true to pause, false to un-pause.
+                 */
+                SetPaused(paused) {
+                    this.m_paused = paused;
+                }
+                /**
+                 * Initially, true, then, the last value passed into
+                 * SetPaused().
+                 *
+                 * @return true if the particle system is being updated in b2World::Step().
+                 */
+                GetPaused() {
+                    return this.m_paused;
+                }
+                /**
+                 * Change the particle density.
+                 *
+                 * Particle density affects the mass of the particles, which in
+                 * turn affects how the particles interact with b2Bodies. Note
+                 * that the density does not affect how the particles interact
+                 * with each other.
+                 */
+                SetDensity(density) {
+                    this.m_def.density = density;
+                    this.m_inverseDensity = 1 / this.m_def.density;
+                }
+                /**
+                 * Get the particle density.
+                 */
+                GetDensity() {
+                    return this.m_def.density;
+                }
+                /**
+                 * Change the particle gravity scale. Adjusts the effect of the
+                 * global gravity vector on particles.
+                 */
+                SetGravityScale(gravityScale) {
+                    this.m_def.gravityScale = gravityScale;
+                }
+                /**
+                 * Get the particle gravity scale.
+                 */
+                GetGravityScale() {
+                    return this.m_def.gravityScale;
+                }
+                /**
+                 * Damping is used to reduce the velocity of particles. The
+                 * damping parameter can be larger than 1.0f but the damping
+                 * effect becomes sensitive to the time step when the damping
+                 * parameter is large.
+                 */
+                SetDamping(damping) {
+                    this.m_def.dampingStrength = damping;
+                }
+                /**
+                 * Get damping for particles
+                 */
+                GetDamping() {
+                    return this.m_def.dampingStrength;
+                }
+                /**
+                 * Change the number of iterations when calculating the static
+                 * pressure of particles. By default, 8 iterations. You can
+                 * reduce the number of iterations down to 1 in some situations,
+                 * but this may cause instabilities when many particles come
+                 * together. If you see particles popping away from each other
+                 * like popcorn, you may have to increase the number of
+                 * iterations.
+                 *
+                 * For a description of static pressure, see
+                 * http://en.wikipedia.org/wiki/Static_pressure#Static_pressure_in_fluid_dynamics
+                 */
+                SetStaticPressureIterations(iterations) {
+                    this.m_def.staticPressureIterations = iterations;
+                }
+                /**
+                 * Get the number of iterations for static pressure of
+                 * particles.
+                 */
+                GetStaticPressureIterations() {
+                    return this.m_def.staticPressureIterations;
+                }
+                /**
+                 * Change the particle radius.
+                 *
+                 * You should set this only once, on world start.
+                 * If you change the radius during execution, existing particles
+                 * may explode, shrink, or behave unexpectedly.
+                 */
+                SetRadius(radius) {
+                    this.m_particleDiameter = 2 * radius;
+                    this.m_squaredDiameter = this.m_particleDiameter * this.m_particleDiameter;
+                    this.m_inverseDiameter = 1 / this.m_particleDiameter;
+                }
+                /**
+                 * Get the particle radius.
+                 */
+                GetRadius() {
+                    return this.m_particleDiameter / 2;
+                }
+                /**
+                 * Get the position of each particle
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle positions array.
+                 */
+                GetPositionBuffer() {
+                    return this.m_positionBuffer.data;
+                }
+                /**
+                 * Get the velocity of each particle
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle velocities array.
+                 */
+                GetVelocityBuffer() {
+                    return this.m_velocityBuffer.data;
+                }
+                /**
+                 * Get the color of each particle
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle colors array.
+                 */
+                GetColorBuffer() {
+                    this.m_colorBuffer.data = this.RequestBuffer(this.m_colorBuffer.data);
+                    return this.m_colorBuffer.data;
+                }
+                /**
+                 * Get the particle-group of each particle.
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle group array.
+                 */
+                GetGroupBuffer() {
+                    return this.m_groupBuffer;
+                }
+                /**
+                 * Get the weight of each particle
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle positions array.
+                 */
+                GetWeightBuffer() {
+                    return this.m_weightBuffer;
+                }
+                /**
+                 * Get the user-specified data of each particle.
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle user-data array.
+                 */
+                GetUserDataBuffer() {
+                    this.m_userDataBuffer.data = this.RequestBuffer(this.m_userDataBuffer.data);
+                    return this.m_userDataBuffer.data;
+                }
+                /**
+                 * Get the flags for each particle. See the b2ParticleFlag enum.
+                 *
+                 * Array is length GetParticleCount()
+                 *
+                 * @return the pointer to the head of the particle-flags array.
+                 */
+                GetFlagsBuffer() {
+                    return this.m_flagsBuffer.data;
+                }
+                /**
+                 * Set flags for a particle. See the b2ParticleFlag enum.
+                 */
+                SetParticleFlags(index, newFlags) {
+                    let oldFlags = this.m_flagsBuffer.data[index];
+                    if (oldFlags & ~newFlags) {
+                        // If any flags might be removed
+                        this.m_needsUpdateAllParticleFlags = true;
+                    }
+                    if (~this.m_allParticleFlags & newFlags) {
+                        // If any flags were added
+                        if (newFlags & 128 /* b2_tensileParticle */) {
+                            this.m_accumulation2Buffer = this.RequestBuffer(this.m_accumulation2Buffer);
+                        }
+                        if (newFlags & 256 /* b2_colorMixingParticle */) {
+                            this.m_colorBuffer.data = this.RequestBuffer(this.m_colorBuffer.data);
+                        }
+                        this.m_allParticleFlags |= newFlags;
+                    }
+                    this.m_flagsBuffer.data[index] = newFlags;
+                }
+                /**
+                 * Get flags for a particle. See the b2ParticleFlag enum.
+                 */
+                GetParticleFlags(index) {
+                    return this.m_flagsBuffer.data[index];
+                }
+                /**
+                 * Set an external buffer for particle data.
+                 *
+                 * Normally, the b2World's block allocator is used for particle
+                 * data. However, sometimes you may have an OpenGL or Java
+                 * buffer for particle data. To avoid data duplication, you may
+                 * supply this external buffer.
+                 *
+                 * Note that, when b2World's block allocator is used, the
+                 * particle data buffers can grow as required. However, when
+                 * external buffers are used, the maximum number of particles is
+                 * clamped to the size of the smallest external buffer.
+                 *
+                 * @param buffer a pointer to a block of memory.
+                 * @param capacity the number of values in the block.
+                 */
+                SetFlagsBuffer(buffer, capacity) {
+                    this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer, capacity);
+                }
+                SetPositionBuffer(buffer, capacity) {
+                    ///if (buffer instanceof Float32Array) {
+                    ///let array = [];
+                    ///for (let i = 0; i < capacity; ++i) {
+                    ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+                    ///}
+                    ///this.SetUserOverridableBuffer(this.m_positionBuffer, array, capacity);
+                    ///} else {
+                    this.SetUserOverridableBuffer(this.m_positionBuffer, buffer, capacity);
+                    ///}
+                }
+                SetVelocityBuffer(buffer, capacity) {
+                    ///if (buffer instanceof Float32Array) {
+                    ///let array = [];
+                    ///for (let i = 0; i < capacity; ++i) {
+                    ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+                    ///}
+                    ///this.SetUserOverridableBuffer(this.m_velocityBuffer, array, capacity);
+                    ///} else {
+                    this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer, capacity);
+                    ///}
+                }
+                SetColorBuffer(buffer, capacity) {
+                    ///if (buffer instanceof Uint8Array) {
+                    ///let array: b2ParticleColor[] = [];
+                    ///for (let i = 0; i < capacity; ++i) {
+                    ///  array[i] = new b2ParticleColor(buffer.subarray(i * 4, i * 4 + 4));
+                    ///}
+                    ///this.SetUserOverridableBuffer(this.m_colorBuffer, array, capacity);
+                    ///} else {
+                    this.SetUserOverridableBuffer(this.m_colorBuffer, buffer, capacity);
+                    ///}
+                }
+                SetUserDataBuffer(buffer, capacity) {
+                    this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer, capacity);
+                }
+                /**
+                 * Get contacts between particles
+                 * Contact data can be used for many reasons, for example to
+                 * trigger rendering or audio effects.
+                 */
+                GetContacts() {
+                    return this.m_contactBuffer.data;
+                }
+                GetContactCount() {
+                    return this.m_contactBuffer.count;
+                }
+                /**
+                 * Get contacts between particles and bodies
+                 *
+                 * Contact data can be used for many reasons, for example to
+                 * trigger rendering or audio effects.
+                 */
+                GetBodyContacts() {
+                    return this.m_bodyContactBuffer.data;
+                }
+                GetBodyContactCount() {
+                    return this.m_bodyContactBuffer.count;
+                }
+                /**
+                 * Get array of particle pairs. The particles in a pair:
+                 *   (1) are contacting,
+                 *   (2) are in the same particle group,
+                 *   (3) are part of a rigid particle group, or are spring, elastic,
+                 *       or wall particles.
+                 *   (4) have at least one particle that is a spring or barrier
+                 *       particle (i.e. one of the types in k_pairFlags),
+                 *   (5) have at least one particle that returns true for
+                 *       ConnectionFilter::IsNecessary,
+                 *   (6) are not zombie particles.
+                 *
+                 * Essentially, this is an array of spring or barrier particles
+                 * that are interacting. The array is sorted by b2ParticlePair's
+                 * indexA, and then indexB. There are no duplicate entries.
+                 */
+                GetPairs() {
+                    return this.m_pairBuffer.data;
+                }
+                GetPairCount() {
+                    return this.m_pairBuffer.count;
+                }
+                /**
+                 * Get array of particle triads. The particles in a triad:
+                 *   (1) are in the same particle group,
+                 *   (2) are in a Voronoi triangle together,
+                 *   (3) are within b2_maxTriadDistance particle diameters of each
+                 *       other,
+                 *   (4) return true for ConnectionFilter::ShouldCreateTriad
+                 *   (5) have at least one particle of type elastic (i.e. one of the
+                 *       types in k_triadFlags),
+                 *   (6) are part of a rigid particle group, or are spring, elastic,
+                 *       or wall particles.
+                 *   (7) are not zombie particles.
+                 *
+                 * Essentially, this is an array of elastic particles that are
+                 * interacting. The array is sorted by b2ParticleTriad's indexA,
+                 * then indexB, then indexC. There are no duplicate entries.
+                 */
+                GetTriads() {
+                    return this.m_triadBuffer.data;
+                }
+                GetTriadCount() {
+                    return this.m_triadBuffer.count;
+                }
+                /**
+                 * Set an optional threshold for the maximum number of
+                 * consecutive particle iterations that a particle may contact
+                 * multiple bodies before it is considered a candidate for being
+                 * "stuck". Setting to zero or less disables.
+                 */
+                SetStuckThreshold(steps) {
+                    this.m_stuckThreshold = steps;
+                    if (steps > 0) {
+                        this.m_lastBodyContactStepBuffer.data = this.RequestBuffer(this.m_lastBodyContactStepBuffer.data);
+                        this.m_bodyContactCountBuffer.data = this.RequestBuffer(this.m_bodyContactCountBuffer.data);
+                        this.m_consecutiveContactStepsBuffer.data = this.RequestBuffer(this.m_consecutiveContactStepsBuffer.data);
+                    }
+                }
+                /**
+                 * Get potentially stuck particles from the last step; the user
+                 * must decide if they are stuck or not, and if so, delete or
+                 * move them
+                 */
+                GetStuckCandidates() {
+                    ///return m_stuckParticleBuffer.Data();
+                    return this.m_stuckParticleBuffer.Data();
+                }
+                /**
+                 * Get the number of stuck particle candidates from the last
+                 * step.
+                 */
+                GetStuckCandidateCount() {
+                    ///return m_stuckParticleBuffer.GetCount();
+                    return this.m_stuckParticleBuffer.GetCount();
+                }
+                /**
+                 * Compute the kinetic energy that can be lost by damping force
+                 */
+                ComputeCollisionEnergy() {
+                    let s_v = b2ParticleSystem.ComputeCollisionEnergy_s_v;
+                    let vel_data = this.m_velocityBuffer.data;
+                    let sum_v2 = 0;
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let n = contact.normal;
+                        ///b2Vec2 v = m_velocityBuffer.data[b] - m_velocityBuffer.data[a];
+                        let v = b2Math_34.b2Vec2.SubVV(vel_data[b], vel_data[a], s_v);
+                        let vn = b2Math_34.b2Vec2.DotVV(v, n);
+                        if (vn < 0) {
+                            sum_v2 += vn * vn;
+                        }
+                    }
+                    return 0.5 * this.GetParticleMass() * sum_v2;
+                }
+                /**
+                 * Set strict Particle/Body contact check.
+                 *
+                 * This is an option that will help ensure correct behavior if
+                 * there are corners in the world model where Particle/Body
+                 * contact is ambiguous. This option scales at n*log(n) of the
+                 * number of Particle/Body contacts, so it is best to only
+                 * enable if it is necessary for your geometry. Enable if you
+                 * see strange particle behavior around b2Body intersections.
+                 */
+                SetStrictContactCheck(enabled) {
+                    this.m_def.strictContactCheck = enabled;
+                }
+                /**
+                 * Get the status of the strict contact check.
+                 */
+                GetStrictContactCheck() {
+                    return this.m_def.strictContactCheck;
+                }
+                /**
+                 * Set the lifetime (in seconds) of a particle relative to the
+                 * current time.  A lifetime of less than or equal to 0.0f
+                 * results in the particle living forever until it's manually
+                 * destroyed by the application.
+                 */
+                SetParticleLifetime(index, lifetime) {
+                    b2Assert(this.ValidateParticleIndex(index));
+                    let initializeExpirationTimes = this.m_indexByExpirationTimeBuffer.data === null;
+                    this.m_expirationTimeBuffer.data = this.RequestBuffer(this.m_expirationTimeBuffer.data);
+                    this.m_indexByExpirationTimeBuffer.data = this.RequestBuffer(this.m_indexByExpirationTimeBuffer.data);
+                    // Initialize the inverse mapping buffer.
+                    if (initializeExpirationTimes) {
+                        let particleCount = this.GetParticleCount();
+                        for (let i = 0; i < particleCount; ++i) {
+                            this.m_indexByExpirationTimeBuffer.data[i] = i;
+                        }
+                    }
+                    ///const int32 quantizedLifetime = (int32)(lifetime / m_def.lifetimeGranularity);
+                    let quantizedLifetime = lifetime / this.m_def.lifetimeGranularity;
+                    // Use a negative lifetime so that it's possible to track which
+                    // of the infinite lifetime particles are older.
+                    let newExpirationTime = quantizedLifetime > 0.0 ? this.GetQuantizedTimeElapsed() + quantizedLifetime : quantizedLifetime;
+                    if (newExpirationTime !== this.m_expirationTimeBuffer.data[index]) {
+                        this.m_expirationTimeBuffer.data[index] = newExpirationTime;
+                        this.m_expirationTimeBufferRequiresSorting = true;
+                    }
+                }
+                /**
+                 * Get the lifetime (in seconds) of a particle relative to the
+                 * current time.  A value > 0.0f is returned if the particle is
+                 * scheduled to be destroyed in the future, values <= 0.0f
+                 * indicate the particle has an infinite lifetime.
+                 */
+                GetParticleLifetime(index) {
+                    b2Assert(this.ValidateParticleIndex(index));
+                    return this.ExpirationTimeToLifetime(this.GetExpirationTimeBuffer()[index]);
+                }
+                /**
+                 * Enable / disable destruction of particles in CreateParticle()
+                 * when no more particles can be created due to a prior call to
+                 * SetMaxParticleCount().  When this is enabled, the oldest
+                 * particle is destroyed in CreateParticle() favoring the
+                 * destruction of particles with a finite lifetime over
+                 * particles with infinite lifetimes. This feature is enabled by
+                 * default when particle lifetimes are tracked.  Explicitly
+                 * enabling this feature using this function enables particle
+                 * lifetime tracking.
+                 */
+                SetDestructionByAge(enable) {
+                    if (enable) {
+                        this.GetExpirationTimeBuffer();
+                    }
+                    this.m_def.destroyByAge = enable;
+                }
+                /**
+                 * Get whether the oldest particle will be destroyed in
+                 * CreateParticle() when the maximum number of particles are
+                 * present in the system.
+                 */
+                GetDestructionByAge() {
+                    return this.m_def.destroyByAge;
+                }
+                /**
+                 * Get the array of particle expiration times indexed by
+                 * particle index.
+                 *
+                 * GetParticleCount() items are in the returned array.
+                 */
+                GetExpirationTimeBuffer() {
+                    this.m_expirationTimeBuffer.data = this.RequestBuffer(this.m_expirationTimeBuffer.data);
+                    return this.m_expirationTimeBuffer.data;
+                }
+                /**
+                 * Convert a expiration time value in returned by
+                 * GetExpirationTimeBuffer() to a time in seconds relative to
+                 * the current simulation time.
+                 */
+                ExpirationTimeToLifetime(expirationTime) {
+                    return (expirationTime > 0 ?
+                        expirationTime - this.GetQuantizedTimeElapsed() :
+                        expirationTime) * this.m_def.lifetimeGranularity;
+                }
+                /**
+                 * Get the array of particle indices ordered by reverse
+                 * lifetime. The oldest particle indexes are at the end of the
+                 * array with the newest at the start.  Particles with infinite
+                 * lifetimes (i.e expiration times less than or equal to 0) are
+                 * placed at the start of the array.
+                 * ExpirationTimeToLifetime(GetExpirationTimeBuffer()[index]) is
+                 * equivalent to GetParticleLifetime(index).
+                 *
+                 * GetParticleCount() items are in the returned array.
+                 */
+                GetIndexByExpirationTimeBuffer() {
+                    // If particles are present, initialize / reinitialize the lifetime buffer.
+                    if (this.GetParticleCount()) {
+                        this.SetParticleLifetime(0, this.GetParticleLifetime(0));
+                    }
+                    else {
+                        this.m_indexByExpirationTimeBuffer.data = this.RequestBuffer(this.m_indexByExpirationTimeBuffer.data);
+                    }
+                    return this.m_indexByExpirationTimeBuffer.data;
+                }
+                /**
+                 * Apply an impulse to one particle. This immediately modifies
+                 * the velocity. Similar to b2Body::ApplyLinearImpulse.
+                 *
+                 * @param index the particle that will be modified.
+                 * @param impulse impulse the world impulse vector, usually in N-seconds or kg-m/s.
+                 */
+                ParticleApplyLinearImpulse(index, impulse) {
+                    this.ApplyLinearImpulse(index, index + 1, impulse);
+                }
+                /**
+                 * Apply an impulse to all particles between 'firstIndex' and
+                 * 'lastIndex'. This immediately modifies the velocity. Note
+                 * that the impulse is applied to the total mass of all
+                 * particles. So, calling ParticleApplyLinearImpulse(0, impulse)
+                 * and ParticleApplyLinearImpulse(1, impulse) will impart twice
+                 * as much velocity as calling just ApplyLinearImpulse(0, 1,
+                 * impulse).
+                 *
+                 * @param firstIndex the first particle to be modified.
+                 * @param lastIndex the last particle to be modified.
+                 * @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
+                 */
+                ApplyLinearImpulse(firstIndex, lastIndex, impulse) {
+                    let vel_data = this.m_velocityBuffer.data;
+                    let numParticles = (lastIndex - firstIndex);
+                    let totalMass = numParticles * this.GetParticleMass();
+                    ///const b2Vec2 velocityDelta = impulse / totalMass;
+                    let velocityDelta = impulse.Clone().SelfMul(1 / totalMass);
+                    for (let i = firstIndex; i < lastIndex; i++) {
+                        ///m_velocityBuffer.data[i] += velocityDelta;
+                        vel_data[i].SelfAdd(velocityDelta);
+                    }
+                }
+                static IsSignificantForce(force) {
+                    return force.x !== 0 || force.y !== 0;
+                }
+                /**
+                 * Apply a force to the center of a particle.
+                 *
+                 * @param index the particle that will be modified.
+                 * @param force the world force vector, usually in Newtons (N).
+                 */
+                ParticleApplyForce(index, force) {
+                    if (b2ParticleSystem.IsSignificantForce(force) &&
+                        this.ForceCanBeApplied(this.m_flagsBuffer.data[index])) {
+                        this.PrepareForceBuffer();
+                        ///m_forceBuffer[index] += force;
+                        this.m_forceBuffer[index].SelfAdd(force);
+                    }
+                }
+                /**
+                 * Distribute a force across several particles. The particles
+                 * must not be wall particles. Note that the force is
+                 * distributed across all the particles, so calling this
+                 * function for indices 0..N is not the same as calling
+                 * ParticleApplyForce(i, force) for i in 0..N.
+                 *
+                 * @param firstIndex the first particle to be modified.
+                 * @param lastIndex the last particle to be modified.
+                 * @param force the world force vector, usually in Newtons (N).
+                 */
+                ApplyForce(firstIndex, lastIndex, force) {
+                    // Ensure we're not trying to apply force to particles that can't move,
+                    // such as wall particles.
+                    ///#if B2_ASSERT_ENABLED
+                    ///let flags = 0;
+                    ///for (let i = firstIndex; i < lastIndex; i++) {
+                    ///flags |= this.m_flagsBuffer.data[i];
+                    ///}
+                    ///b2Assert(this.ForceCanBeApplied(flags));
+                    ///#endif
+                    // Early out if force does nothing (optimization).
+                    ///const b2Vec2 distributedForce = force / (float32)(lastIndex - firstIndex);
+                    let distributedForce = force.Clone().SelfMul(1 / (lastIndex - firstIndex));
+                    if (b2ParticleSystem.IsSignificantForce(distributedForce)) {
+                        this.PrepareForceBuffer();
+                        // Distribute the force over all the particles.
+                        for (let i = firstIndex; i < lastIndex; i++) {
+                            ///m_forceBuffer[i] += distributedForce;
+                            this.m_forceBuffer[i].SelfAdd(distributedForce);
+                        }
+                    }
+                }
+                /**
+                 * Get the next particle-system in the world's particle-system
+                 * list.
+                 */
+                GetNext() {
+                    return this.m_next;
+                }
+                /**
+                 * Query the particle system for all particles that potentially
+                 * overlap the provided AABB.
+                 * b2QueryCallback::ShouldQueryParticleSystem is ignored.
+                 *
+                 * @param callback a user implemented callback class.
+                 * @param aabb the query box.
+                 */
+                QueryAABB(callback, aabb) {
+                    if (this.m_proxyBuffer.count === 0) {
+                        return;
+                    }
+                    let beginProxy = 0;
+                    let endProxy = this.m_proxyBuffer.count;
+                    let firstProxy = std_lower_bound(this.m_proxyBuffer.data, beginProxy, endProxy, b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.lowerBound.x, this.m_inverseDiameter * aabb.lowerBound.y), b2ParticleSystem.Proxy.CompareProxyTag);
+                    let lastProxy = std_upper_bound(this.m_proxyBuffer.data, firstProxy, endProxy, b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.upperBound.x, this.m_inverseDiameter * aabb.upperBound.y), b2ParticleSystem.Proxy.CompareTagProxy);
+                    let pos_data = this.m_positionBuffer.data;
+                    for (let k = firstProxy; k < lastProxy; ++k) {
+                        let proxy = this.m_proxyBuffer.data[k];
+                        let i = proxy.index;
+                        let p = pos_data[i];
+                        if (aabb.lowerBound.x < p.x && p.x < aabb.upperBound.x &&
+                            aabb.lowerBound.y < p.y && p.y < aabb.upperBound.y) {
+                            if (!callback.ReportParticle(this, i)) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                /**
+                 * Query the particle system for all particles that potentially
+                 * overlap the provided shape's AABB. Calls QueryAABB
+                 * internally. b2QueryCallback::ShouldQueryParticleSystem is
+                 * ignored.
+                 *
+                 * @param callback a user implemented callback class.
+                 * @param shape the query shape
+                 * @param xf the transform of the AABB
+                 * @param childIndex
+                 */
+                QueryShapeAABB(callback, shape, xf, childIndex = 0) {
+                    let s_aabb = b2ParticleSystem.QueryShapeAABB_s_aabb;
+                    let aabb = s_aabb;
+                    shape.ComputeAABB(aabb, xf, childIndex);
+                    this.QueryAABB(callback, aabb);
+                }
+                QueryPointAABB(callback, point, slop = b2Settings_37.b2_linearSlop) {
+                    let s_aabb = b2ParticleSystem.QueryPointAABB_s_aabb;
+                    let aabb = s_aabb;
+                    aabb.lowerBound.Set(point.x - slop, point.y - slop);
+                    aabb.upperBound.Set(point.x + slop, point.y + slop);
+                    this.QueryAABB(callback, aabb);
+                }
+                /**
+                 * Ray-cast the particle system for all particles in the path of
+                 * the ray. Your callback controls whether you get the closest
+                 * point, any point, or n-points. The ray-cast ignores particles
+                 * that contain the starting point.
+                 * b2RayCastCallback::ShouldQueryParticleSystem is ignored.
+                 *
+                 * @export
+                 * @return {void}
+                 * @param {b2RayCastCallback} callback a user implemented
+                 *      callback class.
+                 * @param {b2Vec2} point1 the ray starting point
+                 * @param {b2Vec2} point2 the ray ending point
+                 */
+                RayCast(callback, point1, point2) {
+                    let s_aabb = b2ParticleSystem.RayCast_s_aabb;
+                    let s_p = b2ParticleSystem.RayCast_s_p;
+                    let s_v = b2ParticleSystem.RayCast_s_v;
+                    let s_n = b2ParticleSystem.RayCast_s_n;
+                    let s_point = b2ParticleSystem.RayCast_s_point;
+                    if (this.m_proxyBuffer.count === 0) {
+                        return;
+                    }
+                    let pos_data = this.m_positionBuffer.data;
+                    let aabb = s_aabb;
+                    b2Math_34.b2Vec2.MinV(point1, point2, aabb.lowerBound);
+                    b2Math_34.b2Vec2.MaxV(point1, point2, aabb.upperBound);
+                    let fraction = 1;
+                    // solving the following equation:
+                    // ((1-t)*point1+t*point2-position)^2=diameter^2
+                    // where t is a potential fraction
+                    ///b2Vec2 v = point2 - point1;
+                    let v = b2Math_34.b2Vec2.SubVV(point2, point1, s_v);
+                    let v2 = b2Math_34.b2Vec2.DotVV(v, v);
+                    let enumerator = this.GetInsideBoundsEnumerator(aabb);
+                    let i;
+                    while ((i = enumerator.GetNext()) >= 0) {
+                        ///b2Vec2 p = point1 - m_positionBuffer.data[i];
+                        let p = b2Math_34.b2Vec2.SubVV(point1, pos_data[i], s_p);
+                        let pv = b2Math_34.b2Vec2.DotVV(p, v);
+                        let p2 = b2Math_34.b2Vec2.DotVV(p, p);
+                        let determinant = pv * pv - v2 * (p2 - this.m_squaredDiameter);
+                        if (determinant >= 0) {
+                            let sqrtDeterminant = b2Math_34.b2Sqrt(determinant);
+                            // find a solution between 0 and fraction
+                            let t = (-pv - sqrtDeterminant) / v2;
+                            if (t > fraction) {
+                                continue;
+                            }
+                            if (t < 0) {
+                                t = (-pv + sqrtDeterminant) / v2;
+                                if (t < 0 || t > fraction) {
+                                    continue;
+                                }
+                            }
+                            ///b2Vec2 n = p + t * v;
+                            let n = b2Math_34.b2Vec2.AddVMulSV(p, t, v, s_n);
+                            n.Normalize();
+                            ///float32 f = callback.ReportParticle(this, i, point1 + t * v, n, t);
+                            let f = callback.ReportParticle(this, i, b2Math_34.b2Vec2.AddVMulSV(point1, t, v, s_point), n, t);
+                            fraction = b2Math_34.b2Min(fraction, f);
+                            if (fraction <= 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                /**
+                 * Compute the axis-aligned bounding box for all particles
+                 * contained within this particle system.
+                 *
+                 * @export
+                 * @return {void}
+                 * @param {b2AABB} aabb Returns the axis-aligned bounding
+                 *      box of the system.
+                 */
+                ComputeAABB(aabb) {
+                    let particleCount = this.GetParticleCount();
+                    b2Assert(aabb !== null);
+                    aabb.lowerBound.x = +b2Settings_37.b2_maxFloat;
+                    aabb.lowerBound.y = +b2Settings_37.b2_maxFloat;
+                    aabb.upperBound.x = -b2Settings_37.b2_maxFloat;
+                    aabb.upperBound.y = -b2Settings_37.b2_maxFloat;
+                    let pos_data = this.m_positionBuffer.data;
+                    for (let i = 0; i < particleCount; i++) {
+                        let p = pos_data[i];
+                        b2Math_34.b2Vec2.MinV(aabb.lowerBound, p, aabb.lowerBound);
+                        b2Math_34.b2Vec2.MaxV(aabb.upperBound, p, aabb.upperBound);
+                    }
+                    aabb.lowerBound.x -= this.m_particleDiameter;
+                    aabb.lowerBound.y -= this.m_particleDiameter;
+                    aabb.upperBound.x += this.m_particleDiameter;
+                    aabb.upperBound.y += this.m_particleDiameter;
+                }
+                FreeBuffer(b, capacity) {
+                    if (b === null) {
+                        return;
+                    }
+                    b.length = 0;
+                }
+                FreeUserOverridableBuffer(b) {
+                    if (b.userSuppliedCapacity === 0) {
+                        this.FreeBuffer(b.data, this.m_internalAllocatedCapacity);
+                    }
+                }
+                /**
+                 * Reallocate a buffer
+                 */
+                ReallocateBuffer3(oldBuffer, oldCapacity, newCapacity) {
+                    b2Assert(newCapacity > oldCapacity);
+                    let newBuffer = (oldBuffer) ? oldBuffer.slice() : [];
+                    newBuffer.length = newCapacity;
+                    return newBuffer;
+                }
+                /**
+                 * Reallocate a buffer
+                 */
+                ReallocateBuffer5(buffer, userSuppliedCapacity, oldCapacity, newCapacity, deferred) {
+                    b2Assert(newCapacity > oldCapacity);
+                    // A 'deferred' buffer is reallocated only if it is not NULL.
+                    // If 'userSuppliedCapacity' is not zero, buffer is user supplied and must
+                    // be kept.
+                    b2Assert(!userSuppliedCapacity || newCapacity <= userSuppliedCapacity);
+                    if ((!deferred || buffer) && !userSuppliedCapacity) {
+                        buffer = this.ReallocateBuffer3(buffer, oldCapacity, newCapacity);
+                    }
+                    return buffer;
+                }
+                /**
+                 * Reallocate a buffer
+                 */
+                ReallocateBuffer4(buffer, oldCapacity, newCapacity, deferred) {
+                    b2Assert(newCapacity > oldCapacity);
+                    return this.ReallocateBuffer5(buffer.data, buffer.userSuppliedCapacity, oldCapacity, newCapacity, deferred);
+                }
+                RequestBuffer(buffer) {
+                    if (!buffer) {
+                        if (this.m_internalAllocatedCapacity === 0) {
+                            this.ReallocateInternalAllocatedBuffers(b2Settings_37.b2_minParticleSystemBufferCapacity);
+                        }
+                        buffer = [];
+                        buffer.length = this.m_internalAllocatedCapacity;
+                    }
+                    return buffer;
+                }
+                /**
+                 * Reallocate the handle / index map and schedule the allocation
+                 * of a new pool for handle allocation.
+                 */
+                ReallocateHandleBuffers(newCapacity) {
+                    b2Assert(newCapacity > this.m_internalAllocatedCapacity);
+                    // Reallocate a new handle / index map buffer, copying old handle pointers
+                    // is fine since they're kept around.
+                    this.m_handleIndexBuffer.data = this.ReallocateBuffer4(this.m_handleIndexBuffer, this.m_internalAllocatedCapacity, newCapacity, true);
+                    // Set the size of the next handle allocation.
+                    ///this.m_handleAllocator.SetItemsPerSlab(newCapacity - this.m_internalAllocatedCapacity);
+                }
+                ReallocateInternalAllocatedBuffers(capacity) {
+                    function LimitCapacity(capacity, maxCount) {
+                        return maxCount && capacity > maxCount ? maxCount : capacity;
+                    }
+                    // Don't increase capacity beyond the smallest user-supplied buffer size.
+                    capacity = LimitCapacity(capacity, this.m_def.maxCount);
+                    capacity = LimitCapacity(capacity, this.m_flagsBuffer.userSuppliedCapacity);
+                    capacity = LimitCapacity(capacity, this.m_positionBuffer.userSuppliedCapacity);
+                    capacity = LimitCapacity(capacity, this.m_velocityBuffer.userSuppliedCapacity);
+                    capacity = LimitCapacity(capacity, this.m_colorBuffer.userSuppliedCapacity);
+                    capacity = LimitCapacity(capacity, this.m_userDataBuffer.userSuppliedCapacity);
+                    if (this.m_internalAllocatedCapacity < capacity) {
+                        this.ReallocateHandleBuffers(capacity);
+                        this.m_flagsBuffer.data = this.ReallocateBuffer4(this.m_flagsBuffer, this.m_internalAllocatedCapacity, capacity, false);
+                        // Conditionally defer these as they are optional if the feature is
+                        // not enabled.
+                        let stuck = this.m_stuckThreshold > 0;
+                        this.m_lastBodyContactStepBuffer.data = this.ReallocateBuffer4(this.m_lastBodyContactStepBuffer, this.m_internalAllocatedCapacity, capacity, stuck);
+                        this.m_bodyContactCountBuffer.data = this.ReallocateBuffer4(this.m_bodyContactCountBuffer, this.m_internalAllocatedCapacity, capacity, stuck);
+                        this.m_consecutiveContactStepsBuffer.data = this.ReallocateBuffer4(this.m_consecutiveContactStepsBuffer, this.m_internalAllocatedCapacity, capacity, stuck);
+                        this.m_positionBuffer.data = this.ReallocateBuffer4(this.m_positionBuffer, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_velocityBuffer.data = this.ReallocateBuffer4(this.m_velocityBuffer, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_forceBuffer = this.ReallocateBuffer5(this.m_forceBuffer, 0, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_weightBuffer = this.ReallocateBuffer5(this.m_weightBuffer, 0, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_staticPressureBuffer = this.ReallocateBuffer5(this.m_staticPressureBuffer, 0, this.m_internalAllocatedCapacity, capacity, true);
+                        this.m_accumulationBuffer = this.ReallocateBuffer5(this.m_accumulationBuffer, 0, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_accumulation2Buffer = this.ReallocateBuffer5(this.m_accumulation2Buffer, 0, this.m_internalAllocatedCapacity, capacity, true);
+                        this.m_depthBuffer = this.ReallocateBuffer5(this.m_depthBuffer, 0, this.m_internalAllocatedCapacity, capacity, true);
+                        this.m_colorBuffer.data = this.ReallocateBuffer4(this.m_colorBuffer, this.m_internalAllocatedCapacity, capacity, true);
+                        this.m_groupBuffer = this.ReallocateBuffer5(this.m_groupBuffer, 0, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_userDataBuffer.data = this.ReallocateBuffer4(this.m_userDataBuffer, this.m_internalAllocatedCapacity, capacity, true);
+                        this.m_expirationTimeBuffer.data = this.ReallocateBuffer4(this.m_expirationTimeBuffer, this.m_internalAllocatedCapacity, capacity, true);
+                        this.m_indexByExpirationTimeBuffer.data = this.ReallocateBuffer4(this.m_indexByExpirationTimeBuffer, this.m_internalAllocatedCapacity, capacity, false);
+                        this.m_internalAllocatedCapacity = capacity;
+                    }
+                }
+                CreateParticleForGroup(groupDef, xf, p) {
+                    let particleDef = new b2Particle_2.b2ParticleDef();
+                    particleDef.flags = groupDef.flags;
+                    ///particleDef.position = b2Mul(xf, p);
+                    b2Math_34.b2Transform.MulXV(xf, p, particleDef.position);
+                    ///particleDef.velocity =
+                    ///  groupDef.linearVelocity +
+                    ///  b2Cross(groupDef.angularVelocity,
+                    ///      particleDef.position - groupDef.position);
+                    b2Math_34.b2Vec2.AddVV(groupDef.linearVelocity, b2Math_34.b2Vec2.CrossSV(groupDef.angularVelocity, b2Math_34.b2Vec2.SubVV(particleDef.position, groupDef.position, b2Math_34.b2Vec2.s_t0), b2Math_34.b2Vec2.s_t0), particleDef.velocity);
+                    particleDef.color.Copy(groupDef.color);
+                    particleDef.lifetime = groupDef.lifetime;
+                    particleDef.userData = groupDef.userData;
+                    this.CreateParticle(particleDef);
+                }
+                CreateParticlesStrokeShapeForGroup(shape, groupDef, xf) {
+                    let s_edge = b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_edge;
+                    let s_d = b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_d;
+                    let s_p = b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_p;
+                    let stride = groupDef.stride;
+                    if (stride === 0) {
+                        stride = this.GetParticleStride();
+                    }
+                    let positionOnEdge = 0;
+                    let childCount = shape.GetChildCount();
+                    for (let childIndex = 0; childIndex < childCount; childIndex++) {
+                        let edge = null;
+                        if (shape.GetType() === 1 /* e_edgeShape */) {
+                            edge = shape;
+                        }
+                        else {
+                            b2Assert(shape.GetType() === 3 /* e_chainShape */);
+                            edge = s_edge;
+                            shape.GetChildEdge(edge, childIndex);
+                        }
+                        let d = b2Math_34.b2Vec2.SubVV(edge.m_vertex2, edge.m_vertex1, s_d);
+                        let edgeLength = d.Length();
+                        while (positionOnEdge < edgeLength) {
+                            ///b2Vec2 p = edge.m_vertex1 + positionOnEdge / edgeLength * d;
+                            let p = b2Math_34.b2Vec2.AddVMulSV(edge.m_vertex1, positionOnEdge / edgeLength, d, s_p);
+                            this.CreateParticleForGroup(groupDef, xf, p);
+                            positionOnEdge += stride;
+                        }
+                        positionOnEdge -= edgeLength;
+                    }
+                }
+                CreateParticlesFillShapeForGroup(shape, groupDef, xf) {
+                    let s_aabb = b2ParticleSystem.CreateParticlesFillShapeForGroup_s_aabb;
+                    let s_p = b2ParticleSystem.CreateParticlesFillShapeForGroup_s_p;
+                    let stride = groupDef.stride;
+                    if (stride === 0) {
+                        stride = this.GetParticleStride();
+                    }
+                    ///b2Transform identity;
+                    /// identity.SetIdentity();
+                    let identity = b2Math_34.b2Transform.IDENTITY;
+                    let aabb = s_aabb;
+                    b2Assert(shape.GetChildCount() === 1);
+                    shape.ComputeAABB(aabb, identity, 0);
+                    for (let y = Math.floor(aabb.lowerBound.y / stride) * stride; y < aabb.upperBound.y; y += stride) {
+                        for (let x = Math.floor(aabb.lowerBound.x / stride) * stride; x < aabb.upperBound.x; x += stride) {
+                            let p = s_p.Set(x, y);
+                            if (shape.TestPoint(identity, p)) {
+                                this.CreateParticleForGroup(groupDef, xf, p);
+                            }
+                        }
+                    }
+                }
+                CreateParticlesWithShapeForGroup(shape, groupDef, xf) {
+                    switch (shape.GetType()) {
+                        case 1 /* e_edgeShape */:
+                        case 3 /* e_chainShape */:
+                            this.CreateParticlesStrokeShapeForGroup(shape, groupDef, xf);
+                            break;
+                        case 2 /* e_polygonShape */:
+                        case 0 /* e_circleShape */:
+                            this.CreateParticlesFillShapeForGroup(shape, groupDef, xf);
+                            break;
+                        default:
+                            b2Assert(false);
+                            break;
+                    }
+                }
+                CreateParticlesWithShapesForGroup(shapes, shapeCount, groupDef, xf) {
+                    let compositeShape = new b2ParticleSystem.CompositeShape(shapes, shapeCount);
+                    this.CreateParticlesFillShapeForGroup(compositeShape, groupDef, xf);
+                }
+                CloneParticle(oldIndex, group) {
+                    let def = new b2Particle_2.b2ParticleDef();
+                    def.flags = this.m_flagsBuffer.data[oldIndex];
+                    def.position.Copy(this.m_positionBuffer.data[oldIndex]);
+                    def.velocity.Copy(this.m_velocityBuffer.data[oldIndex]);
+                    if (this.m_colorBuffer.data) {
+                        def.color.Copy(this.m_colorBuffer.data[oldIndex]);
+                    }
+                    if (this.m_userDataBuffer.data) {
+                        def.userData = this.m_userDataBuffer.data[oldIndex];
+                    }
+                    def.group = group;
+                    let newIndex = this.CreateParticle(def);
+                    if (this.m_handleIndexBuffer.data) {
+                        let handle = this.m_handleIndexBuffer.data[oldIndex];
+                        if (handle)
+                            handle.SetIndex(newIndex);
+                        this.m_handleIndexBuffer.data[newIndex] = handle;
+                        this.m_handleIndexBuffer.data[oldIndex] = null;
+                    }
+                    if (this.m_lastBodyContactStepBuffer.data) {
+                        this.m_lastBodyContactStepBuffer.data[newIndex] =
+                            this.m_lastBodyContactStepBuffer.data[oldIndex];
+                    }
+                    if (this.m_bodyContactCountBuffer.data) {
+                        this.m_bodyContactCountBuffer.data[newIndex] =
+                            this.m_bodyContactCountBuffer.data[oldIndex];
+                    }
+                    if (this.m_consecutiveContactStepsBuffer.data) {
+                        this.m_consecutiveContactStepsBuffer.data[newIndex] =
+                            this.m_consecutiveContactStepsBuffer.data[oldIndex];
+                    }
+                    if (this.m_hasForce) {
+                        this.m_forceBuffer[newIndex].Copy(this.m_forceBuffer[oldIndex]);
+                    }
+                    if (this.m_staticPressureBuffer) {
+                        this.m_staticPressureBuffer[newIndex] = this.m_staticPressureBuffer[oldIndex];
+                    }
+                    if (this.m_depthBuffer) {
+                        this.m_depthBuffer[newIndex] = this.m_depthBuffer[oldIndex];
+                    }
+                    if (this.m_expirationTimeBuffer.data) {
+                        this.m_expirationTimeBuffer.data[newIndex] =
+                            this.m_expirationTimeBuffer.data[oldIndex];
+                    }
+                    return newIndex;
+                }
+                DestroyParticlesInGroup(group, callDestructionListener = false) {
+                    for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                        this.DestroyParticle(i, callDestructionListener);
+                    }
+                }
+                DestroyParticleGroup(group) {
+                    b2Assert(this.m_groupCount > 0);
+                    b2Assert(group !== null);
+                    if (this.m_world.m_destructionListener) {
+                        this.m_world.m_destructionListener.SayGoodbyeParticleGroup(group);
+                    }
+                    this.SetGroupFlags(group, 0);
+                    for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                        this.m_groupBuffer[i] = null;
+                    }
+                    if (group.m_prev) {
+                        group.m_prev.m_next = group.m_next;
+                    }
+                    if (group.m_next) {
+                        group.m_next.m_prev = group.m_prev;
+                    }
+                    if (group === this.m_groupList) {
+                        this.m_groupList = group.m_next;
+                    }
+                    --this.m_groupCount;
+                }
+                static ParticleCanBeConnected(flags, group) {
+                    return ((flags & (4 /* b2_wallParticle */ | 8 /* b2_springParticle */ | 16 /* b2_elasticParticle */)) !== 0) ||
+                        ((group !== null) && ((group.GetGroupFlags() & 2 /* b2_rigidParticleGroup */) !== 0));
+                }
+                UpdatePairsAndTriads(firstIndex, lastIndex, filter) {
+                    let s_dab = b2ParticleSystem.UpdatePairsAndTriads_s_dab;
+                    let s_dbc = b2ParticleSystem.UpdatePairsAndTriads_s_dbc;
+                    let s_dca = b2ParticleSystem.UpdatePairsAndTriads_s_dca;
+                    let pos_data = this.m_positionBuffer.data;
+                    // Create pairs or triads.
+                    // All particles in each pair/triad should satisfy the following:
+                    // * firstIndex <= index < lastIndex
+                    // * don't have b2_zombieParticle
+                    // * ParticleCanBeConnected returns true
+                    // * ShouldCreatePair/ShouldCreateTriad returns true
+                    // Any particles in each pair/triad should satisfy the following:
+                    // * filter.IsNeeded returns true
+                    // * have one of k_pairFlags/k_triadsFlags
+                    b2Assert(firstIndex <= lastIndex);
+                    let particleFlags = 0;
+                    for (let i = firstIndex; i < lastIndex; i++) {
+                        particleFlags |= this.m_flagsBuffer.data[i];
+                    }
+                    if (particleFlags & b2ParticleSystem.k_pairFlags) {
+                        for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                            let contact = this.m_contactBuffer.data[k];
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            let af = this.m_flagsBuffer.data[a];
+                            let bf = this.m_flagsBuffer.data[b];
+                            let groupA = this.m_groupBuffer[a];
+                            let groupB = this.m_groupBuffer[b];
+                            if (a >= firstIndex && a < lastIndex &&
+                                b >= firstIndex && b < lastIndex &&
+                                !((af | bf) & 2 /* b2_zombieParticle */) &&
+                                ((af | bf) & b2ParticleSystem.k_pairFlags) &&
+                                (filter.IsNecessary(a) || filter.IsNecessary(b)) &&
+                                b2ParticleSystem.ParticleCanBeConnected(af, groupA) &&
+                                b2ParticleSystem.ParticleCanBeConnected(bf, groupB) &&
+                                filter.ShouldCreatePair(a, b)) {
+                                ///b2ParticlePair& pair = m_pairBuffer.Append();
+                                let pair = this.m_pairBuffer.data[this.m_pairBuffer.Append()];
+                                pair.indexA = a;
+                                pair.indexB = b;
+                                pair.flags = contact.flags;
+                                pair.strength = b2Math_34.b2Min(groupA ? groupA.m_strength : 1, groupB ? groupB.m_strength : 1);
+                                ///pair.distance = b2Distance(pos_data[a], pos_data[b]); // TODO: this was wrong!
+                                pair.distance = b2Math_34.b2Vec2.DistanceVV(pos_data[a], pos_data[b]);
+                            }
+                            ///std::stable_sort(m_pairBuffer.Begin(), m_pairBuffer.End(), ComparePairIndices);
+                            std_stable_sort(this.m_pairBuffer.data, 0, this.m_pairBuffer.count, b2ParticleSystem.ComparePairIndices);
+                            ///m_pairBuffer.Unique(MatchPairIndices);
+                            this.m_pairBuffer.Unique(b2ParticleSystem.MatchPairIndices);
+                        }
+                    }
+                    if (particleFlags & b2ParticleSystem.k_triadFlags) {
+                        let diagram = new b2VoronoiDiagram_1.b2VoronoiDiagram(lastIndex - firstIndex);
+                        ///let necessary_count = 0;
+                        for (let i = firstIndex; i < lastIndex; i++) {
+                            let flags = this.m_flagsBuffer.data[i];
+                            let group = this.m_groupBuffer[i];
+                            if (!(flags & 2 /* b2_zombieParticle */) &&
+                                b2ParticleSystem.ParticleCanBeConnected(flags, group)) {
+                                ///if (filter.IsNecessary(i)) {
+                                ///++necessary_count;
+                                ///}
+                                diagram.AddGenerator(pos_data[i], i, filter.IsNecessary(i));
+                            }
+                        }
+                        ///if (necessary_count === 0) {
+                        /////debugger;
+                        ///for (let i = firstIndex; i < lastIndex; i++) {
+                        ///  filter.IsNecessary(i);
+                        ///}
+                        ///}
+                        let stride = this.GetParticleStride();
+                        diagram.Generate(stride / 2, stride * 2);
+                        let system = this;
+                        let callback = function UpdateTriadsCallback(a, b, c) {
+                            let af = system.m_flagsBuffer.data[a];
+                            let bf = system.m_flagsBuffer.data[b];
+                            let cf = system.m_flagsBuffer.data[c];
+                            if (((af | bf | cf) & b2ParticleSystem.k_triadFlags) &&
+                                filter.ShouldCreateTriad(a, b, c)) {
+                                let pa = pos_data[a];
+                                let pb = pos_data[b];
+                                let pc = pos_data[c];
+                                let dab = b2Math_34.b2Vec2.SubVV(pa, pb, s_dab);
+                                let dbc = b2Math_34.b2Vec2.SubVV(pb, pc, s_dbc);
+                                let dca = b2Math_34.b2Vec2.SubVV(pc, pa, s_dca);
+                                let maxDistanceSquared = b2Settings_37.b2_maxTriadDistanceSquared * system.m_squaredDiameter;
+                                if (b2Math_34.b2Vec2.DotVV(dab, dab) > maxDistanceSquared ||
+                                    b2Math_34.b2Vec2.DotVV(dbc, dbc) > maxDistanceSquared ||
+                                    b2Math_34.b2Vec2.DotVV(dca, dca) > maxDistanceSquared) {
+                                    return;
+                                }
+                                let groupA = system.m_groupBuffer[a];
+                                let groupB = system.m_groupBuffer[b];
+                                let groupC = system.m_groupBuffer[c];
+                                ///b2ParticleTriad& triad = m_system.m_triadBuffer.Append();
+                                let triad = system.m_triadBuffer.data[system.m_triadBuffer.Append()];
+                                triad.indexA = a;
+                                triad.indexB = b;
+                                triad.indexC = c;
+                                triad.flags = af | bf | cf;
+                                triad.strength = b2Math_34.b2Min(b2Math_34.b2Min(groupA ? groupA.m_strength : 1, groupB ? groupB.m_strength : 1), groupC ? groupC.m_strength : 1);
+                                ///let midPoint = b2Vec2.MulSV(1.0 / 3.0, b2Vec2.AddVV(pa, b2Vec2.AddVV(pb, pc, new b2Vec2()), new b2Vec2()), new b2Vec2());
+                                let midPoint_x = (pa.x + pb.x + pc.x) / 3.0;
+                                let midPoint_y = (pa.y + pb.y + pc.y) / 3.0;
+                                ///triad.pa = b2Vec2.SubVV(pa, midPoint, new b2Vec2());
+                                triad.pa.x = pa.x - midPoint_x;
+                                triad.pa.y = pa.y - midPoint_y;
+                                ///triad.pb = b2Vec2.SubVV(pb, midPoint, new b2Vec2());
+                                triad.pb.x = pb.x - midPoint_x;
+                                triad.pb.y = pb.y - midPoint_y;
+                                ///triad.pc = b2Vec2.SubVV(pc, midPoint, new b2Vec2());
+                                triad.pc.x = pc.x - midPoint_x;
+                                triad.pc.y = pc.y - midPoint_y;
+                                triad.ka = -b2Math_34.b2Vec2.DotVV(dca, dab);
+                                triad.kb = -b2Math_34.b2Vec2.DotVV(dab, dbc);
+                                triad.kc = -b2Math_34.b2Vec2.DotVV(dbc, dca);
+                                triad.s = b2Math_34.b2Vec2.CrossVV(pa, pb) + b2Math_34.b2Vec2.CrossVV(pb, pc) + b2Math_34.b2Vec2.CrossVV(pc, pa);
+                            }
+                        };
+                        diagram.GetNodes(callback);
+                        ///std::stable_sort(m_triadBuffer.Begin(), m_triadBuffer.End(), CompareTriadIndices);
+                        std_stable_sort(this.m_triadBuffer.data, 0, this.m_triadBuffer.count, b2ParticleSystem.CompareTriadIndices);
+                        ///m_triadBuffer.Unique(MatchTriadIndices);
+                        this.m_triadBuffer.Unique(b2ParticleSystem.MatchTriadIndices);
+                    }
+                }
+                UpdatePairsAndTriadsWithReactiveParticles() {
+                    let filter = new b2ParticleSystem.ReactiveFilter(this.m_flagsBuffer);
+                    this.UpdatePairsAndTriads(0, this.m_count, filter);
+                    for (let i = 0; i < this.m_count; i++) {
+                        this.m_flagsBuffer.data[i] &= ~4096 /* b2_reactiveParticle */;
+                    }
+                    this.m_allParticleFlags &= ~4096 /* b2_reactiveParticle */;
+                }
+                static ComparePairIndices(a, b) {
+                    let diffA = a.indexA - b.indexA;
+                    if (diffA !== 0)
+                        return diffA < 0;
+                    return a.indexB < b.indexB;
+                }
+                static MatchPairIndices(a, b) {
+                    return a.indexA === b.indexA && a.indexB === b.indexB;
+                }
+                static CompareTriadIndices(a, b) {
+                    let diffA = a.indexA - b.indexA;
+                    if (diffA !== 0)
+                        return diffA < 0;
+                    let diffB = a.indexB - b.indexB;
+                    if (diffB !== 0)
+                        return diffB < 0;
+                    return a.indexC < b.indexC;
+                }
+                static MatchTriadIndices(a, b) {
+                    return a.indexA === b.indexA && a.indexB === b.indexB && a.indexC === b.indexC;
+                }
+                static InitializeParticleLists(group, nodeBuffer) {
+                    let bufferIndex = group.GetBufferIndex();
+                    let particleCount = group.GetParticleCount();
+                    for (let i = 0; i < particleCount; i++) {
+                        /*ParticleListNode**/
+                        let node = nodeBuffer[i];
+                        node.list = node;
+                        node.next = null;
+                        node.count = 1;
+                        node.index = i + bufferIndex;
+                    }
+                }
+                MergeParticleListsInContact(group, nodeBuffer) {
+                    let bufferIndex = group.GetBufferIndex();
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        /*const b2ParticleContact&*/
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        if (!group.ContainsParticle(a) || !group.ContainsParticle(b)) {
+                            continue;
+                        }
+                        /*ParticleListNode**/
+                        let listA = nodeBuffer[a - bufferIndex].list;
+                        /*ParticleListNode**/
+                        let listB = nodeBuffer[b - bufferIndex].list;
+                        if (listA === listB) {
+                            continue;
+                        }
+                        // To minimize the cost of insertion, make sure listA is longer than
+                        // listB.
+                        if (listA.count < listB.count) {
+                            let _tmp = listA;
+                            listA = listB;
+                            listB = _tmp; ///b2Swap(listA, listB);
+                        }
+                        b2Assert(listA.count >= listB.count);
+                        b2ParticleSystem.MergeParticleLists(listA, listB);
+                    }
+                }
+                static MergeParticleLists(listA, listB) {
+                    // Insert listB between index 0 and 1 of listA
+                    // Example:
+                    //     listA => a1 => a2 => a3 => null
+                    //     listB => b1 => b2 => null
+                    // to
+                    //     listA => listB => b1 => b2 => a1 => a2 => a3 => null
+                    b2Assert(listA !== listB);
+                    for (let b = listB;;) {
+                        b.list = listA;
+                        /*ParticleListNode**/
+                        let nextB = b.next;
+                        if (nextB) {
+                            b = nextB;
+                        }
+                        else {
+                            b.next = listA.next;
+                            break;
+                        }
+                    }
+                    listA.next = listB;
+                    listA.count += listB.count;
+                    listB.count = 0;
+                }
+                static FindLongestParticleList(group, nodeBuffer) {
+                    let particleCount = group.GetParticleCount();
+                    /*ParticleListNode**/
+                    let result = nodeBuffer[0];
+                    for (let i = 0; i < particleCount; i++) {
+                        /*ParticleListNode**/
+                        let node = nodeBuffer[i];
+                        if (result.count < node.count) {
+                            result = node;
+                        }
+                    }
+                    return result;
+                }
+                MergeZombieParticleListNodes(group, nodeBuffer, survivingList) {
+                    let particleCount = group.GetParticleCount();
+                    for (let i = 0; i < particleCount; i++) {
+                        /*ParticleListNode**/
+                        let node = nodeBuffer[i];
+                        if (node !== survivingList &&
+                            (this.m_flagsBuffer.data[node.index] & 2 /* b2_zombieParticle */)) {
+                            b2ParticleSystem.MergeParticleListAndNode(survivingList, node);
+                        }
+                    }
+                }
+                static MergeParticleListAndNode(list, node) {
+                    // Insert node between index 0 and 1 of list
+                    // Example:
+                    //     list => a1 => a2 => a3 => null
+                    //     node => null
+                    // to
+                    //     list => node => a1 => a2 => a3 => null
+                    b2Assert(node !== list);
+                    b2Assert(node.list === node);
+                    b2Assert(node.count === 1);
+                    node.list = list;
+                    node.next = list.next;
+                    list.next = node;
+                    list.count++;
+                    node.count = 0;
+                }
+                CreateParticleGroupsFromParticleList(group, nodeBuffer, survivingList) {
+                    let particleCount = group.GetParticleCount();
+                    let def = new b2ParticleGroup_1.b2ParticleGroupDef();
+                    def.groupFlags = group.GetGroupFlags();
+                    def.userData = group.GetUserData();
+                    for (let i = 0; i < particleCount; i++) {
+                        /*ParticleListNode**/
+                        let list = nodeBuffer[i];
+                        if (!list.count || list === survivingList) {
+                            continue;
+                        }
+                        b2Assert(list.list === list);
+                        /*b2ParticleGroup**/
+                        let newGroup = this.CreateParticleGroup(def);
+                        for (let node = list; node; node = node.next) {
+                            let oldIndex = node.index;
+                            let flags = this.m_flagsBuffer.data[oldIndex];
+                            b2Assert(!(flags & 2 /* b2_zombieParticle */));
+                            let newIndex = this.CloneParticle(oldIndex, newGroup);
+                            this.m_flagsBuffer.data[oldIndex] |= 2 /* b2_zombieParticle */;
+                            node.index = newIndex;
+                        }
+                    }
+                }
+                UpdatePairsAndTriadsWithParticleList(group, nodeBuffer) {
+                    let bufferIndex = group.GetBufferIndex();
+                    // Update indices in pairs and triads. If an index belongs to the group,
+                    // replace it with the corresponding value in nodeBuffer.
+                    // Note that nodeBuffer is allocated only for the group and the index should
+                    // be shifted by bufferIndex.
+                    for (let k = 0; k < this.m_pairBuffer.count; k++) {
+                        let pair = this.m_pairBuffer.data[k];
+                        let a = pair.indexA;
+                        let b = pair.indexB;
+                        if (group.ContainsParticle(a)) {
+                            pair.indexA = nodeBuffer[a - bufferIndex].index;
+                        }
+                        if (group.ContainsParticle(b)) {
+                            pair.indexB = nodeBuffer[b - bufferIndex].index;
+                        }
+                    }
+                    for (let k = 0; k < this.m_triadBuffer.count; k++) {
+                        let triad = this.m_triadBuffer.data[k];
+                        let a = triad.indexA;
+                        let b = triad.indexB;
+                        let c = triad.indexC;
+                        if (group.ContainsParticle(a)) {
+                            triad.indexA = nodeBuffer[a - bufferIndex].index;
+                        }
+                        if (group.ContainsParticle(b)) {
+                            triad.indexB = nodeBuffer[b - bufferIndex].index;
+                        }
+                        if (group.ContainsParticle(c)) {
+                            triad.indexC = nodeBuffer[c - bufferIndex].index;
+                        }
+                    }
+                }
+                ComputeDepth() {
+                    ///b2ParticleContact* contactGroups = (b2ParticleContact*) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleContact) * this.m_contactBuffer.GetCount());
+                    let contactGroups = []; // TODO: static
+                    let contactGroupsCount = 0;
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let groupA = this.m_groupBuffer[a];
+                        let groupB = this.m_groupBuffer[b];
+                        if (groupA && groupA === groupB &&
+                            (groupA.m_groupFlags & 16 /* b2_particleGroupNeedsUpdateDepth */)) {
+                            contactGroups[contactGroupsCount++] = contact;
+                        }
+                    }
+                    ///b2ParticleGroup** groupsToUpdate = (b2ParticleGroup**) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleGroup*) * this.m_groupCount);
+                    let groupsToUpdate = []; // TODO: static
+                    let groupsToUpdateCount = 0;
+                    for (let group = this.m_groupList; group; group = group.GetNext()) {
+                        if (group.m_groupFlags & 16 /* b2_particleGroupNeedsUpdateDepth */) {
+                            groupsToUpdate[groupsToUpdateCount++] = group;
+                            this.SetGroupFlags(group, group.m_groupFlags &
+                                ~16 /* b2_particleGroupNeedsUpdateDepth */);
+                            for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                                this.m_accumulationBuffer[i] = 0;
+                            }
+                        }
+                    }
+                    // Compute sum of weight of contacts except between different groups.
+                    for (let k = 0; k < contactGroupsCount; k++) {
+                        let contact = contactGroups[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let w = contact.weight;
+                        this.m_accumulationBuffer[a] += w;
+                        this.m_accumulationBuffer[b] += w;
+                    }
+                    b2Assert(this.m_depthBuffer !== null);
+                    for (let i = 0; i < groupsToUpdateCount; i++) {
+                        let group = groupsToUpdate[i];
+                        for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                            let w = this.m_accumulationBuffer[i];
+                            this.m_depthBuffer[i] = w < 0.8 ? 0 : b2Settings_37.b2_maxFloat;
+                        }
+                    }
+                    // The number of iterations is equal to particle number from the deepest
+                    // particle to the nearest surface particle, and in general it is smaller
+                    // than sqrt of total particle number.
+                    ///int32 iterationCount = (int32)b2Sqrt((float)m_count);
+                    let iterationCount = b2Math_34.b2Sqrt(this.m_count) >> 0;
+                    for (let t = 0; t < iterationCount; t++) {
+                        let updated = false;
+                        for (let k = 0; k < contactGroupsCount; k++) {
+                            let contact = contactGroups[k];
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            let r = 1 - contact.weight;
+                            ///float32& ap0 = m_depthBuffer[a];
+                            let ap0 = this.m_depthBuffer[a];
+                            ///float32& bp0 = m_depthBuffer[b];
+                            let bp0 = this.m_depthBuffer[b];
+                            let ap1 = bp0 + r;
+                            let bp1 = ap0 + r;
+                            if (ap0 > ap1) {
+                                ///ap0 = ap1;
+                                this.m_depthBuffer[a] = ap1;
+                                updated = true;
+                            }
+                            if (bp0 > bp1) {
+                                ///bp0 = bp1;
+                                this.m_depthBuffer[b] = bp1;
+                                updated = true;
+                            }
+                        }
+                        if (!updated) {
+                            break;
+                        }
+                    }
+                    for (let i = 0; i < groupsToUpdateCount; i++) {
+                        let group = groupsToUpdate[i];
+                        for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                            if (this.m_depthBuffer[i] < b2Settings_37.b2_maxFloat) {
+                                this.m_depthBuffer[i] *= this.m_particleDiameter;
+                            }
+                            else {
+                                this.m_depthBuffer[i] = 0;
+                            }
+                        }
+                    }
+                    ///this.m_world.m_stackAllocator.Free(groupsToUpdate);
+                    ///this.m_world.m_stackAllocator.Free(contactGroups);
+                }
+                GetInsideBoundsEnumerator(aabb) {
+                    let lowerTag = b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.lowerBound.x - 1, this.m_inverseDiameter * aabb.lowerBound.y - 1);
+                    let upperTag = b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.upperBound.x + 1, this.m_inverseDiameter * aabb.upperBound.y + 1);
+                    ///const Proxy* beginProxy = m_proxyBuffer.Begin();
+                    let beginProxy = 0;
+                    ///const Proxy* endProxy = m_proxyBuffer.End();
+                    let endProxy = this.m_proxyBuffer.count;
+                    ///const Proxy* firstProxy = std::lower_bound(beginProxy, endProxy, lowerTag);
+                    let firstProxy = std_lower_bound(this.m_proxyBuffer.data, beginProxy, endProxy, lowerTag, b2ParticleSystem.Proxy.CompareProxyTag);
+                    ///const Proxy* lastProxy = std::upper_bound(firstProxy, endProxy, upperTag);
+                    let lastProxy = std_upper_bound(this.m_proxyBuffer.data, beginProxy, endProxy, upperTag, b2ParticleSystem.Proxy.CompareTagProxy);
+                    b2Assert(beginProxy <= firstProxy);
+                    b2Assert(firstProxy <= lastProxy);
+                    b2Assert(lastProxy <= endProxy);
+                    return new b2ParticleSystem.InsideBoundsEnumerator(this, lowerTag, upperTag, firstProxy, lastProxy);
+                }
+                UpdateAllParticleFlags() {
+                    this.m_allParticleFlags = 0;
+                    for (let i = 0; i < this.m_count; i++) {
+                        this.m_allParticleFlags |= this.m_flagsBuffer.data[i];
+                    }
+                    this.m_needsUpdateAllParticleFlags = false;
+                }
+                UpdateAllGroupFlags() {
+                    this.m_allGroupFlags = 0;
+                    for (let group = this.m_groupList; group; group = group.GetNext()) {
+                        this.m_allGroupFlags |= group.m_groupFlags;
+                    }
+                    this.m_needsUpdateAllGroupFlags = false;
+                }
+                AddContact(a, b, contacts) {
+                    let s_d = b2ParticleSystem.AddContact_s_d;
+                    let pos_data = this.m_positionBuffer.data;
+                    b2Assert(contacts === this.m_contactBuffer);
+                    ///b2Vec2 d = m_positionBuffer.data[b] - m_positionBuffer.data[a];
+                    let d = b2Math_34.b2Vec2.SubVV(pos_data[b], pos_data[a], s_d);
+                    let distBtParticlesSq = b2Math_34.b2Vec2.DotVV(d, d);
+                    if (distBtParticlesSq < this.m_squaredDiameter) {
+                        let invD = b2Math_34.b2InvSqrt(distBtParticlesSq);
+                        if (!isFinite(invD)) {
+                            invD = 1.98177537e+019;
+                        }
+                        ///b2ParticleContact& contact = contacts.Append();
+                        let contact = this.m_contactBuffer.data[this.m_contactBuffer.Append()];
+                        contact.indexA = a;
+                        contact.indexB = b;
+                        contact.flags = this.m_flagsBuffer.data[a] | this.m_flagsBuffer.data[b];
+                        contact.weight = 1 - distBtParticlesSq * invD * this.m_inverseDiameter;
+                        ///contact.SetNormal(invD * d);
+                        b2Math_34.b2Vec2.MulSV(invD, d, contact.normal);
+                    }
+                }
+                FindContacts_Reference(contacts) {
+                    b2Assert(contacts === this.m_contactBuffer);
+                    let beginProxy = 0;
+                    let endProxy = this.m_proxyBuffer.count;
+                    this.m_contactBuffer.count = 0;
+                    for (let a = beginProxy, c = beginProxy; a < endProxy; a++) {
+                        let rightTag = b2ParticleSystem.computeRelativeTag(this.m_proxyBuffer.data[a].tag, 1, 0);
+                        for (let b = a + 1; b < endProxy; b++) {
+                            if (rightTag < this.m_proxyBuffer.data[b].tag)
+                                break;
+                            this.AddContact(this.m_proxyBuffer.data[a].index, this.m_proxyBuffer.data[b].index, this.m_contactBuffer);
+                        }
+                        let bottomLeftTag = b2ParticleSystem.computeRelativeTag(this.m_proxyBuffer.data[a].tag, -1, 1);
+                        for (; c < endProxy; c++) {
+                            if (bottomLeftTag <= this.m_proxyBuffer.data[c].tag)
+                                break;
+                        }
+                        let bottomRightTag = b2ParticleSystem.computeRelativeTag(this.m_proxyBuffer.data[a].tag, 1, 1);
+                        for (let b = c; b < endProxy; b++) {
+                            if (bottomRightTag < this.m_proxyBuffer.data[b].tag)
+                                break;
+                            this.AddContact(this.m_proxyBuffer.data[a].index, this.m_proxyBuffer.data[b].index, this.m_contactBuffer);
+                        }
+                    }
+                }
+                ///void ReorderForFindContact(FindContactInput* reordered, int alignedCount) const;
+                ///void GatherChecksOneParticle(const uint32 bound, const int startIndex, const int particleIndex, int* nextUncheckedIndex, b2GrowableBuffer<FindContactCheck>& checks) const;
+                ///void GatherChecks(b2GrowableBuffer<FindContactCheck>& checks) const;
+                ///void FindContacts_Simd(b2GrowableBuffer<b2ParticleContact>& contacts) const;
+                FindContacts(contacts) {
+                    this.FindContacts_Reference(contacts);
+                }
+                ///static void UpdateProxyTags(const uint32* const tags, b2GrowableBuffer<Proxy>& proxies);
+                ///static bool ProxyBufferHasIndex(int32 index, const Proxy* const a, int count);
+                ///static int NumProxiesWithSameTag(const Proxy* const a, const Proxy* const b, int count);
+                ///static bool AreProxyBuffersTheSame(const b2GrowableBuffer<Proxy>& a, const b2GrowableBuffer<Proxy>& b);
+                UpdateProxies_Reference(proxies) {
+                    b2Assert(proxies === this.m_proxyBuffer);
+                    let pos_data = this.m_positionBuffer.data;
+                    let inv_diam = this.m_inverseDiameter;
+                    for (let k = 0; k < this.m_proxyBuffer.count; ++k) {
+                        let proxy = this.m_proxyBuffer.data[k];
+                        let i = proxy.index;
+                        let p = pos_data[i];
+                        proxy.tag = b2ParticleSystem.computeTag(inv_diam * p.x, inv_diam * p.y);
+                    }
+                }
+                ///void UpdateProxies_Simd(b2GrowableBuffer<Proxy>& proxies) const;
+                UpdateProxies(proxies) {
+                    this.UpdateProxies_Reference(proxies);
+                }
+                SortProxies(proxies) {
+                    b2Assert(proxies === this.m_proxyBuffer);
+                    ///std::sort(proxies.Begin(), proxies.End());
+                    std_sort(this.m_proxyBuffer.data, 0, this.m_proxyBuffer.count, b2ParticleSystem.Proxy.CompareProxyProxy);
+                }
+                FilterContacts(contacts) {
+                    // Optionally filter the contact.
+                    let contactFilter = this.GetParticleContactFilter();
+                    if (contactFilter === null)
+                        return;
+                    /// contacts.RemoveIf(b2ParticleContactRemovePredicate(this, contactFilter));
+                    b2Assert(contacts === this.m_contactBuffer);
+                    let system = this;
+                    let predicate = function (contact) {
+                        return (contact.flags & 131072 /* b2_particleContactFilterParticle */) && !contactFilter.ShouldCollideParticleParticle(system, contact.indexA, contact.indexB);
+                    };
+                    this.m_contactBuffer.RemoveIf(predicate);
+                }
+                NotifyContactListenerPreContact(particlePairs) {
+                    let contactListener = this.GetParticleContactListener();
+                    if (contactListener === null)
+                        return;
+                    ///particlePairs.Initialize(m_contactBuffer.Begin(), m_contactBuffer.GetCount(), GetFlagsBuffer());
+                    particlePairs.Initialize(this.m_contactBuffer, this.m_flagsBuffer);
+                    throw new Error(); // TODO: notify
+                }
+                NotifyContactListenerPostContact(particlePairs) {
+                    let contactListener = this.GetParticleContactListener();
+                    if (contactListener === null)
+                        return;
+                    // Loop through all new contacts, reporting any new ones, and
+                    // "invalidating" the ones that still exist.
+                    ///const b2ParticleContact* const endContact = m_contactBuffer.End();
+                    ///for (b2ParticleContact* contact = m_contactBuffer.Begin(); contact < endContact; ++contact)
+                    for (let k = 0; k < this.m_contactBuffer.count; ++k) {
+                        let contact = this.m_contactBuffer.data[k];
+                        ///ParticlePair pair;
+                        ///pair.first = contact.GetIndexA();
+                        ///pair.second = contact.GetIndexB();
+                        ///const int32 itemIndex = particlePairs.Find(pair);
+                        let itemIndex = -1; // TODO
+                        if (itemIndex >= 0) {
+                            // Already touching, ignore this contact.
+                            particlePairs.Invalidate(itemIndex);
+                        }
+                        else {
+                            // Just started touching, inform the listener.
+                            contactListener.BeginContactParticleParticle(this, contact);
+                        }
+                    }
+                    // Report particles that are no longer touching.
+                    // That is, any pairs that were not invalidated above.
+                    ///const int32 pairCount = particlePairs.GetCount();
+                    ///const ParticlePair* const pairs = particlePairs.GetBuffer();
+                    ///const int8* const valid = particlePairs.GetValidBuffer();
+                    ///for (int32 i = 0; i < pairCount; ++i)
+                    ///{
+                    ///  if (valid[i])
+                    ///  {
+                    ///    contactListener.EndContactParticleParticle(this, pairs[i].first, pairs[i].second);
+                    ///  }
+                    ///}
+                    throw new Error(); // TODO: notify
+                }
+                static b2ParticleContactIsZombie(contact) {
+                    return (contact.flags & 2 /* b2_zombieParticle */) === 2 /* b2_zombieParticle */;
+                }
+                UpdateContacts(exceptZombie) {
+                    this.UpdateProxies(this.m_proxyBuffer);
+                    this.SortProxies(this.m_proxyBuffer);
+                    ///b2ParticlePairSet particlePairs(&this.m_world.m_stackAllocator);
+                    let particlePairs = new b2ParticleSystem.b2ParticlePairSet(); // TODO: static
+                    this.NotifyContactListenerPreContact(particlePairs);
+                    this.FindContacts(this.m_contactBuffer);
+                    this.FilterContacts(this.m_contactBuffer);
+                    this.NotifyContactListenerPostContact(particlePairs);
+                    if (exceptZombie) {
+                        this.m_contactBuffer.RemoveIf(b2ParticleSystem.b2ParticleContactIsZombie);
+                    }
+                }
+                NotifyBodyContactListenerPreContact(fixtureSet) {
+                    let contactListener = this.GetFixtureContactListener();
+                    if (contactListener === null)
+                        return;
+                    ///fixtureSet.Initialize(m_bodyContactBuffer.Begin(), m_bodyContactBuffer.GetCount(), GetFlagsBuffer());
+                    fixtureSet.Initialize(this.m_bodyContactBuffer, this.m_flagsBuffer);
+                    throw new Error(); // TODO: notify
+                }
+                NotifyBodyContactListenerPostContact(fixtureSet) {
+                    let contactListener = this.GetFixtureContactListener();
+                    if (contactListener === null)
+                        return;
+                    // Loop through all new contacts, reporting any new ones, and
+                    // "invalidating" the ones that still exist.
+                    ///for (b2ParticleBodyContact* contact = m_bodyContactBuffer.Begin(); contact !== m_bodyContactBuffer.End(); ++contact)
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        b2Assert(contact !== null);
+                        ///FixtureParticle fixtureParticleToFind;
+                        ///fixtureParticleToFind.first = contact.fixture;
+                        ///fixtureParticleToFind.second = contact.index;
+                        ///const int32 index = fixtureSet.Find(fixtureParticleToFind);
+                        let index = -1; // TODO
+                        if (index >= 0) {
+                            // Already touching remove this from the set.
+                            fixtureSet.Invalidate(index);
+                        }
+                        else {
+                            // Just started touching, report it!
+                            contactListener.BeginContactFixtureParticle(this, contact);
+                        }
+                    }
+                    // If the contact listener is enabled, report all fixtures that are no
+                    // longer in contact with particles.
+                    ///const FixtureParticle* const fixtureParticles = fixtureSet.GetBuffer();
+                    ///const int8* const fixtureParticlesValid = fixtureSet.GetValidBuffer();
+                    ///const int32 fixtureParticleCount = fixtureSet.GetCount();
+                    ///for (int32 i = 0; i < fixtureParticleCount; ++i)
+                    ///{
+                    ///  if (fixtureParticlesValid[i])
+                    ///  {
+                    ///    const FixtureParticle* const fixtureParticle = &fixtureParticles[i];
+                    ///    contactListener.EndContactFixtureParticle(fixtureParticle.first, this, fixtureParticle.second);
+                    ///  }
+                    ///}
+                    throw new Error(); // TODO: notify
+                }
+                UpdateBodyContacts() {
+                    let s_aabb = b2ParticleSystem.UpdateBodyContacts_s_aabb;
+                    // If the particle contact listener is enabled, generate a set of
+                    // fixture / particle contacts.
+                    ///FixtureParticleSet fixtureSet(&m_world.m_stackAllocator);
+                    let fixtureSet = new b2ParticleSystem.FixtureParticleSet(); // TODO: static
+                    this.NotifyBodyContactListenerPreContact(fixtureSet);
+                    if (this.m_stuckThreshold > 0) {
+                        let particleCount = this.GetParticleCount();
+                        for (let i = 0; i < particleCount; i++) {
+                            // Detect stuck particles, see comment in
+                            // b2ParticleSystem::DetectStuckParticle()
+                            this.m_bodyContactCountBuffer.data[i] = 0;
+                            if (this.m_timestamp > (this.m_lastBodyContactStepBuffer.data[i] + 1)) {
+                                this.m_consecutiveContactStepsBuffer.data[i] = 0;
+                            }
+                        }
+                    }
+                    this.m_bodyContactBuffer.SetCount(0);
+                    this.m_stuckParticleBuffer.SetCount(0);
+                    let aabb = s_aabb;
+                    this.ComputeAABB(aabb);
+                    let callback = new b2ParticleSystem.UpdateBodyContactsCallback(this, this.GetFixtureContactFilter());
+                    this.m_world.QueryAABB(callback, aabb);
+                    if (this.m_def.strictContactCheck) {
+                        this.RemoveSpuriousBodyContacts();
+                    }
+                    this.NotifyBodyContactListenerPostContact(fixtureSet);
+                }
+                Solve(step) {
+                    let s_subStep = b2ParticleSystem.Solve_s_subStep;
+                    if (this.m_count === 0) {
+                        return;
+                    }
+                    // If particle lifetimes are enabled, destroy particles that are too old.
+                    if (this.m_expirationTimeBuffer.data) {
+                        this.SolveLifetimes(step);
+                    }
+                    if (this.m_allParticleFlags & 2 /* b2_zombieParticle */) {
+                        this.SolveZombie();
+                    }
+                    if (this.m_needsUpdateAllParticleFlags) {
+                        this.UpdateAllParticleFlags();
+                    }
+                    if (this.m_needsUpdateAllGroupFlags) {
+                        this.UpdateAllGroupFlags();
+                    }
+                    if (this.m_paused) {
+                        return;
+                    }
+                    for (this.m_iterationIndex = 0; this.m_iterationIndex < step.particleIterations; this.m_iterationIndex++) {
+                        ++this.m_timestamp;
+                        let subStep = s_subStep.Copy(step);
+                        subStep.dt /= step.particleIterations;
+                        subStep.inv_dt *= step.particleIterations;
+                        this.UpdateContacts(false);
+                        this.UpdateBodyContacts();
+                        this.ComputeWeight();
+                        if (this.m_allGroupFlags & 16 /* b2_particleGroupNeedsUpdateDepth */) {
+                            this.ComputeDepth();
+                        }
+                        if (this.m_allParticleFlags & 4096 /* b2_reactiveParticle */) {
+                            this.UpdatePairsAndTriadsWithReactiveParticles();
+                        }
+                        if (this.m_hasForce) {
+                            this.SolveForce(subStep);
+                        }
+                        if (this.m_allParticleFlags & 32 /* b2_viscousParticle */) {
+                            this.SolveViscous();
+                        }
+                        if (this.m_allParticleFlags & 8192 /* b2_repulsiveParticle */) {
+                            this.SolveRepulsive(subStep);
+                        }
+                        if (this.m_allParticleFlags & 64 /* b2_powderParticle */) {
+                            this.SolvePowder(subStep);
+                        }
+                        if (this.m_allParticleFlags & 128 /* b2_tensileParticle */) {
+                            this.SolveTensile(subStep);
+                        }
+                        if (this.m_allGroupFlags & 1 /* b2_solidParticleGroup */) {
+                            this.SolveSolid(subStep);
+                        }
+                        if (this.m_allParticleFlags & 256 /* b2_colorMixingParticle */) {
+                            this.SolveColorMixing();
+                        }
+                        this.SolveGravity(subStep);
+                        if (this.m_allParticleFlags & 2048 /* b2_staticPressureParticle */) {
+                            this.SolveStaticPressure(subStep);
+                        }
+                        this.SolvePressure(subStep);
+                        this.SolveDamping(subStep);
+                        if (this.m_allParticleFlags & b2ParticleSystem.k_extraDampingFlags) {
+                            this.SolveExtraDamping();
+                        }
+                        // SolveElastic and SolveSpring refer the current velocities for
+                        // numerical stability, they should be called as late as possible.
+                        if (this.m_allParticleFlags & 16 /* b2_elasticParticle */) {
+                            this.SolveElastic(subStep);
+                        }
+                        if (this.m_allParticleFlags & 8 /* b2_springParticle */) {
+                            this.SolveSpring(subStep);
+                        }
+                        this.LimitVelocity(subStep);
+                        if (this.m_allGroupFlags & 2 /* b2_rigidParticleGroup */) {
+                            this.SolveRigidDamping();
+                        }
+                        if (this.m_allParticleFlags & 1024 /* b2_barrierParticle */) {
+                            this.SolveBarrier(subStep);
+                        }
+                        // SolveCollision, SolveRigid and SolveWall should be called after
+                        // other force functions because they may require particles to have
+                        // specific velocities.
+                        this.SolveCollision(subStep);
+                        if (this.m_allGroupFlags & 2 /* b2_rigidParticleGroup */) {
+                            this.SolveRigid(subStep);
+                        }
+                        if (this.m_allParticleFlags & 4 /* b2_wallParticle */) {
+                            this.SolveWall();
+                        }
+                        // The particle positions can be updated only at the end of substep.
+                        for (let i = 0; i < this.m_count; i++) {
+                            ///m_positionBuffer.data[i] += subStep.dt * m_velocityBuffer.data[i];
+                            this.m_positionBuffer.data[i].SelfMulAdd(subStep.dt, this.m_velocityBuffer.data[i]);
+                        }
+                    }
+                }
+                SolveCollision(step) {
+                    let s_aabb = b2ParticleSystem.SolveCollision_s_aabb;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    // This function detects particles which are crossing boundary of bodies
+                    // and modifies velocities of them so that they will move just in front of
+                    // boundary. This function function also applies the reaction force to
+                    // bodies as precisely as the numerical stability is kept.
+                    let aabb = s_aabb;
+                    aabb.lowerBound.x = +b2Settings_37.b2_maxFloat;
+                    aabb.lowerBound.y = +b2Settings_37.b2_maxFloat;
+                    aabb.upperBound.x = -b2Settings_37.b2_maxFloat;
+                    aabb.upperBound.y = -b2Settings_37.b2_maxFloat;
+                    for (let i = 0; i < this.m_count; i++) {
+                        let v = vel_data[i];
+                        let p1 = pos_data[i];
+                        ///let p2 = p1 + step.dt * v;
+                        let p2_x = p1.x + step.dt * v.x;
+                        let p2_y = p1.y + step.dt * v.y;
+                        ///aabb.lowerBound = b2Min(aabb.lowerBound, b2Min(p1, p2));
+                        aabb.lowerBound.x = b2Math_34.b2Min(aabb.lowerBound.x, b2Math_34.b2Min(p1.x, p2_x));
+                        aabb.lowerBound.y = b2Math_34.b2Min(aabb.lowerBound.y, b2Math_34.b2Min(p1.y, p2_y));
+                        ///aabb.upperBound = b2Max(aabb.upperBound, b2Max(p1, p2));
+                        aabb.upperBound.x = b2Math_34.b2Max(aabb.upperBound.x, b2Math_34.b2Max(p1.x, p2_x));
+                        aabb.upperBound.y = b2Math_34.b2Max(aabb.upperBound.y, b2Math_34.b2Max(p1.y, p2_y));
+                    }
+                    let callback = new b2ParticleSystem.SolveCollisionCallback(this, step);
+                    this.m_world.QueryAABB(callback, aabb);
+                }
+                LimitVelocity(step) {
+                    let vel_data = this.m_velocityBuffer.data;
+                    let criticalVelocitySquared = this.GetCriticalVelocitySquared(step);
+                    for (let i = 0; i < this.m_count; i++) {
+                        let v = vel_data[i];
+                        let v2 = b2Math_34.b2Vec2.DotVV(v, v);
+                        if (v2 > criticalVelocitySquared) {
+                            ///v *= b2Sqrt(criticalVelocitySquared / v2);
+                            v.SelfMul(b2Math_34.b2Sqrt(criticalVelocitySquared / v2));
+                        }
+                    }
+                }
+                SolveGravity(step) {
+                    let s_gravity = b2ParticleSystem.SolveGravity_s_gravity;
+                    let vel_data = this.m_velocityBuffer.data;
+                    ///b2Vec2 gravity = step.dt * m_def.gravityScale * m_world.GetGravity();
+                    let gravity = b2Math_34.b2Vec2.MulSV(step.dt * this.m_def.gravityScale, this.m_world.GetGravity(), s_gravity);
+                    for (let i = 0; i < this.m_count; i++) {
+                        vel_data[i].SelfAdd(gravity);
+                    }
+                }
+                SolveBarrier(step) {
+                    let s_aabb = b2ParticleSystem.SolveBarrier_s_aabb;
+                    let s_va = b2ParticleSystem.SolveBarrier_s_va;
+                    let s_vb = b2ParticleSystem.SolveBarrier_s_vb;
+                    let s_pba = b2ParticleSystem.SolveBarrier_s_pba;
+                    let s_vba = b2ParticleSystem.SolveBarrier_s_vba;
+                    let s_vc = b2ParticleSystem.SolveBarrier_s_vc;
+                    let s_pca = b2ParticleSystem.SolveBarrier_s_pca;
+                    let s_vca = b2ParticleSystem.SolveBarrier_s_vca;
+                    let s_qba = b2ParticleSystem.SolveBarrier_s_qba;
+                    let s_qca = b2ParticleSystem.SolveBarrier_s_qca;
+                    let s_dv = b2ParticleSystem.SolveBarrier_s_dv;
+                    let s_f = b2ParticleSystem.SolveBarrier_s_f;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    // If a particle is passing between paired barrier particles,
+                    // its velocity will be decelerated to avoid passing.
+                    for (let i = 0; i < this.m_count; i++) {
+                        let flags = this.m_flagsBuffer.data[i];
+                        ///if ((flags & b2ParticleSystem.k_barrierWallFlags) === b2ParticleSystem.k_barrierWallFlags)
+                        if ((flags & b2ParticleSystem.k_barrierWallFlags) !== 0) {
+                            vel_data[i].SetZero();
+                        }
+                    }
+                    let tmax = b2Settings_37.b2_barrierCollisionTime * step.dt;
+                    let mass = this.GetParticleMass();
+                    for (let k = 0; k < this.m_pairBuffer.count; k++) {
+                        let pair = this.m_pairBuffer.data[k];
+                        if (pair.flags & 1024 /* b2_barrierParticle */) {
+                            let a = pair.indexA;
+                            let b = pair.indexB;
+                            let pa = pos_data[a];
+                            let pb = pos_data[b];
+                            /// b2AABB aabb;
+                            let aabb = s_aabb;
+                            ///aabb.lowerBound = b2Min(pa, pb);
+                            b2Math_34.b2Vec2.MinV(pa, pb, aabb.lowerBound);
+                            ///aabb.upperBound = b2Max(pa, pb);
+                            b2Math_34.b2Vec2.MaxV(pa, pb, aabb.upperBound);
+                            let aGroup = this.m_groupBuffer[a];
+                            let bGroup = this.m_groupBuffer[b];
+                            ///b2Vec2 va = GetLinearVelocity(aGroup, a, pa);
+                            let va = this.GetLinearVelocity(aGroup, a, pa, s_va);
+                            ///b2Vec2 vb = GetLinearVelocity(bGroup, b, pb);
+                            let vb = this.GetLinearVelocity(bGroup, b, pb, s_vb);
+                            ///b2Vec2 pba = pb - pa;
+                            let pba = b2Math_34.b2Vec2.SubVV(pb, pa, s_pba);
+                            ///b2Vec2 vba = vb - va;
+                            let vba = b2Math_34.b2Vec2.SubVV(vb, va, s_vba);
+                            ///InsideBoundsEnumerator enumerator = GetInsideBoundsEnumerator(aabb);
+                            let enumerator = this.GetInsideBoundsEnumerator(aabb);
+                            let c;
+                            while ((c = enumerator.GetNext()) >= 0) {
+                                let pc = pos_data[c];
+                                let cGroup = this.m_groupBuffer[c];
+                                if (aGroup !== cGroup && bGroup !== cGroup) {
+                                    ///b2Vec2 vc = GetLinearVelocity(cGroup, c, pc);
+                                    let vc = this.GetLinearVelocity(cGroup, c, pc, s_vc);
+                                    // Solve the equation below:
+                                    //   (1-s)*(pa+t*va)+s*(pb+t*vb) = pc+t*vc
+                                    // which expresses that the particle c will pass a line
+                                    // connecting the particles a and b at the time of t.
+                                    // if s is between 0 and 1, c will pass between a and b.
+                                    ///b2Vec2 pca = pc - pa;
+                                    let pca = b2Math_34.b2Vec2.SubVV(pc, pa, s_pca);
+                                    ///b2Vec2 vca = vc - va;
+                                    let vca = b2Math_34.b2Vec2.SubVV(vc, va, s_vca);
+                                    let e2 = b2Math_34.b2Vec2.CrossVV(vba, vca);
+                                    let e1 = b2Math_34.b2Vec2.CrossVV(pba, vca) - b2Math_34.b2Vec2.CrossVV(pca, vba);
+                                    let e0 = b2Math_34.b2Vec2.CrossVV(pba, pca);
+                                    let s, t;
+                                    ///b2Vec2 qba, qca;
+                                    let qba = s_qba, qca = s_qca;
+                                    if (e2 === 0) {
+                                        if (e1 === 0)
+                                            continue;
+                                        t = -e0 / e1;
+                                        if (!(t >= 0 && t < tmax))
+                                            continue;
+                                        ///qba = pba + t * vba;
+                                        b2Math_34.b2Vec2.AddVMulSV(pba, t, vba, qba);
+                                        ///qca = pca + t * vca;
+                                        b2Math_34.b2Vec2.AddVMulSV(pca, t, vca, qca);
+                                        s = b2Math_34.b2Vec2.DotVV(qba, qca) / b2Math_34.b2Vec2.DotVV(qba, qba);
+                                        if (!(s >= 0 && s <= 1))
+                                            continue;
+                                    }
+                                    else {
+                                        let det = e1 * e1 - 4 * e0 * e2;
+                                        if (det < 0)
+                                            continue;
+                                        let sqrtDet = b2Math_34.b2Sqrt(det);
+                                        let t1 = (-e1 - sqrtDet) / (2 * e2);
+                                        let t2 = (-e1 + sqrtDet) / (2 * e2);
+                                        ///if (t1 > t2) b2Swap(t1, t2);
+                                        if (t1 > t2) {
+                                            let tmp = t1;
+                                            t1 = t2;
+                                            t2 = tmp;
+                                        }
+                                        t = t1;
+                                        ///qba = pba + t * vba;
+                                        b2Math_34.b2Vec2.AddVMulSV(pba, t, vba, qba);
+                                        ///qca = pca + t * vca;
+                                        b2Math_34.b2Vec2.AddVMulSV(pca, t, vca, qca);
+                                        ///s = b2Dot(qba, qca) / b2Dot(qba, qba);
+                                        s = b2Math_34.b2Vec2.DotVV(qba, qca) / b2Math_34.b2Vec2.DotVV(qba, qba);
+                                        if (!(t >= 0 && t < tmax && s >= 0 && s <= 1)) {
+                                            t = t2;
+                                            if (!(t >= 0 && t < tmax))
+                                                continue;
+                                            ///qba = pba + t * vba;
+                                            b2Math_34.b2Vec2.AddVMulSV(pba, t, vba, qba);
+                                            ///qca = pca + t * vca;
+                                            b2Math_34.b2Vec2.AddVMulSV(pca, t, vca, qca);
+                                            ///s = b2Dot(qba, qca) / b2Dot(qba, qba);
+                                            s = b2Math_34.b2Vec2.DotVV(qba, qca) / b2Math_34.b2Vec2.DotVV(qba, qba);
+                                            if (!(s >= 0 && s <= 1))
+                                                continue;
+                                        }
+                                    }
+                                    // Apply a force to particle c so that it will have the
+                                    // interpolated velocity at the collision point on line ab.
+                                    ///b2Vec2 dv = va + s * vba - vc;
+                                    let dv = s_dv;
+                                    dv.x = va.x + s * vba.x - vc.x;
+                                    dv.y = va.y + s * vba.y - vc.y;
+                                    ///b2Vec2 f = GetParticleMass() * dv;
+                                    let f = b2Math_34.b2Vec2.MulSV(mass, dv, s_f);
+                                    if (this.IsRigidGroup(cGroup)) {
+                                        // If c belongs to a rigid group, the force will be
+                                        // distributed in the group.
+                                        let mass = cGroup.GetMass();
+                                        let inertia = cGroup.GetInertia();
+                                        if (mass > 0) {
+                                            ///cGroup.m_linearVelocity += 1 / mass * f;
+                                            cGroup.m_linearVelocity.SelfMulAdd(1 / mass, f);
+                                        }
+                                        if (inertia > 0) {
+                                            ///cGroup.m_angularVelocity += b2Cross(pc - cGroup.GetCenter(), f) / inertia;
+                                            cGroup.m_angularVelocity += b2Math_34.b2Vec2.CrossVV(b2Math_34.b2Vec2.SubVV(pc, cGroup.GetCenter(), b2Math_34.b2Vec2.s_t0), f) / inertia;
+                                        }
+                                    }
+                                    else {
+                                        ///m_velocityBuffer.data[c] += dv;
+                                        vel_data[c].SelfAdd(dv);
+                                    }
+                                    // Apply a reversed force to particle c after particle
+                                    // movement so that momentum will be preserved.
+                                    ///ParticleApplyForce(c, -step.inv_dt * f);
+                                    this.ParticleApplyForce(c, f.SelfMul(-step.inv_dt));
+                                }
+                            }
+                        }
+                    }
+                }
+                SolveStaticPressure(step) {
+                    this.m_staticPressureBuffer = this.RequestBuffer(this.m_staticPressureBuffer);
+                    let criticalPressure = this.GetCriticalPressure(step);
+                    let pressurePerWeight = this.m_def.staticPressureStrength * criticalPressure;
+                    let maxPressure = b2Settings_38.b2_maxParticlePressure * criticalPressure;
+                    let relaxation = this.m_def.staticPressureRelaxation;
+                    /// Compute pressure satisfying the modified Poisson equation:
+                    ///   Sum_for_j((p_i - p_j) * w_ij) + relaxation * p_i =
+                    ///   pressurePerWeight * (w_i - b2_minParticleWeight)
+                    /// by iterating the calculation:
+                    ///   p_i = (Sum_for_j(p_j * w_ij) + pressurePerWeight *
+                    ///         (w_i - b2_minParticleWeight)) / (w_i + relaxation)
+                    /// where
+                    ///   p_i and p_j are static pressure of particle i and j
+                    ///   w_ij is contact weight between particle i and j
+                    ///   w_i is sum of contact weight of particle i
+                    for (let t = 0; t < this.m_def.staticPressureIterations; t++) {
+                        ///memset(m_accumulationBuffer, 0, sizeof(*m_accumulationBuffer) * m_count);
+                        for (let i = 0; i < this.m_count; i++) {
+                            this.m_accumulationBuffer[i] = 0;
+                        }
+                        for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                            let contact = this.m_contactBuffer.data[k];
+                            if (contact.flags & 2048 /* b2_staticPressureParticle */) {
+                                let a = contact.indexA;
+                                let b = contact.indexB;
+                                let w = contact.weight;
+                                this.m_accumulationBuffer[a] += w * this.m_staticPressureBuffer[b]; // a <- b
+                                this.m_accumulationBuffer[b] += w * this.m_staticPressureBuffer[a]; // b <- a
+                            }
+                        }
+                        for (let i = 0; i < this.m_count; i++) {
+                            let w = this.m_weightBuffer[i];
+                            if (this.m_flagsBuffer.data[i] & 2048 /* b2_staticPressureParticle */) {
+                                let wh = this.m_accumulationBuffer[i];
+                                let h = (wh + pressurePerWeight * (w - b2Settings_38.b2_minParticleWeight)) /
+                                    (w + relaxation);
+                                this.m_staticPressureBuffer[i] = b2Math_34.b2Clamp(h, 0.0, maxPressure);
+                            }
+                            else {
+                                this.m_staticPressureBuffer[i] = 0;
+                            }
+                        }
+                    }
+                }
+                ComputeWeight() {
+                    // calculates the sum of contact-weights for each particle
+                    // that means dimensionless density
+                    ///memset(m_weightBuffer, 0, sizeof(*m_weightBuffer) * m_count);
+                    for (let k = 0; k < this.m_count; k++) {
+                        this.m_weightBuffer[k] = 0;
+                    }
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        let w = contact.weight;
+                        this.m_weightBuffer[a] += w;
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let w = contact.weight;
+                        this.m_weightBuffer[a] += w;
+                        this.m_weightBuffer[b] += w;
+                    }
+                }
+                SolvePressure(step) {
+                    let s_f = b2ParticleSystem.SolvePressure_s_f;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    // calculates pressure as a linear function of density
+                    let criticalPressure = this.GetCriticalPressure(step);
+                    let pressurePerWeight = this.m_def.pressureStrength * criticalPressure;
+                    let maxPressure = b2Settings_38.b2_maxParticlePressure * criticalPressure;
+                    for (let i = 0; i < this.m_count; i++) {
+                        let w = this.m_weightBuffer[i];
+                        let h = pressurePerWeight * b2Math_34.b2Max(0.0, w - b2Settings_38.b2_minParticleWeight);
+                        this.m_accumulationBuffer[i] = b2Math_34.b2Min(h, maxPressure);
+                    }
+                    // ignores particles which have their own repulsive force
+                    if (this.m_allParticleFlags & b2ParticleSystem.k_noPressureFlags) {
+                        for (let i = 0; i < this.m_count; i++) {
+                            if (this.m_flagsBuffer.data[i] & b2ParticleSystem.k_noPressureFlags) {
+                                this.m_accumulationBuffer[i] = 0;
+                            }
+                        }
+                    }
+                    // static pressure
+                    if (this.m_allParticleFlags & 2048 /* b2_staticPressureParticle */) {
+                        b2Assert(this.m_staticPressureBuffer !== null);
+                        for (let i = 0; i < this.m_count; i++) {
+                            if (this.m_flagsBuffer.data[i] & 2048 /* b2_staticPressureParticle */) {
+                                this.m_accumulationBuffer[i] += this.m_staticPressureBuffer[i];
+                            }
+                        }
+                    }
+                    // applies pressure between each particles in contact
+                    let velocityPerPressure = step.dt / (this.m_def.density * this.m_particleDiameter);
+                    let inv_mass = this.GetParticleInvMass();
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        let b = contact.body;
+                        let w = contact.weight;
+                        let m = contact.mass;
+                        let n = contact.normal;
+                        let p = pos_data[a];
+                        let h = this.m_accumulationBuffer[a] + pressurePerWeight * w;
+                        ///b2Vec2 f = velocityPerPressure * w * m * h * n;
+                        let f = b2Math_34.b2Vec2.MulSV(velocityPerPressure * w * m * h, n, s_f);
+                        ///m_velocityBuffer.data[a] -= GetParticleInvMass() * f;
+                        vel_data[a].SelfMulSub(inv_mass, f);
+                        b.ApplyLinearImpulse(f, p, true);
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let w = contact.weight;
+                        let n = contact.normal;
+                        let h = this.m_accumulationBuffer[a] + this.m_accumulationBuffer[b];
+                        ///b2Vec2 f = velocityPerPressure * w * h * n;
+                        let f = b2Math_34.b2Vec2.MulSV(velocityPerPressure * w * h, n, s_f);
+                        ///m_velocityBuffer.data[a] -= f;
+                        vel_data[a].SelfSub(f);
+                        ///m_velocityBuffer.data[b] += f;
+                        vel_data[b].SelfAdd(f);
+                    }
+                }
+                SolveDamping(step) {
+                    let s_v = b2ParticleSystem.SolveDamping_s_v;
+                    let s_f = b2ParticleSystem.SolveDamping_s_f;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    // reduces normal velocity of each contact
+                    let linearDamping = this.m_def.dampingStrength;
+                    let quadraticDamping = 1 / this.GetCriticalVelocity(step);
+                    let inv_mass = this.GetParticleInvMass();
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        let b = contact.body;
+                        let w = contact.weight;
+                        let m = contact.mass;
+                        let n = contact.normal;
+                        let p = pos_data[a];
+                        ///b2Vec2 v = b.GetLinearVelocityFromWorldPoint(p) - m_velocityBuffer.data[a];
+                        let v = b2Math_34.b2Vec2.SubVV(b.GetLinearVelocityFromWorldPoint(p, b2Math_34.b2Vec2.s_t0), vel_data[a], s_v);
+                        let vn = b2Math_34.b2Vec2.DotVV(v, n);
+                        if (vn < 0) {
+                            let damping = b2Math_34.b2Max(linearDamping * w, b2Math_34.b2Min(-quadraticDamping * vn, 0.5));
+                            ///b2Vec2 f = damping * m * vn * n;
+                            let f = b2Math_34.b2Vec2.MulSV(damping * m * vn, n, s_f);
+                            ///m_velocityBuffer.data[a] += GetParticleInvMass() * f;
+                            vel_data[a].SelfMulAdd(inv_mass, f);
+                            ///b.ApplyLinearImpulse(-f, p, true);
+                            b.ApplyLinearImpulse(f.SelfNeg(), p, true);
+                        }
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let w = contact.weight;
+                        let n = contact.normal;
+                        ///b2Vec2 v = m_velocityBuffer.data[b] - m_velocityBuffer.data[a];
+                        let v = b2Math_34.b2Vec2.SubVV(vel_data[b], vel_data[a], s_v);
+                        let vn = b2Math_34.b2Vec2.DotVV(v, n);
+                        if (vn < 0) {
+                            ///float32 damping = b2Max(linearDamping * w, b2Min(- quadraticDamping * vn, 0.5f));
+                            let damping = b2Math_34.b2Max(linearDamping * w, b2Math_34.b2Min(-quadraticDamping * vn, 0.5));
+                            ///b2Vec2 f = damping * vn * n;
+                            let f = b2Math_34.b2Vec2.MulSV(damping * vn, n, s_f);
+                            ///this.m_velocityBuffer.data[a] += f;
+                            vel_data[a].SelfAdd(f);
+                            ///this.m_velocityBuffer.data[b] -= f;
+                            vel_data[b].SelfSub(f);
+                        }
+                    }
+                }
+                SolveRigidDamping() {
+                    let s_t0 = b2ParticleSystem.SolveRigidDamping_s_t0;
+                    let s_t1 = b2ParticleSystem.SolveRigidDamping_s_t1;
+                    let s_p = b2ParticleSystem.SolveRigidDamping_s_p;
+                    let s_v = b2ParticleSystem.SolveRigidDamping_s_v;
+                    let invMassA = [0.0], invInertiaA = [0.0], tangentDistanceA = [0.0]; // TODO: static
+                    let invMassB = [0.0], invInertiaB = [0.0], tangentDistanceB = [0.0]; // TODO: static
+                    // Apply impulse to rigid particle groups colliding with other objects
+                    // to reduce relative velocity at the colliding point.
+                    let pos_data = this.m_positionBuffer.data;
+                    let damping = this.m_def.dampingStrength;
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        let aGroup = this.m_groupBuffer[a];
+                        if (this.IsRigidGroup(aGroup)) {
+                            let b = contact.body;
+                            let n = contact.normal;
+                            let w = contact.weight;
+                            let p = pos_data[a];
+                            ///b2Vec2 v = b.GetLinearVelocityFromWorldPoint(p) - aGroup.GetLinearVelocityFromWorldPoint(p);
+                            let v = b2Math_34.b2Vec2.SubVV(b.GetLinearVelocityFromWorldPoint(p, s_t0), aGroup.GetLinearVelocityFromWorldPoint(p, s_t1), s_v);
+                            let vn = b2Math_34.b2Vec2.DotVV(v, n);
+                            if (vn < 0) {
+                                // The group's average velocity at particle position 'p' is pushing
+                                // the particle into the body.
+                                ///this.InitDampingParameterWithRigidGroupOrParticle(&invMassA, &invInertiaA, &tangentDistanceA, true, aGroup, a, p, n);
+                                this.InitDampingParameterWithRigidGroupOrParticle(invMassA, invInertiaA, tangentDistanceA, true, aGroup, a, p, n);
+                                // Calculate b.m_I from public functions of b2Body.
+                                ///this.InitDampingParameter(&invMassB, &invInertiaB, &tangentDistanceB, b.GetMass(), b.GetInertia() - b.GetMass() * b.GetLocalCenter().LengthSquared(), b.GetWorldCenter(), p, n);
+                                this.InitDampingParameter(invMassB, invInertiaB, tangentDistanceB, b.GetMass(), b.GetInertia() - b.GetMass() * b.GetLocalCenter().LengthSquared(), b.GetWorldCenter(), p, n);
+                                ///float32 f = damping * b2Min(w, 1.0) * this.ComputeDampingImpulse(invMassA, invInertiaA, tangentDistanceA, invMassB, invInertiaB, tangentDistanceB, vn);
+                                let f = damping * b2Math_34.b2Min(w, 1.0) * this.ComputeDampingImpulse(invMassA[0], invInertiaA[0], tangentDistanceA[0], invMassB[0], invInertiaB[0], tangentDistanceB[0], vn);
+                                ///this.ApplyDamping(invMassA, invInertiaA, tangentDistanceA, true, aGroup, a, f, n);
+                                this.ApplyDamping(invMassA[0], invInertiaA[0], tangentDistanceA[0], true, aGroup, a, f, n);
+                                ///b.ApplyLinearImpulse(-f * n, p, true);
+                                b.ApplyLinearImpulse(b2Math_34.b2Vec2.MulSV(-f, n, b2Math_34.b2Vec2.s_t0), p, true);
+                            }
+                        }
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        let n = contact.normal;
+                        let w = contact.weight;
+                        let aGroup = this.m_groupBuffer[a];
+                        let bGroup = this.m_groupBuffer[b];
+                        let aRigid = this.IsRigidGroup(aGroup);
+                        let bRigid = this.IsRigidGroup(bGroup);
+                        if (aGroup !== bGroup && (aRigid || bRigid)) {
+                            ///b2Vec2 p = 0.5f * (this.m_positionBuffer.data[a] + this.m_positionBuffer.data[b]);
+                            let p = b2Math_34.b2Vec2.MidVV(pos_data[a], pos_data[b], s_p);
+                            ///b2Vec2 v = GetLinearVelocity(bGroup, b, p) - GetLinearVelocity(aGroup, a, p);
+                            let v = b2Math_34.b2Vec2.SubVV(this.GetLinearVelocity(bGroup, b, p, s_t0), this.GetLinearVelocity(aGroup, a, p, s_t1), s_v);
+                            let vn = b2Math_34.b2Vec2.DotVV(v, n);
+                            if (vn < 0) {
+                                ///this.InitDampingParameterWithRigidGroupOrParticle(&invMassA, &invInertiaA, &tangentDistanceA, aRigid, aGroup, a, p, n);
+                                this.InitDampingParameterWithRigidGroupOrParticle(invMassA, invInertiaA, tangentDistanceA, aRigid, aGroup, a, p, n);
+                                ///this.InitDampingParameterWithRigidGroupOrParticle(&invMassB, &invInertiaB, &tangentDistanceB, bRigid, bGroup, b, p, n);
+                                this.InitDampingParameterWithRigidGroupOrParticle(invMassB, invInertiaB, tangentDistanceB, bRigid, bGroup, b, p, n);
+                                ///float32 f = damping * w * this.ComputeDampingImpulse(invMassA, invInertiaA, tangentDistanceA, invMassB, invInertiaB, tangentDistanceB, vn);
+                                let f = damping * w * this.ComputeDampingImpulse(invMassA[0], invInertiaA[0], tangentDistanceA[0], invMassB[0], invInertiaB[0], tangentDistanceB[0], vn);
+                                ///this.ApplyDamping(invMassA, invInertiaA, tangentDistanceA, aRigid, aGroup, a, f, n);
+                                this.ApplyDamping(invMassA[0], invInertiaA[0], tangentDistanceA[0], aRigid, aGroup, a, f, n);
+                                ///this.ApplyDamping(invMassB, invInertiaB, tangentDistanceB, bRigid, bGroup, b, -f, n);
+                                this.ApplyDamping(invMassB[0], invInertiaB[0], tangentDistanceB[0], bRigid, bGroup, b, -f, n);
+                            }
+                        }
+                    }
+                }
+                SolveExtraDamping() {
+                    let s_v = b2ParticleSystem.SolveExtraDamping_s_v;
+                    let s_f = b2ParticleSystem.SolveExtraDamping_s_f;
+                    let vel_data = this.m_velocityBuffer.data;
+                    // Applies additional damping force between bodies and particles which can
+                    // produce strong repulsive force. Applying damping force multiple times
+                    // is effective in suppressing vibration.
+                    let pos_data = this.m_positionBuffer.data;
+                    let inv_mass = this.GetParticleInvMass();
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        if (this.m_flagsBuffer.data[a] & b2ParticleSystem.k_extraDampingFlags) {
+                            let b = contact.body;
+                            let m = contact.mass;
+                            let n = contact.normal;
+                            let p = pos_data[a];
+                            ///b2Vec2 v = b.GetLinearVelocityFromWorldPoint(p) - m_velocityBuffer.data[a];
+                            let v = b2Math_34.b2Vec2.SubVV(b.GetLinearVelocityFromWorldPoint(p, b2Math_34.b2Vec2.s_t0), vel_data[a], s_v);
+                            ///float32 vn = b2Dot(v, n);
+                            let vn = b2Math_34.b2Vec2.DotVV(v, n);
+                            if (vn < 0) {
+                                ///b2Vec2 f = 0.5f * m * vn * n;
+                                let f = b2Math_34.b2Vec2.MulSV(0.5 * m * vn, n, s_f);
+                                ///m_velocityBuffer.data[a] += GetParticleInvMass() * f;
+                                vel_data[a].SelfMulAdd(inv_mass, f);
+                                ///b.ApplyLinearImpulse(-f, p, true);
+                                b.ApplyLinearImpulse(f.SelfNeg(), p, true);
+                            }
+                        }
+                    }
+                }
+                SolveWall() {
+                    let vel_data = this.m_velocityBuffer.data;
+                    for (let i = 0; i < this.m_count; i++) {
+                        if (this.m_flagsBuffer.data[i] & 4 /* b2_wallParticle */) {
+                            vel_data[i].SetZero();
+                        }
+                    }
+                }
+                SolveRigid(step) {
+                    let s_position = b2ParticleSystem.SolveRigid_s_position;
+                    let s_rotation = b2ParticleSystem.SolveRigid_s_rotation;
+                    let s_transform = b2ParticleSystem.SolveRigid_s_transform;
+                    let s_velocityTransform = b2ParticleSystem.SolveRigid_s_velocityTransform;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    for (let group = this.m_groupList; group; group = group.GetNext()) {
+                        if (group.m_groupFlags & 2 /* b2_rigidParticleGroup */) {
+                            group.UpdateStatistics();
+                            ///b2Rot rotation(step.dt * group.m_angularVelocity);
+                            let rotation = s_rotation;
+                            rotation.SetAngle(step.dt * group.m_angularVelocity);
+                            ///b2Transform transform(group.m_center + step.dt * group.m_linearVelocity - b2Mul(rotation, group.m_center), rotation);
+                            let position = b2Math_34.b2Vec2.AddVV(group.m_center, b2Math_34.b2Vec2.SubVV(b2Math_34.b2Vec2.MulSV(step.dt, group.m_linearVelocity, b2Math_34.b2Vec2.s_t0), b2Math_34.b2Rot.MulRV(rotation, group.m_center, b2Math_34.b2Vec2.s_t1), b2Math_34.b2Vec2.s_t0), s_position);
+                            let transform = s_transform;
+                            transform.SetPositionRotation(position, rotation);
+                            ///group.m_transform = b2Mul(transform, group.m_transform);
+                            b2Math_34.b2Transform.MulXX(transform, group.m_transform, group.m_transform);
+                            let velocityTransform = s_velocityTransform;
+                            velocityTransform.p.x = step.inv_dt * transform.p.x;
+                            velocityTransform.p.y = step.inv_dt * transform.p.y;
+                            velocityTransform.q.s = step.inv_dt * transform.q.s;
+                            velocityTransform.q.c = step.inv_dt * (transform.q.c - 1);
+                            for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                                ///m_velocityBuffer.data[i] = b2Mul(velocityTransform, m_positionBuffer.data[i]);
+                                b2Math_34.b2Transform.MulXV(velocityTransform, pos_data[i], vel_data[i]);
+                            }
+                        }
+                    }
+                }
+                SolveElastic(step) {
+                    let s_pa = b2ParticleSystem.SolveElastic_s_pa;
+                    let s_pb = b2ParticleSystem.SolveElastic_s_pb;
+                    let s_pc = b2ParticleSystem.SolveElastic_s_pc;
+                    let s_r = b2ParticleSystem.SolveElastic_s_r;
+                    let s_t0 = b2ParticleSystem.SolveElastic_s_t0;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    let elasticStrength = step.inv_dt * this.m_def.elasticStrength;
+                    for (let k = 0; k < this.m_triadBuffer.count; k++) {
+                        let triad = this.m_triadBuffer.data[k];
+                        if (triad.flags & 16 /* b2_elasticParticle */) {
+                            let a = triad.indexA;
+                            let b = triad.indexB;
+                            let c = triad.indexC;
+                            let oa = triad.pa;
+                            let ob = triad.pb;
+                            let oc = triad.pc;
+                            ///b2Vec2 pa = m_positionBuffer.data[a];
+                            let pa = s_pa.Copy(pos_data[a]);
+                            ///b2Vec2 pb = m_positionBuffer.data[b];
+                            let pb = s_pb.Copy(pos_data[b]);
+                            ///b2Vec2 pc = m_positionBuffer.data[c];
+                            let pc = s_pc.Copy(pos_data[c]);
+                            let va = vel_data[a];
+                            let vb = vel_data[b];
+                            let vc = vel_data[c];
+                            ///pa += step.dt * va;
+                            pa.SelfMulAdd(step.dt, va);
+                            ///pb += step.dt * vb;
+                            pb.SelfMulAdd(step.dt, vb);
+                            ///pc += step.dt * vc;
+                            pc.SelfMulAdd(step.dt, vc);
+                            ///b2Vec2 midPoint = (float32) 1 / 3 * (pa + pb + pc);
+                            let midPoint_x = (pa.x + pb.x + pc.x) / 3.0;
+                            let midPoint_y = (pa.y + pb.y + pc.y) / 3.0;
+                            ///pa -= midPoint;
+                            pa.x -= midPoint_x;
+                            pa.y -= midPoint_y;
+                            ///pb -= midPoint;
+                            pb.x -= midPoint_x;
+                            pb.y -= midPoint_y;
+                            ///pc -= midPoint;
+                            pc.x -= midPoint_x;
+                            pc.y -= midPoint_y;
+                            ///b2Rot r;
+                            let r = s_r;
+                            r.s = b2Math_34.b2Vec2.CrossVV(oa, pa) + b2Math_34.b2Vec2.CrossVV(ob, pb) + b2Math_34.b2Vec2.CrossVV(oc, pc);
+                            r.c = b2Math_34.b2Vec2.DotVV(oa, pa) + b2Math_34.b2Vec2.DotVV(ob, pb) + b2Math_34.b2Vec2.DotVV(oc, pc);
+                            let r2 = r.s * r.s + r.c * r.c;
+                            let invR = b2Math_34.b2InvSqrt(r2);
+                            if (!isFinite(invR)) {
+                                invR = 1.98177537e+019;
+                            }
+                            r.s *= invR;
+                            r.c *= invR;
+                            ///r.angle = Math.atan2(r.s, r.c); // TODO: optimize
+                            let strength = elasticStrength * triad.strength;
+                            ///va += strength * (b2Mul(r, oa) - pa);
+                            b2Math_34.b2Rot.MulRV(r, oa, s_t0);
+                            b2Math_34.b2Vec2.SubVV(s_t0, pa, s_t0);
+                            b2Math_34.b2Vec2.MulSV(strength, s_t0, s_t0);
+                            va.SelfAdd(s_t0);
+                            ///vb += strength * (b2Mul(r, ob) - pb);
+                            b2Math_34.b2Rot.MulRV(r, ob, s_t0);
+                            b2Math_34.b2Vec2.SubVV(s_t0, pb, s_t0);
+                            b2Math_34.b2Vec2.MulSV(strength, s_t0, s_t0);
+                            vb.SelfAdd(s_t0);
+                            ///vc += strength * (b2Mul(r, oc) - pc);
+                            b2Math_34.b2Rot.MulRV(r, oc, s_t0);
+                            b2Math_34.b2Vec2.SubVV(s_t0, pc, s_t0);
+                            b2Math_34.b2Vec2.MulSV(strength, s_t0, s_t0);
+                            vc.SelfAdd(s_t0);
+                        }
+                    }
+                }
+                SolveSpring(step) {
+                    let s_pa = b2ParticleSystem.SolveSpring_s_pa;
+                    let s_pb = b2ParticleSystem.SolveSpring_s_pb;
+                    let s_d = b2ParticleSystem.SolveSpring_s_d;
+                    let s_f = b2ParticleSystem.SolveSpring_s_f;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    let springStrength = step.inv_dt * this.m_def.springStrength;
+                    for (let k = 0; k < this.m_pairBuffer.count; k++) {
+                        let pair = this.m_pairBuffer.data[k];
+                        if (pair.flags & 8 /* b2_springParticle */) {
+                            ///int32 a = pair.indexA;
+                            let a = pair.indexA;
+                            ///int32 b = pair.indexB;
+                            let b = pair.indexB;
+                            ///b2Vec2 pa = m_positionBuffer.data[a];
+                            let pa = s_pa.Copy(pos_data[a]);
+                            ///b2Vec2 pb = m_positionBuffer.data[b];
+                            let pb = s_pb.Copy(pos_data[b]);
+                            ///b2Vec2& va = m_velocityBuffer.data[a];
+                            let va = vel_data[a];
+                            ///b2Vec2& vb = m_velocityBuffer.data[b];
+                            let vb = vel_data[b];
+                            ///pa += step.dt * va;
+                            pa.SelfMulAdd(step.dt, va);
+                            ///pb += step.dt * vb;
+                            pb.SelfMulAdd(step.dt, vb);
+                            ///b2Vec2 d = pb - pa;
+                            let d = b2Math_34.b2Vec2.SubVV(pb, pa, s_d);
+                            ///float32 r0 = pair.distance;
+                            let r0 = pair.distance;
+                            ///float32 r1 = d.Length();
+                            let r1 = d.Length();
+                            ///float32 strength = springStrength * pair.strength;
+                            let strength = springStrength * pair.strength;
+                            ///b2Vec2 f = strength * (r0 - r1) / r1 * d;
+                            let f = b2Math_34.b2Vec2.MulSV(strength * (r0 - r1) / r1, d, s_f);
+                            ///va -= f;
+                            va.SelfSub(f);
+                            ///vb += f;
+                            vb.SelfAdd(f);
+                        }
+                    }
+                }
+                SolveTensile(step) {
+                    let s_weightedNormal = b2ParticleSystem.SolveTensile_s_weightedNormal;
+                    let s_s = b2ParticleSystem.SolveTensile_s_s;
+                    let s_f = b2ParticleSystem.SolveTensile_s_f;
+                    let vel_data = this.m_velocityBuffer.data;
+                    b2Assert(this.m_accumulation2Buffer !== null);
+                    for (let i = 0; i < this.m_count; i++) {
+                        this.m_accumulation2Buffer[i] = new b2Math_34.b2Vec2();
+                        this.m_accumulation2Buffer[i].SetZero();
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        if (contact.flags & 128 /* b2_tensileParticle */) {
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            let w = contact.weight;
+                            let n = contact.normal;
+                            ///b2Vec2 weightedNormal = (1 - w) * w * n;
+                            let weightedNormal = b2Math_34.b2Vec2.MulSV((1 - w) * w, n, s_weightedNormal);
+                            ///m_accumulation2Buffer[a] -= weightedNormal;
+                            this.m_accumulation2Buffer[a].SelfSub(weightedNormal);
+                            ///m_accumulation2Buffer[b] += weightedNormal;
+                            this.m_accumulation2Buffer[b].SelfAdd(weightedNormal);
+                        }
+                    }
+                    let criticalVelocity = this.GetCriticalVelocity(step);
+                    let pressureStrength = this.m_def.surfaceTensionPressureStrength * criticalVelocity;
+                    let normalStrength = this.m_def.surfaceTensionNormalStrength * criticalVelocity;
+                    let maxVelocityVariation = b2Settings_38.b2_maxParticleForce * criticalVelocity;
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        if (contact.flags & 128 /* b2_tensileParticle */) {
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            let w = contact.weight;
+                            let n = contact.normal;
+                            let h = this.m_weightBuffer[a] + this.m_weightBuffer[b];
+                            ///b2Vec2 s = m_accumulation2Buffer[b] - m_accumulation2Buffer[a];
+                            let s = b2Math_34.b2Vec2.SubVV(this.m_accumulation2Buffer[b], this.m_accumulation2Buffer[a], s_s);
+                            let fn = b2Math_34.b2Min(pressureStrength * (h - 2) + normalStrength * b2Math_34.b2Vec2.DotVV(s, n), maxVelocityVariation) * w;
+                            ///b2Vec2 f = fn * n;
+                            let f = b2Math_34.b2Vec2.MulSV(fn, n, s_f);
+                            ///m_velocityBuffer.data[a] -= f;
+                            vel_data[a].SelfSub(f);
+                            ///m_velocityBuffer.data[b] += f;
+                            vel_data[b].SelfAdd(f);
+                        }
+                    }
+                }
+                SolveViscous() {
+                    let s_v = b2ParticleSystem.SolveViscous_s_v;
+                    let s_f = b2ParticleSystem.SolveViscous_s_f;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    let viscousStrength = this.m_def.viscousStrength;
+                    let inv_mass = this.GetParticleInvMass();
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        if (this.m_flagsBuffer.data[a] & 32 /* b2_viscousParticle */) {
+                            let b = contact.body;
+                            let w = contact.weight;
+                            let m = contact.mass;
+                            let p = pos_data[a];
+                            ///b2Vec2 v = b.GetLinearVelocityFromWorldPoint(p) - m_velocityBuffer.data[a];
+                            let v = b2Math_34.b2Vec2.SubVV(b.GetLinearVelocityFromWorldPoint(p, b2Math_34.b2Vec2.s_t0), vel_data[a], s_v);
+                            ///b2Vec2 f = viscousStrength * m * w * v;
+                            let f = b2Math_34.b2Vec2.MulSV(viscousStrength * m * w, v, s_f);
+                            ///m_velocityBuffer.data[a] += GetParticleInvMass() * f;
+                            vel_data[a].SelfMulAdd(inv_mass, f);
+                            ///b.ApplyLinearImpulse(-f, p, true);
+                            b.ApplyLinearImpulse(f.SelfNeg(), p, true);
+                        }
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        if (contact.flags & 32 /* b2_viscousParticle */) {
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            let w = contact.weight;
+                            ///b2Vec2 v = m_velocityBuffer.data[b] - m_velocityBuffer.data[a];
+                            let v = b2Math_34.b2Vec2.SubVV(vel_data[b], vel_data[a], s_v);
+                            ///b2Vec2 f = viscousStrength * w * v;
+                            let f = b2Math_34.b2Vec2.MulSV(viscousStrength * w, v, s_f);
+                            ///m_velocityBuffer.data[a] += f;
+                            vel_data[a].SelfAdd(f);
+                            ///m_velocityBuffer.data[b] -= f;
+                            vel_data[b].SelfSub(f);
+                        }
+                    }
+                }
+                SolveRepulsive(step) {
+                    let s_f = b2ParticleSystem.SolveRepulsive_s_f;
+                    let vel_data = this.m_velocityBuffer.data;
+                    let repulsiveStrength = this.m_def.repulsiveStrength * this.GetCriticalVelocity(step);
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        if (contact.flags & 8192 /* b2_repulsiveParticle */) {
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            if (this.m_groupBuffer[a] !== this.m_groupBuffer[b]) {
+                                let w = contact.weight;
+                                let n = contact.normal;
+                                ///b2Vec2 f = repulsiveStrength * w * n;
+                                let f = b2Math_34.b2Vec2.MulSV(repulsiveStrength * w, n, s_f);
+                                ///m_velocityBuffer.data[a] -= f;
+                                vel_data[a].SelfSub(f);
+                                ///m_velocityBuffer.data[b] += f;
+                                vel_data[b].SelfAdd(f);
+                            }
+                        }
+                    }
+                }
+                SolvePowder(step) {
+                    let s_f = b2ParticleSystem.SolvePowder_s_f;
+                    let pos_data = this.m_positionBuffer.data;
+                    let vel_data = this.m_velocityBuffer.data;
+                    let powderStrength = this.m_def.powderStrength * this.GetCriticalVelocity(step);
+                    let minWeight = 1.0 - b2Settings_38.b2_particleStride;
+                    let inv_mass = this.GetParticleInvMass();
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        let a = contact.index;
+                        if (this.m_flagsBuffer.data[a] & 64 /* b2_powderParticle */) {
+                            let w = contact.weight;
+                            if (w > minWeight) {
+                                let b = contact.body;
+                                let m = contact.mass;
+                                let p = pos_data[a];
+                                let n = contact.normal;
+                                let f = b2Math_34.b2Vec2.MulSV(powderStrength * m * (w - minWeight), n, s_f);
+                                vel_data[a].SelfMulSub(inv_mass, f);
+                                b.ApplyLinearImpulse(f, p, true);
+                            }
+                        }
+                    }
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        if (contact.flags & 64 /* b2_powderParticle */) {
+                            let w = contact.weight;
+                            if (w > minWeight) {
+                                let a = contact.indexA;
+                                let b = contact.indexB;
+                                let n = contact.normal;
+                                let f = b2Math_34.b2Vec2.MulSV(powderStrength * (w - minWeight), n, s_f);
+                                vel_data[a].SelfSub(f);
+                                vel_data[b].SelfAdd(f);
+                            }
+                        }
+                    }
+                }
+                SolveSolid(step) {
+                    let s_f = b2ParticleSystem.SolveSolid_s_f;
+                    let vel_data = this.m_velocityBuffer.data;
+                    // applies extra repulsive force from solid particle groups
+                    this.m_depthBuffer = this.RequestBuffer(this.m_depthBuffer);
+                    let ejectionStrength = step.inv_dt * this.m_def.ejectionStrength;
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        let a = contact.indexA;
+                        let b = contact.indexB;
+                        if (this.m_groupBuffer[a] !== this.m_groupBuffer[b]) {
+                            let w = contact.weight;
+                            let n = contact.normal;
+                            let h = this.m_depthBuffer[a] + this.m_depthBuffer[b];
+                            let f = b2Math_34.b2Vec2.MulSV(ejectionStrength * h * w, n, s_f);
+                            vel_data[a].SelfSub(f);
+                            vel_data[b].SelfAdd(f);
+                        }
+                    }
+                }
+                SolveForce(step) {
+                    let vel_data = this.m_velocityBuffer.data;
+                    let velocityPerForce = step.dt * this.GetParticleInvMass();
+                    for (let i = 0; i < this.m_count; i++) {
+                        ///m_velocityBuffer.data[i] += velocityPerForce * m_forceBuffer[i];
+                        vel_data[i].SelfMulAdd(velocityPerForce, this.m_forceBuffer[i]);
+                    }
+                    this.m_hasForce = false;
+                }
+                SolveColorMixing() {
+                    // mixes color between contacting particles
+                    b2Assert(this.m_colorBuffer.data !== null);
+                    let colorMixing128 = Math.floor(128 * this.m_def.colorMixingStrength);
+                    if (colorMixing128) {
+                        for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                            let contact = this.m_contactBuffer.data[k];
+                            let a = contact.indexA;
+                            let b = contact.indexB;
+                            if (this.m_flagsBuffer.data[a] & this.m_flagsBuffer.data[b] &
+                                256 /* b2_colorMixingParticle */) {
+                                let colorA = this.m_colorBuffer.data[a];
+                                let colorB = this.m_colorBuffer.data[b];
+                                // Use the static method to ensure certain compilers inline
+                                // this correctly.
+                                b2Particle_2.b2ParticleColor.MixColors(colorA, colorB, colorMixing128);
+                            }
+                        }
+                    }
+                }
+                SolveZombie() {
+                    // removes particles with zombie flag
+                    let newCount = 0;
+                    ///int32* newIndices = (int32*) this.m_world.m_stackAllocator.Allocate(sizeof(int32) * this.m_count);
+                    let newIndices = []; // TODO: static
+                    for (let i = 0; i < this.m_count; i++) {
+                        newIndices[i] = b2Settings_37.b2_invalidParticleIndex;
+                    }
+                    b2Assert(newIndices.length === this.m_count);
+                    let allParticleFlags = 0;
+                    for (let i = 0; i < this.m_count; i++) {
+                        let flags = this.m_flagsBuffer.data[i];
+                        if (flags & 2 /* b2_zombieParticle */) {
+                            let destructionListener = this.m_world.m_destructionListener;
+                            if ((flags & 512 /* b2_destructionListenerParticle */) && destructionListener) {
+                                destructionListener.SayGoodbyeParticle(this, i);
+                            }
+                            // Destroy particle handle.
+                            if (this.m_handleIndexBuffer.data) {
+                                let handle = this.m_handleIndexBuffer.data[i];
+                                if (handle) {
+                                    handle.SetIndex(b2Settings_37.b2_invalidParticleIndex);
+                                    this.m_handleIndexBuffer.data[i] = null;
+                                }
+                            }
+                            newIndices[i] = b2Settings_37.b2_invalidParticleIndex;
+                        }
+                        else {
+                            newIndices[i] = newCount;
+                            if (i !== newCount) {
+                                // Update handle to reference new particle index.
+                                if (this.m_handleIndexBuffer.data) {
+                                    let handle = this.m_handleIndexBuffer.data[i];
+                                    if (handle)
+                                        handle.SetIndex(newCount);
+                                    this.m_handleIndexBuffer.data[newCount] = handle;
+                                }
+                                this.m_flagsBuffer.data[newCount] = this.m_flagsBuffer.data[i];
+                                if (this.m_lastBodyContactStepBuffer.data) {
+                                    this.m_lastBodyContactStepBuffer.data[newCount] = this.m_lastBodyContactStepBuffer.data[i];
+                                }
+                                if (this.m_bodyContactCountBuffer.data) {
+                                    this.m_bodyContactCountBuffer.data[newCount] = this.m_bodyContactCountBuffer.data[i];
+                                }
+                                if (this.m_consecutiveContactStepsBuffer.data) {
+                                    this.m_consecutiveContactStepsBuffer.data[newCount] = this.m_consecutiveContactStepsBuffer.data[i];
+                                }
+                                this.m_positionBuffer.data[newCount].Copy(this.m_positionBuffer.data[i]);
+                                this.m_velocityBuffer.data[newCount].Copy(this.m_velocityBuffer.data[i]);
+                                this.m_groupBuffer[newCount] = this.m_groupBuffer[i];
+                                if (this.m_hasForce) {
+                                    this.m_forceBuffer[newCount].Copy(this.m_forceBuffer[i]);
+                                }
+                                if (this.m_staticPressureBuffer) {
+                                    this.m_staticPressureBuffer[newCount] = this.m_staticPressureBuffer[i];
+                                }
+                                if (this.m_depthBuffer) {
+                                    this.m_depthBuffer[newCount] = this.m_depthBuffer[i];
+                                }
+                                if (this.m_colorBuffer.data) {
+                                    this.m_colorBuffer.data[newCount].Copy(this.m_colorBuffer.data[i]);
+                                }
+                                if (this.m_userDataBuffer.data) {
+                                    this.m_userDataBuffer.data[newCount] = this.m_userDataBuffer.data[i];
+                                }
+                                if (this.m_expirationTimeBuffer.data) {
+                                    this.m_expirationTimeBuffer.data[newCount] = this.m_expirationTimeBuffer.data[i];
+                                }
+                            }
+                            newCount++;
+                            allParticleFlags |= flags;
+                        }
+                    }
+                    // predicate functions
+                    let Test = {
+                        ///static bool IsProxyInvalid(const Proxy& proxy)
+                        IsProxyInvalid: function (proxy) {
+                            return proxy.index < 0;
+                        },
+                        ///static bool IsContactInvalid(const b2ParticleContact& contact)
+                        IsContactInvalid: function (contact) {
+                            return contact.indexA < 0 || contact.indexB < 0;
+                        },
+                        ///static bool IsBodyContactInvalid(const b2ParticleBodyContact& contact)
+                        IsBodyContactInvalid: function (contact) {
+                            return contact.index < 0;
+                        },
+                        ///static bool IsPairInvalid(const b2ParticlePair& pair)
+                        IsPairInvalid: function (pair) {
+                            return pair.indexA < 0 || pair.indexB < 0;
+                        },
+                        ///static bool IsTriadInvalid(const b2ParticleTriad& triad)
+                        IsTriadInvalid: function (triad) {
+                            return triad.indexA < 0 || triad.indexB < 0 || triad.indexC < 0;
+                        }
+                    };
+                    // update proxies
+                    for (let k = 0; k < this.m_proxyBuffer.count; k++) {
+                        let proxy = this.m_proxyBuffer.data[k];
+                        proxy.index = newIndices[proxy.index];
+                    }
+                    this.m_proxyBuffer.RemoveIf(Test.IsProxyInvalid);
+                    // update contacts
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        contact.indexA = newIndices[contact.indexA];
+                        contact.indexB = newIndices[contact.indexB];
+                    }
+                    this.m_contactBuffer.RemoveIf(Test.IsContactInvalid);
+                    // update particle-body contacts
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        contact.index = newIndices[contact.index];
+                    }
+                    this.m_bodyContactBuffer.RemoveIf(Test.IsBodyContactInvalid);
+                    // update pairs
+                    for (let k = 0; k < this.m_pairBuffer.count; k++) {
+                        let pair = this.m_pairBuffer.data[k];
+                        pair.indexA = newIndices[pair.indexA];
+                        pair.indexB = newIndices[pair.indexB];
+                    }
+                    this.m_pairBuffer.RemoveIf(Test.IsPairInvalid);
+                    // update triads
+                    for (let k = 0; k < this.m_triadBuffer.count; k++) {
+                        let triad = this.m_triadBuffer.data[k];
+                        triad.indexA = newIndices[triad.indexA];
+                        triad.indexB = newIndices[triad.indexB];
+                        triad.indexC = newIndices[triad.indexC];
+                    }
+                    this.m_triadBuffer.RemoveIf(Test.IsTriadInvalid);
+                    // Update lifetime indices.
+                    if (this.m_indexByExpirationTimeBuffer.data) {
+                        let writeOffset = 0;
+                        for (let readOffset = 0; readOffset < this.m_count; readOffset++) {
+                            let newIndex = newIndices[this.m_indexByExpirationTimeBuffer.data[readOffset]];
+                            if (newIndex !== b2Settings_37.b2_invalidParticleIndex) {
+                                this.m_indexByExpirationTimeBuffer.data[writeOffset++] = newIndex;
+                            }
+                        }
+                    }
+                    // update groups
+                    for (let group = this.m_groupList; group; group = group.GetNext()) {
+                        let firstIndex = newCount;
+                        let lastIndex = 0;
+                        let modified = false;
+                        for (let i = group.m_firstIndex; i < group.m_lastIndex; i++) {
+                            let j = newIndices[i];
+                            if (j >= 0) {
+                                firstIndex = b2Math_34.b2Min(firstIndex, j);
+                                lastIndex = b2Math_34.b2Max(lastIndex, j + 1);
+                            }
+                            else {
+                                modified = true;
+                            }
+                        }
+                        if (firstIndex < lastIndex) {
+                            group.m_firstIndex = firstIndex;
+                            group.m_lastIndex = lastIndex;
+                            if (modified) {
+                                if (group.m_groupFlags & 1 /* b2_solidParticleGroup */) {
+                                    this.SetGroupFlags(group, group.m_groupFlags | 16 /* b2_particleGroupNeedsUpdateDepth */);
+                                }
+                            }
+                        }
+                        else {
+                            group.m_firstIndex = 0;
+                            group.m_lastIndex = 0;
+                            if (!(group.m_groupFlags & 4 /* b2_particleGroupCanBeEmpty */)) {
+                                this.SetGroupFlags(group, group.m_groupFlags | 8 /* b2_particleGroupWillBeDestroyed */);
+                            }
+                        }
+                    }
+                    // update particle count
+                    this.m_count = newCount;
+                    ///m_world.m_stackAllocator.Free(newIndices);
+                    this.m_allParticleFlags = allParticleFlags;
+                    this.m_needsUpdateAllParticleFlags = false;
+                    // destroy bodies with no particles
+                    for (let group = this.m_groupList; group;) {
+                        let next = group.GetNext();
+                        if (group.m_groupFlags & 8 /* b2_particleGroupWillBeDestroyed */) {
+                            this.DestroyParticleGroup(group);
+                        }
+                        group = next;
+                    }
+                }
+                /**
+                 * Destroy all particles which have outlived their lifetimes set
+                 * by SetParticleLifetime().
+                 */
+                SolveLifetimes(step) {
+                    b2Assert(this.m_expirationTimeBuffer.data !== null);
+                    b2Assert(this.m_indexByExpirationTimeBuffer.data !== null);
+                    // Update the time elapsed.
+                    this.m_timeElapsed = this.LifetimeToExpirationTime(step.dt);
+                    // Get the floor (non-fractional component) of the elapsed time.
+                    let quantizedTimeElapsed = this.GetQuantizedTimeElapsed();
+                    let expirationTimes = this.m_expirationTimeBuffer.data;
+                    let expirationTimeIndices = this.m_indexByExpirationTimeBuffer.data;
+                    let particleCount = this.GetParticleCount();
+                    // Sort the lifetime buffer if it's required.
+                    if (this.m_expirationTimeBufferRequiresSorting) {
+                        ///const ExpirationTimeComparator expirationTimeComparator(expirationTimes);
+                        ///std::sort(expirationTimeIndices, expirationTimeIndices + particleCount, expirationTimeComparator);
+                        /**
+                         * Compare the lifetime of particleIndexA and particleIndexB
+                         * returning true if the lifetime of A is greater than B for
+                         * particles that will expire.  If either particle's lifetime is
+                         * infinite (<= 0.0f) this function return true if the lifetime
+                         * of A is lesser than B. When used with std::sort() this
+                         * results in an array of particle indicies sorted in reverse
+                         * order by particle lifetime.
+                         *
+                         * For example, the set of lifetimes
+                         * (1.0, 0.7, 0.3, 0.0, -1.0, 2.0)
+                         * would be sorted as
+                         * (0.0, 1.0, -2.0, 1.0, 0.7, 0.3)
+                         */
+                        let ExpirationTimeComparator = function (particleIndexA, particleIndexB) {
+                            let expirationTimeA = expirationTimes[particleIndexA];
+                            let expirationTimeB = expirationTimes[particleIndexB];
+                            let infiniteExpirationTimeA = expirationTimeA <= 0.0;
+                            let infiniteExpirationTimeB = expirationTimeB <= 0.0;
+                            return infiniteExpirationTimeA === infiniteExpirationTimeB ?
+                                expirationTimeA > expirationTimeB : infiniteExpirationTimeA;
+                        };
+                        std_sort(expirationTimeIndices, 0, particleCount, ExpirationTimeComparator);
+                        this.m_expirationTimeBufferRequiresSorting = false;
+                    }
+                    // Destroy particles which have expired.
+                    for (let i = particleCount - 1; i >= 0; --i) {
+                        let particleIndex = expirationTimeIndices[i];
+                        let expirationTime = expirationTimes[particleIndex];
+                        // If no particles need to be destroyed, skip this.
+                        if (quantizedTimeElapsed < expirationTime || expirationTime <= 0) {
+                            break;
+                        }
+                        // Destroy this particle.
+                        this.DestroyParticle(particleIndex);
+                    }
+                }
+                RotateBuffer(start, mid, end) {
+                    // move the particles assigned to the given group toward the end of array
+                    if (start === mid || mid === end) {
+                        return;
+                    }
+                    b2Assert(mid >= start && mid <= end);
+                    function newIndices(i) {
+                        if (i < start) {
+                            return i;
+                        }
+                        else if (i < mid) {
+                            return i + end - mid;
+                        }
+                        else if (i < end) {
+                            return i + start - mid;
+                        }
+                        else {
+                            return i;
+                        }
+                    }
+                    ///std::rotate(m_flagsBuffer.data + start, m_flagsBuffer.data + mid, m_flagsBuffer.data + end);
+                    std_rotate(this.m_flagsBuffer.data, start, mid, end);
+                    if (this.m_lastBodyContactStepBuffer.data) {
+                        ///std::rotate(m_lastBodyContactStepBuffer.data + start, m_lastBodyContactStepBuffer.data + mid, m_lastBodyContactStepBuffer.data + end);
+                        std_rotate(this.m_lastBodyContactStepBuffer.data, start, mid, end);
+                    }
+                    if (this.m_bodyContactCountBuffer.data) {
+                        ///std::rotate(m_bodyContactCountBuffer.data + start, m_bodyContactCountBuffer.data + mid, m_bodyContactCountBuffer.data + end);
+                        std_rotate(this.m_bodyContactCountBuffer.data, start, mid, end);
+                    }
+                    if (this.m_consecutiveContactStepsBuffer.data) {
+                        ///std::rotate(m_consecutiveContactStepsBuffer.data + start, m_consecutiveContactStepsBuffer.data + mid, m_consecutiveContactStepsBuffer.data + end);
+                        std_rotate(this.m_consecutiveContactStepsBuffer.data, start, mid, end);
+                    }
+                    ///std::rotate(m_positionBuffer.data + start, m_positionBuffer.data + mid, m_positionBuffer.data + end);
+                    std_rotate(this.m_positionBuffer.data, start, mid, end);
+                    ///std::rotate(m_velocityBuffer.data + start, m_velocityBuffer.data + mid, m_velocityBuffer.data + end);
+                    std_rotate(this.m_velocityBuffer.data, start, mid, end);
+                    ///std::rotate(m_groupBuffer + start, m_groupBuffer + mid, m_groupBuffer + end);
+                    std_rotate(this.m_groupBuffer, start, mid, end);
+                    if (this.m_hasForce) {
+                        ///std::rotate(m_forceBuffer + start, m_forceBuffer + mid, m_forceBuffer + end);
+                        std_rotate(this.m_forceBuffer, start, mid, end);
+                    }
+                    if (this.m_staticPressureBuffer) {
+                        ///std::rotate(m_staticPressureBuffer + start, m_staticPressureBuffer + mid, m_staticPressureBuffer + end);
+                        std_rotate(this.m_staticPressureBuffer, start, mid, end);
+                    }
+                    if (this.m_depthBuffer) {
+                        ///std::rotate(m_depthBuffer + start, m_depthBuffer + mid, m_depthBuffer + end);
+                        std_rotate(this.m_depthBuffer, start, mid, end);
+                    }
+                    if (this.m_colorBuffer.data) {
+                        ///std::rotate(m_colorBuffer.data + start, m_colorBuffer.data + mid, m_colorBuffer.data + end);
+                        std_rotate(this.m_colorBuffer.data, start, mid, end);
+                    }
+                    if (this.m_userDataBuffer.data) {
+                        ///std::rotate(m_userDataBuffer.data + start, m_userDataBuffer.data + mid, m_userDataBuffer.data + end);
+                        std_rotate(this.m_userDataBuffer.data, start, mid, end);
+                    }
+                    // Update handle indices.
+                    if (this.m_handleIndexBuffer.data) {
+                        ///std::rotate(m_handleIndexBuffer.data + start, m_handleIndexBuffer.data + mid, m_handleIndexBuffer.data + end);
+                        std_rotate(this.m_handleIndexBuffer.data, start, mid, end);
+                        for (let i = start; i < end; ++i) {
+                            let handle = this.m_handleIndexBuffer.data[i];
+                            if (handle)
+                                handle.SetIndex(newIndices(handle.GetIndex()));
+                        }
+                    }
+                    if (this.m_expirationTimeBuffer.data) {
+                        ///std::rotate(m_expirationTimeBuffer.data + start, m_expirationTimeBuffer.data + mid, m_expirationTimeBuffer.data + end);
+                        std_rotate(this.m_expirationTimeBuffer.data, start, mid, end);
+                        // Update expiration time buffer indices.
+                        let particleCount = this.GetParticleCount();
+                        let indexByExpirationTime = this.m_indexByExpirationTimeBuffer.data;
+                        for (let i = 0; i < particleCount; ++i) {
+                            indexByExpirationTime[i] = newIndices(indexByExpirationTime[i]);
+                        }
+                    }
+                    // update proxies
+                    for (let k = 0; k < this.m_proxyBuffer.count; k++) {
+                        let proxy = this.m_proxyBuffer.data[k];
+                        proxy.index = newIndices(proxy.index);
+                    }
+                    // update contacts
+                    for (let k = 0; k < this.m_contactBuffer.count; k++) {
+                        let contact = this.m_contactBuffer.data[k];
+                        contact.indexA = newIndices(contact.indexA);
+                        contact.indexB = newIndices(contact.indexB);
+                    }
+                    // update particle-body contacts
+                    for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
+                        let contact = this.m_bodyContactBuffer.data[k];
+                        contact.index = newIndices(contact.index);
+                    }
+                    // update pairs
+                    for (let k = 0; k < this.m_pairBuffer.count; k++) {
+                        let pair = this.m_pairBuffer.data[k];
+                        pair.indexA = newIndices(pair.indexA);
+                        pair.indexB = newIndices(pair.indexB);
+                    }
+                    // update triads
+                    for (let k = 0; k < this.m_triadBuffer.count; k++) {
+                        let triad = this.m_triadBuffer.data[k];
+                        triad.indexA = newIndices(triad.indexA);
+                        triad.indexB = newIndices(triad.indexB);
+                        triad.indexC = newIndices(triad.indexC);
+                    }
+                    // update groups
+                    for (let group = this.m_groupList; group; group = group.GetNext()) {
+                        group.m_firstIndex = newIndices(group.m_firstIndex);
+                        group.m_lastIndex = newIndices(group.m_lastIndex - 1) + 1;
+                    }
+                }
+                GetCriticalVelocity(step) {
+                    return this.m_particleDiameter * step.inv_dt;
+                }
+                GetCriticalVelocitySquared(step) {
+                    let velocity = this.GetCriticalVelocity(step);
+                    return velocity * velocity;
+                }
+                GetCriticalPressure(step) {
+                    return this.m_def.density * this.GetCriticalVelocitySquared(step);
+                }
+                GetParticleStride() {
+                    return b2Settings_38.b2_particleStride * this.m_particleDiameter;
+                }
+                GetParticleMass() {
+                    let stride = this.GetParticleStride();
+                    return this.m_def.density * stride * stride;
+                }
+                GetParticleInvMass() {
+                    ///return 1.777777 * this.m_inverseDensity * this.m_inverseDiameter * this.m_inverseDiameter;
+                    // mass = density * stride^2, so we take the inverse of this.
+                    let inverseStride = this.m_inverseDiameter * (1.0 / b2Settings_38.b2_particleStride);
+                    return this.m_inverseDensity * inverseStride * inverseStride;
+                }
+                /**
+                 * Get the world's contact filter if any particles with the
+                 * b2_contactFilterParticle flag are present in the system.
+                 */
+                GetFixtureContactFilter() {
+                    return (this.m_allParticleFlags & 65536 /* b2_fixtureContactFilterParticle */) ?
+                        this.m_world.m_contactManager.m_contactFilter : null;
+                }
+                /**
+                 * Get the world's contact filter if any particles with the
+                 * b2_particleContactFilterParticle flag are present in the
+                 * system.
+                 */
+                GetParticleContactFilter() {
+                    return (this.m_allParticleFlags & 131072 /* b2_particleContactFilterParticle */) ?
+                        this.m_world.m_contactManager.m_contactFilter : null;
+                }
+                /**
+                 * Get the world's contact listener if any particles with the
+                 * b2_fixtureContactListenerParticle flag are present in the
+                 * system.
+                 */
+                GetFixtureContactListener() {
+                    return (this.m_allParticleFlags & 16384 /* b2_fixtureContactListenerParticle */) ?
+                        this.m_world.m_contactManager.m_contactListener : null;
+                }
+                /**
+                 * Get the world's contact listener if any particles with the
+                 * b2_particleContactListenerParticle flag are present in the
+                 * system.
+                 */
+                GetParticleContactListener() {
+                    return (this.m_allParticleFlags & 32768 /* b2_particleContactListenerParticle */) ?
+                        this.m_world.m_contactManager.m_contactListener : null;
+                }
+                SetUserOverridableBuffer(buffer, newData, newCapacity) {
+                    b2Assert(((newData !== null) && (newCapacity > 0)) || ((newData === null) && (newCapacity === 0)));
+                    ///if (!buffer.userSuppliedCapacity)
+                    ///{
+                    ///this.m_world.m_blockAllocator.Free(buffer.data, sizeof(T) * m_internalAllocatedCapacity);
+                    ///}
+                    buffer.data = newData;
+                    buffer.userSuppliedCapacity = newCapacity;
+                }
+                SetGroupFlags(group, newFlags) {
+                    let oldFlags = group.m_groupFlags;
+                    if ((oldFlags ^ newFlags) & 1 /* b2_solidParticleGroup */) {
+                        // If the b2_solidParticleGroup flag changed schedule depth update.
+                        newFlags |= 16 /* b2_particleGroupNeedsUpdateDepth */;
+                    }
+                    if (oldFlags & ~newFlags) {
+                        // If any flags might be removed
+                        this.m_needsUpdateAllGroupFlags = true;
+                    }
+                    if (~this.m_allGroupFlags & newFlags) {
+                        // If any flags were added
+                        if (newFlags & 1 /* b2_solidParticleGroup */) {
+                            this.m_depthBuffer = this.RequestBuffer(this.m_depthBuffer);
+                        }
+                        this.m_allGroupFlags |= newFlags;
+                    }
+                    group.m_groupFlags = newFlags;
+                }
+                static BodyContactCompare(lhs, rhs) {
+                    if (lhs.index === rhs.index) {
+                        // Subsort by weight, decreasing.
+                        return lhs.weight > rhs.weight;
+                    }
+                    return lhs.index < rhs.index;
+                }
+                RemoveSpuriousBodyContacts() {
+                    // At this point we have a list of contact candidates based on AABB
+                    // overlap.The AABB query that  generated this returns all collidable
+                    // fixtures overlapping particle bounding boxes.  This breaks down around
+                    // vertices where two shapes intersect, such as a "ground" surface made
+                    // of multiple b2PolygonShapes; it potentially applies a lot of spurious
+                    // impulses from normals that should not actually contribute.  See the
+                    // Ramp example in Testbed.
+                    //
+                    // To correct for this, we apply this algorithm:
+                    //   * sort contacts by particle and subsort by weight (nearest to farthest)
+                    //   * for each contact per particle:
+                    //      - project a point at the contact distance along the inverse of the
+                    //        contact normal
+                    //      - if this intersects the fixture that generated the contact, apply
+                    //         it, otherwise discard as impossible
+                    //      - repeat for up to n nearest contacts, currently we get good results
+                    //        from n=3.
+                    ///std::sort(m_bodyContactBuffer.Begin(), m_bodyContactBuffer.End(), b2ParticleSystem::BodyContactCompare);
+                    std_sort(this.m_bodyContactBuffer.data, 0, this.m_bodyContactBuffer.count, b2ParticleSystem.BodyContactCompare);
+                    ///int32 discarded = 0;
+                    ///std::remove_if(m_bodyContactBuffer.Begin(), m_bodyContactBuffer.End(), b2ParticleBodyContactRemovePredicate(this, &discarded));
+                    ///
+                    ///m_bodyContactBuffer.SetCount(m_bodyContactBuffer.GetCount() - discarded);
+                    let s_n = b2ParticleSystem.RemoveSpuriousBodyContacts_s_n;
+                    let s_pos = b2ParticleSystem.RemoveSpuriousBodyContacts_s_pos;
+                    let s_normal = b2ParticleSystem.RemoveSpuriousBodyContacts_s_normal;
+                    // Max number of contacts processed per particle, from nearest to farthest.
+                    // This must be at least 2 for correctness with concave shapes; 3 was
+                    // experimentally arrived at as looking reasonable.
+                    let k_maxContactsPerPoint = 3;
+                    let system = this;
+                    // Index of last particle processed.
+                    let lastIndex = -1;
+                    // Number of contacts processed for the current particle.
+                    let currentContacts = 0;
+                    // Output the number of discarded contacts.
+                    let discarded = 0;
+                    let b2ParticleBodyContactRemovePredicate = function (contact) {
+                        // This implements the selection criteria described in
+                        // RemoveSpuriousBodyContacts().
+                        // This functor is iterating through a list of Body contacts per
+                        // Particle, ordered from near to far.  For up to the maximum number of
+                        // contacts we allow per point per step, we verify that the contact
+                        // normal of the Body that genenerated the contact makes physical sense
+                        // by projecting a point back along that normal and seeing if it
+                        // intersects the fixture generating the contact.
+                        if (contact.index !== lastIndex) {
+                            currentContacts = 0;
+                            lastIndex = contact.index;
+                        }
+                        if (currentContacts++ > k_maxContactsPerPoint) {
+                            ++discarded;
+                            return true;
+                        }
+                        // Project along inverse normal (as returned in the contact) to get the
+                        // point to check.
+                        ///b2Vec2 n = contact.normal;
+                        let n = s_n.Copy(contact.normal);
+                        // weight is 1-(inv(diameter) * distance)
+                        ///n *= system.m_particleDiameter * (1 - contact.weight);
+                        n.SelfMul(system.m_particleDiameter * (1 - contact.weight));
+                        ///b2Vec2 pos = system.m_positionBuffer.data[contact.index] + n;
+                        let pos = b2Math_34.b2Vec2.AddVV(system.m_positionBuffer.data[contact.index], n, s_pos);
+                        // pos is now a point projected back along the contact normal to the
+                        // contact distance. If the surface makes sense for a contact, pos will
+                        // now lie on or in the fixture generating
+                        if (!contact.fixture.TestPoint(pos)) {
+                            let childCount = contact.fixture.GetShape().GetChildCount();
+                            for (let childIndex = 0; childIndex < childCount; childIndex++) {
+                                let normal = s_normal;
+                                let distance = contact.fixture.ComputeDistance(pos, normal, childIndex);
+                                if (distance < b2Settings_37.b2_linearSlop) {
+                                    return false;
+                                }
+                            }
+                            ++discarded;
+                            return true;
+                        }
+                        return false;
+                    };
+                    this.m_bodyContactBuffer.count = std_remove_if(this.m_bodyContactBuffer.data, b2ParticleBodyContactRemovePredicate, this.m_bodyContactBuffer.count);
+                }
+                DetectStuckParticle(particle) {
+                    // Detect stuck particles
+                    //
+                    // The basic algorithm is to allow the user to specify an optional
+                    // threshold where we detect whenever a particle is contacting
+                    // more than one fixture for more than threshold consecutive
+                    // steps. This is considered to be "stuck", and these are put
+                    // in a list the user can query per step, if enabled, to deal with
+                    // such particles.
+                    if (this.m_stuckThreshold <= 0) {
+                        return;
+                    }
+                    // Get the state variables for this particle.
+                    ///int32 * const consecutiveCount = &m_consecutiveContactStepsBuffer.data[particle];
+                    ///int32 * const lastStep = &m_lastBodyContactStepBuffer.data[particle];
+                    ///int32 * const bodyCount = &m_bodyContactCountBuffer.data[particle];
+                    // This is only called when there is a body contact for this particle.
+                    ///++(*bodyCount);
+                    ++this.m_bodyContactCountBuffer.data[particle];
+                    // We want to only trigger detection once per step, the first time we
+                    // contact more than one fixture in a step for a given particle.
+                    ///if (*bodyCount === 2)
+                    if (this.m_bodyContactCountBuffer.data[particle] === 2) {
+                        ///++(*consecutiveCount);
+                        ++this.m_consecutiveContactStepsBuffer.data[particle];
+                        ///if (*consecutiveCount > m_stuckThreshold)
+                        if (this.m_consecutiveContactStepsBuffer.data[particle] > this.m_stuckThreshold) {
+                            ///int32& newStuckParticle = m_stuckParticleBuffer.Append();
+                            ///newStuckParticle = particle;
+                            this.m_stuckParticleBuffer.data[this.m_stuckParticleBuffer.Append()] = particle;
+                        }
+                    }
+                    ///*lastStep = m_timestamp;
+                    this.m_lastBodyContactStepBuffer.data[particle] = this.m_timestamp;
+                }
+                /**
+                 * Determine whether a particle index is valid.
+                 */
+                ValidateParticleIndex(index) {
+                    return index >= 0 && index < this.GetParticleCount() &&
+                        index !== b2Settings_37.b2_invalidParticleIndex;
+                }
+                /**
+                 * Get the time elapsed in
+                 * b2ParticleSystemDef::lifetimeGranularity.
+                 */
+                GetQuantizedTimeElapsed() {
+                    ///return (int32)(m_timeElapsed >> 32);
+                    return Math.floor(this.m_timeElapsed / 0x100000000);
+                }
+                /**
+                 * Convert a lifetime in seconds to an expiration time.
+                 */
+                LifetimeToExpirationTime(lifetime) {
+                    ///return m_timeElapsed + (int64)((lifetime / m_def.lifetimeGranularity) * (float32)(1LL << 32));
+                    return this.m_timeElapsed + Math.floor(((lifetime / this.m_def.lifetimeGranularity) * 0x100000000));
+                }
+                ForceCanBeApplied(flags) {
+                    return !(flags & 4 /* b2_wallParticle */);
+                }
+                PrepareForceBuffer() {
+                    if (!this.m_hasForce) {
+                        ///memset(m_forceBuffer, 0, sizeof(*m_forceBuffer) * m_count);
+                        for (let i = 0; i < this.m_count; i++) {
+                            this.m_forceBuffer[i].SetZero();
+                        }
+                        this.m_hasForce = true;
+                    }
+                }
+                IsRigidGroup(group) {
+                    return (group !== null) && ((group.m_groupFlags & 2 /* b2_rigidParticleGroup */) !== 0);
+                }
+                GetLinearVelocity(group, particleIndex, point, out) {
+                    if (this.IsRigidGroup(group)) {
+                        return group.GetLinearVelocityFromWorldPoint(point, out);
+                    }
+                    else {
+                        ///return m_velocityBuffer.data[particleIndex];
+                        return out.Copy(this.m_velocityBuffer.data[particleIndex]);
+                    }
+                }
+                InitDampingParameter(invMass, invInertia, tangentDistance, mass, inertia, center, point, normal) {
+                    ///*invMass = mass > 0 ? 1 / mass : 0;
+                    invMass[0] = mass > 0 ? 1 / mass : 0;
+                    ///*invInertia = inertia > 0 ? 1 / inertia : 0;
+                    invInertia[0] = inertia > 0 ? 1 / inertia : 0;
+                    ///*tangentDistance = b2Cross(point - center, normal);
+                    tangentDistance[0] = b2Math_34.b2Vec2.CrossVV(b2Math_34.b2Vec2.SubVV(point, center, b2Math_34.b2Vec2.s_t0), normal);
+                }
+                InitDampingParameterWithRigidGroupOrParticle(invMass, invInertia, tangentDistance, isRigidGroup, group, particleIndex, point, normal) {
+                    if (isRigidGroup) {
+                        this.InitDampingParameter(invMass, invInertia, tangentDistance, group.GetMass(), group.GetInertia(), group.GetCenter(), point, normal);
+                    }
+                    else {
+                        let flags = this.m_flagsBuffer.data[particleIndex];
+                        this.InitDampingParameter(invMass, invInertia, tangentDistance, flags & 4 /* b2_wallParticle */ ? 0 : this.GetParticleMass(), 0, point, point, normal);
+                    }
+                }
+                ComputeDampingImpulse(invMassA, invInertiaA, tangentDistanceA, invMassB, invInertiaB, tangentDistanceB, normalVelocity) {
+                    let invMass = invMassA + invInertiaA * tangentDistanceA * tangentDistanceA +
+                        invMassB + invInertiaB * tangentDistanceB * tangentDistanceB;
+                    return invMass > 0 ? normalVelocity / invMass : 0;
+                }
+                ApplyDamping(invMass, invInertia, tangentDistance, isRigidGroup, group, particleIndex, impulse, normal) {
+                    if (isRigidGroup) {
+                        ///group.m_linearVelocity += impulse * invMass * normal;
+                        group.m_linearVelocity.SelfMulAdd(impulse * invMass, normal);
+                        ///group.m_angularVelocity += impulse * tangentDistance * invInertia;
+                        group.m_angularVelocity += impulse * tangentDistance * invInertia;
+                    }
+                    else {
+                        ///m_velocityBuffer.data[particleIndex] += impulse * invMass * normal;
+                        this.m_velocityBuffer.data[particleIndex].SelfMulAdd(impulse * invMass, normal);
+                    }
+                }
+            };
+            b2ParticleSystem.xTruncBits = 12;
+            b2ParticleSystem.yTruncBits = 12;
+            b2ParticleSystem.tagBits = 8 * 4; // 8u * sizeof(uint32);
+            b2ParticleSystem.yOffset = 1 << (b2ParticleSystem.yTruncBits - 1);
+            b2ParticleSystem.yShift = b2ParticleSystem.tagBits - b2ParticleSystem.yTruncBits;
+            b2ParticleSystem.xShift = b2ParticleSystem.tagBits - b2ParticleSystem.yTruncBits - b2ParticleSystem.xTruncBits;
+            b2ParticleSystem.xScale = 1 << b2ParticleSystem.xShift;
+            b2ParticleSystem.xOffset = b2ParticleSystem.xScale * (1 << (b2ParticleSystem.xTruncBits - 1));
+            b2ParticleSystem.yMask = ((1 << b2ParticleSystem.yTruncBits) - 1) << b2ParticleSystem.yShift;
+            b2ParticleSystem.xMask = ~b2ParticleSystem.yMask;
+            b2ParticleSystem.DestroyParticlesInShape_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.CreateParticleGroup_s_transform = new b2Math_34.b2Transform();
+            b2ParticleSystem.ComputeCollisionEnergy_s_v = new b2Math_34.b2Vec2();
+            b2ParticleSystem.QueryShapeAABB_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.QueryPointAABB_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.RayCast_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.RayCast_s_p = new b2Math_34.b2Vec2();
+            b2ParticleSystem.RayCast_s_v = new b2Math_34.b2Vec2();
+            b2ParticleSystem.RayCast_s_n = new b2Math_34.b2Vec2();
+            b2ParticleSystem.RayCast_s_point = new b2Math_34.b2Vec2();
+            /**
+             * All particle types that require creating pairs
+             */
+            b2ParticleSystem.k_pairFlags = 8 /* b2_springParticle */;
+            /**
+             * All particle types that require creating triads
+             *
+             * @type {number}
+             */
+            b2ParticleSystem.k_triadFlags = 16 /* b2_elasticParticle */;
+            /**
+             * All particle types that do not produce dynamic pressure
+             *
+             * @type {number}
+             */
+            b2ParticleSystem.k_noPressureFlags = 64 /* b2_powderParticle */ | 128 /* b2_tensileParticle */;
+            /**
+             * All particle types that apply extra damping force with bodies
+             *
+             * @type {number}
+             */
+            b2ParticleSystem.k_extraDampingFlags = 2048 /* b2_staticPressureParticle */;
+            /**
+             * @type {number}
+             */
+            b2ParticleSystem.k_barrierWallFlags = 1024 /* b2_barrierParticle */ | 4 /* b2_wallParticle */;
+            b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_edge = new b2EdgeShape_4.b2EdgeShape();
+            b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_d = new b2Math_34.b2Vec2();
+            b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_p = new b2Math_34.b2Vec2();
+            b2ParticleSystem.CreateParticlesFillShapeForGroup_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.CreateParticlesFillShapeForGroup_s_p = new b2Math_34.b2Vec2();
+            b2ParticleSystem.UpdatePairsAndTriads_s_dab = new b2Math_34.b2Vec2();
+            b2ParticleSystem.UpdatePairsAndTriads_s_dbc = new b2Math_34.b2Vec2();
+            b2ParticleSystem.UpdatePairsAndTriads_s_dca = new b2Math_34.b2Vec2();
+            b2ParticleSystem.AddContact_s_d = new b2Math_34.b2Vec2();
+            b2ParticleSystem.UpdateBodyContacts_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.Solve_s_subStep = new b2TimeStep_4.b2TimeStep();
+            b2ParticleSystem.SolveCollision_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.SolveGravity_s_gravity = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_aabb = new b2Collision_11.b2AABB();
+            b2ParticleSystem.SolveBarrier_s_va = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_vb = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_pba = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_vba = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_vc = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_pca = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_vca = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_qba = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_qca = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_dv = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveBarrier_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolvePressure_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveDamping_s_v = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveDamping_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRigidDamping_s_t0 = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRigidDamping_s_t1 = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRigidDamping_s_p = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRigidDamping_s_v = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveExtraDamping_s_v = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveExtraDamping_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRigid_s_position = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRigid_s_rotation = new b2Math_34.b2Rot();
+            b2ParticleSystem.SolveRigid_s_transform = new b2Math_34.b2Transform();
+            b2ParticleSystem.SolveRigid_s_velocityTransform = new b2Math_34.b2Transform();
+            b2ParticleSystem.SolveElastic_s_pa = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveElastic_s_pb = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveElastic_s_pc = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveElastic_s_r = new b2Math_34.b2Rot();
+            b2ParticleSystem.SolveElastic_s_t0 = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveSpring_s_pa = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveSpring_s_pb = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveSpring_s_d = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveSpring_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveTensile_s_weightedNormal = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveTensile_s_s = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveTensile_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveViscous_s_v = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveViscous_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveRepulsive_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolvePowder_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.SolveSolid_s_f = new b2Math_34.b2Vec2();
+            b2ParticleSystem.RemoveSpuriousBodyContacts_s_n = new b2Math_34.b2Vec2();
+            b2ParticleSystem.RemoveSpuriousBodyContacts_s_pos = new b2Math_34.b2Vec2();
+            b2ParticleSystem.RemoveSpuriousBodyContacts_s_normal = new b2Math_34.b2Vec2();
+            exports_51("b2ParticleSystem", b2ParticleSystem);
+            (function (b2ParticleSystem) {
+                class UserOverridableBuffer {
+                    constructor() {
+                        this.data = null;
+                        this.userSuppliedCapacity = 0;
+                    }
+                }
+                b2ParticleSystem.UserOverridableBuffer = UserOverridableBuffer;
+                class Proxy {
+                    constructor() {
+                        this.index = b2Settings_37.b2_invalidParticleIndex;
+                        this.tag = 0;
+                    }
+                    static CompareProxyProxy(a, b) {
+                        return a.tag < b.tag;
+                    }
+                    static CompareTagProxy(a, b) {
+                        return a < b.tag;
+                    }
+                    static CompareProxyTag(a, b) {
+                        return a.tag < b;
+                    }
+                }
+                b2ParticleSystem.Proxy = Proxy;
+                class InsideBoundsEnumerator {
+                    /**
+                     * InsideBoundsEnumerator enumerates all particles inside the
+                     * given bounds.
+                     *
+                     * Construct an enumerator with bounds of tags and a range of
+                     * proxies.
+                     */
+                    constructor(system, lower, upper, first, last) {
+                        this.m_system = system;
+                        this.m_xLower = (lower & b2ParticleSystem.xMask) >>> 0;
+                        this.m_xUpper = (upper & b2ParticleSystem.xMask) >>> 0;
+                        this.m_yLower = (lower & b2ParticleSystem.yMask) >>> 0;
+                        this.m_yUpper = (upper & b2ParticleSystem.yMask) >>> 0;
+                        this.m_first = first;
+                        this.m_last = last;
+                        b2Assert(this.m_first <= this.m_last);
+                    }
+                    /**
+                     * Get index of the next particle. Returns
+                     * b2_invalidParticleIndex if there are no more particles.
+                     */
+                    GetNext() {
+                        while (this.m_first < this.m_last) {
+                            let xTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.xMask) >>> 0;
+                            ///#if B2_ASSERT_ENABLED
+                            ///let yTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.yMask) >>> 0;
+                            ///b2Assert(yTag >= this.m_yLower);
+                            ///b2Assert(yTag <= this.m_yUpper);
+                            ///#endif
+                            if (xTag >= this.m_xLower && xTag <= this.m_xUpper) {
+                                return (this.m_system.m_proxyBuffer.data[this.m_first++]).index;
+                            }
+                            this.m_first++;
+                        }
+                        return b2Settings_37.b2_invalidParticleIndex;
+                    }
+                }
+                b2ParticleSystem.InsideBoundsEnumerator = InsideBoundsEnumerator;
+                class ParticleListNode {
+                    constructor() {
+                        /**
+                         * The head of the list.
+                         */
+                        this.list = null;
+                        /**
+                         * The next node in the list.
+                         */
+                        this.next = null;
+                        /**
+                         * Number of entries in the list. Valid only for the node at the
+                         * head of the list.
+                         */
+                        this.count = 0;
+                        /**
+                         * Particle index.
+                         */
+                        this.index = 0;
+                    }
+                }
+                b2ParticleSystem.ParticleListNode = ParticleListNode;
+                /**
+                 * @constructor
+                 */
+                class FixedSetAllocator {
+                    Allocate(itemSize, count) {
+                        // TODO
+                        return count;
+                    }
+                    Clear() {
+                        // TODO
+                    }
+                    GetCount() {
+                        // TODO
+                        return 0;
+                    }
+                    Invalidate(itemIndex) {
+                        // TODO
+                    }
+                    GetValidBuffer() {
+                        // TODO
+                        return [];
+                    }
+                    GetBuffer() {
+                        // TODO
+                        return [];
+                    }
+                    SetCount(count) {
+                        // TODO
+                    }
+                }
+                b2ParticleSystem.FixedSetAllocator = FixedSetAllocator;
+                ;
+                class FixtureParticle {
+                    constructor(fixture, particle) {
+                        this.first = null;
+                        this.second = b2Settings_37.b2_invalidParticleIndex;
+                        this.first = fixture;
+                        this.second = particle;
+                    }
+                }
+                b2ParticleSystem.FixtureParticle = FixtureParticle;
+                ;
+                class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
+                    Initialize(bodyContactBuffer, flagsBuffer) {
+                        // TODO
+                    }
+                    Find(pair) {
+                        // TODO
+                        return b2Settings_37.b2_invalidParticleIndex;
+                    }
+                }
+                b2ParticleSystem.FixtureParticleSet = FixtureParticleSet;
+                ;
+                class ParticlePair {
+                    constructor(particleA, particleB) {
+                        this.first = b2Settings_37.b2_invalidParticleIndex;
+                        this.second = b2Settings_37.b2_invalidParticleIndex;
+                        this.first = particleA;
+                        this.second = particleB;
+                    }
+                }
+                b2ParticleSystem.ParticlePair = ParticlePair;
+                ;
+                class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
+                    Initialize(contactBuffer, flagsBuffer) {
+                        // TODO
+                    }
+                    /**
+                     * @return {number}
+                     * @param {b2ParticleSystem.ParticlePair} pair
+                     */
+                    Find(pair) {
+                        // TODO
+                        return b2Settings_37.b2_invalidParticleIndex;
+                    }
+                }
+                b2ParticleSystem.b2ParticlePairSet = b2ParticlePairSet;
+                class ConnectionFilter {
+                    /**
+                     * Is the particle necessary for connection?
+                     * A pair or a triad should contain at least one 'necessary'
+                     * particle.
+                     */
+                    IsNecessary(index) {
+                        return true;
+                    }
+                    /**
+                     * An additional condition for creating a pair.
+                     */
+                    ShouldCreatePair(a, b) {
+                        return true;
+                    }
+                    /**
+                     * An additional condition for creating a triad.
+                     */
+                    ShouldCreateTriad(a, b, c) {
+                        return true;
+                    }
+                }
+                b2ParticleSystem.ConnectionFilter = ConnectionFilter;
+                class DestroyParticlesInShapeCallback extends b2WorldCallbacks_5.b2QueryCallback {
+                    constructor(system, shape, xf, callDestructionListener) {
+                        super();
+                        this.m_system = null;
+                        this.m_shape = null;
+                        this.m_xf = null;
+                        this.m_callDestructionListener = false;
+                        this.m_destroyed = 0;
+                        this.m_system = system;
+                        this.m_shape = shape;
+                        this.m_xf = xf;
+                        this.m_callDestructionListener = callDestructionListener;
+                        this.m_destroyed = 0;
+                    }
+                    ReportFixture(fixture) {
+                        return false;
+                    }
+                    ReportParticle(particleSystem, index) {
+                        if (particleSystem !== this.m_system)
+                            return false;
+                        b2Assert(index >= 0 && index < this.m_system.m_count);
+                        if (this.m_shape.TestPoint(this.m_xf, this.m_system.m_positionBuffer.data[index])) {
+                            this.m_system.DestroyParticle(index, this.m_callDestructionListener);
+                            this.m_destroyed++;
+                        }
+                        return true;
+                    }
+                    Destroyed() {
+                        return this.m_destroyed;
+                    }
+                }
+                b2ParticleSystem.DestroyParticlesInShapeCallback = DestroyParticlesInShapeCallback;
+                ;
+                class JoinParticleGroupsFilter extends b2ParticleSystem.ConnectionFilter {
+                    constructor(threshold) {
+                        super();
+                        this.m_threshold = 0;
+                        this.m_threshold = threshold;
+                    }
+                    /**
+                     * An additional condition for creating a pair.
+                     */
+                    ShouldCreatePair(a, b) {
+                        return (a < this.m_threshold && this.m_threshold <= b) ||
+                            (b < this.m_threshold && this.m_threshold <= a);
+                    }
+                    /**
+                     * An additional condition for creating a triad.
+                     */
+                    ShouldCreateTriad(a, b, c) {
+                        return (a < this.m_threshold || b < this.m_threshold || c < this.m_threshold) &&
+                            (this.m_threshold <= a || this.m_threshold <= b || this.m_threshold <= c);
+                    }
+                }
+                b2ParticleSystem.JoinParticleGroupsFilter = JoinParticleGroupsFilter;
+                class CompositeShape extends b2Shape_8.b2Shape {
+                    constructor(shapes, shapeCount) {
+                        super(-1 /* e_unknown */, 0);
+                        this.m_shapes = null;
+                        this.m_shapeCount = 0;
+                        this.m_shapes = shapes;
+                        this.m_shapeCount = shapeCount;
+                    }
+                    Clone() {
+                        b2Assert(false);
+                        return null;
+                    }
+                    GetChildCount() {
+                        return 1;
+                    }
+                    /**
+                     * @see b2Shape::TestPoint
+                     */
+                    TestPoint(xf, p) {
+                        for (let i = 0; i < this.m_shapeCount; i++) {
+                            if (this.m_shapes[i].TestPoint(xf, p)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    /**
+                     * @see b2Shape::ComputeDistance
+                     */
+                    ComputeDistance(xf, p, normal, childIndex) {
+                        b2Assert(false);
+                        return 0;
+                    }
+                    /**
+                     * Implement b2Shape.
+                     */
+                    RayCast(output, input, xf, childIndex) {
+                        b2Assert(false);
+                        return false;
+                    }
+                    /**
+                     * @see b2Shape::ComputeAABB
+                     */
+                    ComputeAABB(aabb, xf, childIndex) {
+                        let s_subaabb = new b2Collision_11.b2AABB();
+                        aabb.lowerBound.x = +b2Settings_37.b2_maxFloat;
+                        aabb.lowerBound.y = +b2Settings_37.b2_maxFloat;
+                        aabb.upperBound.x = -b2Settings_37.b2_maxFloat;
+                        aabb.upperBound.y = -b2Settings_37.b2_maxFloat;
+                        b2Assert(childIndex === 0);
+                        for (let i = 0; i < this.m_shapeCount; i++) {
+                            let childCount = this.m_shapes[i].GetChildCount();
+                            for (let j = 0; j < childCount; j++) {
+                                let subaabb = s_subaabb;
+                                this.m_shapes[i].ComputeAABB(subaabb, xf, j);
+                                aabb.Combine1(subaabb);
+                            }
+                        }
+                    }
+                    /**
+                     * @see b2Shape::ComputeMass
+                     */
+                    ComputeMass(massData, density) {
+                        b2Assert(false);
+                    }
+                }
+                b2ParticleSystem.CompositeShape = CompositeShape;
+                class ReactiveFilter extends b2ParticleSystem.ConnectionFilter {
+                    constructor(flagsBuffer) {
+                        super();
+                        this.m_flagsBuffer = null;
+                        this.m_flagsBuffer = flagsBuffer;
+                    }
+                    IsNecessary(index) {
+                        return (this.m_flagsBuffer.data[index] & 4096 /* b2_reactiveParticle */) !== 0;
+                    }
+                }
+                b2ParticleSystem.ReactiveFilter = ReactiveFilter;
+                class UpdateBodyContactsCallback extends b2FixtureParticleQueryCallback {
+                    constructor(system, contactFilter) {
+                        super(system); // base class constructor
+                        this.m_contactFilter = contactFilter;
+                    }
+                    ShouldCollideFixtureParticle(fixture, particleSystem, particleIndex) {
+                        // Call the contact filter if it's set, to determine whether to
+                        // filter this contact.  Returns true if contact calculations should
+                        // be performed, false otherwise.
+                        if (this.m_contactFilter) {
+                            let flags = this.m_system.GetFlagsBuffer();
+                            if (flags[particleIndex] & 65536 /* b2_fixtureContactFilterParticle */) {
+                                return this.m_contactFilter.ShouldCollideFixtureParticle(fixture, this.m_system, particleIndex);
+                            }
+                        }
+                        return true;
+                    }
+                    ReportFixtureAndParticle(fixture, childIndex, a) {
+                        let s_n = b2ParticleSystem.UpdateBodyContactsCallback.ReportFixtureAndParticle_s_n;
+                        let s_rp = b2ParticleSystem.UpdateBodyContactsCallback.ReportFixtureAndParticle_s_rp;
+                        let ap = this.m_system.m_positionBuffer.data[a];
+                        let n = s_n;
+                        let d = fixture.ComputeDistance(ap, n, childIndex);
+                        if (d < this.m_system.m_particleDiameter && this.ShouldCollideFixtureParticle(fixture, this.m_system, a)) {
+                            let b = fixture.GetBody();
+                            let bp = b.GetWorldCenter();
+                            let bm = b.GetMass();
+                            let bI = b.GetInertia() - bm * b.GetLocalCenter().LengthSquared();
+                            let invBm = bm > 0 ? 1 / bm : 0;
+                            let invBI = bI > 0 ? 1 / bI : 0;
+                            let invAm = this.m_system.m_flagsBuffer.data[a] &
+                                4 /* b2_wallParticle */ ? 0 : this.m_system.GetParticleInvMass();
+                            ///b2Vec2 rp = ap - bp;
+                            let rp = b2Math_34.b2Vec2.SubVV(ap, bp, s_rp);
+                            let rpn = b2Math_34.b2Vec2.CrossVV(rp, n);
+                            let invM = invAm + invBm + invBI * rpn * rpn;
+                            ///b2ParticleBodyContact& contact = m_system.m_bodyContactBuffer.Append();
+                            let contact = this.m_system.m_bodyContactBuffer.data[this.m_system.m_bodyContactBuffer.Append()];
+                            contact.index = a;
+                            contact.body = b;
+                            contact.fixture = fixture;
+                            contact.weight = 1 - d * this.m_system.m_inverseDiameter;
+                            ///contact.normal = -n;
+                            contact.normal.Copy(n.SelfNeg());
+                            contact.mass = invM > 0 ? 1 / invM : 0;
+                            this.m_system.DetectStuckParticle(a);
+                        }
+                    }
+                }
+                UpdateBodyContactsCallback.ReportFixtureAndParticle_s_n = new b2Math_34.b2Vec2();
+                UpdateBodyContactsCallback.ReportFixtureAndParticle_s_rp = new b2Math_34.b2Vec2();
+                b2ParticleSystem.UpdateBodyContactsCallback = UpdateBodyContactsCallback;
+                class SolveCollisionCallback extends b2FixtureParticleQueryCallback {
+                    constructor(system, step) {
+                        super(system); // base class constructor
+                        this.m_step = step;
+                    }
+                    ReportFixtureAndParticle(fixture, childIndex, a) {
+                        let s_p1 = b2ParticleSystem.SolveCollisionCallback.ReportFixtureAndParticle_s_p1;
+                        let s_output = b2ParticleSystem.SolveCollisionCallback.ReportFixtureAndParticle_s_output;
+                        let s_input = b2ParticleSystem.SolveCollisionCallback.ReportFixtureAndParticle_s_input;
+                        let s_p = b2ParticleSystem.SolveCollisionCallback.ReportFixtureAndParticle_s_p;
+                        let s_v = b2ParticleSystem.SolveCollisionCallback.ReportFixtureAndParticle_s_v;
+                        let s_f = b2ParticleSystem.SolveCollisionCallback.ReportFixtureAndParticle_s_f;
+                        let body = fixture.GetBody();
+                        let ap = this.m_system.m_positionBuffer.data[a];
+                        let av = this.m_system.m_velocityBuffer.data[a];
+                        let output = s_output;
+                        let input = s_input;
+                        if (this.m_system.m_iterationIndex === 0) {
+                            // Put 'ap' in the local space of the previous frame
+                            ///b2Vec2 p1 = b2MulT(body.m_xf0, ap);
+                            let p1 = b2Math_34.b2Transform.MulTXV(body.m_xf0, ap, s_p1);
+                            if (fixture.GetShape().GetType() === 0 /* e_circleShape */) {
+                                // Make relative to the center of the circle
+                                ///p1 -= body.GetLocalCenter();
+                                p1.SelfSub(body.GetLocalCenter());
+                                // Re-apply rotation about the center of the circle
+                                ///p1 = b2Mul(body.m_xf0.q, p1);
+                                b2Math_34.b2Rot.MulRV(body.m_xf0.q, p1, p1);
+                                // Subtract rotation of the current frame
+                                ///p1 = b2MulT(body.m_xf.q, p1);
+                                b2Math_34.b2Rot.MulTRV(body.m_xf.q, p1, p1);
+                                // Return to local space
+                                ///p1 += body.GetLocalCenter();
+                                p1.SelfAdd(body.GetLocalCenter());
+                            }
+                            // Return to global space and apply rotation of current frame
+                            ///input.p1 = b2Mul(body.m_xf, p1);
+                            b2Math_34.b2Transform.MulXV(body.m_xf, p1, input.p1);
+                        }
+                        else {
+                            ///input.p1 = ap;
+                            input.p1.Copy(ap);
+                        }
+                        ///input.p2 = ap + m_step.dt * av;
+                        b2Math_34.b2Vec2.AddVMulSV(ap, this.m_step.dt, av, input.p2);
+                        input.maxFraction = 1;
+                        if (fixture.RayCast(output, input, childIndex)) {
+                            let n = output.normal;
+                            ///b2Vec2 p = (1 - output.fraction) * input.p1 + output.fraction * input.p2 + b2_linearSlop * n;
+                            let p = s_p;
+                            p.x = (1 - output.fraction) * input.p1.x + output.fraction * input.p2.x + b2Settings_37.b2_linearSlop * n.x;
+                            p.y = (1 - output.fraction) * input.p1.y + output.fraction * input.p2.y + b2Settings_37.b2_linearSlop * n.y;
+                            ///b2Vec2 v = m_step.inv_dt * (p - ap);
+                            let v = s_v;
+                            v.x = this.m_step.inv_dt * (p.x - ap.x);
+                            v.y = this.m_step.inv_dt * (p.y - ap.y);
+                            ///m_system.m_velocityBuffer.data[a] = v;
+                            this.m_system.m_velocityBuffer.data[a].Copy(v);
+                            ///b2Vec2 f = m_step.inv_dt * m_system.GetParticleMass() * (av - v);
+                            let f = s_f;
+                            f.x = this.m_step.inv_dt * this.m_system.GetParticleMass() * (av.x - v.x);
+                            f.y = this.m_step.inv_dt * this.m_system.GetParticleMass() * (av.y - v.y);
+                            this.m_system.ParticleApplyForce(a, f);
+                        }
+                    }
+                    /**
+                     * @export
+                     * @return {boolean}
+                     * @param {b2ParticleSystem} system
+                     * @param {number} index
+                     */
+                    ReportParticle(system, index) {
+                        return false;
+                    }
+                }
+                SolveCollisionCallback.ReportFixtureAndParticle_s_p1 = new b2Math_34.b2Vec2();
+                SolveCollisionCallback.ReportFixtureAndParticle_s_output = new b2Collision_11.b2RayCastOutput();
+                SolveCollisionCallback.ReportFixtureAndParticle_s_input = new b2Collision_11.b2RayCastInput();
+                SolveCollisionCallback.ReportFixtureAndParticle_s_p = new b2Math_34.b2Vec2();
+                SolveCollisionCallback.ReportFixtureAndParticle_s_v = new b2Math_34.b2Vec2();
+                SolveCollisionCallback.ReportFixtureAndParticle_s_f = new b2Math_34.b2Vec2();
+                b2ParticleSystem.SolveCollisionCallback = SolveCollisionCallback;
+            })(b2ParticleSystem = b2ParticleSystem || (b2ParticleSystem = {}));
+            exports_51("b2ParticleSystem", b2ParticleSystem);
+        }
+    }
+});
+///#endif
+/*
+ * Copyright (c) 2013 Google, Inc.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty.  In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+System.register("Particle/b2ParticleGroup", ["Common/b2Math", "Particle/b2Particle"], function(exports_52, context_52) {
+    "use strict";
+    var __moduleName = context_52 && context_52.id;
+    var b2Math_35, b2Particle_3;
+    var b2ParticleGroupDef, b2ParticleGroup;
+    return {
+        setters:[
+            function (b2Math_35_1) {
+                b2Math_35 = b2Math_35_1;
+            },
+            function (b2Particle_3_1) {
+                b2Particle_3 = b2Particle_3_1;
+            }],
+        execute: function() {
+            b2ParticleGroupDef = class b2ParticleGroupDef {
+                constructor() {
+                    this.flags = 0;
+                    this.groupFlags = 0;
+                    this.position = new b2Math_35.b2Vec2();
+                    this.angle = 0.0;
+                    this.linearVelocity = new b2Math_35.b2Vec2();
+                    this.angularVelocity = 0.0;
+                    this.color = new b2Particle_3.b2ParticleColor();
+                    this.strength = 1.0;
+                    this.shape = null;
+                    this.shapes = null;
+                    this.shapeCount = 0;
+                    this.stride = 0;
+                    this.particleCount = 0;
+                    this.positionData = null;
+                    this.lifetime = 0;
+                    this.userData = null;
+                    this.group = null;
+                }
+            };
+            exports_52("b2ParticleGroupDef", b2ParticleGroupDef);
+            b2ParticleGroup = class b2ParticleGroup {
+                constructor() {
+                    this.m_system = null;
+                    this.m_firstIndex = 0;
+                    this.m_lastIndex = 0;
+                    this.m_groupFlags = 0;
+                    this.m_strength = 1.0;
+                    this.m_prev = null;
+                    this.m_next = null;
+                    this.m_timestamp = -1;
+                    this.m_mass = 0.0;
+                    this.m_inertia = 0.0;
+                    this.m_center = new b2Math_35.b2Vec2();
+                    this.m_linearVelocity = new b2Math_35.b2Vec2();
+                    this.m_angularVelocity = 0.0;
+                    this.m_transform = new b2Math_35.b2Transform();
+                    ///m_transform.SetIdentity();
+                    this.m_userData = null;
+                }
+                GetNext() {
+                    return this.m_next;
+                }
+                GetParticleSystem() {
+                    return this.m_system;
+                }
+                GetParticleCount() {
+                    return this.m_lastIndex - this.m_firstIndex;
+                }
+                GetBufferIndex() {
+                    return this.m_firstIndex;
+                }
+                ContainsParticle(index) {
+                    return this.m_firstIndex <= index && index < this.m_lastIndex;
+                }
+                GetAllParticleFlags() {
+                    let flags = 0;
+                    for (let i = this.m_firstIndex; i < this.m_lastIndex; i++) {
+                        flags |= this.m_system.m_flagsBuffer.data[i];
+                    }
+                    return flags;
+                }
+                GetGroupFlags() {
+                    return this.m_groupFlags;
+                }
+                SetGroupFlags(flags) {
+                    ///b2Assert((flags & b2ParticleGroupFlag.b2_particleGroupInternalMask) === 0);
+                    flags |= this.m_groupFlags & 24 /* b2_particleGroupInternalMask */;
+                    this.m_system.SetGroupFlags(this, flags);
+                }
+                GetMass() {
+                    this.UpdateStatistics();
+                    return this.m_mass;
+                }
+                GetInertia() {
+                    this.UpdateStatistics();
+                    return this.m_inertia;
+                }
+                GetCenter() {
+                    this.UpdateStatistics();
+                    return this.m_center;
+                }
+                GetLinearVelocity() {
+                    this.UpdateStatistics();
+                    return this.m_linearVelocity;
+                }
+                GetAngularVelocity() {
+                    this.UpdateStatistics();
+                    return this.m_angularVelocity;
+                }
+                GetTransform() {
+                    return this.m_transform;
+                }
+                GetPosition() {
+                    return this.m_transform.p;
+                }
+                GetAngle() {
+                    return this.m_transform.q.GetAngle();
+                }
+                GetLinearVelocityFromWorldPoint(worldPoint, out) {
+                    const s_t0 = b2ParticleGroup.GetLinearVelocityFromWorldPoint_s_t0;
+                    this.UpdateStatistics();
+                    ///  return m_linearVelocity + b2Cross(m_angularVelocity, worldPoint - m_center);
+                    return b2Math_35.b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Math_35.b2Vec2.SubVV(worldPoint, this.m_center, s_t0), out);
+                }
+                GetUserData() {
+                    return this.m_userData;
+                }
+                SetUserData(data) {
+                    this.m_userData = data;
+                }
+                ApplyForce(force) {
+                    this.m_system.ApplyForce(this.m_firstIndex, this.m_lastIndex, force);
+                }
+                ApplyLinearImpulse(impulse) {
+                    this.m_system.ApplyLinearImpulse(this.m_firstIndex, this.m_lastIndex, impulse);
+                }
+                DestroyParticles(callDestructionListener) {
+                    ///b2Assert(this.m_system.m_world.IsLocked() === false);
+                    if (this.m_system.m_world.IsLocked()) {
+                        return;
+                    }
+                    for (let i = this.m_firstIndex; i < this.m_lastIndex; i++) {
+                        this.m_system.DestroyParticle(i, callDestructionListener);
+                    }
+                }
+                UpdateStatistics() {
+                    const p = new b2Math_35.b2Vec2();
+                    const v = new b2Math_35.b2Vec2();
+                    if (this.m_timestamp !== this.m_system.m_timestamp) {
+                        const m = this.m_system.GetParticleMass();
+                        ///  this.m_mass = 0;
+                        this.m_mass = m * (this.m_lastIndex - this.m_firstIndex);
+                        this.m_center.SetZero();
+                        this.m_linearVelocity.SetZero();
+                        for (let i = this.m_firstIndex; i < this.m_lastIndex; i++) {
+                            ///  this.m_mass += m;
+                            ///  this.m_center += m * this.m_system.m_positionBuffer.data[i];
+                            this.m_center.SelfMulAdd(m, this.m_system.m_positionBuffer.data[i]);
+                            ///  this.m_linearVelocity += m * this.m_system.m_velocityBuffer.data[i];
+                            this.m_linearVelocity.SelfMulAdd(m, this.m_system.m_velocityBuffer.data[i]);
+                        }
+                        if (this.m_mass > 0) {
+                            const inv_mass = 1 / this.m_mass;
+                            ///this.m_center *= 1 / this.m_mass;
+                            this.m_center.SelfMul(inv_mass);
+                            ///this.m_linearVelocity *= 1 / this.m_mass;
+                            this.m_linearVelocity.SelfMul(inv_mass);
+                        }
+                        this.m_inertia = 0;
+                        this.m_angularVelocity = 0;
+                        for (let i = this.m_firstIndex; i < this.m_lastIndex; i++) {
+                            ///b2Vec2 p = this.m_system.m_positionBuffer.data[i] - this.m_center;
+                            b2Math_35.b2Vec2.SubVV(this.m_system.m_positionBuffer.data[i], this.m_center, p);
+                            ///b2Vec2 v = this.m_system.m_velocityBuffer.data[i] - this.m_linearVelocity;
+                            b2Math_35.b2Vec2.SubVV(this.m_system.m_velocityBuffer.data[i], this.m_linearVelocity, v);
+                            this.m_inertia += m * b2Math_35.b2Vec2.DotVV(p, p);
+                            this.m_angularVelocity += m * b2Math_35.b2Vec2.CrossVV(p, v);
+                        }
+                        if (this.m_inertia > 0) {
+                            this.m_angularVelocity *= 1 / this.m_inertia;
+                        }
+                        this.m_timestamp = this.m_system.m_timestamp;
+                    }
+                }
+            };
+            b2ParticleGroup.GetLinearVelocityFromWorldPoint_s_t0 = new b2Math_35.b2Vec2();
+            exports_52("b2ParticleGroup", b2ParticleGroup);
+        }
+    }
+});
+///#endif
+/*
+ * Copyright (c) 2013 Google, Inc.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty.  In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function(exports_53, context_53) {
+    "use strict";
+    var __moduleName = context_53 && context_53.id;
+    var b2Settings_39, b2Math_36, b2Draw_2;
+    var B2PARTICLECOLOR_BITS_PER_COMPONENT, B2PARTICLECOLOR_MAX_VALUE, b2ParticleColor, b2ParticleColor_zero, b2ParticleDef, b2ParticleHandle;
+    function b2CalculateParticleIterations(gravity, radius, timeStep) {
+        // In some situations you may want more particle iterations than this,
+        // but to avoid excessive cycle cost, don't recommend more than this.
+        const B2_MAX_RECOMMENDED_PARTICLE_ITERATIONS = 8;
+        const B2_RADIUS_THRESHOLD = 0.01;
+        const iterations = Math.ceil(Math.sqrt(gravity / (B2_RADIUS_THRESHOLD * radius)) * timeStep);
+        return b2Math_36.b2Clamp(iterations, 1, B2_MAX_RECOMMENDED_PARTICLE_ITERATIONS);
+    }
+    exports_53("b2CalculateParticleIterations", b2CalculateParticleIterations);
+    return {
+        setters:[
+            function (b2Settings_39_1) {
+                b2Settings_39 = b2Settings_39_1;
+            },
+            function (b2Math_36_1) {
+                b2Math_36 = b2Math_36_1;
+            },
+            function (b2Draw_2_1) {
+                b2Draw_2 = b2Draw_2_1;
+            }],
+        execute: function() {
+            ;
+            exports_53("B2PARTICLECOLOR_BITS_PER_COMPONENT", B2PARTICLECOLOR_BITS_PER_COMPONENT = (1 << 3));
+            exports_53("B2PARTICLECOLOR_MAX_VALUE", B2PARTICLECOLOR_MAX_VALUE = ((1 << B2PARTICLECOLOR_BITS_PER_COMPONENT) - 1));
+            b2ParticleColor = class b2ParticleColor {
+                constructor(a0 = 0x7f, a1 = 0x7f, a2 = 0x7f, a3 = 0xff) {
+                    if (a0 instanceof b2Draw_2.b2Color) {
+                        this.r = 0 | (255 * a0.r);
+                        this.g = 0 | (255 * a0.g);
+                        this.b = 0 | (255 * a0.b);
+                        this.a = 0 | (255 * a0.a);
+                    }
+                    else {
+                        this.r = 0 | a0;
+                        this.g = 0 | a1;
+                        this.b = 0 | a2;
+                        this.a = 0 | a3;
+                    }
+                }
+                IsZero() {
+                    return (this.r === 0) && (this.g === 0) && (this.b === 0) && (this.a === 0);
+                }
+                GetColor(out) {
+                    out.r = this.r / 255.0;
+                    out.g = this.g / 255.0;
+                    out.b = this.b / 255.0;
+                    out.a = this.a / 255.0;
+                    return out;
+                }
+                Set(a0, a1, a2, a3) {
+                    if (a0 instanceof b2Draw_2.b2Color) {
+                        this.SetColor(a0);
+                    }
+                    else if (arguments.length >= 3) {
+                        this.SetRGBA(a0 || 0, a1 || 0, a2 || 0, a3);
+                    }
+                    else {
+                        throw new Error();
+                    }
+                }
+                SetRGBA(r, g, b, a = 255) {
+                    this.r = 0 | r;
+                    this.g = 0 | g;
+                    this.b = 0 | b;
+                    this.a = 0 | a;
+                }
+                SetColor(color) {
+                    this.r = 0 | (255 * color.r);
+                    this.g = 0 | (255 * color.g);
+                    this.b = 0 | (255 * color.b);
+                    this.a = 0 | (255 * color.a);
+                }
+                Copy(color) {
+                    this.r = color.r;
+                    this.g = color.g;
+                    this.b = color.b;
+                    this.a = color.a;
+                    return this;
+                }
+                Clone() {
+                    return new b2ParticleColor().Copy(this);
+                }
+                SelfMul_0_1(s) {
+                    this.r *= s;
+                    this.g *= s;
+                    this.b *= s;
+                    this.a *= s;
+                    return this;
+                }
+                SelfMul_0_255(s) {
+                    // 1..256 to maintain the complete dynamic range.
+                    const scale = s + 1;
+                    this.r = (this.r * scale) >> b2ParticleColor.k_bitsPerComponent;
+                    this.g = (this.g * scale) >> b2ParticleColor.k_bitsPerComponent;
+                    this.b = (this.b * scale) >> b2ParticleColor.k_bitsPerComponent;
+                    this.a = (this.a * scale) >> b2ParticleColor.k_bitsPerComponent;
+                    return this;
+                }
+                Mul_0_1(s, out) {
+                    return out.Copy(this).SelfMul_0_1(s);
+                }
+                Mul_0_255(s, out) {
+                    return out.Copy(this).SelfMul_0_255(s);
+                }
+                SelfAdd(color) {
+                    this.r += color.r;
+                    this.g += color.g;
+                    this.b += color.b;
+                    this.a += color.a;
+                    return this;
+                }
+                Add(color, out) {
+                    out.r = this.r + color.r;
+                    out.g = this.g + color.g;
+                    out.b = this.b + color.b;
+                    out.a = this.a + color.a;
+                    return out;
+                }
+                SelfSub(color) {
+                    this.r -= color.r;
+                    this.g -= color.g;
+                    this.b -= color.b;
+                    this.a -= color.a;
+                    return this;
+                }
+                Sub(color, out) {
+                    out.r = this.r - color.r;
+                    out.g = this.g - color.g;
+                    out.b = this.b - color.b;
+                    out.a = this.a - color.a;
+                    return out;
+                }
+                IsEqual(color) {
+                    return (this.r === color.r) && (this.g === color.g) && (this.b === color.b) && (this.a === color.a);
+                }
+                Mix(mixColor, strength) {
+                    b2ParticleColor.MixColors(this, mixColor, strength);
+                }
+                static MixColors(colorA, colorB, strength) {
+                    const dr = (strength * (colorB.r - colorA.r)) >> b2ParticleColor.k_bitsPerComponent;
+                    const dg = (strength * (colorB.g - colorA.g)) >> b2ParticleColor.k_bitsPerComponent;
+                    const db = (strength * (colorB.b - colorA.b)) >> b2ParticleColor.k_bitsPerComponent;
+                    const da = (strength * (colorB.a - colorA.a)) >> b2ParticleColor.k_bitsPerComponent;
+                    colorA.r += dr;
+                    colorA.g += dg;
+                    colorA.b += db;
+                    colorA.a += da;
+                    colorB.r -= dr;
+                    colorB.g -= dg;
+                    colorB.b -= db;
+                    colorB.a -= da;
+                }
+            };
+            b2ParticleColor.k_maxValue = +B2PARTICLECOLOR_MAX_VALUE;
+            b2ParticleColor.k_inverseMaxValue = 1.0 / +B2PARTICLECOLOR_MAX_VALUE;
+            b2ParticleColor.k_bitsPerComponent = B2PARTICLECOLOR_BITS_PER_COMPONENT;
+            exports_53("b2ParticleColor", b2ParticleColor);
+            exports_53("b2ParticleColor_zero", b2ParticleColor_zero = new b2ParticleColor());
+            b2ParticleDef = class b2ParticleDef {
+                constructor() {
+                    this.flags = 0;
+                    this.position = new b2Math_36.b2Vec2();
+                    this.velocity = new b2Math_36.b2Vec2();
+                    this.color = new b2ParticleColor();
+                    this.lifetime = 0.0;
+                    this.userData = null;
+                    this.group = null;
+                }
+            };
+            exports_53("b2ParticleDef", b2ParticleDef);
+            b2ParticleHandle = class b2ParticleHandle {
+                constructor() {
+                    this.m_index = b2Settings_39.b2_invalidParticleIndex;
+                }
+                GetIndex() { return this.m_index; }
+                SetIndex(index) { this.m_index = index; }
+            };
+            exports_53("b2ParticleHandle", b2ParticleHandle);
+        }
+    }
+});
+///#endif
+/*
+* Copyright (c) 2011 Erin Catto http://box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Common/b2Draw", [], function(exports_54, context_54) {
+    "use strict";
+    var __moduleName = context_54 && context_54.id;
+    var b2Color, b2Draw;
+    return {
+        setters:[],
+        execute: function() {
+            ///#endif
+            /// Color for debug drawing. Each value has the range [0,1].
+            b2Color = class b2Color {
+                constructor(rr, gg, bb, aa = 1.0) {
+                    this.r = 0.5;
+                    this.g = 0.5;
+                    this.b = 0.5;
+                    this.a = 1.0;
+                    this.r = rr;
+                    this.g = gg;
+                    this.b = bb;
+                    this.a = aa;
+                }
+                SetRGB(rr, gg, bb) {
+                    this.r = rr;
+                    this.g = gg;
+                    this.b = bb;
+                    return this;
+                }
+                MakeStyleString(alpha = this.a) {
+                    const r = Math.round(Math.max(0, Math.min(255, this.r * 255)));
+                    const g = Math.round(Math.max(0, Math.min(255, this.g * 255)));
+                    const b = Math.round(Math.max(0, Math.min(255, this.b * 255)));
+                    const a = Math.max(0, Math.min(1, alpha));
+                    return b2Color.MakeStyleString(r, g, b, a);
+                }
+                static MakeStyleString(r, g, b, a = 1.0) {
+                    if (a < 1.0) {
+                        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+                    }
+                    else {
+                        return "rgb(" + r + "," + g + "," + b + ")";
+                    }
+                }
+            };
+            b2Color.RED = new b2Color(1, 0, 0);
+            b2Color.GREEN = new b2Color(0, 1, 0);
+            b2Color.BLUE = new b2Color(0, 0, 1);
+            exports_54("b2Color", b2Color);
+            /// Implement and register this class with a b2World to provide debug drawing of physics
+            /// entities in your game.
+            b2Draw = class b2Draw {
+                constructor() {
+                    this.m_drawFlags = 0;
+                }
+                SetFlags(flags) {
+                    this.m_drawFlags = flags;
+                }
+                GetFlags() {
+                    return this.m_drawFlags;
+                }
+                AppendFlags(flags) {
+                    this.m_drawFlags |= flags;
+                }
+                ClearFlags(flags) {
+                    this.m_drawFlags &= ~flags;
+                }
+                PushTransform(xf) { }
+                PopTransform(xf) { }
+                DrawPolygon(vertices, vertexCount, color) { }
+                DrawSolidPolygon(vertices, vertexCount, color) { }
+                DrawCircle(center, radius, color) { }
+                DrawSolidCircle(center, radius, axis, color) { }
+                ///#if B2_ENABLE_PARTICLE
+                DrawParticles(centers, radius, colors, count) { }
+                ///#endif
+                DrawSegment(p1, p2, color) { }
+                DrawTransform(xf) { }
+            };
+            exports_54("b2Draw", b2Draw);
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Common/b2BlockAllocator", [], function(exports_55, context_55) {
+    "use strict";
+    var __moduleName = context_55 && context_55.id;
+    var b2BlockAllocator;
+    return {
+        setters:[],
+        execute: function() {
+            b2BlockAllocator = class b2BlockAllocator {
+            };
+            exports_55("b2BlockAllocator", b2BlockAllocator);
+        }
+    }
+});
+/*
+* Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
+System.register("Common/b2StackAllocator", [], function(exports_56, context_56) {
+    "use strict";
+    var __moduleName = context_56 && context_56.id;
+    var b2StackAllocator;
+    return {
+        setters:[],
+        execute: function() {
+            b2StackAllocator = class b2StackAllocator {
+            };
+            exports_56("b2StackAllocator", b2StackAllocator);
         }
     }
 });
@@ -15802,21 +21686,21 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function(exports_52, context_52) {
+System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function(exports_57, context_57) {
     "use strict";
-    var __moduleName = context_52 && context_52.id;
-    var b2Settings_34, b2Math_34, b2Draw_2;
+    var __moduleName = context_57 && context_57.id;
+    var b2Settings_40, b2Math_37, b2Draw_3;
     var b2RopeDef, b2Rope;
     return {
         setters:[
-            function (b2Settings_34_1) {
-                b2Settings_34 = b2Settings_34_1;
+            function (b2Settings_40_1) {
+                b2Settings_40 = b2Settings_40_1;
             },
-            function (b2Math_34_1) {
-                b2Math_34 = b2Math_34_1;
+            function (b2Math_37_1) {
+                b2Math_37 = b2Math_37_1;
             },
-            function (b2Draw_2_1) {
-                b2Draw_2 = b2Draw_2_1;
+            function (b2Draw_3_1) {
+                b2Draw_3 = b2Draw_3_1;
             }],
         execute: function() {
             ///
@@ -15829,7 +21713,7 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     ///
                     this.masses = [];
                     ///
-                    this.gravity = new b2Math_34.b2Vec2(0, 0);
+                    this.gravity = new b2Math_37.b2Vec2(0, 0);
                     ///
                     this.damping = 0.1;
                     /// Stretching stiffness
@@ -15838,7 +21722,7 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     this.k3 = 0.1;
                 }
             };
-            exports_52("b2RopeDef", b2RopeDef);
+            exports_57("b2RopeDef", b2RopeDef);
             ///
             b2Rope = class b2Rope {
                 constructor() {
@@ -15849,7 +21733,7 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     this.m_ims = null;
                     this.m_Ls = null;
                     this.m_as = null;
-                    this.m_gravity = new b2Math_34.b2Vec2();
+                    this.m_gravity = new b2Math_37.b2Vec2();
                     this.m_damping = 0;
                     this.m_k2 = 1;
                     this.m_k3 = 0.1;
@@ -15865,13 +21749,13 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     ///b2Assert(def.count >= 3);
                     this.m_count = def.count;
                     // this.m_ps = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
-                    this.m_ps = b2Math_34.b2Vec2.MakeArray(this.m_count);
+                    this.m_ps = b2Math_37.b2Vec2.MakeArray(this.m_count);
                     // this.m_p0s = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
-                    this.m_p0s = b2Math_34.b2Vec2.MakeArray(this.m_count);
+                    this.m_p0s = b2Math_37.b2Vec2.MakeArray(this.m_count);
                     // this.m_vs = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
-                    this.m_vs = b2Math_34.b2Vec2.MakeArray(this.m_count);
+                    this.m_vs = b2Math_37.b2Vec2.MakeArray(this.m_count);
                     // this.m_ims = (float32*)b2Alloc(this.m_count * sizeof(float32));
-                    this.m_ims = b2Settings_34.b2MakeNumberArray(this.m_count);
+                    this.m_ims = b2Settings_40.b2MakeNumberArray(this.m_count);
                     for (let i = 0; i < this.m_count; ++i) {
                         this.m_ps[i].Copy(def.vertices[i]);
                         this.m_p0s[i].Copy(def.vertices[i]);
@@ -15887,23 +21771,23 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     const count2 = this.m_count - 1;
                     const count3 = this.m_count - 2;
                     // this.m_Ls = (float32*)be2Alloc(count2 * sizeof(float32));
-                    this.m_Ls = b2Settings_34.b2MakeNumberArray(count2);
+                    this.m_Ls = b2Settings_40.b2MakeNumberArray(count2);
                     // this.m_as = (float32*)b2Alloc(count3 * sizeof(float32));
-                    this.m_as = b2Settings_34.b2MakeNumberArray(count3);
+                    this.m_as = b2Settings_40.b2MakeNumberArray(count3);
                     for (let i = 0; i < count2; ++i) {
                         const p1 = this.m_ps[i];
                         const p2 = this.m_ps[i + 1];
-                        this.m_Ls[i] = b2Math_34.b2Vec2.DistanceVV(p1, p2);
+                        this.m_Ls[i] = b2Math_37.b2Vec2.DistanceVV(p1, p2);
                     }
                     for (let i = 0; i < count3; ++i) {
                         const p1 = this.m_ps[i];
                         const p2 = this.m_ps[i + 1];
                         const p3 = this.m_ps[i + 2];
-                        const d1 = b2Math_34.b2Vec2.SubVV(p2, p1, b2Math_34.b2Vec2.s_t0);
-                        const d2 = b2Math_34.b2Vec2.SubVV(p3, p2, b2Math_34.b2Vec2.s_t1);
-                        const a = b2Math_34.b2Vec2.CrossVV(d1, d2);
-                        const b = b2Math_34.b2Vec2.DotVV(d1, d2);
-                        this.m_as[i] = b2Math_34.b2Atan2(a, b);
+                        const d1 = b2Math_37.b2Vec2.SubVV(p2, p1, b2Math_37.b2Vec2.s_t0);
+                        const d2 = b2Math_37.b2Vec2.SubVV(p3, p2, b2Math_37.b2Vec2.s_t1);
+                        const a = b2Math_37.b2Vec2.CrossVV(d1, d2);
+                        const b = b2Math_37.b2Vec2.DotVV(d1, d2);
+                        this.m_as[i] = b2Math_37.b2Atan2(a, b);
                     }
                     this.m_gravity.Copy(def.gravity);
                     this.m_damping = def.damping;
@@ -15931,7 +21815,7 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     }
                     const inv_h = 1 / h;
                     for (let i = 0; i < this.m_count; ++i) {
-                        b2Math_34.b2Vec2.MulSV(inv_h, b2Math_34.b2Vec2.SubVV(this.m_ps[i], this.m_p0s[i], b2Math_34.b2Vec2.s_t0), this.m_vs[i]);
+                        b2Math_37.b2Vec2.MulSV(inv_h, b2Math_37.b2Vec2.SubVV(this.m_ps[i], this.m_p0s[i], b2Math_37.b2Vec2.s_t0), this.m_vs[i]);
                     }
                 }
                 SolveC2() {
@@ -15939,7 +21823,7 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     for (let i = 0; i < count2; ++i) {
                         const p1 = this.m_ps[i];
                         const p2 = this.m_ps[i + 1];
-                        const d = b2Math_34.b2Vec2.SubVV(p2, p1, b2Rope.s_d);
+                        const d = b2Math_37.b2Vec2.SubVV(p2, p1, b2Rope.s_d);
                         const L = d.Normalize();
                         const im1 = this.m_ims[i];
                         const im2 = this.m_ims[i + 1];
@@ -15967,33 +21851,33 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                         const m1 = this.m_ims[i];
                         const m2 = this.m_ims[i + 1];
                         const m3 = this.m_ims[i + 2];
-                        const d1 = b2Math_34.b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
-                        const d2 = b2Math_34.b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
-                        const L1sqr = d1.GetLength();
-                        const L2sqr = d2.GetLength();
+                        const d1 = b2Math_37.b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
+                        const d2 = b2Math_37.b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
+                        const L1sqr = d1.LengthSquared();
+                        const L2sqr = d2.LengthSquared();
                         if (L1sqr * L2sqr === 0) {
                             continue;
                         }
-                        const a = b2Math_34.b2Vec2.CrossVV(d1, d2);
-                        const b = b2Math_34.b2Vec2.DotVV(d1, d2);
-                        let angle = b2Math_34.b2Atan2(a, b);
-                        const Jd1 = b2Math_34.b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
-                        const Jd2 = b2Math_34.b2Vec2.MulSV((1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
-                        const J1 = b2Math_34.b2Vec2.NegV(Jd1, b2Rope.s_J1);
-                        const J2 = b2Math_34.b2Vec2.SubVV(Jd1, Jd2, b2Rope.s_J2);
+                        const a = b2Math_37.b2Vec2.CrossVV(d1, d2);
+                        const b = b2Math_37.b2Vec2.DotVV(d1, d2);
+                        let angle = b2Math_37.b2Atan2(a, b);
+                        const Jd1 = b2Math_37.b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
+                        const Jd2 = b2Math_37.b2Vec2.MulSV((1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
+                        const J1 = b2Math_37.b2Vec2.NegV(Jd1, b2Rope.s_J1);
+                        const J2 = b2Math_37.b2Vec2.SubVV(Jd1, Jd2, b2Rope.s_J2);
                         const J3 = Jd2;
-                        let mass = m1 * b2Math_34.b2Vec2.DotVV(J1, J1) + m2 * b2Math_34.b2Vec2.DotVV(J2, J2) + m3 * b2Math_34.b2Vec2.DotVV(J3, J3);
+                        let mass = m1 * b2Math_37.b2Vec2.DotVV(J1, J1) + m2 * b2Math_37.b2Vec2.DotVV(J2, J2) + m3 * b2Math_37.b2Vec2.DotVV(J3, J3);
                         if (mass === 0) {
                             continue;
                         }
                         mass = 1 / mass;
                         let C = angle - this.m_as[i];
-                        while (C > b2Settings_34.b2_pi) {
-                            angle -= 2 * b2Settings_34.b2_pi;
+                        while (C > b2Settings_40.b2_pi) {
+                            angle -= 2 * b2Settings_40.b2_pi;
                             C = angle - this.m_as[i];
                         }
-                        while (C < -b2Settings_34.b2_pi) {
-                            angle += 2 * b2Settings_34.b2_pi;
+                        while (C < -b2Settings_40.b2_pi) {
+                            angle += 2 * b2Settings_40.b2_pi;
                             C = angle - this.m_as[i];
                         }
                         const impulse = -this.m_k3 * mass * C;
@@ -16003,21 +21887,21 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                     }
                 }
                 Draw(draw) {
-                    const c = new b2Draw_2.b2Color(0.4, 0.5, 0.7);
+                    const c = new b2Draw_3.b2Color(0.4, 0.5, 0.7);
                     for (let i = 0; i < this.m_count - 1; ++i) {
                         draw.DrawSegment(this.m_ps[i], this.m_ps[i + 1], c);
                     }
                 }
             };
             ///
-            b2Rope.s_d = new b2Math_34.b2Vec2();
-            b2Rope.s_d1 = new b2Math_34.b2Vec2();
-            b2Rope.s_d2 = new b2Math_34.b2Vec2();
-            b2Rope.s_Jd1 = new b2Math_34.b2Vec2();
-            b2Rope.s_Jd2 = new b2Math_34.b2Vec2();
-            b2Rope.s_J1 = new b2Math_34.b2Vec2();
-            b2Rope.s_J2 = new b2Math_34.b2Vec2();
-            exports_52("b2Rope", b2Rope);
+            b2Rope.s_d = new b2Math_37.b2Vec2();
+            b2Rope.s_d1 = new b2Math_37.b2Vec2();
+            b2Rope.s_d2 = new b2Math_37.b2Vec2();
+            b2Rope.s_Jd1 = new b2Math_37.b2Vec2();
+            b2Rope.s_Jd2 = new b2Math_37.b2Vec2();
+            b2Rope.s_J1 = new b2Math_37.b2Vec2();
+            b2Rope.s_J2 = new b2Math_37.b2Vec2();
+            exports_57("b2Rope", b2Rope);
         }
     }
 });
@@ -16038,26 +21922,26 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw", "Common/b2Timer", "Common/b2GrowableStack", "Common/b2BlockAllocator", "Common/b2StackAllocator", "Collision/b2Collision", "Collision/b2Distance", "Collision/b2BroadPhase", "Collision/b2DynamicTree", "Collision/b2TimeOfImpact", "Collision/b2CollideCircle", "Collision/b2CollidePolygon", "Collision/b2CollideEdge", "Collision/Shapes/b2Shape", "Collision/Shapes/b2CircleShape", "Collision/Shapes/b2PolygonShape", "Collision/Shapes/b2EdgeShape", "Collision/Shapes/b2ChainShape", "Dynamics/b2Fixture", "Dynamics/b2Body", "Dynamics/b2World", "Dynamics/b2WorldCallbacks", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2ContactManager", "Dynamics/Contacts/b2Contact", "Dynamics/Contacts/b2ContactFactory", "Dynamics/Contacts/b2ContactSolver", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2JointFactory", "Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint", "Rope/b2Rope"], function(exports_53, context_53) {
+System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw", "Common/b2Timer", "Common/b2GrowableStack", "Common/b2BlockAllocator", "Common/b2StackAllocator", "Collision/b2Collision", "Collision/b2Distance", "Collision/b2BroadPhase", "Collision/b2DynamicTree", "Collision/b2TimeOfImpact", "Collision/b2CollideCircle", "Collision/b2CollidePolygon", "Collision/b2CollideEdge", "Collision/Shapes/b2Shape", "Collision/Shapes/b2CircleShape", "Collision/Shapes/b2PolygonShape", "Collision/Shapes/b2EdgeShape", "Collision/Shapes/b2ChainShape", "Dynamics/b2Fixture", "Dynamics/b2Body", "Dynamics/b2World", "Dynamics/b2WorldCallbacks", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2ContactManager", "Dynamics/Contacts/b2Contact", "Dynamics/Contacts/b2ContactFactory", "Dynamics/Contacts/b2ContactSolver", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2JointFactory", "Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint", "Particle/b2Particle", "Particle/b2ParticleGroup", "Particle/b2ParticleSystem", "Rope/b2Rope"], function(exports_58, context_58) {
     "use strict";
-    var __moduleName = context_53 && context_53.id;
+    var __moduleName = context_58 && context_58.id;
     function exportStar_1(m) {
         var exports = {};
         for(var n in m) {
             if (n !== "default") exports[n] = m[n];
         }
-        exports_53(exports);
+        exports_58(exports);
     }
     return {
         setters:[
-            function (b2Settings_35_1) {
-                exportStar_1(b2Settings_35_1);
+            function (b2Settings_41_1) {
+                exportStar_1(b2Settings_41_1);
             },
-            function (b2Math_35_1) {
-                exportStar_1(b2Math_35_1);
+            function (b2Math_38_1) {
+                exportStar_1(b2Math_38_1);
             },
-            function (b2Draw_3_1) {
-                exportStar_1(b2Draw_3_1);
+            function (b2Draw_4_1) {
+                exportStar_1(b2Draw_4_1);
             },
             function (b2Timer_4_1) {
                 exportStar_1(b2Timer_4_1);
@@ -16071,8 +21955,8 @@ System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw",
             function (b2StackAllocator_1_1) {
                 exportStar_1(b2StackAllocator_1_1);
             },
-            function (b2Collision_11_1) {
-                exportStar_1(b2Collision_11_1);
+            function (b2Collision_12_1) {
+                exportStar_1(b2Collision_12_1);
             },
             function (b2Distance_3_1) {
                 exportStar_1(b2Distance_3_1);
@@ -16095,8 +21979,8 @@ System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw",
             function (b2CollideEdge_5_1) {
                 exportStar_1(b2CollideEdge_5_1);
             },
-            function (b2Shape_8_1) {
-                exportStar_1(b2Shape_8_1);
+            function (b2Shape_9_1) {
+                exportStar_1(b2Shape_9_1);
             },
             function (b2CircleShape_1_1) {
                 exportStar_1(b2CircleShape_1_1);
@@ -16104,8 +21988,8 @@ System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw",
             function (b2PolygonShape_1_1) {
                 exportStar_1(b2PolygonShape_1_1);
             },
-            function (b2EdgeShape_4_1) {
-                exportStar_1(b2EdgeShape_4_1);
+            function (b2EdgeShape_5_1) {
+                exportStar_1(b2EdgeShape_5_1);
             },
             function (b2ChainShape_1_1) {
                 exportStar_1(b2ChainShape_1_1);
@@ -16119,14 +22003,14 @@ System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw",
             function (b2World_1_1) {
                 exportStar_1(b2World_1_1);
             },
-            function (b2WorldCallbacks_5_1) {
-                exportStar_1(b2WorldCallbacks_5_1);
+            function (b2WorldCallbacks_6_1) {
+                exportStar_1(b2WorldCallbacks_6_1);
             },
             function (b2Island_2_1) {
                 exportStar_1(b2Island_2_1);
             },
-            function (b2TimeStep_4_1) {
-                exportStar_1(b2TimeStep_4_1);
+            function (b2TimeStep_5_1) {
+                exportStar_1(b2TimeStep_5_1);
             },
             function (b2ContactManager_2_1) {
                 exportStar_1(b2ContactManager_2_1);
@@ -16202,6 +22086,15 @@ System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw",
             },
             function (b2WheelJoint_2_1) {
                 exportStar_1(b2WheelJoint_2_1);
+            },
+            function (b2Particle_4_1) {
+                exportStar_1(b2Particle_4_1);
+            },
+            function (b2ParticleGroup_2_1) {
+                exportStar_1(b2ParticleGroup_2_1);
+            },
+            function (b2ParticleSystem_2_1) {
+                exportStar_1(b2ParticleSystem_2_1);
             },
             function (b2Rope_1_1) {
                 exportStar_1(b2Rope_1_1);

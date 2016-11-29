@@ -76,7 +76,20 @@ import { SphereStack } from "./SphereStack";
 ///import { TestRagdoll } from "./TestRagdoll";
 ///import { TestStack } from "./TestStack";
 
+///#if B2_ENABLE_PARTICLE
+import { ElasticParticles } from "./ElasticParticles";
+import { Faucet } from "./Faucet";
+import { ParticlesSurfaceTension } from "./ParticlesSurfaceTension";
+import { Sparky } from "./Sparky";
+///#endif
+
 export const g_testEntries: TestEntry[] = [
+  ///#if B2_ENABLE_PARTICLE
+  new TestEntry("Faucet", Faucet.Create ),
+  new TestEntry("Surface Tension", ParticlesSurfaceTension.Create),
+  new TestEntry("Elastic Particles", ElasticParticles.Create),
+  new TestEntry("Sparky", Sparky.Create),
+  ///#endif
   ///new TestEntry("Continuous Test", ContinuousTest.Create),
   ///new TestEntry("Time of Impact", TimeOfImpact.Create),
   ///new TestEntry("Motor Joint", MotorJoint.Create),

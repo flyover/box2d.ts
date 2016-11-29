@@ -177,6 +177,32 @@ export class DebugDraw extends box2d.b2Draw {
     }
   }
 
+  ///#if B2_ENABLE_PARTICLE
+  public DrawParticles(centers: box2d.b2Vec2[], radius: number, colors: box2d.b2ParticleColor[], count: number) {
+    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    if (ctx) {
+      if (colors !== null) {
+        for (let i = 0; i < count; ++i) {
+          let center = centers[i];
+          let color = colors[i];
+          ctx.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + "," + (color.a / 255.0) + ")";
+          ctx.fillRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+          ///ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
+        }
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.beginPath();
+        for (let i = 0; i < count; ++i) {
+          let center = centers[i];
+          ctx.rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+          ///ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
+        }
+        ctx.fill();
+      }
+    }
+  }
+  ///#endif
+
   public DrawSegment(p1: box2d.b2Vec2, p2: box2d.b2Vec2, color: box2d.b2Color): void {
     const ctx: CanvasRenderingContext2D = this.m_ctx;
     if (ctx) {

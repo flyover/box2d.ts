@@ -168,6 +168,16 @@ export class b2ChainShape extends b2Shape {
     return false;
   }
 
+  ///#if B2_ENABLE_PARTICLE
+  /// @see b2Shape::ComputeDistance
+  private static ComputeDistance_s_edgeShape = new b2EdgeShape();
+  public ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number {
+    const edge = b2ChainShape.ComputeDistance_s_edgeShape;
+    this.GetChildEdge(edge, childIndex);
+    return edge.ComputeDistance(xf, p, normal, 0);
+  }
+  ///#endif
+
   /// Implement b2Shape.
   private static RayCast_s_edgeShape = new b2EdgeShape();
   public RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean {

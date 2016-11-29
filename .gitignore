@@ -3,6 +3,7 @@
 /Box2D/Box2D/Collision/**/*.js
 /Box2D/Box2D/Common/**/*.js
 /Box2D/Box2D/Dynamics/**/*.js
+/Box2D/Box2D/Particle/**/*.js
 /Box2D/Box2D/Rope/**/*.js
 /Box2D/HelloWorld/HelloWorld.js
 /Box2D/Testbed/Testbed.js

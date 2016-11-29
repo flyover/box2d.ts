@@ -17,6 +17,9 @@
 */
 
 import { b2Vec2, b2Transform } from "./b2Math";
+///#if B2_ENABLE_PARTICLE
+import { b2ParticleColor } from "../Particle/b2Particle";
+///#endif
 
 /// Color for debug drawing. Each value has the range [0,1].
 export class b2Color {
@@ -67,7 +70,10 @@ export const enum b2DrawFlags {
   e_aabbBit = 0x0004, ///< draw axis aligned bounding boxes
   e_pairBit = 0x0008, ///< draw broad-phase pairs
   e_centerOfMassBit = 0x0010, ///< draw center of mass frame
-  e_controllerBit = 0x0020, /// @see b2Controller list
+  ///#if B2_ENABLE_PARTICLE
+  e_particleBit = 0x0020, ///< draw particles
+  ///#endif
+  e_controllerBit = 0x0040, /// @see b2Controller list
   e_all = 0x003f
 }
 
@@ -103,6 +109,10 @@ export class b2Draw {
   public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {}
 
   public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {}
+
+  ///#if B2_ENABLE_PARTICLE
+  public DrawParticles(centers: b2Vec2[], radius: number, colors: b2ParticleColor[], count: number): void {}
+  ///#endif
 
   public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {}
 
