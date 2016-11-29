@@ -1,8 +1,10 @@
+process.chdir(__dirname);
+
+global.System = global.System || require('systemjs');
+global.ts = global.ts || require('typescript');
+
 function boot(args) {
-  process.chdir(__dirname);
-  global.System = global.System || require('systemjs');
-  global.ts = global.ts || require('typescript');
-  if (!false && global.ts) {
+  if (!false) {
     System.config({
       transpiler: "typescript",
       typescriptOptions: {},
