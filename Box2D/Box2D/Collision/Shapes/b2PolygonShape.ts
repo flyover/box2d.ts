@@ -180,10 +180,12 @@ export class b2PolygonShape extends b2Shape {
     return this.Set(vertices, count);
   }
 
-  /// Build vertices to represent an axis-aligned box.
+  /// Build vertices to represent an axis-aligned box or an oriented box.
   /// @param hx the half-width.
   /// @param hy the half-height.
-  public SetAsBox(hx: number, hy: number): b2PolygonShape {
+  /// @param center the center of the box in local coordinates.
+  /// @param angle the rotation of the box in local coordinates.
+  public SetAsBox(hx: number, hy: number, center?: b2Vec2, angle: number = 0): b2PolygonShape {
     this.m_count = 4;
     this.m_vertices[0].Set((-hx), (-hy));
     this.m_vertices[1].Set(hx, (-hy));
@@ -194,34 +196,19 @@ export class b2PolygonShape extends b2Shape {
     this.m_normals[2].Set(0, 1);
     this.m_normals[3].Set((-1), 0);
     this.m_centroid.SetZero();
-    return this;
-  }
 
-  /// Build vertices to represent an oriented box.
-  /// @param hx the half-width.
-  /// @param hy the half-height.
-  /// @param center the center of the box in local coordinates.
-  /// @param angle the rotation of the box in local coordinates.
-  public SetAsOrientedBox(hx: number, hy: number, center: b2Vec2, angle: number): b2PolygonShape {
-    this.m_count = 4;
-    this.m_vertices[0].Set((-hx), (-hy));
-    this.m_vertices[1].Set(hx, (-hy));
-    this.m_vertices[2].Set(hx, hy);
-    this.m_vertices[3].Set((-hx), hy);
-    this.m_normals[0].Set(0, (-1));
-    this.m_normals[1].Set(1, 0);
-    this.m_normals[2].Set(0, 1);
-    this.m_normals[3].Set((-1), 0);
-    this.m_centroid.Copy(center);
+    if (center instanceof b2Vec2) {
+      this.m_centroid.Copy(center);
 
-    const xf: b2Transform = new b2Transform();
-    xf.SetPosition(center);
-    xf.SetRotationAngle(angle);
+      const xf: b2Transform = new b2Transform();
+      xf.SetPosition(center);
+      xf.SetRotationAngle(angle);
 
-    // Transform vertices and normals.
-    for (let i: number = 0; i < this.m_count; ++i) {
-      b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
-      b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
+      // Transform vertices and normals.
+      for (let i: number = 0; i < this.m_count; ++i) {
+        b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
+        b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
+      }
     }
 
     return this;
