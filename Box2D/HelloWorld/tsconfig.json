@@ -10,7 +10,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": false
   },
-  "files": [
-    "HelloWorld.ts"
+  "include": [
+    "**/*.ts"
   ]
 }
