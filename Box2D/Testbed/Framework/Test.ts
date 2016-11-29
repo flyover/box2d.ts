@@ -95,6 +95,41 @@ export class ContactPoint {
   public separation: number = 0;
 }
 
+///#if B2_ENABLE_PARTICLE
+class QueryCallback2 extends box2d.b2QueryCallback {
+  m_particleSystem: box2d.b2ParticleSystem;
+  m_shape: box2d.b2Shape;
+  m_velocity: box2d.b2Vec2;
+  constructor(particleSystem: box2d.b2ParticleSystem, shape: box2d.b2Shape, velocity: box2d.b2Vec2) {
+    super();
+    this.m_particleSystem = particleSystem;
+    this.m_shape = shape;
+    this.m_velocity = velocity;
+  }
+
+  ReportFixture(fixture: box2d.b2Fixture): boolean {
+    return false;
+  }
+
+  /**
+   * @return {boolean}
+   * @param {box2d.b2ParticleSystem} particleSystem
+   * @param {number} index
+   */
+  ReportParticle(particleSystem: box2d.b2ParticleSystem, index: number): boolean {
+    if (particleSystem !== this.m_particleSystem)
+      return false;
+    const xf = box2d.b2Transform.IDENTITY;
+    const p = this.m_particleSystem.GetPositionBuffer()[index];
+    if (this.m_shape.TestPoint(xf, p)) {
+      const v = this.m_particleSystem.GetVelocityBuffer()[index];
+      v.Copy(this.m_velocity);
+    }
+    return true;
+  }
+}
+///#endif
+
 export class Test extends box2d.b2ContactListener {
   public static k_maxContactPoints: number = 2048;
 
@@ -494,10 +529,7 @@ export class Test extends box2d.b2ContactListener {
       shape.m_p.Copy(this.m_mouseTracerPosition);
       shape.m_radius = 2 * this.GetDefaultViewZoom();
       ///QueryCallback2 callback(m_particleSystem, &shape, m_mouseTracerVelocity);
-      ///let callback = new box2d.Testbed.Test.QueryCallback2(this.m_particleSystem, shape, this.m_mouseTracerVelocity);
-      let callback = function(fixture: box2d.b2Fixture): boolean {
-        return false; // TODO
-      };
+      let callback = new QueryCallback2(this.m_particleSystem, shape, this.m_mouseTracerVelocity);
       let aabb = new box2d.b2AABB();
       let xf = new box2d.b2Transform();
       xf.SetIdentity();
