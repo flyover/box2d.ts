@@ -19,8 +19,9 @@
 ///#if B2_ENABLE_PARTICLE
 
 import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Color } from "../Common/b2Draw";
 import { b2Shape } from "../Collision/Shapes/b2Shape";
-import { b2ParticleFlag, b2ParticleColor } from "./b2Particle";
+import { b2ParticleFlag } from "./b2Particle";
 import { b2ParticleSystem } from "./b2ParticleSystem";
 
 export const enum b2ParticleGroupFlag {
@@ -45,7 +46,7 @@ export class b2ParticleGroupDef {
   angle: number = 0.0;
   linearVelocity: b2Vec2 = new b2Vec2();
   angularVelocity: number = 0.0;
-  color: b2ParticleColor = new b2ParticleColor();
+  color: b2Color = new b2Color();
   strength: number = 1.0;
   shape: b2Shape = null;
   shapes: b2Shape[] = null;

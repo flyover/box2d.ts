@@ -17,9 +17,6 @@
 */
 
 import { b2Vec2, b2Transform } from "./b2Math";
-///#if B2_ENABLE_PARTICLE
-import { b2ParticleColor } from "../Particle/b2Particle";
-///#endif
 
 /// Color for debug drawing. Each value has the range [0,1].
 export class b2Color {
@@ -27,16 +24,53 @@ export class b2Color {
   public static GREEN: b2Color = new b2Color(0, 1, 0);
   public static BLUE: b2Color = new b2Color(0, 0, 1);
 
-  public r: number = 0.5;
-  public g: number = 0.5;
-  public b: number = 0.5;
-  public a: number = 1.0;
+  public r: number;
+  public g: number;
+  public b: number;
+  public a: number;
 
-  constructor(rr: number, gg: number, bb: number, aa: number = 1.0) {
+  constructor(rr: number = 0.5, gg: number = 0.5, bb: number = 0.5, aa: number = 1.0) {
     this.r = rr;
     this.g = gg;
     this.b = bb;
     this.a = aa;
+  }
+
+  public Clone(): b2Color {
+    return new b2Color().Copy(this);
+  }
+
+  public Copy(other: b2Color): b2Color {
+    this.r = other.r;
+    this.g = other.g;
+    this.b = other.b;
+    this.a = other.a;
+    return this;
+  }
+
+  public IsEqual(color: b2Color): boolean {
+    return (this.r === color.r) && (this.g === color.g) && (this.b === color.b) && (this.a === color.a);
+  }
+
+  public IsZero(): boolean {
+    return (this.r === 0) && (this.g === 0) && (this.b === 0) && (this.a === 0);
+  }
+
+  public GetColor(out: b2Color): b2Color {
+    out.Copy(this);
+    return out;
+  }
+
+  public SetColor(color: b2Color): void {
+    this.Copy(color);
+  }
+
+  public Set(a0: number | b2Color, a1?: number, a2?: number, a3: number = 1.0): void {
+    if (a0 instanceof b2Color) {
+      this.Copy(a0);
+    } else {
+      this.SetRGBA(a0, a1, a2, a3);
+    }
   }
 
   public SetRGB(rr: number, gg: number, bb: number): b2Color {
@@ -46,15 +80,90 @@ export class b2Color {
     return this;
   }
 
+  public SetRGBA(rr: number, gg: number, bb: number, aa: number): b2Color {
+    this.r = rr;
+    this.g = gg;
+    this.b = bb;
+    this.a = aa;
+    return this;
+  }
+
+  public SelfAdd(color: b2Color): b2Color {
+    this.r += color.r;
+    this.g += color.g;
+    this.b += color.b;
+    this.a += color.a;
+    return this;
+  }
+
+  public Add(color: b2Color, out: b2Color): b2Color {
+    out.r = this.r + color.r;
+    out.g = this.g + color.g;
+    out.b = this.b + color.b;
+    out.a = this.a + color.a;
+    return out;
+  }
+
+  public SelfSub(color: b2Color): b2Color {
+    this.r -= color.r;
+    this.g -= color.g;
+    this.b -= color.b;
+    this.a -= color.a;
+    return this;
+  }
+
+  public Sub(color: b2Color, out: b2Color): b2Color {
+    out.r = this.r - color.r;
+    out.g = this.g - color.g;
+    out.b = this.b - color.b;
+    out.a = this.a - color.a;
+    return out;
+  }
+
+  public SelfMul_0_1(s: number): b2Color {
+    this.r *= s;
+    this.g *= s;
+    this.b *= s;
+    this.a *= s;
+    return this;
+  }
+
+  public Mul_0_1(s: number, out: b2Color): b2Color {
+    out.r = this.r * s;
+    out.g = this.g * s;
+    out.b = this.b * s;
+    out.a = this.a * s;
+    return this;
+  }
+
+  public Mix(mixColor: b2Color, strength: number): void {
+    b2Color.MixColors(this, mixColor, strength);
+  }
+
+  public static MixColors(colorA: b2Color, colorB: b2Color, strength: number): void {
+    const dr = (strength * (colorB.r - colorA.r));
+    const dg = (strength * (colorB.g - colorA.g));
+    const db = (strength * (colorB.b - colorA.b));
+    const da = (strength * (colorB.a - colorA.a));
+    colorA.r += dr;
+    colorA.g += dg;
+    colorA.b += db;
+    colorA.a += da;
+    colorB.r -= dr;
+    colorB.g -= dg;
+    colorB.b -= db;
+    colorB.a -= da;
+  }
+
   public MakeStyleString(alpha: number = this.a): string {
-    const r = Math.round(Math.max(0, Math.min(255, this.r * 255)));
-    const g = Math.round(Math.max(0, Math.min(255, this.g * 255)));
-    const b = Math.round(Math.max(0, Math.min(255, this.b * 255)));
-    const a = Math.max(0, Math.min(1, alpha));
-    return b2Color.MakeStyleString(r, g, b, a);
+    return b2Color.MakeStyleString(this.r, this.g, this.b, alpha);
   }
 
   public static MakeStyleString(r: number, g: number, b: number, a: number = 1.0): string {
+    r = Math.round(Math.max(0, Math.min(255, r * 255)));
+    g = Math.round(Math.max(0, Math.min(255, g * 255)));
+    b = Math.round(Math.max(0, Math.min(255, b * 255)));
+    a = Math.max(0, Math.min(1, a));
     if (a < 1.0) {
       return "rgba(" + r + "," + g + "," + b + "," + a + ")";
     } else {
@@ -111,7 +220,7 @@ export class b2Draw {
   public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {}
 
   ///#if B2_ENABLE_PARTICLE
-  public DrawParticles(centers: b2Vec2[], radius: number, colors: b2ParticleColor[], count: number): void {}
+  public DrawParticles(centers: b2Vec2[], radius: number, colors: b2Color[], count: number): void {}
   ///#endif
 
   public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {}

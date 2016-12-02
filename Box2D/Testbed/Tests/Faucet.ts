@@ -147,7 +147,7 @@ export class Faucet extends testbed.Test {
     this.m_particleSystem.SetMaxParticleCount(Faucet.k_maxParticleCount);
     this.m_particleSystem.SetDestructionByAge(true);
 
-    let ground = null; {
+    let ground: box2d.b2Body = null; {
       let bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
     }
@@ -211,7 +211,7 @@ export class Faucet extends testbed.Test {
         Faucet.k_containerHeight * Faucet.k_faucetHeight + (faucetLength * 0.5)));
       this.m_emitter.SetVelocity(new box2d.b2Vec2(0.0, 0.0));
       this.m_emitter.SetSize(new box2d.b2Vec2(0.0, faucetLength));
-      this.m_emitter.SetColor(new box2d.b2ParticleColor(255, 255, 255, 255));
+      this.m_emitter.SetColor(new box2d.b2Color(1, 1, 1, 1));
       this.m_emitter.SetEmitRate(120.0);
       this.m_emitter.SetParticleFlags(testbed.Main.GetParticleParameterValue());
     }
@@ -235,12 +235,12 @@ export class Faucet extends testbed.Test {
     this.m_emitter.SetParticleFlags(testbed.Main.GetParticleParameterValue());
 
     // If this is a color mixing particle, add some color.
-    ///  b2ParticleColor color(255, 255, 255, 255);
+    ///  b2Color color(1, 1, 1, 1);
     if (this.m_emitter.GetParticleFlags() & box2d.b2ParticleFlag.b2_colorMixingParticle) {
       // Each second, select a different color.
       this.m_emitter.SetColor(testbed.Test.k_ParticleColors[Math.floor(this.m_particleColorOffset) % testbed.Test.k_ParticleColorsCount]);
     } else {
-      this.m_emitter.SetColor(new box2d.b2ParticleColor(255, 255, 255, 255));
+      this.m_emitter.SetColor(new box2d.b2Color(1, 1, 1, 1));
     }
 
     // Create the particles.

@@ -62,7 +62,7 @@ export class RadialEmitter {
   /**
    * Initial color of particle emitted.
    */
-  m_color: box2d.b2ParticleColor = new box2d.b2ParticleColor();
+  m_color: box2d.b2Color = new box2d.b2Color();
   /**
    * Number particles to emit on the next frame
    */
@@ -162,14 +162,14 @@ export class RadialEmitter {
   /**
    * Set the color of particles.
    */
-  SetColor(color: box2d.b2ParticleColor): void {
+  SetColor(color: box2d.b2Color): void {
     this.m_color.Copy(color);
   }
 
   /**
    * Get the color of particles emitter.
    */
-  GetColor(out: box2d.b2ParticleColor): box2d.b2ParticleColor {
+  GetColor(out: box2d.b2Color): box2d.b2Color {
     return out.Copy(this.m_color);
   }
 

@@ -285,6 +285,65 @@ declare module "Box2D/Common/b2Timer" {
         Decrement(): void;
     }
 }
+declare module "Box2D/Common/b2Draw" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    export class b2Color {
+        static RED: b2Color;
+        static GREEN: b2Color;
+        static BLUE: b2Color;
+        r: number;
+        g: number;
+        b: number;
+        a: number;
+        constructor(rr?: number, gg?: number, bb?: number, aa?: number);
+        Clone(): b2Color;
+        Copy(other: b2Color): b2Color;
+        IsEqual(color: b2Color): boolean;
+        IsZero(): boolean;
+        GetColor(out: b2Color): b2Color;
+        SetColor(color: b2Color): void;
+        Set(a0: number | b2Color, a1?: number, a2?: number, a3?: number): void;
+        SetRGB(rr: number, gg: number, bb: number): b2Color;
+        SetRGBA(rr: number, gg: number, bb: number, aa: number): b2Color;
+        SelfAdd(color: b2Color): b2Color;
+        Add(color: b2Color, out: b2Color): b2Color;
+        SelfSub(color: b2Color): b2Color;
+        Sub(color: b2Color, out: b2Color): b2Color;
+        SelfMul_0_1(s: number): b2Color;
+        Mul_0_1(s: number, out: b2Color): b2Color;
+        Mix(mixColor: b2Color, strength: number): void;
+        static MixColors(colorA: b2Color, colorB: b2Color, strength: number): void;
+        MakeStyleString(alpha?: number): string;
+        static MakeStyleString(r: number, g: number, b: number, a?: number): string;
+    }
+    export const enum b2DrawFlags {
+        e_none = 0,
+        e_shapeBit = 1,
+        e_jointBit = 2,
+        e_aabbBit = 4,
+        e_pairBit = 8,
+        e_centerOfMassBit = 16,
+        e_particleBit = 32,
+        e_controllerBit = 64,
+        e_all = 63,
+    }
+    export class b2Draw {
+        m_drawFlags: b2DrawFlags;
+        SetFlags(flags: b2DrawFlags): void;
+        GetFlags(): b2DrawFlags;
+        AppendFlags(flags: b2DrawFlags): void;
+        ClearFlags(flags: b2DrawFlags): void;
+        PushTransform(xf: b2Transform): void;
+        PopTransform(xf: b2Transform): void;
+        DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
+        DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
+        DrawCircle(center: b2Vec2, radius: number, color: b2Color): void;
+        DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void;
+        DrawParticles(centers: b2Vec2[], radius: number, colors: b2Color[], count: number): void;
+        DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void;
+        DrawTransform(xf: b2Transform): void;
+    }
+}
 declare module "Box2D/Collision/b2Distance" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
     import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
@@ -354,6 +413,41 @@ declare module "Box2D/Collision/b2Distance" {
         private static s_e23;
     }
     export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
+}
+declare module "Box2D/Collision/Shapes/b2Shape" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    export class b2MassData {
+        mass: number;
+        center: b2Vec2;
+        I: number;
+    }
+    export const enum b2ShapeType {
+        e_unknown = -1,
+        e_circleShape = 0,
+        e_edgeShape = 1,
+        e_polygonShape = 2,
+        e_chainShape = 3,
+        e_shapeTypeCount = 4,
+    }
+    export class b2Shape {
+        m_type: b2ShapeType;
+        m_radius: number;
+        constructor(type: b2ShapeType, radius: number);
+        Clone(): b2Shape;
+        Copy(other: b2Shape): b2Shape;
+        GetType(): b2ShapeType;
+        GetChildCount(): number;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
 }
 declare module "Box2D/Collision/b2Collision" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
@@ -463,157 +557,6 @@ declare module "Box2D/Collision/b2Collision" {
     export function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean;
     export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number;
     export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean;
-}
-declare module "Box2D/Collision/Shapes/b2Shape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    export class b2MassData {
-        mass: number;
-        center: b2Vec2;
-        I: number;
-    }
-    export const enum b2ShapeType {
-        e_unknown = -1,
-        e_circleShape = 0,
-        e_edgeShape = 1,
-        e_polygonShape = 2,
-        e_chainShape = 3,
-        e_shapeTypeCount = 4,
-    }
-    export class b2Shape {
-        m_type: b2ShapeType;
-        m_radius: number;
-        constructor(type: b2ShapeType, radius: number);
-        Clone(): b2Shape;
-        Copy(other: b2Shape): b2Shape;
-        GetType(): b2ShapeType;
-        GetChildCount(): number;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2EdgeShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export class b2EdgeShape extends b2Shape {
-        m_vertex1: b2Vec2;
-        m_vertex2: b2Vec2;
-        m_vertex0: b2Vec2;
-        m_vertex3: b2Vec2;
-        m_hasVertex0: boolean;
-        m_hasVertex3: boolean;
-        constructor();
-        Set(v1: b2Vec2, v2: b2Vec2): b2EdgeShape;
-        Clone(): b2EdgeShape;
-        Copy(other: b2EdgeShape): b2EdgeShape;
-        GetChildCount(): number;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        private static ComputeDistance_s_v1;
-        private static ComputeDistance_s_v2;
-        private static ComputeDistance_s_d;
-        private static ComputeDistance_s_s;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        private static RayCast_s_p1;
-        private static RayCast_s_p2;
-        private static RayCast_s_d;
-        private static RayCast_s_e;
-        private static RayCast_s_q;
-        private static RayCast_s_r;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_v1;
-        private static ComputeAABB_s_v2;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2ChainShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
-    export class b2ChainShape extends b2Shape {
-        m_vertices: b2Vec2[];
-        m_count: number;
-        m_prevVertex: b2Vec2;
-        m_nextVertex: b2Vec2;
-        m_hasPrevVertex: boolean;
-        m_hasNextVertex: boolean;
-        constructor();
-        CreateLoop(vertices: b2Vec2[], count?: number): b2ChainShape;
-        CreateChain(vertices: b2Vec2[], count?: number): b2ChainShape;
-        SetPrevVertex(prevVertex: b2Vec2): b2ChainShape;
-        SetNextVertex(nextVertex: b2Vec2): b2ChainShape;
-        Clone(): b2ChainShape;
-        Copy(other: b2ChainShape): b2ChainShape;
-        GetChildCount(): number;
-        GetChildEdge(edge: b2EdgeShape, index: number): void;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        private static ComputeDistance_s_edgeShape;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        private static RayCast_s_edgeShape;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_v1;
-        private static ComputeAABB_s_v2;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/b2TimeStep" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    export class b2Profile {
-        step: number;
-        collide: number;
-        solve: number;
-        solveInit: number;
-        solveVelocity: number;
-        solvePosition: number;
-        broadphase: number;
-        solveTOI: number;
-        Reset(): this;
-    }
-    export class b2TimeStep {
-        dt: number;
-        inv_dt: number;
-        dtRatio: number;
-        velocityIterations: number;
-        positionIterations: number;
-        particleIterations: number;
-        warmStarting: boolean;
-        Copy(step: b2TimeStep): b2TimeStep;
-    }
-    export class b2Position {
-        c: b2Vec2;
-        a: number;
-        static MakeArray(length: number): b2Position[];
-    }
-    export class b2Velocity {
-        v: b2Vec2;
-        w: number;
-        static MakeArray(length: number): b2Velocity[];
-    }
-    export class b2SolverData {
-        step: b2TimeStep;
-        positions: b2Position[];
-        velocities: b2Velocity[];
-    }
 }
 declare module "Box2D/Common/b2GrowableStack" {
     export class b2GrowableStack {
@@ -730,6 +673,45 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
     }
     export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void;
 }
+declare module "Box2D/Dynamics/b2TimeStep" {
+    import { b2Vec2 } from "Box2D/Common/b2Math";
+    export class b2Profile {
+        step: number;
+        collide: number;
+        solve: number;
+        solveInit: number;
+        solveVelocity: number;
+        solvePosition: number;
+        broadphase: number;
+        solveTOI: number;
+        Reset(): this;
+    }
+    export class b2TimeStep {
+        dt: number;
+        inv_dt: number;
+        dtRatio: number;
+        velocityIterations: number;
+        positionIterations: number;
+        particleIterations: number;
+        warmStarting: boolean;
+        Copy(step: b2TimeStep): b2TimeStep;
+    }
+    export class b2Position {
+        c: b2Vec2;
+        a: number;
+        static MakeArray(length: number): b2Position[];
+    }
+    export class b2Velocity {
+        v: b2Vec2;
+        w: number;
+        static MakeArray(length: number): b2Velocity[];
+    }
+    export class b2SolverData {
+        step: b2TimeStep;
+        positions: b2Position[];
+        velocities: b2Velocity[];
+    }
+}
 declare module "Box2D/Dynamics/Joints/b2Joint" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
     import { b2Body } from "Box2D/Dynamics/b2Body";
@@ -806,6 +788,81 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         InitVelocityConstraints(data: b2SolverData): void;
         SolveVelocityConstraints(data: b2SolverData): void;
         SolvePositionConstraints(data: b2SolverData): boolean;
+    }
+}
+declare module "Box2D/Dynamics/b2Fixture" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2TreeNode } from "Box2D/Collision/b2DynamicTree";
+    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Body } from "Box2D/Dynamics/b2Body";
+    export class b2Filter {
+        categoryBits: number;
+        maskBits: number;
+        groupIndex: number;
+        Clone(): b2Filter;
+        Copy(other: b2Filter): b2Filter;
+    }
+    export class b2FixtureDef {
+        shape: b2Shape;
+        userData: any;
+        friction: number;
+        restitution: number;
+        density: number;
+        isSensor: boolean;
+        filter: b2Filter;
+    }
+    export class b2FixtureProxy {
+        aabb: b2AABB;
+        fixture: b2Fixture;
+        childIndex: number;
+        proxy: b2TreeNode;
+        static MakeArray(length: number): b2FixtureProxy[];
+    }
+    export class b2Fixture {
+        m_density: number;
+        m_next: b2Fixture;
+        m_body: b2Body;
+        m_shape: b2Shape;
+        m_friction: number;
+        m_restitution: number;
+        m_proxies: b2FixtureProxy[];
+        m_proxyCount: number;
+        m_filter: b2Filter;
+        m_isSensor: boolean;
+        m_userData: any;
+        GetType(): b2ShapeType;
+        GetShape(): b2Shape;
+        SetSensor(sensor: boolean): void;
+        IsSensor(): boolean;
+        SetFilterData(filter: b2Filter): void;
+        GetFilterData(): b2Filter;
+        Refilter(): void;
+        GetBody(): b2Body;
+        GetNext(): b2Fixture;
+        GetUserData(): any;
+        SetUserData(data: any): void;
+        TestPoint(p: b2Vec2): boolean;
+        ComputeDistance(p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, childIndex: number): boolean;
+        GetMassData(massData?: b2MassData): b2MassData;
+        SetDensity(density: number): void;
+        GetDensity(): number;
+        GetFriction(): number;
+        SetFriction(friction: number): void;
+        GetRestitution(): number;
+        SetRestitution(restitution: number): void;
+        GetAABB(childIndex: number): b2AABB;
+        Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
+        Create(body: b2Body, def: b2FixtureDef): void;
+        Destroy(): void;
+        CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
+        DestroyProxies(broadPhase: b2BroadPhase): void;
+        private static Synchronize_s_aabb1;
+        private static Synchronize_s_aabb2;
+        private static Synchronize_s_displacement;
+        Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
     }
 }
 declare module "Box2D/Dynamics/b2Body" {
@@ -947,477 +1004,124 @@ declare module "Box2D/Dynamics/b2Body" {
         Advance(alpha: number): void;
     }
 }
-declare module "Box2D/Dynamics/b2WorldCallbacks" {
+declare module "Box2D/Particle/b2Particle" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    import { b2Color } from "Box2D/Common/b2Draw";
     import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Particle/b2ParticleSystem";
-    export class b2DestructionListener {
-        SayGoodbyeJoint(joint: b2Joint): void;
-        SayGoodbyeFixture(fixture: b2Fixture): void;
-        SayGoodbyeParticleGroup(group: b2ParticleGroup): void;
-        SayGoodbyeParticle(system: b2ParticleSystem, index: number): void;
+    /**
+     * The particle type. Can be combined with the | operator.
+     */
+    export const enum b2ParticleFlag {
+        b2_waterParticle = 0,
+        b2_zombieParticle = 2,
+        b2_wallParticle = 4,
+        b2_springParticle = 8,
+        b2_elasticParticle = 16,
+        b2_viscousParticle = 32,
+        b2_powderParticle = 64,
+        b2_tensileParticle = 128,
+        b2_colorMixingParticle = 256,
+        b2_destructionListenerParticle = 512,
+        b2_barrierParticle = 1024,
+        b2_staticPressureParticle = 2048,
+        b2_reactiveParticle = 4096,
+        b2_repulsiveParticle = 8192,
+        b2_fixtureContactListenerParticle = 16384,
+        b2_particleContactListenerParticle = 32768,
+        b2_fixtureContactFilterParticle = 65536,
+        b2_particleContactFilterParticle = 131072,
     }
-    export class b2ContactFilter {
-        ShouldCollide(fixtureA: b2Fixture, fixtureB: b2Fixture): boolean;
-        ShouldCollideFixtureParticle(fixture: b2Fixture, system: b2ParticleSystem, index: number): boolean;
-        ShouldCollideParticleParticle(system: b2ParticleSystem, indexA: number, indexB: number): boolean;
-        static b2_defaultFilter: b2ContactFilter;
+    export class b2ParticleDef {
+        flags: b2ParticleFlag;
+        position: b2Vec2;
+        velocity: b2Vec2;
+        color: b2Color;
+        lifetime: number;
+        userData: any;
+        group: b2ParticleGroup;
     }
-    export class b2ContactImpulse {
-        normalImpulses: number[];
-        tangentImpulses: number[];
-        count: number;
-    }
-    export class b2ContactListener {
-        BeginContact(contact: b2Contact): void;
-        EndContact(contact: b2Contact): void;
-        BeginContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void;
-        EndContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void;
-        BeginContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void;
-        EndContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void;
-        PreSolve(contact: b2Contact, oldManifold: b2Manifold): void;
-        PostSolve(contact: b2Contact, impulse: b2ContactImpulse): void;
-        static b2_defaultListener: b2ContactListener;
-    }
-    export class b2QueryCallback {
-        ReportFixture(fixture: b2Fixture): boolean;
-        ReportParticle(system: b2ParticleSystem, index: number): boolean;
-        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
-    }
-    export type b2QueryCallbackFunction = {
-        (fixture: b2Fixture): boolean;
-    };
-    export class b2RayCastCallback {
-        ReportFixture(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
-        ReportParticle(system: b2ParticleSystem, index: number, point: b2Vec2, normal: b2Vec2, fraction: number): number;
-        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
-    }
-    export type b2RayCastCallbackFunction = {
-        (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
-    };
-}
-declare module "Box2D/Dynamics/Contacts/b2Contact" {
-    import { b2Transform, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2Manifold, b2WorldManifold } from "Box2D/Collision/b2Collision";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    export function b2MixFriction(friction1: number, friction2: number): number;
-    export function b2MixRestitution(restitution1: number, restitution2: number): number;
-    export class b2ContactEdge {
-        other: b2Body | null;
-        contact: b2Contact | null;
-        prev: b2ContactEdge | null;
-        next: b2ContactEdge | null;
-    }
-    export class b2Contact {
-        m_islandFlag: boolean;
-        m_touchingFlag: boolean;
-        m_enabledFlag: boolean;
-        m_filterFlag: boolean;
-        m_bulletHitFlag: boolean;
-        m_toiFlag: boolean;
-        m_prev: b2Contact | null;
-        m_next: b2Contact | null;
-        m_nodeA: b2ContactEdge;
-        m_nodeB: b2ContactEdge;
-        m_fixtureA: b2Fixture | null;
-        m_fixtureB: b2Fixture | null;
-        m_indexA: number;
-        m_indexB: number;
-        m_manifold: b2Manifold;
-        m_toiCount: number;
-        m_toi: number;
-        m_friction: number;
-        m_restitution: number;
-        m_tangentSpeed: number;
-        m_oldManifold: b2Manifold;
-        GetManifold(): b2Manifold;
-        GetWorldManifold(worldManifold: b2WorldManifold): void;
-        IsTouching(): boolean;
-        SetEnabled(flag: boolean): void;
-        IsEnabled(): boolean;
-        GetNext(): b2Contact | null;
-        GetFixtureA(): b2Fixture | null;
-        GetChildIndexA(): number;
-        GetFixtureB(): b2Fixture | null;
-        GetChildIndexB(): number;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-        FlagForFiltering(): void;
-        SetFriction(friction: number): void;
-        GetFriction(): number;
-        ResetFriction(): void;
-        SetRestitution(restitution: number): void;
-        GetRestitution(): number;
-        ResetRestitution(): void;
-        SetTangentSpeed(speed: number): void;
-        GetTangentSpeed(): number;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Update(listener: b2ContactListener): void;
-        private static ComputeTOI_s_input;
-        private static ComputeTOI_s_output;
-        ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
+    export function b2CalculateParticleIterations(gravity: number, radius: number, timeStep: number): number;
+    export class b2ParticleHandle {
+        m_index: number;
+        GetIndex(): number;
+        SetIndex(index: number): void;
     }
 }
-declare module "Box2D/Collision/Shapes/b2CircleShape" {
+declare module "Box2D/Collision/Shapes/b2EdgeShape" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
     import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
     import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
     import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
     import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export class b2CircleShape extends b2Shape {
-        m_p: b2Vec2;
-        constructor(radius?: number);
-        Clone(): b2CircleShape;
-        Copy(other: b2CircleShape): b2CircleShape;
-        GetChildCount(): number;
-        private static TestPoint_s_center;
-        private static TestPoint_s_d;
-        TestPoint(transform: b2Transform, p: b2Vec2): boolean;
-        private static ComputeDistance_s_center;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        private static RayCast_s_position;
-        private static RayCast_s_s;
-        private static RayCast_s_r;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_p;
-        ComputeAABB(aabb: b2AABB, transform: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2PolygonShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export class b2PolygonShape extends b2Shape {
-        m_centroid: b2Vec2;
-        m_vertices: b2Vec2[];
-        m_normals: b2Vec2[];
-        m_count: number;
+    export class b2EdgeShape extends b2Shape {
+        m_vertex1: b2Vec2;
+        m_vertex2: b2Vec2;
+        m_vertex0: b2Vec2;
+        m_vertex3: b2Vec2;
+        m_hasVertex0: boolean;
+        m_hasVertex3: boolean;
         constructor();
-        Clone(): b2PolygonShape;
-        Copy(other: b2PolygonShape): b2PolygonShape;
+        Set(v1: b2Vec2, v2: b2Vec2): b2EdgeShape;
+        Clone(): b2EdgeShape;
+        Copy(other: b2EdgeShape): b2EdgeShape;
         GetChildCount(): number;
-        private static Set_s_ps;
-        private static Set_s_hull;
-        private static Set_s_r;
-        private static Set_s_v;
-        Set(vertices: b2Vec2[], count?: number, start?: number): b2PolygonShape;
-        SetAsArray(vertices: b2Vec2[], count?: number): b2PolygonShape;
-        SetAsBox(hx: number, hy: number, center?: b2Vec2, angle?: number): b2PolygonShape;
-        private static TestPoint_s_pLocal;
         TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        private static ComputeDistance_s_pLocal;
-        private static ComputeDistance_s_normalForMaxDistance;
-        private static ComputeDistance_s_minDistance;
-        private static ComputeDistance_s_distance;
+        private static ComputeDistance_s_v1;
+        private static ComputeDistance_s_v2;
+        private static ComputeDistance_s_d;
+        private static ComputeDistance_s_s;
         ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
         private static RayCast_s_p1;
         private static RayCast_s_p2;
         private static RayCast_s_d;
+        private static RayCast_s_e;
+        private static RayCast_s_q;
+        private static RayCast_s_r;
         RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_v;
+        private static ComputeAABB_s_v1;
+        private static ComputeAABB_s_v2;
         ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        private static ComputeMass_s_center;
-        private static ComputeMass_s_s;
-        private static ComputeMass_s_e1;
-        private static ComputeMass_s_e2;
         ComputeMass(massData: b2MassData, density: number): void;
-        private static Validate_s_e;
-        private static Validate_s_v;
-        Validate(): boolean;
         SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        private static ComputeSubmergedArea_s_normalL;
-        private static ComputeSubmergedArea_s_depths;
-        private static ComputeSubmergedArea_s_md;
-        private static ComputeSubmergedArea_s_intoVec;
-        private static ComputeSubmergedArea_s_outoVec;
-        private static ComputeSubmergedArea_s_center;
         ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
         Dump(log: (format: string, ...args: any[]) => void): void;
-        private static ComputeCentroid_s_pRef;
-        private static ComputeCentroid_s_e1;
-        private static ComputeCentroid_s_e2;
-        static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
     }
 }
-declare module "Box2D/Collision/b2CollideCircle" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    export function b2CollideCircles(manifold: b2Manifold, circleA: b2CircleShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
-    export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2PolygonShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
-}
-declare module "Box2D/Dynamics/Contacts/b2CircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2CircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Collision/b2CollidePolygon" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, xfA: b2Transform, polyB: b2PolygonShape, xfB: b2Transform): void;
-}
-declare module "Box2D/Dynamics/Contacts/b2PolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2PolygonContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2PolygonAndCircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Collision/b2CollideEdge" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
-    export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
-    export function b2CollideEdgeAndPolygon(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void;
-}
-declare module "Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2EdgeAndCircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2EdgeAndPolygonContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2ChainAndCircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        private static Evaluate_s_edge;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2ChainAndPolygonContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        private static Evaluate_s_edge;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ContactFactory" {
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2ContactRegister {
-        pool: b2Contact[];
-        createFcn: {
-            (allocator: any): b2Contact;
-        };
-        destroyFcn: {
-            (contact: b2Contact, allocator: any): void;
-        };
-        primary: boolean;
-    }
-    export class b2ContactFactory {
-        m_allocator: any;
-        m_registers: b2ContactRegister[][];
-        constructor(allocator: any);
-        private AddType(createFcn, destroyFcn, type1, type2);
-        private InitializeRegisters();
-        Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact;
-        Destroy(contact: b2Contact): void;
-    }
-}
-declare module "Box2D/Dynamics/b2ContactManager" {
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2ContactFactory } from "Box2D/Dynamics/Contacts/b2ContactFactory";
-    import { b2ContactFilter, b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    export class b2ContactManager {
-        m_broadPhase: b2BroadPhase;
-        m_contactList: b2Contact;
-        m_contactCount: number;
-        m_contactFilter: b2ContactFilter;
-        m_contactListener: b2ContactListener;
-        m_allocator: any;
-        m_contactFactory: b2ContactFactory;
-        constructor();
-        AddPair(proxyUserDataA: any, proxyUserDataB: any): void;
-        FindNewContacts(): void;
-        Destroy(c: b2Contact): void;
-        Collide(): void;
-    }
-}
-declare module "Box2D/Collision/b2BroadPhase" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode, b2DynamicTree } from "Box2D/Collision/b2DynamicTree";
-    import { b2ContactManager } from "Box2D/Dynamics/b2ContactManager";
-    export class b2Pair {
-        proxyA: b2TreeNode | null;
-        proxyB: b2TreeNode | null;
-    }
-    export class b2BroadPhase {
-        m_tree: b2DynamicTree;
-        m_proxyCount: number;
-        m_moveCount: number;
-        m_moveBuffer: b2TreeNode[];
-        m_pairCount: number;
-        m_pairBuffer: b2Pair[];
-        CreateProxy(aabb: b2AABB, userData: any): b2TreeNode;
-        DestroyProxy(proxy: b2TreeNode): void;
-        MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void;
-        TouchProxy(proxy: b2TreeNode): void;
-        GetFatAABB(proxy: b2TreeNode): b2AABB;
-        GetUserData(proxy: b2TreeNode): any;
-        TestOverlap(proxyA: b2TreeNode, proxyB: b2TreeNode): boolean;
-        GetProxyCount(): number;
-        UpdatePairs(contactManager: b2ContactManager): void;
-        Query(callback: (node: b2TreeNode) => boolean, aabb: b2AABB): void;
-        RayCast(callback: (input: b2RayCastInput, node: b2TreeNode) => number, input: b2RayCastInput): void;
-        GetTreeHeight(): number;
-        GetTreeBalance(): number;
-        GetTreeQuality(): number;
-        ShiftOrigin(newOrigin: b2Vec2): void;
-        BufferMove(proxy: b2TreeNode): void;
-        UnBufferMove(proxy: b2TreeNode): void;
-    }
-    export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
-}
-declare module "Box2D/Dynamics/b2Fixture" {
+declare module "Box2D/Collision/Shapes/b2ChainShape" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
     import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode } from "Box2D/Collision/b2DynamicTree";
-    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    export class b2Filter {
-        categoryBits: number;
-        maskBits: number;
-        groupIndex: number;
-        Clone(): b2Filter;
-        Copy(other: b2Filter): b2Filter;
-    }
-    export class b2FixtureDef {
-        shape: b2Shape;
-        userData: any;
-        friction: number;
-        restitution: number;
-        density: number;
-        isSensor: boolean;
-        filter: b2Filter;
-    }
-    export class b2FixtureProxy {
-        aabb: b2AABB;
-        fixture: b2Fixture;
-        childIndex: number;
-        proxy: b2TreeNode;
-        static MakeArray(length: number): b2FixtureProxy[];
-    }
-    export class b2Fixture {
-        m_density: number;
-        m_next: b2Fixture;
-        m_body: b2Body;
-        m_shape: b2Shape;
-        m_friction: number;
-        m_restitution: number;
-        m_proxies: b2FixtureProxy[];
-        m_proxyCount: number;
-        m_filter: b2Filter;
-        m_isSensor: boolean;
-        m_userData: any;
-        GetType(): b2ShapeType;
-        GetShape(): b2Shape;
-        SetSensor(sensor: boolean): void;
-        IsSensor(): boolean;
-        SetFilterData(filter: b2Filter): void;
-        GetFilterData(): b2Filter;
-        Refilter(): void;
-        GetBody(): b2Body;
-        GetNext(): b2Fixture;
-        GetUserData(): any;
-        SetUserData(data: any): void;
-        TestPoint(p: b2Vec2): boolean;
-        ComputeDistance(p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, childIndex: number): boolean;
-        GetMassData(massData?: b2MassData): b2MassData;
-        SetDensity(density: number): void;
-        GetDensity(): number;
-        GetFriction(): number;
-        SetFriction(friction: number): void;
-        GetRestitution(): number;
-        SetRestitution(restitution: number): void;
-        GetAABB(childIndex: number): b2AABB;
-        Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
-        Create(body: b2Body, def: b2FixtureDef): void;
-        Destroy(): void;
-        CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
-        DestroyProxies(broadPhase: b2BroadPhase): void;
-        private static Synchronize_s_aabb1;
-        private static Synchronize_s_aabb2;
-        private static Synchronize_s_displacement;
-        Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+    export class b2ChainShape extends b2Shape {
+        m_vertices: b2Vec2[];
+        m_count: number;
+        m_prevVertex: b2Vec2;
+        m_nextVertex: b2Vec2;
+        m_hasPrevVertex: boolean;
+        m_hasNextVertex: boolean;
+        constructor();
+        CreateLoop(vertices: b2Vec2[], count?: number): b2ChainShape;
+        CreateChain(vertices: b2Vec2[], count?: number): b2ChainShape;
+        SetPrevVertex(prevVertex: b2Vec2): b2ChainShape;
+        SetNextVertex(nextVertex: b2Vec2): b2ChainShape;
+        Clone(): b2ChainShape;
+        Copy(other: b2ChainShape): b2ChainShape;
+        GetChildCount(): number;
+        GetChildEdge(edge: b2EdgeShape, index: number): void;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_edgeShape;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_edgeShape;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_v1;
+        private static ComputeAABB_s_v2;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Box2D/Particle/b2StackQueue" {
@@ -1491,6 +1195,7 @@ declare module "Box2D/Particle/b2VoronoiDiagram" {
 }
 declare module "Box2D/Particle/b2ParticleSystem" {
     import { b2Vec2, b2Rot, b2Transform } from "Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Common/b2Draw";
     import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
     import { b2Shape, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
     import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
@@ -1499,7 +1204,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
     import { b2Body } from "Box2D/Dynamics/b2Body";
     import { b2World } from "Box2D/Dynamics/b2World";
     import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ParticleFlag, b2ParticleColor, b2ParticleDef, b2ParticleHandle } from "Box2D/Particle/b2Particle";
+    import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "Box2D/Particle/b2Particle";
     import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
     export class b2GrowableBuffer<T> {
         data: T[];
@@ -1757,7 +1462,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          * reallocated on subsequent CreateParticle() calls.
          */
         m_depthBuffer: number[];
-        m_colorBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleColor>;
+        m_colorBuffer: b2ParticleSystem.UserOverridableBuffer<b2Color>;
         m_groupBuffer: b2ParticleGroup[];
         m_userDataBuffer: b2ParticleSystem.UserOverridableBuffer<any>;
         /**
@@ -2048,7 +1753,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          *
          * @return the pointer to the head of the particle colors array.
          */
-        GetColorBuffer(): b2ParticleColor[];
+        GetColorBuffer(): b2Color[];
         /**
          * Get the particle-group of each particle.
          *
@@ -2108,7 +1813,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         SetFlagsBuffer(buffer: b2ParticleFlag[], capacity: number): void;
         SetPositionBuffer(buffer: b2Vec2[], capacity: number): void;
         SetVelocityBuffer(buffer: b2Vec2[], capacity: number): void;
-        SetColorBuffer(buffer: b2ParticleColor[], capacity: number): void;
+        SetColorBuffer(buffer: b2Color[], capacity: number): void;
         SetUserDataBuffer(buffer: any[], capacity: number): void;
         /**
          * Get contacts between particles
@@ -2777,8 +2482,9 @@ declare module "Box2D/Particle/b2ParticleSystem" {
 }
 declare module "Box2D/Particle/b2ParticleGroup" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Common/b2Draw";
     import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2ParticleFlag, b2ParticleColor } from "Box2D/Particle/b2Particle";
+    import { b2ParticleFlag } from "Box2D/Particle/b2Particle";
     import { b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
     export const enum b2ParticleGroupFlag {
         b2_solidParticleGroup = 1,
@@ -2795,7 +2501,7 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         angle: number;
         linearVelocity: b2Vec2;
         angularVelocity: number;
-        color: b2ParticleColor;
+        color: b2Color;
         strength: number;
         shape: b2Shape;
         shapes: b2Shape[];
@@ -2849,123 +2555,403 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         UpdateStatistics(): void;
     }
 }
-declare module "Box2D/Particle/b2Particle" {
+declare module "Box2D/Dynamics/b2WorldCallbacks" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
     import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    /**
-     * The particle type. Can be combined with the | operator.
-     */
-    export const enum b2ParticleFlag {
-        b2_waterParticle = 0,
-        b2_zombieParticle = 2,
-        b2_wallParticle = 4,
-        b2_springParticle = 8,
-        b2_elasticParticle = 16,
-        b2_viscousParticle = 32,
-        b2_powderParticle = 64,
-        b2_tensileParticle = 128,
-        b2_colorMixingParticle = 256,
-        b2_destructionListenerParticle = 512,
-        b2_barrierParticle = 1024,
-        b2_staticPressureParticle = 2048,
-        b2_reactiveParticle = 4096,
-        b2_repulsiveParticle = 8192,
-        b2_fixtureContactListenerParticle = 16384,
-        b2_particleContactListenerParticle = 32768,
-        b2_fixtureContactFilterParticle = 65536,
-        b2_particleContactFilterParticle = 131072,
+    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Particle/b2ParticleSystem";
+    export class b2DestructionListener {
+        SayGoodbyeJoint(joint: b2Joint): void;
+        SayGoodbyeFixture(fixture: b2Fixture): void;
+        SayGoodbyeParticleGroup(group: b2ParticleGroup): void;
+        SayGoodbyeParticle(system: b2ParticleSystem, index: number): void;
     }
-    export const B2PARTICLECOLOR_BITS_PER_COMPONENT: number;
-    export const B2PARTICLECOLOR_MAX_VALUE: number;
-    export class b2ParticleColor {
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-        static k_maxValue: number;
-        static k_inverseMaxValue: number;
-        static k_bitsPerComponent: number;
-        constructor(a0?: number | b2Color, a1?: number, a2?: number, a3?: number);
-        IsZero(): boolean;
-        GetColor(out: b2Color): b2Color;
-        Set(a0: number | b2Color, a1?: number, a2?: number, a3?: number): void;
-        SetRGBA(r: number, g: number, b: number, a?: number): void;
-        SetColor(color: b2Color): void;
-        Copy(color: b2ParticleColor): b2ParticleColor;
-        Clone(): b2ParticleColor;
-        SelfMul_0_1(s: number): b2ParticleColor;
-        SelfMul_0_255(s: number): b2ParticleColor;
-        Mul_0_1(s: number, out: b2ParticleColor): b2ParticleColor;
-        Mul_0_255(s: number, out: b2ParticleColor): b2ParticleColor;
-        SelfAdd(color: b2ParticleColor): b2ParticleColor;
-        Add(color: b2ParticleColor, out: b2ParticleColor): b2ParticleColor;
-        SelfSub(color: b2ParticleColor): b2ParticleColor;
-        Sub(color: b2ParticleColor, out: b2ParticleColor): b2ParticleColor;
-        IsEqual(color: b2ParticleColor): boolean;
-        Mix(mixColor: b2ParticleColor, strength: number): void;
-        static MixColors(colorA: b2ParticleColor, colorB: b2ParticleColor, strength: number): void;
+    export class b2ContactFilter {
+        ShouldCollide(fixtureA: b2Fixture, fixtureB: b2Fixture): boolean;
+        ShouldCollideFixtureParticle(fixture: b2Fixture, system: b2ParticleSystem, index: number): boolean;
+        ShouldCollideParticleParticle(system: b2ParticleSystem, indexA: number, indexB: number): boolean;
+        static b2_defaultFilter: b2ContactFilter;
     }
-    export const b2ParticleColor_zero: b2ParticleColor;
-    export class b2ParticleDef {
-        flags: b2ParticleFlag;
-        position: b2Vec2;
-        velocity: b2Vec2;
-        color: b2ParticleColor;
-        lifetime: number;
-        userData: any;
-        group: b2ParticleGroup;
+    export class b2ContactImpulse {
+        normalImpulses: number[];
+        tangentImpulses: number[];
+        count: number;
     }
-    export function b2CalculateParticleIterations(gravity: number, radius: number, timeStep: number): number;
-    export class b2ParticleHandle {
-        m_index: number;
-        GetIndex(): number;
-        SetIndex(index: number): void;
+    export class b2ContactListener {
+        BeginContact(contact: b2Contact): void;
+        EndContact(contact: b2Contact): void;
+        BeginContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void;
+        EndContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void;
+        BeginContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void;
+        EndContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void;
+        PreSolve(contact: b2Contact, oldManifold: b2Manifold): void;
+        PostSolve(contact: b2Contact, impulse: b2ContactImpulse): void;
+        static b2_defaultListener: b2ContactListener;
+    }
+    export class b2QueryCallback {
+        ReportFixture(fixture: b2Fixture): boolean;
+        ReportParticle(system: b2ParticleSystem, index: number): boolean;
+        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
+    }
+    export type b2QueryCallbackFunction = {
+        (fixture: b2Fixture): boolean;
+    };
+    export class b2RayCastCallback {
+        ReportFixture(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
+        ReportParticle(system: b2ParticleSystem, index: number, point: b2Vec2, normal: b2Vec2, fraction: number): number;
+        ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
+    }
+    export type b2RayCastCallbackFunction = {
+        (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
+    };
+}
+declare module "Box2D/Dynamics/Contacts/b2Contact" {
+    import { b2Transform, b2Sweep } from "Box2D/Common/b2Math";
+    import { b2Manifold, b2WorldManifold } from "Box2D/Collision/b2Collision";
+    import { b2Body } from "Box2D/Dynamics/b2Body";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
+    export function b2MixFriction(friction1: number, friction2: number): number;
+    export function b2MixRestitution(restitution1: number, restitution2: number): number;
+    export class b2ContactEdge {
+        other: b2Body | null;
+        contact: b2Contact | null;
+        prev: b2ContactEdge | null;
+        next: b2ContactEdge | null;
+    }
+    export class b2Contact {
+        m_islandFlag: boolean;
+        m_touchingFlag: boolean;
+        m_enabledFlag: boolean;
+        m_filterFlag: boolean;
+        m_bulletHitFlag: boolean;
+        m_toiFlag: boolean;
+        m_prev: b2Contact | null;
+        m_next: b2Contact | null;
+        m_nodeA: b2ContactEdge;
+        m_nodeB: b2ContactEdge;
+        m_fixtureA: b2Fixture | null;
+        m_fixtureB: b2Fixture | null;
+        m_indexA: number;
+        m_indexB: number;
+        m_manifold: b2Manifold;
+        m_toiCount: number;
+        m_toi: number;
+        m_friction: number;
+        m_restitution: number;
+        m_tangentSpeed: number;
+        m_oldManifold: b2Manifold;
+        GetManifold(): b2Manifold;
+        GetWorldManifold(worldManifold: b2WorldManifold): void;
+        IsTouching(): boolean;
+        SetEnabled(flag: boolean): void;
+        IsEnabled(): boolean;
+        GetNext(): b2Contact | null;
+        GetFixtureA(): b2Fixture | null;
+        GetChildIndexA(): number;
+        GetFixtureB(): b2Fixture | null;
+        GetChildIndexB(): number;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+        FlagForFiltering(): void;
+        SetFriction(friction: number): void;
+        GetFriction(): number;
+        ResetFriction(): void;
+        SetRestitution(restitution: number): void;
+        GetRestitution(): number;
+        ResetRestitution(): void;
+        SetTangentSpeed(speed: number): void;
+        GetTangentSpeed(): number;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Update(listener: b2ContactListener): void;
+        private static ComputeTOI_s_input;
+        private static ComputeTOI_s_output;
+        ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
     }
 }
-declare module "Box2D/Common/b2Draw" {
+declare module "Box2D/Collision/Shapes/b2CircleShape" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2ParticleColor } from "Box2D/Particle/b2Particle";
-    export class b2Color {
-        static RED: b2Color;
-        static GREEN: b2Color;
-        static BLUE: b2Color;
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-        constructor(rr: number, gg: number, bb: number, aa?: number);
-        SetRGB(rr: number, gg: number, bb: number): b2Color;
-        MakeStyleString(alpha?: number): string;
-        static MakeStyleString(r: number, g: number, b: number, a?: number): string;
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+    export class b2CircleShape extends b2Shape {
+        m_p: b2Vec2;
+        constructor(radius?: number);
+        Clone(): b2CircleShape;
+        Copy(other: b2CircleShape): b2CircleShape;
+        GetChildCount(): number;
+        private static TestPoint_s_center;
+        private static TestPoint_s_d;
+        TestPoint(transform: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_center;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_position;
+        private static RayCast_s_s;
+        private static RayCast_s_r;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_p;
+        ComputeAABB(aabb: b2AABB, transform: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
     }
-    export const enum b2DrawFlags {
-        e_none = 0,
-        e_shapeBit = 1,
-        e_jointBit = 2,
-        e_aabbBit = 4,
-        e_pairBit = 8,
-        e_centerOfMassBit = 16,
-        e_particleBit = 32,
-        e_controllerBit = 64,
-        e_all = 63,
+}
+declare module "Box2D/Collision/Shapes/b2PolygonShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+    export class b2PolygonShape extends b2Shape {
+        m_centroid: b2Vec2;
+        m_vertices: b2Vec2[];
+        m_normals: b2Vec2[];
+        m_count: number;
+        constructor();
+        Clone(): b2PolygonShape;
+        Copy(other: b2PolygonShape): b2PolygonShape;
+        GetChildCount(): number;
+        private static Set_s_ps;
+        private static Set_s_hull;
+        private static Set_s_r;
+        private static Set_s_v;
+        Set(vertices: b2Vec2[], count?: number, start?: number): b2PolygonShape;
+        SetAsArray(vertices: b2Vec2[], count?: number): b2PolygonShape;
+        SetAsBox(hx: number, hy: number, center?: b2Vec2, angle?: number): b2PolygonShape;
+        private static TestPoint_s_pLocal;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_pLocal;
+        private static ComputeDistance_s_normalForMaxDistance;
+        private static ComputeDistance_s_minDistance;
+        private static ComputeDistance_s_distance;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_p1;
+        private static RayCast_s_p2;
+        private static RayCast_s_d;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_v;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        private static ComputeMass_s_center;
+        private static ComputeMass_s_s;
+        private static ComputeMass_s_e1;
+        private static ComputeMass_s_e2;
+        ComputeMass(massData: b2MassData, density: number): void;
+        private static Validate_s_e;
+        private static Validate_s_v;
+        Validate(): boolean;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        private static ComputeSubmergedArea_s_normalL;
+        private static ComputeSubmergedArea_s_depths;
+        private static ComputeSubmergedArea_s_md;
+        private static ComputeSubmergedArea_s_intoVec;
+        private static ComputeSubmergedArea_s_outoVec;
+        private static ComputeSubmergedArea_s_center;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        private static ComputeCentroid_s_pRef;
+        private static ComputeCentroid_s_e1;
+        private static ComputeCentroid_s_e2;
+        static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
     }
-    export class b2Draw {
-        m_drawFlags: b2DrawFlags;
-        SetFlags(flags: b2DrawFlags): void;
-        GetFlags(): b2DrawFlags;
-        AppendFlags(flags: b2DrawFlags): void;
-        ClearFlags(flags: b2DrawFlags): void;
-        PushTransform(xf: b2Transform): void;
-        PopTransform(xf: b2Transform): void;
-        DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
-        DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void;
-        DrawCircle(center: b2Vec2, radius: number, color: b2Color): void;
-        DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void;
-        DrawParticles(centers: b2Vec2[], radius: number, colors: b2ParticleColor[], count: number): void;
-        DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void;
-        DrawTransform(xf: b2Transform): void;
+}
+declare module "Box2D/Collision/b2CollideCircle" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
+    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
+    export function b2CollideCircles(manifold: b2Manifold, circleA: b2CircleShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
+    export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2PolygonShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
+}
+declare module "Box2D/Dynamics/Contacts/b2CircleContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2CircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
+}
+declare module "Box2D/Collision/b2CollidePolygon" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
+    export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, xfA: b2Transform, polyB: b2PolygonShape, xfB: b2Transform): void;
+}
+declare module "Box2D/Dynamics/Contacts/b2PolygonContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2PolygonContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2PolygonAndCircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Collision/b2CollideEdge" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
+    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
+    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+    export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
+    export function b2CollideEdgeAndPolygon(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void;
+}
+declare module "Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2EdgeAndCircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2EdgeAndPolygonContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2ChainAndCircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        private static Evaluate_s_edge;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
+    import { b2Transform } from "Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2ChainAndPolygonContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        private static Evaluate_s_edge;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Dynamics/Contacts/b2ContactFactory" {
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+    export class b2ContactRegister {
+        pool: b2Contact[];
+        createFcn: {
+            (allocator: any): b2Contact;
+        };
+        destroyFcn: {
+            (contact: b2Contact, allocator: any): void;
+        };
+        primary: boolean;
+    }
+    export class b2ContactFactory {
+        m_allocator: any;
+        m_registers: b2ContactRegister[][];
+        constructor(allocator: any);
+        private AddType(createFcn, destroyFcn, type1, type2);
+        private InitializeRegisters();
+        Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact;
+        Destroy(contact: b2Contact): void;
+    }
+}
+declare module "Box2D/Dynamics/b2ContactManager" {
+    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
+    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
+    import { b2ContactFactory } from "Box2D/Dynamics/Contacts/b2ContactFactory";
+    import { b2ContactFilter, b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
+    export class b2ContactManager {
+        m_broadPhase: b2BroadPhase;
+        m_contactList: b2Contact;
+        m_contactCount: number;
+        m_contactFilter: b2ContactFilter;
+        m_contactListener: b2ContactListener;
+        m_allocator: any;
+        m_contactFactory: b2ContactFactory;
+        constructor();
+        AddPair(proxyUserDataA: any, proxyUserDataB: any): void;
+        FindNewContacts(): void;
+        Destroy(c: b2Contact): void;
+        Collide(): void;
+    }
+}
+declare module "Box2D/Collision/b2BroadPhase" {
+    import { b2Vec2 } from "Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput } from "Box2D/Collision/b2Collision";
+    import { b2TreeNode, b2DynamicTree } from "Box2D/Collision/b2DynamicTree";
+    import { b2ContactManager } from "Box2D/Dynamics/b2ContactManager";
+    export class b2Pair {
+        proxyA: b2TreeNode | null;
+        proxyB: b2TreeNode | null;
+    }
+    export class b2BroadPhase {
+        m_tree: b2DynamicTree;
+        m_proxyCount: number;
+        m_moveCount: number;
+        m_moveBuffer: b2TreeNode[];
+        m_pairCount: number;
+        m_pairBuffer: b2Pair[];
+        CreateProxy(aabb: b2AABB, userData: any): b2TreeNode;
+        DestroyProxy(proxy: b2TreeNode): void;
+        MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void;
+        TouchProxy(proxy: b2TreeNode): void;
+        GetFatAABB(proxy: b2TreeNode): b2AABB;
+        GetUserData(proxy: b2TreeNode): any;
+        TestOverlap(proxyA: b2TreeNode, proxyB: b2TreeNode): boolean;
+        GetProxyCount(): number;
+        UpdatePairs(contactManager: b2ContactManager): void;
+        Query(callback: (node: b2TreeNode) => boolean, aabb: b2AABB): void;
+        RayCast(callback: (input: b2RayCastInput, node: b2TreeNode) => number, input: b2RayCastInput): void;
+        GetTreeHeight(): number;
+        GetTreeBalance(): number;
+        GetTreeQuality(): number;
+        ShiftOrigin(newOrigin: b2Vec2): void;
+        BufferMove(proxy: b2TreeNode): void;
+        UnBufferMove(proxy: b2TreeNode): void;
+    }
+    export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
 }
 declare module "Box2D/Dynamics/Joints/b2DistanceJoint" {
     import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";

@@ -27,10 +27,8 @@ class ParticleVFX {
   private m_halfLifetime = 0.0;
   private m_pg: box2d.b2ParticleGroup = null;
   private m_particleSystem: box2d.b2ParticleSystem = null;
-  private m_origColor: box2d.b2ParticleColor = null;
+  private m_origColor: box2d.b2Color = new box2d.b2Color();
   constructor(particleSystem: box2d.b2ParticleSystem, origin: box2d.b2Vec2, size: number, speed: number, lifetime: number, particleFlags: box2d.b2ParticleFlag) {
-    this.m_origColor = new box2d.b2ParticleColor();
-
     // Create a circle to house the particles of size size
     let shape = new box2d.b2CircleShape();
     shape.m_p.Copy(origin);
@@ -41,10 +39,10 @@ class ParticleVFX {
     pd.flags = particleFlags;
     pd.shape = shape;
     this.m_origColor.Set(
-      Math.floor(Math.random() * 256),
-      Math.floor(Math.random() * 256),
-      Math.floor(Math.random() * 256),
-      255);
+      Math.random(),
+      Math.random(),
+      Math.random(),
+      1.0);
     pd.color.Copy(this.m_origColor);
     this.m_particleSystem = particleSystem;
 

@@ -21,6 +21,7 @@
 import { b2_linearSlop, b2_maxFloat, b2_maxParticleIndex, b2_invalidParticleIndex, b2_minParticleSystemBufferCapacity, b2_maxTriadDistanceSquared, b2_barrierCollisionTime, b2MakeArray } from "../Common/b2Settings";
 import { b2_maxParticlePressure, b2_minParticleWeight, b2_maxParticleForce, b2_particleStride } from "../Common/b2Settings";
 import { b2Min, b2Max, b2Abs, b2Clamp, b2Sqrt, b2InvSqrt, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
+import { b2Color } from "../Common/b2Draw";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2ShapeType, b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
 import { b2EdgeShape } from "../Collision/Shapes/b2EdgeShape";
@@ -30,7 +31,7 @@ import { b2Fixture } from "../Dynamics/b2Fixture";
 import { b2Body } from "../Dynamics/b2Body";
 import { b2World } from "../Dynamics/b2World";
 import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "../Dynamics/b2WorldCallbacks";
-import { b2ParticleFlag, b2ParticleColor, b2ParticleDef, b2ParticleHandle } from "./b2Particle";
+import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "./b2Particle";
 import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "./b2ParticleGroup";
 import { b2VoronoiDiagram } from "./b2VoronoiDiagram";
 
@@ -595,7 +596,7 @@ export class b2ParticleSystem {
    * reallocated on subsequent CreateParticle() calls.
    */
   m_depthBuffer: number[] = [];
-  m_colorBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleColor> = new b2ParticleSystem.UserOverridableBuffer<b2ParticleColor>();
+  m_colorBuffer: b2ParticleSystem.UserOverridableBuffer<b2Color> = new b2ParticleSystem.UserOverridableBuffer<b2Color>();
   m_groupBuffer: b2ParticleGroup[] = [];
   m_userDataBuffer: b2ParticleSystem.UserOverridableBuffer<any> = new b2ParticleSystem.UserOverridableBuffer();
   /**
@@ -755,7 +756,7 @@ export class b2ParticleSystem {
     }
     if (this.m_colorBuffer.data || !def.color.IsZero()) {
       this.m_colorBuffer.data = this.RequestBuffer(this.m_colorBuffer.data);
-      this.m_colorBuffer.data[index] = (this.m_colorBuffer.data[index] || new b2ParticleColor()).Copy(def.color);
+      this.m_colorBuffer.data[index] = (this.m_colorBuffer.data[index] || new b2Color()).Copy(def.color);
     }
     if (this.m_userDataBuffer.data || def.userData) {
       this.m_userDataBuffer.data = this.RequestBuffer(this.m_userDataBuffer.data);
@@ -1238,7 +1239,7 @@ export class b2ParticleSystem {
    *
    * @return the pointer to the head of the particle colors array.
    */
-  GetColorBuffer(): b2ParticleColor[] {
+  GetColorBuffer(): b2Color[] {
     this.m_colorBuffer.data = this.RequestBuffer(this.m_colorBuffer.data);
     return this.m_colorBuffer.data;
   }
@@ -1361,11 +1362,11 @@ export class b2ParticleSystem {
     ///}
   }
 
-  SetColorBuffer(buffer: b2ParticleColor[], capacity: number): void {
+  SetColorBuffer(buffer: b2Color[], capacity: number): void {
     ///if (buffer instanceof Uint8Array) {
-    ///let array: b2ParticleColor[] = [];
+    ///let array: b2Color[] = [];
     ///for (let i = 0; i < capacity; ++i) {
-    ///  array[i] = new b2ParticleColor(buffer.subarray(i * 4, i * 4 + 4));
+    ///  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
     ///}
     ///this.SetUserOverridableBuffer(this.m_colorBuffer, array, capacity);
     ///} else {
@@ -3981,8 +3982,8 @@ export class b2ParticleSystem {
   SolveColorMixing(): void {
     // mixes color between contacting particles
     b2Assert(this.m_colorBuffer.data !== null);
-    let colorMixing128 = Math.floor(128 * this.m_def.colorMixingStrength);
-    if (colorMixing128) {
+    const colorMixing = 0.5 * this.m_def.colorMixingStrength;
+    if (colorMixing) {
       for (let k = 0; k < this.m_contactBuffer.count; k++) {
         let contact = this.m_contactBuffer.data[k];
         let a = contact.indexA;
@@ -3993,7 +3994,7 @@ export class b2ParticleSystem {
           let colorB = this.m_colorBuffer.data[b];
           // Use the static method to ensure certain compilers inline
           // this correctly.
-          b2ParticleColor.MixColors(colorA, colorB, colorMixing128);
+          b2Color.MixColors(colorA, colorB, colorMixing);
         }
       }
     }
