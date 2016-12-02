@@ -1,4 +1,4 @@
-import { b2_maxFloat, b2_maxManifoldPoints, b2MakeNumberArray } from "../Common/b2Settings";
+import { b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature } from "./b2Collision";
 import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
@@ -159,8 +159,8 @@ function b2FindIncidentEdge(c: b2ClipVertex[], poly1: b2PolygonShape, xf1: b2Tra
 const b2CollidePolygons_s_incidentEdge = b2ClipVertex.MakeArray(2);
 const b2CollidePolygons_s_clipPoints1 = b2ClipVertex.MakeArray(2);
 const b2CollidePolygons_s_clipPoints2 = b2ClipVertex.MakeArray(2);
-const b2CollidePolygons_s_edgeA = b2MakeNumberArray(1);
-const b2CollidePolygons_s_edgeB = b2MakeNumberArray(1);
+const b2CollidePolygons_s_edgeA = [ 0 ];
+const b2CollidePolygons_s_edgeB = [ 0 ];
 const b2CollidePolygons_s_localTangent: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_localNormal: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_planePoint: b2Vec2 = new b2Vec2();

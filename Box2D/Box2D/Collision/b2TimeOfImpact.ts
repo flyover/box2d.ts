@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_maxPolygonVertices, b2MakeNumberArray } from "../Common/b2Settings";
+import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings";
 import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
@@ -262,8 +262,8 @@ const b2TimeOfImpact_s_cache: b2SimplexCache = new b2SimplexCache();
 const b2TimeOfImpact_s_distanceInput: b2DistanceInput = new b2DistanceInput();
 const b2TimeOfImpact_s_distanceOutput: b2DistanceOutput = new b2DistanceOutput();
 const b2TimeOfImpact_s_fcn: b2SeparationFunction = new b2SeparationFunction();
-const b2TimeOfImpact_s_indexA = b2MakeNumberArray(1);
-const b2TimeOfImpact_s_indexB = b2MakeNumberArray(1);
+const b2TimeOfImpact_s_indexA = [ 0 ];
+const b2TimeOfImpact_s_indexB = [ 0 ];
 const b2TimeOfImpact_s_sweepA: b2Sweep = new b2Sweep();
 const b2TimeOfImpact_s_sweepB: b2Sweep = new b2Sweep();
 export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {

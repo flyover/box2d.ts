@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2MakeNumberArray } from "../Common/b2Settings";
+import { b2_maxFloat, b2_epsilon, b2_epsilon_sq } from "../Common/b2Settings";
 import { b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 
@@ -80,8 +80,8 @@ export class b2DistanceProxy {
 export class b2SimplexCache {
   public metric: number = 0;
   public count: number = 0;
-  public indexA: number[] = b2MakeNumberArray(3);
-  public indexB: number[] = b2MakeNumberArray(3);
+  public indexA: number[] = [ 0, 0, 0 ];
+  public indexB: number[] = [ 0, 0, 0 ];
 
   public Reset(): b2SimplexCache {
     this.metric = 0;
@@ -447,8 +447,8 @@ export class b2Simplex {
 }
 
 const b2Distance_s_simplex: b2Simplex = new b2Simplex();
-const b2Distance_s_saveA = b2MakeNumberArray(3);
-const b2Distance_s_saveB = b2MakeNumberArray(3);
+const b2Distance_s_saveA = [ 0, 0, 0 ];
+const b2Distance_s_saveB = [ 0, 0, 0 ];
 const b2Distance_s_p: b2Vec2 = new b2Vec2();
 const b2Distance_s_d: b2Vec2 = new b2Vec2();
 const b2Distance_s_normal: b2Vec2 = new b2Vec2();
