@@ -5035,6 +5035,19 @@ export class CompositeShape extends b2Shape {
   ComputeMass(massData: b2MassData, density: number): void {
     b2Assert(false);
   }
+
+  public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
+    b2Assert(false);
+  }
+
+  public ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number {
+    b2Assert(false);
+    return 0;
+  }
+
+  public Dump(log: (format: string, ...args: any[]) => void): void {
+    b2Assert(false);
+  }
 }
 
 export class ReactiveFilter extends b2ParticleSystem.ConnectionFilter {

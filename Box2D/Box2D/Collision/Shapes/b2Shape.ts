@@ -44,7 +44,7 @@ export const enum b2ShapeType {
 /// A shape is used for collision detection. You can create a shape however you like.
 /// Shapes used for simulation in b2World are created automatically when a b2Fixture
 /// is created. Shapes may encapsulate a one or more child shapes.
-export class b2Shape {
+export abstract class b2Shape {
   public m_type: b2ShapeType = b2ShapeType.e_unknown;
   public m_radius: number = 0;
 
@@ -54,10 +54,7 @@ export class b2Shape {
   }
 
   /// Clone the concrete shape using the provided allocator.
-  public Clone(): b2Shape {
-    ///b2Assert(false);
-    return null;
-  }
+  public abstract Clone(): b2Shape;
 
   public Copy(other: b2Shape): b2Shape {
     ///b2Assert(this.m_type === other.m_type);
@@ -72,18 +69,12 @@ export class b2Shape {
   }
 
   /// Get the number of child primitives.
-  public GetChildCount(): number {
-    ///b2Assert(false, "pure virtual");
-    return 0;
-  }
+  public abstract GetChildCount(): number;
 
   /// Test a point for containment in this shape. This only works for convex shapes.
   /// @param xf the shape world transform.
   /// @param p a point in world coordinates.
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
-    ///b2Assert(false, "pure virtual");
-    return false;
-  }
+  public abstract TestPoint(xf: b2Transform, p: b2Vec2): boolean;
 
   ///#if B2_ENABLE_PARTICLE
   /// Compute the distance from the current shape to the specified point. This only works for convex shapes.
@@ -91,10 +82,7 @@ export class b2Shape {
 	/// @param p a point in world coordinates.
 	/// @param distance returns the distance from the current shape.
 	/// @param normal returns the direction in which the distance increases.
-  public ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number {
-    ///b2Assert(false, "pure virtual");
-    return 0;
-  }
+  public abstract ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
   ///#endif
 
   /// Cast a ray against a child shape.
@@ -102,37 +90,23 @@ export class b2Shape {
   /// @param input the ray-cast input parameters.
   /// @param transform the transform to be applied to the shape.
   /// @param childIndex the child shape index
-  public RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean {
-    ///b2Assert(false, "pure virtual");
-    return false;
-  }
+  public abstract RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
 
   /// Given a transform, compute the associated axis aligned bounding box for a child shape.
   /// @param aabb returns the axis aligned box.
   /// @param xf the world transform of the shape.
   /// @param childIndex the child shape
-  public ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void {
-    ///b2Assert(false, "pure virtual");
-  }
+  public abstract ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
 
   /// Compute the mass properties of this shape using its dimensions and density.
   /// The inertia tensor is computed about the local origin.
   /// @param massData returns the mass data for this shape.
   /// @param density the density in kilograms per meter squared.
-  public ComputeMass(massData: b2MassData, density: number): void {
-    ///b2Assert(false, "pure virtual");
-  }
+  public abstract ComputeMass(massData: b2MassData, density: number): void;
 
-  public SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void {
-    ///b2Assert(false, "pure virtual");
-  }
+  public abstract SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
 
-  public ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number {
-    ///b2Assert(false, "pure virtual");
-    c.SetZero();
-    return 0;
-  }
+  public abstract ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
 
-  public Dump(log: (format: string, ...args: any[]) => void): void {
-  }
+  public abstract Dump(log: (format: string, ...args: any[]) => void): void;
 }
