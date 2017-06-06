@@ -34,6 +34,7 @@ import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback 
 import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "./b2Particle";
 import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "./b2ParticleGroup";
 import { b2VoronoiDiagram } from "./b2VoronoiDiagram";
+import { b2DistanceProxy } from "../Collision/b2Distance";
 
 function b2Assert(condition: boolean) {}
 
