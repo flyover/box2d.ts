@@ -2,7 +2,7 @@
     "rules": {
         "class-name": false,
         "comment-format": [
-            true,
+            false,
             "check-space"
         ],
         "indent": [
