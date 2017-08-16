@@ -4832,7 +4832,7 @@ export class FixedSetAllocator {
   SetCount(count: number): void {
     // TODO
   }
-};
+}
 
 export class FixtureParticle {
   first: b2Fixture = null;
@@ -4841,7 +4841,7 @@ export class FixtureParticle {
     this.first = fixture;
     this.second = particle;
   }
-};
+}
 
 export class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
   Initialize(bodyContactBuffer: b2GrowableBuffer<b2ParticleBodyContact>, flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>): void {
@@ -4851,7 +4851,7 @@ export class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
     // TODO
     return b2_invalidParticleIndex;
   }
-};
+}
 
 export class ParticlePair {
   first: number = b2_invalidParticleIndex;
@@ -4860,7 +4860,7 @@ export class ParticlePair {
     this.first = particleA;
     this.second = particleB;
   }
-};
+}
 
 export class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
   Initialize(contactBuffer: b2GrowableBuffer<b2ParticleContact>, flagsBuffer: UserOverridableBuffer<b2ParticleFlag>): void {
@@ -4936,7 +4936,7 @@ export class DestroyParticlesInShapeCallback extends b2QueryCallback {
   Destroyed(): number {
     return this.m_destroyed;
   }
-};
+}
 
 export class JoinParticleGroupsFilter extends b2ParticleSystem.ConnectionFilter {
   m_threshold: number = 0;

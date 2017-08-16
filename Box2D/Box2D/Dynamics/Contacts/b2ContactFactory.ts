@@ -37,11 +37,11 @@ export class b2ContactFactory {
       }
 
       return createFcn(allocator);
-    };
+    }
 
     function poolDestroyFcn(contact: b2Contact, allocator: any): void {
       pool.push(contact);
-    };
+    }
 
     this.m_registers[type1][type2].pool = pool;
     this.m_registers[type1][type2].createFcn = poolCreateFcn;

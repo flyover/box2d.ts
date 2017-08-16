@@ -132,7 +132,7 @@ export class b2BroadPhase {
         ++that.m_pairCount;
 
         return true;
-      };
+      }
 
       // We have to query the tree with the fat AABB so that
       // we don't fail to create a pair that may touch later.

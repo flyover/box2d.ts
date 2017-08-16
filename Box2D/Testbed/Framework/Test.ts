@@ -285,7 +285,7 @@ export class Test extends box2d.b2ContactListener {
 
       // Continue the query.
       return true;
-    };
+    }
 
     this.m_world.QueryAABB(callback, aabb);
 

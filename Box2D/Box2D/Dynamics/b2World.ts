@@ -671,7 +671,7 @@ export class b2World {
       } else /* if (typeof(callback) === 'function') */ {
         return callback(fixture);
       }
-    };
+    }
     broadPhase.Query(WorldQueryWrapper, aabb);
     ///#if B2_ENABLE_PARTICLE
     if (callback instanceof b2QueryCallback) {
@@ -700,7 +700,7 @@ export class b2World {
         }
       }
       return true;
-    };
+    }
     const aabb: b2AABB = b2World.QueryShape_s_aabb;
     shape.ComputeAABB(aabb, transform, 0); // TODO
     broadPhase.Query(WorldQueryWrapper, aabb);
@@ -731,7 +731,7 @@ export class b2World {
         }
       }
       return true;
-    };
+    }
     const aabb: b2AABB = b2World.QueryPoint_s_aabb;
     aabb.lowerBound.Set(point.x - b2_linearSlop, point.y - b2_linearSlop);
     aabb.upperBound.Set(point.x + b2_linearSlop, point.y + b2_linearSlop);
@@ -776,7 +776,7 @@ export class b2World {
         }
       }
       return input.maxFraction;
-    };
+    }
     const input: b2RayCastInput = b2World.RayCast_s_input;
     input.maxFraction = 1;
     input.p1.Copy(point1);
@@ -802,7 +802,7 @@ export class b2World {
         result = fixture;
       }
       return min_fraction;
-    };
+    }
     this.RayCast(WorldRayCastOneWrapper, point1, point2);
     return result;
   }
@@ -811,7 +811,7 @@ export class b2World {
     function WorldRayCastAllWrapper(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number {
       out.push(fixture);
       return 1;
-    };
+    }
     this.RayCast(WorldRayCastAllWrapper, point1, point2);
     return out;
   }

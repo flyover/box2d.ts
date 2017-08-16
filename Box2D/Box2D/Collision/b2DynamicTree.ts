@@ -677,7 +677,7 @@ export class b2DynamicTree {
     const child2: b2TreeNode = node.child2;
     const balance: number = b2Abs(child2.height - child1.height);
     return b2Max(maxBalance, balance);
-  };
+  }
 
   public GetMaxBalance(): number {
     const maxBalance: number = b2DynamicTree.GetMaxBalanceNode(this.m_root, 0);
