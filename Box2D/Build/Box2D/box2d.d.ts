@@ -450,22 +450,22 @@ declare module "Collision/Shapes/b2Shape" {
         e_chainShape = 3,
         e_shapeTypeCount = 4,
     }
-    export class b2Shape {
+    export abstract class b2Shape {
         m_type: b2ShapeType;
         m_radius: number;
         constructor(type: b2ShapeType, radius: number);
-        Clone(): b2Shape;
+        abstract Clone(): b2Shape;
         Copy(other: b2Shape): b2Shape;
         GetType(): b2ShapeType;
-        GetChildCount(): number;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
+        abstract GetChildCount(): number;
+        abstract TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        abstract ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        abstract RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
+        abstract ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        abstract ComputeMass(massData: b2MassData, density: number): void;
+        abstract SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        abstract ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        abstract Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
 declare module "Collision/b2Collision" {
@@ -2116,6 +2116,7 @@ declare module "Particle/b2ParticleSystem" {
     import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Dynamics/b2WorldCallbacks";
     import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "Particle/b2Particle";
     import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Particle/b2ParticleGroup";
+    import { b2DistanceProxy } from "Collision/b2Distance";
     export class b2GrowableBuffer<T> {
         data: T[];
         count: number;
@@ -3356,6 +3357,9 @@ declare module "Particle/b2ParticleSystem" {
              * @see b2Shape::ComputeMass
              */
             ComputeMass(massData: b2MassData, density: number): void;
+            SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+            ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+            Dump(log: (format: string, ...args: any[]) => void): void;
         }
         class ReactiveFilter extends b2ParticleSystem.ConnectionFilter {
             m_flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>;

@@ -15,10 +15,9 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2Settings", [], function(exports_1, context_1) {
+System.register("Common/b2Settings", [], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_pi, b2_maxManifoldPoints, b2_maxPolygonVertices, b2_aabbExtension, b2_aabbMultiplier, b2_linearSlop, b2_angularSlop, b2_polygonRadius, b2_maxSubSteps, b2_maxTOIContacts, b2_velocityThreshold, b2_maxLinearCorrection, b2_maxAngularCorrection, b2_maxTranslation, b2_maxTranslationSquared, b2_maxRotation, b2_maxRotationSquared, b2_baumgarte, b2_toiBaumgarte, b2_invalidParticleIndex, b2_maxParticleIndex, b2_particleStride, b2_minParticleWeight, b2_maxParticlePressure, b2_maxParticleForce, b2_maxTriadDistance, b2_maxTriadDistanceSquared, b2_minParticleSystemBufferCapacity, b2_barrierCollisionTime, b2_timeToSleep, b2_linearSleepTolerance, b2_angularSleepTolerance, b2Version, b2_version, b2_changelist;
     function b2Assert(condition, ...args) {
         if (!condition) {
             debugger;
@@ -52,7 +51,7 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
     exports_1("b2ParseUInt", b2ParseUInt);
     function b2MakeArray(length, init) {
         let a = [];
-        for (let i = length - 1; i >= 0; --i) {
+        for (let i = 0; i < length; ++i) {
             a.push(init(i));
         }
         return a;
@@ -60,7 +59,7 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
     exports_1("b2MakeArray", b2MakeArray);
     function b2MakeNullArray(length) {
         const a = [];
-        for (let i = length - 1; i >= 0; --i) {
+        for (let i = 0; i < length; ++i) {
             a.push(null);
         }
         return a;
@@ -68,15 +67,32 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
     exports_1("b2MakeNullArray", b2MakeNullArray);
     function b2MakeNumberArray(length, init = 0) {
         const a = [];
-        for (let i = length - 1; i >= 0; --i) {
+        for (let i = 0; i < length; ++i) {
             a.push(init);
         }
         return a;
     }
     exports_1("b2MakeNumberArray", b2MakeNumberArray);
+    var b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_pi, b2_maxManifoldPoints, b2_maxPolygonVertices, b2_aabbExtension, b2_aabbMultiplier, b2_linearSlop, b2_angularSlop, b2_polygonRadius, b2_maxSubSteps, b2_maxTOIContacts, b2_velocityThreshold, b2_maxLinearCorrection, b2_maxAngularCorrection, b2_maxTranslation, b2_maxTranslationSquared, b2_maxRotation, b2_maxRotationSquared, b2_baumgarte, b2_toiBaumgarte, b2_invalidParticleIndex, b2_maxParticleIndex, b2_particleStride, b2_minParticleWeight, b2_maxParticlePressure, b2_maxParticleForce, b2_maxTriadDistance, b2_maxTriadDistanceSquared, b2_minParticleSystemBufferCapacity, b2_barrierCollisionTime, b2_timeToSleep, b2_linearSleepTolerance, b2_angularSleepTolerance, b2Version, b2_version, b2_changelist;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             exports_1("b2_maxFloat", b2_maxFloat = 1E+37); // FLT_MAX instead of Number.MAX_VALUE;
             exports_1("b2_epsilon", b2_epsilon = 1E-5); // FLT_EPSILON instead of Number.MIN_VALUE;
             exports_1("b2_epsilon_sq", b2_epsilon_sq = (b2_epsilon * b2_epsilon));
@@ -184,7 +200,7 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
             exports_1("b2_version", b2_version = new b2Version(2, 3, 2));
             exports_1("b2_changelist", b2_changelist = 313);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -203,11 +219,9 @@ System.register("Common/b2Settings", [], function(exports_1, context_1) {
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, context_2) {
+System.register("Common/b2Math", ["Common/b2Settings"], function (exports_2, context_2) {
     "use strict";
     var __moduleName = context_2 && context_2.id;
-    var b2Settings_1;
-    var b2_pi_over_180, b2_180_over_pi, b2_two_pi, b2Vec2, b2Vec2_zero, b2Vec3, b2Mat22, b2Mat33, b2Rot, b2Transform, b2Sweep;
     function b2Abs(n) {
         return (n < 0) ? (-n) : (n);
     }
@@ -548,12 +562,30 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
         b2MulTRV(A.q, b2SubVV(B.p, A.p, out.p), out.p);
         return out;
     }
+    var b2Settings_1, b2_pi_over_180, b2_180_over_pi, b2_two_pi, b2Vec2, b2Vec2_zero, b2Vec3, b2Mat22, b2Mat33, b2Rot, b2Transform, b2Sweep;
     return {
-        setters:[
+        setters: [
             function (b2Settings_1_1) {
                 b2Settings_1 = b2Settings_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             exports_2("b2_pi_over_180", b2_pi_over_180 = b2Settings_1.b2_pi / 180);
             exports_2("b2_180_over_pi", b2_180_over_pi = 180 / b2Settings_1.b2_pi);
             exports_2("b2_two_pi", b2_two_pi = 2 * b2Settings_1.b2_pi);
@@ -1185,7 +1217,7 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
             };
             exports_2("b2Sweep", b2Sweep);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2011 Erin Catto http://box2d.org
@@ -1204,13 +1236,29 @@ System.register("Common/b2Math", ["Common/b2Settings"], function(exports_2, cont
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2Draw", [], function(exports_3, context_3) {
+System.register("Common/b2Draw", [], function (exports_3, context_3) {
     "use strict";
     var __moduleName = context_3 && context_3.id;
     var b2Color, b2Draw;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {/*
+            * Copyright (c) 2011 Erin Catto http://box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Color for debug drawing. Each value has the range [0,1].
             b2Color = class b2Color {
                 constructor(rr = 0.5, gg = 0.5, bb = 0.5, aa = 1.0) {
@@ -1374,7 +1422,7 @@ System.register("Common/b2Draw", [], function(exports_3, context_3) {
             };
             exports_3("b2Draw", b2Draw);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2011 Erin Catto http://box2d.org
@@ -1393,13 +1441,29 @@ System.register("Common/b2Draw", [], function(exports_3, context_3) {
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2Timer", [], function(exports_4, context_4) {
+System.register("Common/b2Timer", [], function (exports_4, context_4) {
     "use strict";
     var __moduleName = context_4 && context_4.id;
     var b2Timer, b2Counter;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {/*
+            * Copyright (c) 2011 Erin Catto http://box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Timer for profiling. This has platform specific code and may
             /// not work on every platform.
             b2Timer = class b2Timer {
@@ -1458,7 +1522,7 @@ System.register("Common/b2Timer", [], function(exports_4, context_4) {
             };
             exports_4("b2Counter", b2Counter);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2010 Erin Catto http://www.box2d.org
@@ -1477,13 +1541,29 @@ System.register("Common/b2Timer", [], function(exports_4, context_4) {
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2GrowableStack", [], function(exports_5, context_5) {
+System.register("Common/b2GrowableStack", [], function (exports_5, context_5) {
     "use strict";
     var __moduleName = context_5 && context_5.id;
     var b2GrowableStack;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {/*
+            * Copyright (c) 2010 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// This is a growable LIFO stack with an initial capacity of N.
             /// If the stack size exceeds the initial capacity, the heap is used
             /// to increase the size of the stack.
@@ -1515,7 +1595,7 @@ System.register("Common/b2GrowableStack", [], function(exports_5, context_5) {
             };
             exports_5("b2GrowableStack", b2GrowableStack);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -1534,18 +1614,34 @@ System.register("Common/b2GrowableStack", [], function(exports_5, context_5) {
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2BlockAllocator", [], function(exports_6, context_6) {
+System.register("Common/b2BlockAllocator", [], function (exports_6, context_6) {
     "use strict";
     var __moduleName = context_6 && context_6.id;
     var b2BlockAllocator;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2BlockAllocator = class b2BlockAllocator {
             };
             exports_6("b2BlockAllocator", b2BlockAllocator);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -1564,18 +1660,34 @@ System.register("Common/b2BlockAllocator", [], function(exports_6, context_6) {
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Common/b2StackAllocator", [], function(exports_7, context_7) {
+System.register("Common/b2StackAllocator", [], function (exports_7, context_7) {
     "use strict";
     var __moduleName = context_7 && context_7.id;
     var b2StackAllocator;
     return {
-        setters:[],
-        execute: function() {
+        setters: [],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2StackAllocator = class b2StackAllocator {
             };
             exports_7("b2StackAllocator", b2StackAllocator);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -1594,11 +1706,9 @@ System.register("Common/b2StackAllocator", [], function(exports_7, context_7) {
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], function(exports_8, context_8) {
+System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], function (exports_8, context_8) {
     "use strict";
     var __moduleName = context_8 && context_8.id;
-    var b2Settings_2, b2Math_1;
-    var b2DistanceProxy, b2SimplexCache, b2DistanceInput, b2DistanceOutput, b2_gjkCalls, b2_gjkIters, b2_gjkMaxIters, b2SimplexVertex, b2Simplex, b2Distance_s_simplex, b2Distance_s_saveA, b2Distance_s_saveB, b2Distance_s_p, b2Distance_s_d, b2Distance_s_normal, b2Distance_s_supportA, b2Distance_s_supportB;
     function b2Distance(output, cache, input) {
         exports_8("b2_gjkCalls", ++b2_gjkCalls);
         const proxyA = input.proxyA;
@@ -1722,15 +1832,33 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
         }
     }
     exports_8("b2Distance", b2Distance);
+    var b2Settings_2, b2Math_1, b2DistanceProxy, b2SimplexCache, b2DistanceInput, b2DistanceOutput, b2_gjkCalls, b2_gjkIters, b2_gjkMaxIters, b2SimplexVertex, b2Simplex, b2Distance_s_simplex, b2Distance_s_saveA, b2Distance_s_saveB, b2Distance_s_p, b2Distance_s_d, b2Distance_s_normal, b2Distance_s_supportA, b2Distance_s_supportB;
     return {
-        setters:[
+        setters: [
             function (b2Settings_2_1) {
                 b2Settings_2 = b2Settings_2_1;
             },
             function (b2Math_1_1) {
                 b2Math_1 = b2Math_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A distance proxy is used by the GJK algorithm.
             /// It encapsulates any shape.
             b2DistanceProxy = class b2DistanceProxy {
@@ -1786,8 +1914,8 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
                 constructor() {
                     this.metric = 0;
                     this.count = 0;
-                    this.indexA = b2Settings_2.b2MakeNumberArray(3);
-                    this.indexB = b2Settings_2.b2MakeNumberArray(3);
+                    this.indexA = [0, 0, 0];
+                    this.indexB = [0, 0, 0];
                 }
                 Reset() {
                     this.metric = 0;
@@ -2112,15 +2240,15 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
             b2Simplex.s_e23 = new b2Math_1.b2Vec2();
             exports_8("b2Simplex", b2Simplex);
             b2Distance_s_simplex = new b2Simplex();
-            b2Distance_s_saveA = b2Settings_2.b2MakeNumberArray(3);
-            b2Distance_s_saveB = b2Settings_2.b2MakeNumberArray(3);
+            b2Distance_s_saveA = [0, 0, 0];
+            b2Distance_s_saveB = [0, 0, 0];
             b2Distance_s_p = new b2Math_1.b2Vec2();
             b2Distance_s_d = new b2Math_1.b2Vec2();
             b2Distance_s_normal = new b2Math_1.b2Vec2();
             b2Distance_s_supportA = new b2Math_1.b2Vec2();
             b2Distance_s_supportB = new b2Math_1.b2Vec2();
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -2139,17 +2267,33 @@ System.register("Collision/b2Distance", ["Common/b2Settings", "Common/b2Math"], 
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function(exports_9, context_9) {
+System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function (exports_9, context_9) {
     "use strict";
     var __moduleName = context_9 && context_9.id;
-    var b2Math_2;
-    var b2MassData, b2Shape;
+    var b2Math_2, b2MassData, b2Shape;
     return {
-        setters:[
+        setters: [
             function (b2Math_2_1) {
                 b2Math_2 = b2Math_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// This holds the mass data computed for a shape.
             b2MassData = class b2MassData {
                 constructor() {
@@ -2172,11 +2316,6 @@ System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function(exports_
                     this.m_type = type;
                     this.m_radius = radius;
                 }
-                /// Clone the concrete shape using the provided allocator.
-                Clone() {
-                    ///b2Assert(false);
-                    return null;
-                }
                 Copy(other) {
                     ///b2Assert(this.m_type === other.m_type);
                     this.m_radius = other.m_radius;
@@ -2187,66 +2326,10 @@ System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function(exports_
                 GetType() {
                     return this.m_type;
                 }
-                /// Get the number of child primitives.
-                GetChildCount() {
-                    ///b2Assert(false, "pure virtual");
-                    return 0;
-                }
-                /// Test a point for containment in this shape. This only works for convex shapes.
-                /// @param xf the shape world transform.
-                /// @param p a point in world coordinates.
-                TestPoint(xf, p) {
-                    ///b2Assert(false, "pure virtual");
-                    return false;
-                }
-                ///#if B2_ENABLE_PARTICLE
-                /// Compute the distance from the current shape to the specified point. This only works for convex shapes.
-                /// @param xf the shape world transform.
-                /// @param p a point in world coordinates.
-                /// @param distance returns the distance from the current shape.
-                /// @param normal returns the direction in which the distance increases.
-                ComputeDistance(xf, p, normal, childIndex) {
-                    ///b2Assert(false, "pure virtual");
-                    return 0;
-                }
-                ///#endif
-                /// Cast a ray against a child shape.
-                /// @param output the ray-cast results.
-                /// @param input the ray-cast input parameters.
-                /// @param transform the transform to be applied to the shape.
-                /// @param childIndex the child shape index
-                RayCast(output, input, transform, childIndex) {
-                    ///b2Assert(false, "pure virtual");
-                    return false;
-                }
-                /// Given a transform, compute the associated axis aligned bounding box for a child shape.
-                /// @param aabb returns the axis aligned box.
-                /// @param xf the world transform of the shape.
-                /// @param childIndex the child shape
-                ComputeAABB(aabb, xf, childIndex) {
-                    ///b2Assert(false, "pure virtual");
-                }
-                /// Compute the mass properties of this shape using its dimensions and density.
-                /// The inertia tensor is computed about the local origin.
-                /// @param massData returns the mass data for this shape.
-                /// @param density the density in kilograms per meter squared.
-                ComputeMass(massData, density) {
-                    ///b2Assert(false, "pure virtual");
-                }
-                SetupDistanceProxy(proxy, index) {
-                    ///b2Assert(false, "pure virtual");
-                }
-                ComputeSubmergedArea(normal, offset, xf, c) {
-                    ///b2Assert(false, "pure virtual");
-                    c.SetZero();
-                    return 0;
-                }
-                Dump(log) {
-                }
             };
             exports_9("b2Shape", b2Shape);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -2265,11 +2348,9 @@ System.register("Collision/Shapes/b2Shape", ["Common/b2Math"], function(exports_
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", "Collision/b2Distance"], function(exports_10, context_10) {
+System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", "Collision/b2Distance"], function (exports_10, context_10) {
     "use strict";
     var __moduleName = context_10 && context_10.id;
-    var b2Settings_3, b2Math_3, b2Distance_1;
-    var b2ContactFeature, b2ContactID, b2ManifoldPoint, b2Manifold, b2WorldManifold, b2ClipVertex, b2RayCastInput, b2RayCastOutput, b2AABB, b2TestOverlapShape_s_input, b2TestOverlapShape_s_simplexCache, b2TestOverlapShape_s_output;
     /// Compute the point states given two manifolds. The states pertain to the transition from manifold1
     /// to manifold2. So state1 is either persist or remove while state2 is either add or persist.
     function b2GetPointStates(state1, state2, manifold1, manifold2) {
@@ -2364,8 +2445,9 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
         return output.distance < 10 * b2Settings_3.b2_epsilon;
     }
     exports_10("b2TestOverlapShape", b2TestOverlapShape);
+    var b2Settings_3, b2Math_3, b2Distance_1, b2ContactFeature, b2ContactID, b2ManifoldPoint, b2Manifold, b2WorldManifold, b2ClipVertex, b2RayCastInput, b2RayCastOutput, b2AABB, b2TestOverlapShape_s_input, b2TestOverlapShape_s_simplexCache, b2TestOverlapShape_s_output;
     return {
-        setters:[
+        setters: [
             function (b2Settings_3_1) {
                 b2Settings_3 = b2Settings_3_1;
             },
@@ -2374,8 +2456,25 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
             },
             function (b2Distance_1_1) {
                 b2Distance_1 = b2Distance_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// The features that intersect to form the contact point
             /// This must be 4 bytes or less.
             b2ContactFeature = class b2ContactFeature {
@@ -2809,7 +2908,7 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
             b2TestOverlapShape_s_simplexCache = new b2Distance_1.b2SimplexCache();
             b2TestOverlapShape_s_output = new b2Distance_1.b2DistanceOutput();
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2009 Erin Catto http://www.box2d.org
@@ -2828,13 +2927,12 @@ System.register("Collision/b2Collision", ["Common/b2Settings", "Common/b2Math", 
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math", "Common/b2GrowableStack", "Collision/b2Collision"], function(exports_11, context_11) {
+System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math", "Common/b2GrowableStack", "Collision/b2Collision"], function (exports_11, context_11) {
     "use strict";
     var __moduleName = context_11 && context_11.id;
-    var b2Settings_4, b2Math_4, b2GrowableStack_1, b2Collision_1;
-    var b2TreeNode, b2DynamicTree;
+    var b2Settings_4, b2Math_4, b2GrowableStack_1, b2Collision_1, b2TreeNode, b2DynamicTree;
     return {
-        setters:[
+        setters: [
             function (b2Settings_4_1) {
                 b2Settings_4 = b2Settings_4_1;
             },
@@ -2846,8 +2944,25 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
             },
             function (b2Collision_1_1) {
                 b2Collision_1 = b2Collision_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A node in the dynamic tree. The client does not interact with this directly.
             b2TreeNode = class b2TreeNode {
                 constructor(id = 0) {
@@ -3327,6 +3442,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                         return;
                     }
                     if (index === this.m_root) {
+                        ///b2Assert(index.parent === null);
                     }
                     const node = index;
                     const child1 = node.child1;
@@ -3390,7 +3506,6 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
                     const balance = b2Math_4.b2Abs(child2.height - child1.height);
                     return b2Math_4.b2Max(maxBalance, balance);
                 }
-                ;
                 GetMaxBalance() {
                     const maxBalance = b2DynamicTree.GetMaxBalanceNode(this.m_root, 0);
                     /*
@@ -3514,7 +3629,7 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
             b2DynamicTree.s_node_id = 0;
             exports_11("b2DynamicTree", b2DynamicTree);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -3533,11 +3648,9 @@ System.register("Collision/b2DynamicTree", ["Common/b2Settings", "Common/b2Math"
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Collision/b2Distance"], function(exports_12, context_12) {
+System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Collision/b2Distance"], function (exports_12, context_12) {
     "use strict";
     var __moduleName = context_12 && context_12.id;
-    var b2Settings_5, b2Math_5, b2Timer_1, b2Distance_2;
-    var b2_toiTime, b2_toiMaxTime, b2_toiCalls, b2_toiIters, b2_toiMaxIters, b2_toiRootIters, b2_toiMaxRootIters, b2TimeOfImpact_s_xfA, b2TimeOfImpact_s_xfB, b2TimeOfImpact_s_pointA, b2TimeOfImpact_s_pointB, b2TimeOfImpact_s_normal, b2TimeOfImpact_s_axisA, b2TimeOfImpact_s_axisB, b2TOIInput, b2TOIOutput, b2SeparationFunction, b2TimeOfImpact_s_timer, b2TimeOfImpact_s_cache, b2TimeOfImpact_s_distanceInput, b2TimeOfImpact_s_distanceOutput, b2TimeOfImpact_s_fcn, b2TimeOfImpact_s_indexA, b2TimeOfImpact_s_indexB, b2TimeOfImpact_s_sweepA, b2TimeOfImpact_s_sweepB;
     function b2TimeOfImpact(output, input) {
         const timer = b2TimeOfImpact_s_timer.Reset();
         exports_12("b2_toiCalls", ++b2_toiCalls);
@@ -3722,8 +3835,9 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
         exports_12("b2_toiTime", b2_toiTime += time);
     }
     exports_12("b2TimeOfImpact", b2TimeOfImpact);
+    var b2Settings_5, b2Math_5, b2Timer_1, b2Distance_2, b2_toiTime, b2_toiMaxTime, b2_toiCalls, b2_toiIters, b2_toiMaxIters, b2_toiRootIters, b2_toiMaxRootIters, b2TimeOfImpact_s_xfA, b2TimeOfImpact_s_xfB, b2TimeOfImpact_s_pointA, b2TimeOfImpact_s_pointB, b2TimeOfImpact_s_normal, b2TimeOfImpact_s_axisA, b2TimeOfImpact_s_axisB, b2TOIInput, b2TOIOutput, b2SeparationFunction, b2TimeOfImpact_s_timer, b2TimeOfImpact_s_cache, b2TimeOfImpact_s_distanceInput, b2TimeOfImpact_s_distanceOutput, b2TimeOfImpact_s_fcn, b2TimeOfImpact_s_indexA, b2TimeOfImpact_s_indexB, b2TimeOfImpact_s_sweepA, b2TimeOfImpact_s_sweepB;
     return {
-        setters:[
+        setters: [
             function (b2Settings_5_1) {
                 b2Settings_5 = b2Settings_5_1;
             },
@@ -3735,8 +3849,25 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
             },
             function (b2Distance_2_1) {
                 b2Distance_2 = b2Distance_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             exports_12("b2_toiTime", b2_toiTime = 0);
             exports_12("b2_toiMaxTime", b2_toiMaxTime = 0);
             exports_12("b2_toiCalls", b2_toiCalls = 0);
@@ -3927,12 +4058,12 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
             b2TimeOfImpact_s_distanceInput = new b2Distance_2.b2DistanceInput();
             b2TimeOfImpact_s_distanceOutput = new b2Distance_2.b2DistanceOutput();
             b2TimeOfImpact_s_fcn = new b2SeparationFunction();
-            b2TimeOfImpact_s_indexA = b2Settings_5.b2MakeNumberArray(1);
-            b2TimeOfImpact_s_indexB = b2Settings_5.b2MakeNumberArray(1);
+            b2TimeOfImpact_s_indexA = [0];
+            b2TimeOfImpact_s_indexB = [0];
             b2TimeOfImpact_s_sweepA = new b2Math_5.b2Sweep();
             b2TimeOfImpact_s_sweepB = new b2Math_5.b2Sweep();
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -3951,20 +4082,36 @@ System.register("Collision/b2TimeOfImpact", ["Common/b2Settings", "Common/b2Math
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], function(exports_13, context_13) {
+System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], function (exports_13, context_13) {
     "use strict";
     var __moduleName = context_13 && context_13.id;
-    var b2Settings_6, b2Math_6;
-    var b2Profile, b2TimeStep, b2Position, b2Velocity, b2SolverData;
+    var b2Settings_6, b2Math_6, b2Profile, b2TimeStep, b2Position, b2Velocity, b2SolverData;
     return {
-        setters:[
+        setters: [
             function (b2Settings_6_1) {
                 b2Settings_6 = b2Settings_6_1;
             },
             function (b2Math_6_1) {
                 b2Math_6 = b2Math_6_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Profiling data. Times are in milliseconds.
             b2Profile = class b2Profile {
                 constructor() {
@@ -4046,7 +4193,7 @@ System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], f
             };
             exports_13("b2SolverData", b2SolverData);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -4065,17 +4212,33 @@ System.register("Dynamics/b2TimeStep", ["Common/b2Settings", "Common/b2Math"], f
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_14, context_14) {
+System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function (exports_14, context_14) {
     "use strict";
     var __moduleName = context_14 && context_14.id;
-    var b2Math_7;
-    var b2Jacobian, b2JointEdge, b2JointDef, b2Joint;
+    var b2Math_7, b2Jacobian, b2JointEdge, b2JointDef, b2Joint;
     return {
-        setters:[
+        setters: [
             function (b2Math_7_1) {
                 b2Math_7 = b2Math_7_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2Jacobian = class b2Jacobian {
                 constructor() {
                     this.linear = new b2Math_7.b2Vec2();
@@ -4217,7 +4380,7 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
             };
             exports_14("b2Joint", b2Joint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -4236,13 +4399,12 @@ System.register("Dynamics/Joints/b2Joint", ["Common/b2Math"], function(exports_1
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/Shapes/b2Shape"], function(exports_15, context_15) {
+System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/Shapes/b2Shape"], function (exports_15, context_15) {
     "use strict";
     var __moduleName = context_15 && context_15.id;
-    var b2Settings_7, b2Math_8, b2Collision_2, b2Shape_1;
-    var b2Filter, b2FixtureDef, b2FixtureProxy, b2Fixture;
+    var b2Settings_7, b2Math_8, b2Collision_2, b2Shape_1, b2Filter, b2FixtureDef, b2FixtureProxy, b2Fixture;
     return {
-        setters:[
+        setters: [
             function (b2Settings_7_1) {
                 b2Settings_7 = b2Settings_7_1;
             },
@@ -4254,8 +4416,25 @@ System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Co
             },
             function (b2Shape_1_1) {
                 b2Shape_1 = b2Shape_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// This holds contact filtering data.
             b2Filter = class b2Filter {
                 constructor() {
@@ -4564,7 +4743,7 @@ System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Co
             b2Fixture.Synchronize_s_displacement = new b2Math_8.b2Vec2();
             exports_15("b2Fixture", b2Fixture);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
@@ -4583,13 +4762,12 @@ System.register("Dynamics/b2Fixture", ["Common/b2Settings", "Common/b2Math", "Co
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_16, context_16) {
+System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function (exports_16, context_16) {
     "use strict";
     var __moduleName = context_16 && context_16.id;
-    var b2Settings_8, b2Math_9, b2Shape_2;
-    var b2EdgeShape;
+    var b2Settings_8, b2Math_9, b2Shape_2, b2EdgeShape;
     return {
-        setters:[
+        setters: [
             function (b2Settings_8_1) {
                 b2Settings_8 = b2Settings_8_1;
             },
@@ -4598,8 +4776,25 @@ System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2
             },
             function (b2Shape_2_1) {
                 b2Shape_2 = b2Shape_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A line segment (edge) shape. These can be connected in chains or loops
             /// to other edge shapes. The connectivity information is used to ensure
             /// correct contact normals.
@@ -4762,7 +4957,7 @@ System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2
             b2EdgeShape.ComputeAABB_s_v2 = new b2Math_9.b2Vec2();
             exports_16("b2EdgeShape", b2EdgeShape);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
@@ -4781,13 +4976,12 @@ System.register("Collision/Shapes/b2EdgeShape", ["Common/b2Settings", "Common/b2
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape"], function(exports_17, context_17) {
+System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape"], function (exports_17, context_17) {
     "use strict";
     var __moduleName = context_17 && context_17.id;
-    var b2Settings_9, b2Math_10, b2Shape_3, b2EdgeShape_1;
-    var b2ChainShape;
+    var b2Settings_9, b2Math_10, b2Shape_3, b2EdgeShape_1, b2ChainShape;
     return {
-        setters:[
+        setters: [
             function (b2Settings_9_1) {
                 b2Settings_9 = b2Settings_9_1;
             },
@@ -4799,8 +4993,25 @@ System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b
             },
             function (b2EdgeShape_1_1) {
                 b2EdgeShape_1 = b2EdgeShape_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A chain shape is a free form sequence of line segments.
             /// The chain has two-sided collision, so you can use inside and outside collision.
             /// Therefore, you may use any winding order.
@@ -4994,7 +5205,7 @@ System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b
             b2ChainShape.ComputeAABB_s_v2 = new b2Math_10.b2Vec2();
             exports_17("b2ChainShape", b2ChainShape);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -5013,13 +5224,12 @@ System.register("Collision/Shapes/b2ChainShape", ["Common/b2Settings", "Common/b
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_18, context_18) {
+System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function (exports_18, context_18) {
     "use strict";
     var __moduleName = context_18 && context_18.id;
-    var b2Settings_10, b2Math_11, b2Shape_4;
-    var b2CircleShape;
+    var b2Settings_10, b2Math_11, b2Shape_4, b2CircleShape;
     return {
-        setters:[
+        setters: [
             function (b2Settings_10_1) {
                 b2Settings_10 = b2Settings_10_1;
             },
@@ -5028,8 +5238,25 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
             },
             function (b2Shape_4_1) {
                 b2Shape_4 = b2Shape_4_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A circle shape.
             b2CircleShape = class b2CircleShape extends b2Shape_4.b2Shape {
                 constructor(radius = 0) {
@@ -5149,7 +5376,7 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
             b2CircleShape.ComputeAABB_s_p = new b2Math_11.b2Vec2();
             exports_18("b2CircleShape", b2CircleShape);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -5168,13 +5395,12 @@ System.register("Collision/Shapes/b2CircleShape", ["Common/b2Settings", "Common/
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function(exports_19, context_19) {
+System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common/b2Math", "Collision/Shapes/b2Shape"], function (exports_19, context_19) {
     "use strict";
     var __moduleName = context_19 && context_19.id;
-    var b2Settings_11, b2Math_12, b2Shape_5, b2Shape_6;
-    var b2PolygonShape;
+    var b2Settings_11, b2Math_12, b2Shape_5, b2Shape_6, b2PolygonShape;
     return {
-        setters:[
+        setters: [
             function (b2Settings_11_1) {
                 b2Settings_11 = b2Settings_11_1;
             },
@@ -5184,8 +5410,25 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
             function (b2Shape_5_1) {
                 b2Shape_5 = b2Shape_5_1;
                 b2Shape_6 = b2Shape_5_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A convex polygon. It is assumed that the interior of the polygon is to
             /// the left of each edge.
             /// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
@@ -5696,7 +5939,7 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
             b2PolygonShape.ComputeCentroid_s_e2 = new b2Math_12.b2Vec2();
             exports_19("b2PolygonShape", b2PolygonShape);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -5715,13 +5958,12 @@ System.register("Collision/Shapes/b2PolygonShape", ["Common/b2Settings", "Common
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_20, context_20) {
+System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_20, context_20) {
     "use strict";
     var __moduleName = context_20 && context_20.id;
-    var b2Settings_12, b2Math_13, b2Joint_1;
-    var b2DistanceJointDef, b2DistanceJoint;
+    var b2Settings_12, b2Math_13, b2Joint_1, b2DistanceJointDef, b2DistanceJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_12_1) {
                 b2Settings_12 = b2Settings_12_1;
             },
@@ -5730,8 +5972,25 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
             },
             function (b2Joint_1_1) {
                 b2Joint_1 = b2Joint_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Distance joint definition. This requires defining an
             /// anchor point on both bodies and the non-zero length of the
             /// distance joint. The definition uses local anchor points
@@ -6002,15 +6261,14 @@ System.register("Dynamics/Joints/b2DistanceJoint", ["Common/b2Settings", "Common
             b2DistanceJoint.SolvePositionConstraints_s_P = new b2Math_13.b2Vec2();
             exports_20("b2DistanceJoint", b2DistanceJoint);
         }
-    }
+    };
 });
-System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2DistanceJoint"], function(exports_21, context_21) {
+System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2DistanceJoint"], function (exports_21, context_21) {
     "use strict";
     var __moduleName = context_21 && context_21.id;
-    var b2Settings_13, b2Math_14, b2Joint_2, b2DistanceJoint_1;
-    var b2AreaJointDef, b2AreaJoint;
+    var b2Settings_13, b2Math_14, b2Joint_2, b2DistanceJoint_1, b2AreaJointDef, b2AreaJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_13_1) {
                 b2Settings_13 = b2Settings_13_1;
             },
@@ -6022,8 +6280,9 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
             },
             function (b2DistanceJoint_1_1) {
                 b2DistanceJoint_1 = b2DistanceJoint_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2AreaJointDef = class b2AreaJointDef extends b2Joint_2.b2JointDef {
                 constructor() {
                     super(12 /* e_areaJoint */);
@@ -6203,7 +6462,7 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
             };
             exports_21("b2AreaJoint", b2AreaJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -6222,20 +6481,36 @@ System.register("Dynamics/Joints/b2AreaJoint", ["Common/b2Settings", "Common/b2M
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_22, context_22) {
+System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_22, context_22) {
     "use strict";
     var __moduleName = context_22 && context_22.id;
-    var b2Math_15, b2Joint_3;
-    var b2FrictionJointDef, b2FrictionJoint;
+    var b2Math_15, b2Joint_3, b2FrictionJointDef, b2FrictionJoint;
     return {
-        setters:[
+        setters: [
             function (b2Math_15_1) {
                 b2Math_15 = b2Math_15_1;
             },
             function (b2Joint_3_1) {
                 b2Joint_3 = b2Joint_3_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Friction joint definition.
             b2FrictionJointDef = class b2FrictionJointDef extends b2Joint_3.b2JointDef {
                 constructor() {
@@ -6456,7 +6731,7 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
             b2FrictionJoint.SolveVelocityConstraints_s_oldImpulseV = new b2Math_15.b2Vec2();
             exports_22("b2FrictionJoint", b2FrictionJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -6475,13 +6750,12 @@ System.register("Dynamics/Joints/b2FrictionJoint", ["Common/b2Math", "Dynamics/J
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_23, context_23) {
+System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_23, context_23) {
     "use strict";
     var __moduleName = context_23 && context_23.id;
-    var b2Settings_14, b2Math_16, b2Joint_4;
-    var b2PrismaticJointDef, b2PrismaticJoint;
+    var b2Settings_14, b2Math_16, b2Joint_4, b2PrismaticJointDef, b2PrismaticJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_14_1) {
                 b2Settings_14 = b2Settings_14_1;
             },
@@ -6490,8 +6764,25 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
             },
             function (b2Joint_4_1) {
                 b2Joint_4 = b2Joint_4_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Prismatic joint definition. This requires defining a line of
             /// motion using an axis and an anchor point. The definition uses local
             /// anchor points and a local axis so that the initial configuration
@@ -6649,6 +6940,9 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
                         this.m_K.ez.y = this.m_K.ey.z;
                         // float32 k33 = mA + mB + iA * m_a1 * m_a1 + iB * m_a2 * m_a2;
                         this.m_K.ez.z = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
+                        // m_K.ex.Set(k11, k12, k13);
+                        // m_K.ey.Set(k12, k22, k23);
+                        // m_K.ez.Set(k13, k23, k33);
                     }
                     // Compute motor and limit terms.
                     if (this.m_enableLimit) {
@@ -7086,7 +7380,7 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
             b2PrismaticJoint.GetJointTranslation_s_axis = new b2Math_16.b2Vec2();
             exports_23("b2PrismaticJoint", b2PrismaticJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -7105,13 +7399,12 @@ System.register("Dynamics/Joints/b2PrismaticJoint", ["Common/b2Settings", "Commo
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_24, context_24) {
+System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_24, context_24) {
     "use strict";
     var __moduleName = context_24 && context_24.id;
-    var b2Settings_15, b2Math_17, b2Joint_5;
-    var b2RevoluteJointDef, b2RevoluteJoint;
+    var b2Settings_15, b2Math_17, b2Joint_5, b2RevoluteJointDef, b2RevoluteJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_15_1) {
                 b2Settings_15 = b2Settings_15_1;
             },
@@ -7120,8 +7413,25 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
             },
             function (b2Joint_5_1) {
                 b2Joint_5 = b2Joint_5_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Revolute joint definition. This requires defining an
             /// anchor point where the bodies are joined. The definition
             /// uses local anchor points so that the initial configuration
@@ -7578,7 +7888,7 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
             b2RevoluteJoint.SolvePositionConstraints_s_impulse = new b2Math_17.b2Vec2();
             exports_24("b2RevoluteJoint", b2RevoluteJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -7597,13 +7907,12 @@ System.register("Dynamics/Joints/b2RevoluteJoint", ["Common/b2Settings", "Common
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_25, context_25) {
+System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_25, context_25) {
     "use strict";
     var __moduleName = context_25 && context_25.id;
-    var b2Settings_16, b2Math_18, b2Joint_6;
-    var b2GearJointDef, b2GearJoint;
+    var b2Settings_16, b2Math_18, b2Joint_6, b2GearJointDef, b2GearJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_16_1) {
                 b2Settings_16 = b2Settings_16_1;
             },
@@ -7612,8 +7921,25 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
             },
             function (b2Joint_6_1) {
                 b2Joint_6 = b2Joint_6_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Gear joint definition. This definition requires two existing
             /// revolute or prismatic joints (any combination will work).
             b2GearJointDef = class b2GearJointDef extends b2Joint_6.b2JointDef {
@@ -8042,22 +8368,22 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
             b2GearJoint.SolvePositionConstraints_s_rD = new b2Math_18.b2Vec2();
             exports_25("b2GearJoint", b2GearJoint);
         }
-    }
+    };
 });
-System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_26, context_26) {
+System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_26, context_26) {
     "use strict";
     var __moduleName = context_26 && context_26.id;
-    var b2Math_19, b2Joint_7;
-    var b2MotorJointDef, b2MotorJoint;
+    var b2Math_19, b2Joint_7, b2MotorJointDef, b2MotorJoint;
     return {
-        setters:[
+        setters: [
             function (b2Math_19_1) {
                 b2Math_19 = b2Math_19_1;
             },
             function (b2Joint_7_1) {
                 b2Joint_7 = b2Joint_7_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2MotorJointDef = class b2MotorJointDef extends b2Joint_7.b2JointDef {
                 constructor() {
                     super(11 /* e_motorJoint */);
@@ -8307,7 +8633,7 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
             b2MotorJoint.SolveVelocityConstraints_s_oldImpulse_v2 = new b2Math_19.b2Vec2();
             exports_26("b2MotorJoint", b2MotorJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -8326,13 +8652,12 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_27, context_27) {
+System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_27, context_27) {
     "use strict";
     var __moduleName = context_27 && context_27.id;
-    var b2Settings_17, b2Math_20, b2Joint_8;
-    var b2MouseJointDef, b2MouseJoint;
+    var b2Settings_17, b2Math_20, b2Joint_8, b2MouseJointDef, b2MouseJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_17_1) {
                 b2Settings_17 = b2Settings_17_1;
             },
@@ -8341,8 +8666,25 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
             },
             function (b2Joint_8_1) {
                 b2Joint_8 = b2Joint_8_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Mouse joint definition. This requires a world target point,
             /// tuning parameters, and the time step.
             b2MouseJointDef = class b2MouseJointDef extends b2Joint_8.b2JointDef {
@@ -8539,7 +8881,7 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
             b2MouseJoint.SolveVelocityConstraints_s_oldImpulse = new b2Math_20.b2Vec2();
             exports_27("b2MouseJoint", b2MouseJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -8558,13 +8900,12 @@ System.register("Dynamics/Joints/b2MouseJoint", ["Common/b2Settings", "Common/b2
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_28, context_28) {
+System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_28, context_28) {
     "use strict";
     var __moduleName = context_28 && context_28.id;
-    var b2Settings_18, b2Math_21, b2Joint_9;
-    var b2_minPulleyLength, b2PulleyJointDef, b2PulleyJoint;
+    var b2Settings_18, b2Math_21, b2Joint_9, b2_minPulleyLength, b2PulleyJointDef, b2PulleyJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_18_1) {
                 b2Settings_18 = b2Settings_18_1;
             },
@@ -8573,8 +8914,25 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
             },
             function (b2Joint_9_1) {
                 b2Joint_9 = b2Joint_9_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             exports_28("b2_minPulleyLength", b2_minPulleyLength = 2);
             /// Pulley joint definition. This requires two ground anchors,
             /// two dynamic body anchor points, and a pulley ratio.
@@ -8889,7 +9247,7 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
             b2PulleyJoint.GetCurrentLengthB_s_p = new b2Math_21.b2Vec2();
             exports_28("b2PulleyJoint", b2PulleyJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -8908,13 +9266,12 @@ System.register("Dynamics/Joints/b2PulleyJoint", ["Common/b2Settings", "Common/b
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_29, context_29) {
+System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_29, context_29) {
     "use strict";
     var __moduleName = context_29 && context_29.id;
-    var b2Settings_19, b2Math_22, b2Joint_10;
-    var b2RopeJointDef, b2RopeJoint;
+    var b2Settings_19, b2Math_22, b2Joint_10, b2RopeJointDef, b2RopeJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_19_1) {
                 b2Settings_19 = b2Settings_19_1;
             },
@@ -8923,8 +9280,25 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
             },
             function (b2Joint_10_1) {
                 b2Joint_10 = b2Joint_10_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Rope joint definition. This requires two body anchor points and
             /// a maximum lengths.
             /// Note: by default the connected objects will not collide.
@@ -9147,7 +9521,7 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
             b2RopeJoint.SolvePositionConstraints_s_P = new b2Math_22.b2Vec2();
             exports_29("b2RopeJoint", b2RopeJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -9166,13 +9540,12 @@ System.register("Dynamics/Joints/b2RopeJoint", ["Common/b2Settings", "Common/b2M
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_30, context_30) {
+System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_30, context_30) {
     "use strict";
     var __moduleName = context_30 && context_30.id;
-    var b2Settings_20, b2Math_23, b2Joint_11;
-    var b2WeldJointDef, b2WeldJoint;
+    var b2Settings_20, b2Math_23, b2Joint_11, b2WeldJointDef, b2WeldJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_20_1) {
                 b2Settings_20 = b2Settings_20_1;
             },
@@ -9181,8 +9554,25 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
             },
             function (b2Joint_11_1) {
                 b2Joint_11 = b2Joint_11_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Weld joint definition. You need to specify local anchor points
             /// where they are attached and the relative body angle. The position
             /// of the anchor points is important for computing the reaction torque.
@@ -9486,7 +9876,7 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
             b2WeldJoint.SolvePositionConstraints_s_impulse = new b2Math_23.b2Vec3();
             exports_30("b2WeldJoint", b2WeldJoint);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -9505,13 +9895,12 @@ System.register("Dynamics/Joints/b2WeldJoint", ["Common/b2Settings", "Common/b2M
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function(exports_31, context_31) {
+System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_31, context_31) {
     "use strict";
     var __moduleName = context_31 && context_31.id;
-    var b2Settings_21, b2Math_24, b2Joint_12;
-    var b2WheelJointDef, b2WheelJoint;
+    var b2Settings_21, b2Math_24, b2Joint_12, b2WheelJointDef, b2WheelJoint;
     return {
-        setters:[
+        setters: [
             function (b2Settings_21_1) {
                 b2Settings_21 = b2Settings_21_1;
             },
@@ -9520,8 +9909,25 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
             },
             function (b2Joint_12_1) {
                 b2Joint_12 = b2Joint_12_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// Wheel joint definition. This requires defining a line of
             /// motion using an axis and an anchor point. The definition uses local
             /// anchor points and a local axis so that the initial configuration
@@ -9961,15 +10367,14 @@ System.register("Dynamics/Joints/b2WheelJoint", ["Common/b2Settings", "Common/b2
             b2WheelJoint.SolvePositionConstraints_s_P = new b2Math_24.b2Vec2();
             exports_31("b2WheelJoint", b2WheelJoint);
         }
-    }
+    };
 });
-System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint"], function(exports_32, context_32) {
+System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint"], function (exports_32, context_32) {
     "use strict";
     var __moduleName = context_32 && context_32.id;
-    var b2AreaJoint_1, b2DistanceJoint_2, b2FrictionJoint_1, b2GearJoint_1, b2MotorJoint_1, b2MouseJoint_1, b2PrismaticJoint_1, b2PulleyJoint_1, b2RevoluteJoint_1, b2RopeJoint_1, b2WeldJoint_1, b2WheelJoint_1;
-    var b2JointFactory;
+    var b2AreaJoint_1, b2DistanceJoint_2, b2FrictionJoint_1, b2GearJoint_1, b2MotorJoint_1, b2MouseJoint_1, b2PrismaticJoint_1, b2PulleyJoint_1, b2RevoluteJoint_1, b2RopeJoint_1, b2WeldJoint_1, b2WheelJoint_1, b2JointFactory;
     return {
-        setters:[
+        setters: [
             function (b2AreaJoint_1_1) {
                 b2AreaJoint_1 = b2AreaJoint_1_1;
             },
@@ -10005,8 +10410,9 @@ System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint"
             },
             function (b2WheelJoint_1_1) {
                 b2WheelJoint_1 = b2WheelJoint_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2JointFactory = class b2JointFactory {
                 static Create(def, allocator) {
                     let joint = null;
@@ -10058,7 +10464,7 @@ System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint"
             };
             exports_32("b2JointFactory", b2JointFactory);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -10077,13 +10483,12 @@ System.register("Dynamics/Joints/b2JointFactory", ["Dynamics/Joints/b2AreaJoint"
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Dynamics/b2TimeStep"], function(exports_33, context_33) {
+System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Dynamics/b2TimeStep"], function (exports_33, context_33) {
     "use strict";
     var __moduleName = context_33 && context_33.id;
-    var b2Settings_22, b2Math_25, b2Collision_3, b2TimeStep_1;
-    var b2VelocityConstraintPoint, b2ContactVelocityConstraint, b2ContactPositionConstraint, b2ContactSolverDef, b2PositionSolverManifold, b2ContactSolver;
+    var b2Settings_22, b2Math_25, b2Collision_3, b2TimeStep_1, b2VelocityConstraintPoint, b2ContactVelocityConstraint, b2ContactPositionConstraint, b2ContactSolverDef, b2PositionSolverManifold, b2ContactSolver;
     return {
-        setters:[
+        setters: [
             function (b2Settings_22_1) {
                 b2Settings_22 = b2Settings_22_1;
             },
@@ -10095,8 +10500,25 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
             },
             function (b2TimeStep_1_1) {
                 b2TimeStep_1 = b2TimeStep_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2VelocityConstraintPoint = class b2VelocityConstraintPoint {
                 constructor() {
                     this.rA = new b2Math_25.b2Vec2();
@@ -10970,7 +11392,7 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
             b2ContactSolver.SolveTOIPositionConstraints_s_P = new b2Math_25.b2Vec2();
             exports_33("b2ContactSolver", b2ContactSolver);
         }
-    }
+    };
 });
 /*
  * Copyright (c) 2013 Google, Inc.
@@ -10989,11 +11411,9 @@ System.register("Dynamics/Contacts/b2ContactSolver", ["Common/b2Settings", "Comm
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function(exports_34, context_34) {
+System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function (exports_34, context_34) {
     "use strict";
     var __moduleName = context_34 && context_34.id;
-    var b2Settings_23, b2Math_26, b2Draw_1;
-    var b2ParticleDef, b2ParticleHandle;
     function b2CalculateParticleIterations(gravity, radius, timeStep) {
         // In some situations you may want more particle iterations than this,
         // but to avoid excessive cycle cost, don't recommend more than this.
@@ -11003,8 +11423,9 @@ System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "C
         return b2Math_26.b2Clamp(iterations, 1, B2_MAX_RECOMMENDED_PARTICLE_ITERATIONS);
     }
     exports_34("b2CalculateParticleIterations", b2CalculateParticleIterations);
+    var b2Settings_23, b2Math_26, b2Draw_1, b2ParticleDef, b2ParticleHandle;
     return {
-        setters:[
+        setters: [
             function (b2Settings_23_1) {
                 b2Settings_23 = b2Settings_23_1;
             },
@@ -11013,9 +11434,25 @@ System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "C
             },
             function (b2Draw_1_1) {
                 b2Draw_1 = b2Draw_1_1;
-            }],
-        execute: function() {
-            ;
+            }
+        ],
+        execute: function () {/*
+             * Copyright (c) 2013 Google, Inc.
+             *
+             * This software is provided 'as-is', without any express or implied
+             * warranty.  In no event will the authors be held liable for any damages
+             * arising from the use of this software.
+             * Permission is granted to anyone to use this software for any purpose,
+             * including commercial applications, and to alter it and redistribute it
+             * freely, subject to the following restrictions:
+             * 1. The origin of this software must not be misrepresented; you must not
+             * claim that you wrote the original software. If you use this software
+             * in a product, an acknowledgment in the product documentation would be
+             * appreciated but is not required.
+             * 2. Altered source versions must be plainly marked as such, and must not be
+             * misrepresented as being the original software.
+             * 3. This notice may not be removed or altered from any source distribution.
+             */
             b2ParticleDef = class b2ParticleDef {
                 constructor() {
                     this.flags = 0;
@@ -11036,10 +11473,10 @@ System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "C
                 SetIndex(index) { this.m_index = index; }
             };
             exports_34("b2ParticleHandle", b2ParticleHandle);
+            ///#endif
         }
-    }
+    };
 });
-///#endif
 /*
  * Copyright (c) 2013 Google, Inc.
  *
@@ -11057,18 +11494,34 @@ System.register("Particle/b2Particle", ["Common/b2Settings", "Common/b2Math", "C
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register("Particle/b2StackQueue", ["Common/b2Settings"], function(exports_35, context_35) {
+System.register("Particle/b2StackQueue", ["Common/b2Settings"], function (exports_35, context_35) {
     "use strict";
     var __moduleName = context_35 && context_35.id;
-    var b2Settings_24;
-    var b2StackQueue;
     function b2Assert(condition) { }
+    var b2Settings_24, b2StackQueue;
     return {
-        setters:[
+        setters: [
             function (b2Settings_24_1) {
                 b2Settings_24 = b2Settings_24_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+             * Copyright (c) 2013 Google, Inc.
+             *
+             * This software is provided 'as-is', without any express or implied
+             * warranty.  In no event will the authors be held liable for any damages
+             * arising from the use of this software.
+             * Permission is granted to anyone to use this software for any purpose,
+             * including commercial applications, and to alter it and redistribute it
+             * freely, subject to the following restrictions:
+             * 1. The origin of this software must not be misrepresented; you must not
+             * claim that you wrote the original software. If you use this software
+             * in a product, an acknowledgment in the product documentation would be
+             * appreciated but is not required.
+             * 2. Altered source versions must be plainly marked as such, and must not be
+             * misrepresented as being the original software.
+             * 3. This notice may not be removed or altered from any source distribution.
+             */
             b2StackQueue = class b2StackQueue {
                 constructor(capacity) {
                     this.m_front = 0;
@@ -11094,6 +11547,7 @@ System.register("Particle/b2StackQueue", ["Common/b2Settings"], function(exports
                                 this.m_buffer.concat(b2Settings_24.b2MakeArray(1, function (index) { return null; }));
                                 this.m_capacity = 1;
                             }
+                            ///m_buffer = (T*) m_allocator->Reallocate(m_buffer, sizeof(T) * m_capacity);
                         }
                     }
                     this.m_buffer[this.m_back] = item;
@@ -11113,10 +11567,10 @@ System.register("Particle/b2StackQueue", ["Common/b2Settings"], function(exports
                 }
             };
             exports_35("b2StackQueue", b2StackQueue);
+            ///#endif
         }
-    }
+    };
 });
-///#endif
 /*
  * Copyright (c) 2013 Google, Inc.
  *
@@ -11134,14 +11588,13 @@ System.register("Particle/b2StackQueue", ["Common/b2Settings"], function(exports
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register("Particle/b2VoronoiDiagram", ["Common/b2Settings", "Common/b2Math", "Particle/b2StackQueue"], function(exports_36, context_36) {
+System.register("Particle/b2VoronoiDiagram", ["Common/b2Settings", "Common/b2Math", "Particle/b2StackQueue"], function (exports_36, context_36) {
     "use strict";
     var __moduleName = context_36 && context_36.id;
-    var b2Settings_25, b2Math_27, b2StackQueue_1;
-    var b2VoronoiDiagram;
     function b2Assert(condition) { }
+    var b2Settings_25, b2Math_27, b2StackQueue_1, b2VoronoiDiagram;
     return {
-        setters:[
+        setters: [
             function (b2Settings_25_1) {
                 b2Settings_25 = b2Settings_25_1;
             },
@@ -11150,8 +11603,25 @@ System.register("Particle/b2VoronoiDiagram", ["Common/b2Settings", "Common/b2Mat
             },
             function (b2StackQueue_1_1) {
                 b2StackQueue_1 = b2StackQueue_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+             * Copyright (c) 2013 Google, Inc.
+             *
+             * This software is provided 'as-is', without any express or implied
+             * warranty.  In no event will the authors be held liable for any damages
+             * arising from the use of this software.
+             * Permission is granted to anyone to use this software for any purpose,
+             * including commercial applications, and to alter it and redistribute it
+             * freely, subject to the following restrictions:
+             * 1. The origin of this software must not be misrepresented; you must not
+             * claim that you wrote the original software. If you use this software
+             * in a product, an acknowledgment in the product documentation would be
+             * appreciated but is not required.
+             * 2. Altered source versions must be plainly marked as such, and must not be
+             * misrepresented as being the original software.
+             * 3. This notice may not be removed or altered from any source distribution.
+             */
             /**
              * A field representing the nearest generator from each point.
              */
@@ -11362,12 +11832,12 @@ System.register("Particle/b2VoronoiDiagram", ["Common/b2Settings", "Common/b2Mat
                     }
                 }
                 b2VoronoiDiagram.Task = Task;
-            })(b2VoronoiDiagram = b2VoronoiDiagram || (b2VoronoiDiagram = {}));
-            exports_36("b2VoronoiDiagram", b2VoronoiDiagram); // namespace b2VoronoiDiagram
+            })(b2VoronoiDiagram || (b2VoronoiDiagram = {})); // namespace b2VoronoiDiagram
+            exports_36("b2VoronoiDiagram", b2VoronoiDiagram);
+            ///#endif
         }
-    }
+    };
 });
-///#endif
 /*
  * Copyright (c) 2013 Google, Inc.
  *
@@ -11385,11 +11855,9 @@ System.register("Particle/b2VoronoiDiagram", ["Common/b2Settings", "Common/b2Mat
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw", "Collision/b2Collision", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks", "Particle/b2Particle", "Particle/b2ParticleGroup", "Particle/b2VoronoiDiagram"], function(exports_37, context_37) {
+System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw", "Collision/b2Collision", "Collision/Shapes/b2Shape", "Collision/Shapes/b2EdgeShape", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks", "Particle/b2Particle", "Particle/b2ParticleGroup", "Particle/b2VoronoiDiagram"], function (exports_37, context_37) {
     "use strict";
     var __moduleName = context_37 && context_37.id;
-    var b2Settings_26, b2Settings_27, b2Math_28, b2Draw_2, b2Collision_4, b2Shape_7, b2EdgeShape_2, b2TimeStep_2, b2WorldCallbacks_1, b2Particle_1, b2ParticleGroup_1, b2VoronoiDiagram_1;
-    var b2GrowableBuffer, b2FixtureParticleQueryCallback, b2ParticleContact, b2ParticleBodyContact, b2ParticlePair, b2ParticleTriad, b2ParticleSystemDef, b2ParticleSystem;
     function b2Assert(condition) { }
     function std_iter_swap(array, a, b) {
         const tmp = array[a];
@@ -11490,8 +11958,9 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
         }
         return ++result;
     }
+    var b2Settings_26, b2Settings_27, b2Math_28, b2Draw_2, b2Collision_4, b2Shape_7, b2EdgeShape_2, b2TimeStep_2, b2WorldCallbacks_1, b2Particle_1, b2ParticleGroup_1, b2VoronoiDiagram_1, b2GrowableBuffer, b2FixtureParticleQueryCallback, b2ParticleContact, b2ParticleBodyContact, b2ParticlePair, b2ParticleTriad, b2ParticleSystemDef, b2ParticleSystem;
     return {
-        setters:[
+        setters: [
             function (b2Settings_26_1) {
                 b2Settings_26 = b2Settings_26_1;
                 b2Settings_27 = b2Settings_26_1;
@@ -11525,8 +11994,25 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
             },
             function (b2VoronoiDiagram_1_1) {
                 b2VoronoiDiagram_1 = b2VoronoiDiagram_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+             * Copyright (c) 2013 Google, Inc.
+             *
+             * This software is provided 'as-is', without any express or implied
+             * warranty.  In no event will the authors be held liable for any damages
+             * arising from the use of this software.
+             * Permission is granted to anyone to use this software for any purpose,
+             * including commercial applications, and to alter it and redistribute it
+             * freely, subject to the following restrictions:
+             * 1. The origin of this software must not be misrepresented; you must not
+             * claim that you wrote the original software. If you use this software
+             * in a product, an acknowledgment in the product documentation would be
+             * appreciated but is not required.
+             * 2. Altered source versions must be plainly marked as such, and must not be
+             * misrepresented as being the original software.
+             * 3. This notice may not be removed or altered from any source distribution.
+             */
             ;
             ;
             ;
@@ -15018,6 +15504,7 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                                 if (handle) {
                                     handle.SetIndex(b2Settings_26.b2_invalidParticleIndex);
                                     this.m_handleIndexBuffer.data[i] = null;
+                                    ///m_handleAllocator.Free(handle);
                                 }
                             }
                             newIndices[i] = b2Settings_26.b2_invalidParticleIndex;
@@ -15864,7 +16351,6 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                     }
                 }
                 b2ParticleSystem.FixedSetAllocator = FixedSetAllocator;
-                ;
                 class FixtureParticle {
                     constructor(fixture, particle) {
                         this.first = null;
@@ -15874,7 +16360,6 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                     }
                 }
                 b2ParticleSystem.FixtureParticle = FixtureParticle;
-                ;
                 class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
                     Initialize(bodyContactBuffer, flagsBuffer) {
                         // TODO
@@ -15885,7 +16370,6 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                     }
                 }
                 b2ParticleSystem.FixtureParticleSet = FixtureParticleSet;
-                ;
                 class ParticlePair {
                     constructor(particleA, particleB) {
                         this.first = b2Settings_26.b2_invalidParticleIndex;
@@ -15895,7 +16379,6 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                     }
                 }
                 b2ParticleSystem.ParticlePair = ParticlePair;
-                ;
                 class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
                     Initialize(contactBuffer, flagsBuffer) {
                         // TODO
@@ -15965,7 +16448,6 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                     }
                 }
                 b2ParticleSystem.DestroyParticlesInShapeCallback = DestroyParticlesInShapeCallback;
-                ;
                 class JoinParticleGroupsFilter extends b2ParticleSystem.ConnectionFilter {
                     constructor(threshold) {
                         super();
@@ -16051,6 +16533,16 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                      * @see b2Shape::ComputeMass
                      */
                     ComputeMass(massData, density) {
+                        b2Assert(false);
+                    }
+                    SetupDistanceProxy(proxy, index) {
+                        b2Assert(false);
+                    }
+                    ComputeSubmergedArea(normal, offset, xf, c) {
+                        b2Assert(false);
+                        return 0;
+                    }
+                    Dump(log) {
                         b2Assert(false);
                     }
                 }
@@ -16200,12 +16692,12 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
                 SolveCollisionCallback.ReportFixtureAndParticle_s_v = new b2Math_28.b2Vec2();
                 SolveCollisionCallback.ReportFixtureAndParticle_s_f = new b2Math_28.b2Vec2();
                 b2ParticleSystem.SolveCollisionCallback = SolveCollisionCallback;
-            })(b2ParticleSystem = b2ParticleSystem || (b2ParticleSystem = {}));
+            })(b2ParticleSystem || (b2ParticleSystem = {}));
             exports_37("b2ParticleSystem", b2ParticleSystem);
+            ///#endif
         }
-    }
+    };
 });
-///#endif
 /*
  * Copyright (c) 2013 Google, Inc.
  *
@@ -16223,20 +16715,36 @@ System.register("Particle/b2ParticleSystem", ["Common/b2Settings", "Common/b2Mat
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register("Particle/b2ParticleGroup", ["Common/b2Math", "Common/b2Draw"], function(exports_38, context_38) {
+System.register("Particle/b2ParticleGroup", ["Common/b2Math", "Common/b2Draw"], function (exports_38, context_38) {
     "use strict";
     var __moduleName = context_38 && context_38.id;
-    var b2Math_29, b2Draw_3;
-    var b2ParticleGroupDef, b2ParticleGroup;
+    var b2Math_29, b2Draw_3, b2ParticleGroupDef, b2ParticleGroup;
     return {
-        setters:[
+        setters: [
             function (b2Math_29_1) {
                 b2Math_29 = b2Math_29_1;
             },
             function (b2Draw_3_1) {
                 b2Draw_3 = b2Draw_3_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+             * Copyright (c) 2013 Google, Inc.
+             *
+             * This software is provided 'as-is', without any express or implied
+             * warranty.  In no event will the authors be held liable for any damages
+             * arising from the use of this software.
+             * Permission is granted to anyone to use this software for any purpose,
+             * including commercial applications, and to alter it and redistribute it
+             * freely, subject to the following restrictions:
+             * 1. The origin of this software must not be misrepresented; you must not
+             * claim that you wrote the original software. If you use this software
+             * in a product, an acknowledgment in the product documentation would be
+             * appreciated but is not required.
+             * 2. Altered source versions must be plainly marked as such, and must not be
+             * misrepresented as being the original software.
+             * 3. This notice may not be removed or altered from any source distribution.
+             */
             b2ParticleGroupDef = class b2ParticleGroupDef {
                 constructor() {
                     this.flags = 0;
@@ -16406,10 +16914,10 @@ System.register("Particle/b2ParticleGroup", ["Common/b2Math", "Common/b2Draw"], 
             };
             b2ParticleGroup.GetLinearVelocityFromWorldPoint_s_t0 = new b2Math_29.b2Vec2();
             exports_38("b2ParticleGroup", b2ParticleGroup);
+            ///#endif
         }
-    }
+    };
 });
-///#endif
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
 *
@@ -16427,17 +16935,33 @@ System.register("Particle/b2ParticleGroup", ["Common/b2Math", "Common/b2Draw"], 
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exports_39, context_39) {
+System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function (exports_39, context_39) {
     "use strict";
     var __moduleName = context_39 && context_39.id;
-    var b2Settings_28;
-    var b2DestructionListener, b2ContactFilter, b2ContactImpulse, b2ContactListener, b2QueryCallback, b2RayCastCallback;
+    var b2Settings_28, b2DestructionListener, b2ContactFilter, b2ContactImpulse, b2ContactListener, b2QueryCallback, b2RayCastCallback;
     return {
-        setters:[
+        setters: [
             function (b2Settings_28_1) {
                 b2Settings_28 = b2Settings_28_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             ///#endif
             /// Joints and fixtures are destroyed when their associated
             /// body is destroyed. Implement this listener so that you
@@ -16591,7 +17115,7 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
             };
             exports_39("b2RayCastCallback", b2RayCastCallback);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -16610,13 +17134,12 @@ System.register("Dynamics/b2WorldCallbacks", ["Common/b2Settings"], function(exp
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Dynamics/Contacts/b2ContactSolver", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks"], function(exports_40, context_40) {
+System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Dynamics/Contacts/b2ContactSolver", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks"], function (exports_40, context_40) {
     "use strict";
     var __moduleName = context_40 && context_40.id;
-    var b2Settings_29, b2Settings_30, b2Settings_31, b2Settings_32, b2Math_30, b2Timer_2, b2ContactSolver_1, b2TimeStep_3, b2WorldCallbacks_2;
-    var b2Island;
+    var b2Settings_29, b2Settings_30, b2Settings_31, b2Settings_32, b2Math_30, b2Timer_2, b2ContactSolver_1, b2TimeStep_3, b2WorldCallbacks_2, b2Island;
     return {
-        setters:[
+        setters: [
             function (b2Settings_29_1) {
                 b2Settings_29 = b2Settings_29_1;
                 b2Settings_30 = b2Settings_29_1;
@@ -16637,8 +17160,25 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
             },
             function (b2WorldCallbacks_2_1) {
                 b2WorldCallbacks_2 = b2WorldCallbacks_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /*
             Position Correction Notes
             =========================
@@ -17107,7 +17647,7 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
             b2Island.s_impulse = new b2WorldCallbacks_2.b2ContactImpulse();
             exports_40("b2Island", b2Island);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -17126,13 +17666,12 @@ System.register("Dynamics/b2Island", ["Common/b2Settings", "Common/b2Math", "Com
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Common/b2Draw", "Collision/b2Collision", "Collision/b2TimeOfImpact", "Dynamics/Joints/b2JointFactory", "Dynamics/b2Body", "Dynamics/b2ContactManager", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks", "Particle/b2Particle", "Particle/b2ParticleSystem"], function(exports_41, context_41) {
+System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Common/b2Timer", "Common/b2Draw", "Collision/b2Collision", "Collision/b2TimeOfImpact", "Dynamics/Joints/b2JointFactory", "Dynamics/b2Body", "Dynamics/b2ContactManager", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2WorldCallbacks", "Particle/b2Particle", "Particle/b2ParticleSystem"], function (exports_41, context_41) {
     "use strict";
     var __moduleName = context_41 && context_41.id;
-    var b2Settings_33, b2Math_31, b2Timer_3, b2Draw_4, b2Collision_5, b2TimeOfImpact_1, b2JointFactory_1, b2Body_1, b2ContactManager_1, b2Island_1, b2TimeStep_4, b2WorldCallbacks_3, b2WorldCallbacks_4, b2Settings_34, b2Particle_2, b2ParticleSystem_1;
-    var b2World;
+    var b2Settings_33, b2Math_31, b2Timer_3, b2Draw_4, b2Collision_5, b2TimeOfImpact_1, b2JointFactory_1, b2Body_1, b2ContactManager_1, b2Island_1, b2TimeStep_4, b2WorldCallbacks_3, b2WorldCallbacks_4, b2Settings_34, b2Particle_2, b2ParticleSystem_1, b2World;
     return {
-        setters:[
+        setters: [
             function (b2Settings_33_1) {
                 b2Settings_33 = b2Settings_33_1;
                 b2Settings_34 = b2Settings_33_1;
@@ -17176,8 +17715,25 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
             },
             function (b2ParticleSystem_1_1) {
                 b2ParticleSystem_1 = b2ParticleSystem_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             ///#endif
             ///import { b2Controller } from "../../../Contributions/Enhancements/Controllers/b2Controller";
             /// The world class manages all physics entities, dynamic simulation,
@@ -17683,7 +18239,6 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                             return callback(fixture);
                         }
                     }
-                    ;
                     broadPhase.Query(WorldQueryWrapper, aabb);
                     ///#if B2_ENABLE_PARTICLE
                     if (callback instanceof b2WorldCallbacks_3.b2QueryCallback) {
@@ -17712,7 +18267,6 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         }
                         return true;
                     }
-                    ;
                     const aabb = b2World.QueryShape_s_aabb;
                     shape.ComputeAABB(aabb, transform, 0); // TODO
                     broadPhase.Query(WorldQueryWrapper, aabb);
@@ -17743,7 +18297,6 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         }
                         return true;
                     }
-                    ;
                     const aabb = b2World.QueryPoint_s_aabb;
                     aabb.lowerBound.Set(point.x - b2Settings_33.b2_linearSlop, point.y - b2Settings_33.b2_linearSlop);
                     aabb.upperBound.Set(point.x + b2Settings_33.b2_linearSlop, point.y + b2Settings_33.b2_linearSlop);
@@ -17780,7 +18333,6 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         }
                         return input.maxFraction;
                     }
-                    ;
                     const input = b2World.RayCast_s_input;
                     input.maxFraction = 1;
                     input.p1.Copy(point1);
@@ -17806,7 +18358,6 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         }
                         return min_fraction;
                     }
-                    ;
                     this.RayCast(WorldRayCastOneWrapper, point1, point2);
                     return result;
                 }
@@ -17815,7 +18366,6 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
                         out.push(fixture);
                         return 1;
                     }
-                    ;
                     this.RayCast(WorldRayCastAllWrapper, point1, point2);
                     return out;
                 }
@@ -18498,7 +19048,7 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
             b2World.SolveTOI_s_toi_output = new b2TimeOfImpact_1.b2TOIOutput();
             exports_41("b2World", b2World);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -18517,13 +19067,12 @@ System.register("Dynamics/b2World", ["Common/b2Settings", "Common/b2Math", "Comm
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape", "Dynamics/b2Fixture"], function(exports_42, context_42) {
+System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape", "Dynamics/b2Fixture"], function (exports_42, context_42) {
     "use strict";
     var __moduleName = context_42 && context_42.id;
-    var b2Math_32, b2Shape_8, b2Fixture_1;
-    var b2BodyDef, b2Body;
+    var b2Math_32, b2Shape_8, b2Fixture_1, b2BodyDef, b2Body;
     return {
-        setters:[
+        setters: [
             function (b2Math_32_1) {
                 b2Math_32 = b2Math_32_1;
             },
@@ -18532,8 +19081,25 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
             },
             function (b2Fixture_1_1) {
                 b2Fixture_1 = b2Fixture_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             /// A body definition holds all the data needed to construct a rigid body.
             /// You can safely re-use body definitions. Shapes are added to a body after construction.
             b2BodyDef = class b2BodyDef {
@@ -19271,6 +19837,7 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
                         for (let f = this.m_fixtureList; f; f = f.m_next) {
                             f.CreateProxies(broadPhase, this.m_xf);
                         }
+                        // Contacts are created the next time step.
                     }
                     else {
                         // Destroy all proxies.
@@ -19447,7 +20014,7 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
             b2Body.SynchronizeFixtures_s_xf1 = new b2Math_32.b2Transform();
             exports_42("b2Body", b2Body);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -19466,11 +20033,9 @@ System.register("Dynamics/b2Body", ["Common/b2Math", "Collision/Shapes/b2Shape",
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/b2TimeOfImpact"], function(exports_43, context_43) {
+System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision", "Collision/b2TimeOfImpact"], function (exports_43, context_43) {
     "use strict";
     var __moduleName = context_43 && context_43.id;
-    var b2Settings_35, b2Math_33, b2Collision_6, b2Collision_7, b2TimeOfImpact_2;
-    var b2ContactEdge, b2Contact;
     /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
     /// For example, anything slides on ice.
     function b2MixFriction(friction1, friction2) {
@@ -19483,8 +20048,9 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
         return restitution1 > restitution2 ? restitution1 : restitution2;
     }
     exports_43("b2MixRestitution", b2MixRestitution);
+    var b2Settings_35, b2Math_33, b2Collision_6, b2Collision_7, b2TimeOfImpact_2, b2ContactEdge, b2Contact;
     return {
-        setters:[
+        setters: [
             function (b2Settings_35_1) {
                 b2Settings_35 = b2Settings_35_1;
             },
@@ -19497,8 +20063,25 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
             },
             function (b2TimeOfImpact_2_1) {
                 b2TimeOfImpact_2 = b2TimeOfImpact_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2ContactEdge = class b2ContactEdge {
                 constructor() {
                     this.other = null; ///< provides quick access to the other body attached.
@@ -19706,13 +20289,11 @@ System.register("Dynamics/Contacts/b2Contact", ["Common/b2Settings", "Common/b2M
             b2Contact.ComputeTOI_s_output = new b2TimeOfImpact_2.b2TOIOutput();
             exports_43("b2Contact", b2Contact);
         }
-    }
+    };
 });
-System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Math"], function(exports_44, context_44) {
+System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Math"], function (exports_44, context_44) {
     "use strict";
     var __moduleName = context_44 && context_44.id;
-    var b2Settings_36, b2Math_34;
-    var b2CollideCircles_s_pA, b2CollideCircles_s_pB, b2CollidePolygonAndCircle_s_c, b2CollidePolygonAndCircle_s_cLocal, b2CollidePolygonAndCircle_s_faceCenter;
     function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
         const pA = b2Math_34.b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
@@ -19808,22 +20389,24 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
         }
     }
     exports_44("b2CollidePolygonAndCircle", b2CollidePolygonAndCircle);
+    var b2Settings_36, b2Math_34, b2CollideCircles_s_pA, b2CollideCircles_s_pB, b2CollidePolygonAndCircle_s_c, b2CollidePolygonAndCircle_s_cLocal, b2CollidePolygonAndCircle_s_faceCenter;
     return {
-        setters:[
+        setters: [
             function (b2Settings_36_1) {
                 b2Settings_36 = b2Settings_36_1;
             },
             function (b2Math_34_1) {
                 b2Math_34 = b2Math_34_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2CollideCircles_s_pA = new b2Math_34.b2Vec2();
             b2CollideCircles_s_pB = new b2Math_34.b2Vec2();
             b2CollidePolygonAndCircle_s_c = new b2Math_34.b2Vec2();
             b2CollidePolygonAndCircle_s_cLocal = new b2Math_34.b2Vec2();
             b2CollidePolygonAndCircle_s_faceCenter = new b2Math_34.b2Vec2();
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -19842,20 +20425,36 @@ System.register("Collision/b2CollideCircle", ["Common/b2Settings", "Common/b2Mat
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2CircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function(exports_45, context_45) {
+System.register("Dynamics/Contacts/b2CircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function (exports_45, context_45) {
     "use strict";
     var __moduleName = context_45 && context_45.id;
-    var b2CollideCircle_1, b2Contact_1;
-    var b2CircleContact;
+    var b2CollideCircle_1, b2Contact_1, b2CircleContact;
     return {
-        setters:[
+        setters: [
             function (b2CollideCircle_1_1) {
                 b2CollideCircle_1 = b2CollideCircle_1_1;
             },
             function (b2Contact_1_1) {
                 b2Contact_1 = b2Contact_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2CircleContact = class b2CircleContact extends b2Contact_1.b2Contact {
                 constructor() {
                     super();
@@ -19878,13 +20477,11 @@ System.register("Dynamics/Contacts/b2CircleContact", ["Collision/b2CollideCircle
             };
             exports_45("b2CircleContact", b2CircleContact);
         }
-    }
+    };
 });
-System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function(exports_46, context_46) {
+System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function (exports_46, context_46) {
     "use strict";
     var __moduleName = context_46 && context_46.id;
-    var b2Settings_37, b2Math_35, b2Collision_8;
-    var b2EdgeSeparation_s_normal1World, b2EdgeSeparation_s_normal1, b2EdgeSeparation_s_v1, b2EdgeSeparation_s_v2, b2FindMaxSeparation_s_d, b2FindMaxSeparation_s_dLocal1, b2FindIncidentEdge_s_normal1, b2CollidePolygons_s_incidentEdge, b2CollidePolygons_s_clipPoints1, b2CollidePolygons_s_clipPoints2, b2CollidePolygons_s_edgeA, b2CollidePolygons_s_edgeB, b2CollidePolygons_s_localTangent, b2CollidePolygons_s_localNormal, b2CollidePolygons_s_planePoint, b2CollidePolygons_s_normal, b2CollidePolygons_s_tangent, b2CollidePolygons_s_ntangent, b2CollidePolygons_s_v11, b2CollidePolygons_s_v12;
     function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
         ///const count1: number = poly1.m_count;
         const vertices1 = poly1.m_vertices;
@@ -20105,8 +20702,9 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
         manifold.pointCount = pointCount;
     }
     exports_46("b2CollidePolygons", b2CollidePolygons);
+    var b2Settings_37, b2Math_35, b2Collision_8, b2EdgeSeparation_s_normal1World, b2EdgeSeparation_s_normal1, b2EdgeSeparation_s_v1, b2EdgeSeparation_s_v2, b2FindMaxSeparation_s_d, b2FindMaxSeparation_s_dLocal1, b2FindIncidentEdge_s_normal1, b2CollidePolygons_s_incidentEdge, b2CollidePolygons_s_clipPoints1, b2CollidePolygons_s_clipPoints2, b2CollidePolygons_s_edgeA, b2CollidePolygons_s_edgeB, b2CollidePolygons_s_localTangent, b2CollidePolygons_s_localNormal, b2CollidePolygons_s_planePoint, b2CollidePolygons_s_normal, b2CollidePolygons_s_tangent, b2CollidePolygons_s_ntangent, b2CollidePolygons_s_v11, b2CollidePolygons_s_v12;
     return {
-        setters:[
+        setters: [
             function (b2Settings_37_1) {
                 b2Settings_37 = b2Settings_37_1;
             },
@@ -20115,8 +20713,9 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
             },
             function (b2Collision_8_1) {
                 b2Collision_8 = b2Collision_8_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2EdgeSeparation_s_normal1World = new b2Math_35.b2Vec2();
             b2EdgeSeparation_s_normal1 = new b2Math_35.b2Vec2();
             b2EdgeSeparation_s_v1 = new b2Math_35.b2Vec2();
@@ -20127,8 +20726,8 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
             b2CollidePolygons_s_incidentEdge = b2Collision_8.b2ClipVertex.MakeArray(2);
             b2CollidePolygons_s_clipPoints1 = b2Collision_8.b2ClipVertex.MakeArray(2);
             b2CollidePolygons_s_clipPoints2 = b2Collision_8.b2ClipVertex.MakeArray(2);
-            b2CollidePolygons_s_edgeA = b2Settings_37.b2MakeNumberArray(1);
-            b2CollidePolygons_s_edgeB = b2Settings_37.b2MakeNumberArray(1);
+            b2CollidePolygons_s_edgeA = [0];
+            b2CollidePolygons_s_edgeB = [0];
             b2CollidePolygons_s_localTangent = new b2Math_35.b2Vec2();
             b2CollidePolygons_s_localNormal = new b2Math_35.b2Vec2();
             b2CollidePolygons_s_planePoint = new b2Math_35.b2Vec2();
@@ -20138,7 +20737,7 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
             b2CollidePolygons_s_v11 = new b2Math_35.b2Vec2();
             b2CollidePolygons_s_v12 = new b2Math_35.b2Vec2();
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -20157,20 +20756,36 @@ System.register("Collision/b2CollidePolygon", ["Common/b2Settings", "Common/b2Ma
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolygon", "Dynamics/Contacts/b2Contact"], function(exports_47, context_47) {
+System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolygon", "Dynamics/Contacts/b2Contact"], function (exports_47, context_47) {
     "use strict";
     var __moduleName = context_47 && context_47.id;
-    var b2CollidePolygon_1, b2Contact_2;
-    var b2PolygonContact;
+    var b2CollidePolygon_1, b2Contact_2, b2PolygonContact;
     return {
-        setters:[
+        setters: [
             function (b2CollidePolygon_1_1) {
                 b2CollidePolygon_1 = b2CollidePolygon_1_1;
             },
             function (b2Contact_2_1) {
                 b2Contact_2 = b2Contact_2_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2PolygonContact = class b2PolygonContact extends b2Contact_2.b2Contact {
                 constructor() {
                     super();
@@ -20193,7 +20808,7 @@ System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolyg
             };
             exports_47("b2PolygonContact", b2PolygonContact);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -20212,20 +20827,36 @@ System.register("Dynamics/Contacts/b2PolygonContact", ["Collision/b2CollidePolyg
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2PolygonAndCircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function(exports_48, context_48) {
+System.register("Dynamics/Contacts/b2PolygonAndCircleContact", ["Collision/b2CollideCircle", "Dynamics/Contacts/b2Contact"], function (exports_48, context_48) {
     "use strict";
     var __moduleName = context_48 && context_48.id;
-    var b2CollideCircle_2, b2Contact_3;
-    var b2PolygonAndCircleContact;
+    var b2CollideCircle_2, b2Contact_3, b2PolygonAndCircleContact;
     return {
-        setters:[
+        setters: [
             function (b2CollideCircle_2_1) {
                 b2CollideCircle_2 = b2CollideCircle_2_1;
             },
             function (b2Contact_3_1) {
                 b2Contact_3 = b2Contact_3_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2PolygonAndCircleContact = class b2PolygonAndCircleContact extends b2Contact_3.b2Contact {
                 constructor() {
                     super();
@@ -20250,13 +20881,11 @@ System.register("Dynamics/Contacts/b2PolygonAndCircleContact", ["Collision/b2Col
             };
             exports_48("b2PolygonAndCircleContact", b2PolygonAndCircleContact);
         }
-    }
+    };
 });
-System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function(exports_49, context_49) {
+System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math", "Collision/b2Collision"], function (exports_49, context_49) {
     "use strict";
     var __moduleName = context_49 && context_49.id;
-    var b2Settings_38, b2Math_36, b2Collision_9, b2Collision_10;
-    var b2CollideEdgeAndCircle_s_Q, b2CollideEdgeAndCircle_s_e, b2CollideEdgeAndCircle_s_d, b2CollideEdgeAndCircle_s_e1, b2CollideEdgeAndCircle_s_e2, b2CollideEdgeAndCircle_s_P, b2CollideEdgeAndCircle_s_n, b2CollideEdgeAndCircle_s_id, b2EPAxis, b2TempPolygon, b2ReferenceFace, b2EPCollider, b2CollideEdgeAndPolygon_s_collider;
     function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
         manifold.pointCount = 0;
         // Compute circle in frame of edge
@@ -20367,8 +20996,9 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
         collider.Collide(manifold, edgeA, xfA, polygonB, xfB);
     }
     exports_49("b2CollideEdgeAndPolygon", b2CollideEdgeAndPolygon);
+    var b2Settings_38, b2Math_36, b2Collision_9, b2Collision_10, b2CollideEdgeAndCircle_s_Q, b2CollideEdgeAndCircle_s_e, b2CollideEdgeAndCircle_s_d, b2CollideEdgeAndCircle_s_e1, b2CollideEdgeAndCircle_s_e2, b2CollideEdgeAndCircle_s_P, b2CollideEdgeAndCircle_s_n, b2CollideEdgeAndCircle_s_id, b2EPAxis, b2TempPolygon, b2ReferenceFace, b2EPCollider, b2CollideEdgeAndPolygon_s_collider;
     return {
-        setters:[
+        setters: [
             function (b2Settings_38_1) {
                 b2Settings_38 = b2Settings_38_1;
             },
@@ -20378,8 +21008,9 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
             function (b2Collision_9_1) {
                 b2Collision_9 = b2Collision_9_1;
                 b2Collision_10 = b2Collision_9_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2CollideEdgeAndCircle_s_Q = new b2Math_36.b2Vec2();
             b2CollideEdgeAndCircle_s_e = new b2Math_36.b2Vec2();
             b2CollideEdgeAndCircle_s_d = new b2Math_36.b2Vec2();
@@ -20801,7 +21432,7 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
             b2EPCollider.s_perp = new b2Math_36.b2Vec2();
             b2CollideEdgeAndPolygon_s_collider = new b2EPCollider();
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -20820,20 +21451,36 @@ System.register("Collision/b2CollideEdge", ["Common/b2Settings", "Common/b2Math"
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function(exports_50, context_50) {
+System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function (exports_50, context_50) {
     "use strict";
     var __moduleName = context_50 && context_50.id;
-    var b2CollideEdge_1, b2Contact_4;
-    var b2EdgeAndCircleContact;
+    var b2CollideEdge_1, b2Contact_4, b2EdgeAndCircleContact;
     return {
-        setters:[
+        setters: [
             function (b2CollideEdge_1_1) {
                 b2CollideEdge_1 = b2CollideEdge_1_1;
             },
             function (b2Contact_4_1) {
                 b2Contact_4 = b2Contact_4_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2EdgeAndCircleContact = class b2EdgeAndCircleContact extends b2Contact_4.b2Contact {
                 constructor() {
                     super();
@@ -20858,7 +21505,7 @@ System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2Collid
             };
             exports_50("b2EdgeAndCircleContact", b2EdgeAndCircleContact);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -20877,20 +21524,36 @@ System.register("Dynamics/Contacts/b2EdgeAndCircleContact", ["Collision/b2Collid
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function(exports_51, context_51) {
+System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2CollideEdge", "Dynamics/Contacts/b2Contact"], function (exports_51, context_51) {
     "use strict";
     var __moduleName = context_51 && context_51.id;
-    var b2CollideEdge_2, b2Contact_5;
-    var b2EdgeAndPolygonContact;
+    var b2CollideEdge_2, b2Contact_5, b2EdgeAndPolygonContact;
     return {
-        setters:[
+        setters: [
             function (b2CollideEdge_2_1) {
                 b2CollideEdge_2 = b2CollideEdge_2_1;
             },
             function (b2Contact_5_1) {
                 b2Contact_5 = b2Contact_5_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2EdgeAndPolygonContact = class b2EdgeAndPolygonContact extends b2Contact_5.b2Contact {
                 constructor() {
                     super();
@@ -20915,7 +21578,7 @@ System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2Colli
             };
             exports_51("b2EdgeAndPolygonContact", b2EdgeAndPolygonContact);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -20934,13 +21597,12 @@ System.register("Dynamics/Contacts/b2EdgeAndPolygonContact", ["Collision/b2Colli
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function(exports_52, context_52) {
+System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function (exports_52, context_52) {
     "use strict";
     var __moduleName = context_52 && context_52.id;
-    var b2CollideEdge_3, b2EdgeShape_3, b2Contact_6;
-    var b2ChainAndCircleContact;
+    var b2CollideEdge_3, b2EdgeShape_3, b2Contact_6, b2ChainAndCircleContact;
     return {
-        setters:[
+        setters: [
             function (b2CollideEdge_3_1) {
                 b2CollideEdge_3 = b2CollideEdge_3_1;
             },
@@ -20949,8 +21611,25 @@ System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2Colli
             },
             function (b2Contact_6_1) {
                 b2Contact_6 = b2Contact_6_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2ChainAndCircleContact = class b2ChainAndCircleContact extends b2Contact_6.b2Contact {
                 constructor() {
                     super();
@@ -20979,7 +21658,7 @@ System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2Colli
             b2ChainAndCircleContact.Evaluate_s_edge = new b2EdgeShape_3.b2EdgeShape();
             exports_52("b2ChainAndCircleContact", b2ChainAndCircleContact);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -20998,13 +21677,12 @@ System.register("Dynamics/Contacts/b2ChainAndCircleContact", ["Collision/b2Colli
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function(exports_53, context_53) {
+System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2CollideEdge", "Collision/Shapes/b2EdgeShape", "Dynamics/Contacts/b2Contact"], function (exports_53, context_53) {
     "use strict";
     var __moduleName = context_53 && context_53.id;
-    var b2CollideEdge_4, b2EdgeShape_4, b2Contact_7;
-    var b2ChainAndPolygonContact;
+    var b2CollideEdge_4, b2EdgeShape_4, b2Contact_7, b2ChainAndPolygonContact;
     return {
-        setters:[
+        setters: [
             function (b2CollideEdge_4_1) {
                 b2CollideEdge_4 = b2CollideEdge_4_1;
             },
@@ -21013,8 +21691,25 @@ System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2Coll
             },
             function (b2Contact_7_1) {
                 b2Contact_7 = b2Contact_7_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2ChainAndPolygonContact = class b2ChainAndPolygonContact extends b2Contact_7.b2Contact {
                 constructor() {
                     super();
@@ -21043,15 +21738,14 @@ System.register("Dynamics/Contacts/b2ChainAndPolygonContact", ["Collision/b2Coll
             b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape_4.b2EdgeShape();
             exports_53("b2ChainAndPolygonContact", b2ChainAndPolygonContact);
         }
-    }
+    };
 });
-System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact"], function(exports_54, context_54) {
+System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact"], function (exports_54, context_54) {
     "use strict";
     var __moduleName = context_54 && context_54.id;
-    var b2Settings_39, b2CircleContact_1, b2PolygonContact_1, b2PolygonAndCircleContact_1, b2EdgeAndCircleContact_1, b2EdgeAndPolygonContact_1, b2ChainAndCircleContact_1, b2ChainAndPolygonContact_1;
-    var b2ContactRegister, b2ContactFactory;
+    var b2Settings_39, b2CircleContact_1, b2PolygonContact_1, b2PolygonAndCircleContact_1, b2EdgeAndCircleContact_1, b2EdgeAndPolygonContact_1, b2ChainAndCircleContact_1, b2ChainAndPolygonContact_1, b2ContactRegister, b2ContactFactory;
     return {
-        setters:[
+        setters: [
             function (b2Settings_39_1) {
                 b2Settings_39 = b2Settings_39_1;
             },
@@ -21075,8 +21769,9 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
             },
             function (b2ChainAndPolygonContact_1_1) {
                 b2ChainAndPolygonContact_1 = b2ChainAndPolygonContact_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             b2ContactRegister = class b2ContactRegister {
                 constructor() {
                     this.pool = null;
@@ -21101,11 +21796,9 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
                         }
                         return createFcn(allocator);
                     }
-                    ;
                     function poolDestroyFcn(contact, allocator) {
                         pool.push(contact);
                     }
-                    ;
                     this.m_registers[type1][type2].pool = pool;
                     this.m_registers[type1][type2].createFcn = poolCreateFcn;
                     this.m_registers[type1][type2].destroyFcn = poolDestroyFcn;
@@ -21178,7 +21871,7 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
             };
             exports_54("b2ContactFactory", b2ContactFactory);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -21197,13 +21890,12 @@ System.register("Dynamics/Contacts/b2ContactFactory", ["Common/b2Settings", "Dyn
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamics/Contacts/b2ContactFactory", "Dynamics/b2WorldCallbacks"], function(exports_55, context_55) {
+System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamics/Contacts/b2ContactFactory", "Dynamics/b2WorldCallbacks"], function (exports_55, context_55) {
     "use strict";
     var __moduleName = context_55 && context_55.id;
-    var b2BroadPhase_1, b2ContactFactory_1, b2WorldCallbacks_5;
-    var b2ContactManager;
+    var b2BroadPhase_1, b2ContactFactory_1, b2WorldCallbacks_5, b2ContactManager;
     return {
-        setters:[
+        setters: [
             function (b2BroadPhase_1_1) {
                 b2BroadPhase_1 = b2BroadPhase_1_1;
             },
@@ -21212,8 +21904,25 @@ System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamic
             },
             function (b2WorldCallbacks_5_1) {
                 b2WorldCallbacks_5 = b2WorldCallbacks_5_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             // Delegate of b2World.
             b2ContactManager = class b2ContactManager {
                 constructor() {
@@ -21407,7 +22116,7 @@ System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamic
             };
             exports_55("b2ContactManager", b2ContactManager);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -21426,11 +22135,9 @@ System.register("Dynamics/b2ContactManager", ["Collision/b2BroadPhase", "Dynamic
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b2DynamicTree"], function(exports_56, context_56) {
+System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b2DynamicTree"], function (exports_56, context_56) {
     "use strict";
     var __moduleName = context_56 && context_56.id;
-    var b2Collision_11, b2DynamicTree_1;
-    var b2Pair, b2BroadPhase;
     /// This is used to sort pairs.
     function b2PairLessThan(pair1, pair2) {
         if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
@@ -21439,15 +22146,33 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
         return pair1.proxyA.m_id - pair2.proxyA.m_id;
     }
     exports_56("b2PairLessThan", b2PairLessThan);
+    var b2Collision_11, b2DynamicTree_1, b2Pair, b2BroadPhase;
     return {
-        setters:[
+        setters: [
             function (b2Collision_11_1) {
                 b2Collision_11 = b2Collision_11_1;
             },
             function (b2DynamicTree_1_1) {
                 b2DynamicTree_1 = b2DynamicTree_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             b2Pair = class b2Pair {
                 constructor() {
                     this.proxyA = null;
@@ -21550,7 +22275,6 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
                             ++that.m_pairCount;
                             return true;
                         }
-                        ;
                         // We have to query the tree with the fat AABB so that
                         // we don't fail to create a pair that may touch later.
                         const fatAABB = this.m_tree.GetFatAABB(queryProxy);
@@ -21626,7 +22350,7 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
             };
             exports_56("b2BroadPhase", b2BroadPhase);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2011 Erin Catto http://www.box2d.org
@@ -21645,13 +22369,12 @@ System.register("Collision/b2BroadPhase", ["Collision/b2Collision", "Collision/b
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function(exports_57, context_57) {
+System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw"], function (exports_57, context_57) {
     "use strict";
     var __moduleName = context_57 && context_57.id;
-    var b2Settings_40, b2Math_37, b2Draw_5;
-    var b2RopeDef, b2Rope;
+    var b2Settings_40, b2Math_37, b2Draw_5, b2RopeDef, b2Rope;
     return {
-        setters:[
+        setters: [
             function (b2Settings_40_1) {
                 b2Settings_40 = b2Settings_40_1;
             },
@@ -21660,8 +22383,25 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
             },
             function (b2Draw_5_1) {
                 b2Draw_5 = b2Draw_5_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2011 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
             ///
             b2RopeDef = class b2RopeDef {
                 constructor() {
@@ -21793,6 +22533,8 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                         const s2 = im2 / (im1 + im2);
                         p1.SelfMulSub(this.m_k2 * s1 * (this.m_Ls[i] - L), d);
                         p2.SelfMulAdd(this.m_k2 * s2 * (this.m_Ls[i] - L), d);
+                        // this.m_ps[i] = p1;
+                        // this.m_ps[i + 1] = p2;
                     }
                 }
                 SetAngle(angle) {
@@ -21843,6 +22585,9 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
                         p1.SelfMulAdd((m1 * impulse), J1);
                         p2.SelfMulAdd((m2 * impulse), J2);
                         p3.SelfMulAdd((m3 * impulse), J3);
+                        // this.m_ps[i] = p1;
+                        // this.m_ps[i + 1] = p2;
+                        // this.m_ps[i + 2] = p3;
                     }
                 }
                 Draw(draw) {
@@ -21862,7 +22607,7 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
             b2Rope.s_J2 = new b2Math_37.b2Vec2();
             exports_57("b2Rope", b2Rope);
         }
-    }
+    };
 });
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -21881,18 +22626,18 @@ System.register("Rope/b2Rope", ["Common/b2Settings", "Common/b2Math", "Common/b2
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw", "Common/b2Timer", "Common/b2GrowableStack", "Common/b2BlockAllocator", "Common/b2StackAllocator", "Collision/b2Collision", "Collision/b2Distance", "Collision/b2BroadPhase", "Collision/b2DynamicTree", "Collision/b2TimeOfImpact", "Collision/b2CollideCircle", "Collision/b2CollidePolygon", "Collision/b2CollideEdge", "Collision/Shapes/b2Shape", "Collision/Shapes/b2CircleShape", "Collision/Shapes/b2PolygonShape", "Collision/Shapes/b2EdgeShape", "Collision/Shapes/b2ChainShape", "Dynamics/b2Fixture", "Dynamics/b2Body", "Dynamics/b2World", "Dynamics/b2WorldCallbacks", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2ContactManager", "Dynamics/Contacts/b2Contact", "Dynamics/Contacts/b2ContactFactory", "Dynamics/Contacts/b2ContactSolver", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2JointFactory", "Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint", "Particle/b2Particle", "Particle/b2ParticleGroup", "Particle/b2ParticleSystem", "Rope/b2Rope"], function(exports_58, context_58) {
+System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw", "Common/b2Timer", "Common/b2GrowableStack", "Common/b2BlockAllocator", "Common/b2StackAllocator", "Collision/b2Collision", "Collision/b2Distance", "Collision/b2BroadPhase", "Collision/b2DynamicTree", "Collision/b2TimeOfImpact", "Collision/b2CollideCircle", "Collision/b2CollidePolygon", "Collision/b2CollideEdge", "Collision/Shapes/b2Shape", "Collision/Shapes/b2CircleShape", "Collision/Shapes/b2PolygonShape", "Collision/Shapes/b2EdgeShape", "Collision/Shapes/b2ChainShape", "Dynamics/b2Fixture", "Dynamics/b2Body", "Dynamics/b2World", "Dynamics/b2WorldCallbacks", "Dynamics/b2Island", "Dynamics/b2TimeStep", "Dynamics/b2ContactManager", "Dynamics/Contacts/b2Contact", "Dynamics/Contacts/b2ContactFactory", "Dynamics/Contacts/b2ContactSolver", "Dynamics/Contacts/b2CircleContact", "Dynamics/Contacts/b2PolygonContact", "Dynamics/Contacts/b2PolygonAndCircleContact", "Dynamics/Contacts/b2EdgeAndCircleContact", "Dynamics/Contacts/b2EdgeAndPolygonContact", "Dynamics/Contacts/b2ChainAndCircleContact", "Dynamics/Contacts/b2ChainAndPolygonContact", "Dynamics/Joints/b2Joint", "Dynamics/Joints/b2JointFactory", "Dynamics/Joints/b2AreaJoint", "Dynamics/Joints/b2DistanceJoint", "Dynamics/Joints/b2FrictionJoint", "Dynamics/Joints/b2GearJoint", "Dynamics/Joints/b2MotorJoint", "Dynamics/Joints/b2MouseJoint", "Dynamics/Joints/b2PrismaticJoint", "Dynamics/Joints/b2PulleyJoint", "Dynamics/Joints/b2RevoluteJoint", "Dynamics/Joints/b2RopeJoint", "Dynamics/Joints/b2WeldJoint", "Dynamics/Joints/b2WheelJoint", "Particle/b2Particle", "Particle/b2ParticleGroup", "Particle/b2ParticleSystem", "Rope/b2Rope"], function (exports_58, context_58) {
     "use strict";
     var __moduleName = context_58 && context_58.id;
     function exportStar_1(m) {
         var exports = {};
-        for(var n in m) {
+        for (var n in m) {
             if (n !== "default") exports[n] = m[n];
         }
         exports_58(exports);
     }
     return {
-        setters:[
+        setters: [
             function (b2Settings_41_1) {
                 exportStar_1(b2Settings_41_1);
             },
@@ -22057,9 +22802,26 @@ System.register("Box2D", ["Common/b2Settings", "Common/b2Math", "Common/b2Draw",
             },
             function (b2Rope_1_1) {
                 exportStar_1(b2Rope_1_1);
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {/*
+            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
         }
-    }
+    };
 });
 //# sourceMappingURL=box2d.js.map
