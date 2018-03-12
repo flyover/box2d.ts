@@ -19,7 +19,7 @@
   "homepage": "https://github.com/flyover/box2d.ts#readme",
   "dependencies": {
     "@types/systemjs": "^0.20.3",
-    "systemjs": "^0.20.17",
-    "typescript": "^2.4.2"
+    "systemjs": "^0.21.0",
+    "typescript": "^2.7.2"
   }
 }
