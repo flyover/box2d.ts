@@ -1,5 +1,5 @@
 {
-  "name": "box2d.ts",
+  "name": "@flyover/box2d",
   "version": "1.0.0",
   "description": "",
   "main": "./Box2D/Box2D/Box2D.js",
