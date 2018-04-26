@@ -652,11 +652,11 @@ export class b2DynamicTree {
     this.ValidateStructure(this.m_root);
     this.ValidateMetrics(this.m_root);
 
-    let freeCount: number = 0;
+    // let freeCount: number = 0;
     let freeIndex: b2TreeNode = this.m_freeList;
     while (freeIndex !== null) {
       freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-      ++freeCount;
+      // ++freeCount;
     }
 
     ///b2Assert(this.GetHeight() === this.ComputeHeight());

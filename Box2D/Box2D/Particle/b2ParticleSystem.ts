@@ -4524,7 +4524,7 @@ export class b2ParticleSystem {
     // Number of contacts processed for the current particle.
     let currentContacts = 0;
     // Output the number of discarded contacts.
-    let discarded = 0;
+    // let discarded = 0;
     let b2ParticleBodyContactRemovePredicate = function(contact: b2ParticleBodyContact): boolean {
       // This implements the selection criteria described in
       // RemoveSpuriousBodyContacts().
@@ -4541,7 +4541,7 @@ export class b2ParticleSystem {
       }
 
       if (currentContacts++ > k_maxContactsPerPoint) {
-        ++discarded;
+        // ++discarded;
         return true;
       }
 
@@ -4567,7 +4567,7 @@ export class b2ParticleSystem {
             return false;
           }
         }
-        ++discarded;
+        // ++discarded;
         return true;
       }
 
