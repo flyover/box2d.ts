@@ -305,14 +305,14 @@ export class b2Body {
     ///b2Assert(this.m_fixtureCount > 0);
     let node: b2Fixture = this.m_fixtureList;
     let ppF: b2Fixture = null;
-    let found: boolean = false;
+    // let found: boolean = false;
     while (node !== null) {
       if (node === fixture) {
         if (ppF)
           ppF.m_next = fixture.m_next;
         else
           this.m_fixtureList = fixture.m_next;
-        found = true;
+        // found = true;
         break;
       }
 

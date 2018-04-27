@@ -108,7 +108,7 @@ export class b2BroadPhase {
 
       // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
       // boolean b2BroadPhase::QueryCallback(int32 proxyId);
-      function QueryCallback(proxy: b2TreeNode): boolean {
+      const QueryCallback = function (proxy: b2TreeNode): boolean {
         // A proxy cannot form a pair with itself.
         if (proxy.m_id === queryProxy.m_id) {
           return true;
