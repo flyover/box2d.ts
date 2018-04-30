@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "system",
+    "preserveConstEnums": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
