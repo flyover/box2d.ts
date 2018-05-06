@@ -17,7 +17,7 @@
 */
 
 import { b2_epsilon, b2_maxFloat, b2_linearSlop, b2_polygonRadius, b2_maxPolygonVertices, b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Min, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -77,7 +77,7 @@ export class b2PolygonShape extends b2Shape {
       return this.SetAsBox(1, 1);
     }
 
-    let n: number = b2Min(count, b2_maxPolygonVertices);
+    let n: number = Math.min(count, b2_maxPolygonVertices);
 
     // Perform welding and copy vertices into local buffer.
     const ps: b2Vec2[] = b2PolygonShape.Set_s_ps;
@@ -636,7 +636,7 @@ export class b2PolygonShape extends b2Shape {
       const root = p[i - 1];
       const uxX = p[i].x - root.x;
       const uxY = p[i].y - root.y;
-      const length = b2Sqrt(uxX * uxX + uxY * uxY);
+      const length = Math.sqrt(uxX * uxX + uxY * uxY);
       uxX /= length;
       uxY /= length;
       const uyX = (-uxY);

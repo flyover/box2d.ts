@@ -17,7 +17,7 @@
 */
 
 import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Sq, b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -94,7 +94,7 @@ export class b2CircleShape extends b2Shape {
     }
 
     // Find the point of intersection of the line with the circle.
-    let a: number = (-(c + b2Sqrt(sigma)));
+    let a: number = (-(c + Math.sqrt(sigma)));
 
     // Is the intersection point on the segment?
     if (0 <= a && a <= input.maxFraction * rr) {
@@ -149,8 +149,8 @@ export class b2CircleShape extends b2Shape {
     // Magic
     const r2: number = this.m_radius * this.m_radius;
     const l2: number = l * l;
-    const area: number = r2 * (b2Asin(l / this.m_radius) + b2_pi / 2) + l * b2Sqrt(r2 - l2);
-    const com: number = (-2 / 3 * b2Pow(r2 - l2, 1.5) / area);
+    const area: number = r2 * (Math.asin(l / this.m_radius) + b2_pi / 2) + l * Math.sqrt(r2 - l2);
+    const com: number = (-2 / 3 * Math.pow(r2 - l2, 1.5) / area);
 
     c.x = p.x + normal.x * com;
     c.y = p.y + normal.y * com;

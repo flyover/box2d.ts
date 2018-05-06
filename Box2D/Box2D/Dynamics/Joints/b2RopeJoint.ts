@@ -17,7 +17,7 @@
 */
 
 import { b2_linearSlop, b2_maxLinearCorrection } from "../../Common/b2Settings";
-import { b2Min, b2Clamp, b2Vec2, b2Rot } from "../../Common/b2Math";
+import { b2Clamp, b2Vec2, b2Rot } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 
@@ -178,7 +178,7 @@ export class b2RopeJoint extends b2Joint {
 
     let impulse: number = -this.m_mass * Cdot;
     const oldImpulse: number = this.m_impulse;
-    this.m_impulse = b2Min(0, this.m_impulse + impulse);
+    this.m_impulse = Math.min(0, this.m_impulse + impulse);
     impulse = this.m_impulse - oldImpulse;
 
     // b2Vec2 P = impulse * m_u;

@@ -17,7 +17,7 @@
 */
 
 import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
+import { b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -221,7 +221,7 @@ export class b2PrismaticJoint extends b2Joint {
     if (this.m_enableLimit) {
       // float32 jointTranslation = b2Dot(m_axis, d);
       const jointTranslation: number = b2Vec2.DotVV(this.m_axis, d);
-      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
+      if (Math.abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
         this.m_limitState = b2LimitState.e_equalLimits;
       } else if (jointTranslation <= this.m_lowerTranslation) {
         if (this.m_limitState !== b2LimitState.e_atLowerLimit) {
@@ -339,9 +339,9 @@ export class b2PrismaticJoint extends b2Joint {
       this.m_impulse.SelfAdd(df3);
 
       if (this.m_limitState === b2LimitState.e_atLowerLimit) {
-        this.m_impulse.z = b2Max(this.m_impulse.z, 0);
+        this.m_impulse.z = Math.max(this.m_impulse.z, 0);
       } else if (this.m_limitState === b2LimitState.e_atUpperLimit) {
-        this.m_impulse.z = b2Min(this.m_impulse.z, 0);
+        this.m_impulse.z = Math.min(this.m_impulse.z, 0);
       }
 
       // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) + f1(1:2)
@@ -455,28 +455,28 @@ export class b2PrismaticJoint extends b2Joint {
     // C1.y = aB - aA - m_referenceAngle;
     const C1_y = aB - aA - this.m_referenceAngle;
 
-    let linearError = b2Abs(C1_x);
-    let angularError = b2Abs(C1_y);
+    let linearError = Math.abs(C1_x);
+    let angularError = Math.abs(C1_y);
 
     let active = false;
     let C2: number = 0;
     if (this.m_enableLimit) {
       // float32 translation = b2Dot(axis, d);
       const translation: number = b2Vec2.DotVV(axis, d);
-      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
+      if (Math.abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
         // Prevent large angular corrections
         C2 = b2Clamp(translation, (-b2_maxLinearCorrection), b2_maxLinearCorrection);
-        linearError = b2Max(linearError, b2Abs(translation));
+        linearError = Math.max(linearError, Math.abs(translation));
         active = true;
       } else if (translation <= this.m_lowerTranslation) {
         // Prevent large linear corrections and allow some slop.
         C2 = b2Clamp(translation - this.m_lowerTranslation + b2_linearSlop, (-b2_maxLinearCorrection), 0);
-        linearError = b2Max(linearError, this.m_lowerTranslation - translation);
+        linearError = Math.max(linearError, this.m_lowerTranslation - translation);
         active = true;
       } else if (translation >= this.m_upperTranslation) {
         // Prevent large linear corrections and allow some slop.
         C2 = b2Clamp(translation - this.m_upperTranslation - b2_linearSlop, 0, b2_maxLinearCorrection);
-        linearError = b2Max(linearError, translation - this.m_upperTranslation);
+        linearError = Math.max(linearError, translation - this.m_upperTranslation);
         active = true;
       }
     }

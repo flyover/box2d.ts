@@ -17,7 +17,7 @@
 */
 
 import { b2_maxFloat, b2_epsilon, b2_epsilon_sq } from "../Common/b2Settings";
-import { b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 
 /// A distance proxy is used by the GJK algorithm.
@@ -569,7 +569,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     ++simplex.m_count;
   }
 
-  b2_gjkMaxIters = b2Max(b2_gjkMaxIters, iter);
+  b2_gjkMaxIters = Math.max(b2_gjkMaxIters, iter);
 
   // Prepare output.
   simplex.GetWitnessPoints(output.pointA, output.pointB);

@@ -17,7 +17,7 @@
 */
 
 import { b2_pi, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Atan2, b2Vec2 } from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
 import { b2Color, b2Draw } from "../Common/b2Draw";
 
 ///
@@ -120,7 +120,7 @@ export class b2Rope {
       const a: number = b2Vec2.CrossVV(d1, d2);
       const b: number = b2Vec2.DotVV(d1, d2);
 
-      this.m_as[i] = b2Atan2(a, b);
+      this.m_as[i] = Math.atan2(a, b);
     }
 
     this.m_gravity.Copy(def.gravity);
@@ -226,7 +226,7 @@ export class b2Rope {
       const a: number = b2Vec2.CrossVV(d1, d2);
       const b: number = b2Vec2.DotVV(d1, d2);
 
-      let angle: number = b2Atan2(a, b);
+      let angle: number = Math.atan2(a, b);
 
       const Jd1: b2Vec2 = b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
       const Jd2: b2Vec2 = b2Vec2.MulSV(( 1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);

@@ -1,5 +1,5 @@
 import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNullArray, b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Vec2 } from "../../Common/b2Math";
+import { b2Sq, b2Vec2 } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
 import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
 import { b2SolverData } from "../b2TimeStep";
@@ -225,7 +225,7 @@ export class b2AreaJoint extends b2Joint {
 
       const norm_sq: number = delta.LengthSquared();
       if (norm_sq > b2Sq(b2_maxLinearCorrection)) {
-        delta.SelfMul(b2_maxLinearCorrection / b2Sqrt(norm_sq));
+        delta.SelfMul(b2_maxLinearCorrection / Math.sqrt(norm_sq));
       }
       if (norm_sq > b2Sq(b2_linearSlop)) {
         done = false;
