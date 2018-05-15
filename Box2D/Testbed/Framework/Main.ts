@@ -34,7 +34,7 @@ export class Main {
   public m_canvas_div: HTMLDivElement;
   public m_canvas: HTMLCanvasElement;
   public m_ctx: CanvasRenderingContext2D;
-  public m_demo_button: HTMLButtonElement;
+  public m_demo_button: HTMLInputElement;
 
   constructor() {
     const that: Main = this; // for callbacks
