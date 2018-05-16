@@ -184,6 +184,7 @@ BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/MotorJoint2.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/SensorTest.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/ShapeEditing.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/SliderCrank.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Soccer.ts
 BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/SphereStack.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestCCD.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/TestRagdoll.ts

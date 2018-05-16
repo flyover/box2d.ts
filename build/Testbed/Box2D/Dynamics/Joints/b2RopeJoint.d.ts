@@ -1,0 +1,52 @@
+import { b2Vec2, b2Rot } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2LimitState } from "./b2Joint";
+import { b2SolverData } from "../b2TimeStep";
+export declare class b2RopeJointDef extends b2JointDef {
+    localAnchorA: b2Vec2;
+    localAnchorB: b2Vec2;
+    maxLength: number;
+    constructor();
+}
+export declare class b2RopeJoint extends b2Joint {
+    m_localAnchorA: b2Vec2;
+    m_localAnchorB: b2Vec2;
+    m_maxLength: number;
+    m_length: number;
+    m_impulse: number;
+    m_indexA: number;
+    m_indexB: number;
+    m_u: b2Vec2;
+    m_rA: b2Vec2;
+    m_rB: b2Vec2;
+    m_localCenterA: b2Vec2;
+    m_localCenterB: b2Vec2;
+    m_invMassA: number;
+    m_invMassB: number;
+    m_invIA: number;
+    m_invIB: number;
+    m_mass: number;
+    m_state: b2LimitState;
+    m_qA: b2Rot;
+    m_qB: b2Rot;
+    m_lalcA: b2Vec2;
+    m_lalcB: b2Vec2;
+    constructor(def: b2RopeJointDef);
+    private static InitVelocityConstraints_s_P;
+    InitVelocityConstraints(data: b2SolverData): void;
+    private static SolveVelocityConstraints_s_vpA;
+    private static SolveVelocityConstraints_s_vpB;
+    private static SolveVelocityConstraints_s_P;
+    SolveVelocityConstraints(data: b2SolverData): void;
+    private static SolvePositionConstraints_s_P;
+    SolvePositionConstraints(data: b2SolverData): boolean;
+    GetAnchorA(out: b2Vec2): b2Vec2;
+    GetAnchorB(out: b2Vec2): b2Vec2;
+    GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+    GetReactionTorque(inv_dt: number): number;
+    GetLocalAnchorA(): b2Vec2;
+    GetLocalAnchorB(): b2Vec2;
+    SetMaxLength(length: number): void;
+    GetMaxLength(): number;
+    GetLimitState(): b2LimitState;
+    Dump(log: (format: string, ...args: any[]) => void): void;
+}

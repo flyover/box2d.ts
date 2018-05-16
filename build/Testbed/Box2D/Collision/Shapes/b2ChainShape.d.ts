@@ -1,0 +1,35 @@
+import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
+import { b2DistanceProxy } from "../b2Distance";
+import { b2MassData } from "./b2Shape";
+import { b2Shape } from "./b2Shape";
+import { b2EdgeShape } from "./b2EdgeShape";
+export declare class b2ChainShape extends b2Shape {
+    m_vertices: b2Vec2[];
+    m_count: number;
+    m_prevVertex: b2Vec2;
+    m_nextVertex: b2Vec2;
+    m_hasPrevVertex: boolean;
+    m_hasNextVertex: boolean;
+    constructor();
+    CreateLoop(vertices: b2Vec2[], count?: number): b2ChainShape;
+    CreateChain(vertices: b2Vec2[], count?: number): b2ChainShape;
+    SetPrevVertex(prevVertex: b2Vec2): b2ChainShape;
+    SetNextVertex(nextVertex: b2Vec2): b2ChainShape;
+    Clone(): b2ChainShape;
+    Copy(other: b2ChainShape): b2ChainShape;
+    GetChildCount(): number;
+    GetChildEdge(edge: b2EdgeShape, index: number): void;
+    TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+    private static ComputeDistance_s_edgeShape;
+    ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+    private static RayCast_s_edgeShape;
+    RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+    private static ComputeAABB_s_v1;
+    private static ComputeAABB_s_v2;
+    ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+    ComputeMass(massData: b2MassData, density: number): void;
+    SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+    ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+    Dump(log: (format: string, ...args: any[]) => void): void;
+}

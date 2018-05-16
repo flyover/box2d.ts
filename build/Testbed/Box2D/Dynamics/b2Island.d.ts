@@ -1,0 +1,36 @@
+import { b2Vec2 } from "../Common/b2Math";
+import { b2Contact } from "./Contacts/b2Contact";
+import { b2ContactVelocityConstraint } from "./Contacts/b2ContactSolver";
+import { b2Joint } from "./Joints/b2Joint";
+import { b2Body } from "./b2Body";
+import { b2TimeStep, b2Profile, b2Position, b2Velocity } from "./b2TimeStep";
+import { b2ContactListener } from "./b2WorldCallbacks";
+export declare class b2Island {
+    m_allocator: any;
+    m_listener: b2ContactListener;
+    m_bodies: b2Body[];
+    m_contacts: b2Contact[];
+    m_joints: b2Joint[];
+    m_positions: b2Position[];
+    m_velocities: b2Velocity[];
+    m_bodyCount: number;
+    m_jointCount: number;
+    m_contactCount: number;
+    m_bodyCapacity: number;
+    m_contactCapacity: number;
+    m_jointCapacity: number;
+    Initialize(bodyCapacity: number, contactCapacity: number, jointCapacity: number, allocator: any, listener: b2ContactListener): void;
+    Clear(): void;
+    AddBody(body: b2Body): void;
+    AddContact(contact: b2Contact): void;
+    AddJoint(joint: b2Joint): void;
+    private static s_timer;
+    private static s_solverData;
+    private static s_contactSolverDef;
+    private static s_contactSolver;
+    private static s_translation;
+    Solve(profile: b2Profile, step: b2TimeStep, gravity: b2Vec2, allowSleep: boolean): void;
+    SolveTOI(subStep: b2TimeStep, toiIndexA: number, toiIndexB: number): void;
+    private static s_impulse;
+    Report(constraints: b2ContactVelocityConstraint[]): void;
+}

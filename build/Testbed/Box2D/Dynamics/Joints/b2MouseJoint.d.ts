@@ -1,0 +1,52 @@
+import { b2Vec2, b2Mat22, b2Rot } from "../../Common/b2Math";
+import { b2Joint, b2JointDef } from "./b2Joint";
+import { b2SolverData } from "../b2TimeStep";
+export declare class b2MouseJointDef extends b2JointDef {
+    target: b2Vec2;
+    maxForce: number;
+    frequencyHz: number;
+    dampingRatio: number;
+    constructor();
+}
+export declare class b2MouseJoint extends b2Joint {
+    m_localAnchorB: b2Vec2;
+    m_targetA: b2Vec2;
+    m_frequencyHz: number;
+    m_dampingRatio: number;
+    m_beta: number;
+    m_impulse: b2Vec2;
+    m_maxForce: number;
+    m_gamma: number;
+    m_indexA: number;
+    m_indexB: number;
+    m_rB: b2Vec2;
+    m_localCenterB: b2Vec2;
+    m_invMassB: number;
+    m_invIB: number;
+    m_mass: b2Mat22;
+    m_C: b2Vec2;
+    m_qB: b2Rot;
+    m_lalcB: b2Vec2;
+    m_K: b2Mat22;
+    constructor(def: b2MouseJointDef);
+    SetTarget(target: b2Vec2): void;
+    GetTarget(): b2Vec2;
+    SetMaxForce(maxForce: number): void;
+    GetMaxForce(): number;
+    SetFrequency(hz: number): void;
+    GetFrequency(): number;
+    SetDampingRatio(ratio: number): void;
+    GetDampingRatio(): number;
+    InitVelocityConstraints(data: b2SolverData): void;
+    private static SolveVelocityConstraints_s_Cdot;
+    private static SolveVelocityConstraints_s_impulse;
+    private static SolveVelocityConstraints_s_oldImpulse;
+    SolveVelocityConstraints(data: b2SolverData): void;
+    SolvePositionConstraints(data: b2SolverData): boolean;
+    GetAnchorA(out: b2Vec2): b2Vec2;
+    GetAnchorB(out: b2Vec2): b2Vec2;
+    GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+    GetReactionTorque(inv_dt: number): number;
+    Dump(log: (format: string, ...args: any[]) => void): void;
+    ShiftOrigin(newOrigin: b2Vec2): void;
+}

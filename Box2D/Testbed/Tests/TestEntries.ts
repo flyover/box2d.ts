@@ -81,6 +81,7 @@ import { DominoTower } from "./DominoTower";
 import { HeavyOnLight } from "./HeavyOnLight";
 import { HeavyOnLightTwo } from "./HeavyOnLightTwo";
 import { TopdownCar } from "./TopdownCar";
+import { Soccer } from "./Soccer";
 
 // #if B2_ENABLE_CONTROLLER
 import { BuoyancyTest } from "./BuoyancyTest";
@@ -183,6 +184,7 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Heavy on Light", HeavyOnLight.Create),
   new TestEntry("Heavy on Light 2", HeavyOnLightTwo.Create),
   new TestEntry("TopDown Car", TopdownCar.Create),
+  new TestEntry("Soccer", Soccer.Create),
 
   // #if B2_ENABLE_CONTROLLER
   new TestEntry("Buoyancy Test", BuoyancyTest.Create),
