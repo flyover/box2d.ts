@@ -169,6 +169,7 @@ BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Car.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Mobile.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/MobileBalanced.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/MotorJoint.ts
+BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/MotorJoint2.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/OneSidedPlatform.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/Pinball.ts
 #BOX2D_TESTBED_SOURCE_TS_FILES += Box2D/Testbed/Tests/PolyCollision.ts

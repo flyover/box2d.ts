@@ -1821,7 +1821,7 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                     this.m_v1 = new b2SimplexVertex();
                     this.m_v2 = new b2SimplexVertex();
                     this.m_v3 = new b2SimplexVertex();
-                    this.m_vertices = [];
+                    this.m_vertices = [ /*3*/];
                     this.m_count = 0;
                     this.m_vertices[0] = this.m_v1;
                     this.m_vertices[1] = this.m_v2;
@@ -2792,7 +2792,7 @@ System.register("Box2D/Common/b2GrowableStack", [], function (exports_8, context
                 constructor(N) {
                     this.m_stack = [];
                     this.m_count = 0;
-                    this.m_stack = [];
+                    this.m_stack = [ /*N*/];
                     this.m_count = 0;
                 }
                 Reset() {
@@ -3393,11 +3393,11 @@ System.register("Box2D/Collision/b2DynamicTree", ["Box2D/Common/b2Settings", "Bo
                 Validate() {
                     this.ValidateStructure(this.m_root);
                     this.ValidateMetrics(this.m_root);
-                    let freeCount = 0;
+                    // let freeCount: number = 0;
                     let freeIndex = this.m_freeList;
                     while (freeIndex !== null) {
                         freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-                        ++freeCount;
+                        // ++freeCount;
                     }
                     ///b2Assert(this.GetHeight() === this.ComputeHeight());
                 }
@@ -4912,14 +4912,14 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Math", "Box2D/Collisio
                     ///b2Assert(this.m_fixtureCount > 0);
                     let node = this.m_fixtureList;
                     let ppF = null;
-                    let found = false;
+                    // let found: boolean = false;
                     while (node !== null) {
                         if (node === fixture) {
                             if (ppF)
                                 ppF.m_next = fixture.m_next;
                             else
                                 this.m_fixtureList = fixture.m_next;
-                            found = true;
+                            // found = true;
                             break;
                         }
                         ppF = node;
@@ -6556,11 +6556,11 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
         let left = first;
         let stack = [];
         let pos = 0;
-        for (;;) {
-            for (; left + 1 < len; len++) {
+        for (;;) { /* outer loop */
+            for (; left + 1 < len; len++) { /* sort left to len-1 */
                 let pivot = array[left + Math.floor(Math.random() * (len - left))]; /* pick random pivot */
                 stack[pos++] = len; /* sort right part later */
-                for (let right = left - 1;;) {
+                for (let right = left - 1;;) { /* inner loop: partitioning */
                     while (cmp(array[++right], pivot)) { } /* look for greater element */
                     while (cmp(pivot, array[--len])) { } /* look for smaller element */
                     if (right >= len)
@@ -8758,7 +8758,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                     // to
                     //     listA => listB => b1 => b2 => a1 => a2 => a3 => null
                     b2Assert(listA !== listB);
-                    for (let b = listB;;) {
+                    for ( /*ParticleListNode**/let b = listB;;) {
                         b.list = listA;
                         /*ParticleListNode**/
                         let nextB = b.next;
@@ -8828,7 +8828,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                         b2Assert(list.list === list);
                         /*b2ParticleGroup**/
                         let newGroup = this.CreateParticleGroup(def);
-                        for (let node = list; node; node = node.next) {
+                        for ( /*ParticleListNode**/let node = list; node; node = node.next) {
                             let oldIndex = node.index;
                             let flags = this.m_flagsBuffer.data[oldIndex];
                             b2Assert(!(flags & 2 /* b2_zombieParticle */));
@@ -10655,7 +10655,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                     // Number of contacts processed for the current particle.
                     let currentContacts = 0;
                     // Output the number of discarded contacts.
-                    let discarded = 0;
+                    // let discarded = 0;
                     let b2ParticleBodyContactRemovePredicate = function (contact) {
                         // This implements the selection criteria described in
                         // RemoveSpuriousBodyContacts().
@@ -10670,7 +10670,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                             lastIndex = contact.index;
                         }
                         if (currentContacts++ > k_maxContactsPerPoint) {
-                            ++discarded;
+                            // ++discarded;
                             return true;
                         }
                         // Project along inverse normal (as returned in the contact) to get the
@@ -10694,7 +10694,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                                     return false;
                                 }
                             }
-                            ++discarded;
+                            // ++discarded;
                             return true;
                         }
                         return false;
@@ -14344,9 +14344,9 @@ System.register("Box2D/Dynamics/Contacts/b2ContactFactory", ["Box2D/Common/b2Set
                     */
                 }
                 InitializeRegisters() {
-                    this.m_registers = [];
+                    this.m_registers = [ /*b2ShapeType.e_shapeTypeCount*/];
                     for (let i = 0; i < 4 /* e_shapeTypeCount */; i++) {
-                        this.m_registers[i] = [];
+                        this.m_registers[i] = [ /*b2ShapeType.e_shapeTypeCount*/];
                         for (let j = 0; j < 4 /* e_shapeTypeCount */; j++) {
                             this.m_registers[i][j] = new b2ContactRegister();
                         }
@@ -14774,7 +14774,7 @@ System.register("Box2D/Collision/b2BroadPhase", ["Box2D/Collision/b2Collision", 
                         const that = this;
                         // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
                         // boolean b2BroadPhase::QueryCallback(int32 proxyId);
-                        function QueryCallback(proxy) {
+                        const QueryCallback = function (proxy) {
                             // A proxy cannot form a pair with itself.
                             if (proxy.m_id === queryProxy.m_id) {
                                 return true;
@@ -14796,7 +14796,7 @@ System.register("Box2D/Collision/b2BroadPhase", ["Box2D/Collision/b2Collision", 
                             }
                             ++that.m_pairCount;
                             return true;
-                        }
+                        };
                         // We have to query the tree with the fat AABB so that
                         // we don't fail to create a pair that may touch later.
                         const fatAABB = this.m_tree.GetFatAABB(queryProxy);
@@ -17303,6 +17303,23 @@ System.register("Box2D/Dynamics/Joints/b2GearJoint", ["Box2D/Common/b2Settings",
         }
     };
 });
+/*
+* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
 System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Math", "Box2D/Dynamics/Joints/b2Joint"], function (exports_45, context_45) {
     "use strict";
     var __moduleName = context_45 && context_45.id;
@@ -17316,7 +17333,36 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Math", "B
                 b2Joint_7 = b2Joint_7_1;
             }
         ],
-        execute: function () {
+        execute: function () {/*
+            * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
+            // Point-to-point constraint
+            // Cdot = v2 - v1
+            //      = v2 + cross(w2, r2) - v1 - cross(w1, r1)
+            // J = [-I -r1_skew I r2_skew ]
+            // Identity used:
+            // w k % (rx i + ry j) = w * (-ry i + rx j)
+            //
+            // r1 = offset - c1
+            // r2 = -c2
+            // Angle constraint
+            // Cdot = w2 - w1
+            // J = [0 0 -1 0 0 1]
+            // K = invI1 + invI2
             b2MotorJointDef = class b2MotorJointDef extends b2Joint_7.b2JointDef {
                 constructor() {
                     super(11 /* e_motorJoint */);
@@ -17439,12 +17485,11 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Math", "B
                     let wB = data.velocities[this.m_indexB].w;
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // Compute the effective mass matrix.
-                    // this.m_rA = b2Mul(qA, -this.m_localCenterA);
-                    const rA = b2Math_28.b2Rot.MulRV(qA, b2Math_28.b2Vec2.NegV(this.m_localCenterA, b2Math_28.b2Vec2.s_t0), this.m_rA);
+                    // this.m_rA = b2Mul(qA, m_linearOffset - this.m_localCenterA);
+                    const rA = b2Math_28.b2Rot.MulRV(qA, b2Math_28.b2Vec2.SubVV(this.m_linearOffset, this.m_localCenterA, b2Math_28.b2Vec2.s_t0), this.m_rA);
                     // this.m_rB = b2Mul(qB, -this.m_localCenterB);
                     const rB = b2Math_28.b2Rot.MulRV(qB, b2Math_28.b2Vec2.NegV(this.m_localCenterB, b2Math_28.b2Vec2.s_t0), this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
-                    //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
                     // Matlab
                     // K = [ mA+r1y^2*iA+mB+r2y^2*iB,  -r1y*iA*r1x-r2y*iB*r2x,          -r1y*iA-r2y*iB]
@@ -17452,6 +17497,7 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Math", "B
                     //     [          -r1y*iA-r2y*iB,           r1x*iA+r2x*iB,                   iA+iB]
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
+                    // Upper 2 by 2 of K for point to point
                     const K = this.m_K;
                     K.ex.x = mA + mB + iA * rA.y * rA.y + iB * rB.y * rB.y;
                     K.ex.y = -iA * rA.x * rA.y - iB * rB.x * rB.y;
@@ -17463,8 +17509,8 @@ System.register("Box2D/Dynamics/Joints/b2MotorJoint", ["Box2D/Common/b2Math", "B
                     if (this.m_angularMass > 0) {
                         this.m_angularMass = 1 / this.m_angularMass;
                     }
-                    // this.m_linearError = cB + rB - cA - rA - b2Mul(qA, this.m_linearOffset);
-                    b2Math_28.b2Vec2.SubVV(b2Math_28.b2Vec2.SubVV(b2Math_28.b2Vec2.AddVV(cB, rB, b2Math_28.b2Vec2.s_t0), b2Math_28.b2Vec2.AddVV(cA, rA, b2Math_28.b2Vec2.s_t1), b2Math_28.b2Vec2.s_t2), b2Math_28.b2Rot.MulRV(qA, this.m_linearOffset, b2Math_28.b2Vec2.s_t3), this.m_linearError);
+                    // this.m_linearError = cB + rB - cA - rA;
+                    b2Math_28.b2Vec2.SubVV(b2Math_28.b2Vec2.AddVV(cB, rB, b2Math_28.b2Vec2.s_t0), b2Math_28.b2Vec2.AddVV(cA, rA, b2Math_28.b2Vec2.s_t1), this.m_linearError);
                     this.m_angularError = aB - aA - this.m_angularOffset;
                     if (data.step.warmStarting) {
                         // Scale impulses to support a variable time step.
@@ -20508,9 +20554,9 @@ System.register("Box2D/Dynamics/b2Island", ["Box2D/Common/b2Settings", "Box2D/Co
                 constructor() {
                     this.m_allocator = null;
                     this.m_listener = null;
-                    this.m_bodies = []; // TODO: b2Settings
-                    this.m_contacts = []; // TODO: b2Settings
-                    this.m_joints = []; // TODO: b2Settings
+                    this.m_bodies = [ /*1024*/]; // TODO: b2Settings
+                    this.m_contacts = [ /*1024*/]; // TODO: b2Settings
+                    this.m_joints = [ /*1024*/]; // TODO: b2Settings
                     this.m_positions = b2TimeStep_3.b2Position.MakeArray(1024); // TODO: b2Settings
                     this.m_velocities = b2TimeStep_3.b2Velocity.MakeArray(1024); // TODO: b2Settings
                     this.m_bodyCount = 0;
@@ -21445,7 +21491,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                         if (callback instanceof b2WorldCallbacks_4.b2QueryCallback) {
                             return callback.ReportFixture(fixture);
                         }
-                        else {
+                        else /* if (typeof(callback) === 'function') */ {
                             return callback(fixture);
                         }
                     }
@@ -21471,7 +21517,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                             if (callback instanceof b2WorldCallbacks_4.b2QueryCallback) {
                                 return callback.ReportFixture(fixture);
                             }
-                            else {
+                            else /* if (typeof(callback) === 'function') */ {
                                 return callback(fixture);
                             }
                         }
@@ -21501,7 +21547,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                             if (callback instanceof b2WorldCallbacks_4.b2QueryCallback) {
                                 return callback.ReportFixture(fixture);
                             }
-                            else {
+                            else /* if (typeof(callback) === 'function') */ {
                                 return callback(fixture);
                             }
                         }
@@ -21537,7 +21583,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                             if (callback instanceof b2WorldCallbacks_5.b2RayCastCallback) {
                                 return callback.ReportFixture(fixture, point, output.normal, fraction);
                             }
-                            else {
+                            else /* if (typeof(callback) === 'function') */ {
                                 return callback(fixture, point, output.normal, fraction);
                             }
                         }

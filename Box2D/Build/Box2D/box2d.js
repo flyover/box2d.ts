@@ -8370,6 +8370,23 @@ System.register("Dynamics/Joints/b2GearJoint", ["Common/b2Settings", "Common/b2M
         }
     };
 });
+/*
+* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+*
+* This software is provided 'as-is', without any express or implied
+* warranty.  In no event will the authors be held liable for any damages
+* arising from the use of this software.
+* Permission is granted to anyone to use this software for any purpose,
+* including commercial applications, and to alter it and redistribute it
+* freely, subject to the following restrictions:
+* 1. The origin of this software must not be misrepresented; you must not
+* claim that you wrote the original software. If you use this software
+* in a product, an acknowledgment in the product documentation would be
+* appreciated but is not required.
+* 2. Altered source versions must be plainly marked as such, and must not be
+* misrepresented as being the original software.
+* 3. This notice may not be removed or altered from any source distribution.
+*/
 System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Joints/b2Joint"], function (exports_26, context_26) {
     "use strict";
     var __moduleName = context_26 && context_26.id;
@@ -8383,7 +8400,36 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                 b2Joint_7 = b2Joint_7_1;
             }
         ],
-        execute: function () {
+        execute: function () {/*
+            * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+            *
+            * This software is provided 'as-is', without any express or implied
+            * warranty.  In no event will the authors be held liable for any damages
+            * arising from the use of this software.
+            * Permission is granted to anyone to use this software for any purpose,
+            * including commercial applications, and to alter it and redistribute it
+            * freely, subject to the following restrictions:
+            * 1. The origin of this software must not be misrepresented; you must not
+            * claim that you wrote the original software. If you use this software
+            * in a product, an acknowledgment in the product documentation would be
+            * appreciated but is not required.
+            * 2. Altered source versions must be plainly marked as such, and must not be
+            * misrepresented as being the original software.
+            * 3. This notice may not be removed or altered from any source distribution.
+            */
+            // Point-to-point constraint
+            // Cdot = v2 - v1
+            //      = v2 + cross(w2, r2) - v1 - cross(w1, r1)
+            // J = [-I -r1_skew I r2_skew ]
+            // Identity used:
+            // w k % (rx i + ry j) = w * (-ry i + rx j)
+            //
+            // r1 = offset - c1
+            // r2 = -c2
+            // Angle constraint
+            // Cdot = w2 - w1
+            // J = [0 0 -1 0 0 1]
+            // K = invI1 + invI2
             b2MotorJointDef = class b2MotorJointDef extends b2Joint_7.b2JointDef {
                 constructor() {
                     super(11 /* e_motorJoint */);
@@ -8506,12 +8552,11 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     let wB = data.velocities[this.m_indexB].w;
                     const qA = this.m_qA.SetAngle(aA), qB = this.m_qB.SetAngle(aB);
                     // Compute the effective mass matrix.
-                    // this.m_rA = b2Mul(qA, -this.m_localCenterA);
-                    const rA = b2Math_19.b2Rot.MulRV(qA, b2Math_19.b2Vec2.NegV(this.m_localCenterA, b2Math_19.b2Vec2.s_t0), this.m_rA);
+                    // this.m_rA = b2Mul(qA, m_linearOffset - this.m_localCenterA);
+                    const rA = b2Math_19.b2Rot.MulRV(qA, b2Math_19.b2Vec2.SubVV(this.m_linearOffset, this.m_localCenterA, b2Math_19.b2Vec2.s_t0), this.m_rA);
                     // this.m_rB = b2Mul(qB, -this.m_localCenterB);
                     const rB = b2Math_19.b2Rot.MulRV(qB, b2Math_19.b2Vec2.NegV(this.m_localCenterB, b2Math_19.b2Vec2.s_t0), this.m_rB);
                     // J = [-I -r1_skew I r2_skew]
-                    //     [ 0       -1 0       1]
                     // r_skew = [-ry; rx]
                     // Matlab
                     // K = [ mA+r1y^2*iA+mB+r2y^2*iB,  -r1y*iA*r1x-r2y*iB*r2x,          -r1y*iA-r2y*iB]
@@ -8519,6 +8564,7 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     //     [          -r1y*iA-r2y*iB,           r1x*iA+r2x*iB,                   iA+iB]
                     const mA = this.m_invMassA, mB = this.m_invMassB;
                     const iA = this.m_invIA, iB = this.m_invIB;
+                    // Upper 2 by 2 of K for point to point
                     const K = this.m_K;
                     K.ex.x = mA + mB + iA * rA.y * rA.y + iB * rB.y * rB.y;
                     K.ex.y = -iA * rA.x * rA.y - iB * rB.x * rB.y;
@@ -8530,8 +8576,8 @@ System.register("Dynamics/Joints/b2MotorJoint", ["Common/b2Math", "Dynamics/Join
                     if (this.m_angularMass > 0) {
                         this.m_angularMass = 1 / this.m_angularMass;
                     }
-                    // this.m_linearError = cB + rB - cA - rA - b2Mul(qA, this.m_linearOffset);
-                    b2Math_19.b2Vec2.SubVV(b2Math_19.b2Vec2.SubVV(b2Math_19.b2Vec2.AddVV(cB, rB, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.AddVV(cA, rA, b2Math_19.b2Vec2.s_t1), b2Math_19.b2Vec2.s_t2), b2Math_19.b2Rot.MulRV(qA, this.m_linearOffset, b2Math_19.b2Vec2.s_t3), this.m_linearError);
+                    // this.m_linearError = cB + rB - cA - rA;
+                    b2Math_19.b2Vec2.SubVV(b2Math_19.b2Vec2.AddVV(cB, rB, b2Math_19.b2Vec2.s_t0), b2Math_19.b2Vec2.AddVV(cA, rA, b2Math_19.b2Vec2.s_t1), this.m_linearError);
                     this.m_angularError = aB - aA - this.m_angularOffset;
                     if (data.step.warmStarting) {
                         // Scale impulses to support a variable time step.

@@ -45,6 +45,7 @@ import { Car } from "./Car";
 ///import { Mobile } from "./Mobile";
 ///import { MobileBalanced } from "./MobileBalanced";
 ///import { MotorJoint } from "./MotorJoint";
+import { MotorJoint2 } from "./MotorJoint2";
 ///import { OneSidedPlatform } from "./OneSidedPlatform";
 ///import { Pinball } from "./Pinball";
 ///import { PolyCollision } from "./PolyCollision";
@@ -93,6 +94,7 @@ export const g_testEntries: TestEntry[] = [
   ///new TestEntry("Continuous Test", ContinuousTest.Create),
   ///new TestEntry("Time of Impact", TimeOfImpact.Create),
   ///new TestEntry("Motor Joint", MotorJoint.Create),
+  new TestEntry("Motor Joint (Bug #487)", MotorJoint2.Create),
   ///new TestEntry("Mobile", Mobile.Create),
   ///new TestEntry("MobileBalanced", MobileBalanced.Create),
   ///new TestEntry("Ray-Cast", RayCast.Create),
