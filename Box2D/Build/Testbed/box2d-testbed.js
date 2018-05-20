@@ -1571,7 +1571,7 @@ System.register("Box2D/Common/b2GrowableStack", [], function (exports_5, context
                 constructor(N) {
                     this.m_stack = [];
                     this.m_count = 0;
-                    this.m_stack = [];
+                    this.m_stack = [ /*N*/];
                     this.m_count = 0;
                 }
                 Reset() {
@@ -1986,7 +1986,7 @@ System.register("Box2D/Collision/b2Distance", ["Box2D/Common/b2Settings", "Box2D
                     this.m_v1 = new b2SimplexVertex();
                     this.m_v2 = new b2SimplexVertex();
                     this.m_v3 = new b2SimplexVertex();
-                    this.m_vertices = [];
+                    this.m_vertices = [ /*3*/];
                     this.m_count = 0;
                     this.m_vertices[0] = this.m_v1;
                     this.m_vertices[1] = this.m_v2;
@@ -3485,11 +3485,11 @@ System.register("Box2D/Collision/b2DynamicTree", ["Box2D/Common/b2Settings", "Bo
                 Validate() {
                     this.ValidateStructure(this.m_root);
                     this.ValidateMetrics(this.m_root);
-                    let freeCount = 0;
+                    // let freeCount: number = 0;
                     let freeIndex = this.m_freeList;
                     while (freeIndex !== null) {
                         freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-                        ++freeCount;
+                        // ++freeCount;
                     }
                     ///b2Assert(this.GetHeight() === this.ComputeHeight());
                 }
@@ -11869,11 +11869,11 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
         let left = first;
         let stack = [];
         let pos = 0;
-        for (;;) {
-            for (; left + 1 < len; len++) {
+        for (;;) { /* outer loop */
+            for (; left + 1 < len; len++) { /* sort left to len-1 */
                 let pivot = array[left + Math.floor(Math.random() * (len - left))]; /* pick random pivot */
                 stack[pos++] = len; /* sort right part later */
-                for (let right = left - 1;;) {
+                for (let right = left - 1;;) { /* inner loop: partitioning */
                     while (cmp(array[++right], pivot)) { } /* look for greater element */
                     while (cmp(pivot, array[--len])) { } /* look for smaller element */
                     if (right >= len)
@@ -14071,7 +14071,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                     // to
                     //     listA => listB => b1 => b2 => a1 => a2 => a3 => null
                     b2Assert(listA !== listB);
-                    for (let b = listB;;) {
+                    for ( /*ParticleListNode**/let b = listB;;) {
                         b.list = listA;
                         /*ParticleListNode**/
                         let nextB = b.next;
@@ -14141,7 +14141,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                         b2Assert(list.list === list);
                         /*b2ParticleGroup**/
                         let newGroup = this.CreateParticleGroup(def);
-                        for (let node = list; node; node = node.next) {
+                        for ( /*ParticleListNode**/let node = list; node; node = node.next) {
                             let oldIndex = node.index;
                             let flags = this.m_flagsBuffer.data[oldIndex];
                             b2Assert(!(flags & 2 /* b2_zombieParticle */));
@@ -15968,7 +15968,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                     // Number of contacts processed for the current particle.
                     let currentContacts = 0;
                     // Output the number of discarded contacts.
-                    let discarded = 0;
+                    // let discarded = 0;
                     let b2ParticleBodyContactRemovePredicate = function (contact) {
                         // This implements the selection criteria described in
                         // RemoveSpuriousBodyContacts().
@@ -15983,7 +15983,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                             lastIndex = contact.index;
                         }
                         if (currentContacts++ > k_maxContactsPerPoint) {
-                            ++discarded;
+                            // ++discarded;
                             return true;
                         }
                         // Project along inverse normal (as returned in the contact) to get the
@@ -16007,7 +16007,7 @@ System.register("Box2D/Particle/b2ParticleSystem", ["Box2D/Common/b2Settings", "
                                     return false;
                                 }
                             }
-                            ++discarded;
+                            // ++discarded;
                             return true;
                         }
                         return false;
@@ -17298,9 +17298,9 @@ System.register("Box2D/Dynamics/b2Island", ["Box2D/Common/b2Settings", "Box2D/Co
                 constructor() {
                     this.m_allocator = null;
                     this.m_listener = null;
-                    this.m_bodies = []; // TODO: b2Settings
-                    this.m_contacts = []; // TODO: b2Settings
-                    this.m_joints = []; // TODO: b2Settings
+                    this.m_bodies = [ /*1024*/]; // TODO: b2Settings
+                    this.m_contacts = [ /*1024*/]; // TODO: b2Settings
+                    this.m_joints = [ /*1024*/]; // TODO: b2Settings
                     this.m_positions = b2TimeStep_3.b2Position.MakeArray(1024); // TODO: b2Settings
                     this.m_velocities = b2TimeStep_3.b2Velocity.MakeArray(1024); // TODO: b2Settings
                     this.m_bodyCount = 0;
@@ -18235,7 +18235,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                         if (callback instanceof b2WorldCallbacks_3.b2QueryCallback) {
                             return callback.ReportFixture(fixture);
                         }
-                        else {
+                        else /* if (typeof(callback) === 'function') */ {
                             return callback(fixture);
                         }
                     }
@@ -18261,7 +18261,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                             if (callback instanceof b2WorldCallbacks_3.b2QueryCallback) {
                                 return callback.ReportFixture(fixture);
                             }
-                            else {
+                            else /* if (typeof(callback) === 'function') */ {
                                 return callback(fixture);
                             }
                         }
@@ -18291,7 +18291,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                             if (callback instanceof b2WorldCallbacks_3.b2QueryCallback) {
                                 return callback.ReportFixture(fixture);
                             }
-                            else {
+                            else /* if (typeof(callback) === 'function') */ {
                                 return callback(fixture);
                             }
                         }
@@ -18327,7 +18327,7 @@ System.register("Box2D/Dynamics/b2World", ["Box2D/Common/b2Settings", "Box2D/Com
                             if (callback instanceof b2WorldCallbacks_4.b2RayCastCallback) {
                                 return callback.ReportFixture(fixture, point, output.normal, fraction);
                             }
-                            else {
+                            else /* if (typeof(callback) === 'function') */ {
                                 return callback(fixture, point, output.normal, fraction);
                             }
                         }
@@ -19309,14 +19309,14 @@ System.register("Box2D/Dynamics/b2Body", ["Box2D/Common/b2Math", "Box2D/Collisio
                     ///b2Assert(this.m_fixtureCount > 0);
                     let node = this.m_fixtureList;
                     let ppF = null;
-                    let found = false;
+                    // let found: boolean = false;
                     while (node !== null) {
                         if (node === fixture) {
                             if (ppF)
                                 ppF.m_next = fixture.m_next;
                             else
                                 this.m_fixtureList = fixture.m_next;
-                            found = true;
+                            // found = true;
                             break;
                         }
                         ppF = node;
@@ -21822,9 +21822,9 @@ System.register("Box2D/Dynamics/Contacts/b2ContactFactory", ["Box2D/Common/b2Set
                     */
                 }
                 InitializeRegisters() {
-                    this.m_registers = [];
+                    this.m_registers = [ /*b2ShapeType.e_shapeTypeCount*/];
                     for (let i = 0; i < 4 /* e_shapeTypeCount */; i++) {
-                        this.m_registers[i] = [];
+                        this.m_registers[i] = [ /*b2ShapeType.e_shapeTypeCount*/];
                         for (let j = 0; j < 4 /* e_shapeTypeCount */; j++) {
                             this.m_registers[i][j] = new b2ContactRegister();
                         }
@@ -22252,7 +22252,7 @@ System.register("Box2D/Collision/b2BroadPhase", ["Box2D/Collision/b2Collision", 
                         const that = this;
                         // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
                         // boolean b2BroadPhase::QueryCallback(int32 proxyId);
-                        function QueryCallback(proxy) {
+                        const QueryCallback = function (proxy) {
                             // A proxy cannot form a pair with itself.
                             if (proxy.m_id === queryProxy.m_id) {
                                 return true;
@@ -22274,7 +22274,7 @@ System.register("Box2D/Collision/b2BroadPhase", ["Box2D/Collision/b2Collision", 
                             }
                             ++that.m_pairCount;
                             return true;
-                        }
+                        };
                         // We have to query the tree with the fat AABB so that
                         // we don't fail to create a pair that may touch later.
                         const fatAABB = this.m_tree.GetFatAABB(queryProxy);
@@ -23975,8 +23975,8 @@ System.register("Testbed/Framework/Test", ["Box2D/Box2D", "Testbed/Framework/Deb
                 }
             };
             Test.k_maxContactPoints = 2048;
-            Test.PreSolve_s_state1 = [];
-            Test.PreSolve_s_state2 = [];
+            Test.PreSolve_s_state1 = [ /*box2d.b2_maxManifoldPoints*/];
+            Test.PreSolve_s_state2 = [ /*box2d.b2_maxManifoldPoints*/];
             Test.PreSolve_s_worldManifold = new box2d.b2WorldManifold();
             ///#if B2_ENABLE_PARTICLE
             Test.k_ParticleColors = [
@@ -24408,14 +24408,14 @@ System.register("Testbed/Tests/RayCast", ["Box2D/Box2D", "Testbed/Testbed"], fun
                         ground.CreateFixture(shape, 0.0);
                     }
                     {
-                        const vertices = [];
+                        const vertices = [ /*3*/];
                         vertices[0] = new box2d.b2Vec2(-0.5, 0.0);
                         vertices[1] = new box2d.b2Vec2(0.5, 0.0);
                         vertices[2] = new box2d.b2Vec2(0.0, 1.5);
                         this.m_polygons[0].Set(vertices, 3);
                     }
                     {
-                        const vertices = [];
+                        const vertices = [ /*3*/];
                         vertices[0] = new box2d.b2Vec2(-0.1, 0.0);
                         vertices[1] = new box2d.b2Vec2(0.1, 0.0);
                         vertices[2] = new box2d.b2Vec2(0.0, 1.5);
@@ -24425,7 +24425,7 @@ System.register("Testbed/Tests/RayCast", ["Box2D/Box2D", "Testbed/Testbed"], fun
                         const w = 1.0;
                         const b = w / (2.0 + box2d.b2Sqrt(2.0));
                         const s = box2d.b2Sqrt(2.0) * b;
-                        const vertices = [];
+                        const vertices = [ /*8*/];
                         vertices[0] = new box2d.b2Vec2(0.5 * s, 0.0);
                         vertices[1] = new box2d.b2Vec2(0.5 * w, b);
                         vertices[2] = new box2d.b2Vec2(0.5 * w, b + s);
@@ -26322,7 +26322,7 @@ System.register("Testbed/Framework/Main", ["Box2D/Box2D", "Testbed/Framework/Tes
                     const element = new box2d.b2Vec2(e.clientX, e.clientY);
                     const world = DebugDraw_2.g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
                     switch (e.which) {
-                        case 1:// left mouse button
+                        case 1: // left mouse button
                             this.m_lMouseDown = true;
                             if (this.m_shift) {
                                 this.m_test.ShiftMouseDown(world);
@@ -26331,7 +26331,7 @@ System.register("Testbed/Framework/Main", ["Box2D/Box2D", "Testbed/Framework/Tes
                                 this.m_test.MouseDown(world);
                             }
                             break;
-                        case 3:// right mouse button
+                        case 3: // right mouse button
                             this.m_rMouseDown = true;
                             const projection = DebugDraw_2.g_camera.ConvertElementToProjection(element, new box2d.b2Vec2());
                             this.m_projection0.Copy(projection);
@@ -26343,11 +26343,11 @@ System.register("Testbed/Framework/Main", ["Box2D/Box2D", "Testbed/Framework/Tes
                     const element = new box2d.b2Vec2(e.clientX, e.clientY);
                     const world = DebugDraw_2.g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
                     switch (e.which) {
-                        case 1:// left mouse button
+                        case 1: // left mouse button
                             this.m_lMouseDown = false;
                             this.m_test.MouseUp(world);
                             break;
-                        case 3:// right mouse button
+                        case 3: // right mouse button
                             this.m_rMouseDown = false;
                             break;
                     }

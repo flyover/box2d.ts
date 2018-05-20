@@ -3,30 +3,32 @@
     <meta charset="utf-8" />
     <title>Box2D Hello World</title>
     <!-- <script type="text/javascript" src="../../node_modules/systemjs/dist/system.js"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.0/system.js"></script>
-    <!-- <script type="text/javascript" src="../../node_modules/typescript/lib/typescript.js"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typescript/2.7.2/typescript.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.3/system.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
-      if (!false) {
-        System.config({
-          transpiler: "typescript",
-          typescriptOptions: {},
-          packages: {
-            '.': { defaultExtension: 'ts' },
-            '../Box2D': { defaultExtension: 'ts' }
-          }
+      var transpile = !false;
+      if (transpile) {
+        SystemJS.config({
+          packages: { "typescript": { main: "typescript.js", meta: { "typescript.js": { exports: "ts" } } } },
+          // map: { "typescript": "../../node_modules/typescript/lib", }
+          map: { "typescript": "https://cdnjs.cloudflare.com/ajax/libs/typescript/2.8.3", }
         });
-      } else {
-        System.config({
-          packages: {
-            '.': { defaultExtension: 'js' },
-            '../Box2D': { defaultExtension: 'js' }
-          }
+        SystemJS.config({
+          packages: { "plugin-typescript": { main: "plugin.js" } },
+          // map: { "plugin-typescript": "../../node_modules/plugin-typescript/lib" },
+          map: { "plugin-typescript": "https://raw.githubusercontent.com/frankwallis/plugin-typescript/8.0.0/lib" },
+          transpiler: "plugin-typescript",
+          typescriptOptions: { tsconfig: true, module: "system" }
         });
       }
-      System.import("HelloWorld").then(function(HelloWorld) {
+      SystemJS.config({
+        packages: {
+          "../Box2D": { defaultExtension: transpile ? "ts" : "js" },
+          ".": { defaultExtension: transpile ? "ts" : "js" }
+        }
+      });
+      System.import("./HelloWorld").then(function(HelloWorld) {
         HelloWorld.main();
       }).catch(function (error) {
         console.error(error);

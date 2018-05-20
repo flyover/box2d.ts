@@ -4844,7 +4844,7 @@ declare module "Testbed/Framework/Main" {
         m_canvas_div: HTMLDivElement;
         m_canvas: HTMLCanvasElement;
         m_ctx: CanvasRenderingContext2D;
-        m_demo_button: HTMLButtonElement;
+        m_demo_button: HTMLInputElement;
         constructor();
         HomeCamera(): void;
         MoveCamera(move: box2d.b2Vec2): void;
