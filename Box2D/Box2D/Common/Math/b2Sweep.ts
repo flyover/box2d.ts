@@ -3,7 +3,7 @@
 /// no coincide with the center of mass. However, to support dynamics
 /// we must interpolate the center of mass position.
 
-import { b2_two_pi } from "../b2Settings";
+import { b2_two_pi } from "../b2Math";
 import { b2Vec2 } from "./b2Vec2";
 import { b2Rot } from "./b2Rot";
 import { b2Transform } from "./b2Transform";
