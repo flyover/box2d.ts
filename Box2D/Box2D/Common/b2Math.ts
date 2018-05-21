@@ -28,6 +28,7 @@ export { b2Sweep } from "./Math/b2Sweep";
 
 export const b2_pi_over_180: number = b2_pi / 180;
 export const b2_180_over_pi: number = 180 / b2_pi;
+export const b2_two_pi: number = b2_pi * 2;
 
 export function b2Clamp(a: number, lo: number, hi: number): number {
   return (a < lo) ? (lo) : ((a > hi) ? (hi) : (a));
