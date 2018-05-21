@@ -26,7 +26,6 @@ export const b2_maxFloat: number = 1E+37; // FLT_MAX instead of Number.MAX_VALUE
 export const b2_epsilon: number = 1E-5; // FLT_EPSILON instead of Number.MIN_VALUE;
 export const b2_epsilon_sq: number = (b2_epsilon * b2_epsilon);
 export const b2_pi: number = 3.14159265359; // Math.PI;
-export const b2_two_pi: number = b2_pi * 2;
 
 /// @file
 /// Global tuning constants based on meters-kilograms-seconds (MKS) units.
