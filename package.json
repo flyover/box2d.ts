@@ -1,7 +1,7 @@
 {
   "name": "@flyover/box2d",
   "version": "1.0.0",
-  "description": "",
+  "description": "A TypeScript port of Box2D",
   "main": "./Box2D/Box2D/Box2D.js",
   "types": "./Box2D/Box2D/Box2D.ts",
   "scripts": {
@@ -11,8 +11,8 @@
     "type": "git",
     "url": "git+https://github.com/flyover/box2d.ts.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Isaac Burns <isaacburns@gmail.com>",
+  "license": "Zlib",
   "bugs": {
     "url": "https://github.com/flyover/box2d.ts/issues"
   },
