@@ -17,7 +17,7 @@
 */
 
 import { b2_epsilon, b2_linearSlop, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
-import { b2Min, b2Vec2, b2Transform, b2Sweep } from "../Common/b2Math";
+import { b2Vec2, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
@@ -422,7 +422,7 @@ export class b2World {
     function GetSmallestRadius(world: b2World): number {
       let smallestRadius = b2_maxFloat;
       for (let system = world.GetParticleSystemList(); system !== null; system = system.m_next) {
-        smallestRadius = b2Min(smallestRadius, system.GetRadius());
+        smallestRadius = Math.min(smallestRadius, system.GetRadius());
       }
       return smallestRadius;
     }
@@ -1417,7 +1417,7 @@ export class b2World {
           // Beta is the fraction of the remaining portion of the .
           const beta: number = output.t;
           if (output.state === b2TOIOutputState.e_touching) {
-            alpha = b2Min(alpha0 + (1 - alpha0) * beta, 1);
+            alpha = Math.min(alpha0 + (1 - alpha0) * beta, 1);
           } else {
             alpha = 1;
           }

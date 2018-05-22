@@ -17,7 +17,7 @@
 */
 
 import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../../Common/b2Settings";
-import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
+import { b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Manifold } from "../../Collision/b2Collision";
 import { b2ManifoldPoint } from "../../Collision/b2Collision";
 import { b2WorldManifold } from "../../Collision/b2Collision";
@@ -182,14 +182,14 @@ export class b2ContactSolver {
     this.m_count = def.count;
     // TODO:
     if (this.m_positionConstraints.length < this.m_count) {
-      const new_length: number = b2Max(this.m_positionConstraints.length * 2, this.m_count);
+      const new_length: number = Math.max(this.m_positionConstraints.length * 2, this.m_count);
       while (this.m_positionConstraints.length < new_length) {
         this.m_positionConstraints[this.m_positionConstraints.length] = new b2ContactPositionConstraint();
       }
     }
     // TODO:
     if (this.m_velocityConstraints.length < this.m_count) {
-      const new_length: number = b2Max(this.m_velocityConstraints.length * 2, this.m_count);
+      const new_length: number = Math.max(this.m_velocityConstraints.length * 2, this.m_count);
       while (this.m_velocityConstraints.length < new_length) {
         this.m_velocityConstraints[this.m_velocityConstraints.length] = new b2ContactVelocityConstraint();
       }
@@ -543,8 +543,8 @@ export class b2ContactSolver {
         let lambda: number = (-vcp.normalMass * (vn - vcp.velocityBias));
 
         // b2Clamp the accumulated impulse
-        // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
-        const newImpulse: number = b2Max(vcp.normalImpulse + lambda, 0);
+        // float32 newImpulse = Math.max(vcp->normalImpulse + lambda, 0.0f);
+        const newImpulse: number = Math.max(vcp.normalImpulse + lambda, 0);
         lambda = newImpulse - vcp.normalImpulse;
         vcp.normalImpulse = newImpulse;
 
@@ -681,8 +681,8 @@ export class b2ContactSolver {
             vn1 = b2Dot(dv1, normal);
             vn2 = b2Dot(dv2, normal);
 
-            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
-            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            ///b2Assert(Math.abs(vn1 - cp1->velocityBias) < k_errorTol);
+            ///b2Assert(Math.abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -732,7 +732,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn1 = b2Dot(dv1, normal);
 
-            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            ///b2Assert(Math.abs(vn1 - cp1->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -783,7 +783,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn2 = b2Dot(dv2, normal);
 
-            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            ///b2Assert(Math.abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -905,7 +905,7 @@ export class b2ContactSolver {
         b2Vec2.SubVV(point, cB, rB);
 
         // Track max constraint error.
-        minSeparation = b2Min(minSeparation, separation);
+        minSeparation = Math.min(minSeparation, separation);
 
         // Prevent large corrections and allow slop.
         const C: number = b2Clamp(b2_baumgarte * (separation + b2_linearSlop), (-b2_maxLinearCorrection), 0);
@@ -1011,7 +1011,7 @@ export class b2ContactSolver {
         b2Vec2.SubVV(point, cB, rB);
 
         // Track max constraint error.
-        minSeparation = b2Min(minSeparation, separation);
+        minSeparation = Math.min(minSeparation, separation);
 
         // Prevent large corrections and allow slop.
         const C: number = b2Clamp(b2_toiBaumgarte * (separation + b2_linearSlop), (-b2_maxLinearCorrection), 0);

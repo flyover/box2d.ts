@@ -17,7 +17,7 @@
 */
 
 import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection } from "../../Common/b2Settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
+import { b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -186,7 +186,7 @@ export class b2RevoluteJoint extends b2Joint {
 
     if (this.m_enableLimit && !fixedRotation) {
       const jointAngle: number = aB - aA - this.m_referenceAngle;
-      if (b2Abs(this.m_upperAngle - this.m_lowerAngle) < 2 * b2_angularSlop) {
+      if (Math.abs(this.m_upperAngle - this.m_lowerAngle) < 2 * b2_angularSlop) {
         this.m_limitState = b2LimitState.e_equalLimits;
       } else if (jointAngle <= this.m_lowerAngle) {
         if (this.m_limitState !== b2LimitState.e_atLowerLimit) {
@@ -374,7 +374,7 @@ export class b2RevoluteJoint extends b2Joint {
         // Prevent large angular corrections
         const C: number = b2Clamp(angle - this.m_lowerAngle, -b2_maxAngularCorrection, b2_maxAngularCorrection);
         limitImpulse = -this.m_motorMass * C;
-        angularError = b2Abs(C);
+        angularError = Math.abs(C);
       } else if (this.m_limitState === b2LimitState.e_atLowerLimit) {
         let C: number = angle - this.m_lowerAngle;
         angularError = -C;

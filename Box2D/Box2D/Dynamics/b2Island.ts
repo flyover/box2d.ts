@@ -20,7 +20,7 @@ import { b2_maxFloat, b2_timeToSleep } from "../Common/b2Settings";
 import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
 import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";
 import { b2_linearSleepTolerance, b2_angularSleepTolerance } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2 } from "../Common/b2Math";
+import { b2Vec2 } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Contact } from "./Contacts/b2Contact";
 import { b2ContactSolver, b2ContactSolverDef } from "./Contacts/b2ContactSolver";
@@ -193,14 +193,14 @@ export class b2Island {
 
     // TODO:
     if (this.m_positions.length < bodyCapacity) {
-      const new_length = b2Max(this.m_positions.length * 2, bodyCapacity);
+      const new_length = Math.max(this.m_positions.length * 2, bodyCapacity);
       while (this.m_positions.length < new_length) {
         this.m_positions[this.m_positions.length] = new b2Position();
       }
     }
     // TODO:
     if (this.m_velocities.length < bodyCapacity) {
-      const new_length = b2Max(this.m_velocities.length * 2, bodyCapacity);
+      const new_length = Math.max(this.m_velocities.length * 2, bodyCapacity);
       while (this.m_velocities.length < new_length) {
         this.m_velocities[this.m_velocities.length] = new b2Velocity();
       }
@@ -335,7 +335,7 @@ export class b2Island {
 
       const rotation: number = h * w;
       if (rotation * rotation > b2_maxRotationSquared) {
-        const ratio: number = b2_maxRotation / b2Abs(rotation);
+        const ratio: number = b2_maxRotation / Math.abs(rotation);
         w *= ratio;
       }
 
@@ -402,7 +402,7 @@ export class b2Island {
           minSleepTime = 0;
         } else {
           b.m_sleepTime += h;
-          minSleepTime = b2Min(minSleepTime, b.m_sleepTime);
+          minSleepTime = Math.min(minSleepTime, b.m_sleepTime);
         }
       }
 
@@ -514,7 +514,7 @@ export class b2Island {
 
       const rotation: number = h * w;
       if (rotation * rotation > b2_maxRotationSquared) {
-        const ratio: number = b2_maxRotation / b2Abs(rotation);
+        const ratio: number = b2_maxRotation / Math.abs(rotation);
         w *= ratio;
       }
 

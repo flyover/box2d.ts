@@ -1,5 +1,5 @@
 import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_polygonRadius, b2_maxManifoldPoints } from "../Common/b2Settings";
-import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactID } from "./b2Collision";
 import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
 import { b2CircleShape } from "./Shapes/b2CircleShape";
@@ -548,7 +548,7 @@ class b2EPCollider {
 
       const s1: number = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
       const s2: number = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Vec2.s_t0));
-      const s: number = b2Min(s1, s2);
+      const s: number = Math.min(s1, s2);
 
       if (s > this.m_radius) {
         // No collision

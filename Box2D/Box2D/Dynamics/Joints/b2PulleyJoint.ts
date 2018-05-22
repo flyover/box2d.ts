@@ -17,7 +17,7 @@
 */
 
 import { b2_linearSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Vec2, b2Rot } from "../../Common/b2Math";
+import { b2Vec2, b2Rot } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -296,7 +296,7 @@ export class b2PulleyJoint extends b2Joint {
     }
 
     const C: number = this.m_constant - lengthA - this.m_ratio * lengthB;
-    const linearError: number = b2Abs(C);
+    const linearError: number = Math.abs(C);
 
     const impulse: number = -mass * C;
 
