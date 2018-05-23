@@ -4,7 +4,6 @@
     "module": "system",
     "strict": true,
     "strictNullChecks": false,
-    "noUnusedParameters": false,
     "inlineSourceMap": true
   },
   "include": [
