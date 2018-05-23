@@ -304,7 +304,7 @@ export class b2DistanceJoint extends b2Joint {
     let aB: number = data.positions[this.m_indexB].a;
 
     // const qA: b2Rot = new b2Rot(aA), qB: b2Rot = new b2Rot(aB);
-    ///const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
+    const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
     const rA: b2Vec2 = b2Rot.MulRV(this.m_qA, this.m_lalcA, this.m_rA); // use m_rA
