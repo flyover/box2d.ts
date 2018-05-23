@@ -136,7 +136,7 @@ export class b2ManifoldPoint {
   public id: b2ContactID = new b2ContactID();  ///< uniquely identifies a contact point between two shapes
 
   public static MakeArray(length: number): b2ManifoldPoint[] {
-    return b2MakeArray(length, function (i: number): b2ManifoldPoint { return new b2ManifoldPoint(); } );
+    return b2MakeArray(length, (i: number): b2ManifoldPoint => new b2ManifoldPoint());
   }
 
   public Reset(): void {
@@ -336,7 +336,7 @@ export class b2ClipVertex {
   public id: b2ContactID = new b2ContactID();
 
   public static MakeArray(length: number): b2ClipVertex[] {
-    return b2MakeArray(length, function (i: number): b2ClipVertex { return new b2ClipVertex(); });
+    return b2MakeArray(length, (i: number): b2ClipVertex => new b2ClipVertex());
   }
 
   public Copy(other: b2ClipVertex): b2ClipVertex {

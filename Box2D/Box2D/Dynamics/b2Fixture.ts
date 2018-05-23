@@ -85,7 +85,7 @@ export class b2FixtureProxy {
   public childIndex: number = 0;
   public proxy: b2TreeNode = null;
   public static MakeArray(length: number): b2FixtureProxy[] {
-    return b2MakeArray(length, function (i) { return new b2FixtureProxy(); });
+    return b2MakeArray(length, (i) => new b2FixtureProxy());
   }
 }
 

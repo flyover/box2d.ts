@@ -37,8 +37,6 @@ export class Main {
   public m_demo_button: HTMLInputElement;
 
   constructor() {
-    const that: Main = this; // for callbacks
-
     const fps_div: HTMLDivElement = this.m_fps_div = <HTMLDivElement> document.body.appendChild(document.createElement("div"));
     fps_div.style.position = "absolute";
     fps_div.style.left = "0px";
@@ -71,8 +69,8 @@ export class Main {
       main_div.style.width = window.innerWidth + "px";
       main_div.style.height = window.innerHeight + "px";
     }
-    window.addEventListener("resize", function (e: UIEvent): void { resize_main_div(); });
-    window.addEventListener("orientationchange", function (e: Event): void { resize_main_div(); });
+    window.addEventListener("resize", (e: UIEvent): void => { resize_main_div(); });
+    window.addEventListener("orientationchange", (e: Event): void => { resize_main_div(); });
     resize_main_div();
 
     const title_div: HTMLDivElement = <HTMLDivElement> main_div.appendChild(document.createElement("div"));
@@ -100,8 +98,8 @@ export class Main {
         g_camera.m_height = canvas.height = canvas_div.clientHeight;
       }
     }
-    window.addEventListener("resize", function (e: UIEvent): void { resize_canvas(); });
-    window.addEventListener("orientationchange", function (e: Event): void { resize_canvas(); });
+    window.addEventListener("resize", (e: UIEvent): void => { resize_canvas(); });
+    window.addEventListener("orientationchange", (e: Event): void => { resize_canvas(); });
     resize_canvas();
 
     g_debugDraw.m_ctx = this.m_ctx = <CanvasRenderingContext2D> this.m_canvas.getContext("2d");
@@ -126,9 +124,9 @@ export class Main {
       test_select.add(option);
     }
     test_select.selectedIndex = this.m_test_index;
-    test_select.addEventListener("change", function (e: Event): void {
-      that.m_test_index = test_select.selectedIndex;
-      that.LoadTest();
+    test_select.addEventListener("change", (e: Event): void => {
+      this.m_test_index = test_select.selectedIndex;
+      this.LoadTest();
     });
     controls_div.appendChild(test_select);
     this.m_test_select = test_select;
@@ -149,7 +147,7 @@ export class Main {
       number_input.max = max.toString();
       number_input.step = step.toString();
       number_input.value = init.toString();
-      number_input.addEventListener("change", function (e: Event): void {
+      number_input.addEventListener("change", (e: Event): void => {
         update(parseInt(number_input.value, 10));
       });
       number_input_td1.appendChild(number_input);
@@ -157,19 +155,19 @@ export class Main {
     }
 
     const number_input_table: HTMLTableElement = <HTMLTableElement> controls_div.appendChild(document.createElement("table"));
-    connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, function(value: number): void { that.m_settings.velocityIterations = value; }, 1, 20, 1);
-    connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, function(value: number): void { that.m_settings.positionIterations = value; }, 1, 20, 1);
+    connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, (value: number): void => { this.m_settings.velocityIterations = value; }, 1, 20, 1);
+    connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, (value: number): void => { this.m_settings.positionIterations = value; }, 1, 20, 1);
     ///#if B2_ENABLE_PARTICLE
-    connect_number_input(number_input_table, "Pcl Iters", that.m_settings.particleIterations, function(value: number): void { that.m_settings.particleIterations = value; }, 1, 100, 1);
+    connect_number_input(number_input_table, "Pcl Iters", this.m_settings.particleIterations, (value: number): void => { this.m_settings.particleIterations = value; }, 1, 100, 1);
     ///#endif
-    connect_number_input(number_input_table, "Hertz", this.m_settings.hz, function(value: number): void { that.m_settings.hz = value; }, 10, 120, 1);
+    connect_number_input(number_input_table, "Hertz", this.m_settings.hz, (value: number): void => { this.m_settings.hz = value; }, 10, 120, 1);
 
     // simulation checkbox inputs
     function connect_checkbox_input(parent: Node, label: string, init: boolean, update: (value: boolean) => void): HTMLInputElement {
       const checkbox_input: HTMLInputElement = document.createElement("input");
       checkbox_input.type = "checkbox";
       checkbox_input.checked = init;
-      checkbox_input.addEventListener("click", function (e: MouseEvent): void {
+      checkbox_input.addEventListener("click", (e: MouseEvent): void => {
         update(checkbox_input.checked);
       });
       parent.appendChild(checkbox_input);
@@ -178,31 +176,31 @@ export class Main {
       return checkbox_input;
     }
 
-    connect_checkbox_input(controls_div, "Sleep", this.m_settings.enableSleep, function(value: boolean): void { that.m_settings.enableSleep = value; });
-    connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.enableWarmStarting, function(value: boolean): void { that.m_settings.enableWarmStarting = value; });
-    connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.enableContinuous, function(value: boolean): void { that.m_settings.enableContinuous = value; });
-    connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.enableSubStepping, function(value: boolean): void { that.m_settings.enableSubStepping = value; });
+    connect_checkbox_input(controls_div, "Sleep", this.m_settings.enableSleep, (value: boolean): void => { this.m_settings.enableSleep = value; });
+    connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.enableWarmStarting, (value: boolean): void => { this.m_settings.enableWarmStarting = value; });
+    connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.enableContinuous, (value: boolean): void => { this.m_settings.enableContinuous = value; });
+    connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.enableSubStepping, (value: boolean): void => { this.m_settings.enableSubStepping = value; });
     ///#if B2_ENABLE_PARTICLE
-    connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", that.m_settings.strictContacts, function(value: boolean): void { that.m_settings.strictContacts = value; });
+    connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", this.m_settings.strictContacts, (value: boolean): void => { this.m_settings.strictContacts = value; });
     ///#endif
 
     // draw checkbox inputs
     const draw_fieldset: HTMLFieldSetElement = <HTMLFieldSetElement> controls_div.appendChild(document.createElement("fieldset"));
     const draw_legend: HTMLLegendElement = <HTMLLegendElement> draw_fieldset.appendChild(document.createElement("legend"));
     draw_legend.appendChild(document.createTextNode("Draw"));
-    connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, function(value: boolean): void { that.m_settings.drawShapes = value; });
+    connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, (value: boolean): void => { this.m_settings.drawShapes = value; });
     ///#if B2_ENABLE_PARTICLE
-    connect_checkbox_input(draw_fieldset, "Particles", that.m_settings.drawParticles, function(value: boolean): void { that.m_settings.drawParticles = value; });
+    connect_checkbox_input(draw_fieldset, "Particles", this.m_settings.drawParticles, (value: boolean): void => { this.m_settings.drawParticles = value; });
     ///#endif
-    connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.drawJoints, function(value: boolean): void { that.m_settings.drawJoints = value; });
-    connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.drawAABBs, function(value: boolean): void { that.m_settings.drawAABBs = value; });
-    connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.drawContactPoints, function(value: boolean): void { that.m_settings.drawContactPoints = value; });
-    connect_checkbox_input(draw_fieldset, "Contact Normals", this.m_settings.drawContactNormals, function(value: boolean): void { that.m_settings.drawContactNormals = value; });
-    connect_checkbox_input(draw_fieldset, "Contact Impulses", this.m_settings.drawContactImpulse, function(value: boolean): void { that.m_settings.drawContactImpulse = value; });
-    connect_checkbox_input(draw_fieldset, "Friction Impulses", this.m_settings.drawFrictionImpulse, function(value: boolean): void { that.m_settings.drawFrictionImpulse = value; });
-    connect_checkbox_input(draw_fieldset, "Center of Masses", this.m_settings.drawCOMs, function(value: boolean): void { that.m_settings.drawCOMs = value; });
-    connect_checkbox_input(draw_fieldset, "Statistics", this.m_settings.drawStats, function(value: boolean): void { that.m_settings.drawStats = value; });
-    connect_checkbox_input(draw_fieldset, "Profile", this.m_settings.drawProfile, function(value: boolean): void { that.m_settings.drawProfile = value; });
+    connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.drawJoints, (value: boolean): void => { this.m_settings.drawJoints = value; });
+    connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.drawAABBs, (value: boolean): void => { this.m_settings.drawAABBs = value; });
+    connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.drawContactPoints, (value: boolean): void => { this.m_settings.drawContactPoints = value; });
+    connect_checkbox_input(draw_fieldset, "Contact Normals", this.m_settings.drawContactNormals, (value: boolean): void => { this.m_settings.drawContactNormals = value; });
+    connect_checkbox_input(draw_fieldset, "Contact Impulses", this.m_settings.drawContactImpulse, (value: boolean): void => { this.m_settings.drawContactImpulse = value; });
+    connect_checkbox_input(draw_fieldset, "Friction Impulses", this.m_settings.drawFrictionImpulse, (value: boolean): void => { this.m_settings.drawFrictionImpulse = value; });
+    connect_checkbox_input(draw_fieldset, "Center of Masses", this.m_settings.drawCOMs, (value: boolean): void => { this.m_settings.drawCOMs = value; });
+    connect_checkbox_input(draw_fieldset, "Statistics", this.m_settings.drawStats, (value: boolean): void => { this.m_settings.drawStats = value; });
+    connect_checkbox_input(draw_fieldset, "Profile", this.m_settings.drawProfile, (value: boolean): void => { this.m_settings.drawProfile = value; });
 
     // simulation buttons
     function connect_button_input(parent: Node, label: string, callback: (e: MouseEvent) => void): HTMLInputElement {
@@ -218,25 +216,25 @@ export class Main {
 
     const button_div: HTMLDivElement = <HTMLDivElement> controls_div.appendChild(document.createElement("div"));
     button_div.align = "center";
-    connect_button_input(button_div, "Pause", function (e: MouseEvent): void { that.Pause(); });
-    connect_button_input(button_div, "Step", function (e: MouseEvent): void { that.SingleStep(); });
-    connect_button_input(button_div, "Restart", function (e: MouseEvent): void { that.LoadTest(); });
-    this.m_demo_button = connect_button_input(button_div, "Demo", function (e: MouseEvent): void { that.ToggleDemo(); });
+    connect_button_input(button_div, "Pause", (e: MouseEvent): void => { this.Pause(); });
+    connect_button_input(button_div, "Step", (e: MouseEvent): void => { this.SingleStep(); });
+    connect_button_input(button_div, "Restart", (e: MouseEvent): void => { this.LoadTest(); });
+    this.m_demo_button = connect_button_input(button_div, "Demo", (e: MouseEvent): void => { this.ToggleDemo(); });
 
     // disable context menu to use right-click
-    window.addEventListener("contextmenu", function (e: MouseEvent): void { e.preventDefault(); }, true);
+    window.addEventListener("contextmenu", (e: MouseEvent): void => { e.preventDefault(); }, true);
 
-    canvas_div.addEventListener("mousemove", function (e: MouseEvent): void { that.HandleMouseMove(e); });
-    canvas_div.addEventListener("mousedown", function (e: MouseEvent): void { that.HandleMouseDown(e); });
-    canvas_div.addEventListener("mouseup", function (e: MouseEvent): void { that.HandleMouseUp(e); });
-    canvas_div.addEventListener("mousewheel", function (e: WheelEvent): void { that.HandleMouseWheel(e); });
+    canvas_div.addEventListener("mousemove", (e: MouseEvent): void => { this.HandleMouseMove(e); });
+    canvas_div.addEventListener("mousedown", (e: MouseEvent): void => { this.HandleMouseDown(e); });
+    canvas_div.addEventListener("mouseup", (e: MouseEvent): void => { this.HandleMouseUp(e); });
+    canvas_div.addEventListener("mousewheel", (e: WheelEvent): void => { this.HandleMouseWheel(e); });
 
-    canvas_div.addEventListener("touchmove", function (e: TouchEvent): void { that.HandleTouchMove(e); });
-    canvas_div.addEventListener("touchstart", function (e: TouchEvent): void { that.HandleTouchStart(e); });
-    canvas_div.addEventListener("touchend", function (e: TouchEvent): void { that.HandleTouchEnd(e); });
+    canvas_div.addEventListener("touchmove", (e: TouchEvent): void => { this.HandleTouchMove(e); });
+    canvas_div.addEventListener("touchstart", (e: TouchEvent): void => { this.HandleTouchStart(e); });
+    canvas_div.addEventListener("touchend", (e: TouchEvent): void => { this.HandleTouchEnd(e); });
 
-    window.addEventListener("keydown", function (e: KeyboardEvent): void { that.HandleKeyDown(e); });
-    window.addEventListener("keyup", function (e: KeyboardEvent): void { that.HandleKeyUp(e); });
+    window.addEventListener("keydown", (e: KeyboardEvent): void => { this.HandleKeyDown(e); });
+    window.addEventListener("keyup", (e: KeyboardEvent): void => { this.HandleKeyUp(e); });
 
     this.LoadTest();
 

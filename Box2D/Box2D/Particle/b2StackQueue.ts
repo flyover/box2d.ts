@@ -28,7 +28,7 @@ export class b2StackQueue<T> {
   m_back: number = 0;
   m_capacity: number = 0;
   constructor(capacity: number) {
-    this.m_buffer = b2MakeArray(capacity, function(index) { return null; });
+    this.m_buffer = b2MakeArray(capacity, (index) => null);
     ///this.m_end = capacity; // TODO: this was wrong!
     this.m_capacity = capacity;
   }
@@ -41,10 +41,10 @@ export class b2StackQueue<T> {
       this.m_front = 0;
       if (this.m_back >= this.m_capacity) {
         if (this.m_capacity > 0) {
-          this.m_buffer.concat(b2MakeArray(this.m_capacity, function(index) { return null; }));
+          this.m_buffer.concat(b2MakeArray(this.m_capacity, (index) => null));
           this.m_capacity *= 2;
         } else {
-          this.m_buffer.concat(b2MakeArray(1, function(index) { return null; }));
+          this.m_buffer.concat(b2MakeArray(1, (index) => null));
           this.m_capacity = 1;
         }
         ///m_buffer = (T*) m_allocator->Reallocate(m_buffer, sizeof(T) * m_capacity);

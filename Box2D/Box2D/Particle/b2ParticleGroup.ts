@@ -61,7 +61,7 @@ export class b2ParticleGroupDef {
 
 export class b2ParticleGroup {
 
-  m_system: b2ParticleSystem = null;
+  readonly m_system: b2ParticleSystem = null;
   m_firstIndex: number = 0;
   m_lastIndex: number = 0;
   m_groupFlags: b2ParticleGroupFlag = 0;
@@ -77,6 +77,10 @@ export class b2ParticleGroup {
   m_transform: b2Transform = new b2Transform();
   ///m_transform.SetIdentity();
   m_userData: any = null;
+
+  constructor(system: b2ParticleSystem) {
+    this.m_system = system;
+  }
 
   GetNext(): b2ParticleGroup {
     return this.m_next;

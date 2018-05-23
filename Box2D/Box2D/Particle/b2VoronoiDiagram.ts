@@ -36,9 +36,7 @@ export class b2VoronoiDiagram {
   m_diagram: b2VoronoiDiagram.Generator[] = null;
 
   constructor(generatorCapacity: number) {
-    this.m_generatorBuffer = b2MakeArray(generatorCapacity, function(index) {
-      return new b2VoronoiDiagram.Generator();
-    });
+    this.m_generatorBuffer = b2MakeArray(generatorCapacity, (index) => new b2VoronoiDiagram.Generator());
     this.m_generatorCapacity = generatorCapacity;
   }
 
@@ -95,7 +93,7 @@ export class b2VoronoiDiagram {
     ///  {
     ///    m_diagram[i] = NULL;
     ///  }
-    this.m_diagram = b2MakeArray(this.m_countX * this.m_countY, function(index) { return null; });
+    this.m_diagram = b2MakeArray(this.m_countX * this.m_countY, (index) => null);
 
     // (4 * m_countX * m_countY) is the queue capacity that is experimentally
     // known to be necessary and sufficient for general particle distributions.

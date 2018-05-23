@@ -27,9 +27,7 @@ export class b2ContactFactory {
   }
 
   private AddType(createFcn: (allocator: any) => b2Contact, destroyFcn: (contact: b2Contact, allocator: any) => void, type1: b2ShapeType, type2: b2ShapeType): void {
-    const that: b2ContactFactory = this;
-
-    const pool: b2Contact[] = b2MakeArray(256, function (i) { return createFcn(that.m_allocator); } ); // TODO: b2Settings
+    const pool: b2Contact[] = b2MakeArray(256, (i: number) => createFcn(this.m_allocator)); // TODO: b2Settings
 
     function poolCreateFcn(allocator: any): b2Contact {
       if (pool.length > 0) {

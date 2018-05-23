@@ -104,22 +104,20 @@ export class b2BroadPhase {
         continue;
       }
 
-      const that: b2BroadPhase = this;
-
       // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
       // boolean b2BroadPhase::QueryCallback(int32 proxyId);
-      const QueryCallback = function (proxy: b2TreeNode): boolean {
+      const QueryCallback = (proxy: b2TreeNode): boolean => {
         // A proxy cannot form a pair with itself.
         if (proxy.m_id === queryProxy.m_id) {
           return true;
         }
 
         // Grow the pair buffer as needed.
-        if (that.m_pairCount === that.m_pairBuffer.length) {
-          that.m_pairBuffer[that.m_pairCount] = new b2Pair();
+        if (this.m_pairCount === this.m_pairBuffer.length) {
+          this.m_pairBuffer[this.m_pairCount] = new b2Pair();
         }
 
-        const pair: b2Pair = that.m_pairBuffer[that.m_pairCount];
+        const pair: b2Pair = this.m_pairBuffer[this.m_pairCount];
         // pair.proxyA = proxy < queryProxy ? proxy : queryProxy;
         // pair.proxyB = proxy >= queryProxy ? proxy : queryProxy;
         if (proxy.m_id < queryProxy.m_id) {
@@ -129,7 +127,7 @@ export class b2BroadPhase {
           pair.proxyA = queryProxy;
           pair.proxyB = proxy;
         }
-        ++that.m_pairCount;
+        ++this.m_pairCount;
 
         return true;
       }

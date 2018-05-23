@@ -74,7 +74,7 @@ export class b2Position {
   public a: number = 0;
 
   public static MakeArray(length: number): b2Position[] {
-    return b2MakeArray(length, function (i: number): b2Position { return new b2Position(); } );
+    return b2MakeArray(length, (i: number): b2Position => new b2Position());
   }
 }
 
@@ -83,7 +83,7 @@ export class b2Velocity {
   public w: number = 0;
 
   public static MakeArray(length: number): b2Velocity[] {
-    return b2MakeArray(length, function (i: number): b2Velocity { return new b2Velocity(); } );
+    return b2MakeArray(length, (i: number): b2Velocity => new b2Velocity());
   }
 }
 
