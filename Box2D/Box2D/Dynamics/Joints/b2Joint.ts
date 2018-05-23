@@ -69,10 +69,14 @@ export class b2Jacobian {
 /// maintained in each attached body. Each joint has two joint
 /// nodes, one for each attached body.
 export class b2JointEdge {
-  public other: b2Body = null;    ///< provides quick access to the other body attached.
-  public joint: b2Joint = null;    ///< the joint
-  public prev: b2JointEdge = null;  ///< the previous joint edge in the body's joint list
-  public next: b2JointEdge = null;  ///< the next joint edge in the body's joint list
+  public readonly other: b2Body;    ///< provides quick access to the other body attached.
+  public readonly joint: b2Joint;    ///< the joint
+  public prev: b2JointEdge | null = null;  ///< the previous joint edge in the body's joint list
+  public next: b2JointEdge | null = null;  ///< the next joint edge in the body's joint list
+  constructor(joint: b2Joint, other: b2Body) {
+    this.joint = joint;
+    this.other = other;
+  }
 }
 
 /// Joint definitions are used to construct joints.
@@ -101,12 +105,12 @@ export class b2JointDef {
 /// various fashions. Some joints also feature limits and motors.
 export class b2Joint {
   public m_type: b2JointType = b2JointType.e_unknownJoint;
-  public m_prev: b2Joint = null;
-  public m_next: b2Joint = null;
-  public m_edgeA: b2JointEdge = new b2JointEdge();
-  public m_edgeB: b2JointEdge = new b2JointEdge();
-  public m_bodyA: b2Body = null;
-  public m_bodyB: b2Body = null;
+  public m_prev: b2Joint | null = null;
+  public m_next: b2Joint | null = null;
+  public m_edgeA: b2JointEdge;
+  public m_edgeB: b2JointEdge;
+  public m_bodyA: b2Body;
+  public m_bodyB: b2Body;
 
   public m_index: number = 0;
 
@@ -119,6 +123,8 @@ export class b2Joint {
     ///b2Assert(def.bodyA !== def.bodyB);
 
     this.m_type = def.type;
+    this.m_edgeA = new b2JointEdge(this, def.bodyB);
+    this.m_edgeB = new b2JointEdge(this, def.bodyA);
     this.m_bodyA = def.bodyA;
     this.m_bodyB = def.bodyB;
 
@@ -163,7 +169,7 @@ export class b2Joint {
   }
 
   /// Get the next joint the world joint list.
-  public GetNext(): b2Joint {
+  public GetNext(): b2Joint | null {
     return this.m_next;
   }
 

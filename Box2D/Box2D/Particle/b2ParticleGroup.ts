@@ -56,7 +56,7 @@ export class b2ParticleGroupDef {
   positionData: b2Vec2[] = null;
   lifetime: number = 0;
   userData: any = null;
-  group: b2ParticleGroup = null;
+  group: b2ParticleGroup | null = null;
 }
 
 export class b2ParticleGroup {
@@ -66,8 +66,8 @@ export class b2ParticleGroup {
   m_lastIndex: number = 0;
   m_groupFlags: b2ParticleGroupFlag = 0;
   m_strength: number = 1.0;
-  m_prev: b2ParticleGroup = null;
-  m_next: b2ParticleGroup = null;
+  m_prev: b2ParticleGroup | null = null;
+  m_next: b2ParticleGroup | null = null;
   m_timestamp: number = -1;
   m_mass: number = 0.0;
   m_inertia: number = 0.0;

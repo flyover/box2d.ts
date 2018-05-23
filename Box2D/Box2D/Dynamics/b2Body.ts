@@ -120,15 +120,15 @@ export class b2Body {
   public m_force: b2Vec2 = new b2Vec2;
   public m_torque: number = 0;
 
-  public m_world: b2World = null;
-  public m_prev: b2Body = null;
-  public m_next: b2Body = null;
+  public m_world: b2World;
+  public m_prev: b2Body | null = null;
+  public m_next: b2Body | null = null;
 
-  public m_fixtureList: b2Fixture = null;
+  public m_fixtureList: b2Fixture | null = null;
   public m_fixtureCount: number = 0;
 
-  public m_jointList: b2JointEdge = null;
-  public m_contactList: b2ContactEdge = null;
+  public m_jointList: b2JointEdge | null = null;
+  public m_contactList: b2ContactEdge | null = null;
 
   public m_mass: number = 1;
   public m_invMass: number = 1;
@@ -245,8 +245,8 @@ export class b2Body {
       return null;
     }
 
-    const fixture: b2Fixture = new b2Fixture();
-    fixture.Create(this, def);
+    const fixture: b2Fixture = new b2Fixture(def, this);
+    fixture.Create(/*this,*/ def);
 
     if (this.m_activeFlag) {
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
@@ -257,7 +257,7 @@ export class b2Body {
     this.m_fixtureList = fixture;
     ++this.m_fixtureCount;
 
-    fixture.m_body = this;
+    // fixture.m_body = this;
 
     // Adjust mass properties if needed.
     if (fixture.m_density > 0) {
@@ -303,7 +303,7 @@ export class b2Body {
 
     // Remove the fixture from this body's singly linked list.
     ///b2Assert(this.m_fixtureCount > 0);
-    let node: b2Fixture = this.m_fixtureList;
+    let node: b2Fixture | null = this.m_fixtureList;
     let ppF: b2Fixture = null;
     // let found: boolean = false;
     while (node !== null) {
@@ -324,7 +324,7 @@ export class b2Body {
     ///b2Assert(found);
 
     // Destroy any contacts associated with the fixture.
-    let edge: b2ContactEdge = this.m_contactList;
+    let edge: b2ContactEdge | null = this.m_contactList;
     while (edge) {
       const c = edge.contact;
       edge = edge.next;
@@ -345,7 +345,7 @@ export class b2Body {
     }
 
     fixture.Destroy();
-    fixture.m_body = null;
+    // fixture.m_body = null;
     fixture.m_next = null;
 
     --this.m_fixtureCount;
@@ -382,7 +382,7 @@ export class b2Body {
     this.m_sweep.a0 = angle;
 
     const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-    for (let f = this.m_fixtureList; f; f = f.m_next) {
+    for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
       f.Synchronize(broadPhase, this.m_xf, this.m_xf);
     }
 
@@ -702,7 +702,7 @@ export class b2Body {
 
     // Accumulate mass over all fixtures.
     const localCenter: b2Vec2 = b2Body.ResetMassData_s_localCenter.SetZero();
-    for (let f = this.m_fixtureList; f; f = f.m_next) {
+    for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
       if (f.m_density === 0) {
         continue;
       }
@@ -846,7 +846,7 @@ export class b2Body {
     this.m_torque = 0;
 
     // Delete the attached contacts.
-    let ce: b2ContactEdge = this.m_contactList;
+    let ce: b2ContactEdge | null = this.m_contactList;
     while (ce) {
       const ce0: b2ContactEdge = ce;
       ce = ce.next;
@@ -856,10 +856,10 @@ export class b2Body {
 
     // Touch the proxies so that new contacts will be created (when appropriate)
     const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-    for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
+    for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
       const proxyCount: number = f.m_proxyCount;
       for (let i: number = 0; i < proxyCount; ++i) {
-        broadPhase.TouchProxy(f.m_proxies[i].proxy);
+        broadPhase.TouchProxy(f.m_proxies[i].treeNode);
       }
     }
   }
@@ -943,18 +943,18 @@ export class b2Body {
     if (flag) {
       // Create all proxies.
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-      for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
+      for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
         f.CreateProxies(broadPhase, this.m_xf);
       }
       // Contacts are created the next time step.
     } else {
       // Destroy all proxies.
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-      for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
+      for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
         f.DestroyProxies(broadPhase);
       }
       // Destroy the attached contacts.
-      let ce: b2ContactEdge = this.m_contactList;
+      let ce: b2ContactEdge | null = this.m_contactList;
       while (ce) {
         const ce0: b2ContactEdge = ce;
         ce = ce.next;
@@ -989,24 +989,24 @@ export class b2Body {
   }
 
   /// Get the list of all fixtures attached to this body.
-  public GetFixtureList(): b2Fixture {
+  public GetFixtureList(): b2Fixture | null {
     return this.m_fixtureList;
   }
 
   /// Get the list of all joints attached to this body.
-  public GetJointList(): b2JointEdge {
+  public GetJointList(): b2JointEdge | null {
     return this.m_jointList;
   }
 
   /// Get the list of all contacts attached to this body.
   /// @warning this list changes during the time step and you may
   /// miss some collisions if you don't use b2ContactListener.
-  public GetContactList(): b2ContactEdge {
+  public GetContactList(): b2ContactEdge | null {
     return this.m_contactList;
   }
 
   /// Get the next body in the world's body list.
-  public GetNext(): b2Body {
+  public GetNext(): b2Body | null {
     return this.m_next;
   }
 
@@ -1062,7 +1062,7 @@ export class b2Body {
     log("\n");
     log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
     log("\n");
-    for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
+    for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
       log("  {\n");
       f.Dump(log, bodyIndex);
       log("  }\n");
@@ -1078,7 +1078,7 @@ export class b2Body {
     b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
     const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-    for (let f: b2Fixture = this.m_fixtureList; f; f = f.m_next) {
+    for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
       f.Synchronize(broadPhase, xf1, this.m_xf);
     }
   }
@@ -1101,7 +1101,7 @@ export class b2Body {
 
   public ShouldCollideConnected(other: b2Body): boolean {
     // Does a joint prevent collision?
-    for (let jn: b2JointEdge = this.m_jointList; jn; jn = jn.next) {
+    for (let jn: b2JointEdge | null = this.m_jointList; jn; jn = jn.next) {
       if (jn.other === other) {
         if (!jn.joint.m_collideConnected) {
           return false;

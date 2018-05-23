@@ -20,6 +20,7 @@ import { b2Vec2 } from "../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
 import { b2TreeNode, b2DynamicTree } from "./b2DynamicTree";
 import { b2ContactManager } from "../Dynamics/b2ContactManager";
+import { b2FixtureProxy } from "../Box2D";
 
 export class b2Pair {
   public proxyA: b2TreeNode|null = null;
@@ -151,8 +152,8 @@ export class b2BroadPhase {
     let i: number = 0;
     while (i < this.m_pairCount) {
       const primaryPair: b2Pair = this.m_pairBuffer[i];
-      const userDataA: any = this.m_tree.GetUserData(primaryPair.proxyA);
-      const userDataB: any = this.m_tree.GetUserData(primaryPair.proxyB);
+      const userDataA: b2FixtureProxy = this.m_tree.GetUserData(primaryPair.proxyA);
+      const userDataB: b2FixtureProxy = this.m_tree.GetUserData(primaryPair.proxyB);
 
       contactManager.AddPair(userDataA, userDataB);
       ++i;

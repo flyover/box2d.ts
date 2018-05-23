@@ -1015,7 +1015,7 @@ export class b2ParticleSystem {
     let particleCount = group.GetParticleCount();
     // We create several linked lists. Each list represents a set of connected particles.
     ///ParticleListNode* nodeBuffer = (ParticleListNode*) m_world.m_stackAllocator.Allocate(sizeof(ParticleListNode) * particleCount);
-    let nodeBuffer = b2MakeArray(particleCount, (index: number) => new b2ParticleSystem.ParticleListNode());
+    let nodeBuffer: b2ParticleSystem.ParticleListNode[] = b2MakeArray(particleCount, (index: number) => new b2ParticleSystem.ParticleListNode());
     b2ParticleSystem.InitializeParticleLists(group, nodeBuffer);
     this.MergeParticleListsInContact(group, nodeBuffer);
     let survivingList = b2ParticleSystem.FindLongestParticleList(group, nodeBuffer);

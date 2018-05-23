@@ -63,8 +63,8 @@ export class b2World {
 
   public m_contactManager: b2ContactManager = new b2ContactManager();
 
-  public m_bodyList: b2Body = null;
-  public m_jointList: b2Joint = null;
+  public m_bodyList: b2Body | null = null;
+  public m_jointList: b2Joint | null = null;
 
   ///#if B2_ENABLE_PARTICLE
   public m_particleSystemList: b2ParticleSystem = null;
@@ -76,8 +76,8 @@ export class b2World {
   public m_gravity: b2Vec2 = new b2Vec2();
   public m_allowSleep: boolean = true;
 
-  public m_destructionListener: b2DestructionListener = null;
-  public m_debugDraw: b2Draw = null;
+  public m_destructionListener: b2DestructionListener | null = null;
+  public m_debugDraw: b2Draw | null = null;
 
   // This is used to compute the time step ratio to
   // support a variable time step.
@@ -166,7 +166,7 @@ export class b2World {
     }
 
     // Delete the attached joints.
-    let je: b2JointEdge = b.m_jointList;
+    let je: b2JointEdge | null = b.m_jointList;
     while (je) {
       const je0: b2JointEdge = je;
       je = je.next;
@@ -182,15 +182,15 @@ export class b2World {
     b.m_jointList = null;
 
     /// @see b2Controller list
-//    const coe: b2ControllerEdge = b.m_controllerList;
-//    while (coe) {
-//      const coe0: b2ControllerEdge = coe;
-//      coe = coe.nextController;
-//      coe0.controller.RemoveBody(b);
-//    }
+    // const coe: b2ControllerEdge = b.m_controllerList;
+    // while (coe) {
+    //   const coe0: b2ControllerEdge = coe;
+    //   coe = coe.nextController;
+    //   coe0.controller.RemoveBody(b);
+    // }
 
     // Delete the attached contacts.
-    let ce: b2ContactEdge = b.m_contactList;
+    let ce: b2ContactEdge | null = b.m_contactList;
     while (ce) {
       const ce0: b2ContactEdge = ce;
       ce = ce.next;
@@ -199,7 +199,7 @@ export class b2World {
     b.m_contactList = null;
 
     // Delete the attached fixtures. This destroys broad-phase proxies.
-    let f: b2Fixture = b.m_fixtureList;
+    let f: b2Fixture | null = b.m_fixtureList;
     while (f) {
       const f0: b2Fixture = f;
       f = f.m_next;
@@ -254,15 +254,15 @@ export class b2World {
     ++this.m_jointCount;
 
     // Connect to the bodies' doubly linked lists.
-    j.m_edgeA.joint = j;
-    j.m_edgeA.other = j.m_bodyB;
+    // j.m_edgeA.joint = j;
+    // j.m_edgeA.other = j.m_bodyB;
     j.m_edgeA.prev = null;
     j.m_edgeA.next = j.m_bodyA.m_jointList;
     if (j.m_bodyA.m_jointList) j.m_bodyA.m_jointList.prev = j.m_edgeA;
     j.m_bodyA.m_jointList = j.m_edgeA;
 
-    j.m_edgeB.joint = j;
-    j.m_edgeB.other = j.m_bodyA;
+    // j.m_edgeB.joint = j;
+    // j.m_edgeB.other = j.m_bodyA;
     j.m_edgeB.prev = null;
     j.m_edgeB.next = j.m_bodyB.m_jointList;
     if (j.m_bodyB.m_jointList) j.m_bodyB.m_jointList.prev = j.m_edgeB;
@@ -560,7 +560,7 @@ export class b2World {
 
         this.m_debugDraw.PushTransform(xf);
 
-        for (let f = b.GetFixtureList(); f; f = f.m_next) {
+        for (let f: b2Fixture | null = b.GetFixtureList(); f; f = f.m_next) {
           if (!b.IsActive()) {
             color.SetRGB(0.5, 0.5, 0.3);
             this.DrawShape(f, color);
@@ -592,7 +592,7 @@ export class b2World {
     ///#endif
 
     if (flags & b2DrawFlags.e_jointBit) {
-      for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
+      for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
         this.DrawJoint(j);
       }
     }
@@ -622,11 +622,11 @@ export class b2World {
           continue;
         }
 
-        for (let f: b2Fixture = b.GetFixtureList(); f; f = f.m_next) {
+        for (let f: b2Fixture | null = b.GetFixtureList(); f; f = f.m_next) {
           for (let i: number = 0; i < f.m_proxyCount; ++i) {
             const proxy: b2FixtureProxy = f.m_proxies[i];
 
-            const aabb: b2AABB = bp.GetFatAABB(proxy.proxy);
+            const aabb: b2AABB = bp.GetFatAABB(proxy.treeNode);
             vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
             vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
             vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
@@ -841,7 +841,7 @@ export class b2World {
   /// @return the head of the world contact list.
   /// @warning contacts are created and destroyed in the middle of a time step.
   /// Use b2ContactListener to avoid missing contacts.
-  public GetContactList(): b2Contact {
+  public GetContactList(): b2Contact | null {
     return this.m_contactManager.m_contactList;
   }
 
@@ -968,13 +968,13 @@ export class b2World {
       return;
     }
 
-    for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+    for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
       b.m_xf.p.SelfSub(newOrigin);
       b.m_sweep.c0.SelfSub(newOrigin);
       b.m_sweep.c.SelfSub(newOrigin);
     }
 
-    for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
+    for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
       j.ShiftOrigin(newOrigin);
     }
 
@@ -1004,20 +1004,20 @@ export class b2World {
     log("const bodies: b2Body[] = [];\n");
     log("const joints: b2Joint[] = [];\n");
     let i: number = 0;
-    for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+    for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
       b.m_islandIndex = i;
       b.Dump(log);
       ++i;
     }
 
     i = 0;
-    for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
+    for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
       j.m_index = i;
       ++i;
     }
 
     // First pass on joints, skip gear joints.
-    for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
+    for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
       if (j.m_type === b2JointType.e_gearJoint) {
         continue;
       }
@@ -1028,7 +1028,7 @@ export class b2World {
     }
 
     // Second pass on joints, only gear joints.
-    for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
+    for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
       if (j.m_type !== b2JointType.e_gearJoint) {
         continue;
       }
@@ -1153,20 +1153,20 @@ export class b2World {
       this.m_contactManager.m_contactListener);
 
     // Clear all the island flags.
-    for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+    for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
       b.m_islandFlag = false;
     }
-    for (let c: b2Contact = this.m_contactManager.m_contactList; c; c = c.m_next) {
+    for (let c: b2Contact | null = this.m_contactManager.m_contactList; c; c = c.m_next) {
       c.m_islandFlag = false;
     }
-    for (let j: b2Joint = this.m_jointList; j; j = j.m_next) {
+    for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
       j.m_islandFlag = false;
     }
 
     // Build and simulate all awake islands.
     ///const stackSize: number = this.m_bodyCount;
     const stack: b2Body[] = this.s_stack;
-    for (let seed: b2Body = this.m_bodyList; seed; seed = seed.m_next) {
+    for (let seed: b2Body | null = this.m_bodyList; seed; seed = seed.m_next) {
       if (seed.m_islandFlag) {
         continue;
       }
@@ -1203,7 +1203,7 @@ export class b2World {
         }
 
         // Search all contacts connected to this body.
-        for (let ce: b2ContactEdge = b.m_contactList; ce; ce = ce.next) {
+        for (let ce: b2ContactEdge | null = b.m_contactList; ce; ce = ce.next) {
           const contact: b2Contact = ce.contact;
 
           // Has this contact already been added to an island?
@@ -1239,7 +1239,7 @@ export class b2World {
         }
 
         // Search all joints connect to this body.
-        for (let je: b2JointEdge = b.m_jointList; je; je = je.next) {
+        for (let je: b2JointEdge | null = b.m_jointList; je; je = je.next) {
           if (je.joint.m_islandFlag) {
             continue;
           }
@@ -1324,7 +1324,7 @@ export class b2World {
         b.m_sweep.alpha0 = 0;
       }
 
-      for (let c: b2Contact = this.m_contactManager.m_contactList; c; c = c.m_next) {
+      for (let c: b2Contact | null = this.m_contactManager.m_contactList; c; c = c.m_next) {
         // Invalidate TOI
         c.m_toiFlag = false;
         c.m_islandFlag = false;
@@ -1339,7 +1339,7 @@ export class b2World {
       let minContact: b2Contact = null;
       let minAlpha: number = 1;
 
-      for (let c: b2Contact = this.m_contactManager.m_contactList; c; c = c.m_next) {
+      for (let c: b2Contact | null = this.m_contactManager.m_contactList; c; c = c.m_next) {
         // Is this contact disabled?
         if (!c.IsEnabled()) {
           continue;
@@ -1485,7 +1485,7 @@ export class b2World {
       for (let i: number = 0; i < 2; ++i) {
         const body: b2Body = (i === 0) ? (bA) : (bB); // bodies[i];
         if (body.m_type === b2BodyType.b2_dynamicBody) {
-          for (let ce: b2ContactEdge = body.m_contactList; ce; ce = ce.next) {
+          for (let ce: b2ContactEdge | null = body.m_contactList; ce; ce = ce.next) {
             if (island.m_bodyCount === island.m_bodyCapacity) {
               break;
             }

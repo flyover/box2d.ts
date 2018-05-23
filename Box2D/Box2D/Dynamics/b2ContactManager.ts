@@ -27,7 +27,7 @@ import { b2ContactFilter, b2ContactListener } from "./b2WorldCallbacks";
 // Delegate of b2World.
 export class b2ContactManager {
   public m_broadPhase: b2BroadPhase = new b2BroadPhase();
-  public m_contactList: b2Contact = null;
+  public m_contactList: b2Contact | null = null;
   public m_contactCount: number = 0;
   public m_contactFilter: b2ContactFilter = b2ContactFilter.b2_defaultFilter;
   public m_contactListener: b2ContactListener = b2ContactListener.b2_defaultListener;
@@ -40,11 +40,9 @@ export class b2ContactManager {
   }
 
   // Broad-phase callback.
-  public AddPair(proxyUserDataA: any, proxyUserDataB: any): void {
-    ///b2Assert(proxyUserDataA instanceof b2FixtureProxy);
-    ///b2Assert(proxyUserDataB instanceof b2FixtureProxy);
-    const proxyA: b2FixtureProxy = <b2FixtureProxy>proxyUserDataA; // (proxyUserDataA instanceof b2FixtureProxy ? proxyUserDataA : null);
-    const proxyB: b2FixtureProxy = <b2FixtureProxy>proxyUserDataB; // (proxyUserDataB instanceof b2FixtureProxy ? proxyUserDataB : null);
+  public AddPair(proxyA: b2FixtureProxy, proxyB: b2FixtureProxy): void {
+    ///b2Assert(proxyA instanceof b2FixtureProxy);
+    ///b2Assert(proxyB instanceof b2FixtureProxy);
 
     let fixtureA: b2Fixture = proxyA.fixture;
     let fixtureB: b2Fixture = proxyB.fixture;
@@ -240,8 +238,8 @@ export class b2ContactManager {
         continue;
       }
 
-      const proxyA: b2TreeNode = fixtureA.m_proxies[indexA].proxy;
-      const proxyB: b2TreeNode = fixtureB.m_proxies[indexB].proxy;
+      const proxyA: b2TreeNode = fixtureA.m_proxies[indexA].treeNode;
+      const proxyB: b2TreeNode = fixtureB.m_proxies[indexB].treeNode;
       const overlap: boolean = this.m_broadPhase.TestOverlap(proxyA, proxyB);
 
       // Here we destroy contacts that cease to overlap in the broad-phase.
