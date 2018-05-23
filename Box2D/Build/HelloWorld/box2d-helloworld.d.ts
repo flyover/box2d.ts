@@ -316,7 +316,7 @@ declare module "Box2D/Common/b2Draw" {
         MakeStyleString(alpha?: number): string;
         static MakeStyleString(r: number, g: number, b: number, a?: number): string;
     }
-    export const enum b2DrawFlags {
+    export enum b2DrawFlags {
         e_none = 0,
         e_shapeBit = 1,
         e_jointBit = 2,
@@ -423,7 +423,7 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
         center: b2Vec2;
         I: number;
     }
-    export const enum b2ShapeType {
+    export enum b2ShapeType {
         e_unknown = -1,
         e_circleShape = 0,
         e_edgeShape = 1,
@@ -452,7 +452,7 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
 declare module "Box2D/Collision/b2Collision" {
     import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
     import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export const enum b2ContactFeatureType {
+    export enum b2ContactFeatureType {
         e_vertex = 0,
         e_face = 1,
     }
@@ -485,7 +485,7 @@ declare module "Box2D/Collision/b2Collision" {
         Reset(): void;
         Copy(o: b2ManifoldPoint): b2ManifoldPoint;
     }
-    export const enum b2ManifoldType {
+    export enum b2ManifoldType {
         e_unknown = -1,
         e_circles = 0,
         e_faceA = 1,
@@ -513,7 +513,7 @@ declare module "Box2D/Collision/b2Collision" {
         private static Initialize_s_clipPoint;
         Initialize(manifold: b2Manifold, xfA: b2Transform, radiusA: number, xfB: b2Transform, radiusB: number): void;
     }
-    export const enum b2PointState {
+    export enum b2PointState {
         b2_nullState = 0,
         b2_addState = 1,
         b2_persistState = 2,
@@ -642,7 +642,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         sweepB: b2Sweep;
         tMax: number;
     }
-    export const enum b2TOIOutputState {
+    export enum b2TOIOutputState {
         e_unknown = 0,
         e_failed = 1,
         e_overlapped = 2,
@@ -653,7 +653,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         state: b2TOIOutputState;
         t: number;
     }
-    export const enum b2SeparationFunctionType {
+    export enum b2SeparationFunctionType {
         e_unknown = -1,
         e_points = 0,
         e_faceA = 1,
@@ -716,7 +716,7 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
     import { b2Vec2 } from "Box2D/Common/b2Math";
     import { b2Body } from "Box2D/Dynamics/b2Body";
     import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export const enum b2JointType {
+    export enum b2JointType {
         e_unknownJoint = 0,
         e_revoluteJoint = 1,
         e_prismaticJoint = 2,
@@ -731,7 +731,7 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         e_motorJoint = 11,
         e_areaJoint = 12,
     }
-    export const enum b2LimitState {
+    export enum b2LimitState {
         e_inactiveLimit = 0,
         e_atLowerLimit = 1,
         e_atUpperLimit = 2,
@@ -872,7 +872,7 @@ declare module "Box2D/Dynamics/b2Body" {
     import { b2JointEdge } from "Box2D/Dynamics/Joints/b2Joint";
     import { b2Fixture, b2FixtureDef } from "Box2D/Dynamics/b2Fixture";
     import { b2World } from "Box2D/Dynamics/b2World";
-    export const enum b2BodyType {
+    export enum b2BodyType {
         b2_unknown = -1,
         b2_staticBody = 0,
         b2_kinematicBody = 1,
@@ -1011,7 +1011,7 @@ declare module "Box2D/Particle/b2Particle" {
     /**
      * The particle type. Can be combined with the | operator.
      */
-    export const enum b2ParticleFlag {
+    export enum b2ParticleFlag {
         b2_waterParticle = 0,
         b2_zombieParticle = 2,
         b2_wallParticle = 4,
@@ -2490,7 +2490,7 @@ declare module "Box2D/Particle/b2ParticleGroup" {
     import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
     import { b2ParticleFlag } from "Box2D/Particle/b2Particle";
     import { b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
-    export const enum b2ParticleGroupFlag {
+    export enum b2ParticleGroupFlag {
         b2_solidParticleGroup = 1,
         b2_rigidParticleGroup = 2,
         b2_particleGroupCanBeEmpty = 4,

@@ -32,7 +32,7 @@ export class b2MassData {
   public I: number = 0;
 }
 
-export const enum b2ShapeType {
+export enum b2ShapeType {
   e_unknown = -1,
   e_circleShape = 0,
   e_edgeShape = 1,

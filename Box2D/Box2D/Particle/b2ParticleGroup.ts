@@ -24,7 +24,7 @@ import { b2Shape } from "../Collision/Shapes/b2Shape";
 import { b2ParticleFlag } from "./b2Particle";
 import { b2ParticleSystem } from "./b2ParticleSystem";
 
-export const enum b2ParticleGroupFlag {
+export enum b2ParticleGroupFlag {
   /// Prevents overlapping or leaking.
   b2_solidParticleGroup = 1 << 0,
   /// Keeps its shape.

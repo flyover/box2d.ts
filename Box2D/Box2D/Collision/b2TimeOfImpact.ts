@@ -46,7 +46,7 @@ export class b2TOIInput {
   public tMax: number = 0; // defines sweep interval [0, tMax]
 }
 
-export const enum b2TOIOutputState {
+export enum b2TOIOutputState {
   e_unknown = 0,
   e_failed = 1,
   e_overlapped = 2,
@@ -59,7 +59,7 @@ export class b2TOIOutput {
   public t: number = 0;
 }
 
-export const enum b2SeparationFunctionType {
+export enum b2SeparationFunctionType {
   e_unknown = -1,
   e_points = 0,
   e_faceA = 1,

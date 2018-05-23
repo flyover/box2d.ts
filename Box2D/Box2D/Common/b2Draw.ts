@@ -172,7 +172,7 @@ export class b2Color {
   }
 }
 
-export const enum b2DrawFlags {
+export enum b2DrawFlags {
   e_none = 0,
   e_shapeBit = 0x0001, ///< draw shapes
   e_jointBit = 0x0002, ///< draw joint connections

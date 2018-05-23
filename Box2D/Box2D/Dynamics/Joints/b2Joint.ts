@@ -20,7 +20,7 @@ import { b2Vec2 } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2SolverData } from "../b2TimeStep";
 
-export const enum b2JointType {
+export enum b2JointType {
   e_unknownJoint = 0,
   e_revoluteJoint = 1,
   e_prismaticJoint = 2,
@@ -36,7 +36,7 @@ export const enum b2JointType {
   e_areaJoint = 12
 }
 
-export const enum b2LimitState {
+export enum b2LimitState {
   e_inactiveLimit = 0,
   e_atLowerLimit = 1,
   e_atUpperLimit = 2,
