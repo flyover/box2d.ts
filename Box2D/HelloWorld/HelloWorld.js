@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 System.register(["../Box2D/Common/b2Math", "../Box2D/Dynamics/b2World", "../Box2D/Dynamics/b2Body", "../Box2D/Dynamics/b2Fixture", "../Box2D/Collision/Shapes/b2PolygonShape"], function (exports_1, context_1) {
+    "use strict";
     var __moduleName = context_1 && context_1.id;
     // This is a simple example of building and running a simulation
     // using Box2D. Here we create a large ground box and a small dynamic
@@ -99,23 +100,8 @@ System.register(["../Box2D/Common/b2Math", "../Box2D/Dynamics/b2World", "../Box2
                 b2PolygonShape_1 = b2PolygonShape_1_1;
             }
         ],
-        execute: function () {/*
-            * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
-            *
-            * This software is provided 'as-is', without any express or implied
-            * warranty.  In no event will the authors be held liable for any damages
-            * arising from the use of this software.
-            * Permission is granted to anyone to use this software for any purpose,
-            * including commercial applications, and to alter it and redistribute it
-            * freely, subject to the following restrictions:
-            * 1. The origin of this software must not be misrepresented; you must not
-            * claim that you wrote the original software. If you use this software
-            * in a product, an acknowledgment in the product documentation would be
-            * appreciated but is not required.
-            * 2. Altered source versions must be plainly marked as such, and must not be
-            * misrepresented as being the original software.
-            * 3. This notice may not be removed or altered from any source distribution.
-            */
+        execute: function () {
         }
     };
 });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiSGVsbG9Xb3JsZC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkhlbGxvV29ybGQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7SUFVRixnRUFBZ0U7SUFDaEUscUVBQXFFO0lBQ3JFLE9BQU87SUFDUCxvRUFBb0U7SUFDcEUsa0RBQWtEO0lBQ2xEO1FBQ0UsNkJBQTZCO1FBQzdCLE1BQU0sT0FBTyxHQUFXLElBQUksZUFBTSxDQUFDLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQyxDQUFDO1FBRTNDLDJFQUEyRTtRQUMzRSxNQUFNLEtBQUssR0FBWSxJQUFJLGlCQUFPLENBQUMsT0FBTyxDQUFDLENBQUM7UUFFNUMsMEJBQTBCO1FBQzFCLE1BQU0sYUFBYSxHQUFjLElBQUksa0JBQVMsRUFBRSxDQUFDO1FBQ2pELGFBQWEsQ0FBQyxRQUFRLENBQUMsR0FBRyxDQUFDLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQyxDQUFDO1FBRW5DLG1FQUFtRTtRQUNuRSxtRUFBbUU7UUFDbkUsdUNBQXVDO1FBQ3ZDLE1BQU0sVUFBVSxHQUFXLEtBQUssQ0FBQyxVQUFVLENBQUMsYUFBYSxDQUFDLENBQUM7UUFFM0QsK0JBQStCO1FBQy9CLE1BQU0sU0FBUyxHQUFtQixJQUFJLCtCQUFjLEVBQUUsQ0FBQztRQUV2RCw4Q0FBOEM7UUFDOUMsU0FBUyxDQUFDLFFBQVEsQ0FBQyxFQUFFLEVBQUUsRUFBRSxDQUFDLENBQUM7UUFFM0IsNkNBQTZDO1FBQzdDLFVBQVUsQ0FBQyxhQUFhLENBQUMsU0FBUyxFQUFFLENBQUMsQ0FBQyxDQUFDO1FBRXZDLDBFQUEwRTtRQUMxRSxNQUFNLE9BQU8sR0FBYyxJQUFJLGtCQUFTLEVBQUUsQ0FBQztRQUMzQyxPQUFPLENBQUMsSUFBSSx5QkFBNEIsQ0FBQztRQUN6QyxPQUFPLENBQUMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUM7UUFDM0IsTUFBTSxJQUFJLEdBQVcsS0FBSyxDQUFDLFVBQVUsQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUUvQyxpREFBaUQ7UUFDakQsTUFBTSxVQUFVLEdBQW1CLElBQUksK0JBQWMsRUFBRSxDQUFDO1FBQ3hELFVBQVUsQ0FBQyxRQUFRLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDO1FBRTFCLG1DQUFtQztRQUNuQyxNQUFNLFVBQVUsR0FBaUIsSUFBSSx3QkFBWSxFQUFFLENBQUM7UUFDcEQsVUFBVSxDQUFDLEtBQUssR0FBRyxVQUFVLENBQUM7UUFFOUIsNkRBQTZEO1FBQzdELFVBQVUsQ0FBQyxPQUFPLEdBQUcsQ0FBQyxDQUFDO1FBRXZCLGlDQUFpQztRQUNqQyxVQUFVLENBQUMsUUFBUSxHQUFHLEdBQUcsQ0FBQztRQUUxQiw2QkFBNkI7UUFDN0IsTUFBTSxPQUFPLEdBQWMsSUFBSSxDQUFDLGFBQWEsQ0FBQyxVQUFVLENBQUMsQ0FBQztRQUUxRCxvRUFBb0U7UUFDcEUsMkVBQTJFO1FBQzNFLDBCQUEwQjtRQUMxQixNQUFNLFFBQVEsR0FBVyxDQUFDLEdBQUcsRUFBRSxDQUFDO1FBQ2hDLE1BQU0sa0JBQWtCLEdBQVcsQ0FBQyxDQUFDO1FBQ3JDLE1BQU0sa0JBQWtCLEdBQVcsQ0FBQyxDQUFDO1FBRXJDLGdDQUFnQztRQUNoQyxLQUFLLElBQUksQ0FBQyxHQUFXLENBQUMsRUFBRSxDQUFDLEdBQUcsRUFBRSxFQUFFLEVBQUUsQ0FBQyxFQUFFO1lBQ25DLDZEQUE2RDtZQUM3RCxtRUFBbUU7WUFDbkUsS0FBSyxDQUFDLElBQUksQ0FBQyxRQUFRLEVBQUUsa0JBQWtCLEVBQUUsa0JBQWtCLENBQUMsQ0FBQztZQUU3RCxnREFBZ0Q7WUFDaEQsTUFBTSxRQUFRLEdBQVcsSUFBSSxDQUFDLFdBQVcsRUFBRSxDQUFDO1lBQzVDLE1BQU0sS0FBSyxHQUFXLElBQUksQ0FBQyxRQUFRLEVBQUUsQ0FBQztZQUV0QyxPQUFPLENBQUMsR0FBRyxDQUFDLFFBQVEsQ0FBQyxDQUFDLENBQUMsT0FBTyxDQUFDLENBQUMsQ0FBQyxFQUFFLFFBQVEsQ0FBQyxDQUFDLENBQUMsT0FBTyxDQUFDLENBQUMsQ0FBQyxFQUFFLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQztTQUM3RTtRQUVELGlGQUFpRjtRQUNqRix1RUFBdUU7UUFFdkUsSUFBSSxDQUFDLGNBQWMsQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUU3QixLQUFLLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQyxDQUFDO1FBRXhCLE9BQU8sQ0FBQyxDQUFDO0lBQ1gsQ0FBQyJ9

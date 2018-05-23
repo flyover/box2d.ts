@@ -2,13 +2,11 @@
   "compilerOptions": {
     "target": "ES2016",
     "module": "system",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitUseStrict": true,
+    "strict": true,
     "strictNullChecks": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": false
+    "preserveConstEnums": true,
+    "noUnusedParameters": false,
+    "inlineSourceMap": true
   },
   "include": [
     "**/*.ts"

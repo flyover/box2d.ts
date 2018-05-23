@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 System.register(["./Common/b2Settings", "./Common/b2Math", "./Common/b2Draw", "./Common/b2Timer", "./Common/b2GrowableStack", "./Common/b2BlockAllocator", "./Common/b2StackAllocator", "./Collision/b2Collision", "./Collision/b2Distance", "./Collision/b2BroadPhase", "./Collision/b2DynamicTree", "./Collision/b2TimeOfImpact", "./Collision/b2CollideCircle", "./Collision/b2CollidePolygon", "./Collision/b2CollideEdge", "./Collision/Shapes/b2Shape", "./Collision/Shapes/b2CircleShape", "./Collision/Shapes/b2PolygonShape", "./Collision/Shapes/b2EdgeShape", "./Collision/Shapes/b2ChainShape", "./Dynamics/b2Fixture", "./Dynamics/b2Body", "./Dynamics/b2World", "./Dynamics/b2WorldCallbacks", "./Dynamics/b2Island", "./Dynamics/b2TimeStep", "./Dynamics/b2ContactManager", "./Dynamics/Contacts/b2Contact", "./Dynamics/Contacts/b2ContactFactory", "./Dynamics/Contacts/b2ContactSolver", "./Dynamics/Contacts/b2CircleContact", "./Dynamics/Contacts/b2PolygonContact", "./Dynamics/Contacts/b2PolygonAndCircleContact", "./Dynamics/Contacts/b2EdgeAndCircleContact", "./Dynamics/Contacts/b2EdgeAndPolygonContact", "./Dynamics/Contacts/b2ChainAndCircleContact", "./Dynamics/Contacts/b2ChainAndPolygonContact", "./Dynamics/Joints/b2Joint", "./Dynamics/Joints/b2JointFactory", "./Dynamics/Joints/b2AreaJoint", "./Dynamics/Joints/b2DistanceJoint", "./Dynamics/Joints/b2FrictionJoint", "./Dynamics/Joints/b2GearJoint", "./Dynamics/Joints/b2MotorJoint", "./Dynamics/Joints/b2MouseJoint", "./Dynamics/Joints/b2PrismaticJoint", "./Dynamics/Joints/b2PulleyJoint", "./Dynamics/Joints/b2RevoluteJoint", "./Dynamics/Joints/b2RopeJoint", "./Dynamics/Joints/b2WeldJoint", "./Dynamics/Joints/b2WheelJoint", "./Particle/b2Particle", "./Particle/b2ParticleGroup", "./Particle/b2ParticleSystem", "./Rope/b2Rope"], function (exports_1, context_1) {
+    "use strict";
     var __moduleName = context_1 && context_1.id;
     function exportStar_1(m) {
         var exports = {};
@@ -192,23 +193,8 @@ System.register(["./Common/b2Settings", "./Common/b2Math", "./Common/b2Draw", ".
                 exportStar_1(b2Rope_1_1);
             }
         ],
-        execute: function () {/*
-            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-            *
-            * This software is provided 'as-is', without any express or implied
-            * warranty.  In no event will the authors be held liable for any damages
-            * arising from the use of this software.
-            * Permission is granted to anyone to use this software for any purpose,
-            * including commercial applications, and to alter it and redistribute it
-            * freely, subject to the following restrictions:
-            * 1. The origin of this software must not be misrepresented; you must not
-            * claim that you wrote the original software. If you use this software
-            * in a product, an acknowledgment in the product documentation would be
-            * appreciated but is not required.
-            * 2. Altered source versions must be plainly marked as such, and must not be
-            * misrepresented as being the original software.
-            * 3. This notice may not be removed or altered from any source distribution.
-            */
+        execute: function () {
         }
     };
 });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm94MkQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJCb3gyRC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRSJ9

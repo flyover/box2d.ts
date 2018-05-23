@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 System.register(["../../Collision/b2CollideEdge", "./b2Contact"], function (exports_1, context_1) {
+    "use strict";
     var __moduleName = context_1 && context_1.id;
     var b2CollideEdge_1, b2Contact_1, b2EdgeAndCircleContact;
     return {
@@ -27,23 +28,7 @@ System.register(["../../Collision/b2CollideEdge", "./b2Contact"], function (expo
                 b2Contact_1 = b2Contact_1_1;
             }
         ],
-        execute: function () {/*
-            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-            *
-            * This software is provided 'as-is', without any express or implied
-            * warranty.  In no event will the authors be held liable for any damages
-            * arising from the use of this software.
-            * Permission is granted to anyone to use this software for any purpose,
-            * including commercial applications, and to alter it and redistribute it
-            * freely, subject to the following restrictions:
-            * 1. The origin of this software must not be misrepresented; you must not
-            * claim that you wrote the original software. If you use this software
-            * in a product, an acknowledgment in the product documentation would be
-            * appreciated but is not required.
-            * 2. Altered source versions must be plainly marked as such, and must not be
-            * misrepresented as being the original software.
-            * 3. This notice may not be removed or altered from any source distribution.
-            */
+        execute: function () {
             b2EdgeAndCircleContact = class b2EdgeAndCircleContact extends b2Contact_1.b2Contact {
                 constructor() {
                     super();
@@ -70,3 +55,4 @@ System.register(["../../Collision/b2CollideEdge", "./b2Contact"], function (expo
         }
     };
 });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJFZGdlQW5kQ2lyY2xlQ29udGFjdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyRWRnZUFuZENpcmNsZUNvbnRhY3QudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7Ozs7OztZQVdGLHlCQUFBLDRCQUFvQyxTQUFRLHFCQUFTO2dCQUNuRDtvQkFDRSxLQUFLLEVBQUUsQ0FBQztnQkFDVixDQUFDO2dCQUVNLE1BQU0sQ0FBQyxNQUFNLENBQUMsU0FBYztvQkFDakMsT0FBTyxJQUFJLHNCQUFzQixFQUFFLENBQUM7Z0JBQ3RDLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE9BQU8sQ0FBQyxPQUFrQixFQUFFLFNBQWM7Z0JBQ3hELENBQUM7Z0JBRU0sS0FBSyxDQUFDLFFBQW1CLEVBQUUsTUFBYyxFQUFFLFFBQW1CLEVBQUUsTUFBYztvQkFDbkYsS0FBSyxDQUFDLEtBQUssQ0FBQyxRQUFRLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxNQUFNLENBQUMsQ0FBQztvQkFDaEQsNERBQTREO29CQUM1RCw4REFBOEQ7Z0JBQ2hFLENBQUM7Z0JBRU0sUUFBUSxDQUFDLFFBQW9CLEVBQUUsR0FBZ0IsRUFBRSxHQUFnQjtvQkFDdEUsTUFBTSxNQUFNLEdBQVksSUFBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLEVBQUUsQ0FBQztvQkFDbkQsTUFBTSxNQUFNLEdBQVksSUFBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLEVBQUUsQ0FBQztvQkFDbkQsMkNBQTJDO29CQUMzQyw2Q0FBNkM7b0JBQzdDLHNDQUFzQixDQUNwQixRQUFRLEVBQ00sTUFBTSxFQUFFLEdBQUcsRUFDVCxNQUFNLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ2pDLENBQUM7YUFDRixDQUFBIn0=

@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 System.register(["../Common/b2Settings", "../Common/b2Math"], function (exports_1, context_1) {
+    "use strict";
     var __moduleName = context_1 && context_1.id;
     var b2Settings_1, b2Math_1, b2Profile, b2TimeStep, b2Position, b2Velocity, b2SolverData;
     return {
@@ -27,23 +28,7 @@ System.register(["../Common/b2Settings", "../Common/b2Math"], function (exports_
                 b2Math_1 = b2Math_1_1;
             }
         ],
-        execute: function () {/*
-            * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
-            *
-            * This software is provided 'as-is', without any express or implied
-            * warranty.  In no event will the authors be held liable for any damages
-            * arising from the use of this software.
-            * Permission is granted to anyone to use this software for any purpose,
-            * including commercial applications, and to alter it and redistribute it
-            * freely, subject to the following restrictions:
-            * 1. The origin of this software must not be misrepresented; you must not
-            * claim that you wrote the original software. If you use this software
-            * in a product, an acknowledgment in the product documentation would be
-            * appreciated but is not required.
-            * 2. Altered source versions must be plainly marked as such, and must not be
-            * misrepresented as being the original software.
-            * 3. This notice may not be removed or altered from any source distribution.
-            */
+        execute: function () {
             /// Profiling data. Times are in milliseconds.
             b2Profile = class b2Profile {
                 constructor() {
@@ -127,3 +112,4 @@ System.register(["../Common/b2Settings", "../Common/b2Math"], function (exports_
         }
     };
 });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJUaW1lU3RlcC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyVGltZVN0ZXAudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7Ozs7OztZQUtGLDhDQUE4QztZQUM5QyxZQUFBO2dCQUFBO29CQUNTLFNBQUksR0FBVyxDQUFDLENBQUM7b0JBQ2pCLFlBQU8sR0FBVyxDQUFDLENBQUM7b0JBQ3BCLFVBQUssR0FBVyxDQUFDLENBQUM7b0JBQ2xCLGNBQVMsR0FBVyxDQUFDLENBQUM7b0JBQ3RCLGtCQUFhLEdBQVcsQ0FBQyxDQUFDO29CQUMxQixrQkFBYSxHQUFXLENBQUMsQ0FBQztvQkFDMUIsZUFBVSxHQUFXLENBQUMsQ0FBQztvQkFDdkIsYUFBUSxHQUFXLENBQUMsQ0FBQztnQkFhOUIsQ0FBQztnQkFYUSxLQUFLO29CQUNWLElBQUksQ0FBQyxJQUFJLEdBQUcsQ0FBQyxDQUFDO29CQUNkLElBQUksQ0FBQyxPQUFPLEdBQUcsQ0FBQyxDQUFDO29CQUNqQixJQUFJLENBQUMsS0FBSyxHQUFHLENBQUMsQ0FBQztvQkFDZixJQUFJLENBQUMsU0FBUyxHQUFHLENBQUMsQ0FBQztvQkFDbkIsSUFBSSxDQUFDLGFBQWEsR0FBRyxDQUFDLENBQUM7b0JBQ3ZCLElBQUksQ0FBQyxhQUFhLEdBQUcsQ0FBQyxDQUFDO29CQUN2QixJQUFJLENBQUMsVUFBVSxHQUFHLENBQUMsQ0FBQztvQkFDcEIsSUFBSSxDQUFDLFFBQVEsR0FBRyxDQUFDLENBQUM7b0JBQ2xCLE9BQU8sSUFBSSxDQUFDO2dCQUNkLENBQUM7YUFDRixDQUFBOztZQUVELGtDQUFrQztZQUNsQyxhQUFBO2dCQUFBO29CQUNTLE9BQUUsR0FBVyxDQUFDLENBQUMsQ0FBQyxZQUFZO29CQUM1QixXQUFNLEdBQVcsQ0FBQyxDQUFDLENBQUMsb0NBQW9DO29CQUN4RCxZQUFPLEdBQVcsQ0FBQyxDQUFDLENBQUMsZUFBZTtvQkFDcEMsdUJBQWtCLEdBQVcsQ0FBQyxDQUFDO29CQUMvQix1QkFBa0IsR0FBVyxDQUFDLENBQUM7b0JBQ3RDLHlCQUF5QjtvQkFDbEIsdUJBQWtCLEdBQVcsQ0FBQyxDQUFDO29CQUN0QyxTQUFTO29CQUNGLGlCQUFZLEdBQVksS0FBSyxDQUFDO2dCQWN2QyxDQUFDO2dCQVpRLElBQUksQ0FBQyxJQUFnQjtvQkFDMUIsSUFBSSxDQUFDLEVBQUUsR0FBRyxJQUFJLENBQUMsRUFBRSxDQUFDO29CQUNsQixJQUFJLENBQUMsTUFBTSxHQUFHLElBQUksQ0FBQyxNQUFNLENBQUM7b0JBQzFCLElBQUksQ0FBQyxPQUFPLEdBQUcsSUFBSSxDQUFDLE9BQU8sQ0FBQztvQkFDNUIsSUFBSSxDQUFDLGtCQUFrQixHQUFHLElBQUksQ0FBQyxrQkFBa0IsQ0FBQztvQkFDbEQsSUFBSSxDQUFDLGtCQUFrQixHQUFHLElBQUksQ0FBQyxrQkFBa0IsQ0FBQztvQkFDbEQseUJBQXlCO29CQUN6QixJQUFJLENBQUMsa0JBQWtCLEdBQUcsSUFBSSxDQUFDLGtCQUFrQixDQUFDO29CQUNsRCxTQUFTO29CQUNULElBQUksQ0FBQyxZQUFZLEdBQUcsSUFBSSxDQUFDLFlBQVksQ0FBQztvQkFDdEMsT0FBTyxJQUFJLENBQUM7Z0JBQ2QsQ0FBQzthQUNGLENBQUE7O1lBRUQsYUFBQTtnQkFBQTtvQkFDUyxNQUFDLEdBQVcsSUFBSSxlQUFNLEVBQUUsQ0FBQztvQkFDekIsTUFBQyxHQUFXLENBQUMsQ0FBQztnQkFLdkIsQ0FBQztnQkFIUSxNQUFNLENBQUMsU0FBUyxDQUFDLE1BQWM7b0JBQ3BDLE9BQU8sd0JBQVcsQ0FBQyxNQUFNLEVBQUUsVUFBVSxDQUFTLElBQWdCLE9BQU8sSUFBSSxVQUFVLEVBQUUsQ0FBQyxDQUFDLENBQUMsQ0FBRSxDQUFDO2dCQUM3RixDQUFDO2FBQ0YsQ0FBQTs7WUFFRCxhQUFBO2dCQUFBO29CQUNTLE1BQUMsR0FBVyxJQUFJLGVBQU0sRUFBRSxDQUFDO29CQUN6QixNQUFDLEdBQVcsQ0FBQyxDQUFDO2dCQUt2QixDQUFDO2dCQUhRLE1BQU0sQ0FBQyxTQUFTLENBQUMsTUFBYztvQkFDcEMsT0FBTyx3QkFBVyxDQUFDLE1BQU0sRUFBRSxVQUFVLENBQVMsSUFBZ0IsT0FBTyxJQUFJLFVBQVUsRUFBRSxDQUFDLENBQUMsQ0FBQyxDQUFFLENBQUM7Z0JBQzdGLENBQUM7YUFDRixDQUFBOztZQUVELGVBQUE7Z0JBQUE7b0JBQ1MsU0FBSSxHQUFlLElBQUksVUFBVSxFQUFFLENBQUM7b0JBQ3BDLGNBQVMsR0FBaUIsSUFBSSxDQUFDO29CQUMvQixlQUFVLEdBQWlCLElBQUksQ0FBQztnQkFDekMsQ0FBQzthQUFBLENBQUEifQ==

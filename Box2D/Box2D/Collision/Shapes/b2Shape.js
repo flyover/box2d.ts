@@ -16,31 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 System.register(["../../Common/b2Math"], function (exports_1, context_1) {
+    "use strict";
     var __moduleName = context_1 && context_1.id;
-    var b2Math_1, b2MassData, b2Shape;
+    var b2Math_1, b2MassData, b2ShapeType, b2Shape;
     return {
         setters: [
             function (b2Math_1_1) {
                 b2Math_1 = b2Math_1_1;
             }
         ],
-        execute: function () {/*
-            * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-            *
-            * This software is provided 'as-is', without any express or implied
-            * warranty.  In no event will the authors be held liable for any damages
-            * arising from the use of this software.
-            * Permission is granted to anyone to use this software for any purpose,
-            * including commercial applications, and to alter it and redistribute it
-            * freely, subject to the following restrictions:
-            * 1. The origin of this software must not be misrepresented; you must not
-            * claim that you wrote the original software. If you use this software
-            * in a product, an acknowledgment in the product documentation would be
-            * appreciated but is not required.
-            * 2. Altered source versions must be plainly marked as such, and must not be
-            * misrepresented as being the original software.
-            * 3. This notice may not be removed or altered from any source distribution.
-            */
+        execute: function () {
             /// This holds the mass data computed for a shape.
             b2MassData = class b2MassData {
                 constructor() {
@@ -53,6 +38,15 @@ System.register(["../../Common/b2Math"], function (exports_1, context_1) {
                 }
             };
             exports_1("b2MassData", b2MassData);
+            (function (b2ShapeType) {
+                b2ShapeType[b2ShapeType["e_unknown"] = -1] = "e_unknown";
+                b2ShapeType[b2ShapeType["e_circleShape"] = 0] = "e_circleShape";
+                b2ShapeType[b2ShapeType["e_edgeShape"] = 1] = "e_edgeShape";
+                b2ShapeType[b2ShapeType["e_polygonShape"] = 2] = "e_polygonShape";
+                b2ShapeType[b2ShapeType["e_chainShape"] = 3] = "e_chainShape";
+                b2ShapeType[b2ShapeType["e_shapeTypeCount"] = 4] = "e_shapeTypeCount";
+            })(b2ShapeType || (b2ShapeType = {}));
+            exports_1("b2ShapeType", b2ShapeType);
             /// A shape is used for collision detection. You can create a shape however you like.
             /// Shapes used for simulation in b2World are created automatically when a b2Fixture
             /// is created. Shapes may encapsulate a one or more child shapes.
@@ -78,3 +72,4 @@ System.register(["../../Common/b2Math"], function (exports_1, context_1) {
         }
     };
 });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJTaGFwZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyU2hhcGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7OztZQU1GLGtEQUFrRDtZQUNsRCxhQUFBO2dCQUFBO29CQUNFLGdEQUFnRDtvQkFDekMsU0FBSSxHQUFXLENBQUMsQ0FBQztvQkFFeEIsd0VBQXdFO29CQUNqRSxXQUFNLEdBQVcsSUFBSSxlQUFNLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDO29CQUV6QywrREFBK0Q7b0JBQ3hELE1BQUMsR0FBVyxDQUFDLENBQUM7Z0JBQ3ZCLENBQUM7YUFBQSxDQUFBOztZQUVELFdBQWtCLFdBQVc7Z0JBQzNCLHdEQUFjLENBQUE7Z0JBQ2QsK0RBQWlCLENBQUE7Z0JBQ2pCLDJEQUFlLENBQUE7Z0JBQ2YsaUVBQWtCLENBQUE7Z0JBQ2xCLDZEQUFnQixDQUFBO2dCQUNoQixxRUFBb0IsQ0FBQTtZQUN0QixDQUFDLEVBUGlCLFdBQVcsS0FBWCxXQUFXLFFBTzVCOztZQUVELHFGQUFxRjtZQUNyRixvRkFBb0Y7WUFDcEYsa0VBQWtFO1lBQ2xFLFVBQUE7Z0JBSUUsWUFBWSxJQUFpQixFQUFFLE1BQWM7b0JBSHRDLFdBQU0sc0JBQXNDO29CQUM1QyxhQUFRLEdBQVcsQ0FBQyxDQUFDO29CQUcxQixJQUFJLENBQUMsTUFBTSxHQUFHLElBQUksQ0FBQztvQkFDbkIsSUFBSSxDQUFDLFFBQVEsR0FBRyxNQUFNLENBQUM7Z0JBQ3pCLENBQUM7Z0JBS00sSUFBSSxDQUFDLEtBQWM7b0JBQ3hCLDBDQUEwQztvQkFDMUMsSUFBSSxDQUFDLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO29CQUMvQixPQUFPLElBQUksQ0FBQztnQkFDZCxDQUFDO2dCQUVELG9GQUFvRjtnQkFDcEYsMkJBQTJCO2dCQUNwQixPQUFPO29CQUNaLE9BQU8sSUFBSSxDQUFDLE1BQU0sQ0FBQztnQkFDckIsQ0FBQzthQTJDRixDQUFBIn0=
