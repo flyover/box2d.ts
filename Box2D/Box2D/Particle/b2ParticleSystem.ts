@@ -38,17 +38,17 @@ import { b2DistanceProxy } from "../Collision/b2Distance";
 
 function b2Assert(condition: boolean) {}
 
-function std_iter_swap(array: any[], a: number, b: number): void {
-  const tmp = array[a];
+function std_iter_swap<T>(array: T[], a: number, b: number): void {
+  const tmp: T = array[a];
   array[a] = array[b];
   array[b] = tmp;
 }
 
-function default_compare(a: number, b: number): boolean { return a < b; }
+function default_compare<T>(a: T, b: T): boolean { return a < b; }
 
-function std_sort(array: any[], first: number = 0, len: number = array.length - first, cmp: (a: any, b: any) => boolean = default_compare): any[] {
+function std_sort<T>(array: T[], first: number = 0, len: number = array.length - first, cmp: (a: T, b: T) => boolean = default_compare): T[] {
   let left = first;
-  let stack: any[] = [];
+  let stack: number[] = [];
   let pos = 0;
 
   for (; ; ) { /* outer loop */
@@ -72,11 +72,11 @@ function std_sort(array: any[], first: number = 0, len: number = array.length - 
   return array;
 };
 
-function std_stable_sort(array: any[], first: number = 0, len: number = array.length - first, cmp: (a: any, b: any) => boolean = default_compare): any[] {
+function std_stable_sort<T>(array: T[], first: number = 0, len: number = array.length - first, cmp: (a: T, b: T) => boolean = default_compare): T[] {
   return std_sort(array, first, len, cmp);
 };
 
-function std_remove_if(array: any[], predicate: (value: any) => boolean, length: number = array.length) {
+function std_remove_if<T>(array: T[], predicate: (value: T) => boolean, length: number = array.length) {
   let l = 0;
 
   for (let c = 0; c < length; ++c) {
@@ -97,7 +97,7 @@ function std_remove_if(array: any[], predicate: (value: any) => boolean, length:
   return l;
 };
 
-function std_lower_bound(array: any[], first: number, last: number, val: any, cmp: (a: any, b: any) => boolean = default_compare): number {
+function std_lower_bound<A, B>(array: A[], first: number, last: number, val: B, cmp: (a: A, b: B) => boolean = default_compare): number {
   let count = last - first;
   while (count > 0) {
     let step = Math.floor(count / 2);
@@ -112,7 +112,7 @@ function std_lower_bound(array: any[], first: number, last: number, val: any, cm
   return first;
 };
 
-function std_upper_bound(array: any[], first: number, last: number, val: any, cmp: (a: any, b: any) => boolean = default_compare): number {
+function std_upper_bound<A, B>(array: B[], first: number, last: number, val: A, cmp: (a: A, b: B) => boolean = default_compare): number {
   let count = last - first;
   while (count > 0) {
     let step = Math.floor(count / 2);
@@ -127,7 +127,7 @@ function std_upper_bound(array: any[], first: number, last: number, val: any, cm
   return first;
 };
 
-function std_rotate(array: any[], first: number, n_first: number, last: number): void {
+function std_rotate<T>(array: T[], first: number, n_first: number, last: number): void {
   let next = n_first;
   while (first !== next) {
     std_iter_swap(array, first++, next++);
@@ -138,7 +138,7 @@ function std_rotate(array: any[], first: number, n_first: number, last: number):
   }
 }
 
-function std_unique(array: any[], first: number, last: number, cmp: (a: any, b: any) => boolean): number {
+function std_unique<T>(array: T[], first: number, last: number, cmp: (a: T, b: T) => boolean): number {
   if (first === last) {
     return last;
   }
@@ -1274,7 +1274,7 @@ export class b2ParticleSystem {
    *
    * @return the pointer to the head of the particle user-data array.
    */
-  GetUserDataBuffer(): any[] {
+  GetUserDataBuffer<T>(): T[] {
     this.m_userDataBuffer.data = this.RequestBuffer(this.m_userDataBuffer.data);
     return this.m_userDataBuffer.data;
   }
@@ -1375,7 +1375,7 @@ export class b2ParticleSystem {
     ///}
   }
 
-  SetUserDataBuffer(buffer: any[], capacity: number): void {
+  SetUserDataBuffer<T>(buffer: T[], capacity: number): void {
     this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer, capacity);
   }
 
@@ -1944,14 +1944,14 @@ export class b2ParticleSystem {
    */
   static k_barrierWallFlags = b2ParticleFlag.b2_barrierParticle | b2ParticleFlag.b2_wallParticle;
 
-  FreeBuffer(b: any, capacity: number): void {
+  FreeBuffer<T>(b: T[], capacity: number): void {
     if (b === null) {
       return;
     }
     b.length = 0;
   }
 
-  FreeUserOverridableBuffer(b: b2ParticleSystem.UserOverridableBuffer<any>): void {
+  FreeUserOverridableBuffer<T>(b: b2ParticleSystem.UserOverridableBuffer<T>): void {
     if (b.userSuppliedCapacity === 0) {
       this.FreeBuffer(b.data, this.m_internalAllocatedCapacity);
     }
@@ -1960,7 +1960,7 @@ export class b2ParticleSystem {
   /**
    * Reallocate a buffer
    */
-  ReallocateBuffer3(oldBuffer: any[], oldCapacity: number, newCapacity: number): any[] {
+  ReallocateBuffer3<T>(oldBuffer: T[], oldCapacity: number, newCapacity: number): T[] {
     b2Assert(newCapacity > oldCapacity);
     let newBuffer = (oldBuffer) ? oldBuffer.slice() : [];
     newBuffer.length = newCapacity;
@@ -1970,7 +1970,7 @@ export class b2ParticleSystem {
   /**
    * Reallocate a buffer
    */
-  ReallocateBuffer5(buffer: any[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): any[] {
+  ReallocateBuffer5<T>(buffer: T[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): T[] {
     b2Assert(newCapacity > oldCapacity);
     // A 'deferred' buffer is reallocated only if it is not NULL.
     // If 'userSuppliedCapacity' is not zero, buffer is user supplied and must
@@ -1985,12 +1985,12 @@ export class b2ParticleSystem {
   /**
    * Reallocate a buffer
    */
-  ReallocateBuffer4(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): any[] {
+  ReallocateBuffer4<T>(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): T[] {
     b2Assert(newCapacity > oldCapacity);
     return this.ReallocateBuffer5(buffer.data, buffer.userSuppliedCapacity, oldCapacity, newCapacity, deferred);
   }
 
-  RequestBuffer(buffer: any[]): any[] {
+  RequestBuffer<T>(buffer: T[]): T[] {
     if (!buffer) {
       if (this.m_internalAllocatedCapacity === 0) {
         this.ReallocateInternalAllocatedBuffers(b2_minParticleSystemBufferCapacity);
@@ -4446,7 +4446,7 @@ export class b2ParticleSystem {
       this.m_world.m_contactManager.m_contactListener : null;
   }
 
-  SetUserOverridableBuffer(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: any[], newCapacity: number): void {
+  SetUserOverridableBuffer<T>(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: T[], newCapacity: number): void {
     b2Assert(((newData !== null) && (newCapacity > 0)) || ((newData === null) && (newCapacity === 0)));
     ///if (!buffer.userSuppliedCapacity)
     ///{
@@ -4800,7 +4800,7 @@ export class ParticleListNode {
 /**
  * @constructor
  */
-export class FixedSetAllocator {
+export class FixedSetAllocator<T> {
   Allocate(itemSize: number, count: number): number {
     // TODO
     return count;
@@ -4824,7 +4824,7 @@ export class FixedSetAllocator {
     return [];
   }
 
-  GetBuffer(): any[] {
+  GetBuffer(): T[] {
     // TODO
     return [];
   }
@@ -4843,7 +4843,7 @@ export class FixtureParticle {
   }
 }
 
-export class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
+export class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator<FixtureParticle> {
   Initialize(bodyContactBuffer: b2GrowableBuffer<b2ParticleBodyContact>, flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>): void {
     // TODO
   }
@@ -4862,7 +4862,7 @@ export class ParticlePair {
   }
 }
 
-export class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
+export class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator<ParticlePair> {
   Initialize(contactBuffer: b2GrowableBuffer<b2ParticleContact>, flagsBuffer: UserOverridableBuffer<b2ParticleFlag>): void {
     // TODO
   }

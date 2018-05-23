@@ -196,16 +196,16 @@ export function b2ParseUInt(v: string): number {
   return Math.abs(parseInt(v, 10));
 }
 
-export function b2MakeArray(length: number, init: { (i: number): any; }): any[] {
-  let a: any[] = [];
+export function b2MakeArray<T>(length: number, init: { (i: number): T; }): T[] {
+  let a: T[] = [];
   for (let i: number = 0; i < length; ++i) {
     a.push(init(i));
   }
   return a;
 }
 
-export function b2MakeNullArray(length: number): any[] {
-  const a: any[] = [];
+export function b2MakeNullArray<T>(length: number): (T | null)[] {
+  const a: (T | null)[] = [];
   for (let i: number = 0; i < length; ++i) {
     a.push(null);
   }
@@ -213,7 +213,7 @@ export function b2MakeNullArray(length: number): any[] {
 }
 
 export function b2MakeNumberArray(length: number, init: number = 0): number[] {
-  const a: any[] = [];
+  const a: number[] = [];
   for (let i: number = 0; i < length; ++i) {
     a.push(init);
   }

@@ -38,9 +38,9 @@ export function b2Clamp(a: number, lo: number, hi: number): number {
   return (a < lo) ? (lo) : ((a > hi) ? (hi) : (a));
 }
 
-export function b2Swap(a: any[], b: any[]): void {
+export function b2Swap<T>(a: T[], b: T[]): void {
   ///b2Assert(false);
-  const tmp: any = a[0];
+  const tmp: T = a[0];
   a[0] = b[0];
   b[0] = tmp;
 }

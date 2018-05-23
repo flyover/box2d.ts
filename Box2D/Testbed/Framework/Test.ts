@@ -78,7 +78,7 @@ export class DestructionListener extends box2d.b2DestructionListener {
   public SayGoodbyeFixture(fixture: box2d.b2Fixture): void {}
 
   ///#if B2_ENABLE_PARTICLE
-  public SayGoodbyeParticleGroup(group: any) {
+  public SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup) {
     this.test.ParticleGroupDestroyed(group);
   }
   ///#endif
@@ -192,7 +192,7 @@ export class Test extends box2d.b2ContactListener {
   public JointDestroyed(joint: box2d.b2Joint): void {}
 
   ///#if B2_ENABLE_PARTICLE
-  public ParticleGroupDestroyed(group: any) {}
+  public ParticleGroupDestroyed(group: box2d.b2ParticleGroup) {}
   ///#endif
 
   public BeginContact(contact: box2d.b2Contact): void {}
@@ -656,7 +656,7 @@ export class Test extends box2d.b2ContactListener {
    * @return {void}
    * @param {number} filterMask
    */
-  InitializeParticleParameters(filterMask: any) {
+  InitializeParticleParameters(filterMask: number) {
     let defaultNumValues = ParticleParameter.k_defaultDefinition[0].numValues;
     let defaultValues = ParticleParameter.k_defaultDefinition[0].values;
     ///  m_particleParameters = new ParticleParameter::Value[defaultNumValues];

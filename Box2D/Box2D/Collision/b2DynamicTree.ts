@@ -53,7 +53,7 @@ export class b2DynamicTree {
 
   public m_insertionCount: number = 0;
 
-  public static s_stack = new b2GrowableStack(256);
+  public static s_stack = new b2GrowableStack<b2TreeNode>(256);
   public static s_r = new b2Vec2();
   public static s_v = new b2Vec2();
   public static s_abs_v = new b2Vec2();
@@ -75,7 +75,7 @@ export class b2DynamicTree {
   public Query(callback: (node: b2TreeNode) => boolean, aabb: b2AABB): void {
     if (this.m_root === null) return;
 
-    const stack: b2GrowableStack = b2DynamicTree.s_stack.Reset();
+    const stack: b2GrowableStack<b2TreeNode> = b2DynamicTree.s_stack.Reset();
     stack.Push(this.m_root);
 
     while (stack.GetCount() > 0) {
@@ -125,7 +125,7 @@ export class b2DynamicTree {
     segmentAABB.upperBound.x = b2Max(p1.x, t_x);
     segmentAABB.upperBound.y = b2Max(p1.y, t_y);
 
-    const stack: b2GrowableStack = b2DynamicTree.s_stack.Reset();
+    const stack: b2GrowableStack<b2TreeNode> = b2DynamicTree.s_stack.Reset();
     stack.Push(this.m_root);
 
     while (stack.GetCount() > 0) {

@@ -20,8 +20,8 @@
 /// If the stack size exceeds the initial capacity, the heap is used
 /// to increase the size of the stack.
 
-export class b2GrowableStack {
-  public m_stack: any[] = [];
+export class b2GrowableStack<T> {
+  public m_stack: T[] = [];
   public m_count: number = 0;
 
   constructor(N: number) {
@@ -29,20 +29,20 @@ export class b2GrowableStack {
     this.m_count = 0;
   }
 
-  public Reset(): b2GrowableStack {
+  public Reset(): this {
     this.m_count = 0;
     return this;
   }
 
-  public Push(element: any): void {
+  public Push(element: T): void {
     this.m_stack[this.m_count] = element;
     this.m_count++;
   }
 
-  public Pop(): any {
+  public Pop(): T {
     ///b2Assert(this.m_count > 0);
     this.m_count--;
-    const element: any = this.m_stack[this.m_count];
+    const element: T = this.m_stack[this.m_count];
     this.m_stack[this.m_count] = null;
     return element;
   }
