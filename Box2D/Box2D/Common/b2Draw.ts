@@ -175,14 +175,15 @@ export class b2Color {
   }
 
   public static MakeStyleString(r: number, g: number, b: number, a: number = 1.0): string {
-    r = Math.round(Math.max(0, Math.min(255, r * 255)));
-    g = Math.round(Math.max(0, Math.min(255, g * 255)));
-    b = Math.round(Math.max(0, Math.min(255, b * 255)));
-    a = Math.max(0, Math.min(1, a));
-    if (a < 1.0) {
-      return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+    // function clamp(x: number, lo: number, hi: number) { return x < lo ? lo : hi < x ? hi : x; }
+    r *= 255; // r = clamp(r, 0, 255);
+    g *= 255; // g = clamp(g, 0, 255);
+    b *= 255; // b = clamp(b, 0, 255);
+    // a = clamp(a, 0, 1);
+    if (a < 1) {
+      return `rgba(${r},${g},${b},${a})`;
     } else {
-      return "rgb(" + r + "," + g + "," + b + ")";
+      return `rgb(${r},${g},${b})`;
     }
   }
 }
