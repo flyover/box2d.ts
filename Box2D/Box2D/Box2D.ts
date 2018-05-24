@@ -85,10 +85,10 @@ export * from "./Dynamics/Joints/b2RopeJoint";
 export * from "./Dynamics/Joints/b2WeldJoint";
 export * from "./Dynamics/Joints/b2WheelJoint";
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 export * from "./Particle/b2Particle";
 export * from "./Particle/b2ParticleGroup";
 export * from "./Particle/b2ParticleSystem";
-///#endif
+// #endif
 
 export * from "./Rope/b2Rope";

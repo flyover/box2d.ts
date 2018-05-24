@@ -24,23 +24,23 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
             }
         ],
         execute: function () {
-            ///#endif
+            // #endif
             exports_1("DRAW_STRING_NEW_LINE", DRAW_STRING_NEW_LINE = 16);
             Settings = class Settings {
                 constructor() {
                     this.hz = 60;
                     this.velocityIterations = 8;
                     this.positionIterations = 3;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     // Particle iterations are needed for numerical stability in particle
                     // simulations with small particles and relatively high gravity.
                     // b2CalculateParticleIterations helps to determine the number.
                     this.particleIterations = box2d.b2CalculateParticleIterations(10, 0.04, 1 / this.hz);
-                    ///#endif
+                    // #endif
                     this.drawShapes = true;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.drawParticles = true;
-                    ///#endif
+                    // #endif
                     this.drawJoints = true;
                     this.drawAABBs = false;
                     this.drawContactPoints = false;
@@ -57,9 +57,9 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     this.enableSleep = true;
                     this.pause = false;
                     this.singleStep = false;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.strictContacts = false;
-                    ///#endif
+                    // #endif
                 }
             };
             exports_1("Settings", Settings);
@@ -87,7 +87,7 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     }
                 }
                 SayGoodbyeFixture(fixture) { }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 SayGoodbyeParticleGroup(group) {
                     this.test.ParticleGroupDestroyed(group);
                 }
@@ -106,7 +106,7 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                 }
             };
             exports_1("ContactPoint", ContactPoint);
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             QueryCallback2 = class QueryCallback2 extends box2d.b2QueryCallback {
                 constructor(particleSystem, shape, velocity) {
                     super();
@@ -134,15 +134,15 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     return true;
                 }
             };
-            ///#endif
+            // #endif
             Test = class Test extends box2d.b2ContactListener {
-                ///#endif
+                // #endif
                 constructor() {
                     super();
                     this.m_world = null;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_particleSystem = null;
-                    ///#endif
+                    // #endif
                     this.m_bomb = null;
                     this.m_textLine = 30;
                     this.m_mouseJoint = null;
@@ -151,25 +151,25 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     this.m_bombSpawnPoint = new box2d.b2Vec2();
                     this.m_bombSpawning = false;
                     this.m_mouseWorld = new box2d.b2Vec2();
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_mouseTracing = false;
                     this.m_mouseTracerPosition = new box2d.b2Vec2();
                     this.m_mouseTracerVelocity = new box2d.b2Vec2();
-                    ///#endif
+                    // #endif
                     this.m_stepCount = 0;
                     this.m_maxProfile = new box2d.b2Profile();
                     this.m_totalProfile = new box2d.b2Profile();
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_particleParameters = null;
                     this.m_particleParameterDef = null;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     const particleSystemDef = new box2d.b2ParticleSystemDef();
-                    ///#endif
+                    // #endif
                     const gravity = new box2d.b2Vec2(0, -10);
                     this.m_world = new box2d.b2World(gravity);
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_particleSystem = this.m_world.CreateParticleSystem(particleSystemDef);
-                    ///#endif
+                    // #endif
                     this.m_bomb = null;
                     this.m_textLine = 30;
                     this.m_mouseJoint = null;
@@ -177,17 +177,17 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     this.m_world.SetDestructionListener(this.m_destructionListener);
                     this.m_world.SetContactListener(this);
                     this.m_world.SetDebugDraw(DebugDraw_1.g_debugDraw);
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_particleSystem.SetGravityScale(0.4);
                     this.m_particleSystem.SetDensity(1.2);
-                    ///#endif
+                    // #endif
                     const bodyDef = new box2d.b2BodyDef();
                     this.m_groundBody = this.m_world.CreateBody(bodyDef);
                 }
                 JointDestroyed(joint) { }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 ParticleGroupDestroyed(group) { }
-                ///#endif
+                // #endif
                 BeginContact(contact) { }
                 EndContact(contact) { }
                 PreSolve(contact, oldManifold) {
@@ -227,11 +227,11 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                 }
                 MouseDown(p) {
                     this.m_mouseWorld.Copy(p);
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_mouseTracing = true;
                     this.m_mouseTracerPosition.Copy(p);
                     this.m_mouseTracerVelocity.SetZero();
-                    ///#endif
+                    // #endif
                     if (this.m_mouseJoint !== null) {
                         return;
                     }
@@ -290,9 +290,9 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     this.SpawnBomb(p);
                 }
                 MouseUp(p) {
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_mouseTracing = false;
-                    ///#endif
+                    // #endif
                     if (this.m_mouseJoint) {
                         this.m_world.DestroyJoint(this.m_mouseJoint);
                         this.m_mouseJoint = null;
@@ -352,11 +352,11 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     if (settings.drawShapes) {
                         flags |= box2d.b2DrawFlags.e_shapeBit;
                     }
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     if (settings.drawParticles) {
                         flags |= box2d.b2DrawFlags.e_particleBit;
                     }
-                    ///#endif
+                    // #endif
                     if (settings.drawJoints) {
                         flags |= box2d.b2DrawFlags.e_jointBit;
                     }
@@ -374,15 +374,15 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                     this.m_world.SetWarmStarting(settings.enableWarmStarting);
                     this.m_world.SetContinuousPhysics(settings.enableContinuous);
                     this.m_world.SetSubStepping(settings.enableSubStepping);
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_particleSystem.SetStrictContactCheck(settings.strictContacts);
-                    ///#endif
+                    // #endif
                     this.m_pointCount = 0;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     this.m_world.Step(timeStep, settings.velocityIterations, settings.positionIterations, settings.particleIterations);
                     ///#else
                     ///this.m_world.Step(timeStep, settings.velocityIterations, settings.positionIterations);
-                    ///#endif
+                    // #endif
                     this.m_world.DrawDebugData();
                     if (timeStep > 0) {
                         ++this.m_stepCount;
@@ -393,14 +393,14 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                         const jointCount = this.m_world.GetJointCount();
                         DebugDraw_1.g_debugDraw.DrawString(5, this.m_textLine, "bodies/contacts/joints = " + bodyCount + "/" + contactCount + "/" + jointCount);
                         this.m_textLine += DRAW_STRING_NEW_LINE;
-                        ///#if B2_ENABLE_PARTICLE
+                        // #if B2_ENABLE_PARTICLE
                         const particleCount = this.m_particleSystem.GetParticleCount();
                         const groupCount = this.m_particleSystem.GetParticleGroupCount();
                         const pairCount = this.m_particleSystem.GetPairCount();
                         const triadCount = this.m_particleSystem.GetTriadCount();
                         DebugDraw_1.g_debugDraw.DrawString(5, this.m_textLine, "particles/groups/pairs/triads = " + particleCount + "/" + groupCount + "/" + pairCount + "/" + triadCount);
                         this.m_textLine += DRAW_STRING_NEW_LINE;
-                        ///#endif
+                        // #endif
                         const proxyCount = this.m_world.GetProxyCount();
                         const height = this.m_world.GetTreeHeight();
                         const balance = this.m_world.GetTreeBalance();
@@ -459,7 +459,7 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                         DebugDraw_1.g_debugDraw.DrawString(5, this.m_textLine, "broad-phase [ave] (max) = " + p.broadphase.toFixed(2) + " [" + aveProfile.broadphase.toFixed(2) + "] (" + this.m_maxProfile.broadphase.toFixed(2) + ")");
                         this.m_textLine += DRAW_STRING_NEW_LINE;
                     }
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     if (this.m_mouseTracing && !this.m_mouseJoint) {
                         let delay = 0.1;
                         ///b2Vec2 acceleration = 2 / delay * (1 / delay * (m_mouseWorld - m_mouseTracerPosition) - m_mouseTracerVelocity);
@@ -481,7 +481,7 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
                         shape.ComputeAABB(aabb, xf, 0);
                         this.m_world.QueryAABB(callback, aabb);
                     }
-                    ///#endif
+                    // #endif
                     if (this.m_mouseJoint) {
                         const p1 = this.m_mouseJoint.GetAnchorB(new box2d.b2Vec2());
                         const p2 = this.m_mouseJoint.GetTarget();
@@ -612,7 +612,7 @@ System.register(["../../Box2D/Box2D", "./DebugDraw", "./ParticleParameter", "./M
             Test.PreSolve_s_state1 = [ /*box2d.b2_maxManifoldPoints*/];
             Test.PreSolve_s_state2 = [ /*box2d.b2_maxManifoldPoints*/];
             Test.PreSolve_s_worldManifold = new box2d.b2WorldManifold();
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             Test.k_ParticleColors = [
                 new box2d.b2Color(0xff / 0xff, 0x00 / 0xff, 0x00 / 0xff, 0xff / 0xff),
                 new box2d.b2Color(0x00 / 0xff, 0xff / 0xff, 0x00 / 0xff, 0xff / 0xff),

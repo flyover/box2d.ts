@@ -15,12 +15,15 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["../Testbed"], function (exports_1, context_1) {
+System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var testbed, SliderCrank;
+    var box2d, testbed, SliderCrank;
     return {
         setters: [
+            function (box2d_1) {
+                box2d = box2d_1;
+            },
             function (testbed_1) {
                 testbed = testbed_1;
             }
@@ -29,16 +32,108 @@ System.register(["../Testbed"], function (exports_1, context_1) {
             SliderCrank = class SliderCrank extends testbed.Test {
                 constructor() {
                     super();
+                    this.m_joint1 = null;
+                    this.m_joint2 = null;
+                    let ground = null;
+                    {
+                        const bd = new box2d.b2BodyDef();
+                        ground = this.m_world.CreateBody(bd);
+                        const shape = new box2d.b2EdgeShape();
+                        shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+                        ground.CreateFixture(shape, 0.0);
+                    }
+                    {
+                        let prevBody = ground;
+                        // Define crank.
+                        {
+                            const shape = new box2d.b2PolygonShape();
+                            shape.SetAsBox(0.5, 2.0);
+                            const bd = new box2d.b2BodyDef();
+                            bd.type = box2d.b2BodyType.b2_dynamicBody;
+                            bd.position.Set(0.0, 7.0);
+                            const body = this.m_world.CreateBody(bd);
+                            body.CreateFixture(shape, 2.0);
+                            const rjd = new box2d.b2RevoluteJointDef();
+                            rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 5.0));
+                            rjd.motorSpeed = 1.0 * box2d.b2_pi;
+                            rjd.maxMotorTorque = 10000.0;
+                            rjd.enableMotor = true;
+                            this.m_joint1 = /** @type {box2d.b2RevoluteJoint} */ (this.m_world.CreateJoint(rjd));
+                            prevBody = body;
+                        }
+                        // Define follower.
+                        {
+                            const shape = new box2d.b2PolygonShape();
+                            shape.SetAsBox(0.5, 4.0);
+                            const bd = new box2d.b2BodyDef();
+                            bd.type = box2d.b2BodyType.b2_dynamicBody;
+                            bd.position.Set(0.0, 13.0);
+                            const body = this.m_world.CreateBody(bd);
+                            body.CreateFixture(shape, 2.0);
+                            const rjd = new box2d.b2RevoluteJointDef();
+                            rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 9.0));
+                            rjd.enableMotor = false;
+                            this.m_world.CreateJoint(rjd);
+                            prevBody = body;
+                        }
+                        // Define piston
+                        {
+                            const shape = new box2d.b2PolygonShape();
+                            shape.SetAsBox(1.5, 1.5);
+                            const bd = new box2d.b2BodyDef();
+                            bd.type = box2d.b2BodyType.b2_dynamicBody;
+                            bd.fixedRotation = true;
+                            bd.position.Set(0.0, 17.0);
+                            const body = this.m_world.CreateBody(bd);
+                            body.CreateFixture(shape, 2.0);
+                            const rjd = new box2d.b2RevoluteJointDef();
+                            rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 17.0));
+                            this.m_world.CreateJoint(rjd);
+                            const pjd = new box2d.b2PrismaticJointDef();
+                            pjd.Initialize(ground, body, new box2d.b2Vec2(0.0, 17.0), new box2d.b2Vec2(0.0, 1.0));
+                            pjd.maxMotorForce = 1000.0;
+                            pjd.enableMotor = true;
+                            this.m_joint2 = /** @type {box2d.b2PrismaticJoint} */ (this.m_world.CreateJoint(pjd));
+                        }
+                        // Create a payload
+                        {
+                            const shape = new box2d.b2PolygonShape();
+                            shape.SetAsBox(1.5, 1.5);
+                            const bd = new box2d.b2BodyDef();
+                            bd.type = box2d.b2BodyType.b2_dynamicBody;
+                            bd.position.Set(0.0, 23.0);
+                            const body = this.m_world.CreateBody(bd);
+                            body.CreateFixture(shape, 2.0);
+                        }
+                    }
+                }
+                Keyboard(key) {
+                    switch (key) {
+                        case "f":
+                            this.m_joint2.EnableMotor(!this.m_joint2.IsMotorEnabled());
+                            this.m_joint2.GetBodyB().SetAwake(true);
+                            break;
+                        case "m":
+                            this.m_joint1.EnableMotor(!this.m_joint1.IsMotorEnabled());
+                            this.m_joint1.GetBodyB().SetAwake(true);
+                            break;
+                    }
                 }
                 Step(settings) {
                     super.Step(settings);
+                    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (f) toggle friction, (m) toggle motor");
+                    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+                    const torque = this.m_joint1.GetMotorTorque(settings.hz);
+                    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque.toFixed(0)}`);
+                    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
                 }
                 static Create() {
                     return new SliderCrank();
                 }
             };
+            SliderCrank.e_count = 30;
             exports_1("SliderCrank", SliderCrank);
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU2xpZGVyQ3JhbmsuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJTbGlkZXJDcmFuay50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRTs7Ozs7Ozs7Ozs7O1lBS0YsY0FBQSxpQkFBeUIsU0FBUSxPQUFPLENBQUMsSUFBSTtnQkFDM0M7b0JBQ0UsS0FBSyxFQUFFLENBQUM7Z0JBQ1YsQ0FBQztnQkFFTSxJQUFJLENBQUMsUUFBMEI7b0JBQ3BDLEtBQUssQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7Z0JBQ3ZCLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE1BQU07b0JBQ2xCLE9BQU8sSUFBSSxXQUFXLEVBQUUsQ0FBQztnQkFDM0IsQ0FBQzthQUNGLENBQUEifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU2xpZGVyQ3JhbmsuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJTbGlkZXJDcmFuay50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRTs7Ozs7Ozs7Ozs7Ozs7O1lBS0YsY0FBQSxpQkFBeUIsU0FBUSxPQUFPLENBQUMsSUFBSTtnQkFNM0M7b0JBQ0UsS0FBSyxFQUFFLENBQUM7b0JBSlYsYUFBUSxHQUEwQixJQUFJLENBQUM7b0JBQ3ZDLGFBQVEsR0FBMkIsSUFBSSxDQUFDO29CQUt0QyxJQUFJLE1BQU0sR0FBRyxJQUFJLENBQUM7b0JBQ2xCO3dCQUNFLE1BQU0sRUFBRSxHQUFHLElBQUksS0FBSyxDQUFDLFNBQVMsRUFBRSxDQUFDO3dCQUNqQyxNQUFNLEdBQUcsSUFBSSxDQUFDLE9BQU8sQ0FBQyxVQUFVLENBQUMsRUFBRSxDQUFDLENBQUM7d0JBRXJDLE1BQU0sS0FBSyxHQUFHLElBQUksS0FBSyxDQUFDLFdBQVcsRUFBRSxDQUFDO3dCQUN0QyxLQUFLLENBQUMsR0FBRyxDQUFDLElBQUksS0FBSyxDQUFDLE1BQU0sQ0FBQyxDQUFDLElBQUksRUFBRSxHQUFHLENBQUMsRUFBRSxJQUFJLEtBQUssQ0FBQyxNQUFNLENBQUMsSUFBSSxFQUFFLEdBQUcsQ0FBQyxDQUFDLENBQUM7d0JBQ3JFLE1BQU0sQ0FBQyxhQUFhLENBQUMsS0FBSyxFQUFFLEdBQUcsQ0FBQyxDQUFDO3FCQUNsQztvQkFFRDt3QkFDRSxJQUFJLFFBQVEsR0FBRyxNQUFNLENBQUM7d0JBRXRCLGdCQUFnQjt3QkFDaEI7NEJBQ0UsTUFBTSxLQUFLLEdBQUcsSUFBSSxLQUFLLENBQUMsY0FBYyxFQUFFLENBQUM7NEJBQ3pDLEtBQUssQ0FBQyxRQUFRLENBQUMsR0FBRyxFQUFFLEdBQUcsQ0FBQyxDQUFDOzRCQUV6QixNQUFNLEVBQUUsR0FBRyxJQUFJLEtBQUssQ0FBQyxTQUFTLEVBQUUsQ0FBQzs0QkFDakMsRUFBRSxDQUFDLElBQUks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

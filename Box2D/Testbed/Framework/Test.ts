@@ -1,9 +1,9 @@
 import * as box2d from "../../Box2D/Box2D";
 import { g_debugDraw } from "./DebugDraw";
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 import { ParticleParameter } from "./ParticleParameter";
 import { Main } from "./Main";
-///#endif
+// #endif
 
 export const DRAW_STRING_NEW_LINE: number = 16;
 
@@ -17,16 +17,16 @@ export class Settings {
   public hz: number = 60;
   public velocityIterations: number = 8;
   public positionIterations: number = 3;
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   // Particle iterations are needed for numerical stability in particle
   // simulations with small particles and relatively high gravity.
   // b2CalculateParticleIterations helps to determine the number.
   public particleIterations: number = box2d.b2CalculateParticleIterations(10, 0.04, 1 / this.hz);
-  ///#endif
+  // #endif
   public drawShapes: boolean = true;
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public drawParticles: boolean = true;
-  ///#endif
+  // #endif
   public drawJoints: boolean = true;
   public drawAABBs: boolean = false;
   public drawContactPoints: boolean = false;
@@ -43,9 +43,9 @@ export class Settings {
   public enableSleep: boolean = true;
   public pause: boolean = false;
   public singleStep: boolean = false;
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public strictContacts: boolean = false;
-  ///#endif
+  // #endif
 }
 
 export class TestEntry {
@@ -77,11 +77,11 @@ export class DestructionListener extends box2d.b2DestructionListener {
 
   public SayGoodbyeFixture(fixture: box2d.b2Fixture): void {}
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup) {
     this.test.ParticleGroupDestroyed(group);
   }
-  ///#endif
+  // #endif
 }
 
 export class ContactPoint {
@@ -95,7 +95,7 @@ export class ContactPoint {
   public separation: number = 0;
 }
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 class QueryCallback2 extends box2d.b2QueryCallback {
   m_particleSystem: box2d.b2ParticleSystem;
   m_shape: box2d.b2Shape;
@@ -128,15 +128,15 @@ class QueryCallback2 extends box2d.b2QueryCallback {
     return true;
   }
 }
-///#endif
+// #endif
 
 export class Test extends box2d.b2ContactListener {
   public static k_maxContactPoints: number = 2048;
 
   public m_world: box2d.b2World = null;
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   m_particleSystem: box2d.b2ParticleSystem = null;
-  ///#endif
+  // #endif
   public m_bomb: box2d.b2Body = null;
   public m_textLine: number = 30;
   public m_mouseJoint: box2d.b2MouseJoint = null;
@@ -146,31 +146,31 @@ export class Test extends box2d.b2ContactListener {
   public m_bombSpawnPoint: box2d.b2Vec2 = new box2d.b2Vec2();
   public m_bombSpawning: boolean = false;
   public m_mouseWorld: box2d.b2Vec2 = new box2d.b2Vec2();
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public m_mouseTracing: boolean = false;
   public m_mouseTracerPosition: box2d.b2Vec2 = new box2d.b2Vec2();
   public m_mouseTracerVelocity: box2d.b2Vec2 = new box2d.b2Vec2();
-  ///#endif
+  // #endif
   public m_stepCount: number = 0;
   public m_maxProfile: box2d.b2Profile = new box2d.b2Profile();
   public m_totalProfile: box2d.b2Profile = new box2d.b2Profile();
   public m_groundBody: box2d.b2Body;
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   m_particleParameters: ParticleParameter.Value[] = null;
   m_particleParameterDef: ParticleParameter.Definition = null;
-  ///#endif
+  // #endif
 
   constructor() {
     super();
 
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     const particleSystemDef = new box2d.b2ParticleSystemDef();
-    ///#endif
+    // #endif
     const gravity: box2d.b2Vec2 = new box2d.b2Vec2(0, -10);
     this.m_world = new box2d.b2World(gravity);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_particleSystem = this.m_world.CreateParticleSystem(particleSystemDef);
-    ///#endif
+    // #endif
     this.m_bomb = null;
     this.m_textLine = 30;
     this.m_mouseJoint = null;
@@ -180,10 +180,10 @@ export class Test extends box2d.b2ContactListener {
     this.m_world.SetContactListener(this);
     this.m_world.SetDebugDraw(g_debugDraw);
 
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_particleSystem.SetGravityScale(0.4);
     this.m_particleSystem.SetDensity(1.2);
-    ///#endif
+    // #endif
 
     const bodyDef: box2d.b2BodyDef = new box2d.b2BodyDef();
     this.m_groundBody = this.m_world.CreateBody(bodyDef);
@@ -191,9 +191,9 @@ export class Test extends box2d.b2ContactListener {
 
   public JointDestroyed(joint: box2d.b2Joint): void {}
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public ParticleGroupDestroyed(group: box2d.b2ParticleGroup) {}
-  ///#endif
+  // #endif
 
   public BeginContact(contact: box2d.b2Contact): void {}
 
@@ -250,11 +250,11 @@ export class Test extends box2d.b2ContactListener {
 
   public MouseDown(p: box2d.b2Vec2): void {
     this.m_mouseWorld.Copy(p);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_mouseTracing = true;
     this.m_mouseTracerPosition.Copy(p);
     this.m_mouseTracerVelocity.SetZero();
-    ///#endif
+    // #endif
 
     if (this.m_mouseJoint !== null) {
       return;
@@ -328,9 +328,9 @@ export class Test extends box2d.b2ContactListener {
   }
 
   public MouseUp(p: box2d.b2Vec2): void {
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_mouseTracing = false;
-    ///#endif
+    // #endif
     if (this.m_mouseJoint) {
       this.m_world.DestroyJoint(this.m_mouseJoint);
       this.m_mouseJoint = null;
@@ -402,9 +402,9 @@ export class Test extends box2d.b2ContactListener {
 
     let flags = box2d.b2DrawFlags.e_none;
     if (settings.drawShapes) { flags |= box2d.b2DrawFlags.e_shapeBit;        }
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (settings.drawParticles) { flags |= box2d.b2DrawFlags.e_particleBit; }
-    ///#endif
+    // #endif
     if (settings.drawJoints) { flags |= box2d.b2DrawFlags.e_jointBit;        }
     if (settings.drawAABBs ) { flags |= box2d.b2DrawFlags.e_aabbBit;         }
     if (settings.drawCOMs  ) { flags |= box2d.b2DrawFlags.e_centerOfMassBit; }
@@ -415,17 +415,17 @@ export class Test extends box2d.b2ContactListener {
     this.m_world.SetWarmStarting(settings.enableWarmStarting);
     this.m_world.SetContinuousPhysics(settings.enableContinuous);
     this.m_world.SetSubStepping(settings.enableSubStepping);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_particleSystem.SetStrictContactCheck(settings.strictContacts);
-    ///#endif
+    // #endif
 
     this.m_pointCount = 0;
 
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_world.Step(timeStep, settings.velocityIterations, settings.positionIterations, settings.particleIterations);
     ///#else
     ///this.m_world.Step(timeStep, settings.velocityIterations, settings.positionIterations);
-    ///#endif
+    // #endif
 
     this.m_world.DrawDebugData();
 
@@ -440,14 +440,14 @@ export class Test extends box2d.b2ContactListener {
       g_debugDraw.DrawString(5, this.m_textLine, "bodies/contacts/joints = " + bodyCount + "/" + contactCount + "/" + jointCount);
       this.m_textLine += DRAW_STRING_NEW_LINE;
 
-      ///#if B2_ENABLE_PARTICLE
+      // #if B2_ENABLE_PARTICLE
       const particleCount = this.m_particleSystem.GetParticleCount();
       const groupCount = this.m_particleSystem.GetParticleGroupCount();
       const pairCount = this.m_particleSystem.GetPairCount();
       const triadCount = this.m_particleSystem.GetTriadCount();
       g_debugDraw.DrawString(5, this.m_textLine, "particles/groups/pairs/triads = " + particleCount + "/" + groupCount + "/" + pairCount + "/" + triadCount);
       this.m_textLine += DRAW_STRING_NEW_LINE;
-      ///#endif
+      // #endif
 
       const proxyCount = this.m_world.GetProxyCount();
       const height = this.m_world.GetTreeHeight();
@@ -513,7 +513,7 @@ export class Test extends box2d.b2ContactListener {
       this.m_textLine += DRAW_STRING_NEW_LINE;
     }
 
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (this.m_mouseTracing && !this.m_mouseJoint) {
       let delay = 0.1;
       ///b2Vec2 acceleration = 2 / delay * (1 / delay * (m_mouseWorld - m_mouseTracerPosition) - m_mouseTracerVelocity);
@@ -535,7 +535,7 @@ export class Test extends box2d.b2ContactListener {
       shape.ComputeAABB(aabb, xf, 0);
       this.m_world.QueryAABB(callback, aabb);
     }
-    ///#endif
+    // #endif
 
     if (this.m_mouseJoint) {
       const p1 = this.m_mouseJoint.GetAnchorB(new box2d.b2Vec2());
@@ -600,7 +600,7 @@ export class Test extends box2d.b2ContactListener {
     return 1.0;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   static k_ParticleColors: box2d.b2Color[] = [
     new box2d.b2Color(0xff / 0xff, 0x00 / 0xff, 0x00 / 0xff, 0xff / 0xff), // red
     new box2d.b2Color(0x00 / 0xff, 0xff / 0xff, 0x00 / 0xff, 0xff / 0xff), // green
@@ -689,5 +689,5 @@ export class Test extends box2d.b2ContactListener {
     }
   }
 
-  ///#endif
+  // #endif
 }

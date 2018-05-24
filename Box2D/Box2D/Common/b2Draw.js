@@ -160,9 +160,9 @@ System.register([], function (exports_1, context_1) {
                 b2DrawFlags[b2DrawFlags["e_aabbBit"] = 4] = "e_aabbBit";
                 b2DrawFlags[b2DrawFlags["e_pairBit"] = 8] = "e_pairBit";
                 b2DrawFlags[b2DrawFlags["e_centerOfMassBit"] = 16] = "e_centerOfMassBit";
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 b2DrawFlags[b2DrawFlags["e_particleBit"] = 32] = "e_particleBit";
-                ///#endif
+                // #endif
                 b2DrawFlags[b2DrawFlags["e_controllerBit"] = 64] = "e_controllerBit";
                 b2DrawFlags[b2DrawFlags["e_all"] = 63] = "e_all";
             })(b2DrawFlags || (b2DrawFlags = {}));
@@ -191,9 +191,9 @@ System.register([], function (exports_1, context_1) {
                 DrawSolidPolygon(vertices, vertexCount, color) { }
                 DrawCircle(center, radius, color) { }
                 DrawSolidCircle(center, radius, axis, color) { }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 DrawParticles(centers, radius, colors, count) { }
-                ///#endif
+                // #endif
                 DrawSegment(p1, p2, color) { }
                 DrawTransform(xf) { }
             };

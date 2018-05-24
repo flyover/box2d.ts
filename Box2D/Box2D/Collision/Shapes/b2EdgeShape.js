@@ -171,13 +171,13 @@ System.register(["../../Common/b2Settings", "../../Common/b2Math", "./b2Shape"],
                     log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
                 }
             };
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             /// @see b2Shape::ComputeDistance
             b2EdgeShape.ComputeDistance_s_v1 = new b2Math_1.b2Vec2();
             b2EdgeShape.ComputeDistance_s_v2 = new b2Math_1.b2Vec2();
             b2EdgeShape.ComputeDistance_s_d = new b2Math_1.b2Vec2();
             b2EdgeShape.ComputeDistance_s_s = new b2Math_1.b2Vec2();
-            ///#endif
+            // #endif
             /// Implement b2Shape.
             // p = p1 + t * d
             // v = v1 + s * e

@@ -59,7 +59,7 @@ export class b2CircleShape extends b2Shape {
     return b2Vec2.DotVV(d, d) <= b2Sq(this.m_radius);
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   /// @see b2Shape::ComputeDistance
   private static ComputeDistance_s_center = new b2Vec2();
   public ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number {
@@ -67,7 +67,7 @@ export class b2CircleShape extends b2Shape {
     b2Vec2.SubVV(p, center, normal);
     return normal.Normalize() - this.m_radius;
   }
-  ///#endif
+  // #endif
 
   /// Implement b2Shape.
   // Collision Detection in Interactive 3D Environments by Gino van den Bergen

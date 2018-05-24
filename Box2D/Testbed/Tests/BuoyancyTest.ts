@@ -16,31 +16,32 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D/Box2D";
+import * as testbed from "Testbed";
+import { b2BuoyancyController } from "Contributions/Enhancements/Controllers/b2BuoyancyController";
 
 export class BuoyancyTest extends testbed.Test {
   m_bodies: box2d.b2Body[];
-  // m_controller: box2d.b2BuoyancyController;
+  m_controller: b2BuoyancyController;
 
   constructor() {
     super();
 
     this.m_bodies = new Array();
 
-    // var bc = new box2d.b2BuoyancyController();
-    // this.m_controller = bc;
+    const bc = new b2BuoyancyController();
+    this.m_controller = bc;
 
-    // bc.normal.Set(0.0, 1.0);
-    // bc.offset = 20.0;
-    // bc.density = 2.0;
-    // bc.linearDrag = 5.0;
-    // bc.angularDrag = 2.0;
+    bc.normal.Set(0.0, 1.0);
+    bc.offset = 20.0;
+    bc.density = 2.0;
+    bc.linearDrag = 5.0;
+    bc.angularDrag = 2.0;
 
-    var ground = this.m_world.CreateBody(new box2d.b2BodyDef());
+    const ground = this.m_world.CreateBody(new box2d.b2BodyDef());
 
     {
-      var shape = new box2d.b2EdgeShape();
+      const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(-40.0, 25.0));
@@ -51,15 +52,15 @@ export class BuoyancyTest extends testbed.Test {
 
     // Spawn in a bunch of crap
     {
-      for (var i = 0; i < 5; i++) {
-        var bd = new box2d.b2BodyDef();
+      for (let i = 0; i < 5; i++) {
+        const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         //bd.isBullet = true;
         bd.position.Set(Math.random() * 40.0 - 20.0, Math.random() * 15.0 + 5.0);
         bd.angle = Math.random() * Math.PI;
-        var body = this.m_world.CreateBody(bd);
+        const body = this.m_world.CreateBody(bd);
 
-        var fd = new box2d.b2FixtureDef();
+        const fd = new box2d.b2FixtureDef();
         fd.density = 1.0;
         // Override the default friction.
         fd.friction = 0.3;
@@ -74,15 +75,15 @@ export class BuoyancyTest extends testbed.Test {
     }
 
     {
-      for (var i = 0; i < 5; i++) {
-        var bd = new box2d.b2BodyDef();
+      for (let i = 0; i < 5; i++) {
+        const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         //bd.isBullet = true;
         bd.position.Set(Math.random() * 40.0 - 20.0, Math.random() * 15.0 + 5.0);
         bd.angle = Math.random() * Math.PI;
-        var body = this.m_world.CreateBody(bd);
+        const body = this.m_world.CreateBody(bd);
 
-        var fd = new box2d.b2FixtureDef();
+        const fd = new box2d.b2FixtureDef();
         fd.density = 1.0;
         // Override the default friction.
         fd.friction = 0.3;
@@ -95,15 +96,15 @@ export class BuoyancyTest extends testbed.Test {
     }
 
     {
-      for (var i = 0; i < 15; i++) {
-        var bd = new box2d.b2BodyDef();
+      for (let i = 0; i < 15; i++) {
+        const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         //bd.isBullet = true;
         bd.position.Set(Math.random() * 40.0 - 20.0, Math.random() * 15.0 + 5.0);
         bd.angle = Math.random() * Math.PI;
-        var body = this.m_world.CreateBody(bd);
+        const body = this.m_world.CreateBody(bd);
 
-        var fd = new box2d.b2FixtureDef();
+        const fd = new box2d.b2FixtureDef();
         fd.density = 1.0;
         fd.friction = 0.3;
         fd.restitution = 0.1;
@@ -117,7 +118,7 @@ export class BuoyancyTest extends testbed.Test {
             new box2d.b2Vec2(1.0 + Math.random() * 1.0, 1.0 + Math.random() * 1.0)
           ]);
         } else if (Math.random() > 0.5) {
-          var array = [];
+          const array = [];
           array[0] = new box2d.b2Vec2(0.0, 1.0 + Math.random() * 1.0);
           array[2] = new box2d.b2Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0);
           array[3] = new box2d.b2Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0);
@@ -141,13 +142,13 @@ export class BuoyancyTest extends testbed.Test {
 
     //Add some exciting bath toys
     {
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 40.0);
       bd.angle = 0;
-      var body = this.m_world.CreateBody(bd);
+      const body = this.m_world.CreateBody(bd);
 
-      var fd = new box2d.b2FixtureDef();
+      const fd = new box2d.b2FixtureDef();
       fd.density = 3.0;
       const polygon = new box2d.b2PolygonShape();
       fd.shape = polygon;
@@ -158,12 +159,12 @@ export class BuoyancyTest extends testbed.Test {
     }
 
     {
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 30.0);
-      var body = this.m_world.CreateBody(bd);
+      const body = this.m_world.CreateBody(bd);
 
-      var fd = new box2d.b2FixtureDef();
+      const fd = new box2d.b2FixtureDef();
       fd.density = 2.0;
       const circle = new box2d.b2CircleShape(0.7);
       fd.shape = circle;
@@ -188,18 +189,18 @@ export class BuoyancyTest extends testbed.Test {
     }
 
     // if (box2d.DEBUG) {
-    //   for (var body_i = 0; i < this.m_bodies.length; ++i)
+    //   for (let body_i = 0; i < this.m_bodies.length; ++i)
     //     this.m_controller.AddBody(this.m_bodies[body_i]);
-    //   for (var body_i = 0; i < this.m_bodies.length; ++i)
+    //   for (let body_i = 0; i < this.m_bodies.length; ++i)
     //     this.m_controller.RemoveBody(this.m_bodies[body_i]);
     // }
-    // for (var body_i = 0; i < this.m_bodies.length; ++i)
-    //   this.m_controller.AddBody(this.m_bodies[body_i]);
+    for (let body_i = 0; body_i < this.m_bodies.length; ++body_i)
+      this.m_controller.AddBody(this.m_bodies[body_i]);
     // if (box2d.DEBUG) {
     //   this.m_world.AddController(this.m_controller);
     //   this.m_world.RemoveController(this.m_controller);
     // }
-    // this.m_world.AddController(this.m_controller);
+    this.m_world.AddController(this.m_controller);
   }
 
   public Step(settings: testbed.Settings): void {

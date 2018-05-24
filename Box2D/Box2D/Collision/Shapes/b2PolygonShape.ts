@@ -229,7 +229,7 @@ export class b2PolygonShape extends b2Shape {
     return true;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   /// @see b2Shape::ComputeDistance
   private static ComputeDistance_s_pLocal = new b2Vec2();
   private static ComputeDistance_s_normalForMaxDistance = new b2Vec2();
@@ -268,7 +268,7 @@ export class b2PolygonShape extends b2Shape {
       return maxDistance;
     }
   }
-  ///#endif
+  // #endif
 
   /// Implement b2Shape.
   private static RayCast_s_p1 = new b2Vec2();

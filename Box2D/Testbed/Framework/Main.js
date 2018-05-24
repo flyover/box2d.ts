@@ -24,10 +24,10 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
             }
         ],
         execute: function () {
-            ///#endif
+            // #endif
             Main = class Main {
                 constructor() {
-                    ///#endif
+                    // #endif
                     this.m_time_last = 0;
                     this.m_fps_time = 0;
                     this.m_fps_frames = 0;
@@ -149,9 +149,9 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                     const number_input_table = controls_div.appendChild(document.createElement("table"));
                     connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, (value) => { this.m_settings.velocityIterations = value; }, 1, 20, 1);
                     connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, (value) => { this.m_settings.positionIterations = value; }, 1, 20, 1);
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     connect_number_input(number_input_table, "Pcl Iters", this.m_settings.particleIterations, (value) => { this.m_settings.particleIterations = value; }, 1, 100, 1);
-                    ///#endif
+                    // #endif
                     connect_number_input(number_input_table, "Hertz", this.m_settings.hz, (value) => { this.m_settings.hz = value; }, 10, 120, 1);
                     // simulation checkbox inputs
                     function connect_checkbox_input(parent, label, init, update) {
@@ -170,17 +170,17 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                     connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.enableWarmStarting, (value) => { this.m_settings.enableWarmStarting = value; });
                     connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.enableContinuous, (value) => { this.m_settings.enableContinuous = value; });
                     connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.enableSubStepping, (value) => { this.m_settings.enableSubStepping = value; });
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", this.m_settings.strictContacts, (value) => { this.m_settings.strictContacts = value; });
-                    ///#endif
+                    // #endif
                     // draw checkbox inputs
                     const draw_fieldset = controls_div.appendChild(document.createElement("fieldset"));
                     const draw_legend = draw_fieldset.appendChild(document.createElement("legend"));
                     draw_legend.appendChild(document.createTextNode("Draw"));
                     connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, (value) => { this.m_settings.drawShapes = value; });
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     connect_checkbox_input(draw_fieldset, "Particles", this.m_settings.drawParticles, (value) => { this.m_settings.drawParticles = value; });
-                    ///#endif
+                    // #endif
                     connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.drawJoints, (value) => { this.m_settings.drawJoints = value; });
                     connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.drawAABBs, (value) => { this.m_settings.drawAABBs = value; });
                     connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.drawContactPoints, (value) => { this.m_settings.drawContactPoints = value; });
@@ -394,7 +394,7 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                         case "]":
                             this.IncrementTest();
                             break;
-                        ///#if B2_ENABLE_PARTICLE
+                        // #if B2_ENABLE_PARTICLE
                         case ",":
                             if (this.m_shift) {
                                 // Press < to select the previous particle parameter setting.
@@ -414,7 +414,7 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                         ///case ".":
                         ///  this.SingleStep();
                         ///  break;
-                        ///#endif
+                        // #endif
                         default:
                             // console.log(e.keyCode);
                             break;
@@ -469,17 +469,17 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                     this.LoadTest();
                 }
                 LoadTest(restartTest = false) {
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     Main.fullscreenUI.Reset();
                     if (!restartTest)
                         Main.particleParameter.Reset();
-                    ///#endif
+                    // #endif
                     this.m_demo_time = 0;
-                    ///#if B2_ENABLE_PARTICLE
+                    // #if B2_ENABLE_PARTICLE
                     if (this.m_test) {
                         this.m_test.RestoreParticleParameters();
                     }
-                    ///#endif
+                    // #endif
                     this.m_test = TestEntries_1.g_testEntries[this.m_test_index].createFcn();
                     if (!restartTest) {
                         this.HomeCamera();
@@ -532,12 +532,12 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                         ///ctx.rotate(-g_camera.m_roll.GetAngle());
                         ctx.translate(-DebugDraw_1.g_camera.m_center.x, -DebugDraw_1.g_camera.m_center.y);
                         this.m_test.Step(this.m_settings);
-                        ///#if B2_ENABLE_PARTICLE
+                        // #if B2_ENABLE_PARTICLE
                         // Update the state of the particle parameter.
                         let restartTest = [false];
                         Main.particleParameter.Changed(restartTest);
-                        ///#endif
-                        ///#if B2_ENABLE_PARTICLE
+                        // #endif
+                        // #if B2_ENABLE_PARTICLE
                         let msg = TestEntries_1.g_testEntries[this.m_test_index].name;
                         if (Main.fullscreenUI.GetParticleParameterSelectionEnabled()) {
                             msg += " : ";
@@ -546,19 +546,19 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                         this.m_test.DrawTitle(msg);
                         ///#else
                         ///this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
-                        ///#endif
+                        // #endif
                         ctx.strokeStyle = "yellow";
                         ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
                         ctx.restore();
-                        ///#if B2_ENABLE_PARTICLE
+                        // #if B2_ENABLE_PARTICLE
                         if (restartTest[0]) {
                             this.LoadTest(true);
                         }
-                        ///#endif
+                        // #endif
                         this.UpdateTest(time_elapsed);
                     }
                 }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 /**
                  * Set whether to restart the test on particle parameter
                  * changes. This parameter is re-enabled when the test changes.
@@ -595,7 +595,7 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                     Main.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
                 }
             };
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             Main.fullscreenUI = new FullscreenUI_1.FullScreenUI();
             Main.particleParameter = new ParticleParameter_1.ParticleParameter();
             exports_1("Main", Main);

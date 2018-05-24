@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 import { b2_linearSlop, b2_maxFloat, b2_maxParticleIndex, b2_invalidParticleIndex, b2_minParticleSystemBufferCapacity, b2_maxTriadDistanceSquared, b2_barrierCollisionTime, b2MakeArray } from "../Common/b2Settings";
 import { b2_maxParticlePressure, b2_minParticleWeight, b2_maxParticleForce, b2_particleStride } from "../Common/b2Settings";
@@ -1711,13 +1711,13 @@ export class b2ParticleSystem {
   ApplyForce(firstIndex: number, lastIndex: number, force: b2Vec2): void {
     // Ensure we're not trying to apply force to particles that can't move,
     // such as wall particles.
-    ///#if B2_ASSERT_ENABLED
+    // #if B2_ASSERT_ENABLED
     ///let flags = 0;
     ///for (let i = firstIndex; i < lastIndex; i++) {
     ///flags |= this.m_flagsBuffer.data[i];
     ///}
     ///b2Assert(this.ForceCanBeApplied(flags));
-    ///#endif
+    // #endif
 
     // Early out if force does nothing (optimization).
     ///const b2Vec2 distributedForce = force / (float32)(lastIndex - firstIndex);
@@ -4751,11 +4751,11 @@ export class InsideBoundsEnumerator {
   GetNext(): number {
     while (this.m_first < this.m_last) {
       let xTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.xMask) >>> 0;
-      ///#if B2_ASSERT_ENABLED
+      // #if B2_ASSERT_ENABLED
       ///let yTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.yMask) >>> 0;
       ///b2Assert(yTag >= this.m_yLower);
       ///b2Assert(yTag <= this.m_yUpper);
-      ///#endif
+      // #endif
       if (xTag >= this.m_xLower && xTag <= this.m_xUpper) {
         return (this.m_system.m_proxyBuffer.data[this.m_first++]).index;
       }
@@ -5194,4 +5194,4 @@ export class SolveCollisionCallback extends b2FixtureParticleQueryCallback {
 
 }
 
-///#endif
+// #endif

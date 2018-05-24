@@ -23,10 +23,10 @@ import { b2Contact } from "./Contacts/b2Contact";
 import { b2Body, b2BodyType } from "./b2Body";
 import { b2Joint } from "./Joints/b2Joint";
 import { b2Fixture, b2Filter } from "./b2Fixture";
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 import { b2ParticleGroup } from "../Particle/b2ParticleGroup";
 import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "../Particle/b2ParticleSystem";
-///#endif
+// #endif
 
 /// Joints and fixtures are destroyed when their associated
 /// body is destroyed. Implement this listener so that you
@@ -40,7 +40,7 @@ export class b2DestructionListener {
   /// to the destruction of its parent body.
   public SayGoodbyeFixture(fixture: b2Fixture): void {}
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   /// Called when any particle group is about to be destroyed.
   public SayGoodbyeParticleGroup(group: b2ParticleGroup): void {}
 
@@ -50,7 +50,7 @@ export class b2DestructionListener {
   /// b2ParticleSystem::GetParticleHandleFromIndex() to determine which
   /// particle has been destroyed.
   public SayGoodbyeParticle(system: b2ParticleSystem, index: number): void {}
-  ///#endif
+  // #endif
 }
 
 /// Implement this class to provide collision filtering. In other words, you can implement
@@ -83,7 +83,7 @@ export class b2ContactFilter {
     return collide;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public ShouldCollideFixtureParticle(fixture: b2Fixture, system: b2ParticleSystem, index: number): boolean {
     return true;
   }
@@ -91,7 +91,7 @@ export class b2ContactFilter {
   public ShouldCollideParticleParticle(system: b2ParticleSystem, indexA: number, indexB: number): boolean {
     return true;
   }
-  ///#endif
+  // #endif
 
   public static b2_defaultFilter: b2ContactFilter = new b2ContactFilter();
 }
@@ -123,12 +123,12 @@ export class b2ContactListener {
   /// Called when two fixtures cease to touch.
   public EndContact(contact: b2Contact): void {}
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public BeginContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void {}
   public EndContactFixtureParticle(system: b2ParticleSystem, contact: b2ParticleBodyContact): void {}
   public BeginContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void {}
   public EndContactParticleParticle(system: b2ParticleSystem, contact: b2ParticleContact): void {}
-  ///#endif
+  // #endif
 
   /// This is called after a contact is updated. This allows you to inspect a
   /// contact before it goes to the solver. If you are careful, you can modify the
@@ -162,14 +162,14 @@ export class b2QueryCallback {
     return true;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public ReportParticle(system: b2ParticleSystem, index: number): boolean {
     return false;
   }
   public ShouldQueryParticleSystem(system: b2ParticleSystem): boolean {
     return true;
   }
-  ///#endif
+  // #endif
 }
 
 export type b2QueryCallbackFunction = { (fixture: b2Fixture): boolean };
@@ -192,14 +192,14 @@ export class b2RayCastCallback {
     return fraction;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public ReportParticle(system: b2ParticleSystem, index: number, point: b2Vec2, normal: b2Vec2, fraction: number): number {
     return 0;
   }
   public ShouldQueryParticleSystem(system: b2ParticleSystem): boolean {
     return true;
   }
-  ///#endif
+  // #endif
 }
 
 export type b2RayCastCallbackFunction = { (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number };

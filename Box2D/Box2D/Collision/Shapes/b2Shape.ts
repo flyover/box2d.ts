@@ -76,14 +76,14 @@ export abstract class b2Shape {
   /// @param p a point in world coordinates.
   public abstract TestPoint(xf: b2Transform, p: b2Vec2): boolean;
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   /// Compute the distance from the current shape to the specified point. This only works for convex shapes.
   /// @param xf the shape world transform.
   /// @param p a point in world coordinates.
   /// @param distance returns the distance from the current shape.
   /// @param normal returns the direction in which the distance increases.
   public abstract ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-  ///#endif
+  // #endif
 
   /// Cast a ray against a child shape.
   /// @param output the ray-cast results.

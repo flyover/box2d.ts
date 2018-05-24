@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2Color } from "../Common/b2Draw";
@@ -233,4 +233,4 @@ export class b2ParticleGroup {
   }
 }
 
-///#endif
+// #endif

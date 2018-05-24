@@ -512,13 +512,13 @@ System.register(["../../Common/b2Settings", "../../Common/b2Math", "./b2Shape"],
             b2PolygonShape.Set_s_v = new b2Math_1.b2Vec2();
             /// @see b2Shape::TestPoint
             b2PolygonShape.TestPoint_s_pLocal = new b2Math_1.b2Vec2();
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             /// @see b2Shape::ComputeDistance
             b2PolygonShape.ComputeDistance_s_pLocal = new b2Math_1.b2Vec2();
             b2PolygonShape.ComputeDistance_s_normalForMaxDistance = new b2Math_1.b2Vec2();
             b2PolygonShape.ComputeDistance_s_minDistance = new b2Math_1.b2Vec2();
             b2PolygonShape.ComputeDistance_s_distance = new b2Math_1.b2Vec2();
-            ///#endif
+            // #endif
             /// Implement b2Shape.
             b2PolygonShape.RayCast_s_p1 = new b2Math_1.b2Vec2();
             b2PolygonShape.RayCast_s_p2 = new b2Math_1.b2Vec2();

@@ -167,7 +167,7 @@ System.register(["../../Box2D/Box2D"], function (exports_1, context_1) {
                         ctx.stroke();
                     }
                 }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 DrawParticles(centers, radius, colors, count) {
                     const ctx = this.m_ctx;
                     if (ctx) {
@@ -192,7 +192,7 @@ System.register(["../../Box2D/Box2D"], function (exports_1, context_1) {
                         }
                     }
                 }
-                ///#endif
+                // #endif
                 DrawSegment(p1, p2, color) {
                     const ctx = this.m_ctx;
                     if (ctx) {

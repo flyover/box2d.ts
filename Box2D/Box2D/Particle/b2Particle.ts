@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 import { b2_invalidParticleIndex } from "../Common/b2Settings";
 import { b2Clamp, b2Vec2 } from "../Common/b2Math";
@@ -99,4 +99,4 @@ export class b2ParticleHandle {
   public SetIndex(index: number): void { this.m_index = index; }
 }
 
-///#endif
+// #endif

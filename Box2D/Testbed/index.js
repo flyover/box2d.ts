@@ -10,14 +10,14 @@ function boot(args) {
       typescriptOptions: {},
       packages: {
         '.': { defaultExtension: 'ts' },
-        '../Box2D': { defaultExtension: 'ts' }
+        '..': { defaultExtension: 'ts' }
       }
     });
   } else {
     System.config({
       packages: {
         '.': { defaultExtension: 'js' },
-        '../Box2D': { defaultExtension: 'js' }
+        '..': { defaultExtension: 'js' }
       }
     });
   }

@@ -29,7 +29,7 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
             }
         ],
         execute: function () {
-            ///#endif
+            // #endif
             /// Joints and fixtures are destroyed when their associated
             /// body is destroyed. Implement this listener so that you
             /// may nullify references to these joints and shapes.
@@ -40,7 +40,7 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
                 /// Called when any fixture is about to be destroyed due
                 /// to the destruction of its parent body.
                 SayGoodbyeFixture(fixture) { }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 /// Called when any particle group is about to be destroyed.
                 SayGoodbyeParticleGroup(group) { }
                 /// Called when a particle is about to be destroyed.
@@ -75,7 +75,7 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
                     const collide = (((filter1.maskBits & filter2.categoryBits) !== 0) && ((filter1.categoryBits & filter2.maskBits) !== 0));
                     return collide;
                 }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 ShouldCollideFixtureParticle(fixture, system, index) {
                     return true;
                 }
@@ -83,7 +83,7 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
                     return true;
                 }
             };
-            ///#endif
+            // #endif
             b2ContactFilter.b2_defaultFilter = new b2ContactFilter();
             exports_1("b2ContactFilter", b2ContactFilter);
             /// Contact impulses for reporting. Impulses are used instead of forces because
@@ -111,12 +111,12 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
                 BeginContact(contact) { }
                 /// Called when two fixtures cease to touch.
                 EndContact(contact) { }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 BeginContactFixtureParticle(system, contact) { }
                 EndContactFixtureParticle(system, contact) { }
                 BeginContactParticleParticle(system, contact) { }
                 EndContactParticleParticle(system, contact) { }
-                ///#endif
+                // #endif
                 /// This is called after a contact is updated. This allows you to inspect a
                 /// contact before it goes to the solver. If you are careful, you can modify the
                 /// contact manifold (e.g. disable contact).
@@ -146,7 +146,7 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
                 ReportFixture(fixture) {
                     return true;
                 }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 ReportParticle(system, index) {
                     return false;
                 }
@@ -172,7 +172,7 @@ System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, conte
                 ReportFixture(fixture, point, normal, fraction) {
                     return fraction;
                 }
-                ///#if B2_ENABLE_PARTICLE
+                // #if B2_ENABLE_PARTICLE
                 ReportParticle(system, index, point, normal, fraction) {
                     return 0;
                 }

@@ -77,7 +77,7 @@ export class b2EdgeShape extends b2Shape {
     return false;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   /// @see b2Shape::ComputeDistance
   private static ComputeDistance_s_v1 = new b2Vec2();
   private static ComputeDistance_s_v2 = new b2Vec2();
@@ -101,7 +101,7 @@ export class b2EdgeShape extends b2Shape {
     normal.Copy(d);
     return normal.Normalize();
   }
-  ///#endif
+  // #endif
 
   /// Implement b2Shape.
   // p = p1 + t * d

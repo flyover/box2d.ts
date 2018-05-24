@@ -43,12 +43,14 @@ import { b2ContactListener } from "./b2WorldCallbacks";
 import { b2DestructionListener } from "./b2WorldCallbacks";
 import { b2QueryCallback, b2QueryCallbackFunction } from "./b2WorldCallbacks";
 import { b2RayCastCallback, b2RayCastCallbackFunction } from "./b2WorldCallbacks";
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 import { b2_maxFloat } from "../Common/b2Settings";
 import { b2CalculateParticleIterations } from "../Particle/b2Particle";
 import { b2ParticleSystemDef, b2ParticleSystem } from "../Particle/b2ParticleSystem";
-///#endif
-///import { b2Controller } from "../../../Contributions/Enhancements/Controllers/b2Controller";
+// #endif
+// #if B@_ENABLE_CONTROLLER
+import { b2Controller, b2ControllerEdge } from "../../../Contributions/Enhancements/Controllers/b2Controller";
+// #endif
 
 /// The world class manages all physics entities, dynamic simulation,
 /// and asynchronous queries. The world also contains efficient memory
@@ -66,9 +68,9 @@ export class b2World {
   public m_bodyList: b2Body | null = null;
   public m_jointList: b2Joint | null = null;
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public m_particleSystemList: b2ParticleSystem = null;
-  ///#endif
+  // #endif
 
   public m_bodyCount: number = 0;
   public m_jointCount: number = 0;
@@ -96,8 +98,10 @@ export class b2World {
 
   public s_stack: b2Body[] = [];
 
-// public m_controllerList: b2Controller = null;
-// public m_controllerCount: number = 0;
+  // #if B2_ENABLE_CONTROLLER
+  public m_controllerList: b2Controller = null;
+  public m_controllerCount: number = 0;
+  // #endif
 
   /// Construct a world object.
   /// @param gravity the world gravity vector.
@@ -181,13 +185,15 @@ export class b2World {
     }
     b.m_jointList = null;
 
-    /// @see b2Controller list
-    // const coe: b2ControllerEdge = b.m_controllerList;
-    // while (coe) {
-    //   const coe0: b2ControllerEdge = coe;
-    //   coe = coe.nextController;
-    //   coe0.controller.RemoveBody(b);
-    // }
+    // #if B2_ENABLE_CONTROLLER
+    // @see b2Controller list
+    let coe: b2ControllerEdge | null = b.m_controllerList;
+    while (coe) {
+      const coe0: b2ControllerEdge = coe;
+      coe = coe.nextController;
+      coe0.controller.RemoveBody(b);
+    }
+    // #endif
 
     // Delete the attached contacts.
     let ce: b2ContactEdge | null = b.m_contactList;
@@ -373,7 +379,7 @@ export class b2World {
     }
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
 
   CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem {
     ///b2Assert(!this.IsLocked());
@@ -431,7 +437,7 @@ export class b2World {
     return b2CalculateParticleIterations(this.m_gravity.Length(), GetSmallestRadius(this), timeStep);
   }
 
-  ///#endif
+  // #endif
 
   /// Take a time step. This performs collision detection, integration,
   /// and constraint solution.
@@ -441,11 +447,11 @@ export class b2World {
   private static Step_s_step = new b2TimeStep();
   private static Step_s_stepTimer = new b2Timer();
   private static Step_s_timer = new b2Timer();
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public Step(dt: number, velocityIterations: number, positionIterations: number, particleIterations: number = this.CalculateReasonableParticleIterations(dt)): void {
   ///#else
   ///public Step(dt: number, velocityIterations: number, positionIterations: number): void {
-  ///#endif
+  // #endif
     const stepTimer: b2Timer = b2World.Step_s_stepTimer.Reset();
 
     // If new fixtures were added, we need to find the new contacts.
@@ -460,9 +466,9 @@ export class b2World {
     step.dt = dt;
     step.velocityIterations = velocityIterations;
     step.positionIterations = positionIterations;
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     step.particleIterations = particleIterations;
-    ///#endif
+    // #endif
     if (dt > 0) {
       step.inv_dt = 1 / dt;
     } else {
@@ -481,11 +487,11 @@ export class b2World {
     // Integrate velocities, solve velocity constraints, and integrate positions.
     if (this.m_stepComplete && step.dt > 0) {
       const timer: b2Timer = b2World.Step_s_timer.Reset();
-      ///#if B2_ENABLE_PARTICLE
+      // #if B2_ENABLE_PARTICLE
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         p.Solve(step); // Particle Simulation
       }
-      ///#endif
+      // #endif
       this.Solve(step);
       this.m_profile.solve = timer.GetMilliseconds();
     }
@@ -524,7 +530,7 @@ export class b2World {
     }
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
 
   DrawParticleSystem(system: b2ParticleSystem): void {
     const particleCount = system.GetParticleCount();
@@ -540,7 +546,7 @@ export class b2World {
     }
   }
 
-  ///#endif
+  // #endif
 
   /// Call this to draw shapes and other debug draw data.
   private static DrawDebugData_s_color = new b2Color(0, 0, 0);
@@ -583,13 +589,13 @@ export class b2World {
       }
     }
 
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (flags & b2DrawFlags.e_particleBit) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         this.DrawParticleSystem(p);
       }
     }
-    ///#endif
+    // #endif
 
     if (flags & b2DrawFlags.e_jointBit) {
       for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
@@ -647,12 +653,14 @@ export class b2World {
       }
     }
 
-    /// @see b2Controller list
-//    if (flags & b2DrawFlags.e_controllerBit) {
-//      for (let c = this.m_controllerList; c; c = c.m_next) {
-//        c.Draw(this.m_debugDraw);
-//      }
-//    }
+    // #if B2_ENABLE_CONTROLLER  
+    // @see b2Controller list
+    if (flags & b2DrawFlags.e_controllerBit) {
+      for (let c = this.m_controllerList; c; c = c.m_next) {
+        c.Draw(this.m_debugDraw);
+      }
+    }
+    // #endif
   }
 
   /// Query the world for all fixtures that potentially overlap the
@@ -673,7 +681,7 @@ export class b2World {
       }
     }
     broadPhase.Query(WorldQueryWrapper, aabb);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (callback instanceof b2QueryCallback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         if (callback.ShouldQueryParticleSystem(p)) {
@@ -681,7 +689,7 @@ export class b2World {
         }
       }
     }
-    ///#endif
+    // #endif
   }
 
   private static QueryShape_s_aabb = new b2AABB();
@@ -704,7 +712,7 @@ export class b2World {
     const aabb: b2AABB = b2World.QueryShape_s_aabb;
     shape.ComputeAABB(aabb, transform, 0); // TODO
     broadPhase.Query(WorldQueryWrapper, aabb);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (callback instanceof b2QueryCallback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         if (callback.ShouldQueryParticleSystem(p)) {
@@ -712,7 +720,7 @@ export class b2World {
         }
       }
     }
-    ///#endif
+    // #endif
   }
 
   private static QueryPoint_s_aabb = new b2AABB();
@@ -736,7 +744,7 @@ export class b2World {
     aabb.lowerBound.Set(point.x - b2_linearSlop, point.y - b2_linearSlop);
     aabb.upperBound.Set(point.x + b2_linearSlop, point.y + b2_linearSlop);
     broadPhase.Query(WorldQueryWrapper, aabb);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (callback instanceof b2QueryCallback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         if (callback.ShouldQueryParticleSystem(p)) {
@@ -744,7 +752,7 @@ export class b2World {
         }
       }
     }
-    ///#endif
+    // #endif
   }
 
   /// Ray-cast the world for all fixtures in the path of the ray. Your callback
@@ -782,7 +790,7 @@ export class b2World {
     input.p1.Copy(point1);
     input.p2.Copy(point2);
     broadPhase.RayCast(WorldRayCastWrapper, input);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (callback instanceof b2RayCastCallback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         if (callback.ShouldQueryParticleSystem(p)) {
@@ -790,7 +798,7 @@ export class b2World {
         }
       }
     }
-    ///#endif
+    // #endif
   }
 
   public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture {
@@ -830,11 +838,11 @@ export class b2World {
     return this.m_jointList;
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   GetParticleSystemList() {
     return this.m_particleSystemList;
   }
-  ///#endif
+  // #endif
 
   /// Get the world contact list. With the returned contact, use b2Contact::GetNext to get
   /// the next contact in the world list. A NULL contact indicates the end of the list.
@@ -1128,17 +1136,19 @@ export class b2World {
   }
 
   public Solve(step: b2TimeStep): void {
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     // update previous transforms
     for (let b = this.m_bodyList; b; b = b.m_next) {
       b.m_xf0.Copy(b.m_xf);
     }
-    ///#endif
+    // #endif
 
-    /// @see b2Controller list
-//    for (let controller = this.m_controllerList; controller; controller = controller.m_next) {
-//      controller.Step(step);
-//    }
+    // #if B2_ENABLE_CONTROLLER
+    // @see b2Controller list
+    for (let controller = this.m_controllerList; controller; controller = controller.m_next) {
+      controller.Step(step);
+    }
+    // #endif
 
     this.m_profile.solveInit = 0;
     this.m_profile.solveVelocity = 0;
@@ -1565,9 +1575,9 @@ export class b2World {
       subStep.dtRatio = 1;
       subStep.positionIterations = 20;
       subStep.velocityIterations = step.velocityIterations;
-      ///#if B2_ENABLE_PARTICLE
+      // #if B2_ENABLE_PARTICLE
       subStep.particleIterations = step.particleIterations;
-      ///#endif
+      // #endif
       subStep.warmStarting = false;
       island.SolveTOI(subStep, bA.m_islandIndex, bB.m_islandIndex);
 
@@ -1600,30 +1610,32 @@ export class b2World {
     }
   }
 
-//  public AddController(controller: b2Controller): b2Controller {
-//    ///b2Assert(controller.m_world === null, "Controller can only be a member of one world");
-//    controller.m_world = this;
-//    controller.m_next = this.m_controllerList;
-//    controller.m_prev = null;
-//    if (this.m_controllerList)
-//      this.m_controllerList.m_prev = controller;
-//    this.m_controllerList = controller;
-//    ++this.m_controllerCount;
-//    return controller;
-//  }
+  // #if B2_ENABLE_CONTROLLER
+  public AddController(controller: b2Controller): b2Controller {
+    ///b2Assert(controller.m_world === null, "Controller can only be a member of one world");
+    controller.m_world = this;
+    controller.m_next = this.m_controllerList;
+    controller.m_prev = null;
+    if (this.m_controllerList)
+      this.m_controllerList.m_prev = controller;
+    this.m_controllerList = controller;
+    ++this.m_controllerCount;
+    return controller;
+  }
 
-//  public RemoveController(controller: b2Controller): b2Controller {
-//    ///b2Assert(controller.m_world === this, "Controller is not a member of this world");
-//    if (controller.m_prev)
-//      controller.m_prev.m_next = controller.m_next;
-//    if (controller.m_next)
-//      controller.m_next.m_prev = controller.m_prev;
-//    if (this.m_controllerList === controller)
-//      this.m_controllerList = controller.m_next;
-//    --this.m_controllerCount;
-//    controller.m_prev = null;
-//    controller.m_next = null;
-//    controller.m_world = null;
-//    return controller;
-//  }
+  public RemoveController(controller: b2Controller): b2Controller {
+    ///b2Assert(controller.m_world === this, "Controller is not a member of this world");
+    if (controller.m_prev)
+      controller.m_prev.m_next = controller.m_next;
+    if (controller.m_next)
+      controller.m_next.m_prev = controller.m_prev;
+    if (this.m_controllerList === controller)
+      this.m_controllerList = controller.m_next;
+    --this.m_controllerCount;
+    controller.m_prev = null;
+    controller.m_next = null;
+    controller.m_world = null;
+    return controller;
+  }
+  // #endif
 }

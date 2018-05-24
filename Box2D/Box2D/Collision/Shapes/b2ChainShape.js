@@ -217,10 +217,10 @@ System.register(["../../Common/b2Settings", "../../Common/b2Math", "./b2Shape", 
                     log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
                 }
             };
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             /// @see b2Shape::ComputeDistance
             b2ChainShape.ComputeDistance_s_edgeShape = new b2EdgeShape_1.b2EdgeShape();
-            ///#endif
+            // #endif
             /// Implement b2Shape.
             b2ChainShape.RayCast_s_edgeShape = new b2EdgeShape_1.b2EdgeShape();
             /// @see b2Shape::ComputeAABB

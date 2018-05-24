@@ -106,9 +106,9 @@ export class b2SeparationFunction {
       const pointB: b2Vec2 = b2Transform.MulXV(xfB, localPointB, b2TimeOfImpact_s_pointB);
       b2Vec2.SubVV(pointB, pointA, this.m_axis);
       const s: number = this.m_axis.Normalize();
-      ///#if B2_ENABLE_PARTICLE
+      // #if B2_ENABLE_PARTICLE
       this.m_localPoint.SetZero();
-      ///#endif
+      // #endif
       return s;
     } else if (cache.indexA[0] === cache.indexA[1]) {
       // Two points on B and one on A.

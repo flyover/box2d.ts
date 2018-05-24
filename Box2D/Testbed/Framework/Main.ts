@@ -2,16 +2,16 @@ import * as box2d from "../../Box2D/Box2D";
 import { Settings, Test } from "./Test";
 import { g_debugDraw, g_camera } from "./DebugDraw";
 import { g_testEntries } from "../Tests/TestEntries";
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 import { FullScreenUI } from "./FullscreenUI";
 import { ParticleParameter } from "./ParticleParameter";
-///#endif
+// #endif
 
 export class Main {
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public static fullscreenUI = new FullScreenUI();
   public static particleParameter = new ParticleParameter();
-  ///#endif
+  // #endif
   public m_time_last: number = 0;
   public m_fps_time: number = 0;
   public m_fps_frames: number = 0;
@@ -157,9 +157,9 @@ export class Main {
     const number_input_table: HTMLTableElement = <HTMLTableElement> controls_div.appendChild(document.createElement("table"));
     connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, (value: number): void => { this.m_settings.velocityIterations = value; }, 1, 20, 1);
     connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, (value: number): void => { this.m_settings.positionIterations = value; }, 1, 20, 1);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     connect_number_input(number_input_table, "Pcl Iters", this.m_settings.particleIterations, (value: number): void => { this.m_settings.particleIterations = value; }, 1, 100, 1);
-    ///#endif
+    // #endif
     connect_number_input(number_input_table, "Hertz", this.m_settings.hz, (value: number): void => { this.m_settings.hz = value; }, 10, 120, 1);
 
     // simulation checkbox inputs
@@ -180,18 +180,18 @@ export class Main {
     connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.enableWarmStarting, (value: boolean): void => { this.m_settings.enableWarmStarting = value; });
     connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.enableContinuous, (value: boolean): void => { this.m_settings.enableContinuous = value; });
     connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.enableSubStepping, (value: boolean): void => { this.m_settings.enableSubStepping = value; });
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", this.m_settings.strictContacts, (value: boolean): void => { this.m_settings.strictContacts = value; });
-    ///#endif
+    // #endif
 
     // draw checkbox inputs
     const draw_fieldset: HTMLFieldSetElement = <HTMLFieldSetElement> controls_div.appendChild(document.createElement("fieldset"));
     const draw_legend: HTMLLegendElement = <HTMLLegendElement> draw_fieldset.appendChild(document.createElement("legend"));
     draw_legend.appendChild(document.createTextNode("Draw"));
     connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, (value: boolean): void => { this.m_settings.drawShapes = value; });
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     connect_checkbox_input(draw_fieldset, "Particles", this.m_settings.drawParticles, (value: boolean): void => { this.m_settings.drawParticles = value; });
-    ///#endif
+    // #endif
     connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.drawJoints, (value: boolean): void => { this.m_settings.drawJoints = value; });
     connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.drawAABBs, (value: boolean): void => { this.m_settings.drawAABBs = value; });
     connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.drawContactPoints, (value: boolean): void => { this.m_settings.drawContactPoints = value; });
@@ -426,7 +426,7 @@ export class Main {
     case "]":
       this.IncrementTest();
       break;
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     case ",":
       if (this.m_shift) {
         // Press < to select the previous particle parameter setting.
@@ -445,7 +445,7 @@ export class Main {
     ///case ".":
     ///  this.SingleStep();
     ///  break;
-    ///#endif
+    // #endif
     default:
       // console.log(e.keyCode);
       break;
@@ -508,16 +508,16 @@ export class Main {
   }
 
   public LoadTest(restartTest: boolean = false): void {
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     Main.fullscreenUI.Reset();
     if (!restartTest) Main.particleParameter.Reset();
-    ///#endif
+    // #endif
     this.m_demo_time = 0;
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     if (this.m_test) {
       this.m_test.RestoreParticleParameters();
     }
-    ///#endif
+    // #endif
     this.m_test = g_testEntries[this.m_test_index].createFcn();
     if (!restartTest) {
       this.HomeCamera();
@@ -587,13 +587,13 @@ export class Main {
 
         this.m_test.Step(this.m_settings);
 
-        ///#if B2_ENABLE_PARTICLE
+        // #if B2_ENABLE_PARTICLE
         // Update the state of the particle parameter.
         let restartTest = [false];
         Main.particleParameter.Changed(restartTest);
-        ///#endif
+        // #endif
 
-        ///#if B2_ENABLE_PARTICLE
+        // #if B2_ENABLE_PARTICLE
         let msg = g_testEntries[this.m_test_index].name;
         if (Main.fullscreenUI.GetParticleParameterSelectionEnabled()) {
           msg += " : ";
@@ -602,24 +602,24 @@ export class Main {
         this.m_test.DrawTitle(msg);
         ///#else
         ///this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
-        ///#endif
+        // #endif
 
         ctx.strokeStyle = "yellow";
         ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
 
       ctx.restore();
 
-      ///#if B2_ENABLE_PARTICLE
+      // #if B2_ENABLE_PARTICLE
       if (restartTest[0]) {
         this.LoadTest(true);
       }
-      ///#endif
+      // #endif
 
       this.UpdateTest(time_elapsed);
     }
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
 
   /**
    * Set whether to restart the test on particle parameter
@@ -660,5 +660,5 @@ export class Main {
     Main.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
   }
 
-  ///#endif
+  // #endif
 }

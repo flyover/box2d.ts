@@ -135,10 +135,10 @@ System.register(["../../Common/b2Settings", "../../Common/b2Math", "./b2Shape"],
             /// Implement b2Shape.
             b2CircleShape.TestPoint_s_center = new b2Math_1.b2Vec2();
             b2CircleShape.TestPoint_s_d = new b2Math_1.b2Vec2();
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             /// @see b2Shape::ComputeDistance
             b2CircleShape.ComputeDistance_s_center = new b2Math_1.b2Vec2();
-            ///#endif
+            // #endif
             /// Implement b2Shape.
             // Collision Detection in Interactive 3D Environments by Gino van den Bergen
             // From Section 3.1.2

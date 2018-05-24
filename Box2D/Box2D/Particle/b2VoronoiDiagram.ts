@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 import { b2_maxFloat, b2MakeArray } from "../Common/b2Settings";
 import { b2Vec2 } from "../Common/b2Math";
@@ -245,4 +245,4 @@ export class Task {
 
 } // namespace b2VoronoiDiagram
 
-///#endif
+// #endif

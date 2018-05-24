@@ -177,7 +177,7 @@ export class DebugDraw extends box2d.b2Draw {
     }
   }
 
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public DrawParticles(centers: box2d.b2Vec2[], radius: number, colors: box2d.b2Color[], count: number) {
     const ctx: CanvasRenderingContext2D = this.m_ctx;
     if (ctx) {
@@ -201,7 +201,7 @@ export class DebugDraw extends box2d.b2Draw {
       }
     }
   }
-  ///#endif
+  // #endif
 
   public DrawSegment(p1: box2d.b2Vec2, p2: box2d.b2Vec2, color: box2d.b2Color): void {
     const ctx: CanvasRenderingContext2D = this.m_ctx;

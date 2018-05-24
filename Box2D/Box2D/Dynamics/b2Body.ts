@@ -23,6 +23,9 @@ import { b2ContactEdge } from "./Contacts/b2Contact";
 import { b2JointEdge } from "./Joints/b2Joint";
 import { b2Fixture, b2FixtureDef } from "./b2Fixture";
 import { b2World } from "./b2World";
+// #if B2_ENABLE_CONTROLLER
+import { b2ControllerEdge } from "../../../Contributions/Enhancements/Controllers/b2Controller";
+// #endif
 
 /// The body type.
 /// static: zero mass, zero velocity, may be manually moved
@@ -109,9 +112,9 @@ export class b2Body {
   public m_islandIndex: number = 0;
 
   public m_xf: b2Transform = new b2Transform();  // the body origin transform
-  ///#if B2_ENABLE_PARTICLE
+  // #if B2_ENABLE_PARTICLE
   public m_xf0: b2Transform = new b2Transform();
-  ///#endif
+  // #endif
   public m_sweep: b2Sweep = new b2Sweep();    // the swept motion for CCD
 
   public m_linearVelocity: b2Vec2 = new b2Vec2();
@@ -145,8 +148,10 @@ export class b2Body {
 
   public m_userData: any = null;
 
-  // public m_controllerList: b2ControllerEdge = null;
-  // public m_controllerCount: number = 0;
+  // #if B2_ENABLE_CONTROLLER
+  public m_controllerList: b2ControllerEdge = null;
+  public m_controllerCount: number = 0;
+  // #endif
 
   constructor(bd: b2BodyDef, world: b2World) {
     ///b2Assert(bd.position.IsValid());
@@ -177,9 +182,9 @@ export class b2Body {
 
     this.m_xf.p.Copy(bd.position);
     this.m_xf.q.SetAngle(bd.angle);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_xf0.Copy(this.m_xf);
-    ///#endif
+    // #endif
 
     this.m_sweep.localCenter.SetZero();
     this.m_sweep.c0.Copy(this.m_xf.p);
@@ -218,8 +223,10 @@ export class b2Body {
     this.m_fixtureList = null;
     this.m_fixtureCount = 0;
 
-    // this.m_controllerList = null;
-    // this.m_controllerCount = 0;
+    // #if B2_ENABLE_CONTROLLER
+    this.m_controllerList = null;
+    this.m_controllerCount = 0;
+    // #endif
   }
 
   public CreateFixture(a: b2FixtureDef | b2Shape, b?: number): b2Fixture {
@@ -371,9 +378,9 @@ export class b2Body {
 
     this.m_xf.q.SetAngle(angle);
     this.m_xf.p.Set(x, y);
-    ///#if B2_ENABLE_PARTICLE
+    // #if B2_ENABLE_PARTICLE
     this.m_xf0.Copy(this.m_xf);
-    ///#endif
+    // #endif
 
     b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
     this.m_sweep.a = angle;
@@ -1122,13 +1129,13 @@ export class b2Body {
     b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
   }
 
-  // public GetControllerList(): b2ControllerEdge
-  // {
-  //   return this.m_controllerList;
-  // }
+  // #if B2_ENABLE_CONTROLLER
+  public GetControllerList(): b2ControllerEdge {
+    return this.m_controllerList;
+  }
 
-  // public GetControllerCount(): number
-  // {
-  //   return this.m_controllerCount;
-  // }
+  public GetControllerCount(): number {
+    return this.m_controllerCount;
+  }
+  // #endif
 }

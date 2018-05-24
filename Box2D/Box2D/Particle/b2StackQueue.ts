@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 import { b2MakeArray } from "../Common/b2Settings";
 
@@ -67,4 +67,4 @@ export class b2StackQueue<T> {
   }
 }
 
-///#endif
+// #endif

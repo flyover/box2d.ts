@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 import * as box2d from "../../Box2D/Box2D";
 
@@ -294,4 +294,4 @@ export class RadialEmitter {
   }
 }
 
-///#endif
+// #endif

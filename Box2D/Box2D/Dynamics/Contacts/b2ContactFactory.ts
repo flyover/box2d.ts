@@ -94,14 +94,17 @@ export class b2ContactFactory {
     ///b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount);
 
     const reg: b2ContactRegister = this.m_registers[type1][type2];
-
-    const c: b2Contact = reg.createFcn(this.m_allocator);
-    if (reg.primary) {
-      c.Reset(fixtureA, indexA, fixtureB, indexB);
+    if (reg.createFcn) {
+      const c: b2Contact = reg.createFcn(this.m_allocator);
+      if (reg.primary) {
+        c.Reset(fixtureA, indexA, fixtureB, indexB);
+      } else {
+        c.Reset(fixtureB, indexB, fixtureA, indexA);
+      }
+      return c;
     } else {
-      c.Reset(fixtureB, indexB, fixtureA, indexA);
+      return null;
     }
-    return c;
   }
 
   public Destroy(contact: b2Contact): void {

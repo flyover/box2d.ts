@@ -102,7 +102,7 @@ export const b2_baumgarte: number = 0.2;
 export const b2_toiBaumgarte: number = 0.75;
 
 
-///#if B2_ENABLE_PARTICLE
+// #if B2_ENABLE_PARTICLE
 
 // Particle
 
@@ -133,7 +133,7 @@ export const b2_minParticleSystemBufferCapacity: number = 256;
 /// The time into the future that collisions against barrier particles will be detected.
 export const b2_barrierCollisionTime: number = 2.5;
 
-///#endif
+// #endif
 
 
 // Sleep

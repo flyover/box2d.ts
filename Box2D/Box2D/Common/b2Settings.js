@@ -136,7 +136,7 @@ System.register([], function (exports_1, context_1) {
             /// to overshoot.
             exports_1("b2_baumgarte", b2_baumgarte = 0.2);
             exports_1("b2_toiBaumgarte", b2_toiBaumgarte = 0.75);
-            ///#if B2_ENABLE_PARTICLE
+            // #if B2_ENABLE_PARTICLE
             // Particle
             /// A symbolic constant that stands for particle allocation error.
             exports_1("b2_invalidParticleIndex", b2_invalidParticleIndex = -1);
@@ -156,7 +156,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("b2_minParticleSystemBufferCapacity", b2_minParticleSystemBufferCapacity = 256);
             /// The time into the future that collisions against barrier particles will be detected.
             exports_1("b2_barrierCollisionTime", b2_barrierCollisionTime = 2.5);
-            ///#endif
+            // #endif
             // Sleep
             /// The time that a body must be still before it will go to sleep.
             exports_1("b2_timeToSleep", b2_timeToSleep = 0.5);
