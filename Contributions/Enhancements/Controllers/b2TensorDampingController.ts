@@ -44,7 +44,7 @@ export class b2TensorDampingController extends b2Controller {
      * @see b2Controller::Step
      */
     Step(step: b2TimeStep) {
-        const timestep = step.dt;
+        let timestep = step.dt;
         if (timestep <= b2_epsilon)
             return;
         if (timestep > this.maxTimestep && this.maxTimestep > 0)
