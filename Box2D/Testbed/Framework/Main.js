@@ -410,10 +410,10 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                                 this.SingleStep();
                             }
                             break;
-                        ///#else
-                        ///case ".":
-                        ///  this.SingleStep();
-                        ///  break;
+                        // #else
+                        // case ".":
+                        //   this.SingleStep();
+                        //   break;
                         // #endif
                         default:
                             // console.log(e.keyCode);
@@ -544,8 +544,8 @@ System.register(["../../Box2D/Box2D", "./Test", "./DebugDraw", "../Tests/TestEnt
                             msg += Main.particleParameter.GetName();
                         }
                         this.m_test.DrawTitle(msg);
-                        ///#else
-                        ///this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
+                        // #else
+                        // this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
                         // #endif
                         ctx.strokeStyle = "yellow";
                         ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);

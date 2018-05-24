@@ -59,11 +59,11 @@ export class MultipleParticleSystems extends testbed.Test {
   /**
    * Color of the left emitter's particles.
    */
-  static readonly k_leftEmitterColor = new box2d.b2Color(0x22/255, 0x33/255, 0xff/255, 0xff/255);
+  static readonly k_leftEmitterColor = new box2d.b2Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
   /**
    * Color of the right emitter's particles.
    */
-  static readonly k_rightEmitterColor = new box2d.b2Color(0xff/255, 0x22/255, 0x11/255, 0xff/255);
+  static readonly k_rightEmitterColor = new box2d.b2Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
 
   constructor() {
     super();

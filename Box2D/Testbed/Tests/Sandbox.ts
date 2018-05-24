@@ -158,10 +158,10 @@ export class SpecialParticleTracker extends box2d.b2DestructionListener {
       this.m_colorOscillationPeriod);
     const colorCoeff = 2.0 * Math.abs(
       (this.m_colorOscillationTime / this.m_colorOscillationPeriod) - 0.5);
-    const color = new box2d.b2Color(
-      (128 + (128.0 * (1.0 - colorCoeff)) / 255),
-      (128 + (256.0 * Math.abs(0.5 - colorCoeff)) / 255),
-      (128 + (128.0 * colorCoeff)) / 255, 255 / 255);
+    const color = new box2d.b2Color().SetByteRGBA(
+      128 + (128.0 * (1.0 - colorCoeff)),
+      128 + (256.0 * Math.abs(0.5 - colorCoeff)),
+      128 + (128.0 * colorCoeff), 255);
     // Update the color of all special particles.
     for (let i = 0; i < this.m_particles.length; ++i) {
       this.m_particleSystem.GetColorBuffer()[this.m_particles[i].GetIndex()].Copy(color);
@@ -403,9 +403,9 @@ export class Sandbox extends testbed.Test {
     const circleShape = new box2d.b2CircleShape();
     circleShape.m_radius = SandboxParams.k_tileRadius * 0.7;
 
-    const red = new box2d.b2Color(255/255, 128/255, 128/255, 255/255);
-    const green = new box2d.b2Color(128/255, 255/255, 128/255, 255/255);
-    const blue = new box2d.b2Color(128/255, 128/255, 255/255, 255/255);
+    const red = new box2d.b2Color().SetByteRGBA(255, 128, 128, 255);
+    const green = new box2d.b2Color().SetByteRGBA(128, 255, 128, 255);
+    const blue = new box2d.b2Color().SetByteRGBA(128, 128, 255, 255);
 
     this.m_pumpForce = new box2d.b2Vec2(SandboxParams.k_pumpForce, 0);
 

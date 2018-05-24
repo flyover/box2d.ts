@@ -449,8 +449,8 @@ export class b2World {
   private static Step_s_timer = new b2Timer();
   // #if B2_ENABLE_PARTICLE
   public Step(dt: number, velocityIterations: number, positionIterations: number, particleIterations: number = this.CalculateReasonableParticleIterations(dt)): void {
-  ///#else
-  ///public Step(dt: number, velocityIterations: number, positionIterations: number): void {
+  // #else
+  // public Step(dt: number, velocityIterations: number, positionIterations: number): void {
   // #endif
     const stepTimer: b2Timer = b2World.Step_s_stepTimer.Reset();
 

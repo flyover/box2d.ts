@@ -383,8 +383,8 @@ System.register(["../Common/b2Settings", "../Common/b2Math", "../Common/b2Timer"
                 }
                 // #if B2_ENABLE_PARTICLE
                 Step(dt, velocityIterations, positionIterations, particleIterations = this.CalculateReasonableParticleIterations(dt)) {
-                    ///#else
-                    ///public Step(dt: number, velocityIterations: number, positionIterations: number): void {
+                    // #else
+                    // public Step(dt: number, velocityIterations: number, positionIterations: number): void {
                     // #endif
                     const stepTimer = b2World.Step_s_stepTimer.Reset();
                     // If new fixtures were added, we need to find the new contacts.

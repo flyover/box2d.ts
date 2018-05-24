@@ -73,6 +73,21 @@ export class b2Color {
     }
   }
 
+  public SetByteRGB(r: number, g: number, b: number): this {
+    this.r = r / 0xff;
+    this.g = g / 0xff;
+    this.b = b / 0xff;
+    return this;
+  }
+
+  public SetByteRGBA(r: number, g: number, b: number, a: number): this {
+    this.r = r / 0xff;
+    this.g = g / 0xff;
+    this.b = b / 0xff;
+    this.a = a / 0xff;
+    return this;
+  }
+
   public SetRGB(rr: number, gg: number, bb: number): b2Color {
     this.r = rr;
     this.g = gg;
