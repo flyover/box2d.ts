@@ -27,13 +27,13 @@ export class Rope extends testbed.Test {
     super();
 
     /*const int32*/
-    var N = 40;
+    const N = 40;
     /*box2d.b2Vec2[]*/
-    var vertices = box2d.b2Vec2.MakeArray(N);
+    const vertices = box2d.b2Vec2.MakeArray(N);
     /*float32[]*/
-    var masses = box2d.b2MakeNumberArray(N);
+    const masses = box2d.b2MakeNumberArray(N);
 
-    for ( /*int32*/ var i = 0; i < N; ++i) {
+    for (let i = 0; i < N; ++i) {
       vertices[i].Set(0.0, 20.0 - 0.25 * i);
       masses[i] = 1.0;
     }
@@ -41,7 +41,7 @@ export class Rope extends testbed.Test {
     masses[1] = 0.0;
 
     /*box2d.b2RopeDef*/
-    var def = new box2d.b2RopeDef();
+    const def = new box2d.b2RopeDef();
     def.vertices = vertices;
     def.count = N;
     def.gravity.Set(0.0, -10.0);
@@ -71,7 +71,7 @@ export class Rope extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    var dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
 
     if (settings.pause && !settings.singleStep) {
       dt = 0.0;

@@ -75,8 +75,8 @@ export class OneSidedPlatform extends testbed.Test {
   PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
     super.PreSolve(contact, oldManifold);
   
-    var fixtureA = contact.GetFixtureA();
-    var fixtureB = contact.GetFixtureB();
+    const fixtureA = contact.GetFixtureA();
+    const fixtureB = contact.GetFixtureB();
   
     if (fixtureA !== this.m_platform && fixtureA !== this.m_character) {
       return;
@@ -86,7 +86,7 @@ export class OneSidedPlatform extends testbed.Test {
       return;
     }
   
-    var position = this.m_character.GetBody().GetPosition();
+    const position = this.m_character.GetBody().GetPosition();
   
     if (position.y < this.m_top + this.m_radius - 3.0 * box2d.b2_linearSlop) {
       contact.SetEnabled(false);

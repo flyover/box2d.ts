@@ -111,11 +111,6 @@ class QueryCallback2 extends box2d.b2QueryCallback {
     return false;
   }
 
-  /**
-   * @return {boolean}
-   * @param {box2d.b2ParticleSystem} particleSystem
-   * @param {number} index
-   */
   ReportParticle(particleSystem: box2d.b2ParticleSystem, index: number): boolean {
     if (particleSystem !== this.m_particleSystem)
       return false;
@@ -623,11 +618,6 @@ export class Test extends box2d.b2ContactListener {
    * If particlesPerColor is 0, the particles in the group are
    * divided into k_ParticleColorsCount equal sets of colored
    * particles.
-   *
-   * @export
-   * @return {void}
-   * @param {box2d.b2ParticleGroup} group
-   * @param {number} particlesPerColor
    */
   ColorParticleGroup(group: box2d.b2ParticleGroup, particlesPerColor: number) {
     ///box2d.b2Assert(group !== null);
@@ -651,9 +641,6 @@ export class Test extends box2d.b2ContactListener {
   /**
    * Remove particle parameters matching "filterMask" from the set
    * of particle parameters available for this test.
-   * @export
-   * @return {void}
-   * @param {number} filterMask
    */
   InitializeParticleParameters(filterMask: number) {
     let defaultNumValues = ParticleParameter.k_defaultDefinition[0].numValues;
@@ -678,8 +665,6 @@ export class Test extends box2d.b2ContactListener {
 
   /**
    * Restore default particle parameters.
-   * @export
-   * @return void
    */
   RestoreParticleParameters() {
     if (this.m_particleParameters) {

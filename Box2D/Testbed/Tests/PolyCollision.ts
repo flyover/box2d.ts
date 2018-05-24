@@ -75,30 +75,30 @@ export class PolyCollision extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     // super.Step(settings);
-    var manifold = new box2d.b2Manifold();
+    const manifold = new box2d.b2Manifold();
     box2d.b2CollidePolygons(manifold, this.m_polygonA, this.m_transformA, this.m_polygonB, this.m_transformB);
 
-    var worldManifold = new box2d.b2WorldManifold();
+    const worldManifold = new box2d.b2WorldManifold();
     worldManifold.Initialize(manifold, this.m_transformA, this.m_polygonA.m_radius, this.m_transformB, this.m_polygonB.m_radius);
 
     testbed.g_debugDraw.DrawString(5, this.m_textLine, `point count = ${manifold.pointCount}`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
     {
-      var color = new box2d.b2Color(0.9, 0.9, 0.9);
-      var v = new Array(box2d.b2_maxPolygonVertices);
-      for (var i = 0; i < this.m_polygonA.m_count; ++i) {
+      const color = new box2d.b2Color(0.9, 0.9, 0.9);
+      const v = new Array(box2d.b2_maxPolygonVertices);
+      for (let i = 0; i < this.m_polygonA.m_count; ++i) {
         v[i] = box2d.b2Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new box2d.b2Vec2());
       }
       testbed.g_debugDraw.DrawPolygon(v, this.m_polygonA.m_count, color);
 
-      for (var i = 0; i < this.m_polygonB.m_count; ++i) {
+      for (let i = 0; i < this.m_polygonB.m_count; ++i) {
         v[i] = box2d.b2Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new box2d.b2Vec2());
       }
       testbed.g_debugDraw.DrawPolygon(v, this.m_polygonB.m_count, color);
     }
 
-    for (var i = 0; i < manifold.pointCount; ++i) {
+    for (let i = 0; i < manifold.pointCount; ++i) {
       testbed.g_debugDraw.DrawPoint(worldManifold.points[i], 4.0, new box2d.b2Color(0.9, 0.3, 0.3));
     }
   }

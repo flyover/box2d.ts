@@ -1814,12 +1814,9 @@ export class b2ParticleSystem {
    * that contain the starting point.
    * b2RayCastCallback::ShouldQueryParticleSystem is ignored.
    *
-   * @export
-   * @return {void}
-   * @param {b2RayCastCallback} callback a user implemented
-   *      callback class.
-   * @param {b2Vec2} point1 the ray starting point
-   * @param {b2Vec2} point2 the ray ending point
+   * @param callback a user implemented callback class.
+   * @param point1 the ray starting point
+   * @param point2 the ray ending point
    */
   RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void {
     let s_aabb = b2ParticleSystem.RayCast_s_aabb;
@@ -1884,11 +1881,7 @@ export class b2ParticleSystem {
   /**
    * Compute the axis-aligned bounding box for all particles
    * contained within this particle system.
-   *
-   * @export
-   * @return {void}
-   * @param {b2AABB} aabb Returns the axis-aligned bounding
-   *      box of the system.
+   * @param aabb Returns the axis-aligned bounding box of the system.
    */
   ComputeAABB(aabb: b2AABB): void {
     let particleCount = this.GetParticleCount();
@@ -1917,28 +1910,19 @@ export class b2ParticleSystem {
 
   /**
    * All particle types that require creating triads
-   *
-   * @type {number}
    */
   static k_triadFlags = b2ParticleFlag.b2_elasticParticle;
 
   /**
    * All particle types that do not produce dynamic pressure
-   *
-   * @type {number}
    */
   static k_noPressureFlags = b2ParticleFlag.b2_powderParticle | b2ParticleFlag.b2_tensileParticle;
 
   /**
    * All particle types that apply extra damping force with bodies
-   *
-   * @type {number}
    */
   static k_extraDampingFlags = b2ParticleFlag.b2_staticPressureParticle;
 
-  /**
-   * @type {number}
-   */
   static k_barrierWallFlags = b2ParticleFlag.b2_barrierParticle | b2ParticleFlag.b2_wallParticle;
 
   FreeBuffer<T>(b: T[], capacity: number): void {
@@ -4855,10 +4839,6 @@ export class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator<Partic
     // TODO
   }
 
-  /**
-   * @return {number}
-   * @param {b2ParticleSystem.ParticlePair} pair
-   */
   Find(pair: b2ParticleSystem.ParticlePair): number {
     // TODO
     return b2_invalidParticleIndex;
@@ -5181,12 +5161,6 @@ export class SolveCollisionCallback extends b2FixtureParticleQueryCallback {
   static ReportFixtureAndParticle_s_v = new b2Vec2();
   static ReportFixtureAndParticle_s_f = new b2Vec2();
 
-  /**
-   * @export
-   * @return {boolean}
-   * @param {b2ParticleSystem} system
-   * @param {number} index
-   */
   ReportParticle(system: b2ParticleSystem, index: number): boolean {
     return false;
   }

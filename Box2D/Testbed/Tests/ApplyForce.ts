@@ -172,9 +172,9 @@ export class ApplyForce extends testbed.Test {
       case "w":
         {
           /*box2d.b2Vec2*/
-          var f = this.m_body.GetWorldVector(new box2d.b2Vec2(0.0, -200.0), new box2d.b2Vec2());
+          const f = this.m_body.GetWorldVector(new box2d.b2Vec2(0.0, -200.0), new box2d.b2Vec2());
           /*box2d.b2Vec2*/
-          var p = this.m_body.GetWorldPoint(new box2d.b2Vec2(0.0, 2.0), new box2d.b2Vec2());
+          const p = this.m_body.GetWorldPoint(new box2d.b2Vec2(0.0, 2.0), new box2d.b2Vec2());
           this.m_body.ApplyForce(f, p);
         }
         break;

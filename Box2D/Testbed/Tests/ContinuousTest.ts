@@ -27,27 +27,27 @@ export class ContinuousTest extends testbed.Test {
     super();
 
     {
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.position.Set(0.0, 0.0);
-      var body = this.m_world.CreateBody(bd);
+      const body = this.m_world.CreateBody(bd);
   
-      var edge = new box2d.b2EdgeShape();
+      const edge = new box2d.b2EdgeShape();
   
       edge.Set(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
       body.CreateFixture(edge, 0.0);
   
-      var shape = new box2d.b2PolygonShape();
+      const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(0.2, 1.0, new box2d.b2Vec2(0.5, 1.0), 0.0);
       body.CreateFixture(shape, 0.0);
     }
   
     {
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 20.0);
       //bd.angle = 0.1;
   
-      var shape = new box2d.b2PolygonShape();
+      const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(2.0, 0.1);
   
       this.m_body = this.m_world.CreateBody(bd);
@@ -61,11 +61,11 @@ export class ContinuousTest extends testbed.Test {
     /*
     else
     {
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 2.0);
-      var body = this.m_world.CreateBody(bd);
-      var shape = new box2d.b2CircleShape();
+      const body = this.m_world.CreateBody(bd);
+      const shape = new box2d.b2CircleShape();
       shape.m_p.SetZero();
       shape.m_radius = 0.5;
       body.CreateFixture(shape, 1.0);

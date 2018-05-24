@@ -71,11 +71,21 @@ import { VerticalStack } from "./VerticalStack";
 import { Web } from "./Web";
 
 import { BlobTest } from "./BlobTest";
-import { BuoyancyTest } from "./BuoyancyTest";
 
 import { TestCCD } from "./TestCCD";
 import { TestRagdoll } from "./TestRagdoll";
 import { TestStack } from "./TestStack";
+
+import { BasicSliderCrank } from "./BasicSliderCrank";
+import { PyramidTopple } from "./PyramidTopple";
+import { DominoTower } from "./DominoTower";
+import { HeavyOnLight } from "./HeavyOnLight";
+import { HeavyOnLightTwo } from "./HeavyOnLightTwo";
+import { TopdownCar } from "./TopdownCar";
+
+// #if B2_ENABLE_CONTROLLER
+import { BuoyancyTest } from "./BuoyancyTest";
+// #endif
 
 // #if B2_ENABLE_PARTICLE
 import { Sandbox } from "./Sandbox";
@@ -104,29 +114,9 @@ import { EyeCandy } from "./EyeCandy";
 
 export const g_testEntries: TestEntry[] = [
   // #if B2_ENABLE_PARTICLE
-  new TestEntry("Sandbox", Sandbox.Create),
   new TestEntry("Sparky", Sparky.Create),
-  new TestEntry("Dam Break", DamBreak.Create),
-  new TestEntry("Liquid Timer", LiquidTimer.Create),
-  new TestEntry("Wave Machine", WaveMachine.Create),
-  new TestEntry("Particles", Particles.Create),
-  new TestEntry("Faucet", Faucet.Create),
-  new TestEntry("Particle Drawing", DrawingParticles.Create),
-  new TestEntry("Soup", Soup.Create),
-  new TestEntry("Surface Tension", ParticlesSurfaceTension.Create),
-  new TestEntry("Elastic Particles", ElasticParticles.Create),
-  new TestEntry("Rigid Particles", RigidParticles.Create),
-  new TestEntry("Multiple Systems", MultipleParticleSystems.Create),
-  new TestEntry("Impulse", Impulse.Create),
-  new TestEntry("Soup Stirrer", SoupStirrer.Create),
-  new TestEntry("Fracker", Fracker.Create),
-  new TestEntry("Maxwell", Maxwell.Create),
-  new TestEntry("Ramp", Ramp.Create),
-  new TestEntry("Pointy", Pointy.Create),
-  new TestEntry("AntiPointy", AntiPointy.Create),
-  new TestEntry("Corner Case", CornerCase.Create),
-  new TestEntry("Eye Candy", EyeCandy.Create),
   // #endif
+
   new TestEntry("Continuous Test", ContinuousTest.Create),
   new TestEntry("Time of Impact", TimeOfImpact.Create),
   new TestEntry("Motor Joint", MotorJoint.Create),
@@ -180,11 +170,44 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Add Pair Stress Test", AddPair.Create),
 
   new TestEntry("Blob Test", BlobTest.Create),
+
+  new TestEntry("Continuous Collision", TestCCD.Create),
+  new TestEntry("Ragdolls", TestRagdoll.Create),
+  new TestEntry("Stacked Boxes", TestStack.Create),
+
+  new TestEntry("Basic Slider Crank", BasicSliderCrank.Create),
+  new TestEntry("Pyramid Topple", PyramidTopple.Create),
+  new TestEntry("Domino Tower", DominoTower.Create),
+  new TestEntry("Heavy on Light", HeavyOnLight.Create),
+  new TestEntry("Heavy on Light 2", HeavyOnLightTwo.Create),
+  new TestEntry("TopDown Car", TopdownCar.Create),
+
   // #if B2_ENABLE_CONTROLLER
   new TestEntry("Buoyancy Test", BuoyancyTest.Create),
   // #endif
 
-  new TestEntry("Continuous Collision", TestCCD.Create),
-  new TestEntry("Ragdolls", TestRagdoll.Create),
-  new TestEntry("Stacked Boxes", TestStack.Create)
+  // #if B2_ENABLE_PARTICLE
+  new TestEntry("Sandbox", Sandbox.Create),
+  // new TestEntry("Sparky", Sparky.Create),
+  new TestEntry("Dam Break", DamBreak.Create),
+  new TestEntry("Liquid Timer", LiquidTimer.Create),
+  new TestEntry("Wave Machine", WaveMachine.Create),
+  new TestEntry("Particles", Particles.Create),
+  new TestEntry("Faucet", Faucet.Create),
+  new TestEntry("Particle Drawing", DrawingParticles.Create),
+  new TestEntry("Soup", Soup.Create),
+  new TestEntry("Surface Tension", ParticlesSurfaceTension.Create),
+  new TestEntry("Elastic Particles", ElasticParticles.Create),
+  new TestEntry("Rigid Particles", RigidParticles.Create),
+  new TestEntry("Multiple Systems", MultipleParticleSystems.Create),
+  new TestEntry("Impulse", Impulse.Create),
+  new TestEntry("Soup Stirrer", SoupStirrer.Create),
+  new TestEntry("Fracker", Fracker.Create),
+  new TestEntry("Maxwell", Maxwell.Create),
+  new TestEntry("Ramp", Ramp.Create),
+  new TestEntry("Pointy", Pointy.Create),
+  new TestEntry("AntiPointy", AntiPointy.Create),
+  new TestEntry("Corner Case", CornerCase.Create),
+  new TestEntry("Eye Candy", EyeCandy.Create),
+  // #endif
 ];

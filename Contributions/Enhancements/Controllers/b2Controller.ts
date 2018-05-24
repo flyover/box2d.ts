@@ -37,8 +37,6 @@ export class b2ControllerEdge {
 /**
  * Base class for controllers. Controllers are a convience for
  * encapsulating common per-step functionality.
- * @export
- * @constructor
  */
 export abstract class b2Controller {
   m_world: b2World = null;
@@ -89,7 +87,7 @@ export abstract class b2Controller {
    * Adds a body to the controller list.
    */
   AddBody(body: b2Body) {
-    var edge = new b2ControllerEdge();
+    const edge = new b2ControllerEdge();
 
     edge.body = body;
     edge.controller = this;
@@ -120,7 +118,7 @@ export abstract class b2Controller {
 
     //Find the corresponding edge
     /*b2ControllerEdge*/
-    var edge = this.m_bodyList;
+    let edge = this.m_bodyList;
     while (edge && edge.body !== body)
       edge = edge.nextBody;
 

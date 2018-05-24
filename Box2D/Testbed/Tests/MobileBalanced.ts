@@ -26,16 +26,16 @@ export class MobileBalanced extends testbed.Test {
     super();
 
     // Create ground body.
-    var /*b2BodyDef*/ bodyDef = new box2d.b2BodyDef();
+    const /*b2BodyDef*/ bodyDef = new box2d.b2BodyDef();
     bodyDef.position.Set(0.0, 20.0);
     const ground = this.m_world.CreateBody(bodyDef);
 
-    var /*float32*/ a = 0.5;
-    var /*b2Vec2*/ h = new box2d.b2Vec2(0.0, a);
+    const /*float32*/ a = 0.5;
+    const /*b2Vec2*/ h = new box2d.b2Vec2(0.0, a);
 
-    var /*b2Body*/ root = this.AddNode(ground, box2d.b2Vec2_zero, 0, 3.0, a);
+    const /*b2Body*/ root = this.AddNode(ground, box2d.b2Vec2_zero, 0, 3.0, a);
 
-    var /*b2RevoluteJointDef*/ jointDef = new box2d.b2RevoluteJointDef();
+    const /*b2RevoluteJointDef*/ jointDef = new box2d.b2RevoluteJointDef();
     jointDef.bodyA = ground;
     jointDef.bodyB = root;
     jointDef.localAnchorA.SetZero();
@@ -44,18 +44,18 @@ export class MobileBalanced extends testbed.Test {
   }
 
   AddNode(parent: box2d.b2Body, localAnchor: box2d.b2Vec2, depth: number, offset: number, a: number): box2d.b2Body {
-    var /*float32*/ density = 20.0;
-    var /*b2Vec2*/ h = new box2d.b2Vec2(0.0, a);
+    const /*float32*/ density = 20.0;
+    const /*b2Vec2*/ h = new box2d.b2Vec2(0.0, a);
   
     //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
-    var /*b2Vec2*/ p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
+    const /*b2Vec2*/ p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
   
-    var /*b2BodyDef*/ bodyDef = new box2d.b2BodyDef();
+    const /*b2BodyDef*/ bodyDef = new box2d.b2BodyDef();
     bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
     bodyDef.position.Copy(p);
-    var /*b2Body*/ body = this.m_world.CreateBody(bodyDef);
+    const /*b2Body*/ body = this.m_world.CreateBody(bodyDef);
   
-    var /*b2PolygonShape*/ shape = new box2d.b2PolygonShape();
+    const /*b2PolygonShape*/ shape = new box2d.b2PolygonShape();
     shape.SetAsBox(0.25 * a, a);
     body.CreateFixture(shape, density);
   
@@ -66,12 +66,12 @@ export class MobileBalanced extends testbed.Test {
     shape.SetAsBox(offset, 0.25 * a, new box2d.b2Vec2(0, -a), 0.0);
     body.CreateFixture(shape, density);
   
-    var /*b2Vec2*/ a1 = new box2d.b2Vec2(offset, -a);
-    var /*b2Vec2*/ a2 = new box2d.b2Vec2(-offset, -a);
-    var /*b2Body*/ body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
-    var /*b2Body*/ body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
+    const /*b2Vec2*/ a1 = new box2d.b2Vec2(offset, -a);
+    const /*b2Vec2*/ a2 = new box2d.b2Vec2(-offset, -a);
+    const /*b2Body*/ body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
+    const /*b2Body*/ body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
   
-    var /*b2RevoluteJointDef*/ jointDef = new box2d.b2RevoluteJointDef();
+    const /*b2RevoluteJointDef*/ jointDef = new box2d.b2RevoluteJointDef();
     jointDef.bodyA = body;
     jointDef.localAnchorB.Copy(h);
   

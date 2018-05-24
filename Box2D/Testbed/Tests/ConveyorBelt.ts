@@ -70,9 +70,9 @@ export class ConveyorBelt extends testbed.Test {
     super.PreSolve(contact, oldManifold);
   
     /*b2Fixture*/
-    var fixtureA = contact.GetFixtureA();
+    const fixtureA = contact.GetFixtureA();
     /*b2Fixture*/
-    var fixtureB = contact.GetFixtureB();
+    const fixtureB = contact.GetFixtureB();
   
     if (fixtureA === this.m_platform) {
       contact.SetTangentSpeed(5.0);

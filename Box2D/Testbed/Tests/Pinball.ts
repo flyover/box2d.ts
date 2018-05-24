@@ -102,14 +102,14 @@ export class Pinball extends testbed.Test {
       jd.bodyB = leftFlipper;
       jd.lowerAngle = -30.0 * box2d.b2_pi / 180.0;
       jd.upperAngle = 5.0 * box2d.b2_pi / 180.0;
-      this.m_leftJoint = /** @type {box2d.b2RevoluteJoint} */ (this.m_world.CreateJoint(jd));
+      this.m_leftJoint = this.m_world.CreateJoint(jd);
 
       jd.motorSpeed = 0.0;
       jd.localAnchorA.Copy(p2);
       jd.bodyB = rightFlipper;
       jd.lowerAngle = -5.0 * box2d.b2_pi / 180.0;
       jd.upperAngle = 30.0 * box2d.b2_pi / 180.0;
-      this.m_rightJoint = /** @type {box2d.b2RevoluteJoint} */ (this.m_world.CreateJoint(jd));
+      this.m_rightJoint = this.m_world.CreateJoint(jd);
     }
 
     // Circle character

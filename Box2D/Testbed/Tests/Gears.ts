@@ -106,7 +106,7 @@ export class Gears extends testbed.Test {
       ground.GetLocalPoint(bd1.position, jd1.localAnchorA);
       body1.GetLocalPoint(bd1.position, jd1.localAnchorB);
       jd1.referenceAngle = body1.GetAngle() - ground.GetAngle();
-      this.m_joint1 = /** @type {box2d.b2RevoluteJoint} */ (this.m_world.CreateJoint(jd1));
+      this.m_joint1 = this.m_world.CreateJoint(jd1);
   
       const bd2 = new box2d.b2BodyDef();
       bd2.type = box2d.b2BodyType.b2_dynamicBody;
@@ -116,7 +116,7 @@ export class Gears extends testbed.Test {
   
       const jd2 = new box2d.b2RevoluteJointDef();
       jd2.Initialize(ground, body2, bd2.position);
-      this.m_joint2 = /** @type {box2d.b2RevoluteJoint} */ (this.m_world.CreateJoint(jd2));
+      this.m_joint2 = this.m_world.CreateJoint(jd2);
   
       const bd3 = new box2d.b2BodyDef();
       bd3.type = box2d.b2BodyType.b2_dynamicBody;
@@ -130,7 +130,7 @@ export class Gears extends testbed.Test {
       jd3.upperTranslation = 5.0;
       jd3.enableLimit = true;
   
-      this.m_joint3 = /** @type {box2d.b2PrismaticJoint} */ (this.m_world.CreateJoint(jd3));
+      this.m_joint3 = this.m_world.CreateJoint(jd3);
   
       const jd4 = new box2d.b2GearJointDef();
       jd4.bodyA = body1;
@@ -138,7 +138,7 @@ export class Gears extends testbed.Test {
       jd4.joint1 = this.m_joint1;
       jd4.joint2 = this.m_joint2;
       jd4.ratio = circle2.m_radius / circle1.m_radius;
-      this.m_joint4 = /** @type {box2d.b2GearJoint} */ (this.m_world.CreateJoint(jd4));
+      this.m_joint4 = this.m_world.CreateJoint(jd4);
   
       const jd5 = new box2d.b2GearJointDef();
       jd5.bodyA = body2;
@@ -146,7 +146,7 @@ export class Gears extends testbed.Test {
       jd5.joint1 = this.m_joint2;
       jd5.joint2 = this.m_joint3;
       jd5.ratio = -1.0 / circle2.m_radius;
-      this.m_joint5 = /** @type {box2d.b2GearJoint} */ (this.m_world.CreateJoint(jd5));
+      this.m_joint5 = this.m_world.CreateJoint(jd5);
     }
   }
 

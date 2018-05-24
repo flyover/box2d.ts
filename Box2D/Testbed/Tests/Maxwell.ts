@@ -68,17 +68,17 @@ export class Maxwell extends testbed.Test {
 
     // Create the container.
     {
-      var bd = new box2d.b2BodyDef();
-      var ground = this.m_world.CreateBody(bd);
-      var shape = new box2d.b2ChainShape();
-      var vertices = [
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
+      const shape = new box2d.b2ChainShape();
+      const vertices = [
         new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, 0),
         new box2d.b2Vec2(Maxwell.k_containerHalfWidth, 0),
         new box2d.b2Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
         new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight)
       ];
       shape.CreateLoop(vertices, 4);
-      var def = new box2d.b2FixtureDef();
+      const def = new box2d.b2FixtureDef();
       def.shape = shape;
       def.density = 0;
       def.restitution = 1.0;
@@ -106,12 +106,12 @@ export class Maxwell extends testbed.Test {
    */
   EnableBarrier() {
     if (!this.m_barrierBody) {
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       this.m_barrierBody = this.m_world.CreateBody(bd);
-      var barrierShape = new box2d.b2PolygonShape();
+      const barrierShape = new box2d.b2PolygonShape();
       barrierShape.SetAsBox(Maxwell.k_containerHalfWidth, Maxwell.k_barrierHeight,
         new box2d.b2Vec2(0, this.m_position), 0);
-      var def = new box2d.b2FixtureDef();
+      const def = new box2d.b2FixtureDef();
       def.shape = barrierShape;
       def.density = 0;
       def.restitution = 1.0;
@@ -140,23 +140,23 @@ export class Maxwell extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(Maxwell.k_containerHalfWidth / 20.0); {
-      var shape = new box2d.b2PolygonShape();
+      const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(this.m_density * Maxwell.k_containerHalfWidth,
         this.m_density * Maxwell.k_containerHalfHeight,
         new box2d.b2Vec2(0, Maxwell.k_containerHalfHeight), 0);
-      var pd = new box2d.b2ParticleGroupDef();
+      const pd = new box2d.b2ParticleGroupDef();
       pd.flags = box2d.b2ParticleFlag.b2_powderParticle;
       pd.shape = shape;
       this.m_particleGroup = this.m_particleSystem.CreateParticleGroup(pd);
       ///  b2Vec2* velocities =
       ///    this.m_particleSystem.GetVelocityBuffer() +
       ///    this.m_particleGroup.GetBufferIndex();
-      var velocities = this.m_particleSystem.GetVelocityBuffer();
-      var index = this.m_particleGroup.GetBufferIndex();
+      const velocities = this.m_particleSystem.GetVelocityBuffer();
+      const index = this.m_particleGroup.GetBufferIndex();
 
-      for (var i = 0; i < this.m_particleGroup.GetParticleCount(); ++i) {
+      for (let i = 0; i < this.m_particleGroup.GetParticleCount(); ++i) {
         ///  b2Vec2& v = *(velocities + i);
-        var v = velocities[index + i];
+        const v = velocities[index + i];
         v.Set(testbed.RandomFloat() + 1.0, testbed.RandomFloat() + 1.0);
         v.Normalize();
         ///  v *= this.m_temperature;
@@ -238,18 +238,18 @@ export class Maxwell extends testbed.Test {
     super.Step(settings);
 
     // Number of particles above (top) and below (bottom) the barrier.
-    var top = 0;
-    var bottom = 0;
-    var index = this.m_particleGroup.GetBufferIndex();
+    let top = 0;
+    let bottom = 0;
+    const index = this.m_particleGroup.GetBufferIndex();
     ///  b2Vec2* const velocities = this.m_particleSystem.GetVelocityBuffer() + index;
-    var velocities = this.m_particleSystem.GetVelocityBuffer();
+    const velocities = this.m_particleSystem.GetVelocityBuffer();
     ///  b2Vec2* const positions = this.m_particleSystem.GetPositionBuffer() + index;
-    var positions = this.m_particleSystem.GetPositionBuffer();
+    const positions = this.m_particleSystem.GetPositionBuffer();
 
-    for (var i = 0; i < this.m_particleGroup.GetParticleCount(); i++) {
+    for (let i = 0; i < this.m_particleGroup.GetParticleCount(); i++) {
       // Add energy to particles based upon the temperature.
       ///  b2Vec2& v = velocities[i];
-      var v = velocities[index + i];
+      const v = velocities[index + i];
       v.Normalize();
       ///  v *= this.m_temperature;
       v.SelfMul(this.m_temperature);
@@ -257,7 +257,7 @@ export class Maxwell extends testbed.Test {
       // Keep track of the number of particles above / below the
       // divider / barrier position.
       ///  b2Vec2& p = positions[i];
-      var p = positions[index + i];
+      const p = positions[index + i];
       if (p.y > this.m_position)
         top++;
       else
@@ -266,8 +266,8 @@ export class Maxwell extends testbed.Test {
 
     // Calculate a score based upon the difference in pressure between the
     // upper and lower divisions of the container.
-    var topPressure = top / (Maxwell.k_containerHeight - this.m_position);
-    var botPressure = bottom / this.m_position;
+    const topPressure = top / (Maxwell.k_containerHeight - this.m_position);
+    const botPressure = bottom / this.m_position;
     testbed.g_debugDraw.DrawString(
       10, 75, `Score: ${topPressure > 0.0 ? botPressure / topPressure - 1.0 : 0.0}`);
   }
@@ -300,168 +300,3 @@ export class Maxwell extends testbed.Test {
 }
 
 // #endif
-
-// //#if B2_ENABLE_PARTICLE
-
-// goog.provide('box2d.Testbed.Maxwell');
-
-// goog.require('box2d.Testbed.Test');
-
-// /**
-//  * Game which adds some fun to Maxwell's demon.
-//  *
-//  * http://en.wikipedia.org/wiki/Maxwell's_demon
-//  *
-//  * The user's goal is to try to catch as many particles as
-//  * possible in the bottom half of the container by splitting the
-//  * container using a barrier with the 'a' key.
-//  *
-//  * See Maxwell::Keyboard() for other controls.
-//  *
-//  * @export
-//  * @constructor
-//  * @extends {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.Maxwell(canvas, settings) {
-//   box2d.Testbed.Test.call(this, canvas, settings); // base class constructor
-//   this.m_density = Maxwell.k_densityDefault;
-//   this.m_position = Maxwell.k_containerHalfHeight;
-//   this.m_particleGroup = null;
-//   this.m_temperature = Maxwell.k_temperatureDefault;
-//   this.m_barrierBody = null;
-
-//   this.m_world.SetGravity(new box2d.b2Vec2(0, 0));
-
-//   // Create the container.
-//   {
-//     var bd = new box2d.b2BodyDef();
-//     var ground = this.m_world.CreateBody(bd);
-//     var shape = new box2d.b2ChainShape();
-//     var vertices = [
-//       new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, 0),
-//       new box2d.b2Vec2(Maxwell.k_containerHalfWidth, 0),
-//       new box2d.b2Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
-//       new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight)
-//     ];
-//     shape.CreateLoop(vertices, 4);
-//     var def = new box2d.b2FixtureDef();
-//     def.shape = shape;
-//     def.density = 0;
-//     def.restitution = 1.0;
-//     ground.CreateFixture(def);
-//   }
-
-//   // Enable the barrier.
-//   this.EnableBarrier();
-//   // Create the particles.
-//   this.ResetParticles();
-// }
-
-// goog.inherits(box2d.Testbed.Maxwell, box2d.Testbed.Test);
-
-// /**
-//  * @type {number}
-//  */
-// m_density = 0.0;
-// /**
-//  * @type {number}
-//  */
-// m_position = 0.0;
-// /**
-//  * @type {number}
-//  */
-// m_temperature = 0.0;
-// /**
-//  * @type {box2d.b2Body}
-//  */
-// m_barrierBody = null;
-// /**
-//  * @type {box2d.b2ParticleGroup}
-//  */
-// m_particleGroup = null;
-
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_containerWidth = 2.0;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_containerHeight = 4.0;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_containerHalfWidth = Maxwell.k_containerWidth / 2.0;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_containerHalfHeight = Maxwell.k_containerHeight / 2.0;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_barrierHeight = Maxwell.k_containerHalfHeight / 100.0;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_barrierMovementIncrement = Maxwell.k_containerHalfHeight * 0.1;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_densityStep = 1.25;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_densityMin = 0.01;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_densityMax = 0.8;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_densityDefault = 0.25;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_temperatureStep = 0.2;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_temperatureMin = 0.4;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_temperatureMax = 10.0;
-// /**
-//  * @const
-//  * @type {number}
-//  */
-// Maxwell.k_temperatureDefault = 5.0;
-
-
-// /**
-//  * @export
-//  * @return {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.Maxwell.Create(canvas, settings) {
-//   return new box2d.Testbed.Maxwell(canvas, settings);
-// }
-
-// //#endif

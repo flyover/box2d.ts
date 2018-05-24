@@ -78,15 +78,15 @@ export class DistanceTest extends testbed.Test {
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
-    var input = new box2d.b2DistanceInput();
+    const input = new box2d.b2DistanceInput();
     input.proxyA.SetShape(this.m_polygonA, 0);
     input.proxyB.SetShape(this.m_polygonB, 0);
     input.transformA.Copy(this.m_transformA);
     input.transformB.Copy(this.m_transformB);
     input.useRadii = true;
-    var cache = new box2d.b2SimplexCache();
+    const cache = new box2d.b2SimplexCache();
     cache.count = 0;
-    var output = new box2d.b2DistanceOutput();
+    const output = new box2d.b2DistanceOutput();
     box2d.b2Distance(output, cache, input);
 
     testbed.g_debugDraw.DrawString(5, this.m_textLine, `distance = ${output.distance.toFixed(2)}`);
@@ -96,26 +96,26 @@ export class DistanceTest extends testbed.Test {
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
     {
-      var color = new box2d.b2Color(0.9, 0.9, 0.9);
-      var v = new Array(box2d.b2_maxPolygonVertices);
-      for (var i = 0; i < this.m_polygonA.m_count; ++i) {
+      const color = new box2d.b2Color(0.9, 0.9, 0.9);
+      const v = new Array(box2d.b2_maxPolygonVertices);
+      for (let i = 0; i < this.m_polygonA.m_count; ++i) {
         v[i] = box2d.b2Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new box2d.b2Vec2());
       }
       testbed.g_debugDraw.DrawPolygon(v, this.m_polygonA.m_count, color);
 
-      for (var i = 0; i < this.m_polygonB.m_count; ++i) {
+      for (let i = 0; i < this.m_polygonB.m_count; ++i) {
         v[i] = box2d.b2Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new box2d.b2Vec2());
       }
       testbed.g_debugDraw.DrawPolygon(v, this.m_polygonB.m_count, color);
     }
 
-    var x1 = output.pointA;
-    var x2 = output.pointB;
+    const x1 = output.pointA;
+    const x2 = output.pointB;
 
-    var c1 = new box2d.b2Color(1.0, 0.0, 0.0);
+    const c1 = new box2d.b2Color(1.0, 0.0, 0.0);
     testbed.g_debugDraw.DrawPoint(x1, 4.0, c1);
 
-    var c2 = new box2d.b2Color(1.0, 1.0, 0.0);
+    const c2 = new box2d.b2Color(1.0, 1.0, 0.0);
     testbed.g_debugDraw.DrawPoint(x2, 4.0, c2);
   }
 

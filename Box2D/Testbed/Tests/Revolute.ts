@@ -69,7 +69,7 @@ export class Revolute extends testbed.Test {
       rjd.enableLimit = true;
       rjd.collideConnected = true;
   
-      this.m_joint = /** @type {box2d.b2RevoluteJoint} */ (this.m_world.CreateJoint(rjd));
+      this.m_joint = this.m_world.CreateJoint(rjd);
     }
   
     {
@@ -156,7 +156,7 @@ export class Revolute extends testbed.Test {
     //   this.m_ball.SetTransformVec(new box2d.b2Vec2(0.0, 0.5), 0.0);
     // }
 
-    // var torque1 = this.m_joint.GetMotorTorque(settings.hz);
+    // const torque1 = this.m_joint.GetMotorTorque(settings.hz);
     // testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque1.toFixed(0)}, ${torque2.toFixed(0)} : Motor Force = ${force3.toFixed(0)}`);
     // this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }

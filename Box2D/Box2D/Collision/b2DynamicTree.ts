@@ -31,9 +31,9 @@ export class b2TreeNode {
   public m_id: number = 0;
   public aabb: b2AABB = new b2AABB();
   public userData: any = null;
-  public parent: b2TreeNode | null = null; // or b2TreeNode.prototype.next
-  public child1: b2TreeNode | null = null; // or b2TreeNode.prototype.next
-  public child2: b2TreeNode | null = null; // or b2TreeNode.prototype.next
+  public parent: b2TreeNode | null = null; // or next
+  public child1: b2TreeNode | null = null;
+  public child2: b2TreeNode | null = null;
   public height: number = 0; // leaf = 0, free node = -1
 
   constructor(id: number = 0) {

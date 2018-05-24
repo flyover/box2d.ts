@@ -22,65 +22,38 @@ import * as testbed from "../Testbed";
 export class HeavyOnLight extends testbed.Test {
   constructor() {
     super();
+
+    {
+      /*box2d.b2BodyDef*/
+      const bd = new box2d.b2BodyDef();
+      /*box2d.b2Body*/
+      const ground = this.m_world.CreateBody(bd);
+
+      /*box2d.b2EdgeShape*/
+      const shape = new box2d.b2EdgeShape();
+      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      ground.CreateFixture(shape, 0.0);
+    }
+
+    /*box2d.b2BodyDef*/
+    const bd = new box2d.b2BodyDef();
+    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.position.Set(0.0, 0.5);
+    /*box2d.b2Body*/
+    let body = this.m_world.CreateBody(bd);
+
+    /*box2d.b2CircleShape*/
+    const shape = new box2d.b2CircleShape();
+    shape.m_radius = 0.5;
+    body.CreateFixture(shape, 10.0);
+
+    bd.position.Set(0.0, 6.0);
+    body = this.m_world.CreateBody(bd);
+    shape.m_radius = 5.0;
+    body.CreateFixture(shape, 10.0);
   }
+
   static Create() {
     return new HeavyOnLight();
   }
 }
-
-// goog.provide('box2d.Testbed.HeavyOnLight');
-
-// goog.require('box2d.Testbed.Test');
-// goog.require('goog.events.KeyCodes');
-
-// /**
-//  * @export
-//  * @constructor
-//  * @extends {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.HeavyOnLight = function(canvas, settings) {
-//   box2d.Testbed.Test.call(this, canvas, settings); // base class constructor
-
-//   {
-//     /*box2d.b2BodyDef*/
-//     var bd = new box2d.b2BodyDef();
-//     /*box2d.b2Body*/
-//     var ground = this.m_world.CreateBody(bd);
-
-//     /*box2d.b2EdgeShape*/
-//     var shape = new box2d.b2EdgeShape();
-//     shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
-//     ground.CreateFixture(shape, 0.0);
-//   }
-
-//   /*box2d.b2BodyDef*/
-//   var bd = new box2d.b2BodyDef();
-//   bd.type = box2d.b2BodyType.b2_dynamicBody;
-//   bd.position.Set(0.0, 0.5);
-//   /*box2d.b2Body*/
-//   var body = this.m_world.CreateBody(bd);
-
-//   /*box2d.b2CircleShape*/
-//   var shape = new box2d.b2CircleShape();
-//   shape.m_radius = 0.5;
-//   body.CreateFixture(shape, 10.0);
-
-//   bd.position.Set(0.0, 6.0);
-//   body = this.m_world.CreateBody(bd);
-//   shape.m_radius = 5.0;
-//   body.CreateFixture(shape, 10.0);
-// }
-
-// goog.inherits(box2d.Testbed.HeavyOnLight, box2d.Testbed.Test);
-
-// /**
-//  * @export
-//  * @return {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.HeavyOnLight.Create = function(canvas, settings) {
-//   return new box2d.Testbed.HeavyOnLight(canvas, settings);
-// }

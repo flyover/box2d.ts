@@ -70,24 +70,24 @@ export class b2BuoyancyController extends b2Controller {
     if (this.useWorldGravity) {
       this.gravity.Copy(this.GetWorld().GetGravity());
     }
-    for (var i = this.m_bodyList; i; i = i.nextBody) {
-      var body = i.body;
+    for (let i = this.m_bodyList; i; i = i.nextBody) {
+      const body = i.body;
       if (!body.IsAwake()) {
         //Buoyancy force is just a function of position,
         //so unlike most forces, it is safe to ignore sleeping bodes
         continue;
       }
-      var areac = new b2Vec2();
-      var massc = new b2Vec2();
-      var area = 0;
-      var mass = 0;
-      for (var fixture = body.GetFixtureList(); fixture; fixture = fixture.m_next) {
-        var sc = new b2Vec2();
-        var sarea = fixture.GetShape().ComputeSubmergedArea(this.normal, this.offset, body.GetTransform(), sc);
+      const areac = new b2Vec2();
+      const massc = new b2Vec2();
+      let area = 0;
+      let mass = 0;
+      for (let fixture = body.GetFixtureList(); fixture; fixture = fixture.m_next) {
+        const sc = new b2Vec2();
+        const sarea = fixture.GetShape().ComputeSubmergedArea(this.normal, this.offset, body.GetTransform(), sc);
         area += sarea;
         areac.x += sarea * sc.x;
         areac.y += sarea * sc.y;
-        var shapeDensity = 0;
+        let shapeDensity = 0;
         if (this.useDensity) {
           //TODO: Expose density publicly
           shapeDensity = fixture.GetDensity();
@@ -106,11 +106,11 @@ export class b2BuoyancyController extends b2Controller {
       if (area < b2_epsilon)
         continue;
       //Buoyancy
-      var buoyancyForce = this.gravity.Clone().SelfNeg();
+      const buoyancyForce = this.gravity.Clone().SelfNeg();
       buoyancyForce.SelfMul(this.density * area);
       body.ApplyForce(buoyancyForce, massc);
       //Linear drag
-      var dragForce = body.GetLinearVelocityFromWorldPoint(areac, new b2Vec2());
+      const dragForce = body.GetLinearVelocityFromWorldPoint(areac, new b2Vec2());
       dragForce.SelfSub(this.velocity);
       dragForce.SelfMul((-this.linearDrag * area));
       body.ApplyForce(dragForce, areac);
@@ -121,15 +121,15 @@ export class b2BuoyancyController extends b2Controller {
   }
 
   Draw(debugDraw: b2Draw) {
-    var r = 100;
-    var p1 = new b2Vec2();
-    var p2 = new b2Vec2();
+    const r = 100;
+    const p1 = new b2Vec2();
+    const p2 = new b2Vec2();
     p1.x = this.normal.x * this.offset + this.normal.y * r;
     p1.y = this.normal.y * this.offset - this.normal.x * r;
     p2.x = this.normal.x * this.offset - this.normal.y * r;
     p2.y = this.normal.y * this.offset + this.normal.x * r;
   
-    var color = new b2Color(0, 0, 0.8);
+    const color = new b2Color(0, 0, 0.8);
   
     debugDraw.DrawSegment(p1, p2, color);
   }

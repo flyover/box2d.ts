@@ -160,9 +160,7 @@ export function b2Free(mem: any): void {
 
 /// Logging function.
 export function b2Log(message: string, ...args: any[]): void {
-  // const args = Array.prototype.slice.call(arguments);
-  // const str = goog.string.format.apply(null, args.slice(0));
-  // console.log(message);
+  // console.log(message, ...args);
 }
 
 /// Version numbering scheme.

@@ -117,9 +117,6 @@ export class SpecialParticleTracker extends box2d.b2DestructionListener {
    */
   m_colorOscillationPeriod = 2.0;
 
-  /**
-   * @return {void}
-   */
   __dtor__(): void {
     this.m_world.SetDestructionListener(null);
   }
@@ -151,8 +148,6 @@ export class SpecialParticleTracker extends box2d.b2DestructionListener {
 
   /**
    * Apply effects to special particles.
-   * @return {void}
-   * @param {number} dt
    */
   Step(dt: number): void {
     function fmod(a: number, b: number) {
@@ -537,22 +532,10 @@ export class Sandbox extends testbed.Test {
     super.EndContact(contact);
   }
 
-  /**
-   * @export
-   * @return {void}
-   * @param {box2d.b2Contact} contact
-   * @param {box2d.b2Manifold} oldManifold
-   */
   PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void {
     super.PreSolve(contact, oldManifold);
   }
 
-  /**
-   * @export
-   * @return {void}
-   * @param {box2d.b2Contact} contact
-   * @param {box2d.b2ContactImpulse} impulse
-   */
   PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void {
     super.PostSolve(contact, impulse);
   }

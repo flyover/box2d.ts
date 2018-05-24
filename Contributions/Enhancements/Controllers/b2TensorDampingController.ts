@@ -44,16 +44,16 @@ export class b2TensorDampingController extends b2Controller {
      * @see b2Controller::Step
      */
     Step(step: b2TimeStep) {
-        var timestep = step.dt;
+        const timestep = step.dt;
         if (timestep <= b2_epsilon)
             return;
         if (timestep > this.maxTimestep && this.maxTimestep > 0)
             timestep = this.maxTimestep;
-        for (var i = this.m_bodyList; i; i = i.nextBody) {
-            var body = i.body;
+        for (let i = this.m_bodyList; i; i = i.nextBody) {
+            const body = i.body;
             if (!body.IsAwake())
             continue;
-            var damping = body.GetWorldVector(
+            const damping = body.GetWorldVector(
             b2Mat22.MulMV(
                 this.T,
                 body.GetLocalVector(

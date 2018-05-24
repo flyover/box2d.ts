@@ -29,31 +29,31 @@ export class BulletTest extends testbed.Test {
 
     {
       /*box2d.b2BodyDef*/
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.position.Set(0.0, 0.0);
       /*box2d.b2Body*/
-      var body = this.m_world.CreateBody(bd);
+      const body = this.m_world.CreateBody(bd);
   
       /*box2d.b2EdgeShape*/
-      var edge = new box2d.b2EdgeShape();
+      const edge = new box2d.b2EdgeShape();
   
       edge.Set(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
       body.CreateFixture(edge, 0.0);
   
       /*box2d.b2PolygonShape*/
-      var shape = new box2d.b2PolygonShape();
+      const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(0.2, 1.0, new box2d.b2Vec2(0.5, 1.0), 0.0);
       body.CreateFixture(shape, 0.0);
     }
   
     {
       /*box2d.b2BodyDef*/
-      var bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 4.0);
   
       /*box2d.b2PolygonShape*/
-      var box = new box2d.b2PolygonShape();
+      const box = new box2d.b2PolygonShape();
       box.SetAsBox(2.0, 0.1);
   
       this.m_body = this.m_world.CreateBody(bd);

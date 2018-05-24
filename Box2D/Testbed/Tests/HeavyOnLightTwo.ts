@@ -20,111 +20,67 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class HeavyOnLightTwo extends testbed.Test {
+  m_heavy: box2d.b2Body | null = null;
+
   constructor() {
     super();
+
+    {
+      /*box2d.b2BodyDef*/
+      const bd = new box2d.b2BodyDef();
+      /*box2d.b2Body*/
+      const ground = this.m_world.CreateBody(bd);
+
+      /*box2d.b2EdgeShape*/
+      const shape = new box2d.b2EdgeShape();
+      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      ground.CreateFixture(shape, 0.0);
+    }
+
+    /*box2d.b2BodyDef*/
+    const bd = new box2d.b2BodyDef();
+    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.position.Set(0.0, 2.5);
+    /*box2d.b2Body*/
+    let body = this.m_world.CreateBody(bd);
+
+    /*box2d.b2CircleShape*/
+    const shape = new box2d.b2CircleShape();
+    shape.m_radius = 0.5;
+    body.CreateFixture(shape, 10.0);
+
+    bd.position.Set(0.0, 3.5);
+    body = this.m_world.CreateBody(bd);
+    body.CreateFixture(shape, 10.0);
   }
+
+  ToggleHeavy() {
+    if (this.m_heavy !== null) {
+      this.m_world.DestroyBody(this.m_heavy);
+      this.m_heavy = null;
+    } else {
+      /*box2d.b2BodyDef*/
+      const bd = new box2d.b2BodyDef();
+      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.position.Set(0.0, 9.0);
+      this.m_heavy = this.m_world.CreateBody(bd);
+
+      /*box2d.b2CircleShape*/
+      const shape = new box2d.b2CircleShape();
+      shape.m_radius = 5.0;
+      this.m_heavy.CreateFixture(shape, 10.0);
+    }
+  }
+
+  Keyboard(key: string) {
+    switch (key) {
+      case "h":
+        this.ToggleHeavy();
+        break;
+    }
+  }
+  
   static Create() {
     return new HeavyOnLightTwo();
   }
 }
-
-// goog.provide('box2d.Testbed.HeavyOnLightTwo');
-
-// goog.require('box2d.Testbed.Test');
-// goog.require('goog.events.KeyCodes');
-
-// /**
-//  * @export
-//  * @constructor
-//  * @extends {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.HeavyOnLightTwo = function(canvas, settings) {
-//   box2d.Testbed.Test.call(this, canvas, settings); // base class constructor
-
-//   {
-//     /*box2d.b2BodyDef*/
-//     var bd = new box2d.b2BodyDef();
-//     /*box2d.b2Body*/
-//     var ground = this.m_world.CreateBody(bd);
-
-//     /*box2d.b2EdgeShape*/
-//     var shape = new box2d.b2EdgeShape();
-//     shape.SetAsEdge(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
-//     ground.CreateFixture(shape, 0.0);
-//   }
-
-//   /*box2d.b2BodyDef*/
-//   var bd = new box2d.b2BodyDef();
-//   bd.type = box2d.b2BodyType.b2_dynamicBody;
-//   bd.position.Set(0.0, 2.5);
-//   /*box2d.b2Body*/
-//   var body = this.m_world.CreateBody(bd);
-
-//   /*box2d.b2CircleShape*/
-//   var shape = new box2d.b2CircleShape();
-//   shape.m_radius = 0.5;
-//   body.CreateFixture(shape, 10.0);
-
-//   bd.position.Set(0.0, 3.5);
-//   body = this.m_world.CreateBody(bd);
-//   body.CreateFixture(shape, 10.0);
-
-//   this.m_heavy = null;
-// }
-
-// goog.inherits(box2d.Testbed.HeavyOnLightTwo, box2d.Testbed.Test);
-
-// /**
-//  * @export
-//  * @type {box2d.b2Body}
-//  */
-// box2d.Testbed.HeavyOnLightTwo.prototype.m_heavy = null;
-
-// /**
-//  * @export
-//  * @return {void}
-//  */
-// box2d.Testbed.HeavyOnLightTwo.prototype.ToggleHeavy = function() {
-//   if (this.m_heavy !== null) {
-//     this.m_world.DestroyBody(this.m_heavy);
-//     this.m_heavy = null;
-//   } else {
-//     /*box2d.b2BodyDef*/
-//     var bd = new box2d.b2BodyDef();
-//     bd.type = box2d.b2BodyType.b2_dynamicBody;
-//     bd.position.Set(0.0, 9.0);
-//     this.m_heavy = this.m_world.CreateBody(bd);
-
-//     /*box2d.b2CircleShape*/
-//     var shape = new box2d.b2CircleShape();
-//     shape.m_radius = 5.0;
-//     this.m_heavy.CreateFixture(shape, 10.0);
-//   }
-// }
-
-// /**
-//  * @export
-//  * @return {void}
-//  * @param {number} key
-//  */
-// box2d.Testbed.HeavyOnLightTwo.prototype.Keyboard = function(key) {
-//   switch (key) {
-//     case goog.events.KeyCodes.H:
-//       this.ToggleHeavy();
-//       break;
-//   }
-
-//   box2d.Testbed.Test.prototype.Keyboard.call(this, key);
-// }
-
-// /**
-//  * @export
-//  * @return {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.HeavyOnLightTwo.Create = function(canvas, settings) {
-//   return new box2d.Testbed.HeavyOnLightTwo(canvas, settings);
-// }

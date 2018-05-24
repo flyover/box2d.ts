@@ -46,7 +46,7 @@ export class EdgeShapes extends testbed.Test {
     this.m_bodyIndex = 0;
     this.m_bodies = new Array(EdgeShapes.e_maxBodies);
     this.m_polygons = new Array(4);
-    for (var i = 0; i < 4; ++i) {
+    for (let i = 0; i < 4; ++i) {
       this.m_polygons[i] = new box2d.b2PolygonShape();
     }
     this.m_circle = new box2d.b2CircleShape();
@@ -55,16 +55,16 @@ export class EdgeShapes extends testbed.Test {
 
     // Ground body
     {
-      var bd = new box2d.b2BodyDef();
-      var ground = this.m_world.CreateBody(bd);
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
 
-      var x1 = -20.0;
-      var y1 = 2.0 * box2d.b2Cos(x1 / 10.0 * box2d.b2_pi);
-      for (var i = 0; i < 80; ++i) {
-        var x2 = x1 + 0.5;
-        var y2 = 2.0 * box2d.b2Cos(x2 / 10.0 * box2d.b2_pi);
+      let x1 = -20.0;
+      let y1 = 2.0 * box2d.b2Cos(x1 / 10.0 * box2d.b2_pi);
+      for (let i = 0; i < 80; ++i) {
+        const x2 = x1 + 0.5;
+        const y2 = 2.0 * box2d.b2Cos(x2 / 10.0 * box2d.b2_pi);
 
-        var shape = new box2d.b2EdgeShape();
+        const shape = new box2d.b2EdgeShape();
         shape.Set(new box2d.b2Vec2(x1, y1), new box2d.b2Vec2(x2, y2));
         ground.CreateFixture(shape, 0.0);
 
@@ -74,7 +74,7 @@ export class EdgeShapes extends testbed.Test {
     }
 
     {
-      var vertices = new Array(3);
+      const vertices = new Array(3);
       vertices[0] = new box2d.b2Vec2(-0.5, 0.0);
       vertices[1] = new box2d.b2Vec2(0.5, 0.0);
       vertices[2] = new box2d.b2Vec2(0.0, 1.5);
@@ -82,7 +82,7 @@ export class EdgeShapes extends testbed.Test {
     }
 
     {
-      var vertices = new Array(3);
+      const vertices = new Array(3);
       vertices[0] = new box2d.b2Vec2(-0.1, 0.0);
       vertices[1] = new box2d.b2Vec2(0.1, 0.0);
       vertices[2] = new box2d.b2Vec2(0.0, 1.5);
@@ -90,11 +90,11 @@ export class EdgeShapes extends testbed.Test {
     }
 
     {
-      var w = 1.0;
-      var b = w / (2.0 + box2d.b2Sqrt(2.0));
-      var s = box2d.b2Sqrt(2.0) * b;
+      const w = 1.0;
+      const b = w / (2.0 + box2d.b2Sqrt(2.0));
+      const s = box2d.b2Sqrt(2.0) * b;
 
-      var vertices = new Array(8);
+      const vertices = new Array(8);
       vertices[0] = new box2d.b2Vec2(0.5 * s, 0.0);
       vertices[1] = new box2d.b2Vec2(0.5 * w, b);
       vertices[2] = new box2d.b2Vec2(0.5 * w, b + s);
@@ -115,7 +115,7 @@ export class EdgeShapes extends testbed.Test {
       this.m_circle.m_radius = 0.5;
     }
 
-    for (var i = 0; i < EdgeShapes.e_maxBodies; ++i) {
+    for (let i = 0; i < EdgeShapes.e_maxBodies; ++i) {
       this.m_bodies[i] = null;
     }
   }
@@ -126,10 +126,10 @@ export class EdgeShapes extends testbed.Test {
       this.m_bodies[this.m_bodyIndex] = null;
     }
   
-    var bd = new box2d.b2BodyDef();
+    const bd = new box2d.b2BodyDef();
   
-    var x = box2d.b2RandomRange(-10.0, 10.0);
-    var y = box2d.b2RandomRange(10.0, 20.0);
+    const x = box2d.b2RandomRange(-10.0, 10.0);
+    const y = box2d.b2RandomRange(10.0, 20.0);
     bd.position.Set(x, y);
     bd.angle = box2d.b2RandomRange(-box2d.b2_pi, box2d.b2_pi);
     bd.type = box2d.b2BodyType.b2_dynamicBody;
@@ -141,13 +141,13 @@ export class EdgeShapes extends testbed.Test {
     this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
   
     if (index < 4) {
-      var fd = new box2d.b2FixtureDef();
+      const fd = new box2d.b2FixtureDef();
       fd.shape = this.m_polygons[index];
       fd.friction = 0.3;
       fd.density = 20.0;
       this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
     } else {
-      var fd = new box2d.b2FixtureDef();
+      const fd = new box2d.b2FixtureDef();
       fd.shape = this.m_circle;
       fd.friction = 0.3;
       fd.density = 20.0;
@@ -159,7 +159,7 @@ export class EdgeShapes extends testbed.Test {
   }
 
   DestroyBody() {
-    for (var i = 0; i < EdgeShapes.e_maxBodies; ++i) {
+    for (let i = 0; i < EdgeShapes.e_maxBodies; ++i) {
       if (this.m_bodies[i] !== null) {
         this.m_world.DestroyBody(this.m_bodies[i]);
         this.m_bodies[i] = null;
@@ -185,23 +185,23 @@ export class EdgeShapes extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    var advanceRay = !settings.pause || settings.singleStep;
+    const advanceRay = !settings.pause || settings.singleStep;
     super.Step(settings);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 1-5 to drop stuff, m to change the mode");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
-    var L = 25.0;
-    var point1 = new box2d.b2Vec2(0.0, 10.0);
-    var d = new box2d.b2Vec2(L * box2d.b2Cos(this.m_angle), -L * box2d.b2Abs(box2d.b2Sin(this.m_angle)));
-    var point2 = box2d.b2Vec2.AddVV(point1, d, new box2d.b2Vec2());
+    const L = 25.0;
+    const point1 = new box2d.b2Vec2(0.0, 10.0);
+    const d = new box2d.b2Vec2(L * box2d.b2Cos(this.m_angle), -L * box2d.b2Abs(box2d.b2Sin(this.m_angle)));
+    const point2 = box2d.b2Vec2.AddVV(point1, d, new box2d.b2Vec2());
 
-    var callback = new EdgeShapesCallback();
+    const callback = new EdgeShapesCallback();
     this.m_world.RayCast(callback, point1, point2);
 
     if (callback.m_fixture) {
       testbed.g_debugDraw.DrawPoint(callback.m_point, 5.0, new box2d.b2Color(0.4, 0.9, 0.4));
       testbed.g_debugDraw.DrawSegment(point1, callback.m_point, new box2d.b2Color(0.8, 0.8, 0.8));
-      var head = box2d.b2Vec2.AddVV(callback.m_point, box2d.b2Vec2.MulSV(0.5, callback.m_normal, box2d.b2Vec2.s_t0), new box2d.b2Vec2());
+      const head = box2d.b2Vec2.AddVV(callback.m_point, box2d.b2Vec2.MulSV(0.5, callback.m_normal, box2d.b2Vec2.s_t0), new box2d.b2Vec2());
       testbed.g_debugDraw.DrawSegment(callback.m_point, head, new box2d.b2Color(0.9, 0.9, 0.4));
     } else {
       testbed.g_debugDraw.DrawSegment(point1, point2, new box2d.b2Color(0.8, 0.8, 0.8));

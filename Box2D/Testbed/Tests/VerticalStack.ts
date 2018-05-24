@@ -31,9 +31,7 @@ export class VerticalStack extends testbed.Test {
     super();
 
     this.m_bullet = null;
-    /** @type {Array.<box2d.b2Body>} */
     this.m_bodies = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
-    /** @type {Array.<number>} */
     this.m_indices = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
 
     {
@@ -90,15 +88,15 @@ export class VerticalStack extends testbed.Test {
         }
   
         {
-          var shape = new box2d.b2CircleShape();
+          const shape = new box2d.b2CircleShape();
           shape.m_radius = 0.25;
   
-          var fd = new box2d.b2FixtureDef();
+          const fd = new box2d.b2FixtureDef();
           fd.shape = shape;
           fd.density = 20.0;
           fd.restitution = 0.05;
   
-          var bd = new box2d.b2BodyDef();
+          const bd = new box2d.b2BodyDef();
           bd.type = box2d.b2BodyType.b2_dynamicBody;
           bd.bullet = true;
           bd.position.Set(-31.0, 5.0);
@@ -129,15 +127,15 @@ export class VerticalStack extends testbed.Test {
     //  }
 
     //  {
-    //    var shape = new box2d.b2CircleShape();
+    //    const shape = new box2d.b2CircleShape();
     //    shape.m_radius = 0.25;
 
-    //    var fd = new box2d.b2FixtureDef();
+    //    const fd = new box2d.b2FixtureDef();
     //    fd.shape = shape;
     //    fd.density = 20.0;
     //    fd.restitution = 0.05;
 
-    //    var bd = new box2d.b2BodyDef();
+    //    const bd = new box2d.b2BodyDef();
     //    bd.type = box2d.b2BodyType.b2_dynamicBody;
     //    bd.bullet = true;
     //    bd.position.Set(-31.0, 5.0);

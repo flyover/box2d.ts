@@ -224,7 +224,7 @@ export class Faucet extends testbed.Test {
 
   Step(settings: testbed.Settings): void {
     let dt = 1.0 / settings.hz;
-    testbed.Test.prototype.Step.call(this, settings);
+    super.Step(settings);
     this.m_particleColorOffset += dt;
     // Keep m_particleColorOffset in the range 0.0f..k_ParticleColorsCount.
     if (this.m_particleColorOffset >= testbed.Test.k_ParticleColorsCount) {
