@@ -22,17 +22,20 @@ export const b2_pi_over_180: number = b2_pi / 180;
 export const b2_180_over_pi: number = 180 / b2_pi;
 export const b2_two_pi: number = 2 * b2_pi;
 
-export function b2Abs(n: number): number {
-  return (n < 0) ? (-n) : (n);
-}
+export const b2Abs = Math.abs;
+// export function b2Abs(n: number): number {
+//   return (n < 0) ? (-n) : (n);
+// }
 
-export function b2Min(a: number, b: number): number {
-  return (a < b) ? (a) : (b);
-}
+export const b2Min = Math.min;
+// export function b2Min(a: number, b: number): number {
+//   return (a < b) ? (a) : (b);
+// }
 
-export function b2Max(a: number, b: number): number {
-  return (a > b) ? (a) : (b);
-}
+export const b2Max = Math.max;
+// export function b2Max(a: number, b: number): number {
+//   return (a > b) ? (a) : (b);
+// }
 
 export function b2Clamp(a: number, lo: number, hi: number): number {
   return (a < lo) ? (lo) : ((a > hi) ? (hi) : (a));
@@ -60,13 +63,15 @@ export function b2InvSqrt(n: number): number {
   return 1 / Math.sqrt(n);
 }
 
-export function b2Sqrt(n: number): number {
-  return Math.sqrt(n);
-}
+export const b2Sqrt = Math.sqrt;
+// export function b2Sqrt(n: number): number {
+//   return Math.sqrt(n);
+// }
 
-export function b2Pow(x: number, y: number): number {
-  return Math.pow(x, y);
-}
+export const b2Pow = Math.pow;
+// export function b2Pow(x: number, y: number): number {
+//   return Math.pow(x, y);
+// }
 
 export function b2DegToRad(degrees: number): number {
   return degrees * b2_pi_over_180;
@@ -76,25 +81,30 @@ export function b2RadToDeg(radians: number): number {
   return radians * b2_180_over_pi;
 }
 
-export function b2Cos(radians: number): number {
-  return Math.cos(radians);
-}
+export const b2Cos = Math.cos;
+// export function b2Cos(radians: number): number {
+//   return Math.cos(radians);
+// }
 
-export function b2Sin(radians: number): number {
-  return Math.sin(radians);
-}
+export const b2Sin = Math.sin;
+// export function b2Sin(radians: number): number {
+//   return Math.sin(radians);
+// }
 
-export function b2Acos(n: number): number {
-  return Math.acos(n);
-}
+export const b2Acos = Math.acos;
+// export function b2Acos(n: number): number {
+//   return Math.acos(n);
+// }
 
-export function b2Asin(n: number): number {
-  return Math.asin(n);
-}
+export const b2Asin = Math.asin;
+// export function b2Asin(n: number): number {
+//   return Math.asin(n);
+// }
 
-export function b2Atan2(y: number, x: number): number {
-  return Math.atan2(y, x);
-}
+export const b2Atan2 = Math.atan2;
+// export function b2Atan2(y: number, x: number): number {
+//   return Math.atan2(y, x);
+// }
 
 export function b2NextPowerOfTwo(x: number): number {
   x |= (x >> 1) & 0x7FFFFFFF;
