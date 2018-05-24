@@ -277,7 +277,7 @@ export class DebugDraw extends box2d.b2Draw {
       box2d.b2Vec2.MulSV(1 / vs, p, p);
 
       // viewport -> canvas
-      const cs: number = g_camera.m_extent;
+      const cs: number = 0.5 * g_camera.m_height / g_camera.m_extent;
       box2d.b2Vec2.MulSV(cs, p, p);
       p.y *= -1;
       const cc: box2d.b2Vec2 = DebugDraw.DrawStringWorld_s_cc.Set(0.5 * ctx.canvas.width, 0.5 * ctx.canvas.height);
