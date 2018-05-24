@@ -45,7 +45,6 @@ import { Gears } from "./Gears";
 import { Mobile } from "./Mobile";
 import { MobileBalanced } from "./MobileBalanced";
 import { MotorJoint } from "./MotorJoint";
-import { MotorJoint2 } from "./MotorJoint2";
 import { OneSidedPlatform } from "./OneSidedPlatform";
 import { Pinball } from "./Pinball";
 import { PolyCollision } from "./PolyCollision";
@@ -55,7 +54,6 @@ import { Pulleys } from "./Pulleys";
 import { Pyramid } from "./Pyramid";
 import { RayCast } from "./RayCast";
 import { Revolute } from "./Revolute";
-import { Rope } from "./Rope";
 import { RopeJoint } from "./RopeJoint";
 import { SensorTest } from "./SensorTest";
 import { ShapeEditing } from "./ShapeEditing";
@@ -70,12 +68,13 @@ import { VaryingRestitution } from "./VaryingRestitution";
 import { VerticalStack } from "./VerticalStack";
 import { Web } from "./Web";
 
-import { BlobTest } from "./BlobTest";
+import { Rope } from "./Rope";
 
+import { MotorJoint2 } from "./MotorJoint2";
+import { BlobTest } from "./BlobTest";
 import { TestCCD } from "./TestCCD";
 import { TestRagdoll } from "./TestRagdoll";
 import { TestStack } from "./TestStack";
-
 import { BasicSliderCrank } from "./BasicSliderCrank";
 import { PyramidTopple } from "./PyramidTopple";
 import { DominoTower } from "./DominoTower";
@@ -109,6 +108,7 @@ import { Ramp } from "./Ramp";
 import { Pointy } from "./Pointy";
 import { AntiPointy } from "./AntiPointy";
 import { CornerCase } from "./CornerCase";
+import { ParticleCollisionFilter } from "./ParticleCollisionFilter";
 import { EyeCandy } from "./EyeCandy";
 // #endif
 
@@ -117,37 +117,39 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Sparky", Sparky.Create),
   // #endif
 
+  new TestEntry("Character Collision", CharacterCollision.Create),
+  new TestEntry("Tiles", Tiles.Create),
+  new TestEntry("Heavy on Light", HeavyOnLight.Create),
+  new TestEntry("Heavy on Light Two", HeavyOnLightTwo.Create),
+  new TestEntry("Vertical Stack", VerticalStack.Create),
+  new TestEntry("Basic Slider Crank", BasicSliderCrank.Create),
+  new TestEntry("Slider Crank", SliderCrank.Create),
+  new TestEntry("Sphere Stack", SphereStack.Create),
+  new TestEntry("Convex Hull", ConvexHull.Create),
+  new TestEntry("Tumbler", Tumbler.Create),
+  new TestEntry("Ray-Cast", RayCast.Create),
+  new TestEntry("Dump Shell", DumpShell.Create),
+  new TestEntry("Apply Force", ApplyForce.Create),
   new TestEntry("Continuous Test", ContinuousTest.Create),
   new TestEntry("Time of Impact", TimeOfImpact.Create),
   new TestEntry("Motor Joint", MotorJoint.Create),
-  new TestEntry("Motor Joint (Bug #487)", MotorJoint2.Create),
+  new TestEntry("One-Sided Platform", OneSidedPlatform.Create),
   new TestEntry("Mobile", Mobile.Create),
   new TestEntry("MobileBalanced", MobileBalanced.Create),
-  new TestEntry("Ray-Cast", RayCast.Create),
   new TestEntry("Conveyor Belt", ConveyorBelt.Create),
   new TestEntry("Gears", Gears.Create),
-  new TestEntry("Convex Hull", ConvexHull.Create),
   new TestEntry("Varying Restitution", VaryingRestitution.Create),
-  new TestEntry("Tumbler", Tumbler.Create),
-  new TestEntry("Tiles", Tiles.Create),
-  new TestEntry("Dump Shell", DumpShell.Create),
   new TestEntry("Cantilever", Cantilever.Create),
-  new TestEntry("Character Collision", CharacterCollision.Create),
   new TestEntry("Edge Test", EdgeTest.Create),
   new TestEntry("Body Types", BodyTypes.Create),
   new TestEntry("Shape Editing", ShapeEditing.Create),
   new TestEntry("Car", Car.Create),
-  new TestEntry("Apply Force", ApplyForce.Create),
   new TestEntry("Prismatic", Prismatic.Create),
-  new TestEntry("Vertical Stack", VerticalStack.Create),
-  new TestEntry("SphereStack", SphereStack.Create),
   new TestEntry("Revolute", Revolute.Create),
   new TestEntry("Pulleys", Pulleys.Create),
   new TestEntry("Polygon Shapes", PolyShapes.Create),
-  new TestEntry("Rope", Rope.Create),
   new TestEntry("Web", Web.Create),
   new TestEntry("RopeJoint", RopeJoint.Create),
-  new TestEntry("One-Sided Platform", OneSidedPlatform.Create),
   new TestEntry("Pinball", Pinball.Create),
   new TestEntry("Bullet Test", BulletTest.Create),
   new TestEntry("Confined", Confined.Create),
@@ -165,16 +167,16 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Dominos", Dominos.Create),
   new TestEntry("Dynamic Tree", DynamicTreeTest.Create),
   new TestEntry("Sensor Test", SensorTest.Create),
-  new TestEntry("Slider Crank", SliderCrank.Create),
   new TestEntry("Varying Friction", VaryingFriction.Create),
   new TestEntry("Add Pair Stress Test", AddPair.Create),
 
-  new TestEntry("Blob Test", BlobTest.Create),
+  new TestEntry("Rope", Rope.Create),
 
+  new TestEntry("Motor Joint (Bug #487)", MotorJoint2.Create),
+  new TestEntry("Blob Test", BlobTest.Create),
   new TestEntry("Continuous Collision", TestCCD.Create),
   new TestEntry("Ragdolls", TestRagdoll.Create),
   new TestEntry("Stacked Boxes", TestStack.Create),
-
   new TestEntry("Basic Slider Crank", BasicSliderCrank.Create),
   new TestEntry("Pyramid Topple", PyramidTopple.Create),
   new TestEntry("Domino Tower", DominoTower.Create),
@@ -189,7 +191,7 @@ export const g_testEntries: TestEntry[] = [
   // #if B2_ENABLE_PARTICLE
   new TestEntry("Sandbox", Sandbox.Create),
   // new TestEntry("Sparky", Sparky.Create),
-  new TestEntry("Dam Break", DamBreak.Create),
+  new TestEntry("DamBreak", DamBreak.Create),
   new TestEntry("Liquid Timer", LiquidTimer.Create),
   new TestEntry("Wave Machine", WaveMachine.Create),
   new TestEntry("Particles", Particles.Create),
@@ -208,6 +210,7 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Pointy", Pointy.Create),
   new TestEntry("AntiPointy", AntiPointy.Create),
   new TestEntry("Corner Case", CornerCase.Create),
+  new TestEntry("Particle Collisions", ParticleCollisionFilter.Create),
   new TestEntry("Eye Candy", EyeCandy.Create),
   // #endif
 ];
