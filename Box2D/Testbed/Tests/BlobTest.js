@@ -15,12 +15,15 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["../Testbed"], function (exports_1, context_1) {
+System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var testbed, BlobTest;
+    var box2d, testbed, BlobTest;
     return {
         setters: [
+            function (box2d_1) {
+                box2d = box2d_1;
+            },
             function (testbed_1) {
                 testbed = testbed_1;
             }
@@ -29,6 +32,45 @@ System.register(["../Testbed"], function (exports_1, context_1) {
             BlobTest = class BlobTest extends testbed.Test {
                 constructor() {
                     super();
+                    const ground = this.m_world.CreateBody(new box2d.b2BodyDef());
+                    {
+                        const shape = new box2d.b2EdgeShape();
+                        shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+                        ground.CreateFixture(shape, 0.0);
+                        shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(-40.0, 25.0));
+                        ground.CreateFixture(shape, 0.0);
+                        shape.Set(new box2d.b2Vec2(40.0, 0.0), new box2d.b2Vec2(40.0, 25.0));
+                        ground.CreateFixture(shape, 0.0);
+                    }
+                    {
+                        const ajd = new box2d.b2AreaJointDef();
+                        ajd.world = this.m_world;
+                        const cx = 0.0;
+                        const cy = 10.0;
+                        const rx = 5.0;
+                        const ry = 5.0;
+                        const nBodies = 20;
+                        const bodyRadius = 0.5;
+                        for (let i = 0; i < nBodies; ++i) {
+                            const angle = (i * 2.0 * Math.PI) / nBodies;
+                            const bd = new box2d.b2BodyDef();
+                            //bd.isBullet = true;
+                            bd.fixedRotation = true;
+                            const x = cx + rx * Math.cos(angle);
+                            const y = cy + ry * Math.sin(angle);
+                            bd.position.Set(x, y);
+                            bd.type = box2d.b2BodyType.b2_dynamicBody;
+                            const body = this.m_world.CreateBody(bd);
+                            const fd = new box2d.b2FixtureDef();
+                            fd.shape = new box2d.b2CircleShape(bodyRadius);
+                            fd.density = 1.0;
+                            body.CreateFixture(fd);
+                            ajd.AddBody(body);
+                        }
+                        ajd.frequencyHz = 10.0;
+                        ajd.dampingRatio = 1.0;
+                        this.m_world.CreateJoint(ajd);
+                    }
                 }
                 Step(settings) {
                     super.Step(settings);
@@ -41,4 +83,4 @@ System.register(["../Testbed"], function (exports_1, context_1) {
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQmxvYlRlc3QuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJCbG9iVGVzdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRTs7Ozs7Ozs7Ozs7O1lBS0YsV0FBQSxjQUFzQixTQUFRLE9BQU8sQ0FBQyxJQUFJO2dCQUN4QztvQkFDRSxLQUFLLEVBQUUsQ0FBQztnQkFDVixDQUFDO2dCQUVNLElBQUksQ0FBQyxRQUEwQjtvQkFDcEMsS0FBSyxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztnQkFDdkIsQ0FBQztnQkFFTSxNQUFNLENBQUMsTUFBTTtvQkFDbEIsT0FBTyxJQUFJLFFBQVEsRUFBRSxDQUFDO2dCQUN4QixDQUFDO2FBQ0YsQ0FBQSJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQmxvYlRlc3QuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJCbG9iVGVzdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRTs7Ozs7Ozs7Ozs7Ozs7O1lBS0YsV0FBQSxjQUFzQixTQUFRLE9BQU8sQ0FBQyxJQUFJO2dCQUN4QztvQkFDRSxLQUFLLEVBQUUsQ0FBQztvQkFFUixNQUFNLE1BQU0sR0FBRyxJQUFJLENBQUMsT0FBTyxDQUFDLFVBQVUsQ0FBQyxJQUFJLEtBQUssQ0FBQyxTQUFTLEVBQUUsQ0FBQyxDQUFDO29CQUU5RDt3QkFDRSxNQUFNLEtBQUssR0FBRyxJQUFJLEtBQUssQ0FBQyxXQUFXLEVBQUUsQ0FBQzt3QkFDdEMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxJQUFJLEtBQUssQ0FBQyxNQUFNLENBQUMsQ0FBQyxJQUFJLEVBQUUsR0FBRyxDQUFDLEVBQUUsSUFBSSxLQUFLLENBQUMsTUFBTSxDQUFDLElBQUksRUFBRSxHQUFHLENBQUMsQ0FBQyxDQUFDO3dCQUNyRSxNQUFNLENBQUMsYUFBYSxDQUFDLEtBQUssRUFBRSxHQUFHLENBQUMsQ0FBQzt3QkFDakMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxJQUFJLEtBQUssQ0FBQyxNQUFNLENBQUMsQ0FBQyxJQUFJLEVBQUUsR0FBRyxDQUFDLEVBQUUsSUFBSSxLQUFLLENBQUMsTUFBTSxDQUFDLENBQUMsSUFBSSxFQUFFLElBQUksQ0FBQyxDQUFDLENBQUM7d0JBQ3ZFLE1BQU0sQ0FBQyxhQUFhLENBQUMsS0FBSyxFQUFFLEdBQUcsQ0FBQyxDQUFDO3dCQUNqQyxLQUFLLENBQUMsR0FBRyxDQUFDLElBQUksS0FBSyxDQUFDLE1BQU0sQ0FBQyxJQUFJLEVBQUUsR0FBRyxDQUFDLEVBQUUsSUFBSSxLQUFLLENBQUMsTUFBTSxDQUFDLElBQUksRUFBRSxJQUFJLENBQUMsQ0FBQyxDQUFDO3dCQUNyRSxNQUFNLENBQUMsYUFBYSxDQUFDLEtBQUssRUFBRSxHQUFHLENBQUMsQ0FBQztxQkFDbEM7b0JBRUQ7d0JBQ0UsTUFBTSxHQUFHLEdBQUcsSUFBSSxLQUFLLENBQUMsY0FBYyxFQUFFLENBQUM7d0JBQ3ZDLEdBQUcsQ0FBQyxLQUFLLEdBQUcsSUFBSSxDQUFDLE9BQU8sQ0FBQzt3QkFFekIsTUFBTSxFQUFFLEdBQUcsR0FBRyxDQUFDO3dCQUNmLE1BQU0sRUFBRSxHQUFHLElBQUksQ0FBQzt3QkFDaEIsTUFBTSxFQUFFLEdBQUcsR0FBRyxDQUFDO3dCQUNmLE1BQU0sRUFBRSxHQUFHLEdBQUcsQ0FBQzt3QkFDZixNQUFNLE9BQU8sR0FBRyxFQUFFLENBQUM7d0JBQ25CLE1BQU0sVUFBVSxHQUFHLEdBQUcsQ0FBQzt3QkFDdkIsS0FBSyxJQUFJLENBQUMsR0FBRyxDQUFDLEVBQUUsQ0FBQyxHQUFHLE9BQU8sRUFBRSxFQUFFLENBQUMsRUFBRTs0QkFDaEMsTUFBTSxLQUFLLEdBQUcsQ0FBQyxDQUFDLEdBQUcsR0FBRyxHQUFHLElBQUksQ0FBQyxFQUFFLENBQUMsR0FBRyxPQUFPLENBQUM7NEJBQzVDLE1BQU0sRUFBRSxHQUFHLElBQUksS0FBSyxDQUFDLFNBQVMsRUFBRSxDQUFDOzRCQUNqQyxxQkFBcUI7NEJBQ3JCLEVBQUUsQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDOzRCQUV4QixNQUFNLENBQUMsR0FBRyxFQUFFLEdBQUcsRUFBRSxHQUFHLElBQUksQ0FBQyxHQUFHLENBQUMsS0FBSyxDQUFDLENBQUM7NEJBQ3BDLE1BQU0sQ0FBQyxHQUFHLEVBQUUsR0FBRyxFQUFFLEdBQUcsSUFBSSxDQUFDLEdBQUcsQ0FBQyxLQUFLLENBQUMsQ0FBQzs0QkFDcEMsRUFBRSxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDOzRCQUN0QixFQUFFLENBQUMsSUFBSSxHQUFHLEtBQUssQ0FBQyxVQUFVLENBQUMsY0FBYyxDQUFDOzRCQUMxQyxNQUFNLElBQUksR0FBRyxJQUFJLENBQUMsT0FBTyxDQUFDLFVBQVUsQ0FBQyxFQUFFLENBQUMsQ0FBQzs0QkFFekMsTUFBTSxFQUFFLEdBQUcsSUFBSSxLQUFLLENBQUMsWUFBWSxFQUFFLENBQUM7NEJBQ3BDLEVBQUUsQ0FBQyxLQUFLLEdBQUcsSUFBSSxLQUFLLENBQUMsYUFBYSxDQUFDLFVBQVUsQ0FBQyxDQUFDOzRCQUMvQyxFQUFFLENBQUMsT0FBTyxHQUFHLEdBQUcsQ0FBQzs0QkFDakIsSUFBSSxDQUFDLGFBQWEsQ0FBQyxFQUFFLENBQUMsQ0FBQzs0QkFFdkIsR0FBRyxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsQ0FBQzt5QkFDbkI7d0JBRUQsR0FBRyxDQUFDLFdBQVcsR0FBRyxJQUFJLENBQUM7d0JBQ3ZCLEdBQUcsQ0FBQyxZQUFZLEdBQUcsR0FBRyxDQUFDO3dCQUN2QixJQUFJLENBQUMsT0FBTyxDQUFDLFdBQVcsQ0FBQyxHQUFHLENBQUMsQ0FBQztxQkFDL0I7Z0JBQ0gsQ0FBQztnQkFFTSxJQUFJLENBQUMsUUFBMEI7b0JBQ3BDLEtBQUssQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7Z0JBQ3ZCLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE1BQU07b0JBQ2xCLE9BQU8sSUFBSSxRQUFRLEVBQUUsQ0FBQztnQkFDeEIsQ0FBQzthQUNGLENBQUEifQ==

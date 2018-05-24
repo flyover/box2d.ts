@@ -16,16 +16,82 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Prismatic extends testbed.Test {
+  m_joint: box2d.b2PrismaticJoint;
+
   constructor() {
     super();
+
+    let ground = null;
+    
+    {
+      const bd = new box2d.b2BodyDef();
+      ground = this.m_world.CreateBody(bd);
+  
+      const shape = new box2d.b2EdgeShape();
+      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      ground.CreateFixture(shape, 0.0);
+    }
+  
+    {
+      const shape = new box2d.b2PolygonShape();
+      shape.SetAsBox(2.0, 0.5);
+  
+      const bd = new box2d.b2BodyDef();
+      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.position.Set(-10.0, 10.0);
+      bd.angle = 0.5 * box2d.b2_pi;
+      bd.allowSleep = false;
+      const body = this.m_world.CreateBody(bd);
+      body.CreateFixture(shape, 5.0);
+  
+      const pjd = new box2d.b2PrismaticJointDef();
+  
+      // Bouncy limit
+      const axis = new box2d.b2Vec2(2.0, 1.0);
+      axis.Normalize();
+      pjd.Initialize(ground, body, new box2d.b2Vec2(0.0, 0.0), axis);
+  
+      // Non-bouncy limit
+      //pjd.Initialize(ground, body, new box2d.b2Vec2(-10.0, 10.0), new box2d.b2Vec2(1.0, 0.0));
+  
+      pjd.motorSpeed = 10.0;
+      pjd.maxMotorForce = 10000.0;
+      pjd.enableMotor = true;
+      pjd.lowerTranslation = 0.0;
+      pjd.upperTranslation = 20.0;
+      pjd.enableLimit = true;
+  
+      this.m_joint = /** @type {box2d.b2PrismaticJoint} */ (this.m_world.CreateJoint(pjd));
+    }
+  }
+
+  Keyboard(key: string) {
+    switch (key) {
+      case "l":
+        this.m_joint.EnableLimit(!this.m_joint.IsLimitEnabled());
+        break;
+  
+      case "m":
+        this.m_joint.EnableMotor(!this.m_joint.IsMotorEnabled());
+        break;
+  
+      case "s":
+        this.m_joint.SetMotorSpeed(-this.m_joint.GetMotorSpeed());
+        break;
+    }
   }
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (l) limits, (m) motors, (s) speed");
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+    const force = this.m_joint.GetMotorForce(settings.hz);
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(4)}`);
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }
 
   public static Create(): testbed.Test {

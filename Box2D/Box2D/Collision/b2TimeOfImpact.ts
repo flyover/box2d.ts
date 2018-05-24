@@ -28,6 +28,15 @@ export let b2_toiIters: number = 0;
 export let b2_toiMaxIters: number = 0;
 export let b2_toiRootIters: number = 0;
 export let b2_toiMaxRootIters: number = 0;
+export function b2_toi_reset(): void {
+  b2_toiTime = 0;
+  b2_toiMaxTime = 0;
+  b2_toiCalls = 0;
+  b2_toiIters = 0;
+  b2_toiMaxIters = 0;
+  b2_toiRootIters = 0;
+  b2_toiMaxRootIters = 0;
+}
 
 const b2TimeOfImpact_s_xfA: b2Transform = new b2Transform();
 const b2TimeOfImpact_s_xfB: b2Transform = new b2Transform();

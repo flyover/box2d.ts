@@ -16,16 +16,107 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class DistanceTest extends testbed.Test {
+  m_positionB = new box2d.b2Vec2();
+  m_angleB = 0;
+  m_transformA = new box2d.b2Transform();
+  m_transformB = new box2d.b2Transform();
+  m_polygonA = new box2d.b2PolygonShape();
+  m_polygonB = new box2d.b2PolygonShape();
+
   constructor() {
     super();
+
+    {
+      this.m_transformA.SetIdentity();
+      this.m_transformA.p.Set(0.0, -0.2);
+      this.m_polygonA.SetAsBox(10.0, 0.2);
+    }
+
+    {
+      this.m_positionB.Set(12.017401, 0.13678508);
+      this.m_angleB = -0.0109265;
+      this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
+
+      this.m_polygonB.SetAsBox(2.0, 0.1);
+    }
   }
+
+  Keyboard(key: string) {
+    switch (key) {
+      case "a":
+        this.m_positionB.x -= 0.1;
+        break;
+  
+      case "d":
+        this.m_positionB.x += 0.1;
+        break;
+  
+      case "s":
+        this.m_positionB.y -= 0.1;
+        break;
+  
+      case "w":
+        this.m_positionB.y += 0.1;
+        break;
+  
+      case "q":
+        this.m_angleB += 0.1 * box2d.b2_pi;
+        break;
+  
+      case "e":
+        this.m_angleB -= 0.1 * box2d.b2_pi;
+        break;
+    }
+  
+    this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
+  }  
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
+
+    var input = new box2d.b2DistanceInput();
+    input.proxyA.SetShape(this.m_polygonA, 0);
+    input.proxyB.SetShape(this.m_polygonB, 0);
+    input.transformA.Copy(this.m_transformA);
+    input.transformB.Copy(this.m_transformB);
+    input.useRadii = true;
+    var cache = new box2d.b2SimplexCache();
+    cache.count = 0;
+    var output = new box2d.b2DistanceOutput();
+    box2d.b2Distance(output, cache, input);
+
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `distance = ${output.distance.toFixed(2)}`);
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `iterations = ${output.iterations}`);
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+
+    {
+      var color = new box2d.b2Color(0.9, 0.9, 0.9);
+      var v = new Array(box2d.b2_maxPolygonVertices);
+      for (var i = 0; i < this.m_polygonA.m_count; ++i) {
+        v[i] = box2d.b2Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new box2d.b2Vec2());
+      }
+      testbed.g_debugDraw.DrawPolygon(v, this.m_polygonA.m_count, color);
+
+      for (var i = 0; i < this.m_polygonB.m_count; ++i) {
+        v[i] = box2d.b2Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new box2d.b2Vec2());
+      }
+      testbed.g_debugDraw.DrawPolygon(v, this.m_polygonB.m_count, color);
+    }
+
+    var x1 = output.pointA;
+    var x2 = output.pointB;
+
+    var c1 = new box2d.b2Color(1.0, 0.0, 0.0);
+    testbed.g_debugDraw.DrawPoint(x1, 4.0, c1);
+
+    var c2 = new box2d.b2Color(1.0, 1.0, 0.0);
+    testbed.g_debugDraw.DrawPoint(x2, 4.0, c2);
   }
 
   public static Create(): testbed.Test {

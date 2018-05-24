@@ -16,16 +16,77 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Rope extends testbed.Test {
+  m_rope = new box2d.b2Rope();
+  m_angle = 0.0;
+
   constructor() {
     super();
+
+    /*const int32*/
+    var N = 40;
+    /*box2d.b2Vec2[]*/
+    var vertices = box2d.b2Vec2.MakeArray(N);
+    /*float32[]*/
+    var masses = box2d.b2MakeNumberArray(N);
+
+    for ( /*int32*/ var i = 0; i < N; ++i) {
+      vertices[i].Set(0.0, 20.0 - 0.25 * i);
+      masses[i] = 1.0;
+    }
+    masses[0] = 0.0;
+    masses[1] = 0.0;
+
+    /*box2d.b2RopeDef*/
+    var def = new box2d.b2RopeDef();
+    def.vertices = vertices;
+    def.count = N;
+    def.gravity.Set(0.0, -10.0);
+    def.masses = masses;
+    def.damping = 0.1;
+    def.k2 = 1.0;
+    def.k3 = 0.5;
+
+    this.m_rope.Initialize(def);
+
+    this.m_angle = 0.0;
+    this.m_rope.SetAngle(this.m_angle);
+  }
+
+  Keyboard(key: string) {
+    switch (key) {
+      case "q":
+        this.m_angle = box2d.b2Max(-box2d.b2_pi, this.m_angle - 0.05 * box2d.b2_pi);
+        this.m_rope.SetAngle(this.m_angle);
+        break;
+  
+      case "e":
+        this.m_angle = box2d.b2Min(box2d.b2_pi, this.m_angle + 0.05 * box2d.b2_pi);
+        this.m_rope.SetAngle(this.m_angle);
+        break;
+    }
   }
 
   public Step(settings: testbed.Settings): void {
+    var dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+
+    if (settings.pause && !settings.singleStep) {
+      dt = 0.0;
+    }
+
+    this.m_rope.Step(dt, 1);
+
     super.Step(settings);
+
+    this.m_rope.Draw(testbed.g_debugDraw);
+
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press (q,e) to adjust target angle");
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Target angle = ${(this.m_angle * 180.0 / box2d.b2_pi).toFixed(2)} degrees`);
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }
 
   public static Create(): testbed.Test {

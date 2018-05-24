@@ -16,12 +16,81 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class OneSidedPlatform extends testbed.Test {
+  m_radius = 0.0;
+  m_top = 0.0;
+  m_bottom = 0.0;
+  m_state = OneSidedPlatform.State.e_unknown;
+  m_platform: box2d.b2Fixture = null;
+  m_character: box2d.b2Fixture = null;
+
   constructor() {
     super();
+
+    // Ground
+    {
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
+
+      const shape = new box2d.b2EdgeShape();
+      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      ground.CreateFixture(shape, 0.0);
+    }
+
+    // Platform
+    {
+      const bd = new box2d.b2BodyDef();
+      bd.position.Set(0.0, 10.0);
+      const body = this.m_world.CreateBody(bd);
+
+      const shape = new box2d.b2PolygonShape();
+      shape.SetAsBox(3.0, 0.5);
+      this.m_platform = body.CreateFixture(shape, 0.0);
+
+      this.m_bottom = 10.0 - 0.5;
+      this.m_top = 10.0 + 0.5;
+    }
+
+    // Actor
+    {
+      const bd = new box2d.b2BodyDef();
+      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.position.Set(0.0, 12.0);
+      const body = this.m_world.CreateBody(bd);
+
+      this.m_radius = 0.5;
+      const shape = new box2d.b2CircleShape();
+      shape.m_radius = this.m_radius;
+      this.m_character = body.CreateFixture(shape, 20.0);
+
+      body.SetLinearVelocity(new box2d.b2Vec2(0.0, -50.0));
+
+      this.m_state = OneSidedPlatform.State.e_unknown;
+    }
+  }
+
+  PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
+    super.PreSolve(contact, oldManifold);
+  
+    var fixtureA = contact.GetFixtureA();
+    var fixtureB = contact.GetFixtureB();
+  
+    if (fixtureA !== this.m_platform && fixtureA !== this.m_character) {
+      return;
+    }
+  
+    if (fixtureB !== this.m_platform && fixtureB !== this.m_character) {
+      return;
+    }
+  
+    var position = this.m_character.GetBody().GetPosition();
+  
+    if (position.y < this.m_top + this.m_radius - 3.0 * box2d.b2_linearSlop) {
+      contact.SetEnabled(false);
+    }
   }
 
   public Step(settings: testbed.Settings): void {
@@ -30,5 +99,13 @@ export class OneSidedPlatform extends testbed.Test {
 
   public static Create(): testbed.Test {
     return new OneSidedPlatform();
+  }
+}
+
+export namespace OneSidedPlatform {
+  export enum State {
+    e_unknown = 0,
+    e_above = 1,
+    e_below = 2
   }
 }

@@ -16,16 +16,91 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class PolyCollision extends testbed.Test {
+  m_polygonA = new box2d.b2PolygonShape();
+  m_polygonB = new box2d.b2PolygonShape();
+  m_transformA = new box2d.b2Transform();
+  m_transformB = new box2d.b2Transform();
+  m_positionB = new box2d.b2Vec2();
+  m_angleB = 0;
+
   constructor() {
     super();
+
+    {
+      this.m_polygonA.SetAsBox(0.2, 0.4);
+      this.m_transformA.SetPositionAngle(new box2d.b2Vec2(0.0, 0.0), 0.0);
+    }
+  
+    {
+      this.m_polygonB.SetAsBox(0.5, 0.5);
+      this.m_positionB.Set(19.345284, 1.5632932);
+      this.m_angleB = 1.9160721;
+      this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
+    }
+  }
+
+  Keyboard(key: string) {
+    switch (key) {
+      case "a":
+        this.m_positionB.x -= 0.1;
+        break;
+  
+      case "d":
+        this.m_positionB.x += 0.1;
+        break;
+  
+      case "s":
+        this.m_positionB.y -= 0.1;
+        break;
+  
+      case "w":
+        this.m_positionB.y += 0.1;
+        break;
+  
+      case "q":
+        this.m_angleB += 0.1 * box2d.b2_pi;
+        break;
+  
+      case "e":
+        this.m_angleB -= 0.1 * box2d.b2_pi;
+        break;
+    }
+  
+    this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
   }
 
   public Step(settings: testbed.Settings): void {
-    super.Step(settings);
+    // super.Step(settings);
+    var manifold = new box2d.b2Manifold();
+    box2d.b2CollidePolygons(manifold, this.m_polygonA, this.m_transformA, this.m_polygonB, this.m_transformB);
+
+    var worldManifold = new box2d.b2WorldManifold();
+    worldManifold.Initialize(manifold, this.m_transformA, this.m_polygonA.m_radius, this.m_transformB, this.m_polygonB.m_radius);
+
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `point count = ${manifold.pointCount}`);
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+
+    {
+      var color = new box2d.b2Color(0.9, 0.9, 0.9);
+      var v = new Array(box2d.b2_maxPolygonVertices);
+      for (var i = 0; i < this.m_polygonA.m_count; ++i) {
+        v[i] = box2d.b2Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new box2d.b2Vec2());
+      }
+      testbed.g_debugDraw.DrawPolygon(v, this.m_polygonA.m_count, color);
+
+      for (var i = 0; i < this.m_polygonB.m_count; ++i) {
+        v[i] = box2d.b2Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new box2d.b2Vec2());
+      }
+      testbed.g_debugDraw.DrawPolygon(v, this.m_polygonB.m_count, color);
+    }
+
+    for (var i = 0; i < manifold.pointCount; ++i) {
+      testbed.g_debugDraw.DrawPoint(worldManifold.points[i], 4.0, new box2d.b2Color(0.9, 0.3, 0.3));
+    }
   }
 
   public static Create(): testbed.Test {

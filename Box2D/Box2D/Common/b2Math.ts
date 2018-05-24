@@ -542,8 +542,8 @@ function b2CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 {
 export class b2Mat22 {
   public static IDENTITY = new b2Mat22();
 
-  public ex: b2Vec2 = new b2Vec2(1, 0);
-  public ey: b2Vec2 = new b2Vec2(0, 1);
+  public readonly ex: b2Vec2 = new b2Vec2(1, 0);
+  public readonly ey: b2Vec2 = new b2Vec2(0, 1);
 
   public Clone(): b2Mat22 {
     return new b2Mat22().Copy(this);
@@ -725,9 +725,9 @@ function b2MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
 export class b2Mat33 {
   public static IDENTITY = new b2Mat33();
 
-  public ex: b2Vec3 = new b2Vec3(1, 0, 0);
-  public ey: b2Vec3 = new b2Vec3(0, 1, 0);
-  public ez: b2Vec3 = new b2Vec3(0, 0, 1);
+  public readonly ex: b2Vec3 = new b2Vec3(1, 0, 0);
+  public readonly ey: b2Vec3 = new b2Vec3(0, 1, 0);
+  public readonly ez: b2Vec3 = new b2Vec3(0, 0, 1);
 
   public Clone(): b2Mat33 {
     return new b2Mat33().Copy(this);
@@ -964,8 +964,8 @@ function b2MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
 export class b2Transform {
   public static IDENTITY = new b2Transform();
 
-  public p: b2Vec2 = new b2Vec2();
-  public q: b2Rot = new b2Rot();
+  public readonly p: b2Vec2 = new b2Vec2();
+  public readonly q: b2Rot = new b2Rot();
 
   public Clone(): b2Transform {
     return new b2Transform().Copy(this);
@@ -1082,9 +1082,9 @@ function b2MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform
 /// no coincide with the center of mass. However, to support dynamics
 /// we must interpolate the center of mass position.
 export class b2Sweep {
-  public localCenter: b2Vec2 = new b2Vec2();
-  public c0: b2Vec2 = new b2Vec2();
-  public c: b2Vec2 = new b2Vec2();
+  public readonly localCenter: b2Vec2 = new b2Vec2();
+  public readonly c0: b2Vec2 = new b2Vec2();
+  public readonly c: b2Vec2 = new b2Vec2();
   public a0: number = 0;
   public a: number = 0;
   public alpha0: number = 0;

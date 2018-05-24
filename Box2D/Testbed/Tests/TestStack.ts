@@ -16,12 +16,71 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class TestStack extends testbed.Test {
   constructor() {
     super();
+
+    {
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
+  
+      const vertices = [];
+      vertices[0] = new box2d.b2Vec2(-30.0, 0.0);
+      vertices[1] = new box2d.b2Vec2(30.0, 0.0);
+      vertices[2] = new box2d.b2Vec2(30.0, 40.0);
+      vertices[3] = new box2d.b2Vec2(-30.0, 40.0);
+      const shape = new box2d.b2ChainShape();
+      shape.CreateLoop(vertices);
+      ground.CreateFixture(shape, 0.0);
+    }
+  
+    // Add bodies
+    const bd = new box2d.b2BodyDef();
+    const fd = new box2d.b2FixtureDef();
+    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    //bd.isBullet = true;
+    const polygon = new box2d.b2PolygonShape();
+    fd.shape = polygon;
+    fd.density = 1.0;
+    fd.friction = 0.5;
+    fd.restitution = 0.1;
+    polygon.SetAsBox(1.0, 1.0);
+    // Create 3 stacks
+    for (let i = 0; i < 10; ++i) {
+      bd.position.Set((0.0 + Math.random() * 0.2 - 0.1), (30.0 - i * 2.5));
+      this.m_world.CreateBody(bd).CreateFixture(fd);
+    }
+    for (let i = 0; i < 10; ++i) {
+      bd.position.Set((10.0 + Math.random() * 0.2 - 0.1), (30.0 - i * 2.5));
+      this.m_world.CreateBody(bd).CreateFixture(fd);
+    }
+    for (let i = 0; i < 10; ++i) {
+      bd.position.Set((20.0 + Math.random() * 0.2 - 0.1), (30.0 - i * 2.5));
+      this.m_world.CreateBody(bd).CreateFixture(fd);
+    }
+    // Create ramp
+    bd.type = box2d.b2BodyType.b2_staticBody;
+    bd.position.Set(0.0, 0.0);
+    const vxs = [
+      new box2d.b2Vec2(-30.0, 0.0),
+      new box2d.b2Vec2(-10.0, 0.0),
+      new box2d.b2Vec2(-30.0, 10.0)
+    ];
+    polygon.Set(vxs, vxs.length);
+    fd.density = 0;
+    this.m_world.CreateBody(bd).CreateFixture(fd);
+  
+    // Create ball
+    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.position.Set(-25.0, 20.0);
+    fd.shape = new box2d.b2CircleShape(4.0);
+    fd.density = 2;
+    fd.restitution = 0.2;
+    fd.friction = 0.5;
+    this.m_world.CreateBody(bd).CreateFixture(fd);
   }
 
   public Step(settings: testbed.Settings): void {

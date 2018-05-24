@@ -16,16 +16,72 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ConvexHull extends testbed.Test {
+  static readonly e_count = box2d.b2_maxPolygonVertices;
+
+  m_test_points: box2d.b2Vec2[] = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
+  m_count = 0;
+  m_auto = false;
+
   constructor() {
     super();
+
+    this.Generate();
+  }
+
+  Generate(): void {
+    for (let i = 0; i < ConvexHull.e_count; ++i) {
+      let x = box2d.b2RandomRange(-10.0, 10.0);
+      let y = box2d.b2RandomRange(-10.0, 10.0);
+  
+      // Clamp onto a square to help create collinearities.
+      // This will stress the convex hull algorithm.
+      x = box2d.b2Clamp(x, -8.0, 8.0);
+      y = box2d.b2Clamp(y, -8.0, 8.0);
+      this.m_test_points[i].Set(x, y);
+    }
+  
+    this.m_count = ConvexHull.e_count;
+  }
+
+  public Keyboard(key: string) {
+    switch (key) {
+      case "a":
+        this.m_auto = !this.m_auto;
+        break;
+  
+      case "g":
+        this.Generate();
+        break;
+    }
   }
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
+
+    const shape = new box2d.b2PolygonShape();
+    shape.Set(this.m_test_points, this.m_count);
+
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press g to generate a new random convex hull");
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+
+    testbed.g_debugDraw.DrawPolygon(shape.m_vertices, shape.m_count, new box2d.b2Color(0.9, 0.9, 0.9));
+
+    for (let i = 0; i < this.m_count; ++i) {
+      testbed.g_debugDraw.DrawPoint(this.m_test_points[i], 3.0, new box2d.b2Color(0.3, 0.9, 0.3));
+      testbed.g_debugDraw.DrawStringWorld(this.m_test_points[i].x + 0.05, this.m_test_points[i].y + 0.05, `${i}`);
+    }
+
+    if (!shape.Validate()) {
+      this.m_textLine += 0;
+    }
+
+    if (this.m_auto) {
+      this.Generate();
+    }
   }
 
   public static Create(): testbed.Test {

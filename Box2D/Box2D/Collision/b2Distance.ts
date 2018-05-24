@@ -126,6 +126,11 @@ export class b2DistanceOutput {
 export let b2_gjkCalls: number = 0;
 export let b2_gjkIters: number = 0;
 export let b2_gjkMaxIters: number = 0;
+export function b2_gjk_reset(): void {
+  b2_gjkCalls = 0;
+  b2_gjkIters = 0;
+  b2_gjkMaxIters = 0;
+}
 
 export class b2SimplexVertex {
   public wA: b2Vec2 = new b2Vec2(); // support point in proxyA

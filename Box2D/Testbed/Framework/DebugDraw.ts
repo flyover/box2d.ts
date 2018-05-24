@@ -274,7 +274,7 @@ export class DebugDraw extends box2d.b2Draw {
       ///const vr = g_camera.m_roll;
       ///box2d.b2Rot.MulTRV(vr, p, p);
       const vs: number = g_camera.m_zoom;
-      box2d.b2Vec2.MulSV(vs, p, p);
+      box2d.b2Vec2.MulSV(1 / vs, p, p);
 
       // viewport -> canvas
       const cs: number = g_camera.m_extent;

@@ -16,16 +16,68 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Tumbler extends testbed.Test {
+  static readonly e_count = 800;
+
+  m_joint: box2d.b2RevoluteJoint;
+  m_count = 0;
+
   constructor() {
     super();
+
+    const bd = new box2d.b2BodyDef();
+    const ground = this.m_world.CreateBody(bd);
+  
+    {
+      const bd = new box2d.b2BodyDef();
+      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.allowSleep = false;
+      bd.position.Set(0.0, 10.0);
+      const body = this.m_world.CreateBody(bd);
+  
+      const shape = new box2d.b2PolygonShape();
+      shape.SetAsBox(0.5, 10.0, new box2d.b2Vec2(10.0, 0.0), 0.0);
+      body.CreateFixture(shape, 5.0);
+      shape.SetAsBox(0.5, 10.0, new box2d.b2Vec2(-10.0, 0.0), 0.0);
+      body.CreateFixture(shape, 5.0);
+      shape.SetAsBox(10.0, 0.5, new box2d.b2Vec2(0.0, 10.0), 0.0);
+      body.CreateFixture(shape, 5.0);
+      shape.SetAsBox(10.0, 0.5, new box2d.b2Vec2(0.0, -10.0), 0.0);
+      body.CreateFixture(shape, 5.0);
+  
+      const jd = new box2d.b2RevoluteJointDef();
+      jd.bodyA = ground;
+      jd.bodyB = body;
+      jd.localAnchorA.Set(0.0, 10.0);
+      jd.localAnchorB.Set(0.0, 0.0);
+      jd.referenceAngle = 0.0;
+      jd.motorSpeed = 0.05 * box2d.b2_pi;
+      jd.maxMotorTorque = 1e8;
+      jd.enableMotor = true;
+      this.m_joint = this.m_world.CreateJoint(jd);
+    }
+  
+    this.m_count = 0;
   }
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
+
+    if (this.m_count < Tumbler.e_count) {
+      const bd = new box2d.b2BodyDef();
+      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.position.Set(0.0, 10.0);
+      const body = this.m_world.CreateBody(bd);
+  
+      const shape = new box2d.b2PolygonShape();
+      shape.SetAsBox(0.125, 0.125);
+      body.CreateFixture(shape, 1.0);
+  
+      ++this.m_count;
+    }
   }
 
   public static Create(): testbed.Test {

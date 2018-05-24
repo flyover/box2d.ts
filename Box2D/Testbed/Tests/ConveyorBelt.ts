@@ -16,12 +16,71 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ConveyorBelt extends testbed.Test {
+  m_platform: box2d.b2Fixture;
+
   constructor() {
     super();
+
+    // Ground
+    {
+      const bd = new box2d.b2BodyDef();
+      /*b2Body*/
+      const ground = this.m_world.CreateBody(bd);
+
+      const shape = new box2d.b2EdgeShape();
+      shape.Set(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      ground.CreateFixture(shape, 0.0);
+    }
+
+    // Platform
+    {
+      const bd = new box2d.b2BodyDef();
+      bd.position.Set(-5.0, 5.0);
+      /*b2Body*/
+      const body = this.m_world.CreateBody(bd);
+
+      const shape = new box2d.b2PolygonShape();
+      shape.SetAsBox(10.0, 0.5);
+
+      const fd = new box2d.b2FixtureDef();
+      fd.shape = shape;
+      fd.friction = 0.8;
+      this.m_platform = body.CreateFixture(fd);
+    }
+
+    // Boxes
+    for ( /*int*/ let i = 0; i < 5; ++i) {
+      const bd = new box2d.b2BodyDef();
+      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.position.Set(-10.0 + 2.0 * i, 7.0);
+      /*b2Body*/
+      const body = this.m_world.CreateBody(bd);
+
+      const shape = new box2d.b2PolygonShape();
+      shape.SetAsBox(0.5, 0.5);
+      body.CreateFixture(shape, 20.0);
+    }
+  }
+
+  PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
+    super.PreSolve(contact, oldManifold);
+  
+    /*b2Fixture*/
+    var fixtureA = contact.GetFixtureA();
+    /*b2Fixture*/
+    var fixtureB = contact.GetFixtureB();
+  
+    if (fixtureA === this.m_platform) {
+      contact.SetTangentSpeed(5.0);
+    }
+  
+    if (fixtureB === this.m_platform) {
+      contact.SetTangentSpeed(-5.0);
+    }
   }
 
   public Step(settings: testbed.Settings): void {
