@@ -78,14 +78,14 @@ import { TestRagdoll } from "./TestRagdoll";
 import { TestStack } from "./TestStack";
 
 // #if B2_ENABLE_PARTICLE
-// import { Sandbox } from "./Sandbox";
+import { Sandbox } from "./Sandbox";
 import { Sparky } from "./Sparky";
 import { DamBreak } from "./DamBreak";
 import { LiquidTimer } from "./LiquidTimer";
 import { WaveMachine } from "./WaveMachine";
 import { Particles } from "./Particles";
 import { Faucet } from "./Faucet";
-// import { DrawingParticles } from "./ParticleDrawing";
+import { DrawingParticles } from "./DrawingParticles";
 import { Soup } from "./Soup";
 import { ParticlesSurfaceTension } from "./ParticlesSurfaceTension";
 import { ElasticParticles } from "./ElasticParticles";
@@ -93,25 +93,25 @@ import { RigidParticles } from "./RigidParticles";
 import { MultipleParticleSystems } from "./MultipleParticleSystems";
 import { Impulse } from "./Impulse";
 import { SoupStirrer } from "./SoupStirrer";
-// import { Fracker } from "./Fracker";
-// import { Maxwell } from "./Maxwell";
-// import { Ramp } from "./Ramp";
-// import { Pointy } from "./Pointy";
-// import { AntiPointy } from "./AntiPointy";
-// import { CornerCase } from "./CornerCase";
-// import { EyeCandy } from "./EyeCandy";
+import { Fracker } from "./Fracker";
+import { Maxwell } from "./Maxwell";
+import { Ramp } from "./Ramp";
+import { Pointy } from "./Pointy";
+import { AntiPointy } from "./AntiPointy";
+import { CornerCase } from "./CornerCase";
+import { EyeCandy } from "./EyeCandy";
 // #endif
 
 export const g_testEntries: TestEntry[] = [
   // #if B2_ENABLE_PARTICLE
-  // new TestEntry("Sandbox", Sandbox.Create),
+  new TestEntry("Sandbox", Sandbox.Create),
   new TestEntry("Sparky", Sparky.Create),
   new TestEntry("Dam Break", DamBreak.Create),
   new TestEntry("Liquid Timer", LiquidTimer.Create),
   new TestEntry("Wave Machine", WaveMachine.Create),
   new TestEntry("Particles", Particles.Create),
   new TestEntry("Faucet", Faucet.Create),
-  // new TestEntry("Particle Drawing", DrawingParticles.Create),
+  new TestEntry("Particle Drawing", DrawingParticles.Create),
   new TestEntry("Soup", Soup.Create),
   new TestEntry("Surface Tension", ParticlesSurfaceTension.Create),
   new TestEntry("Elastic Particles", ElasticParticles.Create),
@@ -119,13 +119,13 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Multiple Systems", MultipleParticleSystems.Create),
   new TestEntry("Impulse", Impulse.Create),
   new TestEntry("Soup Stirrer", SoupStirrer.Create),
-  // new TestEntry("Fracker", Fracker.Create),
-  // new TestEntry("Maxwell", Maxwell.Create),
-  // new TestEntry("Ramp", Ramp.Create),
-  // new TestEntry("Pointy", Pointy.Create),
-  // new TestEntry("AntiPointy", AntiPointy.Create),
-  // new TestEntry("Corner Case", CornerCase.Create),
-  // new TestEntry("Eye Candy", EyeCandy.Create),
+  new TestEntry("Fracker", Fracker.Create),
+  new TestEntry("Maxwell", Maxwell.Create),
+  new TestEntry("Ramp", Ramp.Create),
+  new TestEntry("Pointy", Pointy.Create),
+  new TestEntry("AntiPointy", AntiPointy.Create),
+  new TestEntry("Corner Case", CornerCase.Create),
+  new TestEntry("Eye Candy", EyeCandy.Create),
   // #endif
   new TestEntry("Continuous Test", ContinuousTest.Create),
   new TestEntry("Time of Impact", TimeOfImpact.Create),

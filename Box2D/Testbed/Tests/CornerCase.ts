@@ -24,6 +24,83 @@ import * as testbed from "../Testbed";
 export class CornerCase extends testbed.Test {
   constructor() {
     super();
+
+    {
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
+
+      // Construct a pathological corner intersection out of many
+      // polygons to ensure there's no issue with particle oscillation
+      // from many fixture contact impulses at the corner
+
+      // left edge
+      {
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
+          new box2d.b2Vec2(-20.0, 30.0),
+          new box2d.b2Vec2(-20.0, 0.0),
+          new box2d.b2Vec2(-25.0, 0.0),
+          new box2d.b2Vec2(-25.0, 30.0)
+        ];
+        shape.Set(vertices);
+        ground.CreateFixture(shape, 0.0);
+      }
+
+      const yrange = 30.0,
+        ystep = yrange / 10.0,
+        xrange = 20.0,
+        xstep = xrange / 2.0;
+
+      {
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
+          new box2d.b2Vec2(-25.0, 0.0),
+          new box2d.b2Vec2(20.0, 15.0),
+          new box2d.b2Vec2(25.0, 0.0)
+        ];
+        shape.Set(vertices);
+        ground.CreateFixture(shape, 0.0);
+      }
+
+      for (let x = -xrange; x < xrange; x += xstep) {
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
+          new box2d.b2Vec2(-25.0, 0.0),
+          new box2d.b2Vec2(x, 15.0),
+          new box2d.b2Vec2(x + xstep, 15.0)
+        ];
+        shape.Set(vertices);
+        ground.CreateFixture(shape, 0.0);
+      }
+
+      for (let y = 0.0; y < yrange; y += ystep) {
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
+          new box2d.b2Vec2(25.0, y),
+          new box2d.b2Vec2(25.0, y + ystep),
+          new box2d.b2Vec2(20.0, 15.0)
+        ];
+        shape.Set(vertices);
+        ground.CreateFixture(shape, 0.0);
+      }
+
+    }
+
+    this.m_particleSystem.SetRadius(1.0);
+    const particleType = testbed.Main.GetParticleParameterValue();
+
+    {
+      const shape = new box2d.b2CircleShape();
+      shape.m_p.Set(0, 35);
+      shape.m_radius = 12;
+      const pd = new box2d.b2ParticleGroupDef();
+      pd.flags = particleType;
+      pd.shape = shape;
+      const group = this.m_particleSystem.CreateParticleGroup(pd);
+      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+        this.ColorParticleGroup(group, 0);
+      }
+    }
   }
   static Create() {
     return new CornerCase();
@@ -31,112 +108,3 @@ export class CornerCase extends testbed.Test {
 }
 
 // #endif
-
-// //#if B2_ENABLE_PARTICLE
-
-// goog.provide('box2d.Testbed.CornerCase');
-
-// goog.require('box2d.Testbed.Test');
-
-// /**
-//  * @export
-//  * @constructor
-//  * @extends {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.CornerCase = function(canvas, settings) {
-//   box2d.Testbed.Test.call(this, canvas, settings); // base class constructor
-
-//   {
-//     var bd = new box2d.b2BodyDef();
-//     var ground = this.m_world.CreateBody(bd);
-
-//     // Construct a pathological corner intersection out of many
-//     // polygons to ensure there's no issue with particle oscillation
-//     // from many fixture contact impulses at the corner
-
-//     // left edge
-//     {
-//       var shape = new box2d.b2PolygonShape();
-//       var vertices = [
-//         new box2d.b2Vec2(-20.0, 30.0),
-//         new box2d.b2Vec2(-20.0, 0.0),
-//         new box2d.b2Vec2(-25.0, 0.0),
-//         new box2d.b2Vec2(-25.0, 30.0)
-//       ];
-//       shape.Set(vertices);
-//       ground.CreateFixture(shape, 0.0);
-//     }
-
-//     var x, y;
-//     var yrange = 30.0,
-//       ystep = yrange / 10.0,
-//       xrange = 20.0,
-//       xstep = xrange / 2.0;
-
-//     {
-//       var shape = new box2d.b2PolygonShape();
-//       var vertices = [
-//         new box2d.b2Vec2(-25.0, 0.0),
-//         new box2d.b2Vec2(20.0, 15.0),
-//         new box2d.b2Vec2(25.0, 0.0)
-//       ];
-//       shape.Set(vertices);
-//       ground.CreateFixture(shape, 0.0);
-//     }
-
-//     for (x = -xrange; x < xrange; x += xstep) {
-//       var shape = new box2d.b2PolygonShape();
-//       var vertices = [
-//         new box2d.b2Vec2(-25.0, 0.0),
-//         new box2d.b2Vec2(x, 15.0),
-//         new box2d.b2Vec2(x + xstep, 15.0)
-//       ];
-//       shape.Set(vertices);
-//       ground.CreateFixture(shape, 0.0);
-//     }
-
-//     for (y = 0.0; y < yrange; y += ystep) {
-//       var shape = new box2d.b2PolygonShape();
-//       var vertices = [
-//         new box2d.b2Vec2(25.0, y),
-//         new box2d.b2Vec2(25.0, y + ystep),
-//         new box2d.b2Vec2(20.0, 15.0)
-//       ];
-//       shape.Set(vertices);
-//       ground.CreateFixture(shape, 0.0);
-//     }
-
-//   }
-
-//   this.m_particleSystem.SetRadius(1.0);
-//   var particleType = testbed.Main.GetParticleParameterValue();
-
-//   {
-//     var shape = new box2d.b2CircleShape();
-//     shape.m_p.Set(0, 35);
-//     shape.m_radius = 12;
-//     var pd = new box2d.b2ParticleGroupDef();
-//     pd.flags = particleType;
-//     pd.shape = shape;
-//     var group = this.m_particleSystem.CreateParticleGroup(pd);
-//     if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
-//       this.ColorParticleGroup(group, 0);
-//     }
-//   }
-// }
-
-// goog.inherits(box2d.Testbed.CornerCase, box2d.Testbed.Test);
-
-// /**
-//  * @export
-//  * @return {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.CornerCase.Create = function(canvas, settings) {
-//   return new box2d.Testbed.CornerCase(canvas, settings);
-// }
-
-// //#endif

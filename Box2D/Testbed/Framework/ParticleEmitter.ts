@@ -83,7 +83,7 @@ export class RadialEmitter {
     return Math.random();
   }
 
-  _dtor_(): void {
+  __dtor__(): void {
     this.SetGroup(null);
   }
 

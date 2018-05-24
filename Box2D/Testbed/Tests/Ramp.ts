@@ -24,94 +24,62 @@ import * as testbed from "../Testbed";
 export class Ramp extends testbed.Test {
   constructor() {
     super();
+
+    {
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
+
+      // Construct a ramp out of many polygons to ensure there's no
+      // issue with particles moving across vertices
+
+      const xstep = 5.0, ystep = 5.0;
+
+      for (let y = 30.0; y > 0.0; y -= ystep) {
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
+          new box2d.b2Vec2(-25.0, y),
+          new box2d.b2Vec2(-25.0, y - ystep),
+          new box2d.b2Vec2(0.0, 15.0)
+        ];
+        shape.Set(vertices, 3);
+        ground.CreateFixture(shape, 0.0);
+      }
+
+      for (let x = -25.0; x < 25.0; x += xstep) {
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
+          new box2d.b2Vec2(x, 0.0),
+          new box2d.b2Vec2(x + xstep, 0.0),
+          new box2d.b2Vec2(0.0, 15.0)
+        ];
+        shape.Set(vertices, 3);
+        ground.CreateFixture(shape, 0.0);
+      }
+    }
+
+    this.m_particleSystem.SetRadius(0.25);
+    const particleType = testbed.Main.GetParticleParameterValue();
+    if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
+      this.m_particleSystem.SetDamping(0.2);
+    }
+
+    {
+      const shape = new box2d.b2CircleShape();
+      shape.m_p.Set(-20, 33);
+      shape.m_radius = 3;
+      const pd = new box2d.b2ParticleGroupDef();
+      pd.flags = particleType;
+      pd.shape = shape;
+      const group = this.m_particleSystem.CreateParticleGroup(pd);
+      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+        this.ColorParticleGroup(group, 0);
+      }
+    }
   }
+
   static Create() {
     return new Ramp();
   }
 }
 
 // #endif
-
-// //#if B2_ENABLE_PARTICLE
-
-// goog.provide('box2d.Testbed.Ramp');
-
-// goog.require('box2d.Testbed.Test');
-
-// /**
-//  * @export
-//  * @constructor
-//  * @extends {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.Ramp = function(canvas, settings) {
-//   box2d.Testbed.Test.call(this, canvas, settings); // base class constructor
-
-//   {
-//     var bd = new box2d.b2BodyDef();
-//     var ground = this.m_world.CreateBody(bd);
-
-//     // Construct a ramp out of many polygons to ensure there's no
-//     // issue with particles moving across vertices
-
-//     var x, y;
-//     var xstep = 5.0,
-//       ystep = 5.0;
-
-//     for (y = 30.0; y > 0.0; y -= ystep) {
-//       var shape = new box2d.b2PolygonShape();
-//       var vertices = [
-//         new box2d.b2Vec2(-25.0, y),
-//         new box2d.b2Vec2(-25.0, y - ystep),
-//         new box2d.b2Vec2(0.0, 15.0)
-//       ];
-//       shape.Set(vertices, 3);
-//       ground.CreateFixture(shape, 0.0);
-//     }
-
-//     for (x = -25.0; x < 25.0; x += xstep) {
-//       var shape = new box2d.b2PolygonShape();
-//       var vertices = [
-//         new box2d.b2Vec2(x, 0.0),
-//         new box2d.b2Vec2(x + xstep, 0.0),
-//         new box2d.b2Vec2(0.0, 15.0)
-//       ];
-//       shape.Set(vertices, 3);
-//       ground.CreateFixture(shape, 0.0);
-//     }
-//   }
-
-//   this.m_particleSystem.SetRadius(0.25);
-//   var particleType = testbed.Main.GetParticleParameterValue();
-//   if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
-//     this.m_particleSystem.SetDamping(0.2);
-//   }
-
-//   {
-//     var shape = new box2d.b2CircleShape();
-//     shape.m_p.Set(-20, 33);
-//     shape.m_radius = 3;
-//     var pd = new box2d.b2ParticleGroupDef();
-//     pd.flags = particleType;
-//     pd.shape = shape;
-//     var group = this.m_particleSystem.CreateParticleGroup(pd);
-//     if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
-//       this.ColorParticleGroup(group, 0);
-//     }
-//   }
-// }
-
-// goog.inherits(box2d.Testbed.Ramp, box2d.Testbed.Test);
-
-// /**
-//  * @export
-//  * @return {box2d.Testbed.Test}
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {box2d.Testbed.Settings} settings
-//  */
-// box2d.Testbed.Ramp.Create = function(canvas, settings) {
-//   return new box2d.Testbed.Ramp(canvas, settings);
-// }
-
-// //#endif
