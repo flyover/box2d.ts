@@ -5,6 +5,9 @@
   "main": "./Box2D/Box2D/Box2D.js",
   "types": "./Box2D/Box2D/Box2D.ts",
   "scripts": {
+    "build": "tsc -p Box2D/Testbed",
+    "watch": "tsc -p Box2D/Testbed --watch",
+    "debug": "npx http-server -c-1 -o",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
