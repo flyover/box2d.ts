@@ -43,12 +43,16 @@
         }
       });
       System.import("./Testbed").then(function(Testbed) {
-        const app = new Testbed.Main();
-        const loop = function () {
+        let app;
+        const init = function(time) {
+          app = new Testbed.Main(time);
           window.requestAnimationFrame(loop);
-          app.SimulationLoop();
         }
-        loop();
+        const loop = function(time) {
+          window.requestAnimationFrame(loop);
+          app.SimulationLoop(time);
+        }
+        window.requestAnimationFrame(init);
       }).catch(function (error) {
         console.error(error);
       });

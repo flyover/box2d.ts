@@ -36,7 +36,7 @@ export class Main {
   public m_ctx: CanvasRenderingContext2D | null = null;
   public m_demo_button: HTMLInputElement;
 
-  constructor() {
+  constructor(time: number) {
     const fps_div: HTMLDivElement = this.m_fps_div = document.body.appendChild(document.createElement("div"));
     fps_div.style.position = "absolute";
     fps_div.style.left = "0px";
@@ -238,7 +238,7 @@ export class Main {
 
     this.LoadTest();
 
-    this.m_time_last = Date.now();
+    this.m_time_last = time;
   }
 
   public HomeCamera(): void {
@@ -537,9 +537,7 @@ export class Main {
     this.m_demo_mode = !this.m_demo_mode;
   }
 
-  public SimulationLoop(): void {
-    const time: number = Date.now();
-
+  public SimulationLoop(time: number): void {
     this.m_time_last = this.m_time_last || time;
 
     let time_elapsed: number = time - this.m_time_last;
