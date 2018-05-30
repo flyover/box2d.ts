@@ -7,10 +7,12 @@
     "inlineSourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "Box2D": [ "../Box2D" ],
+      "Box2D": [ "../Box2D/Box2D" ],
       "Box2D/*": [ "../Box2D/*" ],
       "Contributions": [ "../Contributions" ],
-      "Contributions/*": [ "../Contributions/*" ]
+      "Contributions/*": [ "../Contributions/*" ],
+      "Testbed": [ "./Testbed" ],
+      "Testbed/*": [ "./Testbed/*" ],
     }
   },
   "include": [

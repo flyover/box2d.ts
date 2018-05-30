@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "Box2D";
 
 export class Camera {
   public m_center: box2d.b2Vec2 = new box2d.b2Vec2(0, 20);
@@ -99,7 +99,7 @@ export class Camera {
 // This class implements debug drawing callbacks that are invoked
 // inside b2World::Step.
 export class DebugDraw extends box2d.b2Draw {
-  public m_ctx: CanvasRenderingContext2D;
+  public m_ctx: CanvasRenderingContext2D | null = null;
 
   constructor() {
     super();

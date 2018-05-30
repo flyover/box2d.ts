@@ -597,7 +597,11 @@ export class Sandbox extends testbed.Test {
 
     this.m_particleFlags = testbed.Main.GetParticleParameterValue();
 
-    const dt = 1.0 / settings.hz;
+    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+
+    if (settings.pause && !settings.singleStep) {
+      dt = 0.0;
+    }
 
     // Step all the emitters
     for (let i = 0; i < this.m_faucetEmitterIndex; i++) {

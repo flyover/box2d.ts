@@ -28,14 +28,17 @@
       }
       SystemJS.config({
         map: {
-          "Box2D": "../Box2D",
+          "Box2D": "../Box2D/Box2D",
+          "Box2D/": "../Box2D/",
           "Contributions": "../../Contributions",
-          // "Testbed": "."
+          "Contributions/": "../../Contributions/",
+          "Testbed": "./Testbed",
+          "Testbed/": "./"
         },
         packages: {
           "Box2D": { defaultExtension: transpile ? "ts" : "js" },
           "Contributions": { defaultExtension: transpile ? "ts" : "js" },
-          // "Testbed": { defaultExtension: transpile ? "ts" : "js" },
+          "Testbed": { defaultExtension: transpile ? "ts" : "js" },
           ".": { defaultExtension: transpile ? "ts" : "js" }
         }
       });

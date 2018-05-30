@@ -627,7 +627,12 @@ export class Fracker extends testbed.Test {
 
   Step(settings: testbed.Settings): void {
     super.Step(settings);
-    const dt = 1.0 / settings.hz;
+    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+
+    if (settings.pause && !settings.singleStep) {
+      dt = 0.0;
+    }
+
     this.m_tracker.Step(dt);
     // Allow the user to move again.
     this.m_allowInput = true;

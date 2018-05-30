@@ -1,4 +1,4 @@
-import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "Box2D";
 import { Settings, Test } from "./Test";
 import { g_debugDraw, g_camera } from "./DebugDraw";
 import { g_testEntries } from "../Tests/TestEntries";
@@ -32,12 +32,12 @@ export class Main {
   public m_demo_time: number = 0;
   public m_max_demo_time: number = 1000 * 10;
   public m_canvas_div: HTMLDivElement;
-  public m_canvas: HTMLCanvasElement;
-  public m_ctx: CanvasRenderingContext2D;
+  public m_canvas_2d: HTMLCanvasElement;
+  public m_ctx: CanvasRenderingContext2D | null = null;
   public m_demo_button: HTMLInputElement;
 
   constructor() {
-    const fps_div: HTMLDivElement = this.m_fps_div = <HTMLDivElement> document.body.appendChild(document.createElement("div"));
+    const fps_div: HTMLDivElement = this.m_fps_div = document.body.appendChild(document.createElement("div"));
     fps_div.style.position = "absolute";
     fps_div.style.left = "0px";
     fps_div.style.bottom = "0px";
@@ -47,7 +47,7 @@ export class Main {
     fps_div.style.zIndex = "256";
     fps_div.innerHTML = "FPS";
 
-    const debug_div: HTMLDivElement = this.m_debug_div = <HTMLDivElement> document.body.appendChild(document.createElement("div"));
+    const debug_div: HTMLDivElement = this.m_debug_div = document.body.appendChild(document.createElement("div"));
     debug_div.style.position = "absolute";
     debug_div.style.left = "0px";
     debug_div.style.bottom = "0px";
@@ -59,7 +59,7 @@ export class Main {
 
     document.body.style.backgroundColor = "black";
 
-    const main_div: HTMLDivElement = <HTMLDivElement> document.body.appendChild(document.createElement("div"));
+    const main_div: HTMLDivElement = document.body.appendChild(document.createElement("div"));
     main_div.style.position = "absolute"; // relative to document.body
     main_div.style.left = "0px";
     main_div.style.top = "0px";
@@ -73,38 +73,38 @@ export class Main {
     window.addEventListener("orientationchange", (e: Event): void => { resize_main_div(); });
     resize_main_div();
 
-    const title_div: HTMLDivElement = <HTMLDivElement> main_div.appendChild(document.createElement("div"));
+    const title_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
     title_div.style.textAlign = "center";
     title_div.style.color = "grey";
     title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version + " (revision " + box2d.b2_changelist + ")";
 
-    const view_div: HTMLDivElement = <HTMLDivElement> main_div.appendChild(document.createElement("div"));
+    const view_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
 
-    const canvas_div: HTMLDivElement = this.m_canvas_div = <HTMLDivElement> view_div.appendChild(document.createElement("div"));
+    const canvas_div: HTMLDivElement = this.m_canvas_div = view_div.appendChild(document.createElement("div"));
     canvas_div.style.position = "absolute"; // relative to view_div
     canvas_div.style.left = "0px";
     canvas_div.style.right = "0px";
     canvas_div.style.top = "0px";
     canvas_div.style.bottom = "0px";
 
-    const canvas: HTMLCanvasElement = this.m_canvas = <HTMLCanvasElement> canvas_div.appendChild(document.createElement("canvas"));
+    const canvas_2d: HTMLCanvasElement = this.m_canvas_2d = canvas_div.appendChild(document.createElement("canvas"));
 
     function resize_canvas(): void {
       ///console.log(canvas_div.clientWidth + "x" + canvas_div.clientHeight);
-      if (canvas.width !== canvas_div.clientWidth) {
-        g_camera.m_width = canvas.width = canvas_div.clientWidth;
+      if (canvas_2d.width !== canvas_div.clientWidth) {
+        g_camera.m_width = canvas_2d.width = canvas_div.clientWidth;
       }
-      if (canvas.height !== canvas_div.clientHeight) {
-        g_camera.m_height = canvas.height = canvas_div.clientHeight;
+      if (canvas_2d.height !== canvas_div.clientHeight) {
+        g_camera.m_height = canvas_2d.height = canvas_div.clientHeight;
       }
     }
     window.addEventListener("resize", (e: UIEvent): void => { resize_canvas(); });
     window.addEventListener("orientationchange", (e: Event): void => { resize_canvas(); });
     resize_canvas();
 
-    g_debugDraw.m_ctx = this.m_ctx = <CanvasRenderingContext2D> this.m_canvas.getContext("2d");
+    g_debugDraw.m_ctx = this.m_ctx = this.m_canvas_2d.getContext("2d");
 
-    const controls_div: HTMLDivElement = <HTMLDivElement> view_div.appendChild(document.createElement("div"));
+    const controls_div: HTMLDivElement = view_div.appendChild(document.createElement("div"));
     controls_div.style.position = "absolute"; // relative to view_div
     controls_div.style.backgroundColor = "rgba(255,255,255,0.5)";
     controls_div.style.padding = "8px";
@@ -136,11 +136,11 @@ export class Main {
 
     // simulation number inputs
     function connect_number_input(parent: Node, label: string, init: number, update: (value: number) => void, min: number, max: number, step: number): HTMLInputElement {
-      const number_input_tr: HTMLTableRowElement = <HTMLTableRowElement> parent.appendChild(document.createElement("tr"));
-      const number_input_td0: HTMLTableDataCellElement = <HTMLTableDataCellElement> number_input_tr.appendChild(document.createElement("td"));
+      const number_input_tr: HTMLTableRowElement = parent.appendChild(document.createElement("tr"));
+      const number_input_td0: HTMLTableDataCellElement = number_input_tr.appendChild(document.createElement("td"));
       number_input_td0.align = "right";
       number_input_td0.appendChild(document.createTextNode(label));
-      const number_input_td1: HTMLTableDataCellElement = <HTMLTableDataCellElement> number_input_tr.appendChild(document.createElement("td"));
+      const number_input_td1: HTMLTableDataCellElement = number_input_tr.appendChild(document.createElement("td"));
       const number_input: HTMLInputElement = document.createElement("input");
       number_input.size = 8;
       number_input.min = min.toString();
@@ -154,7 +154,7 @@ export class Main {
       return number_input;
     }
 
-    const number_input_table: HTMLTableElement = <HTMLTableElement> controls_div.appendChild(document.createElement("table"));
+    const number_input_table: HTMLTableElement = controls_div.appendChild(document.createElement("table"));
     connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, (value: number): void => { this.m_settings.velocityIterations = value; }, 1, 20, 1);
     connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, (value: number): void => { this.m_settings.positionIterations = value; }, 1, 20, 1);
     // #if B2_ENABLE_PARTICLE
@@ -185,8 +185,8 @@ export class Main {
     // #endif
 
     // draw checkbox inputs
-    const draw_fieldset: HTMLFieldSetElement = <HTMLFieldSetElement> controls_div.appendChild(document.createElement("fieldset"));
-    const draw_legend: HTMLLegendElement = <HTMLLegendElement> draw_fieldset.appendChild(document.createElement("legend"));
+    const draw_fieldset: HTMLFieldSetElement = controls_div.appendChild(document.createElement("fieldset"));
+    const draw_legend: HTMLLegendElement = draw_fieldset.appendChild(document.createElement("legend"));
     draw_legend.appendChild(document.createTextNode("Draw"));
     connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, (value: boolean): void => { this.m_settings.drawShapes = value; });
     // #if B2_ENABLE_PARTICLE
@@ -214,7 +214,7 @@ export class Main {
       return button_input;
     }
 
-    const button_div: HTMLDivElement = <HTMLDivElement> controls_div.appendChild(document.createElement("div"));
+    const button_div: HTMLDivElement = controls_div.appendChild(document.createElement("div"));
     button_div.align = "center";
     connect_button_input(button_div, "Pause", (e: MouseEvent): void => { this.Pause(); });
     connect_button_input(button_div, "Step", (e: MouseEvent): void => { this.SingleStep(); });
@@ -563,10 +563,10 @@ export class Main {
 
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      ctx.strokeStyle = "blue";
-      ctx.strokeRect(this.m_mouse.x - 24, this.m_mouse.y - 24, 48, 48);
+      // ctx.strokeStyle = "blue";
+      // ctx.strokeRect(this.m_mouse.x - 24, this.m_mouse.y - 24, 48, 48);
 
-      const mouse_world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(this.m_mouse, new box2d.b2Vec2());
+      // const mouse_world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(this.m_mouse, new box2d.b2Vec2());
 
       ctx.save();
 
@@ -604,8 +604,8 @@ export class Main {
         // this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
         // #endif
 
-        ctx.strokeStyle = "yellow";
-        ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
+        // ctx.strokeStyle = "yellow";
+        // ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
 
       ctx.restore();
 

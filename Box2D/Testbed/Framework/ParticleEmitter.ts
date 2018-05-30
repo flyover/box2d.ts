@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "Box2D";
 
 export class EmittedParticleCallback {
   /**

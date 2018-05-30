@@ -23,9 +23,13 @@
         });
       }
       SystemJS.config({
+        map: {
+          "Box2D": "../Box2D/Box2D",
+          "Box2D/": "../Box2D/",
+        },
         packages: {
-          "../Box2D": { defaultExtension: transpile ? "ts" : "js" },
-          ".": { defaultExtension: transpile ? "ts" : "js" }
+          "Box2D": { defaultExtension: transpile ? "ts" : "js" },
+          ".": { defaultExtension: transpile ? "ts" : "js" },
         }
       });
       System.import("./HelloWorld").then(function(HelloWorld) {

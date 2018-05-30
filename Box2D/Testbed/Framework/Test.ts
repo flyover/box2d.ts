@@ -1,4 +1,4 @@
-import * as box2d from "../../Box2D/Box2D";
+import * as box2d from "Box2D";
 import { g_debugDraw } from "./DebugDraw";
 // #if B2_ENABLE_PARTICLE
 import { ParticleParameter } from "./ParticleParameter";

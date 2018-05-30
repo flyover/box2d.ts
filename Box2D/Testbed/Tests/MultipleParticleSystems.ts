@@ -132,8 +132,13 @@ export class MultipleParticleSystems extends testbed.Test {
   }
 
   Step(settings: testbed.Settings) {
-    const dt = 1.0 / settings.hz;
     super.Step(settings);
+    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+
+    if (settings.pause && !settings.singleStep) {
+      dt = 0.0;
+    }
+
     for (let i = 0; i < this.m_emitters.length; ++i) {
       this.m_emitters[i].Step(dt);
     }

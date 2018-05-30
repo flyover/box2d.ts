@@ -168,12 +168,18 @@ export class Sparky extends testbed.Test {
       this.m_contact = false;
     }
 
+    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+
+    if (settings.pause && !settings.singleStep) {
+      dt = 0.0;
+    }
+
     // Step particle explosions.
     for (let i = 0; i < Sparky.c_maxVFX; i++) {
       let vfx = this.m_VFX[i];
       if (vfx === null)
         continue;
-      vfx.Step(1.0 / settings.hz);
+      vfx.Step(dt);
       if (vfx.IsDone()) {
         /// delete vfx;
         vfx.Drop();

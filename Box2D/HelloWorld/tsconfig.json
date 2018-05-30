@@ -4,7 +4,12 @@
     "module": "system",
     "strict": true,
     "strictNullChecks": false,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "Box2D": [ "../Box2D/Box2D" ],
+      "Box2D/*": [ "../Box2D/*" ]
+    }
   },
   "include": [
     "**/*.ts"
