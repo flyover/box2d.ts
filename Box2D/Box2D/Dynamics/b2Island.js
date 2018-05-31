@@ -17,8 +17,8 @@
 */
 System.register(["../Common/b2Settings", "../Common/b2Math", "../Common/b2Timer", "./Contacts/b2ContactSolver", "./b2Body", "./b2TimeStep", "./b2WorldCallbacks"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2Settings_1, b2Settings_2, b2Settings_3, b2Settings_4, b2Math_1, b2Timer_1, b2ContactSolver_1, b2Body_1, b2TimeStep_1, b2WorldCallbacks_1, b2Island;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2Settings_1_1) {

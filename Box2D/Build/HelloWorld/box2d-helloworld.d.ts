@@ -1,4 +1,4 @@
-declare module "Box2D/Common/b2Settings" {
+declare module "Box2D/Box2D/Common/b2Settings" {
     export function b2Assert(condition: boolean, ...args: any[]): void;
     export const b2_maxFloat: number;
     export const b2_epsilon: number;
@@ -49,33 +49,33 @@ declare module "Box2D/Common/b2Settings" {
     export const b2_changelist: number;
     export function b2ParseInt(v: string): number;
     export function b2ParseUInt(v: string): number;
-    export function b2MakeArray(length: number, init: {
-        (i: number): any;
-    }): any[];
-    export function b2MakeNullArray(length: number): any[];
+    export function b2MakeArray<T>(length: number, init: {
+        (i: number): T;
+    }): T[];
+    export function b2MakeNullArray<T>(length: number): (T | null)[];
     export function b2MakeNumberArray(length: number, init?: number): number[];
 }
-declare module "Box2D/Common/b2Math" {
+declare module "Box2D/Box2D/Common/b2Math" {
     export const b2_pi_over_180: number;
     export const b2_180_over_pi: number;
     export const b2_two_pi: number;
-    export function b2Abs(n: number): number;
-    export function b2Min(a: number, b: number): number;
-    export function b2Max(a: number, b: number): number;
+    export const b2Abs: (x: number) => number;
+    export const b2Min: (...values: number[]) => number;
+    export const b2Max: (...values: number[]) => number;
     export function b2Clamp(a: number, lo: number, hi: number): number;
-    export function b2Swap(a: any[], b: any[]): void;
+    export function b2Swap<T>(a: T[], b: T[]): void;
     export function b2IsValid(n: number): boolean;
     export function b2Sq(n: number): number;
     export function b2InvSqrt(n: number): number;
-    export function b2Sqrt(n: number): number;
-    export function b2Pow(x: number, y: number): number;
+    export const b2Sqrt: (x: number) => number;
+    export const b2Pow: (x: number, y: number) => number;
     export function b2DegToRad(degrees: number): number;
     export function b2RadToDeg(radians: number): number;
-    export function b2Cos(radians: number): number;
-    export function b2Sin(radians: number): number;
-    export function b2Acos(n: number): number;
-    export function b2Asin(n: number): number;
-    export function b2Atan2(y: number, x: number): number;
+    export const b2Cos: (x: number) => number;
+    export const b2Sin: (x: number) => number;
+    export const b2Acos: (x: number) => number;
+    export const b2Asin: (x: number) => number;
+    export const b2Atan2: (y: number, x: number) => number;
     export function b2NextPowerOfTwo(x: number): number;
     export function b2IsPowerOfTwo(x: number): boolean;
     export function b2Random(): number;
@@ -166,8 +166,8 @@ declare module "Box2D/Common/b2Math" {
     }
     export class b2Mat22 {
         static IDENTITY: b2Mat22;
-        ex: b2Vec2;
-        ey: b2Vec2;
+        readonly ex: b2Vec2;
+        readonly ey: b2Vec2;
         Clone(): b2Mat22;
         static FromVV(c1: b2Vec2, c2: b2Vec2): b2Mat22;
         static FromSSSS(r1c1: number, r1c2: number, r2c1: number, r2c2: number): b2Mat22;
@@ -194,9 +194,9 @@ declare module "Box2D/Common/b2Math" {
     }
     export class b2Mat33 {
         static IDENTITY: b2Mat33;
-        ex: b2Vec3;
-        ey: b2Vec3;
-        ez: b2Vec3;
+        readonly ex: b2Vec3;
+        readonly ey: b2Vec3;
+        readonly ez: b2Vec3;
         Clone(): b2Mat33;
         SetVVV(c1: b2Vec3, c2: b2Vec3, c3: b2Vec3): b2Mat33;
         Copy(other: b2Mat33): b2Mat33;
@@ -231,8 +231,8 @@ declare module "Box2D/Common/b2Math" {
     }
     export class b2Transform {
         static IDENTITY: b2Transform;
-        p: b2Vec2;
-        q: b2Rot;
+        readonly p: b2Vec2;
+        readonly q: b2Rot;
         Clone(): b2Transform;
         Copy(other: b2Transform): b2Transform;
         SetIdentity(): b2Transform;
@@ -252,9 +252,9 @@ declare module "Box2D/Common/b2Math" {
         static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform;
     }
     export class b2Sweep {
-        localCenter: b2Vec2;
-        c0: b2Vec2;
-        c: b2Vec2;
+        readonly localCenter: b2Vec2;
+        readonly c0: b2Vec2;
+        readonly c: b2Vec2;
         a0: number;
         a: number;
         alpha0: number;
@@ -265,7 +265,7 @@ declare module "Box2D/Common/b2Math" {
         Normalize(): void;
     }
 }
-declare module "Box2D/Common/b2Timer" {
+declare module "Box2D/Box2D/Common/b2Timer" {
     export class b2Timer {
         m_start: number;
         Reset(): b2Timer;
@@ -285,8 +285,8 @@ declare module "Box2D/Common/b2Timer" {
         Decrement(): void;
     }
 }
-declare module "Box2D/Common/b2Draw" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+declare module "Box2D/Box2D/Common/b2Draw" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
     export class b2Color {
         static RED: b2Color;
         static GREEN: b2Color;
@@ -303,6 +303,8 @@ declare module "Box2D/Common/b2Draw" {
         GetColor(out: b2Color): b2Color;
         SetColor(color: b2Color): void;
         Set(a0: number | b2Color, a1?: number, a2?: number, a3?: number): void;
+        SetByteRGB(r: number, g: number, b: number): this;
+        SetByteRGBA(r: number, g: number, b: number, a: number): this;
         SetRGB(rr: number, gg: number, bb: number): b2Color;
         SetRGBA(rr: number, gg: number, bb: number, aa: number): b2Color;
         SelfAdd(color: b2Color): b2Color;
@@ -325,7 +327,7 @@ declare module "Box2D/Common/b2Draw" {
         e_centerOfMassBit = 16,
         e_particleBit = 32,
         e_controllerBit = 64,
-        e_all = 63,
+        e_all = 63
     }
     export class b2Draw {
         m_drawFlags: b2DrawFlags;
@@ -344,9 +346,9 @@ declare module "Box2D/Common/b2Draw" {
         DrawTransform(xf: b2Transform): void;
     }
 }
-declare module "Box2D/Collision/b2Distance" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/b2Distance" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export class b2DistanceProxy {
         m_buffer: b2Vec2[];
         m_vertices: b2Vec2[];
@@ -384,6 +386,7 @@ declare module "Box2D/Collision/b2Distance" {
     export let b2_gjkCalls: number;
     export let b2_gjkIters: number;
     export let b2_gjkMaxIters: number;
+    export function b2_gjk_reset(): void;
     export class b2SimplexVertex {
         wA: b2Vec2;
         wB: b2Vec2;
@@ -414,10 +417,10 @@ declare module "Box2D/Collision/b2Distance" {
     }
     export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
 }
-declare module "Box2D/Collision/Shapes/b2Shape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+declare module "Box2D/Box2D/Collision/Shapes/b2Shape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
     export class b2MassData {
         mass: number;
         center: b2Vec2;
@@ -429,7 +432,7 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
         e_edgeShape = 1,
         e_polygonShape = 2,
         e_chainShape = 3,
-        e_shapeTypeCount = 4,
+        e_shapeTypeCount = 4
     }
     export abstract class b2Shape {
         m_type: b2ShapeType;
@@ -449,12 +452,12 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
         abstract Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Collision/b2Collision" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/b2Collision" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export enum b2ContactFeatureType {
         e_vertex = 0,
-        e_face = 1,
+        e_face = 1
     }
     export class b2ContactFeature {
         _key: number;
@@ -489,7 +492,7 @@ declare module "Box2D/Collision/b2Collision" {
         e_unknown = -1,
         e_circles = 0,
         e_faceA = 1,
-        e_faceB = 2,
+        e_faceB = 2
     }
     export class b2Manifold {
         points: b2ManifoldPoint[];
@@ -517,7 +520,7 @@ declare module "Box2D/Collision/b2Collision" {
         b2_nullState = 0,
         b2_addState = 1,
         b2_persistState = 2,
-        b2_removeState = 3,
+        b2_removeState = 3
     }
     export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[], manifold1: b2Manifold, manifold2: b2Manifold): void;
     export class b2ClipVertex {
@@ -558,38 +561,38 @@ declare module "Box2D/Collision/b2Collision" {
     export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number;
     export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean;
 }
-declare module "Box2D/Common/b2GrowableStack" {
-    export class b2GrowableStack {
-        m_stack: any[];
+declare module "Box2D/Box2D/Common/b2GrowableStack" {
+    export class b2GrowableStack<T> {
+        m_stack: T[];
         m_count: number;
         constructor(N: number);
-        Reset(): b2GrowableStack;
-        Push(element: any): void;
-        Pop(): any;
+        Reset(): this;
+        Push(element: T): void;
+        Pop(): T;
         GetCount(): number;
     }
 }
-declare module "Box2D/Collision/b2DynamicTree" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2GrowableStack } from "Box2D/Common/b2GrowableStack";
-    import { b2AABB, b2RayCastInput } from "Box2D/Collision/b2Collision";
+declare module "Box2D/Box2D/Collision/b2DynamicTree" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2GrowableStack } from "Box2D/Box2D/Common/b2GrowableStack";
+    import { b2AABB, b2RayCastInput } from "Box2D/Box2D/Collision/b2Collision";
     export class b2TreeNode {
         m_id: number;
         aabb: b2AABB;
         userData: any;
-        parent: b2TreeNode;
-        child1: b2TreeNode;
-        child2: b2TreeNode;
+        parent: b2TreeNode | null;
+        child1: b2TreeNode | null;
+        child2: b2TreeNode | null;
         height: number;
         constructor(id?: number);
         IsLeaf(): boolean;
     }
     export class b2DynamicTree {
-        m_root: b2TreeNode;
-        m_freeList: b2TreeNode;
+        m_root: b2TreeNode | null;
+        m_freeList: b2TreeNode | null;
         m_path: number;
         m_insertionCount: number;
-        static s_stack: b2GrowableStack;
+        static s_stack: b2GrowableStack<b2TreeNode>;
         static s_r: b2Vec2;
         static s_v: b2Vec2;
         static s_abs_v: b2Vec2;
@@ -611,23 +614,23 @@ declare module "Box2D/Collision/b2DynamicTree" {
         RemoveLeaf(leaf: b2TreeNode): void;
         Balance(A: b2TreeNode): b2TreeNode;
         GetHeight(): number;
-        private static GetAreaNode(node);
+        private static GetAreaNode;
         GetAreaRatio(): number;
         ComputeHeightNode(node: b2TreeNode): number;
         ComputeHeight(): number;
         ValidateStructure(index: b2TreeNode): void;
         ValidateMetrics(index: b2TreeNode): void;
         Validate(): void;
-        private static GetMaxBalanceNode(node, maxBalance);
+        private static GetMaxBalanceNode;
         GetMaxBalance(): number;
         RebuildBottomUp(): void;
-        private static ShiftOriginNode(node, newOrigin);
+        private static ShiftOriginNode;
         ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
-declare module "Box2D/Collision/b2TimeOfImpact" {
-    import { b2Vec2, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2DistanceProxy, b2SimplexCache } from "Box2D/Collision/b2Distance";
+declare module "Box2D/Box2D/Collision/b2TimeOfImpact" {
+    import { b2Vec2, b2Sweep } from "Box2D/Box2D/Common/b2Math";
+    import { b2DistanceProxy, b2SimplexCache } from "Box2D/Box2D/Collision/b2Distance";
     export let b2_toiTime: number;
     export let b2_toiMaxTime: number;
     export let b2_toiCalls: number;
@@ -635,6 +638,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
     export let b2_toiMaxIters: number;
     export let b2_toiRootIters: number;
     export let b2_toiMaxRootIters: number;
+    export function b2_toi_reset(): void;
     export class b2TOIInput {
         proxyA: b2DistanceProxy;
         proxyB: b2DistanceProxy;
@@ -647,7 +651,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         e_failed = 1,
         e_overlapped = 2,
         e_touching = 3,
-        e_separated = 4,
+        e_separated = 4
     }
     export class b2TOIOutput {
         state: b2TOIOutputState;
@@ -657,7 +661,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         e_unknown = -1,
         e_points = 0,
         e_faceA = 1,
-        e_faceB = 2,
+        e_faceB = 2
     }
     export class b2SeparationFunction {
         m_proxyA: b2DistanceProxy;
@@ -673,8 +677,8 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
     }
     export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void;
 }
-declare module "Box2D/Dynamics/b2TimeStep" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
+declare module "Box2D/Box2D/Dynamics/b2TimeStep" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
     export class b2Profile {
         step: number;
         collide: number;
@@ -712,10 +716,10 @@ declare module "Box2D/Dynamics/b2TimeStep" {
         velocities: b2Velocity[];
     }
 }
-declare module "Box2D/Dynamics/Joints/b2Joint" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2Joint" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export enum b2JointType {
         e_unknownJoint = 0,
         e_revoluteJoint = 1,
@@ -729,13 +733,13 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         e_frictionJoint = 9,
         e_ropeJoint = 10,
         e_motorJoint = 11,
-        e_areaJoint = 12,
+        e_areaJoint = 12
     }
     export enum b2LimitState {
         e_inactiveLimit = 0,
         e_atLowerLimit = 1,
         e_atUpperLimit = 2,
-        e_equalLimits = 3,
+        e_equalLimits = 3
     }
     export class b2Jacobian {
         linear: b2Vec2;
@@ -745,10 +749,11 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         Set(x: b2Vec2, a1: number, a2: number): b2Jacobian;
     }
     export class b2JointEdge {
-        other: b2Body;
-        joint: b2Joint;
-        prev: b2JointEdge;
-        next: b2JointEdge;
+        readonly other: b2Body;
+        readonly joint: b2Joint;
+        prev: b2JointEdge | null;
+        next: b2JointEdge | null;
+        constructor(joint: b2Joint, other: b2Body);
     }
     export class b2JointDef {
         type: b2JointType;
@@ -760,8 +765,8 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
     }
     export class b2Joint {
         m_type: b2JointType;
-        m_prev: b2Joint;
-        m_next: b2Joint;
+        m_prev: b2Joint | null;
+        m_next: b2Joint | null;
         m_edgeA: b2JointEdge;
         m_edgeB: b2JointEdge;
         m_bodyA: b2Body;
@@ -778,7 +783,7 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         GetAnchorB(out: b2Vec2): b2Vec2;
         GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
         GetReactionTorque(inv_dt: number): number;
-        GetNext(): b2Joint;
+        GetNext(): b2Joint | null;
         GetUserData(): any;
         SetUserData(data: any): void;
         IsActive(): boolean;
@@ -790,13 +795,13 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         SolvePositionConstraints(data: b2SolverData): boolean;
     }
 }
-declare module "Box2D/Dynamics/b2Fixture" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode } from "Box2D/Collision/b2DynamicTree";
-    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
+declare module "Box2D/Box2D/Dynamics/b2Fixture" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2BroadPhase } from "Box2D/Box2D/Collision/b2BroadPhase";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2TreeNode } from "Box2D/Box2D/Collision/b2DynamicTree";
+    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
     export class b2Filter {
         categoryBits: number;
         maskBits: number;
@@ -817,14 +822,14 @@ declare module "Box2D/Dynamics/b2Fixture" {
         aabb: b2AABB;
         fixture: b2Fixture;
         childIndex: number;
-        proxy: b2TreeNode;
-        static MakeArray(length: number): b2FixtureProxy[];
+        treeNode: b2TreeNode;
+        constructor(fixture: b2Fixture);
     }
     export class b2Fixture {
         m_density: number;
-        m_next: b2Fixture;
-        m_body: b2Body;
-        m_shape: b2Shape;
+        m_next: b2Fixture | null;
+        readonly m_body: b2Body;
+        readonly m_shape: b2Shape;
         m_friction: number;
         m_restitution: number;
         m_proxies: b2FixtureProxy[];
@@ -832,6 +837,7 @@ declare module "Box2D/Dynamics/b2Fixture" {
         m_filter: b2Filter;
         m_isSensor: boolean;
         m_userData: any;
+        constructor(def: b2FixtureDef, body: b2Body);
         GetType(): b2ShapeType;
         GetShape(): b2Shape;
         SetSensor(sensor: boolean): void;
@@ -855,7 +861,7 @@ declare module "Box2D/Dynamics/b2Fixture" {
         SetRestitution(restitution: number): void;
         GetAABB(childIndex: number): b2AABB;
         Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
-        Create(body: b2Body, def: b2FixtureDef): void;
+        Create(/*body: b2Body,*/ def: b2FixtureDef): void;
         Destroy(): void;
         CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
         DestroyProxies(broadPhase: b2BroadPhase): void;
@@ -865,194 +871,121 @@ declare module "Box2D/Dynamics/b2Fixture" {
         Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
     }
 }
-declare module "Box2D/Dynamics/b2Body" {
-    import { b2Vec2, b2Transform, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2Shape, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2ContactEdge } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2JointEdge } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Fixture, b2FixtureDef } from "Box2D/Dynamics/b2Fixture";
-    import { b2World } from "Box2D/Dynamics/b2World";
-    export enum b2BodyType {
-        b2_unknown = -1,
-        b2_staticBody = 0,
-        b2_kinematicBody = 1,
-        b2_dynamicBody = 2,
+declare module "Box2D/Box2D/Common/b2BlockAllocator" {
+    export class b2BlockAllocator {
     }
-    export class b2BodyDef {
-        type: b2BodyType;
-        position: b2Vec2;
-        angle: number;
-        linearVelocity: b2Vec2;
-        angularVelocity: number;
-        linearDamping: number;
-        angularDamping: number;
-        allowSleep: boolean;
-        awake: boolean;
-        fixedRotation: boolean;
-        bullet: boolean;
-        active: boolean;
-        userData: any;
-        gravityScale: number;
+}
+declare module "Box2D/Box2D/Common/b2StackAllocator" {
+    export class b2StackAllocator {
     }
-    export class b2Body {
-        m_type: b2BodyType;
-        m_islandFlag: boolean;
-        m_awakeFlag: boolean;
-        m_autoSleepFlag: boolean;
-        m_bulletFlag: boolean;
-        m_fixedRotationFlag: boolean;
-        m_activeFlag: boolean;
-        m_toiFlag: boolean;
-        m_islandIndex: number;
-        m_xf: b2Transform;
-        m_xf0: b2Transform;
-        m_sweep: b2Sweep;
-        m_linearVelocity: b2Vec2;
-        m_angularVelocity: number;
-        m_force: b2Vec2;
-        m_torque: number;
-        m_world: b2World;
-        m_prev: b2Body;
-        m_next: b2Body;
-        m_fixtureList: b2Fixture;
-        m_fixtureCount: number;
-        m_jointList: b2JointEdge;
-        m_contactList: b2ContactEdge;
-        m_mass: number;
-        m_invMass: number;
-        m_I: number;
-        m_invI: number;
-        m_linearDamping: number;
-        m_angularDamping: number;
-        m_gravityScale: number;
-        m_sleepTime: number;
-        m_userData: any;
-        constructor(bd: b2BodyDef, world: b2World);
-        CreateFixture(a: b2FixtureDef | b2Shape, b?: number): b2Fixture;
-        CreateFixtureDef(def: b2FixtureDef): b2Fixture;
-        private static CreateFixtureShapeDensity_s_def;
-        CreateFixtureShapeDensity(shape: b2Shape, density?: number): b2Fixture;
-        DestroyFixture(fixture: b2Fixture): void;
-        SetTransformVec(position: b2Vec2, angle: number): void;
-        SetTransformXY(x: number, y: number, angle: number): void;
-        SetTransform(xf: b2Transform): void;
-        GetTransform(): b2Transform;
-        GetPosition(): b2Vec2;
-        SetPosition(position: b2Vec2): void;
-        SetPositionXY(x: number, y: number): void;
-        GetAngle(): number;
-        SetAngle(angle: number): void;
-        GetWorldCenter(): b2Vec2;
-        GetLocalCenter(): b2Vec2;
-        SetLinearVelocity(v: b2Vec2): void;
-        GetLinearVelocity(): b2Vec2;
-        SetAngularVelocity(w: number): void;
-        GetAngularVelocity(): number;
-        GetDefinition(bd: b2BodyDef): b2BodyDef;
-        ApplyForce(force: b2Vec2, point: b2Vec2, wake?: boolean): void;
-        ApplyForceToCenter(force: b2Vec2, wake?: boolean): void;
-        ApplyTorque(torque: number, wake?: boolean): void;
-        ApplyLinearImpulse(impulse: b2Vec2, point: b2Vec2, wake?: boolean): void;
-        ApplyLinearImpulseToCenter(impulse: b2Vec2, wake?: boolean): void;
-        ApplyAngularImpulse(impulse: number, wake?: boolean): void;
-        GetMass(): number;
-        GetInertia(): number;
-        GetMassData(data: b2MassData): b2MassData;
-        private static SetMassData_s_oldCenter;
-        SetMassData(massData: b2MassData): void;
-        private static ResetMassData_s_localCenter;
-        private static ResetMassData_s_oldCenter;
-        private static ResetMassData_s_massData;
-        ResetMassData(): void;
-        GetWorldPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2;
-        GetWorldVector(localVector: b2Vec2, out: b2Vec2): b2Vec2;
-        GetLocalPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2;
-        GetLocalVector(worldVector: b2Vec2, out: b2Vec2): b2Vec2;
-        GetLinearVelocityFromWorldPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2;
-        GetLinearVelocityFromLocalPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2;
-        GetLinearDamping(): number;
-        SetLinearDamping(linearDamping: number): void;
-        GetAngularDamping(): number;
-        SetAngularDamping(angularDamping: number): void;
-        GetGravityScale(): number;
-        SetGravityScale(scale: number): void;
-        SetType(type: b2BodyType): void;
-        GetType(): b2BodyType;
-        SetBullet(flag: boolean): void;
-        IsBullet(): boolean;
-        SetSleepingAllowed(flag: boolean): void;
-        IsSleepingAllowed(): boolean;
-        SetAwake(flag: boolean): void;
-        IsAwake(): boolean;
-        SetActive(flag: boolean): void;
-        IsActive(): boolean;
-        SetFixedRotation(flag: boolean): void;
-        IsFixedRotation(): boolean;
-        GetFixtureList(): b2Fixture;
-        GetJointList(): b2JointEdge;
-        GetContactList(): b2ContactEdge;
-        GetNext(): b2Body;
-        GetUserData(): any;
-        SetUserData(data: any): void;
-        GetWorld(): b2World;
+}
+declare module "Box2D/Box2D/Collision/Shapes/b2CircleShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    export class b2CircleShape extends b2Shape {
+        m_p: b2Vec2;
+        constructor(radius?: number);
+        Clone(): b2CircleShape;
+        Copy(other: b2CircleShape): b2CircleShape;
+        GetChildCount(): number;
+        private static TestPoint_s_center;
+        private static TestPoint_s_d;
+        TestPoint(transform: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_center;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_position;
+        private static RayCast_s_s;
+        private static RayCast_s_r;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_p;
+        ComputeAABB(aabb: b2AABB, transform: b2Transform, childIndex: number): void;
+        ComputeMass(massData: b2MassData, density: number): void;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
         Dump(log: (format: string, ...args: any[]) => void): void;
-        private static SynchronizeFixtures_s_xf1;
-        SynchronizeFixtures(): void;
-        SynchronizeTransform(): void;
-        ShouldCollide(other: b2Body): boolean;
-        ShouldCollideConnected(other: b2Body): boolean;
-        Advance(alpha: number): void;
     }
 }
-declare module "Box2D/Particle/b2Particle" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
-    import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    /**
-     * The particle type. Can be combined with the | operator.
-     */
-    export enum b2ParticleFlag {
-        b2_waterParticle = 0,
-        b2_zombieParticle = 2,
-        b2_wallParticle = 4,
-        b2_springParticle = 8,
-        b2_elasticParticle = 16,
-        b2_viscousParticle = 32,
-        b2_powderParticle = 64,
-        b2_tensileParticle = 128,
-        b2_colorMixingParticle = 256,
-        b2_destructionListenerParticle = 512,
-        b2_barrierParticle = 1024,
-        b2_staticPressureParticle = 2048,
-        b2_reactiveParticle = 4096,
-        b2_repulsiveParticle = 8192,
-        b2_fixtureContactListenerParticle = 16384,
-        b2_particleContactListenerParticle = 32768,
-        b2_fixtureContactFilterParticle = 65536,
-        b2_particleContactFilterParticle = 131072,
-    }
-    export class b2ParticleDef {
-        flags: b2ParticleFlag;
-        position: b2Vec2;
-        velocity: b2Vec2;
-        color: b2Color;
-        lifetime: number;
-        userData: any;
-        group: b2ParticleGroup;
-    }
-    export function b2CalculateParticleIterations(gravity: number, radius: number, timeStep: number): number;
-    export class b2ParticleHandle {
-        m_index: number;
-        GetIndex(): number;
-        SetIndex(index: number): void;
+declare module "Box2D/Box2D/Collision/Shapes/b2PolygonShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    export class b2PolygonShape extends b2Shape {
+        m_centroid: b2Vec2;
+        m_vertices: b2Vec2[];
+        m_normals: b2Vec2[];
+        m_count: number;
+        constructor();
+        Clone(): b2PolygonShape;
+        Copy(other: b2PolygonShape): b2PolygonShape;
+        GetChildCount(): number;
+        private static Set_s_ps;
+        private static Set_s_hull;
+        private static Set_s_r;
+        private static Set_s_v;
+        Set(vertices: b2Vec2[], count?: number, start?: number): b2PolygonShape;
+        SetAsArray(vertices: b2Vec2[], count?: number): b2PolygonShape;
+        SetAsBox(hx: number, hy: number, center?: b2Vec2, angle?: number): b2PolygonShape;
+        private static TestPoint_s_pLocal;
+        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+        private static ComputeDistance_s_pLocal;
+        private static ComputeDistance_s_normalForMaxDistance;
+        private static ComputeDistance_s_minDistance;
+        private static ComputeDistance_s_distance;
+        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
+        private static RayCast_s_p1;
+        private static RayCast_s_p2;
+        private static RayCast_s_d;
+        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
+        private static ComputeAABB_s_v;
+        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
+        private static ComputeMass_s_center;
+        private static ComputeMass_s_s;
+        private static ComputeMass_s_e1;
+        private static ComputeMass_s_e2;
+        ComputeMass(massData: b2MassData, density: number): void;
+        private static Validate_s_e;
+        private static Validate_s_v;
+        Validate(): boolean;
+        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
+        private static ComputeSubmergedArea_s_normalL;
+        private static ComputeSubmergedArea_s_depths;
+        private static ComputeSubmergedArea_s_md;
+        private static ComputeSubmergedArea_s_intoVec;
+        private static ComputeSubmergedArea_s_outoVec;
+        private static ComputeSubmergedArea_s_center;
+        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        private static ComputeCentroid_s_pRef;
+        private static ComputeCentroid_s_e1;
+        private static ComputeCentroid_s_e2;
+        static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
     }
 }
-declare module "Box2D/Collision/Shapes/b2EdgeShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/b2CollideCircle" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2CircleShape } from "Box2D/Box2D/Collision/Shapes/b2CircleShape";
+    import { b2PolygonShape } from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
+    export function b2CollideCircles(manifold: b2Manifold, circleA: b2CircleShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
+    export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2PolygonShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
+}
+declare module "Box2D/Box2D/Collision/b2CollidePolygon" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2PolygonShape } from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
+    export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, xfA: b2Transform, polyB: b2PolygonShape, xfB: b2Transform): void;
+}
+declare module "Box2D/Box2D/Collision/Shapes/b2EdgeShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export class b2EdgeShape extends b2Shape {
         m_vertex1: b2Vec2;
         m_vertex2: b2Vec2;
@@ -1087,13 +1020,22 @@ declare module "Box2D/Collision/Shapes/b2EdgeShape" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Collision/Shapes/b2ChainShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+declare module "Box2D/Box2D/Collision/b2CollideEdge" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2CircleShape } from "Box2D/Box2D/Collision/Shapes/b2CircleShape";
+    import { b2PolygonShape } from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
+    import { b2EdgeShape } from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
+    export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
+    export function b2CollideEdgeAndPolygon(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void;
+}
+declare module "Box2D/Box2D/Collision/Shapes/b2ChainShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
     export class b2ChainShape extends b2Shape {
         m_vertices: b2Vec2[];
         m_count: number;
@@ -1124,7 +1066,50 @@ declare module "Box2D/Collision/Shapes/b2ChainShape" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Particle/b2StackQueue" {
+declare module "Box2D/Box2D/Particle/b2Particle" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Box2D/Common/b2Draw";
+    import { b2ParticleGroup } from "Box2D/Box2D/Particle/b2ParticleGroup";
+    /**
+     * The particle type. Can be combined with the | operator.
+     */
+    export enum b2ParticleFlag {
+        b2_waterParticle = 0,
+        b2_zombieParticle = 2,
+        b2_wallParticle = 4,
+        b2_springParticle = 8,
+        b2_elasticParticle = 16,
+        b2_viscousParticle = 32,
+        b2_powderParticle = 64,
+        b2_tensileParticle = 128,
+        b2_colorMixingParticle = 256,
+        b2_destructionListenerParticle = 512,
+        b2_barrierParticle = 1024,
+        b2_staticPressureParticle = 2048,
+        b2_reactiveParticle = 4096,
+        b2_repulsiveParticle = 8192,
+        b2_fixtureContactListenerParticle = 16384,
+        b2_particleContactListenerParticle = 32768,
+        b2_fixtureContactFilterParticle = 65536,
+        b2_particleContactFilterParticle = 131072
+    }
+    export class b2ParticleDef {
+        flags: b2ParticleFlag;
+        position: b2Vec2;
+        velocity: b2Vec2;
+        color: b2Color;
+        lifetime: number;
+        userData: any;
+        group: b2ParticleGroup;
+    }
+    export function b2CalculateParticleIterations(gravity: number, radius: number, timeStep: number): number;
+    export class b2ParticleHandle {
+        m_index: number;
+        GetIndex(): number;
+        SetIndex(index: number): void;
+    }
+}
+declare module "Box2D/Box2D/Particle/b2StackQueue" {
     export class b2StackQueue<T> {
         m_buffer: T[];
         m_front: number;
@@ -1137,8 +1122,8 @@ declare module "Box2D/Particle/b2StackQueue" {
         Front(): T;
     }
 }
-declare module "Box2D/Particle/b2VoronoiDiagram" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
+declare module "Box2D/Box2D/Particle/b2VoronoiDiagram" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
     /**
      * A field representing the nearest generator from each point.
      */
@@ -1193,20 +1178,20 @@ declare module "Box2D/Particle/b2VoronoiDiagram" {
         }
     }
 }
-declare module "Box2D/Particle/b2ParticleSystem" {
-    import { b2Vec2, b2Rot, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2Shape, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
-    import { b2TimeStep } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2World } from "Box2D/Dynamics/b2World";
-    import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "Box2D/Particle/b2Particle";
-    import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+declare module "Box2D/Box2D/Particle/b2ParticleSystem" {
+    import { b2Vec2, b2Rot, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Box2D/Common/b2Draw";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Shape, b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
+    import { b2TimeStep } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2World } from "Box2D/Box2D/Dynamics/b2World";
+    import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "Box2D/Box2D/Particle/b2Particle";
+    import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Box2D/Box2D/Particle/b2ParticleGroup";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
     export class b2GrowableBuffer<T> {
         data: T[];
         count: number;
@@ -1502,11 +1487,11 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          */
         m_expirationTimeBufferRequiresSorting: boolean;
         m_groupCount: number;
-        m_groupList: b2ParticleGroup;
+        m_groupList: b2ParticleGroup | null;
         m_def: b2ParticleSystemDef;
         m_world: b2World;
-        m_prev: b2ParticleSystem;
-        m_next: b2ParticleSystem;
+        m_prev: b2ParticleSystem | null;
+        m_next: b2ParticleSystem | null;
         static xTruncBits: number;
         static yTruncBits: number;
         static tagBits: number;
@@ -1778,7 +1763,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          *
          * @return the pointer to the head of the particle user-data array.
          */
-        GetUserDataBuffer(): any[];
+        GetUserDataBuffer<T>(): T[];
         /**
          * Get the flags for each particle. See the b2ParticleFlag enum.
          *
@@ -1815,7 +1800,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         SetPositionBuffer(buffer: b2Vec2[], capacity: number): void;
         SetVelocityBuffer(buffer: b2Vec2[], capacity: number): void;
         SetColorBuffer(buffer: b2Color[], capacity: number): void;
-        SetUserDataBuffer(buffer: any[], capacity: number): void;
+        SetUserDataBuffer<T>(buffer: T[], capacity: number): void;
         /**
          * Get contacts between particles
          * Contact data can be used for many reasons, for example to
@@ -2041,12 +2026,9 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          * that contain the starting point.
          * b2RayCastCallback::ShouldQueryParticleSystem is ignored.
          *
-         * @export
-         * @return {void}
-         * @param {b2RayCastCallback} callback a user implemented
-         *      callback class.
-         * @param {b2Vec2} point1 the ray starting point
-         * @param {b2Vec2} point2 the ray ending point
+         * @param callback a user implemented callback class.
+         * @param point1 the ray starting point
+         * @param point2 the ray ending point
          */
         RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void;
         static RayCast_s_aabb: b2AABB;
@@ -2057,11 +2039,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         /**
          * Compute the axis-aligned bounding box for all particles
          * contained within this particle system.
-         *
-         * @export
-         * @return {void}
-         * @param {b2AABB} aabb Returns the axis-aligned bounding
-         *      box of the system.
+         * @param aabb Returns the axis-aligned bounding box of the system.
          */
         ComputeAABB(aabb: b2AABB): void;
         /**
@@ -2070,41 +2048,32 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         static k_pairFlags: number;
         /**
          * All particle types that require creating triads
-         *
-         * @type {number}
          */
         static k_triadFlags: b2ParticleFlag;
         /**
          * All particle types that do not produce dynamic pressure
-         *
-         * @type {number}
          */
         static k_noPressureFlags: number;
         /**
          * All particle types that apply extra damping force with bodies
-         *
-         * @type {number}
          */
         static k_extraDampingFlags: b2ParticleFlag;
-        /**
-         * @type {number}
-         */
         static k_barrierWallFlags: number;
-        FreeBuffer(b: any, capacity: number): void;
-        FreeUserOverridableBuffer(b: b2ParticleSystem.UserOverridableBuffer<any>): void;
+        FreeBuffer<T>(b: T[], capacity: number): void;
+        FreeUserOverridableBuffer<T>(b: b2ParticleSystem.UserOverridableBuffer<T>): void;
         /**
          * Reallocate a buffer
          */
-        ReallocateBuffer3(oldBuffer: any[], oldCapacity: number, newCapacity: number): any[];
+        ReallocateBuffer3<T>(oldBuffer: T[], oldCapacity: number, newCapacity: number): T[];
         /**
          * Reallocate a buffer
          */
-        ReallocateBuffer5(buffer: any[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): any[];
+        ReallocateBuffer5<T>(buffer: T[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): T[];
         /**
          * Reallocate a buffer
          */
-        ReallocateBuffer4(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): any[];
-        RequestBuffer(buffer: any[]): any[];
+        ReallocateBuffer4<T>(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): T[];
+        RequestBuffer<T>(buffer: T[]): T[];
         /**
          * Reallocate the handle / index map and schedule the allocation
          * of a new pool for handle allocation.
@@ -2265,7 +2234,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          * system.
          */
         GetParticleContactListener(): b2ContactListener;
-        SetUserOverridableBuffer(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: any[], newCapacity: number): void;
+        SetUserOverridableBuffer<T>(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: T[], newCapacity: number): void;
         SetGroupFlags(group: b2ParticleGroup, newFlags: b2ParticleGroupFlag): void;
         static BodyContactCompare(lhs: b2ParticleBodyContact, rhs: b2ParticleBodyContact): boolean;
         RemoveSpuriousBodyContacts(): void;
@@ -2297,7 +2266,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
     }
     export namespace b2ParticleSystem {
         class UserOverridableBuffer<T> {
-            data: T[];
+            data: T[] | null;
             userSuppliedCapacity: number;
         }
         class Proxy {
@@ -2337,7 +2306,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             /**
              * The next node in the list.
              */
-            next: b2ParticleSystem.ParticleListNode;
+            next: b2ParticleSystem.ParticleListNode | null;
             /**
              * Number of entries in the list. Valid only for the node at the
              * head of the list.
@@ -2351,13 +2320,13 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         /**
          * @constructor
          */
-        class FixedSetAllocator {
+        class FixedSetAllocator<T> {
             Allocate(itemSize: number, count: number): number;
             Clear(): void;
             GetCount(): number;
             Invalidate(itemIndex: number): void;
             GetValidBuffer(): boolean[];
-            GetBuffer(): any[];
+            GetBuffer(): T[];
             SetCount(count: number): void;
         }
         class FixtureParticle {
@@ -2365,7 +2334,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             second: number;
             constructor(fixture: b2Fixture, particle: number);
         }
-        class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
+        class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator<FixtureParticle> {
             Initialize(bodyContactBuffer: b2GrowableBuffer<b2ParticleBodyContact>, flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>): void;
             Find(pair: b2ParticleSystem.FixtureParticle): number;
         }
@@ -2374,12 +2343,8 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             second: number;
             constructor(particleA: number, particleB: number);
         }
-        class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
+        class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator<ParticlePair> {
             Initialize(contactBuffer: b2GrowableBuffer<b2ParticleContact>, flagsBuffer: UserOverridableBuffer<b2ParticleFlag>): void;
-            /**
-             * @return {number}
-             * @param {b2ParticleSystem.ParticlePair} pair
-             */
             Find(pair: b2ParticleSystem.ParticlePair): number;
         }
         class ConnectionFilter {
@@ -2422,7 +2387,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             ShouldCreateTriad(a: number, b: number, c: number): boolean;
         }
         class CompositeShape extends b2Shape {
-            constructor(shapes: b2Shape[], shapeCount: number);
+            constructor(shapes: b2Shape[], shapeCount?: number);
             m_shapes: b2Shape[];
             m_shapeCount: number;
             Clone(): b2Shape;
@@ -2474,29 +2439,23 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             static ReportFixtureAndParticle_s_p: b2Vec2;
             static ReportFixtureAndParticle_s_v: b2Vec2;
             static ReportFixtureAndParticle_s_f: b2Vec2;
-            /**
-             * @export
-             * @return {boolean}
-             * @param {b2ParticleSystem} system
-             * @param {number} index
-             */
             ReportParticle(system: b2ParticleSystem, index: number): boolean;
         }
     }
 }
-declare module "Box2D/Particle/b2ParticleGroup" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2ParticleFlag } from "Box2D/Particle/b2Particle";
-    import { b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
+declare module "Box2D/Box2D/Particle/b2ParticleGroup" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Box2D/Common/b2Draw";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2ParticleFlag } from "Box2D/Box2D/Particle/b2Particle";
+    import { b2ParticleSystem } from "Box2D/Box2D/Particle/b2ParticleSystem";
     export enum b2ParticleGroupFlag {
         b2_solidParticleGroup = 1,
         b2_rigidParticleGroup = 2,
         b2_particleGroupCanBeEmpty = 4,
         b2_particleGroupWillBeDestroyed = 8,
         b2_particleGroupNeedsUpdateDepth = 16,
-        b2_particleGroupInternalMask = 24,
+        b2_particleGroupInternalMask = 24
     }
     export class b2ParticleGroupDef {
         flags: b2ParticleFlag;
@@ -2515,16 +2474,16 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         positionData: b2Vec2[];
         lifetime: number;
         userData: any;
-        group: b2ParticleGroup;
+        group: b2ParticleGroup | null;
     }
     export class b2ParticleGroup {
-        m_system: b2ParticleSystem;
+        readonly m_system: b2ParticleSystem;
         m_firstIndex: number;
         m_lastIndex: number;
         m_groupFlags: b2ParticleGroupFlag;
         m_strength: number;
-        m_prev: b2ParticleGroup;
-        m_next: b2ParticleGroup;
+        m_prev: b2ParticleGroup | null;
+        m_next: b2ParticleGroup | null;
         m_timestamp: number;
         m_mass: number;
         m_inertia: number;
@@ -2533,6 +2492,7 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         m_angularVelocity: number;
         m_transform: b2Transform;
         m_userData: any;
+        constructor(system: b2ParticleSystem);
         GetNext(): b2ParticleGroup;
         GetParticleSystem(): b2ParticleSystem;
         GetParticleCount(): number;
@@ -2559,14 +2519,14 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         UpdateStatistics(): void;
     }
 }
-declare module "Box2D/Dynamics/b2WorldCallbacks" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Particle/b2ParticleSystem";
+declare module "Box2D/Box2D/Dynamics/b2WorldCallbacks" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Joint } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2ParticleGroup } from "Box2D/Box2D/Particle/b2ParticleGroup";
+    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Box2D/Particle/b2ParticleSystem";
     export class b2DestructionListener {
         SayGoodbyeJoint(joint: b2Joint): void;
         SayGoodbyeFixture(fixture: b2Fixture): void;
@@ -2612,1195 +2572,11 @@ declare module "Box2D/Dynamics/b2WorldCallbacks" {
         (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
     };
 }
-declare module "Box2D/Dynamics/Contacts/b2Contact" {
-    import { b2Transform, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2Manifold, b2WorldManifold } from "Box2D/Collision/b2Collision";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    export function b2MixFriction(friction1: number, friction2: number): number;
-    export function b2MixRestitution(restitution1: number, restitution2: number): number;
-    export class b2ContactEdge {
-        other: b2Body | null;
-        contact: b2Contact | null;
-        prev: b2ContactEdge | null;
-        next: b2ContactEdge | null;
-    }
-    export class b2Contact {
-        m_islandFlag: boolean;
-        m_touchingFlag: boolean;
-        m_enabledFlag: boolean;
-        m_filterFlag: boolean;
-        m_bulletHitFlag: boolean;
-        m_toiFlag: boolean;
-        m_prev: b2Contact | null;
-        m_next: b2Contact | null;
-        m_nodeA: b2ContactEdge;
-        m_nodeB: b2ContactEdge;
-        m_fixtureA: b2Fixture | null;
-        m_fixtureB: b2Fixture | null;
-        m_indexA: number;
-        m_indexB: number;
-        m_manifold: b2Manifold;
-        m_toiCount: number;
-        m_toi: number;
-        m_friction: number;
-        m_restitution: number;
-        m_tangentSpeed: number;
-        m_oldManifold: b2Manifold;
-        GetManifold(): b2Manifold;
-        GetWorldManifold(worldManifold: b2WorldManifold): void;
-        IsTouching(): boolean;
-        SetEnabled(flag: boolean): void;
-        IsEnabled(): boolean;
-        GetNext(): b2Contact | null;
-        GetFixtureA(): b2Fixture | null;
-        GetChildIndexA(): number;
-        GetFixtureB(): b2Fixture | null;
-        GetChildIndexB(): number;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-        FlagForFiltering(): void;
-        SetFriction(friction: number): void;
-        GetFriction(): number;
-        ResetFriction(): void;
-        SetRestitution(restitution: number): void;
-        GetRestitution(): number;
-        ResetRestitution(): void;
-        SetTangentSpeed(speed: number): void;
-        GetTangentSpeed(): number;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Update(listener: b2ContactListener): void;
-        private static ComputeTOI_s_input;
-        private static ComputeTOI_s_output;
-        ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2CircleShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export class b2CircleShape extends b2Shape {
-        m_p: b2Vec2;
-        constructor(radius?: number);
-        Clone(): b2CircleShape;
-        Copy(other: b2CircleShape): b2CircleShape;
-        GetChildCount(): number;
-        private static TestPoint_s_center;
-        private static TestPoint_s_d;
-        TestPoint(transform: b2Transform, p: b2Vec2): boolean;
-        private static ComputeDistance_s_center;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        private static RayCast_s_position;
-        private static RayCast_s_s;
-        private static RayCast_s_r;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, transform: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_p;
-        ComputeAABB(aabb: b2AABB, transform: b2Transform, childIndex: number): void;
-        ComputeMass(massData: b2MassData, density: number): void;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Collision/Shapes/b2PolygonShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    export class b2PolygonShape extends b2Shape {
-        m_centroid: b2Vec2;
-        m_vertices: b2Vec2[];
-        m_normals: b2Vec2[];
-        m_count: number;
-        constructor();
-        Clone(): b2PolygonShape;
-        Copy(other: b2PolygonShape): b2PolygonShape;
-        GetChildCount(): number;
-        private static Set_s_ps;
-        private static Set_s_hull;
-        private static Set_s_r;
-        private static Set_s_v;
-        Set(vertices: b2Vec2[], count?: number, start?: number): b2PolygonShape;
-        SetAsArray(vertices: b2Vec2[], count?: number): b2PolygonShape;
-        SetAsBox(hx: number, hy: number, center?: b2Vec2, angle?: number): b2PolygonShape;
-        private static TestPoint_s_pLocal;
-        TestPoint(xf: b2Transform, p: b2Vec2): boolean;
-        private static ComputeDistance_s_pLocal;
-        private static ComputeDistance_s_normalForMaxDistance;
-        private static ComputeDistance_s_minDistance;
-        private static ComputeDistance_s_distance;
-        ComputeDistance(xf: b2Transform, p: b2Vec2, normal: b2Vec2, childIndex: number): number;
-        private static RayCast_s_p1;
-        private static RayCast_s_p2;
-        private static RayCast_s_d;
-        RayCast(output: b2RayCastOutput, input: b2RayCastInput, xf: b2Transform, childIndex: number): boolean;
-        private static ComputeAABB_s_v;
-        ComputeAABB(aabb: b2AABB, xf: b2Transform, childIndex: number): void;
-        private static ComputeMass_s_center;
-        private static ComputeMass_s_s;
-        private static ComputeMass_s_e1;
-        private static ComputeMass_s_e2;
-        ComputeMass(massData: b2MassData, density: number): void;
-        private static Validate_s_e;
-        private static Validate_s_v;
-        Validate(): boolean;
-        SetupDistanceProxy(proxy: b2DistanceProxy, index: number): void;
-        private static ComputeSubmergedArea_s_normalL;
-        private static ComputeSubmergedArea_s_depths;
-        private static ComputeSubmergedArea_s_md;
-        private static ComputeSubmergedArea_s_intoVec;
-        private static ComputeSubmergedArea_s_outoVec;
-        private static ComputeSubmergedArea_s_center;
-        ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-        private static ComputeCentroid_s_pRef;
-        private static ComputeCentroid_s_e1;
-        private static ComputeCentroid_s_e2;
-        static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
-    }
-}
-declare module "Box2D/Collision/b2CollideCircle" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    export function b2CollideCircles(manifold: b2Manifold, circleA: b2CircleShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
-    export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2PolygonShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
-}
-declare module "Box2D/Dynamics/Contacts/b2CircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2CircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Collision/b2CollidePolygon" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, xfA: b2Transform, polyB: b2PolygonShape, xfB: b2Transform): void;
-}
-declare module "Box2D/Dynamics/Contacts/b2PolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2PolygonContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2PolygonAndCircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Collision/b2CollideEdge" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
-    export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
-    export function b2CollideEdgeAndPolygon(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void;
-}
-declare module "Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2EdgeAndCircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2EdgeAndPolygonContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2ChainAndCircleContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        private static Evaluate_s_edge;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2ChainAndPolygonContact extends b2Contact {
-        constructor();
-        static Create(allocator: any): b2Contact;
-        static Destroy(contact: b2Contact, allocator: any): void;
-        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
-        private static Evaluate_s_edge;
-        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ContactFactory" {
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    export class b2ContactRegister {
-        pool: b2Contact[];
-        createFcn: {
-            (allocator: any): b2Contact;
-        };
-        destroyFcn: {
-            (contact: b2Contact, allocator: any): void;
-        };
-        primary: boolean;
-    }
-    export class b2ContactFactory {
-        m_allocator: any;
-        m_registers: b2ContactRegister[][];
-        constructor(allocator: any);
-        private AddType(createFcn, destroyFcn, type1, type2);
-        private InitializeRegisters();
-        Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact;
-        Destroy(contact: b2Contact): void;
-    }
-}
-declare module "Box2D/Dynamics/b2ContactManager" {
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2ContactFactory } from "Box2D/Dynamics/Contacts/b2ContactFactory";
-    import { b2ContactFilter, b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    export class b2ContactManager {
-        m_broadPhase: b2BroadPhase;
-        m_contactList: b2Contact;
-        m_contactCount: number;
-        m_contactFilter: b2ContactFilter;
-        m_contactListener: b2ContactListener;
-        m_allocator: any;
-        m_contactFactory: b2ContactFactory;
-        constructor();
-        AddPair(proxyUserDataA: any, proxyUserDataB: any): void;
-        FindNewContacts(): void;
-        Destroy(c: b2Contact): void;
-        Collide(): void;
-    }
-}
-declare module "Box2D/Collision/b2BroadPhase" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode, b2DynamicTree } from "Box2D/Collision/b2DynamicTree";
-    import { b2ContactManager } from "Box2D/Dynamics/b2ContactManager";
-    export class b2Pair {
-        proxyA: b2TreeNode | null;
-        proxyB: b2TreeNode | null;
-    }
-    export class b2BroadPhase {
-        m_tree: b2DynamicTree;
-        m_proxyCount: number;
-        m_moveCount: number;
-        m_moveBuffer: b2TreeNode[];
-        m_pairCount: number;
-        m_pairBuffer: b2Pair[];
-        CreateProxy(aabb: b2AABB, userData: any): b2TreeNode;
-        DestroyProxy(proxy: b2TreeNode): void;
-        MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void;
-        TouchProxy(proxy: b2TreeNode): void;
-        GetFatAABB(proxy: b2TreeNode): b2AABB;
-        GetUserData(proxy: b2TreeNode): any;
-        TestOverlap(proxyA: b2TreeNode, proxyB: b2TreeNode): boolean;
-        GetProxyCount(): number;
-        UpdatePairs(contactManager: b2ContactManager): void;
-        Query(callback: (node: b2TreeNode) => boolean, aabb: b2AABB): void;
-        RayCast(callback: (input: b2RayCastInput, node: b2TreeNode) => number, input: b2RayCastInput): void;
-        GetTreeHeight(): number;
-        GetTreeBalance(): number;
-        GetTreeQuality(): number;
-        ShiftOrigin(newOrigin: b2Vec2): void;
-        BufferMove(proxy: b2TreeNode): void;
-        UnBufferMove(proxy: b2TreeNode): void;
-    }
-    export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
-}
-declare module "Box2D/Dynamics/Joints/b2DistanceJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    export class b2DistanceJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        length: number;
-        frequencyHz: number;
-        dampingRatio: number;
-        constructor();
-        Initialize(b1: b2Body, b2: b2Body, anchor1: b2Vec2, anchor2: b2Vec2): void;
-    }
-    export class b2DistanceJoint extends b2Joint {
-        m_frequencyHz: number;
-        m_dampingRatio: number;
-        m_bias: number;
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_gamma: number;
-        m_impulse: number;
-        m_length: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_u: b2Vec2;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_mass: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        constructor(def: b2DistanceJointDef);
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        SetLength(length: number): void;
-        Length(): number;
-        SetFrequency(hz: number): void;
-        GetFrequency(): number;
-        SetDampingRatio(ratio: number): void;
-        GetDampingRatio(): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-        private static InitVelocityConstraints_s_P;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_vpA;
-        private static SolveVelocityConstraints_s_vpB;
-        private static SolveVelocityConstraints_s_P;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_P;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2AreaJoint" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2DistanceJoint } from "Box2D/Dynamics/Joints/b2DistanceJoint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2World } from "Box2D/Dynamics/b2World";
-    export class b2AreaJointDef extends b2JointDef {
-        world: b2World;
-        bodies: b2Body[];
-        frequencyHz: number;
-        dampingRatio: number;
-        constructor();
-        AddBody(body: b2Body): void;
-    }
-    export class b2AreaJoint extends b2Joint {
-        m_bodies: b2Body[];
-        m_frequencyHz: number;
-        m_dampingRatio: number;
-        m_impulse: number;
-        m_targetLengths: number[];
-        m_targetArea: number;
-        m_normals: b2Vec2[];
-        m_joints: b2DistanceJoint[];
-        m_deltas: b2Vec2[];
-        m_delta: b2Vec2;
-        constructor(def: b2AreaJointDef);
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        SetFrequency(hz: number): void;
-        GetFrequency(): number;
-        SetDampingRatio(ratio: number): void;
-        GetDampingRatio(): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-        InitVelocityConstraints(data: b2SolverData): void;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2FrictionJoint" {
-    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    export class b2FrictionJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        maxForce: number;
-        maxTorque: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
-    }
-    export class b2FrictionJoint extends b2Joint {
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_linearImpulse: b2Vec2;
-        m_angularImpulse: number;
-        m_maxForce: number;
-        m_maxTorque: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_linearMass: b2Mat22;
-        m_angularMass: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        m_K: b2Mat22;
-        constructor(def: b2FrictionJointDef);
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_Cdot_v2;
-        private static SolveVelocityConstraints_s_impulseV;
-        private static SolveVelocityConstraints_s_oldImpulseV;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        SetMaxForce(force: number): void;
-        GetMaxForce(): number;
-        SetMaxTorque(torque: number): void;
-        GetMaxTorque(): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2PrismaticJoint" {
-    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export class b2PrismaticJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        localAxisA: b2Vec2;
-        referenceAngle: number;
-        enableLimit: boolean;
-        lowerTranslation: number;
-        upperTranslation: number;
-        enableMotor: boolean;
-        maxMotorForce: number;
-        motorSpeed: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void;
-    }
-    export class b2PrismaticJoint extends b2Joint {
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_localXAxisA: b2Vec2;
-        m_localYAxisA: b2Vec2;
-        m_referenceAngle: number;
-        m_impulse: b2Vec3;
-        m_motorImpulse: number;
-        m_lowerTranslation: number;
-        m_upperTranslation: number;
-        m_maxMotorForce: number;
-        m_motorSpeed: number;
-        m_enableLimit: boolean;
-        m_enableMotor: boolean;
-        m_limitState: b2LimitState;
-        m_indexA: number;
-        m_indexB: number;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_axis: b2Vec2;
-        m_perp: b2Vec2;
-        m_s1: number;
-        m_s2: number;
-        m_a1: number;
-        m_a2: number;
-        m_K: b2Mat33;
-        m_K3: b2Mat33;
-        m_K2: b2Mat22;
-        m_motorMass: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        constructor(def: b2PrismaticJointDef);
-        private static InitVelocityConstraints_s_d;
-        private static InitVelocityConstraints_s_P;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_P;
-        private static SolveVelocityConstraints_s_f2r;
-        private static SolveVelocityConstraints_s_f1;
-        private static SolveVelocityConstraints_s_df3;
-        private static SolveVelocityConstraints_s_df2;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_d;
-        private static SolvePositionConstraints_s_impulse;
-        private static SolvePositionConstraints_s_impulse1;
-        private static SolvePositionConstraints_s_P;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        GetLocalAxisA(): b2Vec2;
-        GetReferenceAngle(): number;
-        private static GetJointTranslation_s_pA;
-        private static GetJointTranslation_s_pB;
-        private static GetJointTranslation_s_d;
-        private static GetJointTranslation_s_axis;
-        GetJointTranslation(): number;
-        GetJointSpeed(): number;
-        IsLimitEnabled(): boolean;
-        EnableLimit(flag: boolean): void;
-        GetLowerLimit(): number;
-        GetUpperLimit(): number;
-        SetLimits(lower: number, upper: number): void;
-        IsMotorEnabled(): boolean;
-        EnableMotor(flag: boolean): void;
-        SetMotorSpeed(speed: number): void;
-        GetMotorSpeed(): number;
-        SetMaxMotorForce(force: number): void;
-        GetMaxMotorForce(): number;
-        GetMotorForce(inv_dt: number): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2RevoluteJoint" {
-    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export class b2RevoluteJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        referenceAngle: number;
-        enableLimit: boolean;
-        lowerAngle: number;
-        upperAngle: number;
-        enableMotor: boolean;
-        motorSpeed: number;
-        maxMotorTorque: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
-    }
-    export class b2RevoluteJoint extends b2Joint {
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_impulse: b2Vec3;
-        m_motorImpulse: number;
-        m_enableMotor: boolean;
-        m_maxMotorTorque: number;
-        m_motorSpeed: number;
-        m_enableLimit: boolean;
-        m_referenceAngle: number;
-        m_lowerAngle: number;
-        m_upperAngle: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_mass: b2Mat33;
-        m_motorMass: number;
-        m_limitState: b2LimitState;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        m_K: b2Mat22;
-        constructor(def: b2RevoluteJointDef);
-        private static InitVelocityConstraints_s_P;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_P;
-        private static SolveVelocityConstraints_s_Cdot_v2;
-        private static SolveVelocityConstraints_s_Cdot1;
-        private static SolveVelocityConstraints_s_impulse_v3;
-        private static SolveVelocityConstraints_s_reduced_v2;
-        private static SolveVelocityConstraints_s_impulse_v2;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_C_v2;
-        private static SolvePositionConstraints_s_impulse;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        GetReferenceAngle(): number;
-        GetJointAngle(): number;
-        GetJointSpeed(): number;
-        IsMotorEnabled(): boolean;
-        EnableMotor(flag: boolean): void;
-        GetMotorTorque(inv_dt: number): number;
-        GetMotorSpeed(): number;
-        SetMaxMotorTorque(torque: number): void;
-        GetMaxMotorTorque(): number;
-        IsLimitEnabled(): boolean;
-        EnableLimit(flag: boolean): void;
-        GetLowerLimit(): number;
-        GetUpperLimit(): number;
-        SetLimits(lower: number, upper: number): void;
-        SetMotorSpeed(speed: number): void;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2GearJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef, b2JointType } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    export class b2GearJointDef extends b2JointDef {
-        joint1: b2Joint;
-        joint2: b2Joint;
-        ratio: number;
-        constructor();
-    }
-    export class b2GearJoint extends b2Joint {
-        m_joint1: b2Joint;
-        m_joint2: b2Joint;
-        m_typeA: b2JointType;
-        m_typeB: b2JointType;
-        m_bodyC: b2Body;
-        m_bodyD: b2Body;
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_localAnchorC: b2Vec2;
-        m_localAnchorD: b2Vec2;
-        m_localAxisC: b2Vec2;
-        m_localAxisD: b2Vec2;
-        m_referenceAngleA: number;
-        m_referenceAngleB: number;
-        m_constant: number;
-        m_ratio: number;
-        m_impulse: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_indexC: number;
-        m_indexD: number;
-        m_lcA: b2Vec2;
-        m_lcB: b2Vec2;
-        m_lcC: b2Vec2;
-        m_lcD: b2Vec2;
-        m_mA: number;
-        m_mB: number;
-        m_mC: number;
-        m_mD: number;
-        m_iA: number;
-        m_iB: number;
-        m_iC: number;
-        m_iD: number;
-        m_JvAC: b2Vec2;
-        m_JvBD: b2Vec2;
-        m_JwA: number;
-        m_JwB: number;
-        m_JwC: number;
-        m_JwD: number;
-        m_mass: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_qC: b2Rot;
-        m_qD: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        m_lalcC: b2Vec2;
-        m_lalcD: b2Vec2;
-        constructor(def: b2GearJointDef);
-        private static InitVelocityConstraints_s_u;
-        private static InitVelocityConstraints_s_rA;
-        private static InitVelocityConstraints_s_rB;
-        private static InitVelocityConstraints_s_rC;
-        private static InitVelocityConstraints_s_rD;
-        InitVelocityConstraints(data: b2SolverData): void;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_u;
-        private static SolvePositionConstraints_s_rA;
-        private static SolvePositionConstraints_s_rB;
-        private static SolvePositionConstraints_s_rC;
-        private static SolvePositionConstraints_s_rD;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetJoint1(): b2Joint;
-        GetJoint2(): b2Joint;
-        GetRatio(): number;
-        SetRatio(ratio: number): void;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2MotorJoint" {
-    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export class b2MotorJointDef extends b2JointDef {
-        linearOffset: b2Vec2;
-        angularOffset: number;
-        maxForce: number;
-        maxTorque: number;
-        correctionFactor: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body): void;
-    }
-    export class b2MotorJoint extends b2Joint {
-        m_linearOffset: b2Vec2;
-        m_angularOffset: number;
-        m_linearImpulse: b2Vec2;
-        m_angularImpulse: number;
-        m_maxForce: number;
-        m_maxTorque: number;
-        m_correctionFactor: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_linearError: b2Vec2;
-        m_angularError: number;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_linearMass: b2Mat22;
-        m_angularMass: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_K: b2Mat22;
-        constructor(def: b2MotorJointDef);
-        GetAnchorA(): b2Vec2;
-        GetAnchorB(): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        SetLinearOffset(linearOffset: b2Vec2): void;
-        GetLinearOffset(): b2Vec2;
-        SetAngularOffset(angularOffset: number): void;
-        GetAngularOffset(): number;
-        SetMaxForce(force: number): void;
-        GetMaxForce(): number;
-        SetMaxTorque(torque: number): void;
-        GetMaxTorque(): number;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_Cdot_v2;
-        private static SolveVelocityConstraints_s_impulse_v2;
-        private static SolveVelocityConstraints_s_oldImpulse_v2;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2MouseJoint" {
-    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export class b2MouseJointDef extends b2JointDef {
-        target: b2Vec2;
-        maxForce: number;
-        frequencyHz: number;
-        dampingRatio: number;
-        constructor();
-    }
-    export class b2MouseJoint extends b2Joint {
-        m_localAnchorB: b2Vec2;
-        m_targetA: b2Vec2;
-        m_frequencyHz: number;
-        m_dampingRatio: number;
-        m_beta: number;
-        m_impulse: b2Vec2;
-        m_maxForce: number;
-        m_gamma: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_rB: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassB: number;
-        m_invIB: number;
-        m_mass: b2Mat22;
-        m_C: b2Vec2;
-        m_qB: b2Rot;
-        m_lalcB: b2Vec2;
-        m_K: b2Mat22;
-        constructor(def: b2MouseJointDef);
-        SetTarget(target: b2Vec2): void;
-        GetTarget(): b2Vec2;
-        SetMaxForce(maxForce: number): void;
-        GetMaxForce(): number;
-        SetFrequency(hz: number): void;
-        GetFrequency(): number;
-        SetDampingRatio(ratio: number): void;
-        GetDampingRatio(): number;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_Cdot;
-        private static SolveVelocityConstraints_s_impulse;
-        private static SolveVelocityConstraints_s_oldImpulse;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-        ShiftOrigin(newOrigin: b2Vec2): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2PulleyJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export const b2_minPulleyLength: number;
-    export class b2PulleyJointDef extends b2JointDef {
-        groundAnchorA: b2Vec2;
-        groundAnchorB: b2Vec2;
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        lengthA: number;
-        lengthB: number;
-        ratio: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body, groundA: b2Vec2, groundB: b2Vec2, anchorA: b2Vec2, anchorB: b2Vec2, r: number): void;
-    }
-    export class b2PulleyJoint extends b2Joint {
-        m_groundAnchorA: b2Vec2;
-        m_groundAnchorB: b2Vec2;
-        m_lengthA: number;
-        m_lengthB: number;
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_constant: number;
-        m_ratio: number;
-        m_impulse: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_uA: b2Vec2;
-        m_uB: b2Vec2;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_mass: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        constructor(def: b2PulleyJointDef);
-        private static InitVelocityConstraints_s_PA;
-        private static InitVelocityConstraints_s_PB;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_vpA;
-        private static SolveVelocityConstraints_s_vpB;
-        private static SolveVelocityConstraints_s_PA;
-        private static SolveVelocityConstraints_s_PB;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_PA;
-        private static SolvePositionConstraints_s_PB;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetGroundAnchorA(): b2Vec2;
-        GetGroundAnchorB(): b2Vec2;
-        GetLengthA(): number;
-        GetLengthB(): number;
-        GetRatio(): number;
-        private static GetCurrentLengthA_s_p;
-        GetCurrentLengthA(): number;
-        private static GetCurrentLengthB_s_p;
-        GetCurrentLengthB(): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-        ShiftOrigin(newOrigin: b2Vec2): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2RopeJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export class b2RopeJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        maxLength: number;
-        constructor();
-    }
-    export class b2RopeJoint extends b2Joint {
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_maxLength: number;
-        m_length: number;
-        m_impulse: number;
-        m_indexA: number;
-        m_indexB: number;
-        m_u: b2Vec2;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_mass: number;
-        m_state: b2LimitState;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        constructor(def: b2RopeJointDef);
-        private static InitVelocityConstraints_s_P;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_vpA;
-        private static SolveVelocityConstraints_s_vpB;
-        private static SolveVelocityConstraints_s_P;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_P;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        SetMaxLength(length: number): void;
-        GetMaxLength(): number;
-        GetLimitState(): b2LimitState;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2WeldJoint" {
-    import { b2Vec2, b2Vec3, b2Mat33, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    export class b2WeldJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        referenceAngle: number;
-        frequencyHz: number;
-        dampingRatio: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
-    }
-    export class b2WeldJoint extends b2Joint {
-        m_frequencyHz: number;
-        m_dampingRatio: number;
-        m_bias: number;
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_referenceAngle: number;
-        m_gamma: number;
-        m_impulse: b2Vec3;
-        m_indexA: number;
-        m_indexB: number;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_mass: b2Mat33;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        m_K: b2Mat33;
-        constructor(def: b2WeldJointDef);
-        private static InitVelocityConstraints_s_P;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_Cdot1;
-        private static SolveVelocityConstraints_s_impulse1;
-        private static SolveVelocityConstraints_s_impulse;
-        private static SolveVelocityConstraints_s_P;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_C1;
-        private static SolvePositionConstraints_s_P;
-        private static SolvePositionConstraints_s_impulse;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        GetReferenceAngle(): number;
-        SetFrequency(hz: number): void;
-        GetFrequency(): number;
-        SetDampingRatio(ratio: number): void;
-        GetDampingRatio(): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2WheelJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    export class b2WheelJointDef extends b2JointDef {
-        localAnchorA: b2Vec2;
-        localAnchorB: b2Vec2;
-        localAxisA: b2Vec2;
-        enableMotor: boolean;
-        maxMotorTorque: number;
-        motorSpeed: number;
-        frequencyHz: number;
-        dampingRatio: number;
-        constructor();
-        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void;
-    }
-    export class b2WheelJoint extends b2Joint {
-        m_frequencyHz: number;
-        m_dampingRatio: number;
-        m_localAnchorA: b2Vec2;
-        m_localAnchorB: b2Vec2;
-        m_localXAxisA: b2Vec2;
-        m_localYAxisA: b2Vec2;
-        m_impulse: number;
-        m_motorImpulse: number;
-        m_springImpulse: number;
-        m_maxMotorTorque: number;
-        m_motorSpeed: number;
-        m_enableMotor: boolean;
-        m_indexA: number;
-        m_indexB: number;
-        m_localCenterA: b2Vec2;
-        m_localCenterB: b2Vec2;
-        m_invMassA: number;
-        m_invMassB: number;
-        m_invIA: number;
-        m_invIB: number;
-        m_ax: b2Vec2;
-        m_ay: b2Vec2;
-        m_sAx: number;
-        m_sBx: number;
-        m_sAy: number;
-        m_sBy: number;
-        m_mass: number;
-        m_motorMass: number;
-        m_springMass: number;
-        m_bias: number;
-        m_gamma: number;
-        m_qA: b2Rot;
-        m_qB: b2Rot;
-        m_lalcA: b2Vec2;
-        m_lalcB: b2Vec2;
-        m_rA: b2Vec2;
-        m_rB: b2Vec2;
-        constructor(def: b2WheelJointDef);
-        GetMotorSpeed(): number;
-        GetMaxMotorTorque(): number;
-        SetSpringFrequencyHz(hz: number): void;
-        GetSpringFrequencyHz(): number;
-        SetSpringDampingRatio(ratio: number): void;
-        GetSpringDampingRatio(): number;
-        private static InitVelocityConstraints_s_d;
-        private static InitVelocityConstraints_s_P;
-        InitVelocityConstraints(data: b2SolverData): void;
-        private static SolveVelocityConstraints_s_P;
-        SolveVelocityConstraints(data: b2SolverData): void;
-        private static SolvePositionConstraints_s_d;
-        private static SolvePositionConstraints_s_P;
-        SolvePositionConstraints(data: b2SolverData): boolean;
-        GetDefinition(def: b2WheelJointDef): b2WheelJointDef;
-        GetAnchorA(out: b2Vec2): b2Vec2;
-        GetAnchorB(out: b2Vec2): b2Vec2;
-        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
-        GetReactionTorque(inv_dt: number): number;
-        GetLocalAnchorA(): b2Vec2;
-        GetLocalAnchorB(): b2Vec2;
-        GetLocalAxisA(): b2Vec2;
-        GetJointTranslation(): number;
-        GetJointSpeed(): number;
-        GetPrismaticJointTranslation(): number;
-        GetPrismaticJointSpeed(): number;
-        GetRevoluteJointAngle(): number;
-        GetRevoluteJointSpeed(): number;
-        IsMotorEnabled(): boolean;
-        EnableMotor(flag: boolean): void;
-        SetMotorSpeed(speed: number): void;
-        SetMaxMotorTorque(force: number): void;
-        GetMotorTorque(inv_dt: number): number;
-        Dump(log: (format: string, ...args: any[]) => void): void;
-    }
-}
-declare module "Box2D/Dynamics/Joints/b2JointFactory" {
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    export class b2JointFactory {
-        static Create(def: b2JointDef, allocator: any): b2Joint;
-        static Destroy(joint: b2Joint, allocator: any): void;
-    }
-}
-declare module "Box2D/Dynamics/Contacts/b2ContactSolver" {
-    import { b2Vec2, b2Mat22, b2Transform } from "Box2D/Common/b2Math";
-    import { b2ManifoldType } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2TimeStep, b2Position, b2Velocity } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ContactSolver" {
+    import { b2Vec2, b2Mat22, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2ManifoldType } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2TimeStep, b2Position, b2Velocity } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2VelocityConstraintPoint {
         rA: b2Vec2;
         rB: b2Vec2;
@@ -3911,14 +2687,14 @@ declare module "Box2D/Dynamics/Contacts/b2ContactSolver" {
         SolveTOIPositionConstraints(toiIndexA: number, toiIndexB: number): boolean;
     }
 }
-declare module "Box2D/Dynamics/b2Island" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2ContactVelocityConstraint } from "Box2D/Dynamics/Contacts/b2ContactSolver";
-    import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2TimeStep, b2Profile, b2Position, b2Velocity } from "Box2D/Dynamics/b2TimeStep";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
+declare module "Box2D/Box2D/Dynamics/b2Island" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2ContactVelocityConstraint } from "Box2D/Box2D/Dynamics/Contacts/b2ContactSolver";
+    import { b2Joint } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2TimeStep, b2Profile, b2Position, b2Velocity } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
     export class b2Island {
         m_allocator: any;
         m_listener: b2ContactListener;
@@ -3949,38 +2725,1427 @@ declare module "Box2D/Dynamics/b2Island" {
         Report(constraints: b2ContactVelocityConstraint[]): void;
     }
 }
-declare module "Box2D/Dynamics/b2World" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Color, b2Draw } from "Box2D/Common/b2Draw";
-    import { b2AABB } from "Box2D/Collision/b2Collision";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Body, b2BodyDef } from "Box2D/Dynamics/b2Body";
-    import { b2ContactManager } from "Box2D/Dynamics/b2ContactManager";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2Island } from "Box2D/Dynamics/b2Island";
-    import { b2Profile, b2TimeStep } from "Box2D/Dynamics/b2TimeStep";
-    import { b2ContactFilter } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2DestructionListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2QueryCallback, b2QueryCallbackFunction } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2RayCastCallback, b2RayCastCallbackFunction } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ParticleSystemDef, b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2CircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2CircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2PolygonContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2PolygonContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2PolygonAndCircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2EdgeAndCircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2EdgeAndPolygonContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2ChainAndCircleContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        private static Evaluate_s_edge;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2ChainAndPolygonContact extends b2Contact {
+        constructor();
+        static Create(allocator: any): b2Contact;
+        static Destroy(contact: b2Contact, allocator: any): void;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        private static Evaluate_s_edge;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ContactFactory" {
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    export class b2ContactRegister {
+        pool: b2Contact[];
+        createFcn: {
+            (allocator: any): b2Contact;
+        };
+        destroyFcn: {
+            (contact: b2Contact, allocator: any): void;
+        };
+        primary: boolean;
+    }
+    export class b2ContactFactory {
+        m_allocator: any;
+        m_registers: b2ContactRegister[][];
+        constructor(allocator: any);
+        private AddType;
+        private InitializeRegisters;
+        Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact;
+        Destroy(contact: b2Contact): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2DistanceJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    export class b2DistanceJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        length: number;
+        frequencyHz: number;
+        dampingRatio: number;
+        constructor();
+        Initialize(b1: b2Body, b2: b2Body, anchor1: b2Vec2, anchor2: b2Vec2): void;
+    }
+    export class b2DistanceJoint extends b2Joint {
+        m_frequencyHz: number;
+        m_dampingRatio: number;
+        m_bias: number;
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_gamma: number;
+        m_impulse: number;
+        m_length: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_u: b2Vec2;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_mass: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        constructor(def: b2DistanceJointDef);
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        SetLength(length: number): void;
+        Length(): number;
+        SetFrequency(hz: number): void;
+        GetFrequency(): number;
+        SetDampingRatio(ratio: number): void;
+        GetDampingRatio(): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        private static InitVelocityConstraints_s_P;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_vpA;
+        private static SolveVelocityConstraints_s_vpB;
+        private static SolveVelocityConstraints_s_P;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_P;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2AreaJoint" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2DistanceJoint } from "Box2D/Box2D/Dynamics/Joints/b2DistanceJoint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2World } from "Box2D/Box2D/Dynamics/b2World";
+    export class b2AreaJointDef extends b2JointDef {
+        world: b2World;
+        bodies: b2Body[];
+        frequencyHz: number;
+        dampingRatio: number;
+        constructor();
+        AddBody(body: b2Body): void;
+    }
+    export class b2AreaJoint extends b2Joint {
+        m_bodies: b2Body[];
+        m_frequencyHz: number;
+        m_dampingRatio: number;
+        m_impulse: number;
+        m_targetLengths: number[];
+        m_targetArea: number;
+        m_normals: b2Vec2[];
+        m_joints: b2DistanceJoint[];
+        m_deltas: b2Vec2[];
+        m_delta: b2Vec2;
+        constructor(def: b2AreaJointDef);
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        SetFrequency(hz: number): void;
+        GetFrequency(): number;
+        SetDampingRatio(ratio: number): void;
+        GetDampingRatio(): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        InitVelocityConstraints(data: b2SolverData): void;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2FrictionJoint" {
+    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    export class b2FrictionJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        maxForce: number;
+        maxTorque: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
+    }
+    export class b2FrictionJoint extends b2Joint {
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_linearImpulse: b2Vec2;
+        m_angularImpulse: number;
+        m_maxForce: number;
+        m_maxTorque: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_linearMass: b2Mat22;
+        m_angularMass: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        m_K: b2Mat22;
+        constructor(def: b2FrictionJointDef);
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_Cdot_v2;
+        private static SolveVelocityConstraints_s_impulseV;
+        private static SolveVelocityConstraints_s_oldImpulseV;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        SetMaxForce(force: number): void;
+        GetMaxForce(): number;
+        SetMaxTorque(torque: number): void;
+        GetMaxTorque(): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint" {
+    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export class b2PrismaticJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        localAxisA: b2Vec2;
+        referenceAngle: number;
+        enableLimit: boolean;
+        lowerTranslation: number;
+        upperTranslation: number;
+        enableMotor: boolean;
+        maxMotorForce: number;
+        motorSpeed: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void;
+    }
+    export class b2PrismaticJoint extends b2Joint {
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_localXAxisA: b2Vec2;
+        m_localYAxisA: b2Vec2;
+        m_referenceAngle: number;
+        m_impulse: b2Vec3;
+        m_motorImpulse: number;
+        m_lowerTranslation: number;
+        m_upperTranslation: number;
+        m_maxMotorForce: number;
+        m_motorSpeed: number;
+        m_enableLimit: boolean;
+        m_enableMotor: boolean;
+        m_limitState: b2LimitState;
+        m_indexA: number;
+        m_indexB: number;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_axis: b2Vec2;
+        m_perp: b2Vec2;
+        m_s1: number;
+        m_s2: number;
+        m_a1: number;
+        m_a2: number;
+        m_K: b2Mat33;
+        m_K3: b2Mat33;
+        m_K2: b2Mat22;
+        m_motorMass: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        constructor(def: b2PrismaticJointDef);
+        private static InitVelocityConstraints_s_d;
+        private static InitVelocityConstraints_s_P;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_P;
+        private static SolveVelocityConstraints_s_f2r;
+        private static SolveVelocityConstraints_s_f1;
+        private static SolveVelocityConstraints_s_df3;
+        private static SolveVelocityConstraints_s_df2;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_d;
+        private static SolvePositionConstraints_s_impulse;
+        private static SolvePositionConstraints_s_impulse1;
+        private static SolvePositionConstraints_s_P;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        GetLocalAxisA(): b2Vec2;
+        GetReferenceAngle(): number;
+        private static GetJointTranslation_s_pA;
+        private static GetJointTranslation_s_pB;
+        private static GetJointTranslation_s_d;
+        private static GetJointTranslation_s_axis;
+        GetJointTranslation(): number;
+        GetJointSpeed(): number;
+        IsLimitEnabled(): boolean;
+        EnableLimit(flag: boolean): void;
+        GetLowerLimit(): number;
+        GetUpperLimit(): number;
+        SetLimits(lower: number, upper: number): void;
+        IsMotorEnabled(): boolean;
+        EnableMotor(flag: boolean): void;
+        SetMotorSpeed(speed: number): void;
+        GetMotorSpeed(): number;
+        SetMaxMotorForce(force: number): void;
+        GetMaxMotorForce(): number;
+        GetMotorForce(inv_dt: number): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint" {
+    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export class b2RevoluteJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        referenceAngle: number;
+        enableLimit: boolean;
+        lowerAngle: number;
+        upperAngle: number;
+        enableMotor: boolean;
+        motorSpeed: number;
+        maxMotorTorque: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
+    }
+    export class b2RevoluteJoint extends b2Joint {
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_impulse: b2Vec3;
+        m_motorImpulse: number;
+        m_enableMotor: boolean;
+        m_maxMotorTorque: number;
+        m_motorSpeed: number;
+        m_enableLimit: boolean;
+        m_referenceAngle: number;
+        m_lowerAngle: number;
+        m_upperAngle: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_mass: b2Mat33;
+        m_motorMass: number;
+        m_limitState: b2LimitState;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        m_K: b2Mat22;
+        constructor(def: b2RevoluteJointDef);
+        private static InitVelocityConstraints_s_P;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_P;
+        private static SolveVelocityConstraints_s_Cdot_v2;
+        private static SolveVelocityConstraints_s_Cdot1;
+        private static SolveVelocityConstraints_s_impulse_v3;
+        private static SolveVelocityConstraints_s_reduced_v2;
+        private static SolveVelocityConstraints_s_impulse_v2;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_C_v2;
+        private static SolvePositionConstraints_s_impulse;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        GetReferenceAngle(): number;
+        GetJointAngle(): number;
+        GetJointSpeed(): number;
+        IsMotorEnabled(): boolean;
+        EnableMotor(flag: boolean): void;
+        GetMotorTorque(inv_dt: number): number;
+        GetMotorSpeed(): number;
+        SetMaxMotorTorque(torque: number): void;
+        GetMaxMotorTorque(): number;
+        IsLimitEnabled(): boolean;
+        EnableLimit(flag: boolean): void;
+        GetLowerLimit(): number;
+        GetUpperLimit(): number;
+        SetLimits(lower: number, upper: number): void;
+        SetMotorSpeed(speed: number): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2GearJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef, b2JointType } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    export class b2GearJointDef extends b2JointDef {
+        joint1: b2Joint;
+        joint2: b2Joint;
+        ratio: number;
+        constructor();
+    }
+    export class b2GearJoint extends b2Joint {
+        m_joint1: b2Joint;
+        m_joint2: b2Joint;
+        m_typeA: b2JointType;
+        m_typeB: b2JointType;
+        m_bodyC: b2Body;
+        m_bodyD: b2Body;
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_localAnchorC: b2Vec2;
+        m_localAnchorD: b2Vec2;
+        m_localAxisC: b2Vec2;
+        m_localAxisD: b2Vec2;
+        m_referenceAngleA: number;
+        m_referenceAngleB: number;
+        m_constant: number;
+        m_ratio: number;
+        m_impulse: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_indexC: number;
+        m_indexD: number;
+        m_lcA: b2Vec2;
+        m_lcB: b2Vec2;
+        m_lcC: b2Vec2;
+        m_lcD: b2Vec2;
+        m_mA: number;
+        m_mB: number;
+        m_mC: number;
+        m_mD: number;
+        m_iA: number;
+        m_iB: number;
+        m_iC: number;
+        m_iD: number;
+        m_JvAC: b2Vec2;
+        m_JvBD: b2Vec2;
+        m_JwA: number;
+        m_JwB: number;
+        m_JwC: number;
+        m_JwD: number;
+        m_mass: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_qC: b2Rot;
+        m_qD: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        m_lalcC: b2Vec2;
+        m_lalcD: b2Vec2;
+        constructor(def: b2GearJointDef);
+        private static InitVelocityConstraints_s_u;
+        private static InitVelocityConstraints_s_rA;
+        private static InitVelocityConstraints_s_rB;
+        private static InitVelocityConstraints_s_rC;
+        private static InitVelocityConstraints_s_rD;
+        InitVelocityConstraints(data: b2SolverData): void;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_u;
+        private static SolvePositionConstraints_s_rA;
+        private static SolvePositionConstraints_s_rB;
+        private static SolvePositionConstraints_s_rC;
+        private static SolvePositionConstraints_s_rD;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetJoint1(): b2Joint;
+        GetJoint2(): b2Joint;
+        GetRatio(): number;
+        SetRatio(ratio: number): void;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2MotorJoint" {
+    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export class b2MotorJointDef extends b2JointDef {
+        linearOffset: b2Vec2;
+        angularOffset: number;
+        maxForce: number;
+        maxTorque: number;
+        correctionFactor: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body): void;
+    }
+    export class b2MotorJoint extends b2Joint {
+        m_linearOffset: b2Vec2;
+        m_angularOffset: number;
+        m_linearImpulse: b2Vec2;
+        m_angularImpulse: number;
+        m_maxForce: number;
+        m_maxTorque: number;
+        m_correctionFactor: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_linearError: b2Vec2;
+        m_angularError: number;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_linearMass: b2Mat22;
+        m_angularMass: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_K: b2Mat22;
+        constructor(def: b2MotorJointDef);
+        GetAnchorA(): b2Vec2;
+        GetAnchorB(): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        SetLinearOffset(linearOffset: b2Vec2): void;
+        GetLinearOffset(): b2Vec2;
+        SetAngularOffset(angularOffset: number): void;
+        GetAngularOffset(): number;
+        SetMaxForce(force: number): void;
+        GetMaxForce(): number;
+        SetMaxTorque(torque: number): void;
+        GetMaxTorque(): number;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_Cdot_v2;
+        private static SolveVelocityConstraints_s_impulse_v2;
+        private static SolveVelocityConstraints_s_oldImpulse_v2;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2MouseJoint" {
+    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export class b2MouseJointDef extends b2JointDef {
+        target: b2Vec2;
+        maxForce: number;
+        frequencyHz: number;
+        dampingRatio: number;
+        constructor();
+    }
+    export class b2MouseJoint extends b2Joint {
+        m_localAnchorB: b2Vec2;
+        m_targetA: b2Vec2;
+        m_frequencyHz: number;
+        m_dampingRatio: number;
+        m_beta: number;
+        m_impulse: b2Vec2;
+        m_maxForce: number;
+        m_gamma: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_rB: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassB: number;
+        m_invIB: number;
+        m_mass: b2Mat22;
+        m_C: b2Vec2;
+        m_qB: b2Rot;
+        m_lalcB: b2Vec2;
+        m_K: b2Mat22;
+        constructor(def: b2MouseJointDef);
+        SetTarget(target: b2Vec2): void;
+        GetTarget(): b2Vec2;
+        SetMaxForce(maxForce: number): void;
+        GetMaxForce(): number;
+        SetFrequency(hz: number): void;
+        GetFrequency(): number;
+        SetDampingRatio(ratio: number): void;
+        GetDampingRatio(): number;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_Cdot;
+        private static SolveVelocityConstraints_s_impulse;
+        private static SolveVelocityConstraints_s_oldImpulse;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        ShiftOrigin(newOrigin: b2Vec2): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2PulleyJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export const b2_minPulleyLength: number;
+    export class b2PulleyJointDef extends b2JointDef {
+        groundAnchorA: b2Vec2;
+        groundAnchorB: b2Vec2;
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        lengthA: number;
+        lengthB: number;
+        ratio: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body, groundA: b2Vec2, groundB: b2Vec2, anchorA: b2Vec2, anchorB: b2Vec2, r: number): void;
+    }
+    export class b2PulleyJoint extends b2Joint {
+        m_groundAnchorA: b2Vec2;
+        m_groundAnchorB: b2Vec2;
+        m_lengthA: number;
+        m_lengthB: number;
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_constant: number;
+        m_ratio: number;
+        m_impulse: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_uA: b2Vec2;
+        m_uB: b2Vec2;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_mass: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        constructor(def: b2PulleyJointDef);
+        private static InitVelocityConstraints_s_PA;
+        private static InitVelocityConstraints_s_PB;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_vpA;
+        private static SolveVelocityConstraints_s_vpB;
+        private static SolveVelocityConstraints_s_PA;
+        private static SolveVelocityConstraints_s_PB;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_PA;
+        private static SolvePositionConstraints_s_PB;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetGroundAnchorA(): b2Vec2;
+        GetGroundAnchorB(): b2Vec2;
+        GetLengthA(): number;
+        GetLengthB(): number;
+        GetRatio(): number;
+        private static GetCurrentLengthA_s_p;
+        GetCurrentLengthA(): number;
+        private static GetCurrentLengthB_s_p;
+        GetCurrentLengthB(): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        ShiftOrigin(newOrigin: b2Vec2): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2RopeJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export class b2RopeJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        maxLength: number;
+        constructor();
+    }
+    export class b2RopeJoint extends b2Joint {
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_maxLength: number;
+        m_length: number;
+        m_impulse: number;
+        m_indexA: number;
+        m_indexB: number;
+        m_u: b2Vec2;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_mass: number;
+        m_state: b2LimitState;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        constructor(def: b2RopeJointDef);
+        private static InitVelocityConstraints_s_P;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_vpA;
+        private static SolveVelocityConstraints_s_vpB;
+        private static SolveVelocityConstraints_s_P;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_P;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        SetMaxLength(length: number): void;
+        GetMaxLength(): number;
+        GetLimitState(): b2LimitState;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2WeldJoint" {
+    import { b2Vec2, b2Vec3, b2Mat33, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export class b2WeldJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        referenceAngle: number;
+        frequencyHz: number;
+        dampingRatio: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
+    }
+    export class b2WeldJoint extends b2Joint {
+        m_frequencyHz: number;
+        m_dampingRatio: number;
+        m_bias: number;
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_referenceAngle: number;
+        m_gamma: number;
+        m_impulse: b2Vec3;
+        m_indexA: number;
+        m_indexB: number;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_mass: b2Mat33;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        m_K: b2Mat33;
+        constructor(def: b2WeldJointDef);
+        private static InitVelocityConstraints_s_P;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_Cdot1;
+        private static SolveVelocityConstraints_s_impulse1;
+        private static SolveVelocityConstraints_s_impulse;
+        private static SolveVelocityConstraints_s_P;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_C1;
+        private static SolvePositionConstraints_s_P;
+        private static SolvePositionConstraints_s_impulse;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        GetReferenceAngle(): number;
+        SetFrequency(hz: number): void;
+        GetFrequency(): number;
+        SetDampingRatio(ratio: number): void;
+        GetDampingRatio(): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2WheelJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    export class b2WheelJointDef extends b2JointDef {
+        localAnchorA: b2Vec2;
+        localAnchorB: b2Vec2;
+        localAxisA: b2Vec2;
+        enableMotor: boolean;
+        maxMotorTorque: number;
+        motorSpeed: number;
+        frequencyHz: number;
+        dampingRatio: number;
+        constructor();
+        Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void;
+    }
+    export class b2WheelJoint extends b2Joint {
+        m_frequencyHz: number;
+        m_dampingRatio: number;
+        m_localAnchorA: b2Vec2;
+        m_localAnchorB: b2Vec2;
+        m_localXAxisA: b2Vec2;
+        m_localYAxisA: b2Vec2;
+        m_impulse: number;
+        m_motorImpulse: number;
+        m_springImpulse: number;
+        m_maxMotorTorque: number;
+        m_motorSpeed: number;
+        m_enableMotor: boolean;
+        m_indexA: number;
+        m_indexB: number;
+        m_localCenterA: b2Vec2;
+        m_localCenterB: b2Vec2;
+        m_invMassA: number;
+        m_invMassB: number;
+        m_invIA: number;
+        m_invIB: number;
+        m_ax: b2Vec2;
+        m_ay: b2Vec2;
+        m_sAx: number;
+        m_sBx: number;
+        m_sAy: number;
+        m_sBy: number;
+        m_mass: number;
+        m_motorMass: number;
+        m_springMass: number;
+        m_bias: number;
+        m_gamma: number;
+        m_qA: b2Rot;
+        m_qB: b2Rot;
+        m_lalcA: b2Vec2;
+        m_lalcB: b2Vec2;
+        m_rA: b2Vec2;
+        m_rB: b2Vec2;
+        constructor(def: b2WheelJointDef);
+        GetMotorSpeed(): number;
+        GetMaxMotorTorque(): number;
+        SetSpringFrequencyHz(hz: number): void;
+        GetSpringFrequencyHz(): number;
+        SetSpringDampingRatio(ratio: number): void;
+        GetSpringDampingRatio(): number;
+        private static InitVelocityConstraints_s_d;
+        private static InitVelocityConstraints_s_P;
+        InitVelocityConstraints(data: b2SolverData): void;
+        private static SolveVelocityConstraints_s_P;
+        SolveVelocityConstraints(data: b2SolverData): void;
+        private static SolvePositionConstraints_s_d;
+        private static SolvePositionConstraints_s_P;
+        SolvePositionConstraints(data: b2SolverData): boolean;
+        GetDefinition(def: b2WheelJointDef): b2WheelJointDef;
+        GetAnchorA(out: b2Vec2): b2Vec2;
+        GetAnchorB(out: b2Vec2): b2Vec2;
+        GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
+        GetReactionTorque(inv_dt: number): number;
+        GetLocalAnchorA(): b2Vec2;
+        GetLocalAnchorB(): b2Vec2;
+        GetLocalAxisA(): b2Vec2;
+        GetJointTranslation(): number;
+        GetJointSpeed(): number;
+        GetPrismaticJointTranslation(): number;
+        GetPrismaticJointSpeed(): number;
+        GetRevoluteJointAngle(): number;
+        GetRevoluteJointSpeed(): number;
+        IsMotorEnabled(): boolean;
+        EnableMotor(flag: boolean): void;
+        SetMotorSpeed(speed: number): void;
+        SetMaxMotorTorque(force: number): void;
+        GetMotorTorque(inv_dt: number): number;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Joints/b2JointFactory" {
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    export class b2JointFactory {
+        static Create(def: b2JointDef, allocator: any): b2Joint;
+        static Destroy(joint: b2Joint, allocator: any): void;
+    }
+}
+declare module "Box2D/Box2D/Rope/b2Rope" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Draw } from "Box2D/Box2D/Common/b2Draw";
+    export class b2RopeDef {
+        vertices: b2Vec2[];
+        count: number;
+        masses: number[];
+        gravity: b2Vec2;
+        damping: number;
+        k2: number;
+        k3: number;
+    }
+    export class b2Rope {
+        m_count: number;
+        m_ps: b2Vec2[];
+        m_p0s: b2Vec2[];
+        m_vs: b2Vec2[];
+        m_ims: number[];
+        m_Ls: number[];
+        m_as: number[];
+        m_gravity: b2Vec2;
+        m_damping: number;
+        m_k2: number;
+        m_k3: number;
+        GetVertexCount(): number;
+        GetVertices(): b2Vec2[];
+        Initialize(def: b2RopeDef): void;
+        Step(h: number, iterations: number): void;
+        private static s_d;
+        SolveC2(): void;
+        SetAngle(angle: number): void;
+        private static s_d1;
+        private static s_d2;
+        private static s_Jd1;
+        private static s_Jd2;
+        private static s_J1;
+        private static s_J2;
+        SolveC3(): void;
+        Draw(draw: b2Draw): void;
+    }
+}
+declare module "Box2D/Box2D/Box2D" {
+    /**
+    \mainpage Box2D API Documentation
+    
+    \section intro_sec Getting Started
+    
+    For documentation please see http://box2d.org/documentation.html
+    
+    For discussion please visit http://box2d.org/forum
+    */
+    export * from "Box2D/Box2D/Common/b2Settings";
+    export * from "Box2D/Box2D/Common/b2Math";
+    export * from "Box2D/Box2D/Common/b2Draw";
+    export * from "Box2D/Box2D/Common/b2Timer";
+    export * from "Box2D/Box2D/Common/b2GrowableStack";
+    export * from "Box2D/Box2D/Common/b2BlockAllocator";
+    export * from "Box2D/Box2D/Common/b2StackAllocator";
+    export * from "Box2D/Box2D/Collision/b2Collision";
+    export * from "Box2D/Box2D/Collision/b2Distance";
+    export * from "Box2D/Box2D/Collision/b2BroadPhase";
+    export * from "Box2D/Box2D/Collision/b2DynamicTree";
+    export * from "Box2D/Box2D/Collision/b2TimeOfImpact";
+    export * from "Box2D/Box2D/Collision/b2CollideCircle";
+    export * from "Box2D/Box2D/Collision/b2CollidePolygon";
+    export * from "Box2D/Box2D/Collision/b2CollideEdge";
+    export * from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2CircleShape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2ChainShape";
+    export * from "Box2D/Box2D/Dynamics/b2Fixture";
+    export * from "Box2D/Box2D/Dynamics/b2Body";
+    export * from "Box2D/Box2D/Dynamics/b2World";
+    export * from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    export * from "Box2D/Box2D/Dynamics/b2Island";
+    export * from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export * from "Box2D/Box2D/Dynamics/b2ContactManager";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ContactFactory";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ContactSolver";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2CircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2PolygonContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ChainAndCircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2JointFactory";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2AreaJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2DistanceJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2FrictionJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2GearJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2MotorJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2MouseJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2PulleyJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2RopeJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2WeldJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2WheelJoint";
+    export * from "Box2D/Box2D/Particle/b2Particle";
+    export * from "Box2D/Box2D/Particle/b2ParticleGroup";
+    export * from "Box2D/Box2D/Particle/b2ParticleSystem";
+    export * from "Box2D/Box2D/Rope/b2Rope";
+}
+declare module "Contributions/Enhancements/Controllers/b2Controller" {
+    import { b2TimeStep, b2Draw, b2Body, b2World } from "Box2D/Box2D/Box2D";
+    /**
+     * A controller edge is used to connect bodies and controllers
+     * together in a bipartite graph.
+     */
+    export class b2ControllerEdge {
+        controller: b2Controller;
+        body: b2Body;
+        prevBody: b2ControllerEdge;
+        nextBody: b2ControllerEdge;
+        prevController: b2ControllerEdge;
+        nextController: b2ControllerEdge;
+    }
+    /**
+     * Base class for controllers. Controllers are a convience for
+     * encapsulating common per-step functionality.
+     */
+    export abstract class b2Controller {
+        m_world: b2World;
+        m_bodyList: b2ControllerEdge;
+        m_bodyCount: number;
+        m_prev: b2Controller | null;
+        m_next: b2Controller | null;
+        /**
+         * Controllers override this to implement per-step functionality.
+         */
+        abstract Step(step: b2TimeStep): void;
+        /**
+         * Controllers override this to provide debug drawing.
+         */
+        abstract Draw(debugDraw: b2Draw): void;
+        /**
+         * Get the next controller in the world's body list.
+         */
+        GetNext(): b2Controller;
+        /**
+         * Get the previous controller in the world's body list.
+         */
+        GetPrev(): b2Controller;
+        /**
+         * Get the parent world of this body.
+         */
+        GetWorld(): b2World;
+        /**
+         * Get the attached body list
+         */
+        GetBodyList(): b2ControllerEdge;
+        /**
+         * Adds a body to the controller list.
+         */
+        AddBody(body: b2Body): void;
+        /**
+         * Removes a body from the controller list.
+         */
+        RemoveBody(body: b2Body): void;
+        /**
+         * Removes all bodies from the controller list.
+         */
+        Clear(): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/b2Body" {
+    import { b2Vec2, b2Transform, b2Sweep } from "Box2D/Box2D/Common/b2Math";
+    import { b2Shape, b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2ContactEdge } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2JointEdge } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Fixture, b2FixtureDef } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2World } from "Box2D/Box2D/Dynamics/b2World";
+    import { b2ControllerEdge } from "Contributions/Enhancements/Controllers/b2Controller";
+    export enum b2BodyType {
+        b2_unknown = -1,
+        b2_staticBody = 0,
+        b2_kinematicBody = 1,
+        b2_dynamicBody = 2
+    }
+    export class b2BodyDef {
+        type: b2BodyType;
+        position: b2Vec2;
+        angle: number;
+        linearVelocity: b2Vec2;
+        angularVelocity: number;
+        linearDamping: number;
+        angularDamping: number;
+        allowSleep: boolean;
+        awake: boolean;
+        fixedRotation: boolean;
+        bullet: boolean;
+        active: boolean;
+        userData: any;
+        gravityScale: number;
+    }
+    export class b2Body {
+        m_type: b2BodyType;
+        m_islandFlag: boolean;
+        m_awakeFlag: boolean;
+        m_autoSleepFlag: boolean;
+        m_bulletFlag: boolean;
+        m_fixedRotationFlag: boolean;
+        m_activeFlag: boolean;
+        m_toiFlag: boolean;
+        m_islandIndex: number;
+        m_xf: b2Transform;
+        m_xf0: b2Transform;
+        m_sweep: b2Sweep;
+        m_linearVelocity: b2Vec2;
+        m_angularVelocity: number;
+        m_force: b2Vec2;
+        m_torque: number;
+        m_world: b2World;
+        m_prev: b2Body | null;
+        m_next: b2Body | null;
+        m_fixtureList: b2Fixture | null;
+        m_fixtureCount: number;
+        m_jointList: b2JointEdge | null;
+        m_contactList: b2ContactEdge | null;
+        m_mass: number;
+        m_invMass: number;
+        m_I: number;
+        m_invI: number;
+        m_linearDamping: number;
+        m_angularDamping: number;
+        m_gravityScale: number;
+        m_sleepTime: number;
+        m_userData: any;
+        m_controllerList: b2ControllerEdge;
+        m_controllerCount: number;
+        constructor(bd: b2BodyDef, world: b2World);
+        CreateFixture(a: b2FixtureDef | b2Shape, b?: number): b2Fixture;
+        CreateFixtureDef(def: b2FixtureDef): b2Fixture;
+        private static CreateFixtureShapeDensity_s_def;
+        CreateFixtureShapeDensity(shape: b2Shape, density?: number): b2Fixture;
+        DestroyFixture(fixture: b2Fixture): void;
+        SetTransformVec(position: b2Vec2, angle: number): void;
+        SetTransformXY(x: number, y: number, angle: number): void;
+        SetTransform(xf: b2Transform): void;
+        GetTransform(): b2Transform;
+        GetPosition(): b2Vec2;
+        SetPosition(position: b2Vec2): void;
+        SetPositionXY(x: number, y: number): void;
+        GetAngle(): number;
+        SetAngle(angle: number): void;
+        GetWorldCenter(): b2Vec2;
+        GetLocalCenter(): b2Vec2;
+        SetLinearVelocity(v: b2Vec2): void;
+        GetLinearVelocity(): b2Vec2;
+        SetAngularVelocity(w: number): void;
+        GetAngularVelocity(): number;
+        GetDefinition(bd: b2BodyDef): b2BodyDef;
+        ApplyForce(force: b2Vec2, point: b2Vec2, wake?: boolean): void;
+        ApplyForceToCenter(force: b2Vec2, wake?: boolean): void;
+        ApplyTorque(torque: number, wake?: boolean): void;
+        ApplyLinearImpulse(impulse: b2Vec2, point: b2Vec2, wake?: boolean): void;
+        ApplyLinearImpulseToCenter(impulse: b2Vec2, wake?: boolean): void;
+        ApplyAngularImpulse(impulse: number, wake?: boolean): void;
+        GetMass(): number;
+        GetInertia(): number;
+        GetMassData(data: b2MassData): b2MassData;
+        private static SetMassData_s_oldCenter;
+        SetMassData(massData: b2MassData): void;
+        private static ResetMassData_s_localCenter;
+        private static ResetMassData_s_oldCenter;
+        private static ResetMassData_s_massData;
+        ResetMassData(): void;
+        GetWorldPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2;
+        GetWorldVector(localVector: b2Vec2, out: b2Vec2): b2Vec2;
+        GetLocalPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2;
+        GetLocalVector(worldVector: b2Vec2, out: b2Vec2): b2Vec2;
+        GetLinearVelocityFromWorldPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2;
+        GetLinearVelocityFromLocalPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2;
+        GetLinearDamping(): number;
+        SetLinearDamping(linearDamping: number): void;
+        GetAngularDamping(): number;
+        SetAngularDamping(angularDamping: number): void;
+        GetGravityScale(): number;
+        SetGravityScale(scale: number): void;
+        SetType(type: b2BodyType): void;
+        GetType(): b2BodyType;
+        SetBullet(flag: boolean): void;
+        IsBullet(): boolean;
+        SetSleepingAllowed(flag: boolean): void;
+        IsSleepingAllowed(): boolean;
+        SetAwake(flag: boolean): void;
+        IsAwake(): boolean;
+        SetActive(flag: boolean): void;
+        IsActive(): boolean;
+        SetFixedRotation(flag: boolean): void;
+        IsFixedRotation(): boolean;
+        GetFixtureList(): b2Fixture | null;
+        GetJointList(): b2JointEdge | null;
+        GetContactList(): b2ContactEdge | null;
+        GetNext(): b2Body | null;
+        GetUserData(): any;
+        SetUserData(data: any): void;
+        GetWorld(): b2World;
+        Dump(log: (format: string, ...args: any[]) => void): void;
+        private static SynchronizeFixtures_s_xf1;
+        SynchronizeFixtures(): void;
+        SynchronizeTransform(): void;
+        ShouldCollide(other: b2Body): boolean;
+        ShouldCollideConnected(other: b2Body): boolean;
+        Advance(alpha: number): void;
+        GetControllerList(): b2ControllerEdge;
+        GetControllerCount(): number;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/Contacts/b2Contact" {
+    import { b2Transform, b2Sweep } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold, b2WorldManifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    export function b2MixFriction(friction1: number, friction2: number): number;
+    export function b2MixRestitution(restitution1: number, restitution2: number): number;
+    export class b2ContactEdge {
+        other: b2Body | null;
+        contact: b2Contact | null;
+        prev: b2ContactEdge | null;
+        next: b2ContactEdge | null;
+    }
+    export class b2Contact {
+        m_islandFlag: boolean;
+        m_touchingFlag: boolean;
+        m_enabledFlag: boolean;
+        m_filterFlag: boolean;
+        m_bulletHitFlag: boolean;
+        m_toiFlag: boolean;
+        m_prev: b2Contact | null;
+        m_next: b2Contact | null;
+        m_nodeA: b2ContactEdge;
+        m_nodeB: b2ContactEdge;
+        m_fixtureA: b2Fixture | null;
+        m_fixtureB: b2Fixture | null;
+        m_indexA: number;
+        m_indexB: number;
+        m_manifold: b2Manifold;
+        m_toiCount: number;
+        m_toi: number;
+        m_friction: number;
+        m_restitution: number;
+        m_tangentSpeed: number;
+        m_oldManifold: b2Manifold;
+        GetManifold(): b2Manifold;
+        GetWorldManifold(worldManifold: b2WorldManifold): void;
+        IsTouching(): boolean;
+        SetEnabled(flag: boolean): void;
+        IsEnabled(): boolean;
+        GetNext(): b2Contact | null;
+        GetFixtureA(): b2Fixture | null;
+        GetChildIndexA(): number;
+        GetFixtureB(): b2Fixture | null;
+        GetChildIndexB(): number;
+        Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
+        FlagForFiltering(): void;
+        SetFriction(friction: number): void;
+        GetFriction(): number;
+        ResetFriction(): void;
+        SetRestitution(restitution: number): void;
+        GetRestitution(): number;
+        ResetRestitution(): void;
+        SetTangentSpeed(speed: number): void;
+        GetTangentSpeed(): number;
+        Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;
+        Update(listener: b2ContactListener): void;
+        private static ComputeTOI_s_input;
+        private static ComputeTOI_s_output;
+        ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/b2ContactManager" {
+    import { b2BroadPhase } from "Box2D/Box2D/Collision/b2BroadPhase";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2ContactFactory } from "Box2D/Box2D/Dynamics/Contacts/b2ContactFactory";
+    import { b2FixtureProxy } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2ContactFilter, b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    export class b2ContactManager {
+        m_broadPhase: b2BroadPhase;
+        m_contactList: b2Contact | null;
+        m_contactCount: number;
+        m_contactFilter: b2ContactFilter;
+        m_contactListener: b2ContactListener;
+        m_allocator: any;
+        m_contactFactory: b2ContactFactory;
+        constructor();
+        AddPair(proxyA: b2FixtureProxy, proxyB: b2FixtureProxy): void;
+        FindNewContacts(): void;
+        Destroy(c: b2Contact): void;
+        Collide(): void;
+    }
+}
+declare module "Box2D/Box2D/Collision/b2BroadPhase" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2TreeNode, b2DynamicTree } from "Box2D/Box2D/Collision/b2DynamicTree";
+    import { b2ContactManager } from "Box2D/Box2D/Dynamics/b2ContactManager";
+    export class b2Pair {
+        proxyA: b2TreeNode | null;
+        proxyB: b2TreeNode | null;
+    }
+    export class b2BroadPhase {
+        m_tree: b2DynamicTree;
+        m_proxyCount: number;
+        m_moveCount: number;
+        m_moveBuffer: b2TreeNode[];
+        m_pairCount: number;
+        m_pairBuffer: b2Pair[];
+        CreateProxy(aabb: b2AABB, userData: any): b2TreeNode;
+        DestroyProxy(proxy: b2TreeNode): void;
+        MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void;
+        TouchProxy(proxy: b2TreeNode): void;
+        GetFatAABB(proxy: b2TreeNode): b2AABB;
+        GetUserData(proxy: b2TreeNode): any;
+        TestOverlap(proxyA: b2TreeNode, proxyB: b2TreeNode): boolean;
+        GetProxyCount(): number;
+        UpdatePairs(contactManager: b2ContactManager): void;
+        Query(callback: (node: b2TreeNode) => boolean, aabb: b2AABB): void;
+        RayCast(callback: (input: b2RayCastInput, node: b2TreeNode) => number, input: b2RayCastInput): void;
+        GetTreeHeight(): number;
+        GetTreeBalance(): number;
+        GetTreeQuality(): number;
+        ShiftOrigin(newOrigin: b2Vec2): void;
+        BufferMove(proxy: b2TreeNode): void;
+        UnBufferMove(proxy: b2TreeNode): void;
+    }
+    export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
+}
+declare module "Box2D/Box2D/Dynamics/b2World" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color, b2Draw } from "Box2D/Box2D/Common/b2Draw";
+    import { b2AABB } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Body, b2BodyDef } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2ContactManager } from "Box2D/Box2D/Dynamics/b2ContactManager";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2Island } from "Box2D/Box2D/Dynamics/b2Island";
+    import { b2Profile, b2TimeStep } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2ContactFilter } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2DestructionListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2QueryCallback, b2QueryCallbackFunction } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2RayCastCallback, b2RayCastCallbackFunction } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ParticleSystemDef, b2ParticleSystem } from "Box2D/Box2D/Particle/b2ParticleSystem";
+    import { b2Controller } from "Contributions/Enhancements/Controllers/b2Controller";
     export class b2World {
         m_newFixture: boolean;
         m_locked: boolean;
         m_clearForces: boolean;
         m_contactManager: b2ContactManager;
-        m_bodyList: b2Body;
-        m_jointList: b2Joint;
+        m_bodyList: b2Body | null;
+        m_jointList: b2Joint | null;
         m_particleSystemList: b2ParticleSystem;
         m_bodyCount: number;
         m_jointCount: number;
         m_gravity: b2Vec2;
         m_allowSleep: boolean;
-        m_destructionListener: b2DestructionListener;
-        m_debugDraw: b2Draw;
+        m_destructionListener: b2DestructionListener | null;
+        m_debugDraw: b2Draw | null;
         m_inv_dt0: number;
         m_warmStarting: boolean;
         m_continuousPhysics: boolean;
@@ -3989,6 +4154,8 @@ declare module "Box2D/Dynamics/b2World" {
         m_profile: b2Profile;
         m_island: b2Island;
         s_stack: b2Body[];
+        m_controllerList: b2Controller;
+        m_controllerCount: number;
         constructor(gravity: b2Vec2);
         SetDestructionListener(listener: b2DestructionListener): void;
         SetContactFilter(filter: b2ContactFilter): void;
@@ -3996,7 +4163,7 @@ declare module "Box2D/Dynamics/b2World" {
         SetDebugDraw(debugDraw: b2Draw): void;
         CreateBody(def: b2BodyDef): b2Body;
         DestroyBody(b: b2Body): void;
-        CreateJoint(def: b2JointDef): b2Joint;
+        CreateJoint<T extends b2Joint>(def: b2JointDef): T;
         DestroyJoint(j: b2Joint): void;
         CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem;
         DestroyParticleSystem(p: b2ParticleSystem): void;
@@ -4025,7 +4192,7 @@ declare module "Box2D/Dynamics/b2World" {
         GetBodyList(): b2Body;
         GetJointList(): b2Joint;
         GetParticleSystemList(): b2ParticleSystem;
-        GetContactList(): b2Contact;
+        GetContactList(): b2Contact | null;
         SetAllowSleeping(flag: boolean): void;
         GetAllowSleeping(): boolean;
         SetWarmStarting(flag: boolean): void;
@@ -4063,8 +4230,10 @@ declare module "Box2D/Dynamics/b2World" {
         private static SolveTOI_s_toi_input;
         private static SolveTOI_s_toi_output;
         SolveTOI(step: b2TimeStep): void;
+        AddController(controller: b2Controller): b2Controller;
+        RemoveController(controller: b2Controller): b2Controller;
     }
 }
-declare module "HelloWorld/HelloWorld" {
+declare module "Box2D/HelloWorld/HelloWorld" {
     export function main(): number;
 }

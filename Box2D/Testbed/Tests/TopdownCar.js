@@ -19,8 +19,8 @@
  */
 System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var box2d, testbed, DEGTORAD, RADTODEG, TDC_LEFT, TDC_RIGHT, TDC_UP, TDC_DOWN, FUD_CAR_TIRE, FUD_GROUND_AREA, FixtureUserData, CarTireFUD, GroundAreaFUD, TDTire, TDCar, MyDestructionListener, TopdownCar;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (box2d_1) {

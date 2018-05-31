@@ -17,8 +17,8 @@
 */
 System.register(["../Common/b2Settings", "./b2Body"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2Settings_1, b2Body_1, b2DestructionListener, b2ContactFilter, b2ContactImpulse, b2ContactListener, b2QueryCallback, b2RayCastCallback;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2Settings_1_1) {

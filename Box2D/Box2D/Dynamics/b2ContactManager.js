@@ -17,8 +17,8 @@
 */
 System.register(["../Collision/b2BroadPhase", "./Contacts/b2ContactFactory", "./b2Body", "./b2WorldCallbacks"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2BroadPhase_1, b2ContactFactory_1, b2Body_1, b2WorldCallbacks_1, b2ContactManager;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2BroadPhase_1_1) {

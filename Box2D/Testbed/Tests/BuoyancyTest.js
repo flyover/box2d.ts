@@ -17,8 +17,8 @@
 */
 System.register(["Box2D/Box2D", "Testbed", "Contributions/Enhancements/Controllers/b2BuoyancyController"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var box2d, testbed, b2BuoyancyController_1, BuoyancyTest;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (box2d_1) {

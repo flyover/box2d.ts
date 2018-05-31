@@ -17,8 +17,8 @@
  */
 System.register(["../../../Box2D/Box2D/Box2D"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var Box2D_1, b2ControllerEdge, b2Controller;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (Box2D_1_1) {

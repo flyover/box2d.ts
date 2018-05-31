@@ -17,8 +17,8 @@
  */
 System.register(["../Common/b2Math", "../Common/b2Draw"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2Math_1, b2Draw_1, b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2Math_1_1) {

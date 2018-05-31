@@ -17,8 +17,8 @@
 */
 System.register(["../../Common/b2Settings", "../../Common/b2Math", "../../Collision/b2Collision", "../b2TimeStep"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2Settings_1, b2Math_1, b2Collision_1, b2Collision_2, b2TimeStep_1, b2VelocityConstraintPoint, b2ContactVelocityConstraint, b2ContactPositionConstraint, b2ContactSolverDef, b2PositionSolverManifold, b2ContactSolver;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2Settings_1_1) {

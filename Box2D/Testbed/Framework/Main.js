@@ -1,7 +1,7 @@
 System.register(["Box2D", "./Test", "./DebugDraw", "../Tests/TestEntries", "./FullscreenUI", "./ParticleParameter"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var box2d, Test_1, DebugDraw_1, TestEntries_1, FullscreenUI_1, ParticleParameter_1, Main;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (box2d_1) {

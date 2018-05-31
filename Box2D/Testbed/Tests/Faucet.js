@@ -17,8 +17,8 @@
  */
 System.register(["../../Box2D/Box2D", "../Testbed", "../Framework/ParticleParameter", "../Framework/ParticleEmitter"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var box2d, testbed, ParticleParameter_1, ParticleEmitter_1, ParticleLifetimeRandomizer, Faucet;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (box2d_1) {

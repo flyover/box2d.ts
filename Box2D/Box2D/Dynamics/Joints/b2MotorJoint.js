@@ -17,8 +17,8 @@
 */
 System.register(["../../Common/b2Math", "./b2Joint"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2Math_1, b2Joint_1, b2MotorJointDef, b2MotorJoint;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2Math_1_1) {

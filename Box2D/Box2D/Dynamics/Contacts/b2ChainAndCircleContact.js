@@ -17,8 +17,8 @@
 */
 System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2EdgeShape", "./b2Contact"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2CollideEdge_1, b2EdgeShape_1, b2Contact_1, b2ChainAndCircleContact;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2CollideEdge_1_1) {

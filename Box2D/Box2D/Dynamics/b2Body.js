@@ -17,8 +17,8 @@
 */
 System.register(["../Common/b2Math", "../Collision/Shapes/b2Shape", "./b2Fixture"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var b2Math_1, b2Shape_1, b2Fixture_1, b2BodyType, b2BodyDef, b2Body;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (b2Math_1_1) {

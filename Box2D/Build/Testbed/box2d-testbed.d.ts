@@ -1,4 +1,4 @@
-declare module "Box2D/Common/b2Settings" {
+declare module "Box2D/Box2D/Common/b2Settings" {
     export function b2Assert(condition: boolean, ...args: any[]): void;
     export const b2_maxFloat: number;
     export const b2_epsilon: number;
@@ -49,33 +49,33 @@ declare module "Box2D/Common/b2Settings" {
     export const b2_changelist: number;
     export function b2ParseInt(v: string): number;
     export function b2ParseUInt(v: string): number;
-    export function b2MakeArray(length: number, init: {
-        (i: number): any;
-    }): any[];
-    export function b2MakeNullArray(length: number): any[];
+    export function b2MakeArray<T>(length: number, init: {
+        (i: number): T;
+    }): T[];
+    export function b2MakeNullArray<T>(length: number): (T | null)[];
     export function b2MakeNumberArray(length: number, init?: number): number[];
 }
-declare module "Box2D/Common/b2Math" {
+declare module "Box2D/Box2D/Common/b2Math" {
     export const b2_pi_over_180: number;
     export const b2_180_over_pi: number;
     export const b2_two_pi: number;
-    export function b2Abs(n: number): number;
-    export function b2Min(a: number, b: number): number;
-    export function b2Max(a: number, b: number): number;
+    export const b2Abs: (x: number) => number;
+    export const b2Min: (...values: number[]) => number;
+    export const b2Max: (...values: number[]) => number;
     export function b2Clamp(a: number, lo: number, hi: number): number;
-    export function b2Swap(a: any[], b: any[]): void;
+    export function b2Swap<T>(a: T[], b: T[]): void;
     export function b2IsValid(n: number): boolean;
     export function b2Sq(n: number): number;
     export function b2InvSqrt(n: number): number;
-    export function b2Sqrt(n: number): number;
-    export function b2Pow(x: number, y: number): number;
+    export const b2Sqrt: (x: number) => number;
+    export const b2Pow: (x: number, y: number) => number;
     export function b2DegToRad(degrees: number): number;
     export function b2RadToDeg(radians: number): number;
-    export function b2Cos(radians: number): number;
-    export function b2Sin(radians: number): number;
-    export function b2Acos(n: number): number;
-    export function b2Asin(n: number): number;
-    export function b2Atan2(y: number, x: number): number;
+    export const b2Cos: (x: number) => number;
+    export const b2Sin: (x: number) => number;
+    export const b2Acos: (x: number) => number;
+    export const b2Asin: (x: number) => number;
+    export const b2Atan2: (y: number, x: number) => number;
     export function b2NextPowerOfTwo(x: number): number;
     export function b2IsPowerOfTwo(x: number): boolean;
     export function b2Random(): number;
@@ -166,8 +166,8 @@ declare module "Box2D/Common/b2Math" {
     }
     export class b2Mat22 {
         static IDENTITY: b2Mat22;
-        ex: b2Vec2;
-        ey: b2Vec2;
+        readonly ex: b2Vec2;
+        readonly ey: b2Vec2;
         Clone(): b2Mat22;
         static FromVV(c1: b2Vec2, c2: b2Vec2): b2Mat22;
         static FromSSSS(r1c1: number, r1c2: number, r2c1: number, r2c2: number): b2Mat22;
@@ -194,9 +194,9 @@ declare module "Box2D/Common/b2Math" {
     }
     export class b2Mat33 {
         static IDENTITY: b2Mat33;
-        ex: b2Vec3;
-        ey: b2Vec3;
-        ez: b2Vec3;
+        readonly ex: b2Vec3;
+        readonly ey: b2Vec3;
+        readonly ez: b2Vec3;
         Clone(): b2Mat33;
         SetVVV(c1: b2Vec3, c2: b2Vec3, c3: b2Vec3): b2Mat33;
         Copy(other: b2Mat33): b2Mat33;
@@ -231,8 +231,8 @@ declare module "Box2D/Common/b2Math" {
     }
     export class b2Transform {
         static IDENTITY: b2Transform;
-        p: b2Vec2;
-        q: b2Rot;
+        readonly p: b2Vec2;
+        readonly q: b2Rot;
         Clone(): b2Transform;
         Copy(other: b2Transform): b2Transform;
         SetIdentity(): b2Transform;
@@ -252,9 +252,9 @@ declare module "Box2D/Common/b2Math" {
         static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform;
     }
     export class b2Sweep {
-        localCenter: b2Vec2;
-        c0: b2Vec2;
-        c: b2Vec2;
+        readonly localCenter: b2Vec2;
+        readonly c0: b2Vec2;
+        readonly c: b2Vec2;
         a0: number;
         a: number;
         alpha0: number;
@@ -265,8 +265,8 @@ declare module "Box2D/Common/b2Math" {
         Normalize(): void;
     }
 }
-declare module "Box2D/Common/b2Draw" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
+declare module "Box2D/Box2D/Common/b2Draw" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
     export class b2Color {
         static RED: b2Color;
         static GREEN: b2Color;
@@ -283,6 +283,8 @@ declare module "Box2D/Common/b2Draw" {
         GetColor(out: b2Color): b2Color;
         SetColor(color: b2Color): void;
         Set(a0: number | b2Color, a1?: number, a2?: number, a3?: number): void;
+        SetByteRGB(r: number, g: number, b: number): this;
+        SetByteRGBA(r: number, g: number, b: number, a: number): this;
         SetRGB(rr: number, gg: number, bb: number): b2Color;
         SetRGBA(rr: number, gg: number, bb: number, aa: number): b2Color;
         SelfAdd(color: b2Color): b2Color;
@@ -305,7 +307,7 @@ declare module "Box2D/Common/b2Draw" {
         e_centerOfMassBit = 16,
         e_particleBit = 32,
         e_controllerBit = 64,
-        e_all = 63,
+        e_all = 63
     }
     export class b2Draw {
         m_drawFlags: b2DrawFlags;
@@ -324,7 +326,7 @@ declare module "Box2D/Common/b2Draw" {
         DrawTransform(xf: b2Transform): void;
     }
 }
-declare module "Box2D/Common/b2Timer" {
+declare module "Box2D/Box2D/Common/b2Timer" {
     export class b2Timer {
         m_start: number;
         Reset(): b2Timer;
@@ -344,28 +346,28 @@ declare module "Box2D/Common/b2Timer" {
         Decrement(): void;
     }
 }
-declare module "Box2D/Common/b2GrowableStack" {
-    export class b2GrowableStack {
-        m_stack: any[];
+declare module "Box2D/Box2D/Common/b2GrowableStack" {
+    export class b2GrowableStack<T> {
+        m_stack: T[];
         m_count: number;
         constructor(N: number);
-        Reset(): b2GrowableStack;
-        Push(element: any): void;
-        Pop(): any;
+        Reset(): this;
+        Push(element: T): void;
+        Pop(): T;
         GetCount(): number;
     }
 }
-declare module "Box2D/Common/b2BlockAllocator" {
+declare module "Box2D/Box2D/Common/b2BlockAllocator" {
     export class b2BlockAllocator {
     }
 }
-declare module "Box2D/Common/b2StackAllocator" {
+declare module "Box2D/Box2D/Common/b2StackAllocator" {
     export class b2StackAllocator {
     }
 }
-declare module "Box2D/Collision/b2Distance" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/b2Distance" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export class b2DistanceProxy {
         m_buffer: b2Vec2[];
         m_vertices: b2Vec2[];
@@ -403,6 +405,7 @@ declare module "Box2D/Collision/b2Distance" {
     export let b2_gjkCalls: number;
     export let b2_gjkIters: number;
     export let b2_gjkMaxIters: number;
+    export function b2_gjk_reset(): void;
     export class b2SimplexVertex {
         wA: b2Vec2;
         wB: b2Vec2;
@@ -433,10 +436,10 @@ declare module "Box2D/Collision/b2Distance" {
     }
     export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
 }
-declare module "Box2D/Collision/Shapes/b2Shape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+declare module "Box2D/Box2D/Collision/Shapes/b2Shape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
     export class b2MassData {
         mass: number;
         center: b2Vec2;
@@ -448,7 +451,7 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
         e_edgeShape = 1,
         e_polygonShape = 2,
         e_chainShape = 3,
-        e_shapeTypeCount = 4,
+        e_shapeTypeCount = 4
     }
     export abstract class b2Shape {
         m_type: b2ShapeType;
@@ -468,12 +471,12 @@ declare module "Box2D/Collision/Shapes/b2Shape" {
         abstract Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Collision/b2Collision" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/b2Collision" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export enum b2ContactFeatureType {
         e_vertex = 0,
-        e_face = 1,
+        e_face = 1
     }
     export class b2ContactFeature {
         _key: number;
@@ -508,7 +511,7 @@ declare module "Box2D/Collision/b2Collision" {
         e_unknown = -1,
         e_circles = 0,
         e_faceA = 1,
-        e_faceB = 2,
+        e_faceB = 2
     }
     export class b2Manifold {
         points: b2ManifoldPoint[];
@@ -536,7 +539,7 @@ declare module "Box2D/Collision/b2Collision" {
         b2_nullState = 0,
         b2_addState = 1,
         b2_persistState = 2,
-        b2_removeState = 3,
+        b2_removeState = 3
     }
     export function b2GetPointStates(state1: b2PointState[], state2: b2PointState[], manifold1: b2Manifold, manifold2: b2Manifold): void;
     export class b2ClipVertex {
@@ -577,27 +580,27 @@ declare module "Box2D/Collision/b2Collision" {
     export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number;
     export function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean;
 }
-declare module "Box2D/Collision/b2DynamicTree" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2GrowableStack } from "Box2D/Common/b2GrowableStack";
-    import { b2AABB, b2RayCastInput } from "Box2D/Collision/b2Collision";
+declare module "Box2D/Box2D/Collision/b2DynamicTree" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2GrowableStack } from "Box2D/Box2D/Common/b2GrowableStack";
+    import { b2AABB, b2RayCastInput } from "Box2D/Box2D/Collision/b2Collision";
     export class b2TreeNode {
         m_id: number;
         aabb: b2AABB;
         userData: any;
-        parent: b2TreeNode;
-        child1: b2TreeNode;
-        child2: b2TreeNode;
+        parent: b2TreeNode | null;
+        child1: b2TreeNode | null;
+        child2: b2TreeNode | null;
         height: number;
         constructor(id?: number);
         IsLeaf(): boolean;
     }
     export class b2DynamicTree {
-        m_root: b2TreeNode;
-        m_freeList: b2TreeNode;
+        m_root: b2TreeNode | null;
+        m_freeList: b2TreeNode | null;
         m_path: number;
         m_insertionCount: number;
-        static s_stack: b2GrowableStack;
+        static s_stack: b2GrowableStack<b2TreeNode>;
         static s_r: b2Vec2;
         static s_v: b2Vec2;
         static s_abs_v: b2Vec2;
@@ -619,23 +622,23 @@ declare module "Box2D/Collision/b2DynamicTree" {
         RemoveLeaf(leaf: b2TreeNode): void;
         Balance(A: b2TreeNode): b2TreeNode;
         GetHeight(): number;
-        private static GetAreaNode(node);
+        private static GetAreaNode;
         GetAreaRatio(): number;
         ComputeHeightNode(node: b2TreeNode): number;
         ComputeHeight(): number;
         ValidateStructure(index: b2TreeNode): void;
         ValidateMetrics(index: b2TreeNode): void;
         Validate(): void;
-        private static GetMaxBalanceNode(node, maxBalance);
+        private static GetMaxBalanceNode;
         GetMaxBalance(): number;
         RebuildBottomUp(): void;
-        private static ShiftOriginNode(node, newOrigin);
+        private static ShiftOriginNode;
         ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
-declare module "Box2D/Collision/b2TimeOfImpact" {
-    import { b2Vec2, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2DistanceProxy, b2SimplexCache } from "Box2D/Collision/b2Distance";
+declare module "Box2D/Box2D/Collision/b2TimeOfImpact" {
+    import { b2Vec2, b2Sweep } from "Box2D/Box2D/Common/b2Math";
+    import { b2DistanceProxy, b2SimplexCache } from "Box2D/Box2D/Collision/b2Distance";
     export let b2_toiTime: number;
     export let b2_toiMaxTime: number;
     export let b2_toiCalls: number;
@@ -643,6 +646,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
     export let b2_toiMaxIters: number;
     export let b2_toiRootIters: number;
     export let b2_toiMaxRootIters: number;
+    export function b2_toi_reset(): void;
     export class b2TOIInput {
         proxyA: b2DistanceProxy;
         proxyB: b2DistanceProxy;
@@ -655,7 +659,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         e_failed = 1,
         e_overlapped = 2,
         e_touching = 3,
-        e_separated = 4,
+        e_separated = 4
     }
     export class b2TOIOutput {
         state: b2TOIOutputState;
@@ -665,7 +669,7 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
         e_unknown = -1,
         e_points = 0,
         e_faceA = 1,
-        e_faceB = 2,
+        e_faceB = 2
     }
     export class b2SeparationFunction {
         m_proxyA: b2DistanceProxy;
@@ -681,8 +685,8 @@ declare module "Box2D/Collision/b2TimeOfImpact" {
     }
     export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void;
 }
-declare module "Box2D/Dynamics/b2TimeStep" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
+declare module "Box2D/Box2D/Dynamics/b2TimeStep" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
     export class b2Profile {
         step: number;
         collide: number;
@@ -720,10 +724,10 @@ declare module "Box2D/Dynamics/b2TimeStep" {
         velocities: b2Velocity[];
     }
 }
-declare module "Box2D/Dynamics/Joints/b2Joint" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2Joint" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export enum b2JointType {
         e_unknownJoint = 0,
         e_revoluteJoint = 1,
@@ -737,13 +741,13 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         e_frictionJoint = 9,
         e_ropeJoint = 10,
         e_motorJoint = 11,
-        e_areaJoint = 12,
+        e_areaJoint = 12
     }
     export enum b2LimitState {
         e_inactiveLimit = 0,
         e_atLowerLimit = 1,
         e_atUpperLimit = 2,
-        e_equalLimits = 3,
+        e_equalLimits = 3
     }
     export class b2Jacobian {
         linear: b2Vec2;
@@ -753,10 +757,11 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         Set(x: b2Vec2, a1: number, a2: number): b2Jacobian;
     }
     export class b2JointEdge {
-        other: b2Body;
-        joint: b2Joint;
-        prev: b2JointEdge;
-        next: b2JointEdge;
+        readonly other: b2Body;
+        readonly joint: b2Joint;
+        prev: b2JointEdge | null;
+        next: b2JointEdge | null;
+        constructor(joint: b2Joint, other: b2Body);
     }
     export class b2JointDef {
         type: b2JointType;
@@ -768,8 +773,8 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
     }
     export class b2Joint {
         m_type: b2JointType;
-        m_prev: b2Joint;
-        m_next: b2Joint;
+        m_prev: b2Joint | null;
+        m_next: b2Joint | null;
         m_edgeA: b2JointEdge;
         m_edgeB: b2JointEdge;
         m_bodyA: b2Body;
@@ -786,7 +791,7 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         GetAnchorB(out: b2Vec2): b2Vec2;
         GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2;
         GetReactionTorque(inv_dt: number): number;
-        GetNext(): b2Joint;
+        GetNext(): b2Joint | null;
         GetUserData(): any;
         SetUserData(data: any): void;
         IsActive(): boolean;
@@ -798,13 +803,13 @@ declare module "Box2D/Dynamics/Joints/b2Joint" {
         SolvePositionConstraints(data: b2SolverData): boolean;
     }
 }
-declare module "Box2D/Dynamics/b2Fixture" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode } from "Box2D/Collision/b2DynamicTree";
-    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
+declare module "Box2D/Box2D/Dynamics/b2Fixture" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2BroadPhase } from "Box2D/Box2D/Collision/b2BroadPhase";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2TreeNode } from "Box2D/Box2D/Collision/b2DynamicTree";
+    import { b2Shape, b2ShapeType, b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
     export class b2Filter {
         categoryBits: number;
         maskBits: number;
@@ -825,14 +830,14 @@ declare module "Box2D/Dynamics/b2Fixture" {
         aabb: b2AABB;
         fixture: b2Fixture;
         childIndex: number;
-        proxy: b2TreeNode;
-        static MakeArray(length: number): b2FixtureProxy[];
+        treeNode: b2TreeNode;
+        constructor(fixture: b2Fixture);
     }
     export class b2Fixture {
         m_density: number;
-        m_next: b2Fixture;
-        m_body: b2Body;
-        m_shape: b2Shape;
+        m_next: b2Fixture | null;
+        readonly m_body: b2Body;
+        readonly m_shape: b2Shape;
         m_friction: number;
         m_restitution: number;
         m_proxies: b2FixtureProxy[];
@@ -840,6 +845,7 @@ declare module "Box2D/Dynamics/b2Fixture" {
         m_filter: b2Filter;
         m_isSensor: boolean;
         m_userData: any;
+        constructor(def: b2FixtureDef, body: b2Body);
         GetType(): b2ShapeType;
         GetShape(): b2Shape;
         SetSensor(sensor: boolean): void;
@@ -863,7 +869,7 @@ declare module "Box2D/Dynamics/b2Fixture" {
         SetRestitution(restitution: number): void;
         GetAABB(childIndex: number): b2AABB;
         Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
-        Create(body: b2Body, def: b2FixtureDef): void;
+        Create(/*body: b2Body,*/ def: b2FixtureDef): void;
         Destroy(): void;
         CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void;
         DestroyProxies(broadPhase: b2BroadPhase): void;
@@ -873,12 +879,12 @@ declare module "Box2D/Dynamics/b2Fixture" {
         Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void;
     }
 }
-declare module "Box2D/Collision/Shapes/b2EdgeShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/Shapes/b2EdgeShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export class b2EdgeShape extends b2Shape {
         m_vertex1: b2Vec2;
         m_vertex2: b2Vec2;
@@ -913,13 +919,13 @@ declare module "Box2D/Collision/Shapes/b2EdgeShape" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Collision/Shapes/b2ChainShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+declare module "Box2D/Box2D/Collision/Shapes/b2ChainShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
     export class b2ChainShape extends b2Shape {
         m_vertices: b2Vec2[];
         m_count: number;
@@ -950,12 +956,12 @@ declare module "Box2D/Collision/Shapes/b2ChainShape" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Collision/Shapes/b2CircleShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/Shapes/b2CircleShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export class b2CircleShape extends b2Shape {
         m_p: b2Vec2;
         constructor(radius?: number);
@@ -979,12 +985,12 @@ declare module "Box2D/Collision/Shapes/b2CircleShape" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Collision/Shapes/b2PolygonShape" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
-    import { b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
+declare module "Box2D/Box2D/Collision/Shapes/b2PolygonShape" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
+    import { b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
     export class b2PolygonShape extends b2Shape {
         m_centroid: b2Vec2;
         m_vertices: b2Vec2[];
@@ -1037,11 +1043,11 @@ declare module "Box2D/Collision/Shapes/b2PolygonShape" {
         static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2DistanceJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
+declare module "Box2D/Box2D/Dynamics/Joints/b2DistanceJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
     export class b2DistanceJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1100,13 +1106,13 @@ declare module "Box2D/Dynamics/Joints/b2DistanceJoint" {
         SolvePositionConstraints(data: b2SolverData): boolean;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2AreaJoint" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2DistanceJoint } from "Box2D/Dynamics/Joints/b2DistanceJoint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2World } from "Box2D/Dynamics/b2World";
+declare module "Box2D/Box2D/Dynamics/Joints/b2AreaJoint" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2DistanceJoint } from "Box2D/Box2D/Dynamics/Joints/b2DistanceJoint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2World } from "Box2D/Box2D/Dynamics/b2World";
     export class b2AreaJointDef extends b2JointDef {
         world: b2World;
         bodies: b2Body[];
@@ -1141,11 +1147,11 @@ declare module "Box2D/Dynamics/Joints/b2AreaJoint" {
         SolvePositionConstraints(data: b2SolverData): boolean;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2FrictionJoint" {
-    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
+declare module "Box2D/Box2D/Dynamics/Joints/b2FrictionJoint" {
+    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
     export class b2FrictionJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1198,11 +1204,11 @@ declare module "Box2D/Dynamics/Joints/b2FrictionJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2PrismaticJoint" {
-    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint" {
+    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2PrismaticJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1300,11 +1306,11 @@ declare module "Box2D/Dynamics/Joints/b2PrismaticJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2RevoluteJoint" {
-    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint" {
+    import { b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2RevoluteJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1385,11 +1391,11 @@ declare module "Box2D/Dynamics/Joints/b2RevoluteJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2GearJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef, b2JointType } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
+declare module "Box2D/Box2D/Dynamics/Joints/b2GearJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef, b2JointType } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
     export class b2GearJointDef extends b2JointDef {
         joint1: b2Joint;
         joint2: b2Joint;
@@ -1470,11 +1476,11 @@ declare module "Box2D/Dynamics/Joints/b2GearJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2MotorJoint" {
-    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2MotorJoint" {
+    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2MotorJointDef extends b2JointDef {
         linearOffset: b2Vec2;
         angularOffset: number;
@@ -1531,10 +1537,10 @@ declare module "Box2D/Dynamics/Joints/b2MotorJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2MouseJoint" {
-    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2MouseJoint" {
+    import { b2Vec2, b2Mat22, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2MouseJointDef extends b2JointDef {
         target: b2Vec2;
         maxForce: number;
@@ -1585,11 +1591,11 @@ declare module "Box2D/Dynamics/Joints/b2MouseJoint" {
         ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2PulleyJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2PulleyJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export const b2_minPulleyLength: number;
     export class b2PulleyJointDef extends b2JointDef {
         groundAnchorA: b2Vec2;
@@ -1658,10 +1664,10 @@ declare module "Box2D/Dynamics/Joints/b2PulleyJoint" {
         ShiftOrigin(newOrigin: b2Vec2): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2RopeJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2RopeJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef, b2LimitState } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2RopeJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1712,11 +1718,11 @@ declare module "Box2D/Dynamics/Joints/b2RopeJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2WeldJoint" {
-    import { b2Vec2, b2Vec3, b2Mat33, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Joints/b2WeldJoint" {
+    import { b2Vec2, b2Vec3, b2Mat33, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2WeldJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1777,11 +1783,11 @@ declare module "Box2D/Dynamics/Joints/b2WeldJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2WheelJoint" {
-    import { b2Vec2, b2Rot } from "Box2D/Common/b2Math";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2SolverData } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
+declare module "Box2D/Box2D/Dynamics/Joints/b2WheelJoint" {
+    import { b2Vec2, b2Rot } from "Box2D/Box2D/Common/b2Math";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2SolverData } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
     export class b2WheelJointDef extends b2JointDef {
         localAnchorA: b2Vec2;
         localAnchorB: b2Vec2;
@@ -1869,18 +1875,18 @@ declare module "Box2D/Dynamics/Joints/b2WheelJoint" {
         Dump(log: (format: string, ...args: any[]) => void): void;
     }
 }
-declare module "Box2D/Dynamics/Joints/b2JointFactory" {
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
+declare module "Box2D/Box2D/Dynamics/Joints/b2JointFactory" {
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
     export class b2JointFactory {
         static Create(def: b2JointDef, allocator: any): b2Joint;
         static Destroy(joint: b2Joint, allocator: any): void;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2ContactSolver" {
-    import { b2Vec2, b2Mat22, b2Transform } from "Box2D/Common/b2Math";
-    import { b2ManifoldType } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2TimeStep, b2Position, b2Velocity } from "Box2D/Dynamics/b2TimeStep";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ContactSolver" {
+    import { b2Vec2, b2Mat22, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2ManifoldType } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2TimeStep, b2Position, b2Velocity } from "Box2D/Box2D/Dynamics/b2TimeStep";
     export class b2VelocityConstraintPoint {
         rA: b2Vec2;
         rB: b2Vec2;
@@ -1991,10 +1997,10 @@ declare module "Box2D/Dynamics/Contacts/b2ContactSolver" {
         SolveTOIPositionConstraints(toiIndexA: number, toiIndexB: number): boolean;
     }
 }
-declare module "Box2D/Particle/b2Particle" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
-    import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
+declare module "Box2D/Box2D/Particle/b2Particle" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Box2D/Common/b2Draw";
+    import { b2ParticleGroup } from "Box2D/Box2D/Particle/b2ParticleGroup";
     /**
      * The particle type. Can be combined with the | operator.
      */
@@ -2016,7 +2022,7 @@ declare module "Box2D/Particle/b2Particle" {
         b2_fixtureContactListenerParticle = 16384,
         b2_particleContactListenerParticle = 32768,
         b2_fixtureContactFilterParticle = 65536,
-        b2_particleContactFilterParticle = 131072,
+        b2_particleContactFilterParticle = 131072
     }
     export class b2ParticleDef {
         flags: b2ParticleFlag;
@@ -2034,7 +2040,7 @@ declare module "Box2D/Particle/b2Particle" {
         SetIndex(index: number): void;
     }
 }
-declare module "Box2D/Particle/b2StackQueue" {
+declare module "Box2D/Box2D/Particle/b2StackQueue" {
     export class b2StackQueue<T> {
         m_buffer: T[];
         m_front: number;
@@ -2047,8 +2053,8 @@ declare module "Box2D/Particle/b2StackQueue" {
         Front(): T;
     }
 }
-declare module "Box2D/Particle/b2VoronoiDiagram" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
+declare module "Box2D/Box2D/Particle/b2VoronoiDiagram" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
     /**
      * A field representing the nearest generator from each point.
      */
@@ -2103,20 +2109,20 @@ declare module "Box2D/Particle/b2VoronoiDiagram" {
         }
     }
 }
-declare module "Box2D/Particle/b2ParticleSystem" {
-    import { b2Vec2, b2Rot, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
-    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Collision/b2Collision";
-    import { b2Shape, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
-    import { b2TimeStep } from "Box2D/Dynamics/b2TimeStep";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2World } from "Box2D/Dynamics/b2World";
-    import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "Box2D/Particle/b2Particle";
-    import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    import { b2DistanceProxy } from "Box2D/Collision/b2Distance";
+declare module "Box2D/Box2D/Particle/b2ParticleSystem" {
+    import { b2Vec2, b2Rot, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Box2D/Common/b2Draw";
+    import { b2AABB, b2RayCastInput, b2RayCastOutput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Shape, b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2EdgeShape } from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
+    import { b2TimeStep } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2World } from "Box2D/Box2D/Dynamics/b2World";
+    import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "Box2D/Box2D/Particle/b2Particle";
+    import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "Box2D/Box2D/Particle/b2ParticleGroup";
+    import { b2DistanceProxy } from "Box2D/Box2D/Collision/b2Distance";
     export class b2GrowableBuffer<T> {
         data: T[];
         count: number;
@@ -2412,11 +2418,11 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          */
         m_expirationTimeBufferRequiresSorting: boolean;
         m_groupCount: number;
-        m_groupList: b2ParticleGroup;
+        m_groupList: b2ParticleGroup | null;
         m_def: b2ParticleSystemDef;
         m_world: b2World;
-        m_prev: b2ParticleSystem;
-        m_next: b2ParticleSystem;
+        m_prev: b2ParticleSystem | null;
+        m_next: b2ParticleSystem | null;
         static xTruncBits: number;
         static yTruncBits: number;
         static tagBits: number;
@@ -2688,7 +2694,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          *
          * @return the pointer to the head of the particle user-data array.
          */
-        GetUserDataBuffer(): any[];
+        GetUserDataBuffer<T>(): T[];
         /**
          * Get the flags for each particle. See the b2ParticleFlag enum.
          *
@@ -2725,7 +2731,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         SetPositionBuffer(buffer: b2Vec2[], capacity: number): void;
         SetVelocityBuffer(buffer: b2Vec2[], capacity: number): void;
         SetColorBuffer(buffer: b2Color[], capacity: number): void;
-        SetUserDataBuffer(buffer: any[], capacity: number): void;
+        SetUserDataBuffer<T>(buffer: T[], capacity: number): void;
         /**
          * Get contacts between particles
          * Contact data can be used for many reasons, for example to
@@ -2951,12 +2957,9 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          * that contain the starting point.
          * b2RayCastCallback::ShouldQueryParticleSystem is ignored.
          *
-         * @export
-         * @return {void}
-         * @param {b2RayCastCallback} callback a user implemented
-         *      callback class.
-         * @param {b2Vec2} point1 the ray starting point
-         * @param {b2Vec2} point2 the ray ending point
+         * @param callback a user implemented callback class.
+         * @param point1 the ray starting point
+         * @param point2 the ray ending point
          */
         RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void;
         static RayCast_s_aabb: b2AABB;
@@ -2967,11 +2970,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         /**
          * Compute the axis-aligned bounding box for all particles
          * contained within this particle system.
-         *
-         * @export
-         * @return {void}
-         * @param {b2AABB} aabb Returns the axis-aligned bounding
-         *      box of the system.
+         * @param aabb Returns the axis-aligned bounding box of the system.
          */
         ComputeAABB(aabb: b2AABB): void;
         /**
@@ -2980,41 +2979,32 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         static k_pairFlags: number;
         /**
          * All particle types that require creating triads
-         *
-         * @type {number}
          */
         static k_triadFlags: b2ParticleFlag;
         /**
          * All particle types that do not produce dynamic pressure
-         *
-         * @type {number}
          */
         static k_noPressureFlags: number;
         /**
          * All particle types that apply extra damping force with bodies
-         *
-         * @type {number}
          */
         static k_extraDampingFlags: b2ParticleFlag;
-        /**
-         * @type {number}
-         */
         static k_barrierWallFlags: number;
-        FreeBuffer(b: any, capacity: number): void;
-        FreeUserOverridableBuffer(b: b2ParticleSystem.UserOverridableBuffer<any>): void;
+        FreeBuffer<T>(b: T[], capacity: number): void;
+        FreeUserOverridableBuffer<T>(b: b2ParticleSystem.UserOverridableBuffer<T>): void;
         /**
          * Reallocate a buffer
          */
-        ReallocateBuffer3(oldBuffer: any[], oldCapacity: number, newCapacity: number): any[];
+        ReallocateBuffer3<T>(oldBuffer: T[], oldCapacity: number, newCapacity: number): T[];
         /**
          * Reallocate a buffer
          */
-        ReallocateBuffer5(buffer: any[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): any[];
+        ReallocateBuffer5<T>(buffer: T[], userSuppliedCapacity: number, oldCapacity: number, newCapacity: number, deferred: boolean): T[];
         /**
          * Reallocate a buffer
          */
-        ReallocateBuffer4(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): any[];
-        RequestBuffer(buffer: any[]): any[];
+        ReallocateBuffer4<T>(buffer: b2ParticleSystem.UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): T[];
+        RequestBuffer<T>(buffer: T[]): T[];
         /**
          * Reallocate the handle / index map and schedule the allocation
          * of a new pool for handle allocation.
@@ -3175,7 +3165,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
          * system.
          */
         GetParticleContactListener(): b2ContactListener;
-        SetUserOverridableBuffer(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: any[], newCapacity: number): void;
+        SetUserOverridableBuffer<T>(buffer: b2ParticleSystem.UserOverridableBuffer<any>, newData: T[], newCapacity: number): void;
         SetGroupFlags(group: b2ParticleGroup, newFlags: b2ParticleGroupFlag): void;
         static BodyContactCompare(lhs: b2ParticleBodyContact, rhs: b2ParticleBodyContact): boolean;
         RemoveSpuriousBodyContacts(): void;
@@ -3207,7 +3197,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
     }
     export namespace b2ParticleSystem {
         class UserOverridableBuffer<T> {
-            data: T[];
+            data: T[] | null;
             userSuppliedCapacity: number;
         }
         class Proxy {
@@ -3247,7 +3237,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             /**
              * The next node in the list.
              */
-            next: b2ParticleSystem.ParticleListNode;
+            next: b2ParticleSystem.ParticleListNode | null;
             /**
              * Number of entries in the list. Valid only for the node at the
              * head of the list.
@@ -3261,13 +3251,13 @@ declare module "Box2D/Particle/b2ParticleSystem" {
         /**
          * @constructor
          */
-        class FixedSetAllocator {
+        class FixedSetAllocator<T> {
             Allocate(itemSize: number, count: number): number;
             Clear(): void;
             GetCount(): number;
             Invalidate(itemIndex: number): void;
             GetValidBuffer(): boolean[];
-            GetBuffer(): any[];
+            GetBuffer(): T[];
             SetCount(count: number): void;
         }
         class FixtureParticle {
@@ -3275,7 +3265,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             second: number;
             constructor(fixture: b2Fixture, particle: number);
         }
-        class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator {
+        class FixtureParticleSet extends b2ParticleSystem.FixedSetAllocator<FixtureParticle> {
             Initialize(bodyContactBuffer: b2GrowableBuffer<b2ParticleBodyContact>, flagsBuffer: b2ParticleSystem.UserOverridableBuffer<b2ParticleFlag>): void;
             Find(pair: b2ParticleSystem.FixtureParticle): number;
         }
@@ -3284,12 +3274,8 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             second: number;
             constructor(particleA: number, particleB: number);
         }
-        class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator {
+        class b2ParticlePairSet extends b2ParticleSystem.FixedSetAllocator<ParticlePair> {
             Initialize(contactBuffer: b2GrowableBuffer<b2ParticleContact>, flagsBuffer: UserOverridableBuffer<b2ParticleFlag>): void;
-            /**
-             * @return {number}
-             * @param {b2ParticleSystem.ParticlePair} pair
-             */
             Find(pair: b2ParticleSystem.ParticlePair): number;
         }
         class ConnectionFilter {
@@ -3332,7 +3318,7 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             ShouldCreateTriad(a: number, b: number, c: number): boolean;
         }
         class CompositeShape extends b2Shape {
-            constructor(shapes: b2Shape[], shapeCount: number);
+            constructor(shapes: b2Shape[], shapeCount?: number);
             m_shapes: b2Shape[];
             m_shapeCount: number;
             Clone(): b2Shape;
@@ -3384,29 +3370,23 @@ declare module "Box2D/Particle/b2ParticleSystem" {
             static ReportFixtureAndParticle_s_p: b2Vec2;
             static ReportFixtureAndParticle_s_v: b2Vec2;
             static ReportFixtureAndParticle_s_f: b2Vec2;
-            /**
-             * @export
-             * @return {boolean}
-             * @param {b2ParticleSystem} system
-             * @param {number} index
-             */
             ReportParticle(system: b2ParticleSystem, index: number): boolean;
         }
     }
 }
-declare module "Box2D/Particle/b2ParticleGroup" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Color } from "Box2D/Common/b2Draw";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2ParticleFlag } from "Box2D/Particle/b2Particle";
-    import { b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
+declare module "Box2D/Box2D/Particle/b2ParticleGroup" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color } from "Box2D/Box2D/Common/b2Draw";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2ParticleFlag } from "Box2D/Box2D/Particle/b2Particle";
+    import { b2ParticleSystem } from "Box2D/Box2D/Particle/b2ParticleSystem";
     export enum b2ParticleGroupFlag {
         b2_solidParticleGroup = 1,
         b2_rigidParticleGroup = 2,
         b2_particleGroupCanBeEmpty = 4,
         b2_particleGroupWillBeDestroyed = 8,
         b2_particleGroupNeedsUpdateDepth = 16,
-        b2_particleGroupInternalMask = 24,
+        b2_particleGroupInternalMask = 24
     }
     export class b2ParticleGroupDef {
         flags: b2ParticleFlag;
@@ -3425,16 +3405,16 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         positionData: b2Vec2[];
         lifetime: number;
         userData: any;
-        group: b2ParticleGroup;
+        group: b2ParticleGroup | null;
     }
     export class b2ParticleGroup {
-        m_system: b2ParticleSystem;
+        readonly m_system: b2ParticleSystem;
         m_firstIndex: number;
         m_lastIndex: number;
         m_groupFlags: b2ParticleGroupFlag;
         m_strength: number;
-        m_prev: b2ParticleGroup;
-        m_next: b2ParticleGroup;
+        m_prev: b2ParticleGroup | null;
+        m_next: b2ParticleGroup | null;
         m_timestamp: number;
         m_mass: number;
         m_inertia: number;
@@ -3443,6 +3423,7 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         m_angularVelocity: number;
         m_transform: b2Transform;
         m_userData: any;
+        constructor(system: b2ParticleSystem);
         GetNext(): b2ParticleGroup;
         GetParticleSystem(): b2ParticleSystem;
         GetParticleCount(): number;
@@ -3469,14 +3450,14 @@ declare module "Box2D/Particle/b2ParticleGroup" {
         UpdateStatistics(): void;
     }
 }
-declare module "Box2D/Dynamics/b2WorldCallbacks" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2ParticleGroup } from "Box2D/Particle/b2ParticleGroup";
-    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Particle/b2ParticleSystem";
+declare module "Box2D/Box2D/Dynamics/b2WorldCallbacks" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Joint } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2ParticleGroup } from "Box2D/Box2D/Particle/b2ParticleGroup";
+    import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "Box2D/Box2D/Particle/b2ParticleSystem";
     export class b2DestructionListener {
         SayGoodbyeJoint(joint: b2Joint): void;
         SayGoodbyeFixture(fixture: b2Fixture): void;
@@ -3522,14 +3503,14 @@ declare module "Box2D/Dynamics/b2WorldCallbacks" {
         (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
     };
 }
-declare module "Box2D/Dynamics/b2Island" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2ContactVelocityConstraint } from "Box2D/Dynamics/Contacts/b2ContactSolver";
-    import { b2Joint } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2TimeStep, b2Profile, b2Position, b2Velocity } from "Box2D/Dynamics/b2TimeStep";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
+declare module "Box2D/Box2D/Dynamics/b2Island" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2ContactVelocityConstraint } from "Box2D/Box2D/Dynamics/Contacts/b2ContactSolver";
+    import { b2Joint } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2TimeStep, b2Profile, b2Position, b2Velocity } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
     export class b2Island {
         m_allocator: any;
         m_listener: b2ContactListener;
@@ -3560,38 +3541,101 @@ declare module "Box2D/Dynamics/b2Island" {
         Report(constraints: b2ContactVelocityConstraint[]): void;
     }
 }
-declare module "Box2D/Dynamics/b2World" {
-    import { b2Vec2, b2Transform } from "Box2D/Common/b2Math";
-    import { b2Color, b2Draw } from "Box2D/Common/b2Draw";
-    import { b2AABB } from "Box2D/Collision/b2Collision";
-    import { b2Shape } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Joint, b2JointDef } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Body, b2BodyDef } from "Box2D/Dynamics/b2Body";
-    import { b2ContactManager } from "Box2D/Dynamics/b2ContactManager";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2Island } from "Box2D/Dynamics/b2Island";
-    import { b2Profile, b2TimeStep } from "Box2D/Dynamics/b2TimeStep";
-    import { b2ContactFilter } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2DestructionListener } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2QueryCallback, b2QueryCallbackFunction } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2RayCastCallback, b2RayCastCallbackFunction } from "Box2D/Dynamics/b2WorldCallbacks";
-    import { b2ParticleSystemDef, b2ParticleSystem } from "Box2D/Particle/b2ParticleSystem";
+declare module "Contributions/Enhancements/Controllers/b2Controller" {
+    import { b2TimeStep, b2Draw, b2Body, b2World } from "Box2D/Box2D/Box2D";
+    /**
+     * A controller edge is used to connect bodies and controllers
+     * together in a bipartite graph.
+     */
+    export class b2ControllerEdge {
+        controller: b2Controller;
+        body: b2Body;
+        prevBody: b2ControllerEdge;
+        nextBody: b2ControllerEdge;
+        prevController: b2ControllerEdge;
+        nextController: b2ControllerEdge;
+    }
+    /**
+     * Base class for controllers. Controllers are a convience for
+     * encapsulating common per-step functionality.
+     */
+    export abstract class b2Controller {
+        m_world: b2World;
+        m_bodyList: b2ControllerEdge;
+        m_bodyCount: number;
+        m_prev: b2Controller | null;
+        m_next: b2Controller | null;
+        /**
+         * Controllers override this to implement per-step functionality.
+         */
+        abstract Step(step: b2TimeStep): void;
+        /**
+         * Controllers override this to provide debug drawing.
+         */
+        abstract Draw(debugDraw: b2Draw): void;
+        /**
+         * Get the next controller in the world's body list.
+         */
+        GetNext(): b2Controller;
+        /**
+         * Get the previous controller in the world's body list.
+         */
+        GetPrev(): b2Controller;
+        /**
+         * Get the parent world of this body.
+         */
+        GetWorld(): b2World;
+        /**
+         * Get the attached body list
+         */
+        GetBodyList(): b2ControllerEdge;
+        /**
+         * Adds a body to the controller list.
+         */
+        AddBody(body: b2Body): void;
+        /**
+         * Removes a body from the controller list.
+         */
+        RemoveBody(body: b2Body): void;
+        /**
+         * Removes all bodies from the controller list.
+         */
+        Clear(): void;
+    }
+}
+declare module "Box2D/Box2D/Dynamics/b2World" {
+    import { b2Vec2, b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Color, b2Draw } from "Box2D/Box2D/Common/b2Draw";
+    import { b2AABB } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Shape } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Joint, b2JointDef } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Body, b2BodyDef } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2ContactManager } from "Box2D/Box2D/Dynamics/b2ContactManager";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2Island } from "Box2D/Box2D/Dynamics/b2Island";
+    import { b2Profile, b2TimeStep } from "Box2D/Box2D/Dynamics/b2TimeStep";
+    import { b2ContactFilter } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2DestructionListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2QueryCallback, b2QueryCallbackFunction } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2RayCastCallback, b2RayCastCallbackFunction } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    import { b2ParticleSystemDef, b2ParticleSystem } from "Box2D/Box2D/Particle/b2ParticleSystem";
+    import { b2Controller } from "Contributions/Enhancements/Controllers/b2Controller";
     export class b2World {
         m_newFixture: boolean;
         m_locked: boolean;
         m_clearForces: boolean;
         m_contactManager: b2ContactManager;
-        m_bodyList: b2Body;
-        m_jointList: b2Joint;
+        m_bodyList: b2Body | null;
+        m_jointList: b2Joint | null;
         m_particleSystemList: b2ParticleSystem;
         m_bodyCount: number;
         m_jointCount: number;
         m_gravity: b2Vec2;
         m_allowSleep: boolean;
-        m_destructionListener: b2DestructionListener;
-        m_debugDraw: b2Draw;
+        m_destructionListener: b2DestructionListener | null;
+        m_debugDraw: b2Draw | null;
         m_inv_dt0: number;
         m_warmStarting: boolean;
         m_continuousPhysics: boolean;
@@ -3600,6 +3644,8 @@ declare module "Box2D/Dynamics/b2World" {
         m_profile: b2Profile;
         m_island: b2Island;
         s_stack: b2Body[];
+        m_controllerList: b2Controller;
+        m_controllerCount: number;
         constructor(gravity: b2Vec2);
         SetDestructionListener(listener: b2DestructionListener): void;
         SetContactFilter(filter: b2ContactFilter): void;
@@ -3607,7 +3653,7 @@ declare module "Box2D/Dynamics/b2World" {
         SetDebugDraw(debugDraw: b2Draw): void;
         CreateBody(def: b2BodyDef): b2Body;
         DestroyBody(b: b2Body): void;
-        CreateJoint(def: b2JointDef): b2Joint;
+        CreateJoint<T extends b2Joint>(def: b2JointDef): T;
         DestroyJoint(j: b2Joint): void;
         CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem;
         DestroyParticleSystem(p: b2ParticleSystem): void;
@@ -3636,7 +3682,7 @@ declare module "Box2D/Dynamics/b2World" {
         GetBodyList(): b2Body;
         GetJointList(): b2Joint;
         GetParticleSystemList(): b2ParticleSystem;
-        GetContactList(): b2Contact;
+        GetContactList(): b2Contact | null;
         SetAllowSleeping(flag: boolean): void;
         GetAllowSleeping(): boolean;
         SetWarmStarting(flag: boolean): void;
@@ -3674,20 +3720,23 @@ declare module "Box2D/Dynamics/b2World" {
         private static SolveTOI_s_toi_input;
         private static SolveTOI_s_toi_output;
         SolveTOI(step: b2TimeStep): void;
+        AddController(controller: b2Controller): b2Controller;
+        RemoveController(controller: b2Controller): b2Controller;
     }
 }
-declare module "Box2D/Dynamics/b2Body" {
-    import { b2Vec2, b2Transform, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2Shape, b2MassData } from "Box2D/Collision/Shapes/b2Shape";
-    import { b2ContactEdge } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2JointEdge } from "Box2D/Dynamics/Joints/b2Joint";
-    import { b2Fixture, b2FixtureDef } from "Box2D/Dynamics/b2Fixture";
-    import { b2World } from "Box2D/Dynamics/b2World";
+declare module "Box2D/Box2D/Dynamics/b2Body" {
+    import { b2Vec2, b2Transform, b2Sweep } from "Box2D/Box2D/Common/b2Math";
+    import { b2Shape, b2MassData } from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    import { b2ContactEdge } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2JointEdge } from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    import { b2Fixture, b2FixtureDef } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2World } from "Box2D/Box2D/Dynamics/b2World";
+    import { b2ControllerEdge } from "Contributions/Enhancements/Controllers/b2Controller";
     export enum b2BodyType {
         b2_unknown = -1,
         b2_staticBody = 0,
         b2_kinematicBody = 1,
-        b2_dynamicBody = 2,
+        b2_dynamicBody = 2
     }
     export class b2BodyDef {
         type: b2BodyType;
@@ -3723,12 +3772,12 @@ declare module "Box2D/Dynamics/b2Body" {
         m_force: b2Vec2;
         m_torque: number;
         m_world: b2World;
-        m_prev: b2Body;
-        m_next: b2Body;
-        m_fixtureList: b2Fixture;
+        m_prev: b2Body | null;
+        m_next: b2Body | null;
+        m_fixtureList: b2Fixture | null;
         m_fixtureCount: number;
-        m_jointList: b2JointEdge;
-        m_contactList: b2ContactEdge;
+        m_jointList: b2JointEdge | null;
+        m_contactList: b2ContactEdge | null;
         m_mass: number;
         m_invMass: number;
         m_I: number;
@@ -3738,6 +3787,8 @@ declare module "Box2D/Dynamics/b2Body" {
         m_gravityScale: number;
         m_sleepTime: number;
         m_userData: any;
+        m_controllerList: b2ControllerEdge;
+        m_controllerCount: number;
         constructor(bd: b2BodyDef, world: b2World);
         CreateFixture(a: b2FixtureDef | b2Shape, b?: number): b2Fixture;
         CreateFixtureDef(def: b2FixtureDef): b2Fixture;
@@ -3799,10 +3850,10 @@ declare module "Box2D/Dynamics/b2Body" {
         IsActive(): boolean;
         SetFixedRotation(flag: boolean): void;
         IsFixedRotation(): boolean;
-        GetFixtureList(): b2Fixture;
-        GetJointList(): b2JointEdge;
-        GetContactList(): b2ContactEdge;
-        GetNext(): b2Body;
+        GetFixtureList(): b2Fixture | null;
+        GetJointList(): b2JointEdge | null;
+        GetContactList(): b2ContactEdge | null;
+        GetNext(): b2Body | null;
         GetUserData(): any;
         SetUserData(data: any): void;
         GetWorld(): b2World;
@@ -3813,14 +3864,16 @@ declare module "Box2D/Dynamics/b2Body" {
         ShouldCollide(other: b2Body): boolean;
         ShouldCollideConnected(other: b2Body): boolean;
         Advance(alpha: number): void;
+        GetControllerList(): b2ControllerEdge;
+        GetControllerCount(): number;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2Contact" {
-    import { b2Transform, b2Sweep } from "Box2D/Common/b2Math";
-    import { b2Manifold, b2WorldManifold } from "Box2D/Collision/b2Collision";
-    import { b2Body } from "Box2D/Dynamics/b2Body";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
-    import { b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2Contact" {
+    import { b2Transform, b2Sweep } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold, b2WorldManifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Body } from "Box2D/Box2D/Dynamics/b2Body";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
     export function b2MixFriction(friction1: number, friction2: number): number;
     export function b2MixRestitution(restitution1: number, restitution2: number): number;
     export class b2ContactEdge {
@@ -3878,19 +3931,19 @@ declare module "Box2D/Dynamics/Contacts/b2Contact" {
         ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
     }
 }
-declare module "Box2D/Collision/b2CollideCircle" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
+declare module "Box2D/Box2D/Collision/b2CollideCircle" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2CircleShape } from "Box2D/Box2D/Collision/Shapes/b2CircleShape";
+    import { b2PolygonShape } from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
     export function b2CollideCircles(manifold: b2Manifold, circleA: b2CircleShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
     export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2PolygonShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
 }
-declare module "Box2D/Dynamics/Contacts/b2CircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2CircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2CircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3899,17 +3952,17 @@ declare module "Box2D/Dynamics/Contacts/b2CircleContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Collision/b2CollidePolygon" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
+declare module "Box2D/Box2D/Collision/b2CollidePolygon" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2PolygonShape } from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
     export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, xfA: b2Transform, polyB: b2PolygonShape, xfB: b2Transform): void;
 }
-declare module "Box2D/Dynamics/Contacts/b2PolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2PolygonContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2PolygonContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3918,11 +3971,11 @@ declare module "Box2D/Dynamics/Contacts/b2PolygonContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2PolygonAndCircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3931,20 +3984,20 @@ declare module "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Collision/b2CollideEdge" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2CircleShape } from "Box2D/Collision/Shapes/b2CircleShape";
-    import { b2PolygonShape } from "Box2D/Collision/Shapes/b2PolygonShape";
-    import { b2EdgeShape } from "Box2D/Collision/Shapes/b2EdgeShape";
+declare module "Box2D/Box2D/Collision/b2CollideEdge" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2CircleShape } from "Box2D/Box2D/Collision/Shapes/b2CircleShape";
+    import { b2PolygonShape } from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
+    import { b2EdgeShape } from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
     export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, circleB: b2CircleShape, xfB: b2Transform): void;
     export function b2CollideEdgeAndPolygon(manifold: b2Manifold, edgeA: b2EdgeShape, xfA: b2Transform, polygonB: b2PolygonShape, xfB: b2Transform): void;
 }
-declare module "Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2EdgeAndCircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3953,11 +4006,11 @@ declare module "Box2D/Dynamics/Contacts/b2EdgeAndCircleContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2EdgeAndPolygonContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3966,11 +4019,11 @@ declare module "Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2ChainAndCircleContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3980,11 +4033,11 @@ declare module "Box2D/Dynamics/Contacts/b2ChainAndCircleContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
-    import { b2Transform } from "Box2D/Common/b2Math";
-    import { b2Manifold } from "Box2D/Collision/b2Collision";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
+    import { b2Transform } from "Box2D/Box2D/Common/b2Math";
+    import { b2Manifold } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2ChainAndPolygonContact extends b2Contact {
         constructor();
         static Create(allocator: any): b2Contact;
@@ -3994,9 +4047,9 @@ declare module "Box2D/Dynamics/Contacts/b2ChainAndPolygonContact" {
         Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
     }
 }
-declare module "Box2D/Dynamics/Contacts/b2ContactFactory" {
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2Fixture } from "Box2D/Dynamics/b2Fixture";
+declare module "Box2D/Box2D/Dynamics/Contacts/b2ContactFactory" {
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2Fixture } from "Box2D/Box2D/Dynamics/b2Fixture";
     export class b2ContactRegister {
         pool: b2Contact[];
         createFcn: {
@@ -4011,37 +4064,38 @@ declare module "Box2D/Dynamics/Contacts/b2ContactFactory" {
         m_allocator: any;
         m_registers: b2ContactRegister[][];
         constructor(allocator: any);
-        private AddType(createFcn, destroyFcn, type1, type2);
-        private InitializeRegisters();
+        private AddType;
+        private InitializeRegisters;
         Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact;
         Destroy(contact: b2Contact): void;
     }
 }
-declare module "Box2D/Dynamics/b2ContactManager" {
-    import { b2BroadPhase } from "Box2D/Collision/b2BroadPhase";
-    import { b2Contact } from "Box2D/Dynamics/Contacts/b2Contact";
-    import { b2ContactFactory } from "Box2D/Dynamics/Contacts/b2ContactFactory";
-    import { b2ContactFilter, b2ContactListener } from "Box2D/Dynamics/b2WorldCallbacks";
+declare module "Box2D/Box2D/Dynamics/b2ContactManager" {
+    import { b2BroadPhase } from "Box2D/Box2D/Collision/b2BroadPhase";
+    import { b2Contact } from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    import { b2ContactFactory } from "Box2D/Box2D/Dynamics/Contacts/b2ContactFactory";
+    import { b2FixtureProxy } from "Box2D/Box2D/Dynamics/b2Fixture";
+    import { b2ContactFilter, b2ContactListener } from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
     export class b2ContactManager {
         m_broadPhase: b2BroadPhase;
-        m_contactList: b2Contact;
+        m_contactList: b2Contact | null;
         m_contactCount: number;
         m_contactFilter: b2ContactFilter;
         m_contactListener: b2ContactListener;
         m_allocator: any;
         m_contactFactory: b2ContactFactory;
         constructor();
-        AddPair(proxyUserDataA: any, proxyUserDataB: any): void;
+        AddPair(proxyA: b2FixtureProxy, proxyB: b2FixtureProxy): void;
         FindNewContacts(): void;
         Destroy(c: b2Contact): void;
         Collide(): void;
     }
 }
-declare module "Box2D/Collision/b2BroadPhase" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2AABB, b2RayCastInput } from "Box2D/Collision/b2Collision";
-    import { b2TreeNode, b2DynamicTree } from "Box2D/Collision/b2DynamicTree";
-    import { b2ContactManager } from "Box2D/Dynamics/b2ContactManager";
+declare module "Box2D/Box2D/Collision/b2BroadPhase" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2AABB, b2RayCastInput } from "Box2D/Box2D/Collision/b2Collision";
+    import { b2TreeNode, b2DynamicTree } from "Box2D/Box2D/Collision/b2DynamicTree";
+    import { b2ContactManager } from "Box2D/Box2D/Dynamics/b2ContactManager";
     export class b2Pair {
         proxyA: b2TreeNode | null;
         proxyB: b2TreeNode | null;
@@ -4073,9 +4127,9 @@ declare module "Box2D/Collision/b2BroadPhase" {
     }
     export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number;
 }
-declare module "Box2D/Rope/b2Rope" {
-    import { b2Vec2 } from "Box2D/Common/b2Math";
-    import { b2Draw } from "Box2D/Common/b2Draw";
+declare module "Box2D/Box2D/Rope/b2Rope" {
+    import { b2Vec2 } from "Box2D/Box2D/Common/b2Math";
+    import { b2Draw } from "Box2D/Box2D/Common/b2Draw";
     export class b2RopeDef {
         vertices: b2Vec2[];
         count: number;
@@ -4114,7 +4168,7 @@ declare module "Box2D/Rope/b2Rope" {
         Draw(draw: b2Draw): void;
     }
 }
-declare module "Box2D/Box2D" {
+declare module "Box2D/Box2D/Box2D" {
     /**
     \mainpage Box2D API Documentation
     
@@ -4124,64 +4178,64 @@ declare module "Box2D/Box2D" {
     
     For discussion please visit http://box2d.org/forum
     */
-    export * from "Box2D/Common/b2Settings";
-    export * from "Box2D/Common/b2Math";
-    export * from "Box2D/Common/b2Draw";
-    export * from "Box2D/Common/b2Timer";
-    export * from "Box2D/Common/b2GrowableStack";
-    export * from "Box2D/Common/b2BlockAllocator";
-    export * from "Box2D/Common/b2StackAllocator";
-    export * from "Box2D/Collision/b2Collision";
-    export * from "Box2D/Collision/b2Distance";
-    export * from "Box2D/Collision/b2BroadPhase";
-    export * from "Box2D/Collision/b2DynamicTree";
-    export * from "Box2D/Collision/b2TimeOfImpact";
-    export * from "Box2D/Collision/b2CollideCircle";
-    export * from "Box2D/Collision/b2CollidePolygon";
-    export * from "Box2D/Collision/b2CollideEdge";
-    export * from "Box2D/Collision/Shapes/b2Shape";
-    export * from "Box2D/Collision/Shapes/b2CircleShape";
-    export * from "Box2D/Collision/Shapes/b2PolygonShape";
-    export * from "Box2D/Collision/Shapes/b2EdgeShape";
-    export * from "Box2D/Collision/Shapes/b2ChainShape";
-    export * from "Box2D/Dynamics/b2Fixture";
-    export * from "Box2D/Dynamics/b2Body";
-    export * from "Box2D/Dynamics/b2World";
-    export * from "Box2D/Dynamics/b2WorldCallbacks";
-    export * from "Box2D/Dynamics/b2Island";
-    export * from "Box2D/Dynamics/b2TimeStep";
-    export * from "Box2D/Dynamics/b2ContactManager";
-    export * from "Box2D/Dynamics/Contacts/b2Contact";
-    export * from "Box2D/Dynamics/Contacts/b2ContactFactory";
-    export * from "Box2D/Dynamics/Contacts/b2ContactSolver";
-    export * from "Box2D/Dynamics/Contacts/b2CircleContact";
-    export * from "Box2D/Dynamics/Contacts/b2PolygonContact";
-    export * from "Box2D/Dynamics/Contacts/b2PolygonAndCircleContact";
-    export * from "Box2D/Dynamics/Contacts/b2EdgeAndCircleContact";
-    export * from "Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact";
-    export * from "Box2D/Dynamics/Contacts/b2ChainAndCircleContact";
-    export * from "Box2D/Dynamics/Contacts/b2ChainAndPolygonContact";
-    export * from "Box2D/Dynamics/Joints/b2Joint";
-    export * from "Box2D/Dynamics/Joints/b2JointFactory";
-    export * from "Box2D/Dynamics/Joints/b2AreaJoint";
-    export * from "Box2D/Dynamics/Joints/b2DistanceJoint";
-    export * from "Box2D/Dynamics/Joints/b2FrictionJoint";
-    export * from "Box2D/Dynamics/Joints/b2GearJoint";
-    export * from "Box2D/Dynamics/Joints/b2MotorJoint";
-    export * from "Box2D/Dynamics/Joints/b2MouseJoint";
-    export * from "Box2D/Dynamics/Joints/b2PrismaticJoint";
-    export * from "Box2D/Dynamics/Joints/b2PulleyJoint";
-    export * from "Box2D/Dynamics/Joints/b2RevoluteJoint";
-    export * from "Box2D/Dynamics/Joints/b2RopeJoint";
-    export * from "Box2D/Dynamics/Joints/b2WeldJoint";
-    export * from "Box2D/Dynamics/Joints/b2WheelJoint";
-    export * from "Box2D/Particle/b2Particle";
-    export * from "Box2D/Particle/b2ParticleGroup";
-    export * from "Box2D/Particle/b2ParticleSystem";
-    export * from "Box2D/Rope/b2Rope";
+    export * from "Box2D/Box2D/Common/b2Settings";
+    export * from "Box2D/Box2D/Common/b2Math";
+    export * from "Box2D/Box2D/Common/b2Draw";
+    export * from "Box2D/Box2D/Common/b2Timer";
+    export * from "Box2D/Box2D/Common/b2GrowableStack";
+    export * from "Box2D/Box2D/Common/b2BlockAllocator";
+    export * from "Box2D/Box2D/Common/b2StackAllocator";
+    export * from "Box2D/Box2D/Collision/b2Collision";
+    export * from "Box2D/Box2D/Collision/b2Distance";
+    export * from "Box2D/Box2D/Collision/b2BroadPhase";
+    export * from "Box2D/Box2D/Collision/b2DynamicTree";
+    export * from "Box2D/Box2D/Collision/b2TimeOfImpact";
+    export * from "Box2D/Box2D/Collision/b2CollideCircle";
+    export * from "Box2D/Box2D/Collision/b2CollidePolygon";
+    export * from "Box2D/Box2D/Collision/b2CollideEdge";
+    export * from "Box2D/Box2D/Collision/Shapes/b2Shape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2CircleShape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2PolygonShape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2EdgeShape";
+    export * from "Box2D/Box2D/Collision/Shapes/b2ChainShape";
+    export * from "Box2D/Box2D/Dynamics/b2Fixture";
+    export * from "Box2D/Box2D/Dynamics/b2Body";
+    export * from "Box2D/Box2D/Dynamics/b2World";
+    export * from "Box2D/Box2D/Dynamics/b2WorldCallbacks";
+    export * from "Box2D/Box2D/Dynamics/b2Island";
+    export * from "Box2D/Box2D/Dynamics/b2TimeStep";
+    export * from "Box2D/Box2D/Dynamics/b2ContactManager";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2Contact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ContactFactory";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ContactSolver";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2CircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2PolygonContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ChainAndCircleContact";
+    export * from "Box2D/Box2D/Dynamics/Contacts/b2ChainAndPolygonContact";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2Joint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2JointFactory";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2AreaJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2DistanceJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2FrictionJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2GearJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2MotorJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2MouseJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2PrismaticJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2PulleyJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2RevoluteJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2RopeJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2WeldJoint";
+    export * from "Box2D/Box2D/Dynamics/Joints/b2WheelJoint";
+    export * from "Box2D/Box2D/Particle/b2Particle";
+    export * from "Box2D/Box2D/Particle/b2ParticleGroup";
+    export * from "Box2D/Box2D/Particle/b2ParticleSystem";
+    export * from "Box2D/Box2D/Rope/b2Rope";
 }
-declare module "Testbed/Framework/DebugDraw" {
-    import * as box2d from "Box2D/Box2D";
+declare module "Box2D/Testbed/Framework/DebugDraw" {
+    import * as box2d from "Box2D/Box2D/Box2D";
     export class Camera {
         m_center: box2d.b2Vec2;
         m_extent: number;
@@ -4201,7 +4255,7 @@ declare module "Testbed/Framework/DebugDraw" {
         ConvertElementToProjection(element: box2d.b2Vec2, out: box2d.b2Vec2): box2d.b2Vec2;
     }
     export class DebugDraw extends box2d.b2Draw {
-        m_ctx: CanvasRenderingContext2D;
+        m_ctx: CanvasRenderingContext2D | null;
         constructor();
         PushTransform(xf: box2d.b2Transform): void;
         PopTransform(xf: box2d.b2Transform): void;
@@ -4224,7 +4278,7 @@ declare module "Testbed/Framework/DebugDraw" {
     export const g_debugDraw: DebugDraw;
     export const g_camera: Camera;
 }
-declare module "Testbed/Framework/ParticleParameter" {
+declare module "Box2D/Testbed/Framework/ParticleParameter" {
     export enum ParticleParameterOptions {
         OptionStrictContacts = 1,
         OptionDrawShapes = 2,
@@ -4237,7 +4291,7 @@ declare module "Testbed/Framework/ParticleParameter" {
         OptionDrawFrictionImpulse = 256,
         OptionDrawCOMs = 512,
         OptionDrawStats = 1024,
-        OptionDrawProfile = 2048,
+        OptionDrawProfile = 2048
     }
     export class ParticleParameterValue {
         /**
@@ -4302,9 +4356,9 @@ declare module "Testbed/Framework/ParticleParameter" {
         }
     }
 }
-declare module "Testbed/Framework/Test" {
-    import * as box2d from "Box2D/Box2D";
-    import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
+declare module "Box2D/Testbed/Framework/Test" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import { ParticleParameter } from "Box2D/Testbed/Framework/ParticleParameter";
     export const DRAW_STRING_NEW_LINE: number;
     export function RandomFloat(lo?: number, hi?: number): number;
     export class Settings {
@@ -4342,7 +4396,7 @@ declare module "Testbed/Framework/Test" {
         constructor(test: Test);
         SayGoodbyeJoint(joint: box2d.b2Joint): void;
         SayGoodbyeFixture(fixture: box2d.b2Fixture): void;
-        SayGoodbyeParticleGroup(group: any): void;
+        SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void;
     }
     export class ContactPoint {
         fixtureA: box2d.b2Fixture;
@@ -4378,7 +4432,7 @@ declare module "Testbed/Framework/Test" {
         m_particleParameterDef: ParticleParameter.Definition;
         constructor();
         JointDestroyed(joint: box2d.b2Joint): void;
-        ParticleGroupDestroyed(group: any): void;
+        ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
         BeginContact(contact: box2d.b2Contact): void;
         EndContact(contact: box2d.b2Contact): void;
         private static PreSolve_s_state1;
@@ -4412,32 +4466,108 @@ declare module "Testbed/Framework/Test" {
          * If particlesPerColor is 0, the particles in the group are
          * divided into k_ParticleColorsCount equal sets of colored
          * particles.
-         *
-         * @export
-         * @return {void}
-         * @param {box2d.b2ParticleGroup} group
-         * @param {number} particlesPerColor
          */
         ColorParticleGroup(group: box2d.b2ParticleGroup, particlesPerColor: number): void;
         /**
          * Remove particle parameters matching "filterMask" from the set
          * of particle parameters available for this test.
-         * @export
-         * @return {void}
-         * @param {number} filterMask
          */
-        InitializeParticleParameters(filterMask: any): void;
+        InitializeParticleParameters(filterMask: number): void;
         /**
          * Restore default particle parameters.
-         * @export
-         * @return void
          */
         RestoreParticleParameters(): void;
     }
 }
-declare module "Testbed/Tests/Car" {
-    import * as box2d from "Box2D/Box2D";
-    import * as testbed from "Testbed/Testbed";
+declare module "Box2D/Testbed/Tests/AddPair" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class AddPair extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/ApplyForce" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ApplyForce extends testbed.Test {
+        m_body: box2d.b2Body;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/BodyTypes" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class BodyTypes extends testbed.Test {
+        m_attachment: box2d.b2Body;
+        m_platform: box2d.b2Body;
+        m_speed: number;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Breakable" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Breakable extends testbed.Test {
+        static readonly e_count: number;
+        readonly m_body1: box2d.b2Body;
+        readonly m_velocity: box2d.b2Vec2;
+        m_angularVelocity: number;
+        readonly m_shape1: box2d.b2PolygonShape;
+        readonly m_shape2: box2d.b2PolygonShape;
+        m_piece1: box2d.b2Fixture;
+        m_piece2: box2d.b2Fixture;
+        m_broke: boolean;
+        m_break: boolean;
+        constructor();
+        PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void;
+        Break(): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Bridge" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Bridge extends testbed.Test {
+        static readonly e_count: number;
+        m_middle: box2d.b2Body;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/BulletTest" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class BulletTest extends testbed.Test {
+        m_body: box2d.b2Body;
+        m_bullet: box2d.b2Body;
+        m_x: number;
+        constructor();
+        Launch(): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Cantilever" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Cantilever extends testbed.Test {
+        static readonly e_count: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Car" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
     export class Car extends testbed.Test {
         m_car: box2d.b2Body;
         m_wheel1: box2d.b2Body;
@@ -4453,18 +4583,380 @@ declare module "Testbed/Tests/Car" {
         static Create(): testbed.Test;
     }
 }
-declare module "Testbed/Tests/MotorJoint2" {
-    import * as box2d from "Box2D/Box2D";
-    import * as testbed from "Testbed/Testbed";
-    export class MotorJoint2 extends testbed.Test {
+declare module "Box2D/Testbed/Tests/ContinuousTest" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ContinuousTest extends testbed.Test {
+        m_body: box2d.b2Body;
+        m_angularVelocity: number;
         constructor();
-        m_joint: box2d.b2MotorJoint;
+        Launch(): void;
         Step(settings: testbed.Settings): void;
         static Create(): testbed.Test;
     }
 }
-declare module "Testbed/Tests/RayCast" {
-    import * as testbed from "Testbed/Testbed";
+declare module "Box2D/Testbed/Tests/Chain" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Chain extends testbed.Test {
+        static readonly e_count: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/CharacterCollision" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class CharacterCollision extends testbed.Test {
+        m_character: box2d.b2Body;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/CollisionFiltering" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class CollisionFiltering extends testbed.Test {
+        static readonly k_smallGroup: number;
+        static readonly k_largeGroup: number;
+        static readonly k_defaultCategory: number;
+        static readonly k_triangleCategory: number;
+        static readonly k_boxCategory: number;
+        static readonly k_circleCategory: number;
+        static readonly k_triangleMask: number;
+        static readonly k_boxMask: number;
+        static readonly k_circleMask: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/CollisionProcessing" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class CollisionProcessing extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/CompoundShapes" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class CompoundShapes extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Confined" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Confined extends testbed.Test {
+        static readonly e_columnCount: number;
+        static readonly e_rowCount: number;
+        constructor();
+        CreateCircle(): void;
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/ConvexHull" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ConvexHull extends testbed.Test {
+        static readonly e_count: number;
+        m_test_points: box2d.b2Vec2[];
+        m_count: number;
+        m_auto: boolean;
+        constructor();
+        Generate(): void;
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/ConveyorBelt" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ConveyorBelt extends testbed.Test {
+        m_platform: box2d.b2Fixture;
+        constructor();
+        PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/DistanceTest" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class DistanceTest extends testbed.Test {
+        m_positionB: box2d.b2Vec2;
+        m_angleB: number;
+        m_transformA: box2d.b2Transform;
+        m_transformB: box2d.b2Transform;
+        m_polygonA: box2d.b2PolygonShape;
+        m_polygonB: box2d.b2PolygonShape;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Dominos" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Dominos extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/DumpShell" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class DumpShell extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/DynamicTreeTest" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class DynamicTreeTest extends testbed.Test {
+        static e_actorCount: number;
+        m_worldExtent: number;
+        m_proxyExtent: number;
+        m_tree: box2d.b2DynamicTree;
+        m_queryAABB: box2d.b2AABB;
+        m_rayCastInput: box2d.b2RayCastInput;
+        m_rayCastOutput: box2d.b2RayCastOutput;
+        m_rayActor: DynamicTreeTest.Actor | null;
+        m_actors: DynamicTreeTest.Actor[];
+        m_stepCount: number;
+        m_automated: boolean;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        Keyboard(key: string): void;
+        GetRandomAABB(aabb: box2d.b2AABB): void;
+        MoveAABB(aabb: box2d.b2AABB): void;
+        CreateProxy(): void;
+        DestroyProxy(): void;
+        MoveProxy(): void;
+        Action(): void;
+        Query(): void;
+        RayCast(): void;
+        static Create(): testbed.Test;
+    }
+    export namespace DynamicTreeTest {
+        class Actor {
+            aabb: box2d.b2AABB;
+            fraction: number;
+            overlap: boolean;
+            proxyId: box2d.b2TreeNode | null;
+        }
+    }
+}
+declare module "Box2D/Testbed/Tests/EdgeShapes" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class EdgeShapesCallback extends box2d.b2RayCastCallback {
+        m_fixture: box2d.b2Fixture;
+        m_point: box2d.b2Vec2;
+        m_normal: box2d.b2Vec2;
+        ReportFixture(fixture: box2d.b2Fixture, point: box2d.b2Vec2, normal: box2d.b2Vec2, fraction: number): number;
+    }
+    export class EdgeShapes extends testbed.Test {
+        static readonly e_maxBodies: number;
+        m_bodyIndex: number;
+        m_bodies: box2d.b2Body[];
+        m_polygons: box2d.b2PolygonShape[];
+        m_circle: box2d.b2CircleShape;
+        m_angle: number;
+        constructor();
+        CreateBody(index: number): void;
+        DestroyBody(): void;
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/EdgeTest" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class EdgeTest extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Gears" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Gears extends testbed.Test {
+        m_joint1: box2d.b2RevoluteJoint;
+        m_joint2: box2d.b2RevoluteJoint;
+        m_joint3: box2d.b2RevoluteJoint;
+        m_joint4: box2d.b2RevoluteJoint;
+        m_joint5: box2d.b2RevoluteJoint;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Mobile" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Mobile extends testbed.Test {
+        static readonly e_depth: number;
+        constructor();
+        AddNode(parent: box2d.b2Body, localAnchor: box2d.b2Vec2, depth: number, offset: number, a: number): box2d.b2Body;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/MobileBalanced" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class MobileBalanced extends testbed.Test {
+        static readonly e_depth: number;
+        constructor();
+        AddNode(parent: box2d.b2Body, localAnchor: box2d.b2Vec2, depth: number, offset: number, a: number): box2d.b2Body;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/MotorJoint" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class MotorJoint extends testbed.Test {
+        m_joint: box2d.b2MotorJoint;
+        m_time: number;
+        m_go: boolean;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/OneSidedPlatform" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class OneSidedPlatform extends testbed.Test {
+        m_radius: number;
+        m_top: number;
+        m_bottom: number;
+        m_state: OneSidedPlatform.State;
+        m_platform: box2d.b2Fixture;
+        m_character: box2d.b2Fixture;
+        constructor();
+        PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+    export namespace OneSidedPlatform {
+        enum State {
+            e_unknown = 0,
+            e_above = 1,
+            e_below = 2
+        }
+    }
+}
+declare module "Box2D/Testbed/Tests/Pinball" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * This tests bullet collision and provides an example of a
+     * gameplay scenario. This also uses a loop shape.
+     */
+    export class Pinball extends testbed.Test {
+        m_leftJoint: box2d.b2RevoluteJoint;
+        m_rightJoint: box2d.b2RevoluteJoint;
+        m_ball: box2d.b2Body;
+        m_button: boolean;
+        constructor();
+        Keyboard(key: string): void;
+        KeyboardUp(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/PolyCollision" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class PolyCollision extends testbed.Test {
+        m_polygonA: box2d.b2PolygonShape;
+        m_polygonB: box2d.b2PolygonShape;
+        m_transformA: box2d.b2Transform;
+        m_transformB: box2d.b2Transform;
+        m_positionB: box2d.b2Vec2;
+        m_angleB: number;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/PolyShapes" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * This callback is called by box2d.b2World::QueryAABB. We find
+     * all the fixtures that overlap an AABB. Of those, we use
+     * b2TestOverlap to determine which fixtures overlap a circle.
+     * Up to 4 overlapped fixtures will be highlighted with a yellow
+     * border.
+     */
+    export class PolyShapesCallback extends box2d.b2QueryCallback {
+        static readonly e_maxCount: number;
+        m_circle: box2d.b2CircleShape;
+        m_transform: box2d.b2Transform;
+        m_count: number;
+        ReportFixture(fixture: box2d.b2Fixture): boolean;
+        DrawFixture(fixture: box2d.b2Fixture): void;
+    }
+    export class PolyShapes extends testbed.Test {
+        static readonly e_maxBodies: number;
+        m_bodyIndex: number;
+        m_bodies: any[];
+        m_polygons: box2d.b2PolygonShape[];
+        m_circle: box2d.b2CircleShape;
+        constructor();
+        CreateBody(index: number): void;
+        DestroyBody(): void;
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Prismatic" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Prismatic extends testbed.Test {
+        m_joint: box2d.b2PrismaticJoint;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Pulleys" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Pulleys extends testbed.Test {
+        m_joint1: box2d.b2PulleyJoint;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Pyramid" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Pyramid extends testbed.Test {
+        static readonly e_count: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/RayCast" {
+    import * as testbed from "Box2D/Testbed/Testbed";
     export class RayCast extends testbed.Test {
         private static e_maxBodies;
         private m_bodyIndex;
@@ -4482,9 +4974,75 @@ declare module "Testbed/Tests/RayCast" {
         static Create(): testbed.Test;
     }
 }
-declare module "Testbed/Tests/SphereStack" {
-    import * as box2d from "Box2D/Box2D";
-    import * as testbed from "Testbed/Testbed";
+declare module "Box2D/Testbed/Tests/Revolute" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Revolute extends testbed.Test {
+        m_ball: box2d.b2Body;
+        m_joint: box2d.b2RevoluteJoint;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/RopeJoint" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class RopeJoint extends testbed.Test {
+        m_ropeDef: box2d.b2RopeJointDef;
+        m_rope: box2d.b2RopeJoint;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/SensorTest" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class SensorTest extends testbed.Test {
+        static e_count: number;
+        m_sensor: box2d.b2Fixture;
+        m_bodies: box2d.b2Body[];
+        m_touching: boolean[][];
+        constructor();
+        BeginContact(contact: box2d.b2Contact): void;
+        EndContact(contact: box2d.b2Contact): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/ShapeEditing" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ShapeEditing extends testbed.Test {
+        m_body: box2d.b2Body;
+        m_fixture1: box2d.b2Fixture;
+        m_fixture2: box2d.b2Fixture;
+        m_sensor: boolean;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/SliderCrank" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class SliderCrank extends testbed.Test {
+        static readonly e_count: number;
+        m_joint1: box2d.b2RevoluteJoint;
+        m_joint2: box2d.b2PrismaticJoint;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/SphereStack" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
     export class SphereStack extends testbed.Test {
         static e_count: number;
         m_bodies: box2d.b2Body[];
@@ -4493,16 +5051,577 @@ declare module "Testbed/Tests/SphereStack" {
         static Create(): testbed.Test;
     }
 }
-declare module "Testbed/Tests/ElasticParticles" {
-    import * as testbed from "Testbed/Testbed";
-    export class ElasticParticles extends testbed.Test {
+declare module "Box2D/Testbed/Tests/TheoJansen" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class TheoJansen extends testbed.Test {
+        m_offset: box2d.b2Vec2;
+        m_chassis: box2d.b2Body;
+        m_wheel: box2d.b2Body;
+        m_motorJoint: box2d.b2RevoluteJoint;
+        m_motorOn: boolean;
+        m_motorSpeed: number;
         constructor();
-        GetDefaultViewZoom(): number;
-        static Create(): ElasticParticles;
+        CreateLeg(s: number, wheelAnchor: box2d.b2Vec2): void;
+        Construct(): void;
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
     }
 }
-declare module "Testbed/Framework/ParticleEmitter" {
-    import * as box2d from "Box2D/Box2D";
+declare module "Box2D/Testbed/Tests/Tiles" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * This stress tests the dynamic tree broad-phase. This also
+     * shows that tile based collision is _not_ smooth due to Box2D
+     * not knowing about adjacency.
+     */
+    export class Tiles extends testbed.Test {
+        static readonly e_count: number;
+        m_fixtureCount: number;
+        m_createTime: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/TimeOfImpact" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class TimeOfImpact extends testbed.Test {
+        m_shapeA: box2d.b2PolygonShape;
+        m_shapeB: box2d.b2PolygonShape;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Tumbler" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Tumbler extends testbed.Test {
+        static readonly e_count: number;
+        m_joint: box2d.b2RevoluteJoint;
+        m_count: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/VaryingFriction" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class VaryingFriction extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/VaryingRestitution" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class VaryingRestitution extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/VerticalStack" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class VerticalStack extends testbed.Test {
+        static e_columnCount: number;
+        static e_rowCount: number;
+        m_bullet: box2d.b2Body;
+        m_bodies: box2d.b2Body[];
+        m_indices: number[];
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Web" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Web extends testbed.Test {
+        m_bodies: box2d.b2Body[];
+        m_joints: box2d.b2Joint[];
+        constructor();
+        JointDestroyed(joint: box2d.b2Joint): void;
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Rope" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Rope extends testbed.Test {
+        m_rope: box2d.b2Rope;
+        m_angle: number;
+        constructor();
+        Keyboard(key: string): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/MotorJoint2" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class MotorJoint2 extends testbed.Test {
+        constructor();
+        m_joint: box2d.b2MotorJoint;
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/BlobTest" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class BlobTest extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/TestCCD" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class TestCCD extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/TestRagdoll" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class TestRagdoll extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/TestStack" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class TestStack extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/BasicSliderCrank" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class BasicSliderCrank extends testbed.Test {
+        constructor();
+        static Create(): BasicSliderCrank;
+    }
+}
+declare module "Box2D/Testbed/Tests/PyramidTopple" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class PyramidTopple extends testbed.Test {
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): PyramidTopple;
+    }
+}
+declare module "Box2D/Testbed/Tests/DominoTower" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class DominoTower extends testbed.Test {
+        constructor();
+        static Create(): DominoTower;
+    }
+}
+declare module "Box2D/Testbed/Tests/HeavyOnLight" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class HeavyOnLight extends testbed.Test {
+        constructor();
+        static Create(): HeavyOnLight;
+    }
+}
+declare module "Box2D/Testbed/Tests/HeavyOnLightTwo" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class HeavyOnLightTwo extends testbed.Test {
+        m_heavy: box2d.b2Body | null;
+        constructor();
+        ToggleHeavy(): void;
+        Keyboard(key: string): void;
+        static Create(): HeavyOnLightTwo;
+    }
+}
+declare module "Box2D/Testbed/Tests/TopdownCar" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * a class to allow subclassing of different fixture user data
+     */
+    export class FixtureUserData {
+        m_type: number;
+        constructor(type: number);
+        getType(): number;
+    }
+    /**
+     * class to allow marking a fixture as a car tire
+     */
+    export class CarTireFUD extends FixtureUserData {
+        constructor();
+    }
+    export class GroundAreaFUD extends FixtureUserData {
+        frictionModifier: number;
+        outOfCourse: boolean;
+        constructor(fm: number, ooc: boolean);
+    }
+    export class TDTire {
+        m_groundAreas: any[];
+        m_body: box2d.b2Body;
+        m_currentTraction: number;
+        m_maxForwardSpeed: number;
+        m_maxBackwardSpeed: number;
+        m_maxDriveForce: number;
+        m_maxLateralImpulse: number;
+        constructor(world: box2d.b2World);
+        setCharacteristics(maxForwardSpeed: number, maxBackwardSpeed: number, maxDriveForce: number, maxLateralImpulse: number): void;
+        addGroundArea(ga: FixtureUserData): void;
+        removeGroundArea(ga: FixtureUserData): void;
+        updateTraction(): void;
+        getLateralVelocity(): box2d.b2Vec2;
+        getForwardVelocity(): box2d.b2Vec2;
+        updateFriction(): void;
+        updateDrive(controlState: number): void;
+        updateTurn(controlState: number): void;
+    }
+    export class TDCar {
+        m_tires: any[];
+        m_body: box2d.b2Body;
+        flJoint: box2d.b2RevoluteJoint;
+        frJoint: box2d.b2RevoluteJoint;
+        constructor(world: box2d.b2World);
+        update(controlState: number): void;
+    }
+    export class MyDestructionListener extends testbed.DestructionListener {
+        SayGoodbyeFixture(fixture: box2d.b2Fixture): void;
+        /**
+         * (unused but must implement all pure virtual functions)
+         */
+        SayGoodbyeJoint(joint: box2d.b2Joint): void;
+    }
+    export class TopdownCar extends testbed.Test {
+        m_car: TDCar;
+        m_controlState: number;
+        constructor();
+        Keyboard(key: string): void;
+        KeyboardUp(key: string): void;
+        static handleContact(contact: box2d.b2Contact, began: boolean): void;
+        BeginContact(contact: box2d.b2Contact): void;
+        EndContact(contact: box2d.b2Contact): void;
+        static tire_vs_groundArea(tireFixture: box2d.b2Fixture, groundAreaFixture: box2d.b2Fixture, began: boolean): void;
+        Step(settings: testbed.Settings): void;
+        static Create(): TopdownCar;
+    }
+}
+declare module "Contributions/Enhancements/Controllers/b2BuoyancyController" {
+    import { b2Controller } from "Contributions/Enhancements/Controllers/b2Controller";
+    import { b2Vec2, b2TimeStep, b2Draw } from "Box2D/Box2D/Box2D";
+    /**
+     * Calculates buoyancy forces for fluids in the form of a half
+     * plane.
+     */
+    export class b2BuoyancyController extends b2Controller {
+        /**
+         * The outer surface normal
+         */
+        normal: b2Vec2;
+        /**
+         * The height of the fluid surface along the normal
+         */
+        offset: number;
+        /**
+         * The fluid density
+         */
+        density: number;
+        /**
+         * Fluid velocity, for drag calculations
+         */
+        velocity: b2Vec2;
+        /**
+         * Linear drag co-efficient
+         */
+        linearDrag: number;
+        /**
+         * Angular drag co-efficient
+         */
+        angularDrag: number;
+        /**
+         * If false, bodies are assumed to be uniformly dense, otherwise
+         * use the shapes densities
+         */
+        useDensity: boolean;
+        /**
+         * If true, gravity is taken from the world instead of the
+         */
+        useWorldGravity: boolean;
+        /**
+         * Gravity vector, if the world's gravity is not used
+         */
+        gravity: b2Vec2;
+        Step(step: b2TimeStep): void;
+        Draw(debugDraw: b2Draw): void;
+    }
+}
+declare module "Box2D/Testbed/Tests/BuoyancyTest" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    import { b2BuoyancyController } from "Contributions/Enhancements/Controllers/b2BuoyancyController";
+    export class BuoyancyTest extends testbed.Test {
+        m_bodies: box2d.b2Body[];
+        m_controller: b2BuoyancyController;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/Sandbox" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class SandboxParams {
+        /**
+         * Total possible pump squares
+         */
+        static readonly k_maxPumps: number;
+        /**
+         * Total possible emitters
+         */
+        static readonly k_maxEmitters: number;
+        /**
+         * Number of seconds to push one direction or the other on the
+         * pumps
+         */
+        static readonly k_flipTime: number;
+        /**
+         * Radius of a tile
+         */
+        static readonly k_tileRadius: number;
+        /**
+         * Diameter of a tile
+         */
+        static readonly k_tileDiameter: number;
+        /**
+         * Pump radius; slightly smaller than a tile
+         */
+        static readonly k_pumpRadius: number;
+        static readonly k_playfieldLeftEdge: number;
+        static readonly k_playfieldRightEdge: number;
+        static readonly k_playfieldBottomEdge: number;
+        /**
+         * The world size in the TILE
+         */
+        static readonly k_tileWidth: number;
+        static readonly k_tileHeight: number;
+        /**
+         * Particles/second
+         */
+        static readonly k_defaultEmitterRate: number;
+        /**
+         * Fit cleanly inside one block
+         */
+        static readonly k_defaultEmitterSize: number;
+        /**
+         * How fast particles coming out of the particles should drop
+         */
+        static readonly k_particleExitSpeedY: number;
+        /**
+         * How hard the pumps can push
+         */
+        static readonly k_pumpForce: number;
+        /**
+         * Number of *special* particles.
+         */
+        static readonly k_numberOfSpecialParticles: number;
+    }
+    /**
+     * Class which tracks a set of particles and applies a special
+     * effect to them.
+     */
+    export class SpecialParticleTracker extends box2d.b2DestructionListener {
+        /**
+         * Set of particle handles used to track special particles.
+         */
+        m_particles: box2d.b2ParticleHandle[];
+        /**
+         * Pointer to the world used to enable / disable this class as a
+         * destruction listener.
+         */
+        m_world: box2d.b2World;
+        /**
+         * Pointer to the particle system used to retrieve particle
+         * handles.
+         */
+        m_particleSystem: box2d.b2ParticleSystem;
+        /**
+         * Current offset into this.m_colorOscillationPeriod.
+         */
+        m_colorOscillationTime: number;
+        /**
+         * Color oscillation period in seconds.
+         */
+        m_colorOscillationPeriod: number;
+        __dtor__(): void;
+        /**
+         * Register this class as a destruction listener so that it's
+         * possible to keep track of special particles.
+         */
+        Init(world: box2d.b2World, system: box2d.b2ParticleSystem): void;
+        /**
+         * Add as many of the specified particles to the set of special
+         * particles.
+         */
+        Add(particleIndices: number[], numberOfParticles: number): void;
+        /**
+         * Apply effects to special particles.
+         */
+        Step(dt: number): void;
+        SayGoodbyeJoint(joint: box2d.b2Joint): void;
+        SayGoodbyeFixture(fixture: box2d.b2Fixture): void;
+        SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void;
+        /**
+         * When a particle is about to be destroyed, remove it from the
+         * list of special particles as the handle will become invalid.
+         */
+        SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void;
+    }
+    /**
+     * Sandbox test creates a maze of faucets, pumps, ramps,
+     * circles, and blocks based on a string constant.  Please
+     * modify and play with this string to make new mazes, and also
+     * add new maze elements!
+     */
+    export class Sandbox extends testbed.Test {
+        /**
+         * Count of faucets in the world
+         */
+        m_faucetEmitterIndex: number;
+        /**
+         * Count of pumps in the world
+         */
+        m_pumpIndex: number;
+        /**
+         * How long have we been pushing the pumps?
+         */
+        m_pumpTimer: number;
+        /**
+         * Particle creation flags
+         */
+        m_particleFlags: number;
+        /**
+         * Pump force
+         */
+        m_pumpForce: box2d.b2Vec2;
+        /**
+         * The shape we will use for the killfield
+         */
+        m_killFieldShape: box2d.b2PolygonShape;
+        /**
+         * Transform for the killfield shape
+         */
+        m_killFieldTransform: box2d.b2Transform;
+        /**
+         * Pumps and emitters
+         */
+        m_pumps: box2d.b2Body[];
+        m_emitters: testbed.RadialEmitter[];
+        /**
+         * Special particle tracker.
+         */
+        m_specialTracker: SpecialParticleTracker;
+        static readonly k_paramValues: testbed.ParticleParameter.Value[];
+        static readonly k_paramDef: testbed.ParticleParameter.Definition[];
+        static readonly k_paramDefCount: number;
+        constructor();
+        __dtor__(): void;
+        SetupMaze(): void;
+        CreateBody(center: box2d.b2Vec2, shape: box2d.b2Shape, type: box2d.b2BodyType): void;
+        AddPump(center: box2d.b2Vec2): void;
+        AddFaucetEmitter(center: box2d.b2Vec2, color: box2d.b2Color): void;
+        JointDestroyed(joint: box2d.b2Joint): void;
+        ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
+        BeginContact(contact: box2d.b2Contact): void;
+        EndContact(contact: box2d.b2Contact): void;
+        PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
+        PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void;
+        /**
+         * Allows you to set particle flags on devices with keyboards
+         */
+        Keyboard(key: string): void;
+        KeyboardUp(key: string): void;
+        MouseDown(p: box2d.b2Vec2): void;
+        MouseUp(p: box2d.b2Vec2): void;
+        MouseMove(p: box2d.b2Vec2): void;
+        /**
+         * Per-frame step updater overridden from Test
+         */
+        Step(settings: testbed.Settings): void;
+        GetDefaultViewZoom(): number;
+        static Create(): Sandbox;
+    }
+}
+declare module "Box2D/Testbed/Tests/Sparky" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Sparky extends testbed.Test {
+        private static c_maxCircles;
+        private static c_maxVFX;
+        private static SHAPE_HEIGHT_OFFSET;
+        private static SHAPE_OFFSET;
+        private m_VFXIndex;
+        private m_VFX;
+        private m_contact;
+        private m_contactPoint;
+        constructor();
+        BeginContact(contact: box2d.b2Contact): void;
+        Step(settings: testbed.Settings): void;
+        AddVFX(p: box2d.b2Vec2, particleFlags: box2d.b2ParticleFlag): void;
+        CreateWalls(): void;
+        static Create(): testbed.Test;
+    }
+}
+declare module "Box2D/Testbed/Tests/DamBreak" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class DamBreak extends testbed.Test {
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): DamBreak;
+    }
+}
+declare module "Box2D/Testbed/Tests/LiquidTimer" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class LiquidTimer extends testbed.Test {
+        static readonly k_paramValues: testbed.ParticleParameter.Value[];
+        static readonly k_paramDef: testbed.ParticleParameter.Definition[];
+        static readonly k_paramDefCount: number;
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): LiquidTimer;
+    }
+}
+declare module "Box2D/Testbed/Tests/WaveMachine" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class WaveMachine extends testbed.Test {
+        m_joint: box2d.b2RevoluteJoint;
+        m_time: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        GetDefaultViewZoom(): number;
+        static Create(): WaveMachine;
+    }
+}
+declare module "Box2D/Testbed/Tests/Particles" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Particles extends testbed.Test {
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): Particles;
+    }
+}
+declare module "Box2D/Testbed/Framework/ParticleEmitter" {
+    import * as box2d from "Box2D/Box2D/Box2D";
     export class EmittedParticleCallback {
         /**
          * Called for each created particle.
@@ -4561,7 +5680,7 @@ declare module "Testbed/Framework/ParticleEmitter" {
          * Calculate a random number 0.0..1.0.
          */
         static Random(): number;
-        _dtor_(): void;
+        __dtor__(): void;
         /**
          * Set the center of the emitter.
          */
@@ -4660,11 +5779,11 @@ declare module "Testbed/Framework/ParticleEmitter" {
         Step(dt: number, particleIndices?: number[], particleIndicesCount?: number): number;
     }
 }
-declare module "Testbed/Tests/Faucet" {
-    import * as box2d from "Box2D/Box2D";
-    import * as testbed from "Testbed/Testbed";
-    import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
-    import { EmittedParticleCallback, RadialEmitter } from "Testbed/Framework/ParticleEmitter";
+declare module "Box2D/Testbed/Tests/Faucet" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    import { ParticleParameter } from "Box2D/Testbed/Framework/ParticleParameter";
+    import { EmittedParticleCallback, RadialEmitter } from "Box2D/Testbed/Framework/ParticleEmitter";
     export class ParticleLifetimeRandomizer extends EmittedParticleCallback {
         m_minLifetime: number;
         m_maxLifetime: number;
@@ -4768,39 +5887,673 @@ declare module "Testbed/Tests/Faucet" {
         static Create(): Faucet;
     }
 }
-declare module "Testbed/Tests/ParticlesSurfaceTension" {
-    import * as testbed from "Testbed/Testbed";
+declare module "Box2D/Testbed/Tests/DrawingParticles" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class DrawingParticles extends testbed.Test {
+        /**
+         * Set bit 31 to distiguish these values from particle flags.
+         */
+        static readonly Parameters: {
+            e_parameterBegin: number;
+            e_parameterMove: number;
+            e_parameterRigid: number;
+            e_parameterRigidBarrier: number;
+            e_parameterElasticBarrier: number;
+            e_parameterSpringBarrier: number;
+            e_parameterRepulsive: number;
+        };
+        m_lastGroup: box2d.b2ParticleGroup;
+        m_drawing: boolean;
+        m_particleFlags: number;
+        m_groupFlags: number;
+        m_colorIndex: number;
+        static readonly k_paramValues: testbed.ParticleParameter.Value[];
+        static readonly k_paramDef: testbed.ParticleParameter.Definition[];
+        static readonly k_paramDefCount: number;
+        constructor();
+        DetermineParticleParameter(): number;
+        Keyboard(key: string): void;
+        MouseMove(p: box2d.b2Vec2): void;
+        MouseUp(p: box2d.b2Vec2): void;
+        ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
+        SplitParticleGroups(): void;
+        Step(settings: testbed.Settings): void;
+        GetDefaultViewZoom(): number;
+        static Create(): DrawingParticles;
+    }
+}
+declare module "Box2D/Testbed/Tests/Soup" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Soup extends testbed.Test {
+        m_ground: box2d.b2Body;
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): Soup;
+    }
+}
+declare module "Box2D/Testbed/Tests/ParticlesSurfaceTension" {
+    import * as testbed from "Box2D/Testbed/Testbed";
     export class ParticlesSurfaceTension extends testbed.Test {
         constructor();
         GetDefaultViewZoom(): number;
         static Create(): ParticlesSurfaceTension;
     }
 }
-declare module "Testbed/Tests/Sparky" {
-    import * as box2d from "Box2D/Box2D";
-    import * as testbed from "Testbed/Testbed";
-    export class Sparky extends testbed.Test {
-        private static c_maxCircles;
-        private static c_maxVFX;
-        private static SHAPE_HEIGHT_OFFSET;
-        private static SHAPE_OFFSET;
-        private m_VFXIndex;
-        private m_VFX;
-        private m_contact;
-        private m_contactPoint;
+declare module "Box2D/Testbed/Tests/ElasticParticles" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ElasticParticles extends testbed.Test {
         constructor();
-        BeginContact(contact: box2d.b2Contact): void;
-        Step(settings: testbed.Settings): void;
-        AddVFX(p: box2d.b2Vec2, particleFlags: box2d.b2ParticleFlag): void;
-        CreateWalls(): void;
-        static Create(): testbed.Test;
+        GetDefaultViewZoom(): number;
+        static Create(): ElasticParticles;
     }
 }
-declare module "Testbed/Tests/TestEntries" {
-    import { TestEntry } from "Testbed/Framework/Test";
+declare module "Box2D/Testbed/Tests/RigidParticles" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class RigidParticles extends testbed.Test {
+        constructor();
+        GetDefaultViewZoom(): number;
+        static Create(): RigidParticles;
+    }
+}
+declare module "Box2D/Testbed/Tests/MultipleParticleSystems" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class MultipleParticleSystems extends testbed.Test {
+        m_particleSystem2: box2d.b2ParticleSystem;
+        m_emitters: testbed.RadialEmitter[];
+        /**
+         * Maximum number of particles per system.
+         */
+        static readonly k_maxParticleCount: number;
+        /**
+         * Size of the box which is pushed around by particles.
+         */
+        static readonly k_dynamicBoxSize: box2d.b2Vec2;
+        /**
+         * Mass of the box.
+         */
+        static readonly k_boxMass: number;
+        /**
+         * Emit rate of the emitters in particles per second.
+         */
+        static readonly k_emitRate: number;
+        /**
+         * Location of the left emitter (the position of the right one
+         * is mirrored along the y-axis).
+         */
+        static readonly k_emitterPosition: box2d.b2Vec2;
+        /**
+         * Starting velocity of particles from the left emitter (the
+         * velocity of particles from the right emitter are mirrored
+         * along the y-axis).
+         */
+        static readonly k_emitterVelocity: box2d.b2Vec2;
+        /**
+         * Size of particle emitters.
+         */
+        static readonly k_emitterSize: box2d.b2Vec2;
+        /**
+         * Color of the left emitter's particles.
+         */
+        static readonly k_leftEmitterColor: box2d.b2Color;
+        /**
+         * Color of the right emitter's particles.
+         */
+        static readonly k_rightEmitterColor: box2d.b2Color;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        GetDefaultViewZoom(): number;
+        static Create(): MultipleParticleSystems;
+    }
+}
+declare module "Box2D/Testbed/Tests/Impulse" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Impulse extends testbed.Test {
+        static readonly kBoxLeft: number;
+        static readonly kBoxRight: number;
+        static readonly kBoxBottom: number;
+        static readonly kBoxTop: number;
+        m_useLinearImpulse: boolean;
+        constructor();
+        MouseUp(p: box2d.b2Vec2): void;
+        Keyboard(key: string): void;
+        ApplyImpulseOrForce(direction: box2d.b2Vec2): void;
+        GetDefaultViewZoom(): number;
+        static Create(): Impulse;
+    }
+}
+declare module "Box2D/Testbed/Tests/SoupStirrer" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    import { Soup } from "Box2D/Testbed/Tests/Soup";
+    export class SoupStirrer extends Soup {
+        m_stirrer: box2d.b2Body;
+        m_joint: box2d.b2Joint;
+        m_oscillationOffset: number;
+        constructor();
+        CreateJoint(): void;
+        /**
+         * Enable the joint if it's disabled, disable it if it's
+         * enabled.
+         */
+        ToggleJoint(): void;
+        /**
+         * Press "t" to enable / disable the joint restricting the
+         * stirrer's movement.
+         */
+        Keyboard(key: string): void;
+        /**
+         * Click the soup to toggle between enabling / disabling the
+         * joint.
+         */
+        MouseUp(p: box2d.b2Vec2): void;
+        /**
+         * Determine whether a point is in the soup.
+         */
+        InSoup(pos: box2d.b2Vec2): boolean;
+        /**
+         * Apply a force to the stirrer.
+         */
+        Step(settings: testbed.Settings): void;
+        static Create(): SoupStirrer;
+    }
+}
+declare module "Box2D/Testbed/Tests/Fracker" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * Tracks instances of RadialEmitter and destroys them after a
+     * specified period of time.
+     */
+    export class EmitterTracker {
+        m_emitterLifetime: {
+            emitter: testbed.RadialEmitter;
+            lifetime: number;
+        }[];
+        /**
+         * Delete all emitters.
+         */
+        __dtor__(): void;
+        /**
+         * Add an emitter to the tracker.
+         * This assumes emitter was allocated using "new" and ownership
+         * of the object is handed to this class.
+         */
+        Add(emitter: testbed.RadialEmitter, lifetime: number): void;
+        /**
+         * Update all emitters destroying those who are too old.
+         */
+        Step(dt: number): void;
+    }
+    /**
+     * Keep track of particle groups in a set, removing them when
+     * they're destroyed.
+     */
+    export class ParticleGroupTracker extends box2d.b2DestructionListener {
+        m_particleGroups: box2d.b2ParticleGroup[];
+        /**
+         * Called when any particle group is about to be destroyed.
+         */
+        SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void;
+        /**
+         * Add a particle group to the tracker.
+         */
+        AddParticleGroup(group: box2d.b2ParticleGroup): void;
+        /**
+         * Remove a particle group from the tracker.
+         */
+        RemoveParticleGroup(group: box2d.b2ParticleGroup): void;
+        GetParticleGroups(): Array<box2d.b2ParticleGroup>;
+    }
+    export class FrackerSettings {
+        /**
+         * Width and height of the world in tiles.
+         */
+        static readonly k_worldWidthTiles: number;
+        static readonly k_worldHeightTiles: number;
+        /**
+         * Total number of tiles.
+         */
+        static readonly k_worldTiles: number;
+        /**
+         * Center of the world in world coordinates.
+         */
+        static readonly k_worldCenterX: number;
+        static readonly k_worldCenterY: number;
+        /**
+         * Size of each tile in world units.
+         */
+        static readonly k_tileWidth: number;
+        static readonly k_tileHeight: number;
+        /**
+         * Half width and height of tiles in world units.
+         */
+        static readonly k_tileHalfWidth: number;
+        static readonly k_tileHalfHeight: number;
+        /**
+         * Half width and height of the world in world coordinates.
+         */
+        static readonly k_worldHalfWidth: number;
+        static readonly k_worldHalfHeight: number;
+        /**
+         * Colors of tiles.
+         */
+        static readonly k_playerColor: box2d.b2Color;
+        static readonly k_playerFrackColor: box2d.b2Color;
+        static readonly k_wellColor: box2d.b2Color;
+        static readonly k_oilColor: box2d.b2Color;
+        static readonly k_waterColor: box2d.b2Color;
+        static readonly k_frackingFluidColor: box2d.b2Color;
+        /**
+         * Default density of each body.
+         */
+        static readonly k_density: number;
+        /**
+         * Radius of oil / water / fracking fluid particles.
+         */
+        static readonly k_particleRadius: number;
+        /**
+         * Probability (0..100%) of generating each tile (must sum to
+         * 1.0).
+         */
+        static readonly k_dirtProbability: number;
+        static readonly k_emptyProbability: number;
+        static readonly k_oilProbability: number;
+        static readonly k_waterProbability: number;
+        /**
+         * Lifetime of a fracking fluid emitter in seconds.
+         */
+        static readonly k_frackingFluidEmitterLifetime: number;
+        /**
+         * Speed particles are sucked up the well.
+         */
+        static readonly k_wellSuckSpeedInside: number;
+        /**
+         * Speed particle are sucket towards the well bottom.
+         */
+        static readonly k_wellSuckSpeedOutside: number;
+        /**
+         * Time mouse button must be held before emitting fracking
+         * fluid.
+         */
+        static readonly k_frackingFluidChargeTime: number;
+        /**
+         * Scores.
+         */
+        static readonly k_scorePerOilParticle: number;
+        static readonly k_scorePerWaterParticle: number;
+        static readonly k_scorePerFrackingParticle: number;
+        static readonly k_scorePerFrackingDeployment: number;
+    }
+    /**
+     * Oil Fracking simulator.
+     *
+     * Dig down to move the oil (red) to the well (gray). Try not to
+     * contaminate the ground water (blue). To deploy fracking fluid
+     * press 'space'.  Fracking fluid can be used to push other
+     * fluids to the well head and ultimately score points.
+     */
+    export class Fracker extends testbed.Test {
+        m_player: box2d.b2Body;
+        m_wellX: number;
+        m_wellTop: number;
+        m_wellBottom: number;
+        m_tracker: EmitterTracker;
+        m_allowInput: boolean;
+        m_frackingFluidChargeTime: number;
+        m_material: Fracker.Material[];
+        m_bodies: box2d.b2Body[];
+        /**
+         * Set of particle groups the well has influence over.
+         */
+        m_listener: Fracker.DestructionListener;
+        constructor();
+        __dtor__(): void;
+        /**
+         * Initialize the data structures used to track the material in
+         * each tile and the bodies associated with each tile.
+         */
+        InitializeLayout(): void;
+        /**
+         * Get the material of the tile at the specified tile position.
+         */
+        GetMaterial(x: number, y: number): Fracker.Material;
+        /**
+         * Set the material of the tile at the specified tile position.
+         */
+        SetMaterial(x: number, y: number, material: Fracker.Material): void;
+        /**
+         * Get the body associated with the specified tile position.
+         */
+        GetBody(x: number, y: number): box2d.b2Body;
+        /**
+         * Set the body associated with the specified tile position.
+         */
+        SetBody(x: number, y: number, body: box2d.b2Body): void;
+        /**
+         * Create the player.
+         */
+        CreatePlayer(): void;
+        /**
+         * Create the geography / features of the world.
+         */
+        CreateGeo(): void;
+        /**
+         * Create the boundary of the world.
+         */
+        CreateGround(): void;
+        /**
+         * Create a dirt block at the specified world position.
+         */
+        CreateDirtBlock(x: number, y: number): void;
+        /**
+         * Create particles in a tile with resources.
+         */
+        CreateReservoirBlock(x: number, y: number, material: Fracker.Material): void;
+        /**
+         * Create a well and the region which applies negative pressure
+         * to suck out fluid.
+         */
+        CreateWell(): void;
+        /**
+         * Create a fracking fluid emitter.
+         */
+        CreateFrackingFluidEmitter(position: box2d.b2Vec2): void;
+        /**
+         * Update the player's position.
+         */
+        SetPlayerPosition(playerX: number, playerY: number): void;
+        /**
+         * Try to deploy fracking fluid at the player's position,
+         * returning true if successful.
+         */
+        DeployFrackingFluid(): boolean;
+        /**
+         * Destroy all particles in the box specified by a set of tile
+         * coordinates.
+         */
+        DestroyParticlesInTiles(startX: number, startY: number, endX: number, endY: number): void;
+        JointDestroyed(joint: box2d.b2Joint): void;
+        ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
+        BeginContact(contact: box2d.b2Contact): void;
+        EndContact(contact: box2d.b2Contact): void;
+        PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
+        PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void;
+        /**
+         * a = left, d = right, a = up, s = down, e = deploy fracking
+         * fluid.
+         */
+        Keyboard(key: string): void;
+        KeyboardUp(key: string): void;
+        MouseDown(p: box2d.b2Vec2): void;
+        /**
+         * Try to deploy the fracking fluid or move the player.
+         */
+        MouseUp(p: box2d.b2Vec2): void;
+        MouseMove(p: box2d.b2Vec2): void;
+        Step(settings: testbed.Settings): void;
+        /**
+         * Render the well.
+         */
+        DrawWell(): void;
+        /**
+         * Render the player / fracker.
+         */
+        DrawPlayer(): void;
+        /**
+         * Render the score and the instructions / keys.
+         */
+        DrawScore(): void;
+        /**
+         * Draw a quad at position of color that is either just an
+         * outline (fill = false) or solid (fill = true).
+         */
+        DrawQuad(position: box2d.b2Vec2, color: box2d.b2Color, fill?: boolean): void;
+        GetDefaultViewZoom(): number;
+        static Create(): testbed.Test;
+        /**
+         * Get the bottom left position of the world in world units.
+         */
+        static GetBottomLeft(bottomLeft: box2d.b2Vec2): void;
+        /**
+         * Get the extents of the world in world units.
+         */
+        static GetExtents(bottomLeft: box2d.b2Vec2, topRight: box2d.b2Vec2): void;
+        static WorldToTile(position: box2d.b2Vec2, x: Array<number>, y: Array<number>): void;
+        /**
+         * Convert a tile position to a point  in world coordinates.
+         */
+        static TileToWorld(x: number, y: number, out?: box2d.b2Vec2): box2d.b2Vec2;
+        /**
+         * Calculate the offset within an array of all world tiles using
+         * the specified tile coordinates.
+         */
+        static TileToArrayOffset(x: number, y: number): number;
+        /**
+         * Calculate the center of a tile position in world units.
+         */
+        static CenteredPosition(position: box2d.b2Vec2, out?: box2d.b2Vec2): box2d.b2Vec2;
+        /**
+         * Interpolate between color a and b using t.
+         */
+        static LerpColor(a: box2d.b2Color, b: box2d.b2Color, t: number): box2d.b2Color;
+        /**
+         * Interpolate between a and b using t.
+         */
+        static Lerp(a: number, b: number, t: number): number;
+    }
+    export namespace Fracker {
+        /**
+         * Type of material in a tile.
+         */
+        enum Material {
+            EMPTY = 0,
+            DIRT = 1,
+            ROCK = 2,
+            OIL = 3,
+            WATER = 4,
+            WELL = 5,
+            PUMP = 6
+        }
+        /**
+         * Keep track of particle groups which are drawn up the well and
+         * tracks the score of the game.
+         */
+        class DestructionListener extends ParticleGroupTracker {
+            m_score: number;
+            m_oil: number;
+            m_world: box2d.b2World;
+            m_previousListener: box2d.b2DestructionListener;
+            /**
+             * Initialize the score.
+             */
+            __ctor__(): void;
+            __dtor__(): void;
+            /**
+             * Initialize the particle system and world, setting this class
+             * as a destruction listener for the world.
+             */
+            Initialize(world: box2d.b2World): void;
+            /**
+             * Add to the current score.
+             */
+            AddScore(score: number): void;
+            /**
+             * Get the current score.
+             */
+            GetScore(): number;
+            /**
+             * Add to the remaining oil.
+             */
+            AddOil(oil: number): void;
+            /**
+             * Get the total oil.
+             */
+            GetOil(): number;
+            /**
+             * Update the score when certain particles are destroyed.
+             */
+            SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void;
+        }
+    }
+}
+declare module "Box2D/Testbed/Tests/Maxwell" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * Game which adds some fun to Maxwell's demon.
+     *
+     * http://en.wikipedia.org/wiki/Maxwell's_demon
+     *
+     * The user's goal is to try to catch as many particles as
+     * possible in the bottom half of the container by splitting the
+     * container using a barrier with the 'a' key.
+     *
+     * See Maxwell::Keyboard() for other controls.
+     */
+    export class Maxwell extends testbed.Test {
+        m_density: number;
+        m_position: number;
+        m_temperature: number;
+        m_barrierBody: box2d.b2Body;
+        m_particleGroup: box2d.b2ParticleGroup;
+        static readonly k_containerWidth: number;
+        static readonly k_containerHeight: number;
+        static readonly k_containerHalfWidth: number;
+        static readonly k_containerHalfHeight: number;
+        static readonly k_barrierHeight: number;
+        static readonly k_barrierMovementIncrement: number;
+        static readonly k_densityStep: number;
+        static readonly k_densityMin: number;
+        static readonly k_densityMax: number;
+        static readonly k_densityDefault: number;
+        static readonly k_temperatureStep: number;
+        static readonly k_temperatureMin: number;
+        static readonly k_temperatureMax: number;
+        static readonly k_temperatureDefault: number;
+        constructor();
+        /**
+         * Disable the barrier.
+         */
+        DisableBarrier(): void;
+        /**
+         * Enable the barrier.
+         */
+        EnableBarrier(): void;
+        /**
+         * Enable / disable the barrier.
+         */
+        ToggleBarrier(): void;
+        /**
+         * Destroy and recreate all particles.
+         */
+        ResetParticles(): void;
+        Keyboard(key: string): void;
+        /**
+         * Determine whether a point is in the container.
+         */
+        InContainer(p: box2d.b2Vec2): boolean;
+        MouseDown(p: box2d.b2Vec2): void;
+        MouseUp(p: box2d.b2Vec2): void;
+        Step(settings: testbed.Settings): void;
+        /**
+         * Reset the particles and the barrier.
+         */
+        Reset(): void;
+        /**
+         * Move the divider / barrier.
+         */
+        MoveDivider(newPosition: number): void;
+        GetDefaultViewZoom(): number;
+        static Create(): Maxwell;
+    }
+}
+declare module "Box2D/Testbed/Tests/Ramp" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Ramp extends testbed.Test {
+        constructor();
+        static Create(): Ramp;
+    }
+}
+declare module "Box2D/Testbed/Tests/Pointy" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * Test behavior when particles fall on a convex ambigious Body
+     * contact fixture junction.
+     */
+    export class Pointy extends testbed.Test {
+        m_killfieldShape: box2d.b2PolygonShape;
+        m_killfieldTransform: box2d.b2Transform;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): Pointy;
+    }
+}
+declare module "Box2D/Testbed/Tests/AntiPointy" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    /**
+     * Test the behavior of particles falling onto a concave
+     * ambiguous Body contact fixture junction.
+     */
+    export class AntiPointy extends testbed.Test {
+        m_particlesToCreate: number;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): AntiPointy;
+    }
+}
+declare module "Box2D/Testbed/Tests/CornerCase" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class CornerCase extends testbed.Test {
+        constructor();
+        static Create(): CornerCase;
+    }
+}
+declare module "Box2D/Testbed/Tests/ParticleCollisionFilter" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class ParticleContactDisabler extends box2d.b2ContactFilter {
+        m_enableFixtureParticleCollisions: boolean;
+        m_enableParticleParticleCollisions: boolean;
+        ShouldCollideFixtureParticle(): boolean;
+        ShouldCollideParticleParticle(): boolean;
+    }
+    export class ParticleCollisionFilter extends testbed.Test {
+        constructor();
+        Step(settings: testbed.Settings): void;
+        Keyboard(key: string): void;
+        ToggleFixtureCollisions(): void;
+        ToggleParticleCollisions(): void;
+        m_contactDisabler: ParticleContactDisabler;
+        m_particleGroup: box2d.b2ParticleGroup;
+        static readonly kBoxSize: number;
+        static readonly kBoxSizeHalf: number;
+        static readonly kOffset: number;
+        static readonly kParticlesContainerSize: number;
+        static readonly kSpeedup: number;
+        static Create(): ParticleCollisionFilter;
+    }
+}
+declare module "Box2D/Testbed/Tests/EyeCandy" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class EyeCandy extends testbed.Test {
+        m_mover: box2d.b2Body;
+        m_joint: box2d.b2RevoluteJoint;
+        constructor();
+        Step(settings: testbed.Settings): void;
+        static Create(): EyeCandy;
+    }
+}
+declare module "Box2D/Testbed/Tests/TestEntries" {
+    import { TestEntry } from "Box2D/Testbed/Framework/Test";
     export const g_testEntries: TestEntry[];
 }
-declare module "Testbed/Framework/FullscreenUI" {
+declare module "Box2D/Testbed/Framework/FullscreenUI" {
     /**
      * Handles drawing and selection of full screen UI.
      */
@@ -4824,11 +6577,11 @@ declare module "Testbed/Framework/FullscreenUI" {
         GetParticleParameterSelectionEnabled(): boolean;
     }
 }
-declare module "Testbed/Framework/Main" {
-    import * as box2d from "Box2D/Box2D";
-    import { Settings, Test } from "Testbed/Framework/Test";
-    import { FullScreenUI } from "Testbed/Framework/FullscreenUI";
-    import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
+declare module "Box2D/Testbed/Framework/Main" {
+    import * as box2d from "Box2D/Box2D/Box2D";
+    import { Settings, Test } from "Box2D/Testbed/Framework/Test";
+    import { FullScreenUI } from "Box2D/Testbed/Framework/FullscreenUI";
+    import { ParticleParameter } from "Box2D/Testbed/Framework/ParticleParameter";
     export class Main {
         static fullscreenUI: FullScreenUI;
         static particleParameter: ParticleParameter;
@@ -4852,10 +6605,10 @@ declare module "Testbed/Framework/Main" {
         m_demo_time: number;
         m_max_demo_time: number;
         m_canvas_div: HTMLDivElement;
-        m_canvas: HTMLCanvasElement;
-        m_ctx: CanvasRenderingContext2D;
+        m_canvas_2d: HTMLCanvasElement;
+        m_ctx: CanvasRenderingContext2D | null;
         m_demo_button: HTMLInputElement;
-        constructor();
+        constructor(time: number);
         HomeCamera(): void;
         MoveCamera(move: box2d.b2Vec2): void;
         ZoomCamera(zoom: number): void;
@@ -4876,7 +6629,7 @@ declare module "Testbed/Framework/Main" {
         Pause(): void;
         SingleStep(): void;
         ToggleDemo(): void;
-        SimulationLoop(): void;
+        SimulationLoop(time: number): void;
         /**
          * Set whether to restart the test on particle parameter
          * changes. This parameter is re-enabled when the test changes.
@@ -4900,12 +6653,19 @@ declare module "Testbed/Framework/Main" {
         static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount?: number): void;
     }
 }
-declare module "Testbed/Testbed" {
-    export * from "Testbed/Framework/Main";
-    export * from "Testbed/Framework/DebugDraw";
-    export * from "Testbed/Framework/FullscreenUI";
-    export * from "Testbed/Framework/ParticleEmitter";
-    export * from "Testbed/Framework/ParticleParameter";
-    export * from "Testbed/Framework/Test";
-    export * from "Testbed/Tests/TestEntries";
+declare module "Box2D/Testbed/Testbed" {
+    export * from "Box2D/Testbed/Framework/Main";
+    export * from "Box2D/Testbed/Framework/DebugDraw";
+    export * from "Box2D/Testbed/Framework/FullscreenUI";
+    export * from "Box2D/Testbed/Framework/ParticleEmitter";
+    export * from "Box2D/Testbed/Framework/ParticleParameter";
+    export * from "Box2D/Testbed/Framework/Test";
+    export * from "Box2D/Testbed/Tests/TestEntries";
+}
+declare module "Box2D/Testbed/Tests/Empty" {
+    import * as testbed from "Box2D/Testbed/Testbed";
+    export class Empty extends testbed.Test {
+        constructor();
+        static Create(): Empty;
+    }
 }

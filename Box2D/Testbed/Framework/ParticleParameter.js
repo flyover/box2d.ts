@@ -17,8 +17,8 @@
  */
 System.register(["Box2D"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var box2d, ParticleParameterOptions, ParticleParameterValue, ParticleParameterDefinition, ParticleParameter;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (box2d_1) {

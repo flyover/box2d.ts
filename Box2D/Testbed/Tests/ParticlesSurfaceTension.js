@@ -17,8 +17,8 @@
  */
 System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var box2d, testbed, ParticlesSurfaceTension;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (box2d_1) {

@@ -103,11 +103,11 @@ clean-box2d:
 
 build-box2d: $(BOX2D_OUTPUT_JS_FILE)
 #	@$$(npm bin)/tsc -p Box2D/HelloWorld
-#	@$$(npm bin)/tsc --declaration --sourcemap --target ES2016 --module commonjs --outDir build/Box2D $(BOX2D_SOURCE_TS_FILES)
+#	@$$(npm bin)/tsc --declaration --target ES2016 --module commonjs --outDir build/Box2D $(BOX2D_SOURCE_TS_FILES)
 	$(DONE)
 
 $(BOX2D_OUTPUT_JS_FILE): $(BOX2D_SOURCE_TS_FILES)
-	@$$(npm bin)/tsc --declaration --sourcemap --target ES2016 --module system --outFile $@ $<
+	@$$(npm bin)/tsc --project Box2D/Box2D --declaration --target ES2016 --module system --outFile $@
 	$(DONE)
 
 # box2d-helloworld
@@ -126,11 +126,11 @@ clean-box2d-helloworld:
 
 build-box2d-helloworld: $(BOX2D_HELLOWORLD_OUTPUT_JS_FILE)
 #	@$$(npm bin)/tsc -p Box2D/HelloWorld
-#	@$$(npm bin)/tsc --declaration --sourcemap --target ES2016 --module commonjs --outDir build/HelloWorld $(BOX2D_HELLOWORLD_SOURCE_TS_FILES)
+#	@$$(npm bin)/tsc --declaration --target ES2016 --module commonjs --outDir build/HelloWorld $(BOX2D_HELLOWORLD_SOURCE_TS_FILES)
 	$(DONE)
 
 $(BOX2D_HELLOWORLD_OUTPUT_JS_FILE): $(BOX2D_HELLOWORLD_SOURCE_TS_FILES)
-	@$$(npm bin)/tsc --declaration --sourcemap --target ES2016 --module system --outFile $@ $<
+	@$$(npm bin)/tsc --project Box2D/HelloWorld --declaration --target ES2016 --module system --outFile $@
 	$(DONE)
 
 # box2d-testbed
@@ -209,9 +209,9 @@ clean-box2d-testbed:
 
 build-box2d-testbed: $(BOX2D_TESTBED_OUTPUT_JS_FILE)
 #	@$$(npm bin)/tsc -p Box2D/Testbed
-#	@$$(npm bin)/tsc --declaration --sourcemap --target ES2016 --module commonjs --outDir build/Testbed $(BOX2D_TESTBED_SOURCE_TS_FILES)
+#	@$$(npm bin)/tsc --declaration --target ES2016 --module commonjs --outDir build/Testbed $(BOX2D_TESTBED_SOURCE_TS_FILES)
 	$(DONE)
 
 $(BOX2D_TESTBED_OUTPUT_JS_FILE): $(BOX2D_TESTBED_SOURCE_TS_FILES)
-	@$$(npm bin)/tsc --declaration --sourcemap --target ES2016 --module system --outFile $@ $<
+	@$$(npm bin)/tsc --project Box2D/Testbed --declaration --target ES2016 --module system --outFile $@
 	$(DONE)
