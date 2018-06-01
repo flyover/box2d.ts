@@ -307,9 +307,9 @@ export class b2DistanceJoint extends b2Joint {
     const qA: b2Rot = this.m_qA.SetAngle(aA), qB: b2Rot = this.m_qB.SetAngle(aB);
 
     // b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-    const rA: b2Vec2 = b2Rot.MulRV(this.m_qA, this.m_lalcA, this.m_rA); // use m_rA
+    const rA: b2Vec2 = b2Rot.MulRV(qA, this.m_lalcA, this.m_rA); // use m_rA
     // b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-    const rB: b2Vec2 = b2Rot.MulRV(this.m_qB, this.m_lalcB, this.m_rB); // use m_rB
+    const rB: b2Vec2 = b2Rot.MulRV(qB, this.m_lalcB, this.m_rB); // use m_rB
     // b2Vec2 u = cB + rB - cA - rA;
     const u: b2Vec2 = this.m_u; // use m_u
     u.x = cB.x + rB.x - cA.x - rA.x;
