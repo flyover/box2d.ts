@@ -4,7 +4,8 @@
     "module": "system",
     "strict": true,
     "strictNullChecks": false,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "preserveConstEnums": true
   },
   "include": [
     "**/*.ts"
