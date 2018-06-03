@@ -16,13 +16,23 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Clamp, b2Vec2, b2Mat22, b2Rot } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
 
+export interface b2IFrictionJointDef extends b2IJointDef {
+  localAnchorA: XY;
+
+  localAnchorB: XY;
+
+  maxForce?: number;
+
+  maxTorque?: number;
+}
+
 /// Friction joint definition.
-export class b2FrictionJointDef extends b2JointDef {
+export class b2FrictionJointDef extends b2JointDef implements b2IFrictionJointDef {
   public localAnchorA: b2Vec2 = new b2Vec2();
 
   public localAnchorB: b2Vec2 = new b2Vec2();
@@ -73,15 +83,19 @@ export class b2FrictionJoint extends b2Joint {
   public m_lalcB: b2Vec2 = new b2Vec2();
   public m_K: b2Mat22 = new b2Mat22();
 
-  constructor(def: b2FrictionJointDef) {
+  constructor(def: b2IFrictionJointDef) {
     super(def);
 
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
     this.m_localAnchorA.Copy(def.localAnchorA);
     this.m_localAnchorB.Copy(def.localAnchorB);
 
     this.m_linearImpulse.SetZero();
-    this.m_maxForce = def.maxForce;
-    this.m_maxTorque = def.maxTorque;
+    this.m_maxForce = maybe(def.maxForce, 0);
+    this.m_maxTorque = maybe(def.maxTorque, 0);
 
     this.m_linearMass.SetZero();
   }
@@ -244,25 +258,27 @@ export class b2FrictionJoint extends b2Joint {
     return true;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
-    return out.Set(inv_dt * this.m_linearImpulse.x, inv_dt * this.m_linearImpulse.y);
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
+    out.x = inv_dt * this.m_linearImpulse.x;
+    out.y = inv_dt * this.m_linearImpulse.y;
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {
     return inv_dt * this.m_angularImpulse;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
   public SetMaxForce(force: number): void {
     this.m_maxForce = force;

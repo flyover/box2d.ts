@@ -147,8 +147,7 @@ export class BodyTypes extends testbed.Test {
 
       if ((p.x < -10.0 && v.x < 0.0) ||
         (p.x > 10.0 && v.x > 0.0)) {
-        v.x = -v.x;
-        this.m_platform.SetLinearVelocity(v);
+        this.m_platform.SetLinearVelocity(new box2d.b2Vec2(-v.x, v.y));
       }
     }
 

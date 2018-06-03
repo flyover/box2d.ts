@@ -17,7 +17,7 @@
 */
 
 import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -25,10 +25,16 @@ import { b2Shape, b2ShapeType } from "./b2Shape";
 
 /// A circle shape.
 export class b2CircleShape extends b2Shape {
-  public m_p: b2Vec2 = new b2Vec2();
+  public readonly m_p: b2Vec2 = new b2Vec2();
 
   constructor(radius: number = 0) {
     super(b2ShapeType.e_circleShape, radius);
+  }
+
+  public Set(position: XY, radius: number = this.m_radius): this {
+    this.m_p.Copy(position);
+    this.m_radius = radius;
+    return this;
   }
 
   /// Implement b2Shape.
@@ -53,7 +59,7 @@ export class b2CircleShape extends b2Shape {
   /// Implement b2Shape.
   private static TestPoint_s_center = new b2Vec2();
   private static TestPoint_s_d = new b2Vec2();
-  public TestPoint(transform: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(transform: b2Transform, p: XY): boolean {
     const center: b2Vec2 = b2Transform.MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
     const d: b2Vec2 = b2Vec2.SubVV(p, center, b2CircleShape.TestPoint_s_d);
     return b2Vec2.DotVV(d, d) <= b2Sq(this.m_radius);

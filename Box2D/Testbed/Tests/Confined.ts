@@ -130,10 +130,10 @@ export class Confined extends testbed.Test {
         continue;
       }
   
-      const p = b.GetPosition();
-      if (p.x <= -10.0 || 10.0 <= p.x || p.y <= 0.0 || 20.0 <= p.y) {
-        p.x += 0.0;
-      }
+      // const p = b.GetPosition();
+      // if (p.x <= -10.0 || 10.0 <= p.x || p.y <= 0.0 || 20.0 <= p.y) {
+      //   p.x += 0.0;
+      // }
     }
   
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 'c' to create a circle.");

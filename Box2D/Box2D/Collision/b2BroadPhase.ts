@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2 } from "../Common/b2Math";
+import { b2Vec2, XY } from "../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
 import { b2TreeNode, b2DynamicTree } from "./b2DynamicTree";
 import { b2ContactManager } from "../Dynamics/b2ContactManager";
@@ -207,7 +207,7 @@ export class b2BroadPhase {
   /// Shift the world origin. Useful for large worlds.
   /// The shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
-  public ShiftOrigin(newOrigin: b2Vec2): void {
+  public ShiftOrigin(newOrigin: XY): void {
     this.m_tree.ShiftOrigin(newOrigin);
   }
 

@@ -1,12 +1,22 @@
 import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNullArray, b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Vec2 } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Sq, b2Sqrt, b2Vec2, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
 import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
 import { b2World } from "../b2World";
 
-export class b2AreaJointDef extends b2JointDef {
+export interface b2IAreaJointDef extends b2IJointDef {
+  world: b2World;
+
+  bodies: b2Body[];
+
+  frequencyHz?: number;
+
+  dampingRatio?: number;
+}
+
+export class b2AreaJointDef extends b2JointDef implements b2IAreaJointDef {
   public world: b2World = null;
 
   public bodies: b2Body[] = [];
@@ -46,14 +56,18 @@ export class b2AreaJoint extends b2Joint {
   public m_deltas: b2Vec2[] = null;
   public m_delta: b2Vec2 = null;
 
-  constructor(def: b2AreaJointDef) {
+  constructor(def: b2IAreaJointDef) {
     super(def);
 
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
     ///b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
 
     this.m_bodies = def.bodies;
-    this.m_frequencyHz = def.frequencyHz;
-    this.m_dampingRatio = def.dampingRatio;
+    this.m_frequencyHz = maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = maybe(def.dampingRatio, 0);
 
     this.m_targetLengths = b2MakeNumberArray(def.bodies.length);
     this.m_normals = b2Vec2.MakeArray(def.bodies.length);
@@ -62,8 +76,8 @@ export class b2AreaJoint extends b2Joint {
     this.m_delta = new b2Vec2();
 
     const djd: b2DistanceJointDef = new b2DistanceJointDef();
-    djd.frequencyHz = def.frequencyHz;
-    djd.dampingRatio = def.dampingRatio;
+    djd.frequencyHz = this.m_frequencyHz;
+    djd.dampingRatio = this.m_dampingRatio;
 
     this.m_targetArea = 0;
 
@@ -79,22 +93,22 @@ export class b2AreaJoint extends b2Joint {
       this.m_targetArea += b2Vec2.CrossVV(body_c, next_c);
 
       djd.Initialize(body, next, body_c, next_c);
-      this.m_joints[i] = <b2DistanceJoint> def.world.CreateJoint(djd);
+      this.m_joints[i] = def.world.CreateJoint(djd);
     }
 
     this.m_targetArea *= 0.5;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
-    return out.SetZero();
+  public GetAnchorA<T extends XY>(out: T): T {
+    return out;
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
-    return out.SetZero();
+  public GetAnchorB<T extends XY>(out: T): T {
+    return out;
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
-    return out.SetZero();
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {

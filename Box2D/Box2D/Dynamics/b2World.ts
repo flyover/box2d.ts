@@ -17,7 +17,7 @@
 */
 
 import { b2_epsilon, b2_linearSlop, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
-import { b2Min, b2Vec2, b2Transform, b2Sweep } from "../Common/b2Math";
+import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
@@ -33,7 +33,7 @@ import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact";
 import { b2Joint, b2JointDef, b2JointType, b2JointEdge } from "./Joints/b2Joint";
 import { b2JointFactory } from "./Joints/b2JointFactory";
 import { b2PulleyJoint } from "./Joints/b2PulleyJoint";
-import { b2Body, b2BodyDef, b2BodyType } from "./b2Body";
+import { b2Body, b2IBodyDef, b2BodyType } from "./b2Body";
 import { b2ContactManager } from "./b2ContactManager";
 import { b2Fixture, b2FixtureProxy } from "./b2Fixture";
 import { b2Island } from "./b2Island";
@@ -63,19 +63,19 @@ export class b2World {
   public m_locked: boolean = false;
   public m_clearForces: boolean = true;
 
-  public m_contactManager: b2ContactManager = new b2ContactManager();
+  public readonly m_contactManager: b2ContactManager = new b2ContactManager();
 
   public m_bodyList: b2Body | null = null;
   public m_jointList: b2Joint | null = null;
 
   // #if B2_ENABLE_PARTICLE
-  public m_particleSystemList: b2ParticleSystem = null;
+  public m_particleSystemList: b2ParticleSystem | null = null;
   // #endif
 
   public m_bodyCount: number = 0;
   public m_jointCount: number = 0;
 
-  public m_gravity: b2Vec2 = new b2Vec2();
+  public readonly m_gravity: b2Vec2 = new b2Vec2();
   public m_allowSleep: boolean = true;
 
   public m_destructionListener: b2DestructionListener | null = null;
@@ -92,11 +92,11 @@ export class b2World {
 
   public m_stepComplete: boolean = true;
 
-  public m_profile: b2Profile = new b2Profile();
+  public readonly m_profile: b2Profile = new b2Profile();
 
-  public m_island: b2Island = new b2Island();
+  public readonly m_island: b2Island = new b2Island();
 
-  public s_stack: b2Body[] = [];
+  public readonly s_stack: b2Body[] = [];
 
   // #if B2_ENABLE_CONTROLLER
   public m_controllerList: b2Controller = null;
@@ -105,7 +105,7 @@ export class b2World {
 
   /// Construct a world object.
   /// @param gravity the world gravity vector.
-  constructor(gravity: b2Vec2) {
+  constructor(gravity: XY) {
     this.m_gravity.Copy(gravity);
   }
 
@@ -138,7 +138,7 @@ export class b2World {
   /// Create a rigid body given a definition. No reference to the definition
   /// is retained.
   /// @warning This function is locked during callbacks.
-  public CreateBody(def: b2BodyDef): b2Body {
+  public CreateBody(def: b2IBodyDef): b2Body {
     ///b2Assert(!this.IsLocked());
     if (this.IsLocked()) {
       return null;
@@ -827,19 +827,19 @@ export class b2World {
   /// Get the world body list. With the returned body, use b2Body::GetNext to get
   /// the next body in the world list. A NULL body indicates the end of the list.
   /// @return the head of the world body list.
-  public GetBodyList(): b2Body {
+  public GetBodyList(): b2Body | null {
     return this.m_bodyList;
   }
 
   /// Get the world joint list. With the returned joint, use b2Joint::GetNext to get
   /// the next joint in the world list. A NULL joint indicates the end of the list.
   /// @return the head of the world joint list.
-  public GetJointList(): b2Joint {
+  public GetJointList(): b2Joint | null {
     return this.m_jointList;
   }
 
   // #if B2_ENABLE_PARTICLE
-  GetParticleSystemList() {
+  GetParticleSystemList(): b2ParticleSystem | null {
     return this.m_particleSystemList;
   }
   // #endif
@@ -935,7 +935,7 @@ export class b2World {
   }
 
   /// Change the global gravity vector.
-  public SetGravity(gravity: b2Vec2, wake: boolean = true) {
+  public SetGravity(gravity: XY, wake: boolean = true) {
     if (!b2Vec2.IsEqualToV(this.m_gravity, gravity)) {
       this.m_gravity.Copy(gravity);
 
@@ -948,7 +948,7 @@ export class b2World {
   }
 
   /// Get the global gravity vector.
-  public GetGravity(): b2Vec2 {
+  public GetGravity(): Readonly<b2Vec2> {
     return this.m_gravity;
   }
 
@@ -970,7 +970,7 @@ export class b2World {
   /// Shift the world origin. Useful for large worlds.
   /// The body shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
-  public ShiftOrigin(newOrigin: b2Vec2): void {
+  public ShiftOrigin(newOrigin: XY): void {
     ///b2Assert(!this.IsLocked());
     if (this.IsLocked()) {
       return;

@@ -17,15 +17,23 @@
 */
 
 import { b2_linearSlop, b2_maxLinearCorrection } from "../../Common/b2Settings";
-import { b2Min, b2Clamp, b2Vec2, b2Rot } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
+import { b2Min, b2Clamp, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
+
+export interface b2IRopeJointDef extends b2IJointDef {
+  localAnchorA?: XY;
+
+  localAnchorB?: XY;
+
+  maxLength?: number;
+}
 
 /// Rope joint definition. This requires two body anchor points and
 /// a maximum lengths.
 /// Note: by default the connected objects will not collide.
 /// see collideConnected in b2JointDef.
-export class b2RopeJointDef extends b2JointDef {
+export class b2RopeJointDef extends b2JointDef implements b2IRopeJointDef {
   public localAnchorA: b2Vec2 = new b2Vec2(-1, 0);
 
   public localAnchorB: b2Vec2 = new b2Vec2(1, 0);
@@ -65,12 +73,16 @@ export class b2RopeJoint extends b2Joint {
   public m_lalcA: b2Vec2 = new b2Vec2();
   public m_lalcB: b2Vec2 = new b2Vec2();
 
-  constructor(def: b2RopeJointDef) {
+  constructor(def: b2IRopeJointDef) {
     super(def);
 
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
-    this.m_maxLength = def.maxLength;
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_localAnchorA.Copy(maybe(def.localAnchorA, new b2Vec2(-1, 0)));
+    this.m_localAnchorB.Copy(maybe(def.localAnchorB, new b2Vec2(1, 0)));
+    this.m_maxLength = maybe(def.maxLength, 0);
   }
 
   private static InitVelocityConstraints_s_P = new b2Vec2();
@@ -238,27 +250,26 @@ export class b2RopeJoint extends b2Joint {
     return length - this.m_maxLength < b2_linearSlop;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
-    const F: b2Vec2 = b2Vec2.MulSV((inv_dt * this.m_impulse), this.m_u, out);
-    return F;
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // return out.Set(inv_dt * this.m_linearImpulse.x, inv_dt * this.m_linearImpulse.y);
+    return b2Vec2.MulSV((inv_dt * this.m_impulse), this.m_u, out);
   }
 
   public GetReactionTorque(inv_dt: number): number {
     return 0;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
   public SetMaxLength(length: number): void { this.m_maxLength = length; }
   public GetMaxLength(): number {

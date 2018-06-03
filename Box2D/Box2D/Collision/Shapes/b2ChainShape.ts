@@ -17,7 +17,7 @@
 */
 
 import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Vec2, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -31,10 +31,10 @@ import { b2EdgeShape } from "./b2EdgeShape";
 /// Connectivity information is used to create smooth collisions.
 /// WARNING: The chain will not collide properly if there are self-intersections.
 export class b2ChainShape extends b2Shape {
-  public m_vertices: b2Vec2[];
+  public m_vertices: b2Vec2[] = [];
   public m_count: number = 0;
-  public m_prevVertex: b2Vec2 = new b2Vec2();
-  public m_nextVertex: b2Vec2 = new b2Vec2();
+  public readonly m_prevVertex: b2Vec2 = new b2Vec2();
+  public readonly m_nextVertex: b2Vec2 = new b2Vec2();
   public m_hasPrevVertex: boolean = false;
   public m_hasNextVertex: boolean = false;
 
@@ -45,12 +45,12 @@ export class b2ChainShape extends b2Shape {
   /// Create a loop. This automatically adjusts connectivity.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateLoop(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
+  public CreateLoop(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
     ///b2Assert(this.m_vertices === null && this.m_count === 0);
     ///b2Assert(count >= 3);
     ///for (let i: number = 1; i < count; ++i) {
-    ///  const v1 = vertices[i - 1];
-    ///  const v2 = vertices[i];
+    ///  const v1 = vertices[start + i - 1];
+    ///  const v2 = vertices[start + i];
     ///  // If the code crashes here, it means your vertices are too close together.
     ///  b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
     ///}
@@ -58,7 +58,7 @@ export class b2ChainShape extends b2Shape {
     this.m_count = count + 1;
     this.m_vertices = b2Vec2.MakeArray(this.m_count);
     for (let i: number = 0; i < count; ++i) {
-      this.m_vertices[i].Copy(vertices[i]);
+      this.m_vertices[i].Copy(vertices[start + i]);
     }
     this.m_vertices[count].Copy(this.m_vertices[0]);
     this.m_prevVertex.Copy(this.m_vertices[this.m_count - 2]);
@@ -71,12 +71,12 @@ export class b2ChainShape extends b2Shape {
   /// Create a chain with isolated end vertices.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateChain(vertices: b2Vec2[], count: number = vertices.length): b2ChainShape {
+  public CreateChain(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
     ///b2Assert(this.m_vertices === null && this.m_count === 0);
     ///b2Assert(count >= 2);
     ///for (let i: number = 1; i < count; ++i) {
-    ///  const v1 = vertices[i - 1];
-    ///  const v2 = vertices[i];
+    ///  const v1 = vertices[start + i - 1];
+    ///  const v2 = vertices[start + i];
     ///  // If the code crashes here, it means your vertices are too close together.
     ///  b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
     ///}
@@ -84,20 +84,20 @@ export class b2ChainShape extends b2Shape {
     this.m_count = count;
     this.m_vertices = b2Vec2.MakeArray(count);
     for (let i: number = 0; i < count; ++i) {
-      this.m_vertices[i].Copy(vertices[i]);
+      this.m_vertices[i].Copy(vertices[start + i]);
     }
     this.m_hasPrevVertex = false;
     this.m_hasNextVertex = false;
 
-  this.m_prevVertex.SetZero();
-  this.m_nextVertex.SetZero();
+    this.m_prevVertex.SetZero();
+    this.m_nextVertex.SetZero();
 
     return this;
   }
 
   /// Establish connectivity to a vertex that precedes the first vertex.
   /// Don't call this for loops.
-  public SetPrevVertex(prevVertex: b2Vec2): b2ChainShape {
+  public SetPrevVertex(prevVertex: XY): b2ChainShape {
     this.m_prevVertex.Copy(prevVertex);
     this.m_hasPrevVertex = true;
     return this;
@@ -105,7 +105,7 @@ export class b2ChainShape extends b2Shape {
 
   /// Establish connectivity to a vertex that follows the last vertex.
   /// Don't call this for loops.
-  public SetNextVertex(nextVertex: b2Vec2): b2ChainShape {
+  public SetNextVertex(nextVertex: XY): b2ChainShape {
     this.m_nextVertex.Copy(nextVertex);
     this.m_hasNextVertex = true;
     return this;

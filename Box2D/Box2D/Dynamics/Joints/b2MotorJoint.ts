@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Clamp, b2Vec2, b2Mat22, b2Rot } from "../../Common/b2Math";
+import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 
 // Point-to-point constraint
@@ -36,7 +36,19 @@ import { b2SolverData } from "../b2TimeStep";
 // J = [0 0 -1 0 0 1]
 // K = invI1 + invI2
 
-export class b2MotorJointDef extends b2JointDef {
+export interface b2IMotorJointDef extends b2IJointDef {
+  linearOffset?: XY;
+
+  angularOffset?: number;
+
+  maxForce?: number;
+
+  maxTorque?: number;
+
+  correctionFactor?: number;
+}
+
+export class b2MotorJointDef extends b2JointDef implements b2IMotorJointDef {
   public linearOffset: b2Vec2 = new b2Vec2(0, 0);
 
   public angularOffset: number = 0;
@@ -94,24 +106,34 @@ export class b2MotorJoint extends b2Joint {
   public m_qB: b2Rot = new b2Rot();
   public m_K: b2Mat22 = new b2Mat22();
 
-  constructor(def: b2MotorJointDef) {
+  constructor(def: b2IMotorJointDef) {
     super(def);
 
-    this.m_linearOffset.Copy(def.linearOffset);
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_linearOffset.Copy(maybe(def.linearOffset, b2Vec2.ZERO));
     this.m_linearImpulse.SetZero();
-    this.m_maxForce = def.maxForce;
-    this.m_maxTorque = def.maxTorque;
-    this.m_correctionFactor = def.correctionFactor;
+    this.m_maxForce = maybe(def.maxForce, 0);
+    this.m_maxTorque = maybe(def.maxTorque, 0);
+    this.m_correctionFactor = maybe(def.correctionFactor, 0.3);
   }
 
-  public GetAnchorA() {
-    return this.m_bodyA.GetPosition();
+  public GetAnchorA<T extends XY>(out: T): T {
+    const pos: Readonly<b2Vec2> = this.m_bodyA.GetPosition();
+    out.x = pos.x;
+    out.y = pos.y;
+    return out;
   }
-  public GetAnchorB() {
-    return this.m_bodyB.GetPosition();
+  public GetAnchorB<T extends XY>(out: T): T {
+    const pos: Readonly<b2Vec2> = this.m_bodyB.GetPosition();
+    out.x = pos.x;
+    out.y = pos.y;
+    return out;
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // return inv_dt * m_linearImpulse;
     return b2Vec2.MulSV(inv_dt, this.m_linearImpulse, out);
   }

@@ -593,15 +593,13 @@ export class Sandbox extends testbed.Test {
    * Per-frame step updater overridden from Test
    */
   Step(settings: testbed.Settings): void {
-    super.Step(settings);
-
-    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
-
     let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
-
     if (settings.pause && !settings.singleStep) {
       dt = 0.0;
     }
+    super.Step(settings);
+
+    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
 
     // Step all the emitters
     for (let i = 0; i < this.m_faucetEmitterIndex; i++) {

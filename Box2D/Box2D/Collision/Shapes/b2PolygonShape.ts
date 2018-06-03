@@ -17,7 +17,7 @@
 */
 
 import { b2_epsilon, b2_maxFloat, b2_linearSlop, b2_polygonRadius, b2_maxPolygonVertices, b2MakeNumberArray } from "../../Common/b2Settings";
-import { b2Min, b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
+import { b2Min, b2Vec2, b2Rot, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -28,9 +28,9 @@ import { b2Shape, b2ShapeType } from "./b2Shape";
 /// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
 /// In most cases you should not need many vertices for a convex polygon.
 export class b2PolygonShape extends b2Shape {
-  public m_centroid: b2Vec2 = new b2Vec2(0, 0);
-  public m_vertices: b2Vec2[] = b2Vec2.MakeArray(b2_maxPolygonVertices);
-  public m_normals: b2Vec2[] = b2Vec2.MakeArray(b2_maxPolygonVertices);
+  public readonly m_centroid: b2Vec2 = new b2Vec2(0, 0);
+  public m_vertices: b2Vec2[] = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
+  public m_normals: b2Vec2[] = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
   public m_count: number = 0;
 
   constructor() {
@@ -49,6 +49,8 @@ export class b2PolygonShape extends b2Shape {
 
     this.m_centroid.Copy(other.m_centroid);
     this.m_count = other.m_count;
+    this.m_vertices = b2Vec2.MakeArray(this.m_count);
+    this.m_normals = b2Vec2.MakeArray(this.m_count);
     for (let i: number = 0; i < this.m_count; ++i) {
       this.m_vertices[i].Copy(other.m_vertices[i]);
       this.m_normals[i].Copy(other.m_normals[i]);
@@ -70,7 +72,7 @@ export class b2PolygonShape extends b2Shape {
   private static Set_s_hull = b2MakeNumberArray(b2_maxPolygonVertices);
   private static Set_s_r = new b2Vec2();
   private static Set_s_v = new b2Vec2();
-  public Set(vertices: b2Vec2[], count: number = vertices.length, start: number = 0): b2PolygonShape {
+  public Set(vertices: XY[], count: number = vertices.length, start: number = 0): b2PolygonShape {
 
     ///b2Assert(3 <= count && count <= b2_maxPolygonVertices);
     if (count < 3) {
@@ -155,6 +157,8 @@ export class b2PolygonShape extends b2Shape {
     }
 
     this.m_count = m;
+    this.m_vertices = b2Vec2.MakeArray(this.m_count);
+    this.m_normals = b2Vec2.MakeArray(this.m_count);
 
     // Copy vertices.
     for (let i: number = 0; i < m; ++i) {
@@ -176,7 +180,7 @@ export class b2PolygonShape extends b2Shape {
     return this;
   }
 
-  public SetAsArray(vertices: b2Vec2[], count: number = vertices.length): b2PolygonShape {
+  public SetAsArray(vertices: XY[], count: number = vertices.length): b2PolygonShape {
     return this.Set(vertices, count);
   }
 
@@ -185,8 +189,10 @@ export class b2PolygonShape extends b2Shape {
   /// @param hy the half-height.
   /// @param center the center of the box in local coordinates.
   /// @param angle the rotation of the box in local coordinates.
-  public SetAsBox(hx: number, hy: number, center?: b2Vec2, angle: number = 0): b2PolygonShape {
+  public SetAsBox(hx: number, hy: number, center?: XY, angle: number = 0): b2PolygonShape {
     this.m_count = 4;
+    this.m_vertices = b2Vec2.MakeArray(this.m_count);
+    this.m_normals = b2Vec2.MakeArray(this.m_count);
     this.m_vertices[0].Set((-hx), (-hy));
     this.m_vertices[1].Set(hx, (-hy));
     this.m_vertices[2].Set(hx, hy);
@@ -197,7 +203,7 @@ export class b2PolygonShape extends b2Shape {
     this.m_normals[3].Set((-1), 0);
     this.m_centroid.SetZero();
 
-    if (center instanceof b2Vec2) {
+    if (center) {
       this.m_centroid.Copy(center);
 
       const xf: b2Transform = new b2Transform();

@@ -17,10 +17,18 @@
 */
 
 import { b2_pi, b2_linearSlop, b2_maxLinearCorrection } from "../../Common/b2Settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Rot } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
+
+export interface b2IDistanceJointDef extends b2IJointDef {
+  localAnchorA: XY;
+  localAnchorB: XY;
+  length: number;
+  frequencyHz?: number;
+  dampingRatio?: number;
+}
 
 /// Distance joint definition. This requires defining an
 /// anchor point on both bodies and the non-zero length of the
@@ -28,7 +36,7 @@ import { b2Body } from "../b2Body";
 /// so that the initial configuration can violate the constraint
 /// slightly. This helps when saving and loading a game.
 /// @warning Do not use a zero or short length.
-export class b2DistanceJointDef extends b2JointDef {
+export class b2DistanceJointDef extends b2JointDef implements b2IDistanceJointDef {
   public localAnchorA: b2Vec2 = new b2Vec2();
   public localAnchorB: b2Vec2 = new b2Vec2();
   public length: number = 1;
@@ -39,7 +47,7 @@ export class b2DistanceJointDef extends b2JointDef {
     super(b2JointType.e_distanceJoint);
   }
 
-  public Initialize(b1: b2Body, b2: b2Body, anchor1: b2Vec2, anchor2: b2Vec2): void {
+  public Initialize(b1: b2Body, b2: b2Body, anchor1: XY, anchor2: XY): void {
     this.bodyA = b1;
     this.bodyB = b2;
     this.bodyA.GetLocalPoint(anchor1, this.localAnchorA);
@@ -81,36 +89,42 @@ export class b2DistanceJoint extends b2Joint {
   public m_lalcA: b2Vec2 = new b2Vec2();
   public m_lalcB: b2Vec2 = new b2Vec2();
 
-  constructor(def: b2DistanceJointDef) {
+  constructor(def: b2IDistanceJointDef) {
     super(def);
 
-    this.m_frequencyHz = def.frequencyHz;
-    this.m_dampingRatio = def.dampingRatio;
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_frequencyHz = maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = maybe(def.dampingRatio, 0);
 
     this.m_localAnchorA.Copy(def.localAnchorA);
     this.m_localAnchorB.Copy(def.localAnchorB);
     this.m_length = def.length;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
-    return out.Set(inv_dt * this.m_impulse * this.m_u.x, inv_dt * this.m_impulse * this.m_u.y);
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
+    out.x = inv_dt * this.m_impulse * this.m_u.x;
+    out.y = inv_dt * this.m_impulse * this.m_u.y;
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {
     return 0;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
   public SetLength(length: number): void {
     this.m_length = length;

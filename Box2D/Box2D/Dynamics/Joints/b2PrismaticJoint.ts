@@ -17,10 +17,32 @@
 */
 
 import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
-import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
+import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
+
+export interface b2IPrismaticJointDef extends b2IJointDef {
+  localAnchorA: XY;
+
+  localAnchorB: XY;
+
+  localAxisA: XY;
+
+  referenceAngle: number;
+
+  enableLimit: boolean;
+
+  lowerTranslation: number;
+
+  upperTranslation: number;
+
+  enableMotor: boolean;
+
+  maxMotorForce: number;
+
+  motorSpeed: number;
+}
 
 /// Prismatic joint definition. This requires defining a line of
 /// motion using an axis and an anchor point. The definition uses local
@@ -28,12 +50,12 @@ import { b2SolverData } from "../b2TimeStep";
 /// can violate the constraint slightly. The joint translation is zero
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
-export class b2PrismaticJointDef extends b2JointDef {
-  public localAnchorA: b2Vec2 = null;
+export class b2PrismaticJointDef extends b2JointDef implements b2IPrismaticJointDef {
+  public localAnchorA: b2Vec2 = new b2Vec2();
 
-  public localAnchorB: b2Vec2 = null;
+  public localAnchorB: b2Vec2 = new b2Vec2();
 
-  public localAxisA: b2Vec2 = null;
+  public localAxisA: b2Vec2 = new b2Vec2(1, 0);
 
   public referenceAngle: number = 0;
 
@@ -51,10 +73,6 @@ export class b2PrismaticJointDef extends b2JointDef {
 
   constructor() {
     super(b2JointType.e_prismaticJoint);
-
-    this.localAnchorA = new b2Vec2();
-    this.localAnchorB = new b2Vec2();
-    this.localAxisA = new b2Vec2(1, 0);
   }
 
   public Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void {
@@ -111,20 +129,24 @@ export class b2PrismaticJoint extends b2Joint {
   public m_rA: b2Vec2 = new b2Vec2();
   public m_rB: b2Vec2 = new b2Vec2();
 
-  constructor(def: b2PrismaticJointDef) {
+  constructor(def: b2IPrismaticJointDef) {
     super(def);
 
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
-    this.m_localXAxisA.Copy(def.localAxisA).SelfNormalize();
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_localXAxisA.Copy(maybe(def.localAxisA, new b2Vec2(1, 0))).SelfNormalize();
     b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
-    this.m_referenceAngle = def.referenceAngle;
-    this.m_lowerTranslation = def.lowerTranslation;
-    this.m_upperTranslation = def.upperTranslation;
-    this.m_maxMotorForce = def.maxMotorForce;
-    this.m_motorSpeed = def.motorSpeed;
-    this.m_enableLimit = def.enableLimit;
-    this.m_enableMotor = def.enableMotor;
+    this.m_referenceAngle = maybe(def.referenceAngle, 0);
+    this.m_lowerTranslation = maybe(def.lowerTranslation, 0);
+    this.m_upperTranslation = maybe(def.upperTranslation, 0);
+    this.m_maxMotorForce = maybe(def.maxMotorForce, 0);
+    this.m_motorSpeed = maybe(def.motorSpeed, 0);
+    this.m_enableLimit = maybe(def.enableLimit, false);
+    this.m_enableMotor = maybe(def.enableMotor, false);
   }
 
   private static InitVelocityConstraints_s_d = new b2Vec2();
@@ -565,28 +587,30 @@ export class b2PrismaticJoint extends b2Joint {
     return linearError <= b2_linearSlop && angularError <= b2_angularSlop;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // return inv_dt * (m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis);
-    return out.Set(inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.x), inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.y));
+    out.x = inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.x);
+    out.y = inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.y);
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {
     return inv_dt * this.m_impulse.y;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
-  public GetLocalAxisA(): b2Vec2 { return this.m_localXAxisA; }
+  public GetLocalAxisA(): Readonly<b2Vec2> { return this.m_localXAxisA; }
 
   public GetReferenceAngle() { return this.m_referenceAngle; }
 

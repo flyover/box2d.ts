@@ -17,7 +17,7 @@
 */
 
 import { b2_aabbExtension, b2_aabbMultiplier } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2 } from "../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Vec2, XY } from "../Common/b2Math";
 import { b2GrowableStack } from "../Common/b2GrowableStack";
 import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
 
@@ -778,7 +778,7 @@ export class b2DynamicTree {
     this.Validate();
   }
 
-  private static ShiftOriginNode(node: b2TreeNode, newOrigin: b2Vec2): void {
+  private static ShiftOriginNode(node: b2TreeNode, newOrigin: XY): void {
     if (node === null) {
       return;
     }
@@ -798,7 +798,7 @@ export class b2DynamicTree {
     node.aabb.upperBound.SelfSub(newOrigin);
   }
 
-  public ShiftOrigin(newOrigin: b2Vec2): void {
+  public ShiftOrigin(newOrigin: XY): void {
 
     b2DynamicTree.ShiftOriginNode(this.m_root, newOrigin);
 

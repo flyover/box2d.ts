@@ -16,13 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, b2Transform } from "./b2Math";
+import { b2Vec2, b2Transform, XY } from "./b2Math";
+
+export interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
+
+export interface RGBA extends RGB {
+  a: number;
+}
 
 /// Color for debug drawing. Each value has the range [0,1].
-export class b2Color {
-  public static RED: b2Color = new b2Color(1, 0, 0);
-  public static GREEN: b2Color = new b2Color(0, 1, 0);
-  public static BLUE: b2Color = new b2Color(0, 0, 1);
+export class b2Color implements RGBA {
+  public static readonly ZERO: Readonly<b2Color> = new b2Color(0, 0, 0, 0);
+
+  public static readonly RED: Readonly<b2Color> = new b2Color(1, 0, 0);
+  public static readonly GREEN: Readonly<b2Color> = new b2Color(0, 1, 0);
+  public static readonly BLUE: Readonly<b2Color> = new b2Color(0, 0, 1);
 
   public r: number;
   public g: number;
@@ -40,7 +52,7 @@ export class b2Color {
     return new b2Color().Copy(this);
   }
 
-  public Copy(other: b2Color): b2Color {
+  public Copy(other: RGBA): this {
     this.r = other.r;
     this.g = other.g;
     this.b = other.b;
@@ -48,7 +60,7 @@ export class b2Color {
     return this;
   }
 
-  public IsEqual(color: b2Color): boolean {
+  public IsEqual(color: RGBA): boolean {
     return (this.r === color.r) && (this.g === color.g) && (this.b === color.b) && (this.a === color.a);
   }
 
@@ -56,21 +68,8 @@ export class b2Color {
     return (this.r === 0) && (this.g === 0) && (this.b === 0) && (this.a === 0);
   }
 
-  public GetColor(out: b2Color): b2Color {
-    out.Copy(this);
-    return out;
-  }
-
-  public SetColor(color: b2Color): void {
-    this.Copy(color);
-  }
-
-  public Set(a0: number | b2Color, a1?: number, a2?: number, a3: number = 1.0): void {
-    if (a0 instanceof b2Color) {
-      this.Copy(a0);
-    } else {
-      this.SetRGBA(a0, a1, a2, a3);
-    }
+  public Set(r: number, g: number, b: number, a: number = this.a): void {
+    this.SetRGBA(r, g, b, a);
   }
 
   public SetByteRGB(r: number, g: number, b: number): this {
@@ -88,14 +87,14 @@ export class b2Color {
     return this;
   }
 
-  public SetRGB(rr: number, gg: number, bb: number): b2Color {
+  public SetRGB(rr: number, gg: number, bb: number): this {
     this.r = rr;
     this.g = gg;
     this.b = bb;
     return this;
   }
 
-  public SetRGBA(rr: number, gg: number, bb: number, aa: number): b2Color {
+  public SetRGBA(rr: number, gg: number, bb: number, aa: number): this {
     this.r = rr;
     this.g = gg;
     this.b = bb;
@@ -103,7 +102,7 @@ export class b2Color {
     return this;
   }
 
-  public SelfAdd(color: b2Color): b2Color {
+  public SelfAdd(color: RGBA): this {
     this.r += color.r;
     this.g += color.g;
     this.b += color.b;
@@ -111,7 +110,7 @@ export class b2Color {
     return this;
   }
 
-  public Add(color: b2Color, out: b2Color): b2Color {
+  public Add<T extends RGBA>(color: RGBA, out: T): T {
     out.r = this.r + color.r;
     out.g = this.g + color.g;
     out.b = this.b + color.b;
@@ -119,7 +118,7 @@ export class b2Color {
     return out;
   }
 
-  public SelfSub(color: b2Color): b2Color {
+  public SelfSub(color: RGBA): this {
     this.r -= color.r;
     this.g -= color.g;
     this.b -= color.b;
@@ -127,7 +126,7 @@ export class b2Color {
     return this;
   }
 
-  public Sub(color: b2Color, out: b2Color): b2Color {
+  public Sub<T extends RGBA>(color: RGBA, out: T): T {
     out.r = this.r - color.r;
     out.g = this.g - color.g;
     out.b = this.b - color.b;
@@ -135,7 +134,7 @@ export class b2Color {
     return out;
   }
 
-  public SelfMul_0_1(s: number): b2Color {
+  public SelfMul(s: number): this {
     this.r *= s;
     this.g *= s;
     this.b *= s;
@@ -143,19 +142,19 @@ export class b2Color {
     return this;
   }
 
-  public Mul_0_1(s: number, out: b2Color): b2Color {
+  public Mul<T extends RGBA>(s: number, out: T): T {
     out.r = this.r * s;
     out.g = this.g * s;
     out.b = this.b * s;
     out.a = this.a * s;
-    return this;
+    return out;
   }
 
-  public Mix(mixColor: b2Color, strength: number): void {
+  public Mix(mixColor: RGBA, strength: number): void {
     b2Color.MixColors(this, mixColor, strength);
   }
 
-  public static MixColors(colorA: b2Color, colorB: b2Color, strength: number): void {
+  public static MixColors(colorA: RGBA, colorB: RGBA, strength: number): void {
     const dr = (strength * (colorB.r - colorA.r));
     const dg = (strength * (colorB.g - colorA.g));
     const db = (strength * (colorB.b - colorA.b));
@@ -227,19 +226,19 @@ export class b2Draw {
 
   public PopTransform(xf: b2Transform): void {}
 
-  public DrawPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {}
+  public DrawPolygon(vertices: XY[], vertexCount: number, color: RGBA): void {}
 
-  public DrawSolidPolygon(vertices: b2Vec2[], vertexCount: number, color: b2Color): void {}
+  public DrawSolidPolygon(vertices: XY[], vertexCount: number, color: RGBA): void {}
 
-  public DrawCircle(center: b2Vec2, radius: number, color: b2Color): void {}
+  public DrawCircle(center: XY, radius: number, color: RGBA): void {}
 
-  public DrawSolidCircle(center: b2Vec2, radius: number, axis: b2Vec2, color: b2Color): void {}
+  public DrawSolidCircle(center: XY, radius: number, axis: XY, color: RGBA): void {}
 
   // #if B2_ENABLE_PARTICLE
-  public DrawParticles(centers: b2Vec2[], radius: number, colors: b2Color[], count: number): void {}
+  public DrawParticles(centers: XY[], radius: number, colors: RGBA[], count: number): void {}
   // #endif
 
-  public DrawSegment(p1: b2Vec2, p2: b2Vec2, color: b2Color): void {}
+  public DrawSegment(p1: XY, p2: XY, color: RGBA): void {}
 
   public DrawTransform(xf: b2Transform): void {}
 }

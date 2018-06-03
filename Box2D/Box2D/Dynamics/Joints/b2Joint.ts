@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2 } from "../../Common/b2Math";
+import { b2Vec2, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2SolverData } from "../b2TimeStep";
 
@@ -44,7 +44,7 @@ export enum b2LimitState {
 }
 
 export class b2Jacobian {
-  public linear: b2Vec2 = new b2Vec2();
+  public readonly linear: b2Vec2 = new b2Vec2();
   public angularA: number = 0;
   public angularB: number = 0;
 
@@ -55,7 +55,7 @@ export class b2Jacobian {
     return this;
   }
 
-  public Set(x: b2Vec2, a1: number, a2: number): b2Jacobian {
+  public Set(x: XY, a1: number, a2: number): b2Jacobian {
     this.linear.Copy(x);
     this.angularA = a1;
     this.angularB = a2;
@@ -77,6 +77,24 @@ export class b2JointEdge {
     this.joint = joint;
     this.other = other;
   }
+}
+
+/// Joint definitions are used to construct joints.
+export interface b2IJointDef {
+  /// The joint type is set automatically for concrete joint types.
+  type: b2JointType;
+
+  /// Use this to attach application specific data to your joints.
+  userData?: any;
+
+  /// The first attached body.
+  bodyA: b2Body;
+
+  /// The second attached body.
+  bodyB: b2Body;
+
+  /// Set this flag to true if the attached bodies should collide.
+  collideConnected?: boolean;
 }
 
 /// Joint definitions are used to construct joints.
@@ -103,7 +121,7 @@ export class b2JointDef {
 
 /// The base joint class. Joints are used to constraint two bodies together in
 /// various fashions. Some joints also feature limits and motors.
-export class b2Joint {
+export abstract class b2Joint {
   public m_type: b2JointType = b2JointType.e_unknownJoint;
   public m_prev: b2Joint | null = null;
   public m_next: b2Joint | null = null;
@@ -119,16 +137,20 @@ export class b2Joint {
 
   public m_userData: any = null;
 
-  constructor(def: b2JointDef) {
+  constructor(def: b2IJointDef) {
     ///b2Assert(def.bodyA !== def.bodyB);
 
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
     this.m_type = def.type;
     this.m_edgeA = new b2JointEdge(this, def.bodyB);
     this.m_edgeB = new b2JointEdge(this, def.bodyA);
     this.m_bodyA = def.bodyA;
     this.m_bodyB = def.bodyB;
 
-    this.m_collideConnected = def.collideConnected;
+    this.m_collideConnected = maybe(def.collideConnected, false);
 
     this.m_userData = def.userData;
   }
@@ -149,24 +171,16 @@ export class b2Joint {
   }
 
   /// Get the anchor point on bodyA in world coordinates.
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
-    return out.SetZero();
-  }
+  public abstract GetAnchorA<T extends XY>(out: T): T;
 
   /// Get the anchor point on bodyB in world coordinates.
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
-    return out.SetZero();
-  }
+  public abstract GetAnchorB<T extends XY>(out: T): T;
 
   /// Get the reaction force on bodyB at the joint anchor in Newtons.
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
-    return out.SetZero();
-  }
+  public abstract GetReactionForce<T extends XY>(inv_dt: number, out: T): T;
 
   /// Get the reaction torque on bodyB in N*m.
-  public GetReactionTorque(inv_dt: number): number {
-    return 0;
-  }
+  public abstract GetReactionTorque(inv_dt: number): number;
 
   /// Get the next joint the world joint list.
   public GetNext(): b2Joint | null {
@@ -201,17 +215,13 @@ export class b2Joint {
   }
 
   /// Shift the origin for any points stored in world coordinates.
-  public ShiftOrigin(newOrigin: b2Vec2): void {
+  public ShiftOrigin(newOrigin: XY): void {
   }
 
-  public InitVelocityConstraints(data: b2SolverData): void {
-  }
+  public abstract InitVelocityConstraints(data: b2SolverData): void;
 
-  public SolveVelocityConstraints(data: b2SolverData): void {
-  }
+  public abstract SolveVelocityConstraints(data: b2SolverData): void;
 
   // This returns true if the position errors are within tolerance.
-  public SolvePositionConstraints(data: b2SolverData): boolean {
-    return false;
-  }
+  public abstract SolvePositionConstraints(data: b2SolverData): boolean;
 }

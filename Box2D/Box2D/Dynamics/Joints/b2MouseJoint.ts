@@ -17,13 +17,23 @@
 */
 
 import { b2_pi } from "../../Common/b2Settings";
-import { b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Vec2, b2Mat22, b2Rot, b2Transform, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
+
+export interface b2IMouseJointDef extends b2IJointDef {
+  target?: XY;
+
+  maxForce?: number;
+
+  frequencyHz?: number;
+
+  dampingRatio?: number;
+}
 
 /// Mouse joint definition. This requires a world target point,
 /// tuning parameters, and the time step.
-export class b2MouseJointDef extends b2JointDef {
+export class b2MouseJointDef extends b2JointDef implements b2IMouseJointDef {
   public target: b2Vec2 = new b2Vec2();
 
   public maxForce: number = 0;
@@ -38,59 +48,50 @@ export class b2MouseJointDef extends b2JointDef {
 }
 
 export class b2MouseJoint extends b2Joint {
-  public m_localAnchorB: b2Vec2 = null;
-  public m_targetA: b2Vec2 = null;
+  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public m_targetA: b2Vec2 = new b2Vec2();
   public m_frequencyHz: number = 0;
   public m_dampingRatio: number = 0;
   public m_beta: number = 0;
 
   // Solver shared
-  public m_impulse: b2Vec2 = null;
+  public m_impulse: b2Vec2 = new b2Vec2();
   public m_maxForce: number = 0;
   public m_gamma: number = 0;
 
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_rB: b2Vec2 = null;
-  public m_localCenterB: b2Vec2 = null;
+  public m_rB: b2Vec2 = new b2Vec2();
+  public m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassB: number = 0;
   public m_invIB: number = 0;
-  public m_mass: b2Mat22 = null;
-  public m_C: b2Vec2 = null;
-  public m_qB: b2Rot = null;
-  public m_lalcB: b2Vec2 = null;
-  public m_K: b2Mat22 = null;
+  public m_mass: b2Mat22 = new b2Mat22();
+  public m_C: b2Vec2 = new b2Vec2();
+  public m_qB: b2Rot = new b2Rot();
+  public m_lalcB: b2Vec2 = new b2Vec2();
+  public m_K: b2Mat22 = new b2Mat22();
 
-  constructor(def: b2MouseJointDef) {
+  constructor(def: b2IMouseJointDef) {
     super(def);
 
-    this.m_localAnchorB = new b2Vec2();
-    this.m_targetA = new b2Vec2();
-
-    this.m_impulse = new b2Vec2();
-
-    this.m_rB = new b2Vec2();
-    this.m_localCenterB = new b2Vec2();
-    this.m_mass = new b2Mat22();
-    this.m_C = new b2Vec2();
-    this.m_qB = new b2Rot();
-    this.m_lalcB = new b2Vec2();
-    this.m_K = new b2Mat22();
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
 
     ///b2Assert(def.target.IsValid());
     ///b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0);
     ///b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0);
     ///b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
 
-    this.m_targetA.Copy(def.target);
+    this.m_targetA.Copy(maybe(def.target, b2Vec2.ZERO));
     b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
 
-    this.m_maxForce = def.maxForce;
+    this.m_maxForce = maybe(def.maxForce, 0);
     this.m_impulse.SetZero();
 
-    this.m_frequencyHz = def.frequencyHz;
-    this.m_dampingRatio = def.dampingRatio;
+    this.m_frequencyHz = maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = maybe(def.dampingRatio, 0);
 
     this.m_beta = 0;
     this.m_gamma = 0;
@@ -248,15 +249,17 @@ export class b2MouseJoint extends b2Joint {
     return true;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
-    return out.Copy(this.m_targetA);
+  public GetAnchorA<T extends XY>(out: T): T {
+    out.x = this.m_targetA.x;
+    out.y = this.m_targetA.y;
+    return out;
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     return b2Vec2.MulSV(inv_dt, this.m_impulse, out);
   }
 

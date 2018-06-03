@@ -17,16 +17,32 @@
 */
 
 import { b2_linearSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Vec2, b2Rot } from "../../Common/b2Math";
+import { b2Abs, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 
 export const b2_minPulleyLength: number = 2;
 
+export interface b2IPulleyJointDef extends b2IJointDef {
+  groundAnchorA?: XY;
+
+  groundAnchorB?: XY;
+
+  localAnchorA?: XY;
+
+  localAnchorB?: XY;
+
+  lengthA?: number;
+
+  lengthB?: number;
+
+  ratio?: number;
+}
+
 /// Pulley joint definition. This requires two ground anchors,
 /// two dynamic body anchor points, and a pulley ratio.
-export class b2PulleyJointDef extends b2JointDef {
+export class b2PulleyJointDef extends b2JointDef implements b2IPulleyJointDef {
   public groundAnchorA: b2Vec2 = new b2Vec2(-1, 1);
 
   public groundAnchorB: b2Vec2 = new b2Vec2(1, 1);
@@ -96,21 +112,25 @@ export class b2PulleyJoint extends b2Joint {
   public m_lalcA: b2Vec2 = new b2Vec2();
   public m_lalcB: b2Vec2 = new b2Vec2();
 
-  constructor(def: b2PulleyJointDef) {
+  constructor(def: b2IPulleyJointDef) {
     super(def);
 
-    this.m_groundAnchorA.Copy(def.groundAnchorA);
-    this.m_groundAnchorB.Copy(def.groundAnchorB);
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_groundAnchorA.Copy(maybe(def.groundAnchorA, new b2Vec2(-1, 1)));
+    this.m_groundAnchorB.Copy(maybe(def.groundAnchorB, new b2Vec2(1, 0)));
+    this.m_localAnchorA.Copy(maybe(def.localAnchorA, new b2Vec2(-1, 0)));
+    this.m_localAnchorB.Copy(maybe(def.localAnchorB, new b2Vec2(1, 0)));
 
-    this.m_lengthA = def.lengthA;
-    this.m_lengthB = def.lengthB;
+    this.m_lengthA = maybe(def.lengthA, 0);
+    this.m_lengthB = maybe(def.lengthB, 0);
 
-    ///b2Assert(def.ratio !== 0);
-    this.m_ratio = def.ratio;
+    ///b2Assert(maybe(def.ratio, 1) !== 0);
+    this.m_ratio = maybe(def.ratio, 1);
 
-    this.m_constant = def.lengthA + this.m_ratio * def.lengthB;
+    this.m_constant = maybe(def.lengthA, 0) + this.m_ratio * maybe(def.lengthB, 0);
 
     this.m_impulse = 0;
   }
@@ -320,18 +340,20 @@ export class b2PulleyJoint extends b2Joint {
     return linearError < b2_linearSlop;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // b2Vec2 P = m_impulse * m_uB;
     // return inv_dt * P;
-    return out.Set(inv_dt * this.m_impulse * this.m_uB.x, inv_dt * this.m_impulse * this.m_uB.y);
+    out.x = inv_dt * this.m_impulse * this.m_uB.x;
+    out.y = inv_dt * this.m_impulse * this.m_uB.y;
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {

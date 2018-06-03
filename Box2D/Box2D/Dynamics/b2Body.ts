@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
 import { b2ContactEdge } from "./Contacts/b2Contact";
 import { b2JointEdge } from "./Joints/b2Joint";
-import { b2Fixture, b2FixtureDef } from "./b2Fixture";
+import { b2Fixture, b2FixtureDef, b2IFixtureDef } from "./b2Fixture";
 import { b2World } from "./b2World";
 // #if B2_ENABLE_CONTROLLER
 import { b2ControllerEdge } from "../../../Contributions/Enhancements/Controllers/b2Controller";
@@ -41,9 +41,63 @@ export enum b2BodyType {
   // b2_bulletBody = 3
 }
 
+export interface b2IBodyDef {
+  /// The body type: static, kinematic, or dynamic.
+  /// Note: if a dynamic body would have zero mass, the mass is set to one.
+  type?: b2BodyType;
+
+  /// The world position of the body. Avoid creating bodies at the origin
+  /// since this can lead to many overlapping shapes.
+  position?: XY;
+
+  /// The world angle of the body in radians.
+  angle?: number;
+
+  /// The linear velocity of the body's origin in world co-ordinates.
+  linearVelocity?: XY;
+
+  /// The angular velocity of the body.
+  angularVelocity?: number;
+
+  /// Linear damping is use to reduce the linear velocity. The damping parameter
+  /// can be larger than 1.0f but the damping effect becomes sensitive to the
+  /// time step when the damping parameter is large.
+  linearDamping?: number;
+
+  /// Angular damping is use to reduce the angular velocity. The damping parameter
+  /// can be larger than 1.0f but the damping effect becomes sensitive to the
+  /// time step when the damping parameter is large.
+  angularDamping?: number;
+
+  /// Set this flag to false if this body should never fall asleep. Note that
+  /// this increases CPU usage.
+  allowSleep?: boolean;
+
+  /// Is this body initially awake or sleeping?
+  awake?: boolean;
+
+  /// Should this body be prevented from rotating? Useful for characters.
+  fixedRotation?: boolean;
+
+  /// Is this a fast moving body that should be prevented from tunneling through
+  /// other moving bodies? Note that all bodies are prevented from tunneling through
+  /// kinematic and static bodies. This setting is only considered on dynamic bodies.
+  /// @warning You should use this flag sparingly since it increases processing time.
+  bullet?: boolean;
+
+  /// Does this body start out active?
+  active?: boolean;
+
+  /// Use this to store application specific body data.
+  userData?: any;
+
+  /// Scale the gravity applied to this body.
+  gravityScale?: number;
+}
+
 /// A body definition holds all the data needed to construct a rigid body.
 /// You can safely re-use body definitions. Shapes are added to a body after construction.
-export class b2BodyDef {
+export class b2BodyDef implements b2IBodyDef {
   /// The body type: static, kinematic, or dynamic.
   /// Note: if a dynamic body would have zero mass, the mass is set to one.
   public type: b2BodyType = b2BodyType.b2_staticBody;
@@ -111,16 +165,16 @@ export class b2Body {
 
   public m_islandIndex: number = 0;
 
-  public m_xf: b2Transform = new b2Transform();  // the body origin transform
+  public readonly m_xf: b2Transform = new b2Transform();  // the body origin transform
   // #if B2_ENABLE_PARTICLE
-  public m_xf0: b2Transform = new b2Transform();
+  public readonly m_xf0: b2Transform = new b2Transform();
   // #endif
-  public m_sweep: b2Sweep = new b2Sweep();    // the swept motion for CCD
+  public readonly m_sweep: b2Sweep = new b2Sweep();    // the swept motion for CCD
 
-  public m_linearVelocity: b2Vec2 = new b2Vec2();
+  public readonly m_linearVelocity: b2Vec2 = new b2Vec2();
   public m_angularVelocity: number = 0;
 
-  public m_force: b2Vec2 = new b2Vec2;
+  public readonly m_force: b2Vec2 = new b2Vec2();
   public m_torque: number = 0;
 
   public m_world: b2World;
@@ -149,11 +203,15 @@ export class b2Body {
   public m_userData: any = null;
 
   // #if B2_ENABLE_CONTROLLER
-  public m_controllerList: b2ControllerEdge = null;
+  public m_controllerList: b2ControllerEdge | null = null;
   public m_controllerCount: number = 0;
   // #endif
 
-  constructor(bd: b2BodyDef, world: b2World) {
+  constructor(bd: b2IBodyDef, world: b2World) {
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+
     ///b2Assert(bd.position.IsValid());
     ///b2Assert(bd.linearVelocity.IsValid());
     ///b2Assert(b2IsValid(bd.angle));
@@ -162,26 +220,16 @@ export class b2Body {
     ///b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
     ///b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
 
-    if (bd.bullet) {
-      this.m_bulletFlag = true;
-    }
-    if (bd.fixedRotation) {
-      this.m_fixedRotationFlag = true;
-    }
-    if (bd.allowSleep) {
-      this.m_autoSleepFlag = true;
-    }
-    if (bd.awake) {
-      this.m_awakeFlag = true;
-    }
-    if (bd.active) {
-      this.m_activeFlag = true;
-    }
+    this.m_bulletFlag = maybe(bd.bullet, false);
+    this.m_fixedRotationFlag = maybe(bd.fixedRotation, false);
+    this.m_autoSleepFlag = maybe(bd.allowSleep, true);
+    this.m_awakeFlag = maybe(bd.awake, true);
+    this.m_activeFlag = maybe(bd.active, true);
 
     this.m_world = world;
 
-    this.m_xf.p.Copy(bd.position);
-    this.m_xf.q.SetAngle(bd.angle);
+    this.m_xf.p.Copy(maybe(bd.position, b2Vec2.ZERO));
+    this.m_xf.q.SetAngle(maybe(bd.angle, 0));
     // #if B2_ENABLE_PARTICLE
     this.m_xf0.Copy(this.m_xf);
     // #endif
@@ -189,23 +237,22 @@ export class b2Body {
     this.m_sweep.localCenter.SetZero();
     this.m_sweep.c0.Copy(this.m_xf.p);
     this.m_sweep.c.Copy(this.m_xf.p);
-    this.m_sweep.a0 = bd.angle;
-    this.m_sweep.a = bd.angle;
+    this.m_sweep.a0 = this.m_sweep.a = this.m_xf.q.GetAngle();
     this.m_sweep.alpha0 = 0;
 
-    this.m_linearVelocity.Copy(bd.linearVelocity);
-    this.m_angularVelocity = bd.angularVelocity;
+    this.m_linearVelocity.Copy(maybe(bd.linearVelocity, b2Vec2.ZERO));
+    this.m_angularVelocity = maybe(bd.angularVelocity, 0);
 
-    this.m_linearDamping = bd.linearDamping;
-    this.m_angularDamping = bd.angularDamping;
-    this.m_gravityScale = bd.gravityScale;
+    this.m_linearDamping = maybe(bd.linearDamping, 0);
+    this.m_angularDamping = maybe(bd.angularDamping, 0);
+    this.m_gravityScale = maybe(bd.gravityScale, 1);
 
     this.m_force.SetZero();
     this.m_torque = 0;
 
     this.m_sleepTime = 0;
 
-    this.m_type = bd.type;
+    this.m_type = maybe(bd.type, b2BodyType.b2_staticBody);
 
     if (bd.type === b2BodyType.b2_dynamicBody) {
       this.m_mass = 1;
@@ -229,13 +276,11 @@ export class b2Body {
     // #endif
   }
 
-  public CreateFixture(a: b2FixtureDef | b2Shape, b?: number): b2Fixture {
-    if (a instanceof b2FixtureDef) {
-      return this.CreateFixtureDef(a);
-    } else if ((a instanceof b2Shape) && (typeof(b) === "number")) {
+  public CreateFixture(a: b2IFixtureDef | b2Shape, b: number = 0): b2Fixture {
+    if (a instanceof b2Shape) {
       return this.CreateFixtureShapeDensity(a, b);
     } else {
-      throw new Error();
+      return this.CreateFixtureDef(a);
     }
   }
 
@@ -246,7 +291,7 @@ export class b2Body {
   /// Contacts are not created until the next time step.
   /// @param def the fixture definition.
   /// @warning This function is locked during callbacks.
-  public CreateFixtureDef(def: b2FixtureDef): b2Fixture {
+  public CreateFixtureDef(def: b2IFixtureDef): b2Fixture {
     ///b2Assert(!this.m_world.IsLocked());
     if (this.m_world.IsLocked()) {
       return null;
@@ -311,7 +356,7 @@ export class b2Body {
     // Remove the fixture from this body's singly linked list.
     ///b2Assert(this.m_fixtureCount > 0);
     let node: b2Fixture | null = this.m_fixtureList;
-    let ppF: b2Fixture = null;
+    let ppF: b2Fixture | null = null;
     // let found: boolean = false;
     while (node !== null) {
       if (node === fixture) {
@@ -366,7 +411,7 @@ export class b2Body {
   /// Manipulating a body's transform may cause non-physical behavior.
   /// @param position the world position of the body's local origin.
   /// @param angle the world rotation in radians.
-  public SetTransformVec(position: b2Vec2, angle: number): void {
+  public SetTransformVec(position: XY, angle: number): void {
     this.SetTransformXY(position.x, position.y, angle);
   }
 
@@ -402,17 +447,17 @@ export class b2Body {
 
   /// Get the body transform for the body's origin.
   /// @return the world transform of the body's origin.
-  public GetTransform(): b2Transform {
+  public GetTransform(): Readonly<b2Transform> {
     return this.m_xf;
   }
 
   /// Get the world body origin position.
   /// @return the world position of the body's origin.
-  public GetPosition(): b2Vec2 {
+  public GetPosition(): Readonly<b2Vec2> {
     return this.m_xf.p;
   }
 
-  public SetPosition(position: b2Vec2): void {
+  public SetPosition(position: XY): void {
     this.SetTransformVec(position, this.GetAngle());
   }
 
@@ -431,18 +476,18 @@ export class b2Body {
   }
 
   /// Get the world position of the center of mass.
-  public GetWorldCenter(): b2Vec2 {
+  public GetWorldCenter(): Readonly<b2Vec2> {
     return this.m_sweep.c;
   }
 
   /// Get the local position of the center of mass.
-  public GetLocalCenter(): b2Vec2 {
+  public GetLocalCenter(): Readonly<b2Vec2> {
     return this.m_sweep.localCenter;
   }
 
   /// Set the linear velocity of the center of mass.
   /// @param v the new linear velocity of the center of mass.
-  public SetLinearVelocity(v: b2Vec2): void {
+  public SetLinearVelocity(v: XY): void {
     if (this.m_type === b2BodyType.b2_staticBody) {
       return;
     }
@@ -456,7 +501,7 @@ export class b2Body {
 
   /// Get the linear velocity of the center of mass.
   /// @return the linear velocity of the center of mass.
-  public GetLinearVelocity(): b2Vec2 {
+  public GetLinearVelocity(): Readonly<b2Vec2> {
     return this.m_linearVelocity;
   }
 
@@ -503,7 +548,7 @@ export class b2Body {
   /// @param force the world force vector, usually in Newtons (N).
   /// @param point the world position of the point of application.
   /// @param wake also wake up the body
-  public ApplyForce(force: b2Vec2, point: b2Vec2, wake: boolean = true): void {
+  public ApplyForce(force: XY, point: XY, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
@@ -523,7 +568,7 @@ export class b2Body {
   /// Apply a force to the center of mass. This wakes up the body.
   /// @param force the world force vector, usually in Newtons (N).
   /// @param wake also wake up the body
-  public ApplyForceToCenter(force: b2Vec2, wake: boolean = true): void {
+  public ApplyForceToCenter(force: XY, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
@@ -565,7 +610,7 @@ export class b2Body {
   /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
   /// @param point the world position of the point of application.
   /// @param wake also wake up the body
-  public ApplyLinearImpulse(impulse: b2Vec2, point: b2Vec2, wake: boolean = true): void {
+  public ApplyLinearImpulse(impulse: XY, point: XY, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
@@ -585,7 +630,7 @@ export class b2Body {
   /// Apply an impulse at the center of gravity. This immediately modifies the velocity.
   /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
   /// @param wake also wake up the body
-  public ApplyLinearImpulseToCenter(impulse: b2Vec2, wake: boolean = true): void {
+  public ApplyLinearImpulseToCenter(impulse: XY, wake: boolean = true): void {
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
     }
@@ -755,42 +800,42 @@ export class b2Body {
   /// Get the world coordinates of a point given the local coordinates.
   /// @param localPoint a point on the body measured relative the the body's origin.
   /// @return the same point expressed in world coordinates.
-  public GetWorldPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetWorldPoint<T extends XY>(localPoint: XY, out: T): T {
     return b2Transform.MulXV(this.m_xf, localPoint, out);
   }
 
   /// Get the world coordinates of a vector given the local coordinates.
   /// @param localVector a vector fixed in the body.
   /// @return the same vector expressed in world coordinates.
-  public GetWorldVector(localVector: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetWorldVector<T extends XY>(localVector: XY, out: T): T {
     return b2Rot.MulRV(this.m_xf.q, localVector, out);
   }
 
   /// Gets a local point relative to the body's origin given a world point.
   /// @param a point in world coordinates.
   /// @return the corresponding local point relative to the body's origin.
-  public GetLocalPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetLocalPoint<T extends XY>(worldPoint: XY, out: T): T {
     return b2Transform.MulTXV(this.m_xf, worldPoint, out);
   }
 
   /// Gets a local vector given a world vector.
   /// @param a vector in world coordinates.
   /// @return the corresponding local vector.
-  public GetLocalVector(worldVector: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetLocalVector<T extends XY>(worldVector: XY, out: T): T {
     return b2Rot.MulTRV(this.m_xf.q, worldVector, out);
   }
 
   /// Get the world linear velocity of a world point attached to this body.
   /// @param a point in world coordinates.
   /// @return the world velocity of a point.
-  public GetLinearVelocityFromWorldPoint(worldPoint: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetLinearVelocityFromWorldPoint<T extends XY>(worldPoint: XY, out: T): T {
     return b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(worldPoint, this.m_sweep.c, b2Vec2.s_t0), out);
   }
 
   /// Get the world velocity of a local point.
   /// @param a point in local coordinates.
   /// @return the world velocity of a point.
-  public GetLinearVelocityFromLocalPoint(localPoint: b2Vec2, out: b2Vec2): b2Vec2 {
+  public GetLinearVelocityFromLocalPoint<T extends XY>(localPoint: XY, out: T): T {
     return this.GetLinearVelocityFromWorldPoint(this.GetWorldPoint(localPoint, out), out);
   }
 

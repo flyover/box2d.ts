@@ -72,7 +72,6 @@ export class Rope extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
-
     if (settings.pause && !settings.singleStep) {
       dt = 0.0;
     }

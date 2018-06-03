@@ -17,10 +17,30 @@
 */
 
 import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection } from "../../Common/b2Settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
+import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
-import { b2Joint, b2JointDef, b2JointType, b2LimitState } from "./b2Joint";
+import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
+
+export interface b2IRevoluteJointDef extends b2IJointDef {
+  localAnchorA?: XY;
+
+  localAnchorB?: XY;
+
+  referenceAngle?: number;
+
+  enableLimit?: boolean;
+
+  lowerAngle?: number;
+
+  upperAngle?: number;
+
+  enableMotor?: boolean;
+
+  motorSpeed?: number;
+
+  maxMotorTorque?: number;
+}
 
 /// Revolute joint definition. This requires defining an
 /// anchor point where the bodies are joined. The definition
@@ -33,7 +53,7 @@ import { b2SolverData } from "../b2TimeStep";
 /// 1. you might not know where the center of mass will be.
 /// 2. if you add/remove shapes from a body and recompute the mass,
 ///    the joints will be broken.
-export class b2RevoluteJointDef extends b2JointDef {
+export class b2RevoluteJointDef extends b2JointDef implements b2IRevoluteJointDef {
   public localAnchorA: b2Vec2 = new b2Vec2(0, 0);
 
   public localAnchorB: b2Vec2 = new b2Vec2(0, 0);
@@ -103,22 +123,26 @@ export class b2RevoluteJoint extends b2Joint {
   public m_lalcB: b2Vec2 = new b2Vec2();
   public m_K: b2Mat22 = new b2Mat22();
 
-  constructor(def: b2RevoluteJointDef) {
+  constructor(def: b2IRevoluteJointDef) {
     super(def);
 
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
-    this.m_referenceAngle = def.referenceAngle;
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_referenceAngle = maybe(def.referenceAngle, 0);
 
     this.m_impulse.SetZero();
     this.m_motorImpulse = 0;
 
-    this.m_lowerAngle = def.lowerAngle;
-    this.m_upperAngle = def.upperAngle;
-    this.m_maxMotorTorque = def.maxMotorTorque;
-    this.m_motorSpeed = def.motorSpeed;
-    this.m_enableLimit = def.enableLimit;
-    this.m_enableMotor = def.enableMotor;
+    this.m_lowerAngle = maybe(def.lowerAngle, 0);
+    this.m_upperAngle = maybe(def.upperAngle, 0);
+    this.m_maxMotorTorque = maybe(def.maxMotorTorque, 0);
+    this.m_motorSpeed = maybe(def.motorSpeed, 0);
+    this.m_enableLimit = maybe(def.enableLimit, false);
+    this.m_enableMotor = maybe(def.enableMotor, false);
     this.m_limitState = b2LimitState.e_inactiveLimit;
   }
 
@@ -444,29 +468,31 @@ export class b2RevoluteJoint extends b2Joint {
     return positionError <= b2_linearSlop && angularError <= b2_angularSlop;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // b2Vec2 P(this.m_impulse.x, this.m_impulse.y);
     // return inv_dt * P;
-    return out.Set(inv_dt * this.m_impulse.x, inv_dt * this.m_impulse.y);
+    out.x = inv_dt * this.m_impulse.x;
+    out.y = inv_dt * this.m_impulse.y;
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {
     return inv_dt * this.m_impulse.z;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
-  public GetReferenceAngle() { return this.m_referenceAngle; }
+  public GetReferenceAngle(): number { return this.m_referenceAngle; }
 
   public GetJointAngle(): number {
     // b2Body* bA = this.m_bodyA;

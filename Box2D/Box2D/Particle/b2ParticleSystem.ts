@@ -20,7 +20,7 @@
 
 import { b2_linearSlop, b2_maxFloat, b2_maxParticleIndex, b2_invalidParticleIndex, b2_minParticleSystemBufferCapacity, b2_maxTriadDistanceSquared, b2_barrierCollisionTime, b2MakeArray } from "../Common/b2Settings";
 import { b2_maxParticlePressure, b2_minParticleWeight, b2_maxParticleForce, b2_particleStride } from "../Common/b2Settings";
-import { b2Min, b2Max, b2Abs, b2Clamp, b2Sqrt, b2InvSqrt, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
+import { b2Min, b2Max, b2Abs, b2Clamp, b2Sqrt, b2InvSqrt, b2Vec2, b2Rot, b2Transform, XY } from "../Common/b2Math";
 import { b2Color } from "../Common/b2Draw";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2ShapeType, b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
@@ -31,8 +31,8 @@ import { b2Fixture } from "../Dynamics/b2Fixture";
 import { b2Body } from "../Dynamics/b2Body";
 import { b2World } from "../Dynamics/b2World";
 import { b2ContactFilter, b2ContactListener, b2QueryCallback, b2RayCastCallback } from "../Dynamics/b2WorldCallbacks";
-import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle } from "./b2Particle";
-import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup } from "./b2ParticleGroup";
+import { b2ParticleFlag, b2ParticleDef, b2ParticleHandle, b2IParticleDef } from "./b2Particle";
+import { b2ParticleGroupFlag, b2ParticleGroupDef, b2ParticleGroup, b2IParticleGroupDef } from "./b2ParticleGroup";
 import { b2VoronoiDiagram } from "./b2VoronoiDiagram";
 import { b2DistanceProxy } from "../Collision/b2Distance";
 
@@ -712,7 +712,11 @@ export class b2ParticleSystem {
    *
    * warning: This function is locked during callbacks.
    */
-  CreateParticle(def: b2ParticleDef): number {
+  CreateParticle(def: b2IParticleDef): number {
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
     b2Assert(this.m_world.IsLocked() === false);
     if (this.m_world.IsLocked()) {
       return 0;
@@ -745,8 +749,8 @@ export class b2ParticleSystem {
     if (this.m_consecutiveContactStepsBuffer.data) {
       this.m_consecutiveContactStepsBuffer.data[index] = 0;
     }
-    this.m_positionBuffer.data[index] = (this.m_positionBuffer.data[index] || new b2Vec2()).Copy(def.position);
-    this.m_velocityBuffer.data[index] = (this.m_velocityBuffer.data[index] || new b2Vec2()).Copy(def.velocity);
+    this.m_positionBuffer.data[index] = (this.m_positionBuffer.data[index] || new b2Vec2()).Copy(maybe(def.position, b2Vec2.ZERO));
+    this.m_velocityBuffer.data[index] = (this.m_velocityBuffer.data[index] || new b2Vec2()).Copy(maybe(def.velocity, b2Vec2.ZERO));
     this.m_weightBuffer[index] = 0;
     this.m_forceBuffer[index] = (this.m_forceBuffer[index] || new b2Vec2()).SetZero();
     if (this.m_staticPressureBuffer) {
@@ -755,7 +759,8 @@ export class b2ParticleSystem {
     if (this.m_depthBuffer) {
       this.m_depthBuffer[index] = 0;
     }
-    if (this.m_colorBuffer.data || !def.color.IsZero()) {
+    const color: b2Color = new b2Color().Copy(maybe(def.color, b2Color.ZERO));
+    if (this.m_colorBuffer.data || !color.IsZero()) {
       this.m_colorBuffer.data = this.RequestBuffer(this.m_colorBuffer.data);
       this.m_colorBuffer.data[index] = (this.m_colorBuffer.data[index] || new b2Color()).Copy(def.color);
     }
@@ -771,9 +776,10 @@ export class b2ParticleSystem {
 
     // If particle lifetimes are enabled or the lifetime is set in the particle
     // definition, initialize the lifetime.
-    let finiteLifetime = def.lifetime > 0.0;
+    const lifetime = maybe(def.lifetime, 0.0);
+    let finiteLifetime = lifetime > 0.0;
     if (this.m_expirationTimeBuffer.data || finiteLifetime) {
-      this.SetParticleLifetime(index, finiteLifetime ? def.lifetime :
+      this.SetParticleLifetime(index, finiteLifetime ? lifetime :
         this.ExpirationTimeToLifetime(-this.GetQuantizedTimeElapsed()));
       // Add a reference to the newly added particle to the end of the
       // queue.
@@ -781,7 +787,7 @@ export class b2ParticleSystem {
     }
 
     proxy.index = index;
-    let group = def.group;
+    const group = def.group;
     this.m_groupBuffer[index] = group;
     if (group) {
       if (group.m_firstIndex < group.m_lastIndex) {
@@ -797,7 +803,7 @@ export class b2ParticleSystem {
         group.m_lastIndex = index + 1;
       }
     }
-    this.SetParticleFlags(index, def.flags);
+    this.SetParticleFlags(index, maybe(def.flags, 0));
     return index;
   }
 
@@ -910,7 +916,11 @@ export class b2ParticleSystem {
    *
    * warning: This function is locked during callbacks.
    */
-  CreateParticleGroup(groupDef: b2ParticleGroupDef): b2ParticleGroup {
+  CreateParticleGroup(groupDef: b2IParticleGroupDef): b2ParticleGroup {
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+
     let s_transform = b2ParticleSystem.CreateParticleGroup_s_transform;
 
     b2Assert(this.m_world.IsLocked() === false);
@@ -919,17 +929,17 @@ export class b2ParticleSystem {
     }
 
     let transform = s_transform;
-    transform.SetPositionAngle(groupDef.position, groupDef.angle);
+    transform.SetPositionAngle(maybe(groupDef.position, b2Vec2.ZERO), maybe(groupDef.angle, 0));
     let firstIndex = this.m_count;
     if (groupDef.shape) {
       this.CreateParticlesWithShapeForGroup(groupDef.shape, groupDef, transform);
     }
     if (groupDef.shapes) {
-      this.CreateParticlesWithShapesForGroup(groupDef.shapes, groupDef.shapeCount, groupDef, transform);
+      this.CreateParticlesWithShapesForGroup(groupDef.shapes, maybe(groupDef.shapeCount, groupDef.shapes.length), groupDef, transform);
     }
-    if (groupDef.particleCount) {
-      b2Assert(groupDef.positionData !== null);
-      for (let i = 0; i < groupDef.particleCount; i++) {
+    if (groupDef.positionData) {
+      const count = maybe(groupDef.particleCount, groupDef.positionData.length);
+      for (let i = 0; i < count; i++) {
         let p = groupDef.positionData[i];
         this.CreateParticleForGroup(groupDef, transform, p);
       }
@@ -939,7 +949,7 @@ export class b2ParticleSystem {
     let group = new b2ParticleGroup(this);
     group.m_firstIndex = firstIndex;
     group.m_lastIndex = lastIndex;
-    group.m_strength = groupDef.strength;
+    group.m_strength = maybe(groupDef.strength, 1);
     group.m_userData = groupDef.userData;
     group.m_transform.Copy(transform);
     group.m_prev = null;
@@ -952,7 +962,7 @@ export class b2ParticleSystem {
     for (let i = firstIndex; i < lastIndex; i++) {
       this.m_groupBuffer[i] = group;
     }
-    this.SetGroupFlags(group, groupDef.groupFlags);
+    this.SetGroupFlags(group, maybe(groupDef.groupFlags, 0));
 
     // Create pairs and triads between particles in the group.
     let filter = new b2ParticleSystem.ConnectionFilter();
@@ -1649,7 +1659,7 @@ export class b2ParticleSystem {
    * @param index the particle that will be modified.
    * @param impulse impulse the world impulse vector, usually in N-seconds or kg-m/s.
    */
-  ParticleApplyLinearImpulse(index: number, impulse: b2Vec2): void {
+  ParticleApplyLinearImpulse(index: number, impulse: XY): void {
     this.ApplyLinearImpulse(index, index + 1, impulse);
   }
 
@@ -1666,19 +1676,19 @@ export class b2ParticleSystem {
    * @param lastIndex the last particle to be modified.
    * @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
    */
-  ApplyLinearImpulse(firstIndex: number, lastIndex: number, impulse: b2Vec2): void {
+  ApplyLinearImpulse(firstIndex: number, lastIndex: number, impulse: XY): void {
     let vel_data = this.m_velocityBuffer.data;
     let numParticles = (lastIndex - firstIndex);
     let totalMass = numParticles * this.GetParticleMass();
     ///const b2Vec2 velocityDelta = impulse / totalMass;
-    let velocityDelta = impulse.Clone().SelfMul(1 / totalMass);
+    let velocityDelta = new b2Vec2().Copy(impulse).SelfMul(1 / totalMass);
     for (let i = firstIndex; i < lastIndex; i++) {
       ///m_velocityBuffer.data[i] += velocityDelta;
       vel_data[i].SelfAdd(velocityDelta);
     }
   }
 
-  static IsSignificantForce(force: b2Vec2): boolean {
+  static IsSignificantForce(force: XY): boolean {
     return force.x !== 0 || force.y !== 0;
   }
 
@@ -1688,7 +1698,7 @@ export class b2ParticleSystem {
    * @param index the particle that will be modified.
    * @param force the world force vector, usually in Newtons (N).
    */
-  ParticleApplyForce(index: number, force: b2Vec2): void {
+  ParticleApplyForce(index: number, force: XY): void {
     if (b2ParticleSystem.IsSignificantForce(force) &&
       this.ForceCanBeApplied(this.m_flagsBuffer.data[index])) {
       this.PrepareForceBuffer();
@@ -1708,7 +1718,7 @@ export class b2ParticleSystem {
    * @param lastIndex the last particle to be modified.
    * @param force the world force vector, usually in Newtons (N).
    */
-  ApplyForce(firstIndex: number, lastIndex: number, force: b2Vec2): void {
+  ApplyForce(firstIndex: number, lastIndex: number, force: XY): void {
     // Ensure we're not trying to apply force to particles that can't move,
     // such as wall particles.
     // #if B2_ASSERT_ENABLED
@@ -1721,7 +1731,7 @@ export class b2ParticleSystem {
 
     // Early out if force does nothing (optimization).
     ///const b2Vec2 distributedForce = force / (float32)(lastIndex - firstIndex);
-    let distributedForce = force.Clone().SelfMul(1 / (lastIndex - firstIndex));
+    let distributedForce =  new b2Vec2().Copy(force).SelfMul(1 / (lastIndex - firstIndex));
     if (b2ParticleSystem.IsSignificantForce(distributedForce)) {
       this.PrepareForceBuffer();
 
@@ -2035,7 +2045,7 @@ export class b2ParticleSystem {
     }
   }
 
-  CreateParticleForGroup(groupDef: b2ParticleGroupDef, xf: b2Transform, p: b2Vec2): void {
+  CreateParticleForGroup(groupDef: b2IParticleGroupDef, xf: b2Transform, p: XY): void {
     let particleDef = new b2ParticleDef();
     particleDef.flags = groupDef.flags;
     ///particleDef.position = b2Mul(xf, p);
@@ -2063,7 +2073,7 @@ export class b2ParticleSystem {
     this.CreateParticle(particleDef);
   }
 
-  CreateParticlesStrokeShapeForGroup(shape: b2Shape, groupDef: b2ParticleGroupDef, xf: b2Transform): void {
+  CreateParticlesStrokeShapeForGroup(shape: b2Shape, groupDef: b2IParticleGroupDef, xf: b2Transform): void {
     let s_edge = b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_edge;
     let s_d = b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_d;
     let s_p = b2ParticleSystem.CreateParticlesStrokeShapeForGroup_s_p;
@@ -2098,7 +2108,7 @@ export class b2ParticleSystem {
   static CreateParticlesStrokeShapeForGroup_s_d = new b2Vec2();
   static CreateParticlesStrokeShapeForGroup_s_p = new b2Vec2();
 
-  CreateParticlesFillShapeForGroup(shape: b2Shape, groupDef: b2ParticleGroupDef, xf: b2Transform): void {
+  CreateParticlesFillShapeForGroup(shape: b2Shape, groupDef: b2IParticleGroupDef, xf: b2Transform): void {
     let s_aabb = b2ParticleSystem.CreateParticlesFillShapeForGroup_s_aabb;
     let s_p = b2ParticleSystem.CreateParticlesFillShapeForGroup_s_p;
     let stride = groupDef.stride;
@@ -2123,7 +2133,7 @@ export class b2ParticleSystem {
   static CreateParticlesFillShapeForGroup_s_aabb = new b2AABB();
   static CreateParticlesFillShapeForGroup_s_p = new b2Vec2();
 
-  CreateParticlesWithShapeForGroup(shape: b2Shape, groupDef: b2ParticleGroupDef, xf: b2Transform): void {
+  CreateParticlesWithShapeForGroup(shape: b2Shape, groupDef: b2IParticleGroupDef, xf: b2Transform): void {
     switch (shape.GetType()) {
       case b2ShapeType.e_edgeShape:
       case b2ShapeType.e_chainShape:
@@ -2139,7 +2149,7 @@ export class b2ParticleSystem {
     }
   }
 
-  CreateParticlesWithShapesForGroup(shapes: b2Shape[], shapeCount: number, groupDef: b2ParticleGroupDef, xf: b2Transform): void {
+  CreateParticlesWithShapesForGroup(shapes: b2Shape[], shapeCount: number, groupDef: b2IParticleGroupDef, xf: b2Transform): void {
     let compositeShape = new b2ParticleSystem.CompositeShape(shapes, shapeCount);
     this.CreateParticlesFillShapeForGroup(compositeShape, groupDef, xf);
   }
@@ -2649,7 +2659,7 @@ export class b2ParticleSystem {
     ///this.m_world.m_stackAllocator.Free(contactGroups);
   }
 
-  GetInsideBoundsEnumerator(aabb: b2AABB): b2ParticleSystem.InsideBoundsEnumerator {
+  GetInsideBoundsEnumerator(aabb: Readonly<b2AABB>): b2ParticleSystem.InsideBoundsEnumerator {
     let lowerTag = b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.lowerBound.x - 1,
       this.m_inverseDiameter * aabb.lowerBound.y - 1);
     let upperTag = b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.upperBound.x + 1,

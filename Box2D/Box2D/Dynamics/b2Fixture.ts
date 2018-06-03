@@ -17,7 +17,7 @@
 */
 
 import { b2MakeArray } from "../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
@@ -25,7 +25,24 @@ import { b2Shape, b2ShapeType, b2MassData } from "../Collision/Shapes/b2Shape";
 import { b2Body } from "./b2Body";
 
 /// This holds contact filtering data.
-export class b2Filter {
+export interface b2IFilter {
+  /// The collision category bits. Normally you would just set one bit.
+  categoryBits: number;
+
+  /// The collision mask bits. This states the categories that this
+  /// shape would accept for collision.
+  maskBits: number;
+
+  /// Collision groups allow a certain group of objects to never collide (negative)
+  /// or always collide (positive). Zero means no collision group. Non-zero group
+  /// filtering always wins against the mask bits.
+  groupIndex?: number;
+}
+
+/// This holds contact filtering data.
+export class b2Filter implements b2IFilter {
+  public static readonly DEFAULT: Readonly<b2Filter> = new b2Filter();
+
   /// The collision category bits. Normally you would just set one bit.
   public categoryBits: number = 0x0001;
 
@@ -42,18 +59,45 @@ export class b2Filter {
     return new b2Filter().Copy(this);
   }
 
-  public Copy(other: b2Filter): b2Filter {
+  public Copy(other: b2IFilter): this {
     ///b2Assert(this !== other);
     this.categoryBits = other.categoryBits;
     this.maskBits = other.maskBits;
-    this.groupIndex = other.groupIndex;
+    this.groupIndex = other.groupIndex || 0;
     return this;
   }
 }
 
 /// A fixture definition is used to create a fixture. This class defines an
 /// abstract fixture definition. You can reuse fixture definitions safely.
-export class b2FixtureDef {
+export interface b2IFixtureDef {
+  /// The shape, this must be set. The shape will be cloned, so you
+  /// can create the shape on the stack.
+  shape: b2Shape;
+
+  /// Use this to store application specific fixture data.
+  userData?: any;
+
+  /// The friction coefficient, usually in the range [0,1].
+  friction?: number;
+
+  /// The restitution (elasticity) usually in the range [0,1].
+  restitution?: number;
+
+  /// The density, usually in kg/m^2.
+  density?: number;
+
+  /// A sensor shape collects contact information but never generates a collision
+  /// response.
+  isSensor?: boolean;
+
+  /// Contact filtering data.
+  filter?: b2IFilter;
+}
+
+/// A fixture definition is used to create a fixture. This class defines an
+/// abstract fixture definition. You can reuse fixture definitions safely.
+export class b2FixtureDef implements b2IFixtureDef {
   /// The shape, this must be set. The shape will be cloned, so you
   /// can create the shape on the stack.
   public shape: b2Shape = null;
@@ -80,10 +124,10 @@ export class b2FixtureDef {
 
 /// This proxy is used internally to connect fixtures to the broad-phase.
 export class b2FixtureProxy {
-  public aabb: b2AABB = new b2AABB();
+  public readonly aabb: b2AABB = new b2AABB();
   public fixture: b2Fixture;
   public childIndex: number = 0;
-  public treeNode: b2TreeNode = null;
+  public treeNode: b2TreeNode | null = null;
   // public static MakeArray(length: number): b2FixtureProxy[] {
   //   return b2MakeArray(length, (i) => new b2FixtureProxy());
   // }
@@ -108,7 +152,7 @@ export class b2Fixture {
   public m_friction: number = 0;
   public m_restitution: number = 0;
 
-  public m_proxies: b2FixtureProxy[] = null;
+  public m_proxies: b2FixtureProxy[] = [];
   public m_proxyCount: number = 0;
 
   public m_filter: b2Filter = new b2Filter();
@@ -117,7 +161,7 @@ export class b2Fixture {
 
   public m_userData: any = null;
 
-  constructor(def: b2FixtureDef, body: b2Body) {
+  constructor(def: b2IFixtureDef, body: b2Body) {
     this.m_body = body;
     this.m_shape = def.shape.Clone();
   }
@@ -159,16 +203,12 @@ export class b2Fixture {
   }
 
   /// Get the contact filtering data.
-  public GetFilterData(): b2Filter {
+  public GetFilterData(): Readonly<b2Filter> {
     return this.m_filter;
   }
 
   /// Call this if you want to establish collision that was previously disabled by b2ContactFilter::ShouldCollide.
   public Refilter(): void {
-    if (this.m_body) {
-      return;
-    }
-
     // Flag associated contacts for filtering.
     let edge = this.m_body.GetContactList();
 
@@ -204,7 +244,7 @@ export class b2Fixture {
 
   /// Get the next fixture in the parent body's fixture list.
   /// @return the next shape.
-  public GetNext(): b2Fixture {
+  public GetNext(): b2Fixture | null {
     return this.m_next;
   }
 
@@ -283,7 +323,7 @@ export class b2Fixture {
   /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
   /// If you need a more accurate AABB, compute it using the shape and
   /// the body transform.
-  public GetAABB(childIndex: number): b2AABB {
+  public GetAABB(childIndex: number): Readonly<b2AABB> {
     ///b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
     return this.m_proxies[childIndex].aabb;
   }
@@ -309,17 +349,21 @@ export class b2Fixture {
 
   // We need separation create/destroy functions from the constructor/destructor because
   // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-  public Create(/*body: b2Body,*/ def: b2FixtureDef): void {
+  public Create(/*body: b2Body,*/ def: b2IFixtureDef): void {
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
     this.m_userData = def.userData;
-    this.m_friction = def.friction;
-    this.m_restitution = def.restitution;
+    this.m_friction = maybe(def.friction,  0.2);
+    this.m_restitution = maybe(def.restitution, 0);
 
     // this.m_body = body;
     this.m_next = null;
 
-    this.m_filter.Copy(def.filter);
+    this.m_filter.Copy(maybe(def.filter, b2Filter.DEFAULT));
 
-    this.m_isSensor = def.isSensor;
+    this.m_isSensor = maybe(def.isSensor, false);
 
     // this.m_shape = def.shape.Clone();
 
@@ -335,7 +379,7 @@ export class b2Fixture {
     this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
     this.m_proxyCount = 0;
 
-    this.m_density = def.density;
+    this.m_density = maybe(def.density, 0);
   }
 
   public Destroy(): void {

@@ -17,16 +17,24 @@
 */
 
 import { b2_linearSlop } from "../../Common/b2Settings";
-import { b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Vec2, b2Rot, b2Transform, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2PrismaticJoint } from "./b2PrismaticJoint";
 import { b2RevoluteJoint } from "./b2RevoluteJoint";
 import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
 
+export interface b2IGearJointDef extends b2IJointDef {
+  joint1: b2Joint;
+
+  joint2: b2Joint;
+
+  ratio?: number;
+}
+
 /// Gear joint definition. This definition requires two existing
 /// revolute or prismatic joints (any combination will work).
-export class b2GearJointDef extends b2JointDef {
+export class b2GearJointDef extends b2JointDef implements b2IGearJointDef {
   public joint1: b2Joint = null;
 
   public joint2: b2Joint = null;
@@ -101,9 +109,13 @@ export class b2GearJoint extends b2Joint {
   public m_lalcC: b2Vec2 = new b2Vec2();
   public m_lalcD: b2Vec2 = new b2Vec2();
 
-  constructor(def: b2GearJointDef) {
+  constructor(def: b2IGearJointDef) {
     super(def);
 
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
     this.m_joint1 = def.joint1;
     this.m_joint2 = def.joint2;
 
@@ -193,7 +205,7 @@ export class b2GearJoint extends b2Joint {
       coordinateB = b2Vec2.DotVV(b2Vec2.SubVV(pB, pD, b2Vec2.s_t0), this.m_localAxisD);
     }
 
-    this.m_ratio = def.ratio;
+    this.m_ratio = maybe(def.ratio, 1);
 
     this.m_constant = coordinateA + this.m_ratio * coordinateB;
 
@@ -499,15 +511,15 @@ export class b2GearJoint extends b2Joint {
     return linearError < b2_linearSlop;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // b2Vec2 P = m_impulse * m_JvAC;
     // return inv_dt * P;
     return b2Vec2.MulSV(inv_dt * this.m_impulse, this.m_JvAC, out);

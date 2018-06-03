@@ -17,7 +17,7 @@
 */
 
 import { b2_polygonRadius } from "../../Common/b2Settings";
-import { b2Vec2, b2Rot, b2Transform } from "../../Common/b2Math";
+import { b2Vec2, b2Rot, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 import { b2MassData } from "./b2Shape";
@@ -27,10 +27,10 @@ import { b2Shape, b2ShapeType } from "./b2Shape";
 /// to other edge shapes. The connectivity information is used to ensure
 /// correct contact normals.
 export class b2EdgeShape extends b2Shape {
-  public m_vertex1: b2Vec2 = new b2Vec2();
-  public m_vertex2: b2Vec2 = new b2Vec2();
-  public m_vertex0: b2Vec2 = new b2Vec2();
-  public m_vertex3: b2Vec2 = new b2Vec2();
+  public readonly m_vertex1: b2Vec2 = new b2Vec2();
+  public readonly m_vertex2: b2Vec2 = new b2Vec2();
+  public readonly m_vertex0: b2Vec2 = new b2Vec2();
+  public readonly m_vertex3: b2Vec2 = new b2Vec2();
   public m_hasVertex0: boolean = false;
   public m_hasVertex3: boolean = false;
 
@@ -39,7 +39,7 @@ export class b2EdgeShape extends b2Shape {
   }
 
   /// Set this as an isolated edge.
-  public Set(v1: b2Vec2, v2: b2Vec2): b2EdgeShape {
+  public Set(v1: XY, v2: XY): b2EdgeShape {
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
     this.m_hasVertex0 = false;

@@ -17,15 +17,27 @@
 */
 
 import { b2_pi, b2_linearSlop, b2_angularSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Vec2, b2Vec3, b2Mat33, b2Rot } from "../../Common/b2Math";
+import { b2Abs, b2Vec2, b2Vec3, b2Mat33, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
+
+export interface b2IWeldJointDef extends b2IJointDef {
+  localAnchorA?: XY;
+
+  localAnchorB?: XY;
+
+  referenceAngle?: number;
+
+  frequencyHz?: number;
+
+  dampingRatio?: number;
+}
 
 /// Weld joint definition. You need to specify local anchor points
 /// where they are attached and the relative body angle. The position
 /// of the anchor points is important for computing the reaction torque.
-export class b2WeldJointDef extends b2JointDef {
+export class b2WeldJointDef extends b2JointDef implements b2IWeldJointDef {
   public localAnchorA: b2Vec2 = new b2Vec2();
 
   public localAnchorB: b2Vec2 = new b2Vec2();
@@ -80,15 +92,19 @@ export class b2WeldJoint extends b2Joint {
   public m_lalcB: b2Vec2 = new b2Vec2();
   public m_K: b2Mat33 = new b2Mat33();
 
-  constructor(def: b2WeldJointDef) {
+  constructor(def: b2IWeldJointDef) {
     super(def);
 
-    this.m_frequencyHz = def.frequencyHz;
-    this.m_dampingRatio = def.dampingRatio;
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_frequencyHz = maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = maybe(def.dampingRatio, 0);
 
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
-    this.m_referenceAngle = def.referenceAngle;
+    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_referenceAngle = maybe(def.referenceAngle, 0);
     this.m_impulse.SetZero();
   }
 
@@ -365,27 +381,29 @@ export class b2WeldJoint extends b2Joint {
     return positionError <= b2_linearSlop && angularError <= b2_angularSlop;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // b2Vec2 P(this.m_impulse.x, this.m_impulse.y);
     // return inv_dt * P;
-    return out.Set(inv_dt * this.m_impulse.x, inv_dt * this.m_impulse.y);
+    out.x = inv_dt * this.m_impulse.x;
+    out.y = inv_dt * this.m_impulse.y;
+    return out;
   }
 
   public GetReactionTorque(inv_dt: number): number {
     return inv_dt * this.m_impulse.z;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
   public GetReferenceAngle(): number { return this.m_referenceAngle; }
 

@@ -38,11 +38,33 @@ class ParticleVFX {
     let pd = new box2d.b2ParticleGroupDef();
     pd.flags = particleFlags;
     pd.shape = shape;
-    this.m_origColor.Set(
-      Math.random(),
-      Math.random(),
-      Math.random(),
-      1.0);
+    // this.m_origColor.Set(
+    //   Math.random(),
+    //   Math.random(),
+    //   Math.random(),
+    //   1.0);
+    function hslToRgb(h: number, s: number, l: number, a: number = 1): box2d.RGBA {
+      let r, g, b;
+      if (s === 0) {
+        r = g = b = l; // achromatic
+      } else {
+        function hue2rgb(p: number, q: number, t: number) {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        }
+        const q: number = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p: number = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      return { r, g, b, a };
+    }
+    this.m_origColor.Copy(hslToRgb(Math.random(), 1, 0.5));
     pd.color.Copy(this.m_origColor);
     this.m_particleSystem = particleSystem;
 
@@ -75,7 +97,7 @@ class ParticleVFX {
     return 1.0 - ((this.m_halfLifetime - this.m_remainingLifetime) / this.m_halfLifetime);
   }
   Step(dt: number) {
-    if (this.m_remainingLifetime > 0.0) {
+    if (dt > 0 && this.m_remainingLifetime > 0.0) {
       this.m_remainingLifetime = Math.max(this.m_remainingLifetime - dt, 0.0);
       let coeff = this.ColorCoeff();
 
@@ -85,9 +107,10 @@ class ParticleVFX {
       // Set particle colors all at once.
       for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
         let c = colors[i];
-        ///  c *= coeff;
-        c.SelfMul_0_1(coeff);
-        c.a = this.m_origColor.a;
+        // c *= coeff;
+        // c.SelfMul(coeff);
+        // c.a = this.m_origColor.a;
+        c.a *= coeff;
       }
     }
   }
@@ -159,6 +182,11 @@ export class Sparky extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     let particleFlags = testbed.Main.GetParticleParameterValue();
+    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+    if (settings.pause && !settings.singleStep) {
+      dt = 0.0;
+    }
+
     super.Step(settings);
 
     // If there was a contacts...
@@ -166,12 +194,6 @@ export class Sparky extends testbed.Test {
       // ...explode!
       this.AddVFX(this.m_contactPoint, particleFlags);
       this.m_contact = false;
-    }
-
-    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
-
-    if (settings.pause && !settings.singleStep) {
-      dt = 0.0;
     }
 
     // Step particle explosions.

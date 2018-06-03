@@ -17,10 +17,28 @@
 */
 
 import { b2_pi, b2_linearSlop } from "../../Common/b2Settings";
-import { b2Abs, b2Clamp, b2Vec2, b2Rot } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType } from "./b2Joint";
+import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
+
+export interface b2IWheelJointDef extends b2IJointDef {
+  localAnchorA?: XY;
+
+  localAnchorB?: XY;
+
+  localAxisA?: XY;
+
+  enableMotor?: boolean;
+
+  maxMotorTorque?: number;
+
+  motorSpeed?: number;
+
+  frequencyHz?: number;
+
+  dampingRatio?: number;
+}
 
 /// Wheel joint definition. This requires defining a line of
 /// motion using an axis and an anchor point. The definition uses local
@@ -28,7 +46,7 @@ import { b2Body } from "../b2Body";
 /// can violate the constraint slightly. The joint translation is zero
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
-export class b2WheelJointDef extends b2JointDef {
+export class b2WheelJointDef extends b2JointDef implements b2IWheelJointDef {
   public localAnchorA: b2Vec2 = new b2Vec2(0, 0);
 
   public localAnchorB: b2Vec2 = new b2Vec2(0, 0);
@@ -107,20 +125,24 @@ export class b2WheelJoint extends b2Joint {
   public m_rA: b2Vec2 = new b2Vec2();
   public m_rB: b2Vec2 = new b2Vec2();
 
-  constructor(def: b2WheelJointDef) {
+  constructor(def: b2IWheelJointDef) {
     super(def);
 
-    this.m_frequencyHz = def.frequencyHz;
-    this.m_dampingRatio = def.dampingRatio;
+    function maybe<T>(value: T | undefined, _default: T): T {
+      return value !== undefined ? value : _default;
+    }
+    
+    this.m_frequencyHz = maybe(def.frequencyHz, 2);
+    this.m_dampingRatio = maybe(def.dampingRatio, 0.7);
 
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
-    this.m_localXAxisA.Copy(def.localAxisA);
+    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_localXAxisA.Copy(maybe(def.localAxisA, b2Vec2.UNITX));
     b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
 
-    this.m_maxMotorTorque = def.maxMotorTorque;
-    this.m_motorSpeed = def.motorSpeed;
-    this.m_enableMotor = def.enableMotor;
+    this.m_maxMotorTorque = maybe(def.maxMotorTorque, 0);
+    this.m_motorSpeed = maybe(def.motorSpeed, 0);
+    this.m_enableMotor = maybe(def.enableMotor, false);
 
     this.m_ax.SetZero();
     this.m_ay.SetZero();
@@ -435,15 +457,15 @@ export class b2WheelJoint extends b2Joint {
     return def;
   }
 
-  public GetAnchorA(out: b2Vec2): b2Vec2 {
+  public GetAnchorA<T extends XY>(out: T): T {
     return this.m_bodyA.GetWorldPoint(this.m_localAnchorA, out);
   }
 
-  public GetAnchorB(out: b2Vec2): b2Vec2 {
+  public GetAnchorB<T extends XY>(out: T): T {
     return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
   }
 
-  public GetReactionForce(inv_dt: number, out: b2Vec2): b2Vec2 {
+  public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // return inv_dt * (m_impulse * m_ay + m_springImpulse * m_ax);
     out.x = inv_dt * (this.m_impulse * this.m_ay.x + this.m_springImpulse * this.m_ax.x);
     out.y = inv_dt * (this.m_impulse * this.m_ay.y + this.m_springImpulse * this.m_ax.y);
@@ -454,11 +476,11 @@ export class b2WheelJoint extends b2Joint {
     return inv_dt * this.m_motorImpulse;
   }
 
-  public GetLocalAnchorA(): b2Vec2 { return this.m_localAnchorA; }
+  public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }
 
-  public GetLocalAnchorB(): b2Vec2 { return this.m_localAnchorB; }
+  public GetLocalAnchorB(): Readonly<b2Vec2> { return this.m_localAnchorB; }
 
-  public GetLocalAxisA(): b2Vec2 { return this.m_localXAxisA; }
+  public GetLocalAxisA(): Readonly<b2Vec2> { return this.m_localXAxisA; }
 
   public GetJointTranslation(): number {
     return this.GetPrismaticJointTranslation();

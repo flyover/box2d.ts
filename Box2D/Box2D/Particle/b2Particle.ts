@@ -19,8 +19,8 @@
 // #if B2_ENABLE_PARTICLE
 
 import { b2_invalidParticleIndex } from "../Common/b2Settings";
-import { b2Clamp, b2Vec2 } from "../Common/b2Math";
-import { b2Color } from "../Common/b2Draw";
+import { b2Clamp, b2Vec2, XY } from "../Common/b2Math";
+import { b2Color, RGBA } from "../Common/b2Draw";
 import { b2ParticleGroup } from "./b2ParticleGroup";
 
 /**
@@ -74,14 +74,24 @@ export enum b2ParticleFlag {
   b2_particleContactFilterParticle = 1 << 17
 }
 
-export class b2ParticleDef {
-  flags: b2ParticleFlag = 0;
-  position: b2Vec2 = new b2Vec2();
-  velocity: b2Vec2 = new b2Vec2();
-  color: b2Color = new b2Color();
-  lifetime: number = 0.0;
-  userData: any = null;
-  group: b2ParticleGroup = null;
+export interface b2IParticleDef {
+  flags?: b2ParticleFlag;
+  position?: XY;
+  velocity?: XY;
+  color?: RGBA;
+  lifetime?: number;
+  userData?: any;
+  group?: b2ParticleGroup;
+}
+
+export class b2ParticleDef implements b2IParticleDef {
+  public flags: b2ParticleFlag = 0;
+  public readonly position: b2Vec2 = new b2Vec2();
+  public readonly velocity: b2Vec2 = new b2Vec2();
+  public readonly color: b2Color = new b2Color(0, 0, 0, 0);
+  public lifetime: number = 0.0;
+  public userData: any = null;
+  public group: b2ParticleGroup | null = null;
 }
 
 export function b2CalculateParticleIterations(gravity: number, radius: number, timeStep: number): number {

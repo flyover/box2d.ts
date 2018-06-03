@@ -127,16 +127,21 @@ export function b2RandomRange(lo: number, hi: number): number {
   return (hi - lo) * Math.random() + lo;
 }
 
-/// A 2D column vector.
-export class b2Vec2 {
-  public static ZERO = new b2Vec2(0, 0);
-  public static UNITX = new b2Vec2(1, 0);
-  public static UNITY = new b2Vec2(0, 1);
+export interface XY {
+  x: number,
+  y: number
+}
 
-  public static s_t0 = new b2Vec2();
-  public static s_t1 = new b2Vec2();
-  public static s_t2 = new b2Vec2();
-  public static s_t3 = new b2Vec2();
+/// A 2D column vector.
+export class b2Vec2 implements XY {
+  public static readonly ZERO: Readonly<b2Vec2> = new b2Vec2(0, 0);
+  public static readonly UNITX: Readonly<b2Vec2> = new b2Vec2(1, 0);
+  public static readonly UNITY: Readonly<b2Vec2> = new b2Vec2(0, 1);
+
+  public static readonly s_t0: b2Vec2 = new b2Vec2();
+  public static readonly s_t1: b2Vec2 = new b2Vec2();
+  public static readonly s_t2: b2Vec2 = new b2Vec2();
+  public static readonly s_t3: b2Vec2 = new b2Vec2();
 
   public x: number;
   public y: number;
@@ -150,72 +155,72 @@ export class b2Vec2 {
     return new b2Vec2(this.x, this.y);
   }
 
-  public SetZero(): b2Vec2 {
+  public SetZero(): this {
     this.x = 0;
     this.y = 0;
     return this;
   }
 
-  public Set(x: number, y: number): b2Vec2 {
+  public Set(x: number, y: number): this {
     this.x = x;
     this.y = y;
     return this;
   }
 
-  public Copy(other: b2Vec2): b2Vec2 {
+  public Copy(other: XY): this {
     ///b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     return this;
   }
 
-  public SelfAdd(v: b2Vec2): b2Vec2 {
+  public SelfAdd(v: XY): this {
     this.x += v.x;
     this.y += v.y;
     return this;
   }
 
-  public SelfAddXY(x: number, y: number): b2Vec2 {
+  public SelfAddXY(x: number, y: number): this {
     this.x += x;
     this.y += y;
     return this;
   }
 
-  public SelfSub(v: b2Vec2): b2Vec2 {
+  public SelfSub(v: XY): this {
     this.x -= v.x;
     this.y -= v.y;
     return this;
   }
 
-  public SelfSubXY(x: number, y: number): b2Vec2 {
+  public SelfSubXY(x: number, y: number): this {
     this.x -= x;
     this.y -= y;
     return this;
   }
 
-  public SelfMul(s: number): b2Vec2 {
+  public SelfMul(s: number): this {
     this.x *= s;
     this.y *= s;
     return this;
   }
 
-  public SelfMulAdd(s: number, v: b2Vec2): b2Vec2 {
+  public SelfMulAdd(s: number, v: XY): this {
     this.x += s * v.x;
     this.y += s * v.y;
     return this;
   }
 
-  public SelfMulSub(s: number, v: b2Vec2): b2Vec2 {
+  public SelfMulSub(s: number, v: XY): this {
     this.x -= s * v.x;
     this.y -= s * v.y;
     return this;
   }
 
-  public Dot(v: b2Vec2): number {
+  public Dot(v: XY): number {
     return this.x * v.x + this.y * v.y;
   }
 
-  public Cross(v: b2Vec2): number {
+  public Cross(v: XY): number {
     return this.x * v.y - this.y * v.x;
   }
 
@@ -239,7 +244,7 @@ export class b2Vec2 {
     return length;
   }
 
-  public SelfNormalize(): b2Vec2 {
+  public SelfNormalize(): this {
     const length: number = this.Length();
     if (length >= b2_epsilon) {
       const inv_length: number = 1 / length;
@@ -249,7 +254,7 @@ export class b2Vec2 {
     return this;
   }
 
-  public SelfRotate(radians: number): b2Vec2 {
+  public SelfRotate(radians: number): this {
     const c: number = Math.cos(radians);
     const s: number = Math.sin(radians);
     const x: number = this.x;
@@ -262,45 +267,45 @@ export class b2Vec2 {
     return isFinite(this.x) && isFinite(this.y);
   }
 
-  public SelfCrossVS(s: number): b2Vec2 {
+  public SelfCrossVS(s: number): this {
     const x: number = this.x;
     this.x =  s * this.y;
     this.y = -s * x;
     return this;
   }
 
-  public SelfCrossSV(s: number): b2Vec2 {
+  public SelfCrossSV(s: number): this {
     const x: number = this.x;
     this.x = -s * this.y;
     this.y =  s * x;
     return this;
   }
 
-  public SelfMinV(v: b2Vec2): b2Vec2 {
+  public SelfMinV(v: XY): this {
     this.x = b2Min(this.x, v.x);
     this.y = b2Min(this.y, v.y);
     return this;
   }
 
-  public SelfMaxV(v: b2Vec2): b2Vec2 {
+  public SelfMaxV(v: XY): this {
     this.x = b2Max(this.x, v.x);
     this.y = b2Max(this.y, v.y);
     return this;
   }
 
-  public SelfAbs(): b2Vec2 {
+  public SelfAbs(): this {
     this.x = b2Abs(this.x);
     this.y = b2Abs(this.y);
     return this;
   }
 
-  public SelfNeg(): b2Vec2 {
+  public SelfNeg(): this {
     this.x = (-this.x);
     this.y = (-this.y);
     return this;
   }
 
-  public SelfSkew(): b2Vec2 {
+  public SelfSkew(): this {
     const x: number = this.x;
     this.x = -this.y;
     this.y = x;
@@ -311,59 +316,59 @@ export class b2Vec2 {
     return b2MakeArray(length, (i: number): b2Vec2 => new b2Vec2());
   }
 
-  public static AbsV(v: b2Vec2, out: b2Vec2): b2Vec2 { return b2AbsV(v, out); }
-  public static MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2MinV(a, b, out); }
-  public static MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2MaxV(a, b, out); }
-  public static ClampV(v: b2Vec2, lo: b2Vec2, hi: b2Vec2, out: b2Vec2): b2Vec2 { return b2ClampV(v, lo, hi, out); }
-  public static RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2 { return b2RotateV(v, radians, out); }
-  public static DotVV(a: b2Vec2, b: b2Vec2): number { return b2DotVV(a, b); }
-  public static CrossVV(a: b2Vec2, b: b2Vec2): number { return b2CrossVV(a, b); }
-  public static CrossVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 { return b2CrossVS(v, s, out); }
-  public static CrossVOne(v: b2Vec2, out: b2Vec2): b2Vec2 { return b2CrossVOne(v, out); }
-  public static CrossSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2CrossSV(s, v, out); }
-  public static CrossOneV(v: b2Vec2, out: b2Vec2): b2Vec2 { return b2CrossOneV(v, out); }
-  public static AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2AddVV(a, b, out); }
-  public static SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2SubVV(a, b, out); }
-  public static MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulSV(s, v, out); }
-  public static MulVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 { return b2MulVS(v, s, out); }
-  public static AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2AddVMulSV(a, s, b, out); }
-  public static SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2SubVMulSV(a, s, b, out); }
-  public static AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2AddVCrossSV(a, s, v, out); }
-  public static MidVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2MidVV(a, b, out); }
-  public static ExtVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { return b2ExtVV(a, b, out); }
-  public static IsEqualToV(a: b2Vec2, b: b2Vec2): boolean { return b2IsEqualToV(a, b); }
-  public static DistanceVV(a: b2Vec2, b: b2Vec2): number { return b2DistanceVV(a, b); }
-  public static DistanceSquaredVV(a: b2Vec2, b: b2Vec2): number { return b2DistanceSquaredVV(a, b); }
-  public static NegV(v: b2Vec2, out: b2Vec2): b2Vec2 { return b2NegV(v, out); }
+  public static AbsV<T extends XY>(v: XY, out: T): T { return b2AbsV(v, out); }
+  public static MinV<T extends XY>(a: XY, b: XY, out: T): T { return b2MinV(a, b, out); }
+  public static MaxV<T extends XY>(a: XY, b: XY, out: T): T { return b2MaxV(a, b, out); }
+  public static ClampV<T extends XY>(v: XY, lo: XY, hi: XY, out: T): T { return b2ClampV(v, lo, hi, out); }
+  public static RotateV<T extends XY>(v: XY, radians: number, out: T): T { return b2RotateV(v, radians, out); }
+  public static DotVV(a: XY, b: XY): number { return b2DotVV(a, b); }
+  public static CrossVV(a: XY, b: XY): number { return b2CrossVV(a, b); }
+  public static CrossVS<T extends XY>(v: XY, s: number, out: T): T { return b2CrossVS(v, s, out); }
+  public static CrossVOne<T extends XY>(v: XY, out: T): T { return b2CrossVOne(v, out); }
+  public static CrossSV<T extends XY>(s: number, v: XY, out: T): T { return b2CrossSV(s, v, out); }
+  public static CrossOneV<T extends XY>(v: XY, out: T): T { return b2CrossOneV(v, out); }
+  public static AddVV<T extends XY>(a: XY, b: XY, out: T): T { return b2AddVV(a, b, out); }
+  public static SubVV<T extends XY>(a: XY, b: XY, out: T): T { return b2SubVV(a, b, out); }
+  public static MulSV<T extends XY>(s: number, v: XY, out: T): T { return b2MulSV(s, v, out); }
+  public static MulVS<T extends XY>(v: XY, s: number, out: T): T { return b2MulVS(v, s, out); }
+  public static AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { return b2AddVMulSV(a, s, b, out); }
+  public static SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { return b2SubVMulSV(a, s, b, out); }
+  public static AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T { return b2AddVCrossSV(a, s, v, out); }
+  public static MidVV<T extends XY>(a: XY, b: XY, out: T): T { return b2MidVV(a, b, out); }
+  public static ExtVV<T extends XY>(a: XY, b: XY, out: T): T { return b2ExtVV(a, b, out); }
+  public static IsEqualToV(a: XY, b: XY): boolean { return b2IsEqualToV(a, b); }
+  public static DistanceVV(a: XY, b: XY): number { return b2DistanceVV(a, b); }
+  public static DistanceSquaredVV(a: XY, b: XY): number { return b2DistanceSquaredVV(a, b); }
+  public static NegV<T extends XY>(v: XY, out: T): T { return b2NegV(v, out); }
 }
 
-export const b2Vec2_zero: b2Vec2 = new b2Vec2(0, 0);
+export const b2Vec2_zero: Readonly<b2Vec2> = new b2Vec2(0, 0);
 
-function b2AbsV(v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2AbsV<T extends XY>(v: XY, out: T): T {
   out.x = b2Abs(v.x);
   out.y = b2Abs(v.y);
   return out;
 }
 
-function b2MinV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MinV<T extends XY>(a: XY, b: XY, out: T): T {
   out.x = b2Min(a.x, b.x);
   out.y = b2Min(a.y, b.y);
   return out;
 }
 
-function b2MaxV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MaxV<T extends XY>(a: XY, b: XY, out: T): T {
   out.x = b2Max(a.x, b.x);
   out.y = b2Max(a.y, b.y);
   return out;
 }
 
-function b2ClampV(v: b2Vec2, lo: b2Vec2, hi: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2ClampV<T extends XY>(v: XY, lo: XY, hi: XY, out: T): T {
   out.x = b2Clamp(v.x, lo.x, hi.x);
   out.y = b2Clamp(v.y, lo.y, hi.y);
   return out;
 }
 
-function b2RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2 {
+function b2RotateV<T extends XY>(v: XY, radians: number, out: T): T {
   const v_x: number = v.x, v_y: number = v.y;
   const c: number = Math.cos(radians);
   const s: number = Math.sin(radians);
@@ -372,86 +377,90 @@ function b2RotateV(v: b2Vec2, radians: number, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-function b2DotVV(a: b2Vec2, b: b2Vec2): number {
+function b2DotVV(a: XY, b: XY): number {
   return a.x * b.x + a.y * b.y;
 }
 
-function b2CrossVV(a: b2Vec2, b: b2Vec2): number {
+function b2CrossVV(a: XY, b: XY): number {
   return a.x * b.y - a.y * b.x;
 }
 
-function b2CrossVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 {
+function b2CrossVS<T extends XY>(v: XY, s: number, out: T): T {
   const v_x: number = v.x;
   out.x =  s * v.y;
   out.y = -s * v_x;
   return out;
 }
 
-function b2CrossVOne(v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2CrossVOne<T extends XY>(v: XY, out: T): T {
   const v_x: number = v.x;
   out.x =  v.y;
   out.y = -v_x;
   return out;
 }
 
-function b2CrossSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2CrossSV<T extends XY>(s: number, v: XY, out: T): T {
   const v_x: number = v.x;
   out.x = -s * v.y;
   out.y =  s * v_x;
   return out;
 }
 
-function b2CrossOneV(v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2CrossOneV<T extends XY>(v: XY, out: T): T {
   const v_x: number = v.x;
   out.x = -v.y;
   out.y =  v_x;
   return out;
 }
 
-function b2AddVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
+function b2AddVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
 
-function b2SubVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
+function b2SubVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
 
-function b2MulSV(s: number, v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = v.x * s; out.y = v.y * s; return out; }
-function b2MulVS(v: b2Vec2, s: number, out: b2Vec2): b2Vec2 { out.x = v.x * s; out.y = v.y * s; return out; }
+function b2MulSV<T extends XY>(s: number, v: XY, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
+function b2MulVS<T extends XY>(v: XY, s: number, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
 
-function b2AddVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
-function b2SubVMulSV(a: b2Vec2, s: number, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
+function b2AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
+function b2SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
 
-function b2AddVCrossSV(a: b2Vec2, s: number, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T {
   const v_x: number = v.x;
   out.x = a.x - (s * v.y);
   out.y = a.y + (s * v_x);
   return out;
 }
 
-function b2MidVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
+function b2MidVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
 
-function b2ExtVV(a: b2Vec2, b: b2Vec2, out: b2Vec2): b2Vec2 { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
+function b2ExtVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
 
-function b2IsEqualToV(a: b2Vec2, b: b2Vec2): boolean {
+function b2IsEqualToV(a: XY, b: XY): boolean {
   return a.x === b.x && a.y === b.y;
 }
 
-function b2DistanceVV(a: b2Vec2, b: b2Vec2): number {
+function b2DistanceVV(a: XY, b: XY): number {
   const c_x: number = a.x - b.x;
   const c_y: number = a.y - b.y;
   return Math.sqrt(c_x * c_x + c_y * c_y);
 }
 
-function b2DistanceSquaredVV(a: b2Vec2, b: b2Vec2): number {
+function b2DistanceSquaredVV(a: XY, b: XY): number {
   const c_x: number = a.x - b.x;
   const c_y: number = a.y - b.y;
   return (c_x * c_x + c_y * c_y);
 }
 
-function b2NegV(v: b2Vec2, out: b2Vec2): b2Vec2 { out.x = -v.x; out.y = -v.y; return out; }
+function b2NegV<T extends XY>(v: XY, out: T): T { out.x = -v.x; out.y = -v.y; return out; }
+
+export interface XYZ extends XY {
+  z: number
+}
 
 /// A 2D column vector with 3 elements.
-export class b2Vec3 {
-  public static ZERO = new b2Vec3(0, 0, 0);
+export class b2Vec3 implements XYZ {
+  public static readonly ZERO: Readonly<b2Vec3> = new b2Vec3(0, 0, 0);
 
-  public static s_t0 = new b2Vec3();
+  public static readonly s_t0: b2Vec3 = new b2Vec3();
 
   public x: number;
   public y: number;
@@ -467,21 +476,21 @@ export class b2Vec3 {
     return new b2Vec3(this.x, this.y, this.z);
   }
 
-  public SetZero(): b2Vec3 {
+  public SetZero(): this {
     this.x = 0;
     this.y = 0;
     this.z = 0;
     return this;
   }
 
-  public SetXYZ(x: number, y: number, z: number): b2Vec3 {
+  public SetXYZ(x: number, y: number, z: number): this {
     this.x = x;
     this.y = y;
     this.z = z;
     return this;
   }
 
-  public Copy(other: b2Vec3): b2Vec3 {
+  public Copy(other: XYZ): this {
     ///b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
@@ -489,57 +498,57 @@ export class b2Vec3 {
     return this;
   }
 
-  public SelfNeg(): b2Vec3 {
+  public SelfNeg(): this {
     this.x = (-this.x);
     this.y = (-this.y);
     this.z = (-this.z);
     return this;
   }
 
-  public SelfAdd(v: b2Vec3): b2Vec3 {
+  public SelfAdd(v: XYZ): this {
     this.x += v.x;
     this.y += v.y;
     this.z += v.z;
     return this;
   }
 
-  public SelfAddXYZ(x: number, y: number, z: number): b2Vec3 {
+  public SelfAddXYZ(x: number, y: number, z: number): this {
     this.x += x;
     this.y += y;
     this.z += z;
     return this;
   }
 
-  public SelfSub(v: b2Vec3): b2Vec3 {
+  public SelfSub(v: XYZ): this {
     this.x -= v.x;
     this.y -= v.y;
     this.z -= v.z;
     return this;
   }
 
-  public SelfSubXYZ(x: number, y: number, z: number): b2Vec3 {
+  public SelfSubXYZ(x: number, y: number, z: number): this {
     this.x -= x;
     this.y -= y;
     this.z -= z;
     return this;
   }
 
-  public SelfMul(s: number): b2Vec3 {
+  public SelfMul(s: number): this {
     this.x *= s;
     this.y *= s;
     this.z *= s;
     return this;
   }
 
-  public static DotV3V3(a: b2Vec3, b: b2Vec3): number { return b2DotV3V3(a, b); }
-  public static CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 { return b2CrossV3V3(a, b, out); }
+  public static DotV3V3(a: XYZ, b: XYZ): number { return b2DotV3V3(a, b); }
+  public static CrossV3V3<T extends XYZ>(a: XYZ, b: XYZ, out: T): T { return b2CrossV3V3(a, b, out); }
 }
 
-function b2DotV3V3(a: b2Vec3, b: b2Vec3): number {
+function b2DotV3V3(a: XYZ, b: XYZ): number {
   return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-function b2CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 {
+function b2CrossV3V3<T extends XYZ>(a: XYZ, b: XYZ, out: T): T {
   const a_x: number = a.x, a_y = a.y, a_z = a.z;
   const b_x: number = b.x, b_y = b.y, b_z = b.z;
   out.x = a_y * b_z - a_z * b_y;
@@ -550,7 +559,7 @@ function b2CrossV3V3(a: b2Vec3, b: b2Vec3, out: b2Vec3): b2Vec3 {
 
 /// A 2-by-2 matrix. Stored in column-major order.
 export class b2Mat22 {
-  public static IDENTITY = new b2Mat22();
+  public static readonly IDENTITY: Readonly<b2Mat22> = new b2Mat22();
 
   public readonly ex: b2Vec2 = new b2Vec2(1, 0);
   public readonly ey: b2Vec2 = new b2Vec2(0, 1);
@@ -559,7 +568,7 @@ export class b2Mat22 {
     return new b2Mat22().Copy(this);
   }
 
-  public static FromVV(c1: b2Vec2, c2: b2Vec2): b2Mat22 {
+  public static FromVV(c1: XY, c2: XY): b2Mat22 {
     return new b2Mat22().SetVV(c1, c2);
   }
 
@@ -571,19 +580,19 @@ export class b2Mat22 {
     return new b2Mat22().SetAngle(radians);
   }
 
-  public SetSSSS(r1c1: number, r1c2: number, r2c1: number, r2c2: number): b2Mat22 {
+  public SetSSSS(r1c1: number, r1c2: number, r2c1: number, r2c2: number): this {
     this.ex.Set(r1c1, r2c1);
     this.ey.Set(r1c2, r2c2);
     return this;
   }
 
-  public SetVV(c1: b2Vec2, c2: b2Vec2): b2Mat22 {
+  public SetVV(c1: XY, c2: XY): this {
     this.ex.Copy(c1);
     this.ey.Copy(c2);
     return this;
   }
 
-  public SetAngle(radians: number): b2Mat22 {
+  public SetAngle(radians: number): this {
     const c: number = Math.cos(radians);
     const s: number = Math.sin(radians);
     this.ex.Set( c, s);
@@ -591,20 +600,20 @@ export class b2Mat22 {
     return this;
   }
 
-  public Copy(other: b2Mat22): b2Mat22 {
+  public Copy(other: b2Mat22): this {
     ///b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     return this;
   }
 
-  public SetIdentity(): b2Mat22 {
+  public SetIdentity(): this {
     this.ex.Set(1, 0);
     this.ey.Set(0, 1);
     return this;
   }
 
-  public SetZero(): b2Mat22 {
+  public SetZero(): this {
     this.ex.SetZero();
     this.ey.SetZero();
     return this;
@@ -630,7 +639,7 @@ export class b2Mat22 {
     return out;
   }
 
-  public Solve(b_x: number, b_y: number, out: b2Vec2): b2Vec2 {
+  public Solve<T extends XY>(b_x: number, b_y: number, out: T): T {
     const a11: number = this.ex.x, a12 = this.ey.x;
     const a21: number = this.ex.y, a22 = this.ey.y;
     let det: number = a11 * a22 - a12 * a21;
@@ -642,31 +651,32 @@ export class b2Mat22 {
     return out;
   }
 
-  public SelfAbs(): b2Mat22 {
+  public SelfAbs(): this {
     this.ex.SelfAbs();
     this.ey.SelfAbs();
     return this;
   }
 
-  public SelfInv(): b2Mat22 {
-    return this.GetInverse(this);
+  public SelfInv(): this {
+    this.GetInverse(this);
+    return this;
   }
 
-  public SelfAddM(M: b2Mat22): b2Mat22 {
+  public SelfAddM(M: b2Mat22): this {
     this.ex.SelfAdd(M.ex);
     this.ey.SelfAdd(M.ey);
     return this;
   }
 
-  public SelfSubM(M: b2Mat22): b2Mat22 {
+  public SelfSubM(M: b2Mat22): this {
     this.ex.SelfSub(M.ex);
     this.ey.SelfSub(M.ey);
     return this;
   }
 
   public static AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 { return b2AbsM(M, out); }
-  public static MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulMV(M, v, out); }
-  public static MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulTMV(M, v, out); }
+  public static MulMV<T extends XY>(M: b2Mat22, v: XY, out: T): T { return b2MulMV(M, v, out); }
+  public static MulTMV<T extends XY>(M: b2Mat22, v: XY, out: T): T { return b2MulTMV(M, v, out); }
   public static AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2AddMM(A, B, out); }
   public static MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2MulMM(A, B, out); }
   public static MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2MulTMM(A, B, out); }
@@ -681,7 +691,7 @@ function b2AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 {
   return out;
 }
 
-function b2MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulMV<T extends XY>(M: b2Mat22, v: XY, out: T): T {
   const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
   const v_x: number = v.x, v_y: number = v.y;
   out.x = M_ex.x * v_x + M_ey.x * v_y;
@@ -689,7 +699,7 @@ function b2MulMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-function b2MulTMV(M: b2Mat22, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulTMV<T extends XY>(M: b2Mat22, v: XY, out: T): T {
   const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
   const v_x: number = v.x, v_y: number = v.y;
   out.x = M_ex.x * v_x + M_ex.y * v_y;
@@ -733,7 +743,7 @@ function b2MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
 
 /// A 3-by-3 matrix. Stored in column-major order.
 export class b2Mat33 {
-  public static IDENTITY = new b2Mat33();
+  public static readonly IDENTITY: Readonly<b2Mat33> = new b2Mat33();
 
   public readonly ex: b2Vec3 = new b2Vec3(1, 0, 0);
   public readonly ey: b2Vec3 = new b2Vec3(0, 1, 0);
@@ -743,14 +753,14 @@ export class b2Mat33 {
     return new b2Mat33().Copy(this);
   }
 
-  public SetVVV(c1: b2Vec3, c2: b2Vec3, c3: b2Vec3): b2Mat33 {
+  public SetVVV(c1: XYZ, c2: XYZ, c3: XYZ): this {
     this.ex.Copy(c1);
     this.ey.Copy(c2);
     this.ez.Copy(c3);
     return this;
   }
 
-  public Copy(other: b2Mat33): b2Mat33 {
+  public Copy(other: b2Mat33): this {
     ///b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
@@ -758,28 +768,28 @@ export class b2Mat33 {
     return this;
   }
 
-  public SetIdentity(): b2Mat33 {
+  public SetIdentity(): this {
     this.ex.SetXYZ(1, 0, 0);
     this.ey.SetXYZ(0, 1, 0);
     this.ez.SetXYZ(0, 0, 1);
     return this;
   }
 
-  public SetZero(): b2Mat33 {
+  public SetZero(): this {
     this.ex.SetZero();
     this.ey.SetZero();
     this.ez.SetZero();
     return this;
   }
 
-  public SelfAddM(M: b2Mat33): b2Mat33 {
+  public SelfAddM(M: b2Mat33): this {
     this.ex.SelfAdd(M.ex);
     this.ey.SelfAdd(M.ey);
     this.ez.SelfAdd(M.ez);
     return this;
   }
 
-  public Solve33(b_x: number, b_y: number, b_z: number, out: b2Vec3): b2Vec3 {
+  public Solve33<T extends XYZ>(b_x: number, b_y: number, b_z: number, out: T): T {
     const a11: number = this.ex.x, a21: number = this.ex.y, a31: number = this.ex.z;
     const a12: number = this.ey.x, a22: number = this.ey.y, a32: number = this.ey.z;
     const a13: number = this.ez.x, a23: number = this.ez.y, a33: number = this.ez.z;
@@ -793,7 +803,7 @@ export class b2Mat33 {
     return out;
   }
 
-  public Solve22(b_x: number, b_y: number, out: b2Vec2): b2Vec2 {
+  public Solve22<T extends XY>(b_x: number, b_y: number, out: T): T {
     const a11: number = this.ex.x, a12: number = this.ey.x;
     const a21: number = this.ex.y, a22: number = this.ey.y;
     let det: number = a11 * a22 - a12 * a21;
@@ -840,32 +850,32 @@ export class b2Mat33 {
     M.ez.z = det * (a11 * a22 - a12 * a12);
   }
 
-  public static MulM33V3(A: b2Mat33, v: b2Vec3, out: b2Vec3): b2Vec3 { return b2MulM33V3(A, v, out); }
-  public static MulM33XYZ(A: b2Mat33, x: number, y: number, z: number, out: b2Vec3): b2Vec3 { return b2MulM33XYZ(A, x, y, z, out); }
-  public static MulM33V2(A: b2Mat33, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulM33V2(A, v, out); }
-  public static MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2 { return b2MulM33XY(A, x, y, out); }
+  public static MulM33V3<T extends XYZ>(A: b2Mat33, v: XYZ, out: T): T { return b2MulM33V3(A, v, out); }
+  public static MulM33XYZ<T extends XYZ>(A: b2Mat33, x: number, y: number, z: number, out: T): T { return b2MulM33XYZ(A, x, y, z, out); }
+  public static MulM33V2<T extends XY>(A: b2Mat33, v: XY, out: T): T { return b2MulM33V2(A, v, out); }
+  public static MulM33XY<T extends XY>(A: b2Mat33, x: number, y: number, out: T): T { return b2MulM33XY(A, x, y, out); }
 }
 
-function b2MulM33V3(A: b2Mat33, v: b2Vec3, out: b2Vec3): b2Vec3 {
+function b2MulM33V3<T extends XYZ>(A: b2Mat33, v: XYZ, out: T): T {
   const v_x: number = v.x, v_y: number = v.y, v_z: number = v.z;
   out.x = A.ex.x * v_x + A.ey.x * v_y + A.ez.x * v_z;
   out.y = A.ex.y * v_x + A.ey.y * v_y + A.ez.y * v_z;
   out.z = A.ex.z * v_x + A.ey.z * v_y + A.ez.z * v_z;
   return out;
 }
-function b2MulM33XYZ(A: b2Mat33, x: number, y: number, z: number, out: b2Vec3): b2Vec3 {
+function b2MulM33XYZ<T extends XYZ>(A: b2Mat33, x: number, y: number, z: number, out: T): T {
   out.x = A.ex.x * x + A.ey.x * y + A.ez.x * z;
   out.y = A.ex.y * x + A.ey.y * y + A.ez.y * z;
   out.z = A.ex.z * x + A.ey.z * y + A.ez.z * z;
   return out;
 }
-function b2MulM33V2(A: b2Mat33, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulM33V2<T extends XY>(A: b2Mat33, v: XY, out: T): T {
   const v_x: number = v.x, v_y: number = v.y;
   out.x = A.ex.x * v_x + A.ey.x * v_y;
   out.y = A.ex.y * v_x + A.ey.y * v_y;
   return out;
 }
-function b2MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2 {
+function b2MulM33XY<T extends XY>(A: b2Mat33, x: number, y: number, out: T): T {
   out.x = A.ex.x * x + A.ey.x * y;
   out.y = A.ex.y * x + A.ey.y * y;
   return out;
@@ -873,7 +883,7 @@ function b2MulM33XY(A: b2Mat33, x: number, y: number, out: b2Vec2): b2Vec2 {
 
 /// Rotation
 export class b2Rot {
-  public static IDENTITY = new b2Rot();
+  public static readonly IDENTITY: Readonly<b2Rot> = new b2Rot();
 
   public s: number = 0;
   public c: number = 1;
@@ -889,19 +899,19 @@ export class b2Rot {
     return new b2Rot().Copy(this);
   }
 
-  public Copy(other: b2Rot): b2Rot {
+  public Copy(other: b2Rot): this {
     this.s = other.s;
     this.c = other.c;
     return this;
   }
 
-  public SetAngle(angle: number): b2Rot {
+  public SetAngle(angle: number): this {
     this.s = Math.sin(angle);
     this.c = Math.cos(angle);
     return this;
   }
 
-  public SetIdentity(): b2Rot {
+  public SetIdentity(): this {
     this.s = 0;
     this.c = 1;
     return this;
@@ -911,13 +921,13 @@ export class b2Rot {
     return Math.atan2(this.s, this.c);
   }
 
-  public GetXAxis(out: b2Vec2): b2Vec2 {
+  public GetXAxis<T extends XY>(out: T): T {
     out.x = this.c;
     out.y = this.s;
     return out;
   }
 
-  public GetYAxis(out: b2Vec2): b2Vec2 {
+  public GetYAxis<T extends XY>(out: T): T {
     out.x = -this.s;
     out.y = this.c;
     return out;
@@ -925,8 +935,8 @@ export class b2Rot {
 
   public static MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot { return b2MulRR(q, r, out); }
   public static MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot { return b2MulTRR(q, r, out); }
-  public static MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulRV(q, v, out); }
-  public static MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulTRV(q, v, out); }
+  public static MulRV<T extends XY>(q: b2Rot, v: XY, out: T): T { return b2MulRV(q, v, out); }
+  public static MulTRV<T extends XY>(q: b2Rot, v: XY, out: T): T { return b2MulTRV(q, v, out); }
 }
 
 function b2MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
@@ -953,7 +963,7 @@ function b2MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
   return out;
 }
 
-function b2MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulRV<T extends XY>(q: b2Rot, v: XY, out: T): T {
   const q_c: number = q.c, q_s: number = q.s;
   const v_x: number = v.x, v_y: number = v.y;
   out.x = q_c * v_x - q_s * v_y;
@@ -961,7 +971,7 @@ function b2MulRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-function b2MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulTRV<T extends XY>(q: b2Rot, v: XY, out: T): T {
   const q_c: number = q.c, q_s: number = q.s;
   const v_x: number = v.x, v_y: number = v.y;
   out.x =  q_c * v_x + q_s * v_y;
@@ -972,7 +982,7 @@ function b2MulTRV(q: b2Rot, v: b2Vec2, out: b2Vec2): b2Vec2 {
 /// A transform contains translation and rotation. It is used to represent
 /// the position and orientation of rigid frames.
 export class b2Transform {
-  public static IDENTITY = new b2Transform();
+  public static readonly IDENTITY: Readonly<b2Transform> = new b2Transform();
 
   public readonly p: b2Vec2 = new b2Vec2();
   public readonly q: b2Rot = new b2Rot();
@@ -981,56 +991,56 @@ export class b2Transform {
     return new b2Transform().Copy(this);
   }
 
-  public Copy(other: b2Transform): b2Transform {
+  public Copy(other: b2Transform): this {
     ///b2Assert(this !== other);
     this.p.Copy(other.p);
     this.q.Copy(other.q);
     return this;
   }
 
-  public SetIdentity(): b2Transform {
+  public SetIdentity(): this {
     this.p.SetZero();
     this.q.SetIdentity();
     return this;
   }
 
-  public SetPositionRotation(position: b2Vec2, q: b2Rot): b2Transform {
+  public SetPositionRotation(position: XY, q: Readonly<b2Rot>): this {
     this.p.Copy(position);
     this.q.Copy(q);
     return this;
   }
 
-  public SetPositionAngle(pos: b2Vec2, a: number): b2Transform {
+  public SetPositionAngle(pos: XY, a: number): this {
     this.p.Copy(pos);
     this.q.SetAngle(a);
     return this;
   }
 
-  public SetPosition(position: b2Vec2): b2Transform {
+  public SetPosition(position: XY): this {
     this.p.Copy(position);
     return this;
   }
 
-  public SetPositionXY(x: number, y: number): b2Transform {
+  public SetPositionXY(x: number, y: number): this {
     this.p.Set(x, y);
     return this;
   }
 
-  public SetRotation(rotation: b2Rot): b2Transform {
+  public SetRotation(rotation: Readonly<b2Rot>): this {
     this.q.Copy(rotation);
     return this;
   }
 
-  public SetRotationAngle(radians: number): b2Transform {
+  public SetRotationAngle(radians: number): this {
     this.q.SetAngle(radians);
     return this;
   }
 
-  public GetPosition(): b2Vec2 {
+  public GetPosition(): Readonly<b2Vec2> {
     return this.p;
   }
 
-  public GetRotation(): b2Rot {
+  public GetRotation(): Readonly<b2Rot> {
     return this.q;
   }
 
@@ -1042,13 +1052,13 @@ export class b2Transform {
     return this.q.GetAngle();
   }
 
-  public static MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulXV(T, v, out); }
-  public static MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 { return b2MulTXV(T, v, out); }
+  public static MulXV<T extends XY>(T: b2Transform, v: XY, out: T): T { return b2MulXV(T, v, out); }
+  public static MulTXV<T extends XY>(T: b2Transform, v: XY, out: T): T { return b2MulTXV(T, v, out); }
   public static MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform { return b2MulXX(A, B, out); }
   public static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform { return b2MulTXX(A, B, out); }
 }
 
-function b2MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulXV<T extends XY>(T: b2Transform, v: XY, out: T): T {
 //  float32 x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
 //  float32 y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
 //
@@ -1060,7 +1070,7 @@ function b2MulXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
   return out;
 }
 
-function b2MulTXV(T: b2Transform, v: b2Vec2, out: b2Vec2): b2Vec2 {
+function b2MulTXV<T extends XY>(T: b2Transform, v: XY, out: T): T {
 //  float32 px = v.x - T.p.x;
 //  float32 py = v.y - T.p.y;
 //  float32 x = (T.q.c * px + T.q.s * py);
@@ -1103,7 +1113,7 @@ export class b2Sweep {
     return new b2Sweep().Copy(this);
   }
 
-  public Copy(other: b2Sweep): b2Sweep {
+  public Copy(other: b2Sweep): this {
     ///b2Assert(this !== other);
     this.localCenter.Copy(other.localCenter);
     this.c0.Copy(other.c0);
