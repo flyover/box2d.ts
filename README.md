@@ -12,11 +12,14 @@ https://rawgit.com/flyover/box2d.ts/master/Box2D/Testbed/index.html
 ```
 git clone git@github.com:flyover/box2d.ts.git && cd box2d.ts
 npm install
-make build
+npm run build
 ```
 
 ## Run it
 
 ```
-npx http-server -o
+# This command runs a server
+npm start
 ```
+
+Then go on http://localhost:8000/Box2D/Testbed
