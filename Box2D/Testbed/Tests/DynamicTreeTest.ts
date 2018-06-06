@@ -29,7 +29,7 @@ export class DynamicTreeTest extends testbed.Test {
   public m_queryAABB = new box2d.b2AABB();
   public m_rayCastInput = new box2d.b2RayCastInput();
   public m_rayCastOutput = new box2d.b2RayCastOutput();
-  public m_rayActor: DynamicTreeTest.Actor | null | any = null; // HACK: tsc doesn't detect calling callbacks
+  public m_rayActor: DynamicTreeTest.Actor | null = null;
   public m_actors: DynamicTreeTest.Actor[] = box2d.b2MakeArray(DynamicTreeTest.e_actorCount, () => new DynamicTreeTest.Actor());
   public m_stepCount = 0;
   public m_automated = false;
@@ -66,11 +66,7 @@ export class DynamicTreeTest extends testbed.Test {
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
-    this.m_rayActor = null;
-    for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
-      this.m_actors[i].fraction = 1.0;
-      this.m_actors[i].overlap = false;
-    }
+    this.Reset();
 
     if (this.m_automated) {
       const actionCount = box2d.b2Max(1, DynamicTreeTest.e_actorCount >> 2);
@@ -217,6 +213,14 @@ export class DynamicTreeTest extends testbed.Test {
     }
   }
 
+  public Reset(): void {
+    this.m_rayActor = null;
+    for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
+      this.m_actors[i].fraction = 1.0;
+      this.m_actors[i].overlap = false;
+    }
+  }
+
   public Action(): void {
     const choice = 0 | box2d.b2RandomRange(0, 20);
 
@@ -235,13 +239,11 @@ export class DynamicTreeTest extends testbed.Test {
   }
 
   public Query(): void {
-    const QueryCallback = (proxyId: box2d.b2TreeNode): boolean => {
+    this.m_tree.Query(this.m_queryAABB, (proxyId: box2d.b2TreeNode): boolean => {
       const actor = this.m_tree.GetUserData(proxyId);
       actor.overlap = box2d.b2TestOverlapAABB(this.m_queryAABB, actor.aabb);
       return true;
-    };
-
-    this.m_tree.Query(QueryCallback, this.m_queryAABB);
+    });
 
     for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
       if (this.m_actors[i].proxyId === null) {
@@ -255,7 +257,13 @@ export class DynamicTreeTest extends testbed.Test {
   }
 
   public RayCast(): void {
-    const RayCastCallback = (input: box2d.b2RayCastInput, proxyId: box2d.b2TreeNode): number => {
+    this.m_rayActor = null;
+
+    const input = new box2d.b2RayCastInput();
+    input.Copy(this.m_rayCastInput);
+
+    // Ray cast against the dynamic tree.
+    this.m_tree.RayCast(input, (input: box2d.b2RayCastInput, proxyId: box2d.b2TreeNode): number => {
       const actor: DynamicTreeTest.Actor = this.m_tree.GetUserData(proxyId);
 
       const output = new box2d.b2RayCastOutput();
@@ -269,15 +277,7 @@ export class DynamicTreeTest extends testbed.Test {
       }
 
       return input.maxFraction;
-    };
-
-    this.m_rayActor = null;
-
-    const input = new box2d.b2RayCastInput();
-    input.Copy(this.m_rayCastInput);
-
-    // Ray cast against the dynamic tree.
-    this.m_tree.RayCast(RayCastCallback, input);
+    });
 
     // Brute force ray cast.
     let bruteActor = null;

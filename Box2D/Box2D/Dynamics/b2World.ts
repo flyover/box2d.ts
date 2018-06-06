@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_epsilon, b2_linearSlop, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
+import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw";
@@ -653,20 +653,19 @@ export class b2World {
   /// provided AABB.
   /// @param callback a user implemented callback class.
   /// @param aabb the query box.
-  public QueryAABB(callback: b2QueryCallback | b2QueryCallbackFunction, aabb: b2AABB): void {
+  public QueryAABB(callback: b2QueryCallback | null, aabb: b2AABB, fn?: b2QueryCallbackFunction): void {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    function WorldQueryWrapper(proxy: b2TreeNode): boolean {
+    broadPhase.Query(aabb, (proxy: b2TreeNode): boolean => {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
-      ///const index: number = fixture_proxy.childIndex;
-      if (callback instanceof b2QueryCallback) {
+      if (callback) {
         return callback.ReportFixture(fixture);
-      } else /* if (typeof(callback) === 'function') */ {
-        return callback(fixture);
+      } else if (fn) {
+        return fn(fixture);
       }
-    }
-    broadPhase.Query(WorldQueryWrapper, aabb);
+      return true;
+    });
     // #if B2_ENABLE_PARTICLE
     if (callback instanceof b2QueryCallback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
@@ -678,26 +677,62 @@ export class b2World {
     // #endif
   }
 
-  private static QueryShape_s_aabb = new b2AABB();
-  public QueryShape(callback: b2QueryCallback | b2QueryCallbackFunction, shape: b2Shape, transform: b2Transform): void {
+  public QueryAllAABB(aabb: b2AABB, out: b2Fixture[] = []): b2Fixture[] {
+    this.QueryAABB(null, aabb, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    return out;
+  }
+
+  /// Query the world for all fixtures that potentially overlap the
+  /// provided point.
+  /// @param callback a user implemented callback class.
+  /// @param point the query point.
+  public QueryPointAABB(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    function WorldQueryWrapper(proxy: b2TreeNode): boolean {
+    broadPhase.QueryPoint(point, (proxy: b2TreeNode): boolean => {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
-      ///const index: number = fixture_proxy.childIndex;
-      if (b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
-        if (callback instanceof b2QueryCallback) {
+      if (callback) {
+        return callback.ReportFixture(fixture);
+      } else if (fn) {
+        return fn(fixture);
+      }
+      return true;
+    });
+    // #if B2_ENABLE_PARTICLE
+    if (callback instanceof b2QueryCallback) {
+      for (let p = this.m_particleSystemList; p; p = p.m_next) {
+        if (callback.ShouldQueryParticleSystem(p)) {
+          p.QueryPointAABB(callback, point);
+        }
+      }
+    }
+    // #endif
+  }
+
+  public QueryAllPointAABB(point: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
+    this.QueryPointAABB(null, point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    return out;
+  }
+
+  private static QueryFixtureShape_s_aabb = new b2AABB();
+  public QueryFixtureShape(callback: b2QueryCallback | null, shape: b2Shape, index: number, transform: b2Transform, fn?: b2QueryCallbackFunction): void {
+    const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
+    const aabb: b2AABB = b2World.QueryFixtureShape_s_aabb;
+    shape.ComputeAABB(aabb, transform, index);
+    broadPhase.Query(aabb, (proxy: b2TreeNode): boolean => {
+      const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      const fixture: b2Fixture = fixture_proxy.fixture;
+      if (b2TestOverlapShape(shape, index, fixture.GetShape(), fixture_proxy.childIndex, transform, fixture.GetBody().GetTransform())) {
+        if (callback) {
           return callback.ReportFixture(fixture);
-        } else /* if (typeof(callback) === 'function') */ {
-          return callback(fixture);
+        } else if (fn) {
+          return fn(fixture);
         }
       }
       return true;
-    }
-    const aabb: b2AABB = b2World.QueryShape_s_aabb;
-    shape.ComputeAABB(aabb, transform, 0); // TODO
-    broadPhase.Query(WorldQueryWrapper, aabb);
+    });
     // #if B2_ENABLE_PARTICLE
     if (callback instanceof b2QueryCallback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
@@ -709,36 +744,40 @@ export class b2World {
     // #endif
   }
 
-  private static QueryPoint_s_aabb = new b2AABB();
-  public QueryPoint(callback: b2QueryCallback | b2QueryCallbackFunction, point: b2Vec2): void {
+  public QueryAllFixtureShape(shape: b2Shape, index: number, transform: b2Transform, out: b2Fixture[] = []): b2Fixture[] {
+    this.QueryFixtureShape(null, shape, index, transform, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    return out;
+  }
+
+  public QueryFixturePoint(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    function WorldQueryWrapper(proxy: b2TreeNode): boolean {
+    broadPhase.QueryPoint(point, (proxy: b2TreeNode): boolean => {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
-      ///const index: number = fixture_proxy.childIndex;
       if (fixture.TestPoint(point)) {
-        if (callback instanceof b2QueryCallback) {
+        if (callback) {
           return callback.ReportFixture(fixture);
-        } else /* if (typeof(callback) === 'function') */ {
-          return callback(fixture);
+        } else if (fn) {
+          return fn(fixture);
         }
       }
       return true;
-    }
-    const aabb: b2AABB = b2World.QueryPoint_s_aabb;
-    aabb.lowerBound.Set(point.x - b2_linearSlop, point.y - b2_linearSlop);
-    aabb.upperBound.Set(point.x + b2_linearSlop, point.y + b2_linearSlop);
-    broadPhase.Query(WorldQueryWrapper, aabb);
+    });
     // #if B2_ENABLE_PARTICLE
-    if (callback instanceof b2QueryCallback) {
+    if (callback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         if (callback.ShouldQueryParticleSystem(p)) {
-          p.QueryAABB(callback, aabb);
+          p.QueryPointAABB(callback, point);
         }
       }
     }
     // #endif
+  }
+
+  public QueryAllFixturePoint(point: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
+    this.QueryFixturePoint(null, point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    return out;
   }
 
   /// Ray-cast the world for all fixtures in the path of the ray. Your callback
@@ -750,9 +789,13 @@ export class b2World {
   private static RayCast_s_input = new b2RayCastInput();
   private static RayCast_s_output = new b2RayCastOutput();
   private static RayCast_s_point = new b2Vec2();
-  public RayCast(callback: b2RayCastCallback | b2RayCastCallbackFunction, point1: b2Vec2, point2: b2Vec2): void {
+  public RayCast(callback: b2RayCastCallback | null, point1: b2Vec2, point2: b2Vec2, fn?: b2RayCastCallbackFunction): void {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    function WorldRayCastWrapper(input: b2RayCastInput, proxy: b2TreeNode): number {
+    const input: b2RayCastInput = b2World.RayCast_s_input;
+    input.maxFraction = 1;
+    input.p1.Copy(point1);
+    input.p2.Copy(point2);
+    broadPhase.RayCast(input, (input: b2RayCastInput, proxy: b2TreeNode): number => {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
@@ -763,21 +806,16 @@ export class b2World {
         const fraction: number = output.fraction;
         const point: b2Vec2 = b2World.RayCast_s_point;
         point.Set((1 - fraction) * point1.x + fraction * point2.x, (1 - fraction) * point1.y + fraction * point2.y);
-        if (callback instanceof b2RayCastCallback) {
+        if (callback) {
           return callback.ReportFixture(fixture, point, output.normal, fraction);
-        } else /* if (typeof(callback) === 'function') */ {
-          return callback(fixture, point, output.normal, fraction);
+        } else if (fn) {
+          return fn(fixture, point, output.normal, fraction);
         }
       }
       return input.maxFraction;
-    }
-    const input: b2RayCastInput = b2World.RayCast_s_input;
-    input.maxFraction = 1;
-    input.p1.Copy(point1);
-    input.p2.Copy(point2);
-    broadPhase.RayCast(WorldRayCastWrapper, input);
+    });
     // #if B2_ENABLE_PARTICLE
-    if (callback instanceof b2RayCastCallback) {
+    if (callback) {
       for (let p = this.m_particleSystemList; p; p = p.m_next) {
         if (callback.ShouldQueryParticleSystem(p)) {
           p.RayCast(callback, point1, point2);
@@ -790,23 +828,21 @@ export class b2World {
   public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture | null {
     let result: b2Fixture | null = null;
     let min_fraction: number = 1;
-    function WorldRayCastOneWrapper(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number {
+    this.RayCast(null, point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
       if (fraction < min_fraction) {
         min_fraction = fraction;
         result = fixture;
       }
       return min_fraction;
-    }
-    this.RayCast(WorldRayCastOneWrapper, point1, point2);
+    });
     return result;
   }
 
   public RayCastAll(point1: b2Vec2, point2: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
-    function WorldRayCastAllWrapper(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number {
+    this.RayCast(null, point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
       out.push(fixture);
       return 1;
-    }
-    this.RayCast(WorldRayCastAllWrapper, point1, point2);
+    });
     return out;
   }
 

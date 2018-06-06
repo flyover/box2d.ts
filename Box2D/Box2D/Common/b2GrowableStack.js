@@ -15,14 +15,17 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register([], function (exports_1, context_1) {
+System.register(["./b2Settings"], function (exports_1, context_1) {
     "use strict";
-    var b2GrowableStack;
+    var b2Settings_1, b2GrowableStack;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [],
+        setters: [
+            function (b2Settings_1_1) {
+                b2Settings_1 = b2Settings_1_1;
+            }
+        ],
         execute: function () {
-            // DEBUG: import { b2Assert } from "./b2Settings";
             /// This is a growable LIFO stack with an initial capacity of N.
             /// If the stack size exceeds the initial capacity, the heap is used
             /// to increase the size of the stack.
@@ -30,7 +33,7 @@ System.register([], function (exports_1, context_1) {
                 constructor(N) {
                     this.m_stack = [];
                     this.m_count = 0;
-                    this.m_stack = [ /*N*/];
+                    this.m_stack = b2Settings_1.b2MakeArray(N, (index) => null);
                     this.m_count = 0;
                 }
                 Reset() {
@@ -46,6 +49,9 @@ System.register([], function (exports_1, context_1) {
                     this.m_count--;
                     const element = this.m_stack[this.m_count];
                     this.m_stack[this.m_count] = null;
+                    if (element === null) {
+                        throw new Error();
+                    }
                     return element;
                 }
                 GetCount() {
@@ -56,4 +62,4 @@ System.register([], function (exports_1, context_1) {
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJHcm93YWJsZVN0YWNrLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJHcm93YWJsZVN0YWNrLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0VBZ0JFOzs7Ozs7OztZQUVGLGtEQUFrRDtZQUVsRCxnRUFBZ0U7WUFDaEUsb0VBQW9FO1lBQ3BFLHNDQUFzQztZQUV0QyxrQkFBQTtnQkFJRSxZQUFZLENBQVM7b0JBSGQsWUFBTyxHQUFvQixFQUFFLENBQUM7b0JBQzlCLFlBQU8sR0FBVyxDQUFDLENBQUM7b0JBR3pCLElBQUksQ0FBQyxPQUFPLEdBQUcsRUFBQyxLQUFLLENBQUMsQ0FBQztvQkFDdkIsSUFBSSxDQUFDLE9BQU8sR0FBRyxDQUFDLENBQUM7Z0JBQ25CLENBQUM7Z0JBRU0sS0FBSztvQkFDVixJQUFJLENBQUMsT0FBTyxHQUFHLENBQUMsQ0FBQztvQkFDakIsT0FBTyxJQUFJLENBQUM7Z0JBQ2QsQ0FBQztnQkFFTSxJQUFJLENBQUMsT0FBaUI7b0JBQzNCLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxHQUFHLE9BQU8sQ0FBQztvQkFDckMsSUFBSSxDQUFDLE9BQU8sRUFBRSxDQUFDO2dCQUNqQixDQUFDO2dCQUVNLEdBQUc7b0JBQ1IscUNBQXFDO29CQUNyQyxJQUFJLENBQUMsT0FBTyxFQUFFLENBQUM7b0JBQ2YsTUFBTSxPQUFPLEdBQWEsSUFBSSxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLENBQUM7b0JBQ3JELElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxHQUFHLElBQUksQ0FBQztvQkFDbEMsT0FBTyxPQUFPLENBQUM7Z0JBQ2pCLENBQUM7Z0JBRU0sUUFBUTtvQkFDYixPQUFPLElBQUksQ0FBQyxPQUFPLENBQUM7Z0JBQ3RCLENBQUM7YUFDRixDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJHcm93YWJsZVN0YWNrLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJHcm93YWJsZVN0YWNrLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0VBZ0JFOzs7Ozs7Ozs7Ozs7WUFLRixnRUFBZ0U7WUFDaEUsb0VBQW9FO1lBQ3BFLHNDQUFzQztZQUV0QyxrQkFBQTtnQkFJRSxZQUFZLENBQVM7b0JBSGQsWUFBTyxHQUFvQixFQUFFLENBQUM7b0JBQzlCLFlBQU8sR0FBVyxDQUFDLENBQUM7b0JBR3pCLElBQUksQ0FBQyxPQUFPLEdBQUcsd0JBQVcsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDLElBQUksQ0FBQyxDQUFDO29CQUMvQyxJQUFJLENBQUMsT0FBTyxHQUFHLENBQUMsQ0FBQztnQkFDbkIsQ0FBQztnQkFFTSxLQUFLO29CQUNWLElBQUksQ0FBQyxPQUFPLEdBQUcsQ0FBQyxDQUFDO29CQUNqQixPQUFPLElBQUksQ0FBQztnQkFDZCxDQUFDO2dCQUVNLElBQUksQ0FBQyxPQUFVO29CQUNwQixJQUFJLENBQUMsT0FBTyxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsR0FBRyxPQUFPLENBQUM7b0JBQ3JDLElBQUksQ0FBQyxPQUFPLEVBQUUsQ0FBQztnQkFDakIsQ0FBQztnQkFFTSxHQUFHO29CQUNSLHFDQUFxQztvQkFDckMsSUFBSSxDQUFDLE9BQU8sRUFBRSxDQUFDO29CQUNmLE1BQU0sT0FBTyxHQUFhLElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxDQUFDO29CQUNyRCxJQUFJLENBQUMsT0FBTyxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsR0FBRyxJQUFJLENBQUM7b0JBQ2xDLElBQUksT0FBTyxLQUFLLElBQUksRUFBRTt3QkFBRSxNQUFNLElBQUksS0FBSyxFQUFFLENBQUM7cUJBQUU7b0JBQzVDLE9BQU8sT0FBTyxDQUFDO2dCQUNqQixDQUFDO2dCQUVNLFFBQVE7b0JBQ2IsT0FBTyxJQUFJLENBQUMsT0FBTyxDQUFDO2dCQUN0QixDQUFDO2FBQ0YsQ0FBQSJ9

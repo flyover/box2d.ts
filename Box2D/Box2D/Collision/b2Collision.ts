@@ -543,6 +543,12 @@ export class b2AABB {
     return true;
   }
 
+  public TestContain(point: b2Vec2): boolean {
+    if (point.x < this.lowerBound.x || this.upperBound.x < point.x) { return false; }
+    if (point.y < this.lowerBound.y || this.upperBound.y < point.y) { return false; }
+    return true;
+  }
+
   public TestOverlap(other: b2AABB): boolean {
     const d1_x: number = other.lowerBound.x - this.upperBound.x;
     const d1_y: number = other.lowerBound.y - this.upperBound.y;

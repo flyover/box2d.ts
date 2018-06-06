@@ -253,36 +253,24 @@ export class Test extends box2d.b2ContactListener {
     // #endif
 
     if (this.m_mouseJoint !== null) {
-      return;
+      this.m_world.DestroyJoint(this.m_mouseJoint);
+      this.m_mouseJoint = null;
     }
-
-    // Make a small box.
-    const aabb: box2d.b2AABB = new box2d.b2AABB();
-    const d: box2d.b2Vec2 = new box2d.b2Vec2();
-    d.Set(0.001, 0.001);
-    box2d.b2Vec2.SubVV(p, d, aabb.lowerBound);
-    box2d.b2Vec2.AddVV(p, d, aabb.upperBound);
 
     let hit_fixture: box2d.b2Fixture | null | any = null; // HACK: tsc doesn't detect calling callbacks
 
     // Query the world for overlapping shapes.
-    const callback = (fixture: box2d.b2Fixture): boolean => {
+    this.m_world.QueryPointAABB(null, p, (fixture: box2d.b2Fixture): boolean => {
       const body = fixture.GetBody();
       if (body.GetType() === box2d.b2BodyType.b2_dynamicBody) {
-        const inside = fixture.TestPoint(this.m_mouseWorld);
+        const inside = fixture.TestPoint(p);
         if (inside) {
           hit_fixture = fixture;
-
-          // We are done, terminate the query.
-          return false;
+          return false; // We are done, terminate the query.
         }
       }
-
-      // Continue the query.
-      return true;
-    };
-
-    this.m_world.QueryAABB(callback, aabb);
+      return true; // Continue the query.
+    });
 
     if (hit_fixture) {
       const body = hit_fixture.GetBody();

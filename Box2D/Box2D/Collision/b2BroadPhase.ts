@@ -106,7 +106,13 @@ export class b2BroadPhase {
 
       // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
       // boolean b2BroadPhase::QueryCallback(int32 proxyId);
-      const QueryCallback = (proxy: b2TreeNode): boolean => {
+
+      // We have to query the tree with the fat AABB so that
+      // we don't fail to create a pair that may touch later.
+      const fatAABB: b2AABB = this.m_tree.GetFatAABB(queryProxy);
+
+      // Query tree, create pairs and add them pair buffer.
+      this.m_tree.Query(fatAABB, (proxy: b2TreeNode): boolean => {
         // A proxy cannot form a pair with itself.
         if (proxy.m_id === queryProxy.m_id) {
           return true;
@@ -136,14 +142,7 @@ export class b2BroadPhase {
         ++this.m_pairCount;
 
         return true;
-      };
-
-      // We have to query the tree with the fat AABB so that
-      // we don't fail to create a pair that may touch later.
-      const fatAABB: b2AABB = this.m_tree.GetFatAABB(queryProxy);
-
-      // Query tree, create pairs and add them pair buffer.
-      this.m_tree.Query(QueryCallback, fatAABB);
+      });
     }
 
     // Reset move buffer
@@ -179,8 +178,12 @@ export class b2BroadPhase {
 
   /// Query an AABB for overlapping proxies. The callback class
   /// is called for each proxy that overlaps the supplied AABB.
-  public Query(callback: (node: b2TreeNode) => boolean, aabb: b2AABB): void {
-    this.m_tree.Query(callback, aabb);
+  public Query(aabb: b2AABB, callback: (node: b2TreeNode) => boolean): void {
+    this.m_tree.Query(aabb, callback);
+  }
+
+  public QueryPoint(point: b2Vec2, callback: (node: b2TreeNode) => boolean): void {
+    this.m_tree.QueryPoint(point, callback);
   }
 
   /// Ray-cast against the proxies in the tree. This relies on the callback
@@ -190,8 +193,8 @@ export class b2BroadPhase {
   /// number of proxies in the tree.
   /// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
   /// @param callback a callback class that is called for each proxy that is hit by the ray.
-  public RayCast(callback: (input: b2RayCastInput, node: b2TreeNode) => number, input: b2RayCastInput): void {
-    this.m_tree.RayCast(callback, input);
+  public RayCast(input: b2RayCastInput, callback: (input: b2RayCastInput, node: b2TreeNode) => number): void {
+    this.m_tree.RayCast(input, callback);
   }
 
   /// Get the height of the embedded tree.
