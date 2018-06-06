@@ -20,11 +20,11 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class SensorTest extends testbed.Test {
-  static e_count = 7;
+  public static readonly e_count = 7;
 
-  m_sensor: box2d.b2Fixture = null;
-  m_bodies: box2d.b2Body[] = null;
-  m_touching: boolean[][] = null;
+  public m_sensor: box2d.b2Fixture;
+  public m_bodies: box2d.b2Body[];
+  public m_touching: boolean[][];
 
   constructor() {
     super();
@@ -81,10 +81,10 @@ export class SensorTest extends testbed.Test {
     }
   }
 
-  BeginContact(contact: box2d.b2Contact) {
+  public BeginContact(contact: box2d.b2Contact) {
     const fixtureA = contact.GetFixtureA();
     const fixtureB = contact.GetFixtureB();
-  
+
     if (fixtureA === this.m_sensor) {
       const userData = fixtureB.GetBody().GetUserData();
       if (userData) {
@@ -92,7 +92,7 @@ export class SensorTest extends testbed.Test {
         touching[0] = true;
       }
     }
-  
+
     if (fixtureB === this.m_sensor) {
       const userData = fixtureA.GetBody().GetUserData();
       if (userData) {
@@ -101,11 +101,11 @@ export class SensorTest extends testbed.Test {
       }
     }
   }
-  
-  EndContact(contact: box2d.b2Contact) {
+
+  public EndContact(contact: box2d.b2Contact) {
     const fixtureA = contact.GetFixtureA();
     const fixtureB = contact.GetFixtureB();
-  
+
     if (fixtureA === this.m_sensor) {
       const userData = fixtureB.GetBody().GetUserData();
       if (userData) {
@@ -113,7 +113,7 @@ export class SensorTest extends testbed.Test {
         touching[0] = false;
       }
     }
-  
+
     if (fixtureB === this.m_sensor) {
       const userData = fixtureA.GetBody().GetUserData();
       if (userData) {

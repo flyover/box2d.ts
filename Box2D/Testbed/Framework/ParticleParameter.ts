@@ -32,7 +32,7 @@ export enum ParticleParameterOptions {
   OptionDrawFrictionImpulse = 1 << 8,
   OptionDrawCOMs = 1 << 9,
   OptionDrawStats = 1 << 10,
-  OptionDrawProfile = 1 << 11
+  OptionDrawProfile = 1 << 11,
 }
 
 export class ParticleParameterValue {
@@ -48,18 +48,18 @@ export class ParticleParameterValue {
   /**
    * ParticleParameterValue associated with the parameter.
    */
-  value: number = 0;
+  public value: number = 0;
 
   /**
    * Any global (non particle-specific) options associated with
    * this parameter
    */
-  options: ParticleParameterOptions = 0;
+  public options: ParticleParameterOptions = 0;
 
   /**
    * Name to display when this parameter is selected.
    */
-  name = "";
+  public name = "";
 }
 
 export class ParticleParameterDefinition {
@@ -71,10 +71,10 @@ export class ParticleParameterDefinition {
     this.numValues = numValues;
   }
 
-  values: ParticleParameterValue[] = null;
-  numValues: number = 0;
+  public values: ParticleParameterValue[];
+  public numValues: number = 0;
 
-  CalculateValueMask(): number {
+  public CalculateValueMask(): number {
     let mask = 0;
     for (let i = 0; i < this.numValues; i++) {
       mask |= this.values[i].value;
@@ -84,8 +84,8 @@ export class ParticleParameterDefinition {
 }
 
 export class ParticleParameter {
-  static k_DefaultOptions: ParticleParameterOptions = ParticleParameterOptions.OptionDrawShapes | ParticleParameterOptions.OptionDrawParticles;
-  static k_particleTypes: ParticleParameterValue[] = [
+  public static readonly k_DefaultOptions: ParticleParameterOptions = ParticleParameterOptions.OptionDrawShapes | ParticleParameterOptions.OptionDrawParticles;
+  public static readonly k_particleTypes: ParticleParameterValue[] = [
     new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
     new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
     new ParticleParameterValue(box2d.b2ParticleFlag.b2_springParticle, ParticleParameter.k_DefaultOptions, "spring"),
@@ -97,32 +97,32 @@ export class ParticleParameter {
     new ParticleParameterValue(box2d.b2ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "wall"),
     new ParticleParameterValue(box2d.b2ParticleFlag.b2_barrierParticle | box2d.b2ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "barrier"),
     new ParticleParameterValue(box2d.b2ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionDrawAABBs, "water (bounding boxes)")
+    new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionDrawAABBs, "water (bounding boxes)"),
   ];
-  static k_defaultDefinition: ParticleParameterDefinition[] = [
-    new ParticleParameterDefinition(ParticleParameter.k_particleTypes)
+  public static readonly k_defaultDefinition: ParticleParameterDefinition[] = [
+    new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
   ];
 
-  m_index = 0;
-  m_changed = false;
-  m_restartOnChange = false;
-  m_value: ParticleParameterValue = null;
-  m_definition: ParticleParameterDefinition[] = null;
-  m_definitionCount = 0;
-  m_valueCount = 0;
+  public m_index = 0;
+  public m_changed = false;
+  public m_restartOnChange = false;
+  public m_value: ParticleParameterValue | null = null;
+  public m_definition: ParticleParameterDefinition[] = ParticleParameter.k_defaultDefinition;
+  public m_definitionCount = 0;
+  public m_valueCount = 0;
 
   constructor() {
     this.Reset();
   }
 
-  Reset() {
+  public Reset() {
     this.m_restartOnChange = true;
     this.m_index = 0;
     this.SetDefinition(ParticleParameter.k_defaultDefinition);
     this.Set(0);
   }
 
-  SetDefinition(definition: ParticleParameterDefinition[], definitionCount: number = definition.length): void {
+  public SetDefinition(definition: ParticleParameterDefinition[], definitionCount: number = definition.length): void {
     this.m_definition = definition;
     this.m_definitionCount = definitionCount;
     this.m_valueCount = 0;
@@ -133,29 +133,29 @@ export class ParticleParameter {
     this.Set(this.Get());
   }
 
-  Get(): number {
+  public Get(): number {
     return this.m_index;
   }
 
-  Set(index: number): void {
+  public Set(index: number): void {
     this.m_changed = this.m_index !== index;
     this.m_index = this.m_valueCount ? index % this.m_valueCount : index;
     this.m_value = this.FindParticleParameterValue();
     box2d.b2Assert(this.m_value !== null);
   }
 
-  Increment(): void {
-    let index = this.Get();
+  public Increment(): void {
+    const index = this.Get();
     this.Set(index >= this.m_valueCount ? 0 : index + 1);
   }
 
-  Decrement(): void {
-    let index = this.Get();
+  public Decrement(): void {
+    const index = this.Get();
     this.Set(index === 0 ? this.m_valueCount - 1 : index - 1);
   }
 
-  Changed(restart: boolean[]): boolean {
-    let changed = this.m_changed;
+  public Changed(restart: boolean[]): boolean {
+    const changed = this.m_changed;
     this.m_changed = false;
     if (restart) {
       restart[0] = changed && this.GetRestartOnChange();
@@ -163,47 +163,47 @@ export class ParticleParameter {
     return changed;
   }
 
-  GetValue(): number {
-    box2d.b2Assert(this.m_value !== null);
+  public GetValue(): number {
+    if (this.m_value === null) { throw new Error(); }
     return this.m_value.value;
   }
 
-  GetName(): string {
-    box2d.b2Assert(this.m_value !== null);
+  public GetName(): string {
+    if (this.m_value === null) { throw new Error(); }
     return this.m_value.name;
   }
 
-  GetOptions(): ParticleParameterOptions {
-    box2d.b2Assert(this.m_value !== null);
+  public GetOptions(): ParticleParameterOptions {
+    if (this.m_value === null) { throw new Error(); }
     return this.m_value.options;
   }
 
-  SetRestartOnChange(enable: boolean): void {
+  public SetRestartOnChange(enable: boolean): void {
     this.m_restartOnChange = enable;
   }
 
-  GetRestartOnChange(): boolean {
+  public GetRestartOnChange(): boolean {
     return this.m_restartOnChange;
   }
 
-  FindIndexByValue(value: number): number {
+  public FindIndexByValue(value: number): number {
     let index = 0;
     for (let i = 0; i < this.m_definitionCount; ++i) {
-      let definition = this.m_definition[i];
-      let numValues = definition.numValues;
+      const definition = this.m_definition[i];
+      const numValues = definition.numValues;
       for (let j = 0; j < numValues; ++j, ++index) {
-        if (definition.values[j].value === value) return index;
+        if (definition.values[j].value === value) { return index; }
       }
     }
     return -1;
   }
 
-  FindParticleParameterValue(): ParticleParameterValue {
+  public FindParticleParameterValue(): ParticleParameterValue | null {
     let start = 0;
-    let index = this.Get();
+    const index = this.Get();
     for (let i = 0; i < this.m_definitionCount; ++i) {
-      let definition = this.m_definition[i];
-      let end = start + definition.numValues;
+      const definition = this.m_definition[i];
+      const end = start + definition.numValues;
       if (index >= start && index < end) {
         return definition.values[index - start];
       }

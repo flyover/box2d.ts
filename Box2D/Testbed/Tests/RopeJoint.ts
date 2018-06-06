@@ -20,8 +20,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class RopeJoint extends testbed.Test {
-  m_ropeDef = new box2d.b2RopeJointDef();
-  m_rope: box2d.b2RopeJoint;
+  public m_ropeDef = new box2d.b2RopeJointDef();
+  public m_rope: box2d.b2RopeJoint | null = null;
 
   constructor() {
     super();
@@ -100,18 +100,18 @@ export class RopeJoint extends testbed.Test {
 
     {
       this.m_ropeDef.bodyA = ground;
-      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as box2d.b2RopeJoint;
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "j":
         if (this.m_rope) {
           this.m_world.DestroyJoint(this.m_rope);
           this.m_rope = null;
         } else {
-          this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+          this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as box2d.b2RopeJoint;
         }
         break;
     }

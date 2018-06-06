@@ -27,8 +27,8 @@ import * as testbed from "../Testbed";
  */
 
 export class Pointy extends testbed.Test {
-  m_killfieldShape = new box2d.b2PolygonShape();
-  m_killfieldTransform = new box2d.b2Transform();
+  public m_killfieldShape = new box2d.b2PolygonShape();
+  public m_killfieldTransform = new box2d.b2Transform();
 
   constructor() {
     super();
@@ -46,7 +46,7 @@ export class Pointy extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(x, -10.0),
           new box2d.b2Vec2(x + xstep, -10.0),
-          new box2d.b2Vec2(0.0, 25.0)
+          new box2d.b2Vec2(0.0, 25.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -69,7 +69,7 @@ export class Pointy extends testbed.Test {
     this.m_killfieldTransform.SetPositionAngle(loc, 0);
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     super.Step(settings);
 
     const flags = testbed.Main.GetParticleParameterValue();
@@ -91,7 +91,7 @@ export class Pointy extends testbed.Test {
     this.m_particleSystem.DestroyParticlesInShape(this.m_killfieldShape, this.m_killfieldTransform);
   }
 
-  static Create() {
+  public static Create() {
     return new Pointy();
   }
 }

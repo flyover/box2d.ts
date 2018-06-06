@@ -25,7 +25,7 @@ export class MotorJoint2 extends testbed.Test {
   constructor() {
     super();
 
-    let ground: box2d.b2Body = null;
+    let ground: box2d.b2Body;
     {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
@@ -40,7 +40,7 @@ export class MotorJoint2 extends testbed.Test {
     }
 
     // b2Body * body1 = NULL;
-    let body1: box2d.b2Body = null;
+    let body1: box2d.b2Body;
     {
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
@@ -58,7 +58,7 @@ export class MotorJoint2 extends testbed.Test {
     }
 
     // b2Body * body2 = NULL;
-    let body2: box2d.b2Body = null;
+    let body2: box2d.b2Body;
     {
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
@@ -85,7 +85,7 @@ export class MotorJoint2 extends testbed.Test {
   }
 
   // b2MotorJoint* m_joint;
-  m_joint: box2d.b2MotorJoint;
+  public m_joint: box2d.b2MotorJoint;
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);

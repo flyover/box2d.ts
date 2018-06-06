@@ -91,10 +91,10 @@ export class b2SimplexCache {
 }
 
 export class b2DistanceInput {
-  public proxyA: b2DistanceProxy = new b2DistanceProxy();
-  public proxyB: b2DistanceProxy = new b2DistanceProxy();
-  public transformA: b2Transform = new b2Transform();
-  public transformB: b2Transform = new b2Transform();
+  public proxyA: b2DistanceProxy = new b2DistanceProxy(); // TODO: readonly
+  public proxyB: b2DistanceProxy = new b2DistanceProxy(); // TODO: readonly
+  public readonly transformA: b2Transform = new b2Transform();
+  public readonly transformB: b2Transform = new b2Transform();
   public useRadii: boolean = false;
 
   public Reset(): b2DistanceInput {
@@ -108,8 +108,8 @@ export class b2DistanceInput {
 }
 
 export class b2DistanceOutput {
-  public pointA: b2Vec2 = new b2Vec2();
-  public pointB: b2Vec2 = new b2Vec2();
+  public readonly pointA: b2Vec2 = new b2Vec2();
+  public readonly pointB: b2Vec2 = new b2Vec2();
   public distance: number = 0;
   public iterations: number = 0; ///< number of GJK iterations used
 
@@ -122,7 +122,6 @@ export class b2DistanceOutput {
   }
 }
 
-
 export let b2_gjkCalls: number = 0;
 export let b2_gjkIters: number = 0;
 export let b2_gjkMaxIters: number = 0;
@@ -133,9 +132,9 @@ export function b2_gjk_reset(): void {
 }
 
 export class b2SimplexVertex {
-  public wA: b2Vec2 = new b2Vec2(); // support point in proxyA
-  public wB: b2Vec2 = new b2Vec2(); // support point in proxyB
-  public w: b2Vec2 = new b2Vec2(); // wB - wA
+  public readonly wA: b2Vec2 = new b2Vec2(); // support point in proxyA
+  public readonly wB: b2Vec2 = new b2Vec2(); // support point in proxyB
+  public readonly w: b2Vec2 = new b2Vec2(); // wB - wA
   public a: number = 0; // barycentric coordinate for closest point
   public indexA: number = 0; // wA index
   public indexB: number = 0; // wB index
@@ -152,9 +151,9 @@ export class b2SimplexVertex {
 }
 
 export class b2Simplex {
-  public m_v1: b2SimplexVertex = new b2SimplexVertex();
-  public m_v2: b2SimplexVertex = new b2SimplexVertex();
-  public m_v3: b2SimplexVertex = new b2SimplexVertex();
+  public readonly m_v1: b2SimplexVertex = new b2SimplexVertex();
+  public readonly m_v2: b2SimplexVertex = new b2SimplexVertex();
+  public readonly m_v3: b2SimplexVertex = new b2SimplexVertex();
   public m_vertices: b2SimplexVertex[] = [/*3*/];
   public m_count: number = 0;
 

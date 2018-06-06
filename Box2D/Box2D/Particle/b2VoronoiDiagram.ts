@@ -18,22 +18,20 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import { b2_maxFloat, b2MakeArray } from "../Common/b2Settings";
+import { b2_maxFloat, b2MakeArray, b2Assert } from "../Common/b2Settings";
 import { b2Vec2 } from "../Common/b2Math";
 import { b2StackQueue } from "./b2StackQueue";
-
-function b2Assert(condition: boolean) {}
 
 /**
  * A field representing the nearest generator from each point.
  */
 export class b2VoronoiDiagram {
-  m_generatorBuffer: b2VoronoiDiagram.Generator[] = null;
-  m_generatorCapacity = 0;
-  m_generatorCount = 0;
-  m_countX = 0;
-  m_countY = 0;
-  m_diagram: b2VoronoiDiagram.Generator[] = null;
+  public m_generatorBuffer: b2VoronoiDiagram.Generator[];
+  public m_generatorCapacity = 0;
+  public m_generatorCount = 0;
+  public m_countX = 0;
+  public m_countY = 0;
+  public m_diagram: b2VoronoiDiagram.Generator[] = [];
 
   constructor(generatorCapacity: number) {
     this.m_generatorBuffer = b2MakeArray(generatorCapacity, (index) => new b2VoronoiDiagram.Generator());
@@ -47,9 +45,9 @@ export class b2VoronoiDiagram {
    * @param tag a tag used to identify the generator in callback functions.
    * @param necessary whether to callback for nodes associated with the generator.
    */
-  AddGenerator(center: b2Vec2, tag: number, necessary: boolean): void {
+  public AddGenerator(center: b2Vec2, tag: number, necessary: boolean): void {
     b2Assert(this.m_generatorCount < this.m_generatorCapacity);
-    let g = this.m_generatorBuffer[this.m_generatorCount++];
+    const g = this.m_generatorBuffer[this.m_generatorCount++];
     g.center.Copy(center);
     g.tag = tag;
     g.necessary = necessary;
@@ -62,14 +60,14 @@ export class b2VoronoiDiagram {
    * @param radius the interval of the diagram.
    * @param margin margin for which the range of the diagram is extended.
    */
-  Generate(radius: number, margin: number): void {
+  public Generate(radius: number, margin: number): void {
     b2Assert(this.m_diagram === null);
-    let inverseRadius = 1 / radius;
-    let lower = new b2Vec2(+b2_maxFloat, +b2_maxFloat);
-    let upper = new b2Vec2(-b2_maxFloat, -b2_maxFloat);
+    const inverseRadius = 1 / radius;
+    const lower = new b2Vec2(+b2_maxFloat, +b2_maxFloat);
+    const upper = new b2Vec2(-b2_maxFloat, -b2_maxFloat);
     let necessary_count = 0;
     for (let k = 0; k < this.m_generatorCount; k++) {
-      let g = this.m_generatorBuffer[k];
+      const g = this.m_generatorBuffer[k];
       if (g.necessary) {
         b2Vec2.MinV(lower, g.center, lower);
         b2Vec2.MaxV(upper, g.center, upper);
@@ -93,27 +91,27 @@ export class b2VoronoiDiagram {
     ///  {
     ///    m_diagram[i] = NULL;
     ///  }
-    this.m_diagram = b2MakeArray(this.m_countX * this.m_countY, (index) => null);
+    this.m_diagram = []; // b2MakeArray(this.m_countX * this.m_countY, (index) => null);
 
     // (4 * m_countX * m_countY) is the queue capacity that is experimentally
     // known to be necessary and sufficient for general particle distributions.
-    let queue = new b2StackQueue<b2VoronoiDiagram.Task>(4 * this.m_countX * this.m_countY);
+    const queue = new b2StackQueue<b2VoronoiDiagram.Task>(4 * this.m_countX * this.m_countY);
     for (let k = 0; k < this.m_generatorCount; k++) {
-      let g = this.m_generatorBuffer[k];
+      const g = this.m_generatorBuffer[k];
       ///  g.center = inverseRadius * (g.center - lower);
       g.center.SelfSub(lower).SelfMul(inverseRadius);
-      let x = Math.floor(g.center.x);
-      let y = Math.floor(g.center.y);
+      const x = Math.floor(g.center.x);
+      const y = Math.floor(g.center.y);
       if (x >= 0 && y >= 0 && x < this.m_countX && y < this.m_countY) {
         queue.Push(new b2VoronoiDiagram.Task(x, y, x + y * this.m_countX, g));
       }
     }
     while (!queue.Empty()) {
-      let task = queue.Front();
-      let x = task.m_x;
-      let y = task.m_y;
-      let i = task.m_i;
-      let g = task.m_generator;
+      const task = queue.Front();
+      const x = task.m_x;
+      const y = task.m_y;
+      const i = task.m_i;
+      const g = task.m_generator;
       queue.Pop();
       if (!this.m_diagram[i]) {
         this.m_diagram[i] = g;
@@ -133,9 +131,9 @@ export class b2VoronoiDiagram {
     }
     for (let y = 0; y < this.m_countY; y++) {
       for (let x = 0; x < this.m_countX - 1; x++) {
-        let i = x + y * this.m_countX;
-        let a = this.m_diagram[i];
-        let b = this.m_diagram[i + 1];
+        const i = x + y * this.m_countX;
+        const a = this.m_diagram[i];
+        const b = this.m_diagram[i + 1];
         if (a !== b) {
           queue.Push(new b2VoronoiDiagram.Task(x, y, i, b));
           queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, a));
@@ -144,9 +142,9 @@ export class b2VoronoiDiagram {
     }
     for (let y = 0; y < this.m_countY - 1; y++) {
       for (let x = 0; x < this.m_countX; x++) {
-        let i = x + y * this.m_countX;
-        let a = this.m_diagram[i];
-        let b = this.m_diagram[i + this.m_countX];
+        const i = x + y * this.m_countX;
+        const a = this.m_diagram[i];
+        const b = this.m_diagram[i + this.m_countX];
         if (a !== b) {
           queue.Push(new b2VoronoiDiagram.Task(x, y, i, b));
           queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, a));
@@ -154,21 +152,21 @@ export class b2VoronoiDiagram {
       }
     }
     while (!queue.Empty()) {
-      let task = queue.Front();
-      let x = task.m_x;
-      let y = task.m_y;
-      let i = task.m_i;
-      let k = task.m_generator;
+      const task = queue.Front();
+      const x = task.m_x;
+      const y = task.m_y;
+      const i = task.m_i;
+      const k = task.m_generator;
       queue.Pop();
-      let a = this.m_diagram[i];
-      let b = k;
+      const a = this.m_diagram[i];
+      const b = k;
       if (a !== b) {
-        let ax = a.center.x - x;
-        let ay = a.center.y - y;
-        let bx = b.center.x - x;
-        let by = b.center.y - y;
-        let a2 = ax * ax + ay * ay;
-        let b2 = bx * bx + by * by;
+        const ax = a.center.x - x;
+        const ay = a.center.y - y;
+        const bx = b.center.x - x;
+        const by = b.center.y - y;
+        const a2 = ax * ax + ay * ay;
+        const b2 = bx * bx + by * by;
         if (a2 > b2) {
           this.m_diagram[i] = b;
           if (x > 0) {
@@ -192,14 +190,14 @@ export class b2VoronoiDiagram {
    * Enumerate all nodes that contain at least one necessary
    * generator.
    */
-  GetNodes(callback: b2VoronoiDiagram.NodeCallback): void {
+  public GetNodes(callback: b2VoronoiDiagram.NodeCallback): void {
     for (let y = 0; y < this.m_countY - 1; y++) {
       for (let x = 0; x < this.m_countX - 1; x++) {
-        let i = x + y * this.m_countX;
-        let a = this.m_diagram[i];
-        let b = this.m_diagram[i + 1];
-        let c = this.m_diagram[i + this.m_countX];
-        let d = this.m_diagram[i + 1 + this.m_countX];
+        const i = x + y * this.m_countX;
+        const a = this.m_diagram[i];
+        const b = this.m_diagram[i + 1];
+        const c = this.m_diagram[i + this.m_countX];
+        const d = this.m_diagram[i + 1 + this.m_countX];
         if (b !== c) {
           if (a !== b && a !== c &&
             (a.necessary || b.necessary || c.necessary)) {
@@ -225,16 +223,16 @@ export namespace b2VoronoiDiagram {
 export type NodeCallback = (a: number, b: number, c: number) => void;
 
 export class Generator {
-  center: b2Vec2 = new b2Vec2();
-  tag: number = 0;
-  necessary: boolean = false;
+  public center: b2Vec2 = new b2Vec2();
+  public tag: number = 0;
+  public necessary: boolean = false;
 }
 
 export class Task {
-  m_x: number = 0;
-  m_y: number = 0;
-  m_i: number = 0;
-  m_generator: b2VoronoiDiagram.Generator = null;
+  public m_x: number;
+  public m_y: number;
+  public m_i: number;
+  public m_generator: b2VoronoiDiagram.Generator;
   constructor(x: number, y: number, i: number, g: b2VoronoiDiagram.Generator) {
     this.m_x = x;
     this.m_y = y;

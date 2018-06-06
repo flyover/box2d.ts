@@ -22,8 +22,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class WaveMachine extends testbed.Test {
-  m_joint: box2d.b2RevoluteJoint;
-  m_time = 0;
+  public m_joint: box2d.b2RevoluteJoint;
+  public m_time = 0;
 
   constructor() {
     super();
@@ -84,7 +84,7 @@ export class WaveMachine extends testbed.Test {
     this.m_time = 0;
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     super.Step(settings);
     if (settings.hz > 0) {
       this.m_time += 1 / settings.hz;
@@ -92,11 +92,11 @@ export class WaveMachine extends testbed.Test {
     this.m_joint.SetMotorSpeed(0.05 * Math.cos(this.m_time) * box2d.b2_pi);
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new WaveMachine();
   }
 }

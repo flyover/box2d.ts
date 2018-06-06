@@ -11,15 +11,15 @@ import { b2ChainAndPolygonContact } from "./b2ChainAndPolygonContact";
 import { b2Fixture } from "../b2Fixture";
 
 export class b2ContactRegister {
-  public pool: b2Contact[] = null;
-  public createFcn: { (allocator: any): b2Contact; } = null;
-  public destroyFcn: { (contact: b2Contact, allocator: any): void; } = null;
+  // public pool: b2Contact[];
+  public createFcn: ((allocator: any) => b2Contact) | null = null;
+  public destroyFcn: ((contact: b2Contact, allocator: any) => void) | null = null;
   public primary: boolean = false;
 }
 
 export class b2ContactFactory {
   public m_allocator: any = null;
-  public m_registers: b2ContactRegister[][];
+  public m_registers!: b2ContactRegister[][];
 
   constructor(allocator: any) {
     this.m_allocator = allocator;
@@ -30,24 +30,25 @@ export class b2ContactFactory {
     const pool: b2Contact[] = b2MakeArray(256, (i: number) => createFcn(this.m_allocator)); // TODO: b2Settings
 
     function poolCreateFcn(allocator: any): b2Contact {
-      if (pool.length > 0) {
-        return pool.pop();
-      }
+      // if (pool.length > 0) {
+      //   return pool.pop();
+      // }
 
-      return createFcn(allocator);
+      // return createFcn(allocator);
+      return pool.pop() || createFcn(allocator);
     }
 
     function poolDestroyFcn(contact: b2Contact, allocator: any): void {
       pool.push(contact);
     }
 
-    this.m_registers[type1][type2].pool = pool;
+    // this.m_registers[type1][type2].pool = pool;
     this.m_registers[type1][type2].createFcn = poolCreateFcn;
     this.m_registers[type1][type2].destroyFcn = poolDestroyFcn;
     this.m_registers[type1][type2].primary = true;
 
     if (type1 !== type2) {
-      this.m_registers[type2][type1].pool = pool;
+      // this.m_registers[type2][type1].pool = pool;
       this.m_registers[type2][type1].createFcn = poolCreateFcn;
       this.m_registers[type2][type1].destroyFcn = poolDestroyFcn;
       this.m_registers[type2][type1].primary = false;
@@ -86,7 +87,7 @@ export class b2ContactFactory {
     this.AddType( b2ChainAndPolygonContact.Create,  b2ChainAndPolygonContact.Destroy, b2ShapeType.e_chainShape,   b2ShapeType.e_polygonShape);
   }
 
-  public Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact {
+  public Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact | null {
     const type1: b2ShapeType = fixtureA.GetType();
     const type2: b2ShapeType = fixtureB.GetType();
 
@@ -125,7 +126,8 @@ export class b2ContactFactory {
     ///b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
 
     const reg: b2ContactRegister = this.m_registers[typeA][typeB];
-
-    reg.destroyFcn(contact, this.m_allocator);
+    if (reg.destroyFcn) {
+      reg.destroyFcn(contact, this.m_allocator);
+    }
   }
 }

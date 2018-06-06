@@ -20,26 +20,26 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Prismatic extends testbed.Test {
-  m_joint: box2d.b2PrismaticJoint;
+  public m_joint: box2d.b2PrismaticJoint;
 
   constructor() {
     super();
 
     let ground = null;
-    
+
     {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     {
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(2.0, 0.5);
-  
+
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(-10.0, 10.0);
@@ -47,38 +47,38 @@ export class Prismatic extends testbed.Test {
       bd.allowSleep = false;
       const body = this.m_world.CreateBody(bd);
       body.CreateFixture(shape, 5.0);
-  
+
       const pjd = new box2d.b2PrismaticJointDef();
-  
+
       // Bouncy limit
       const axis = new box2d.b2Vec2(2.0, 1.0);
       axis.Normalize();
       pjd.Initialize(ground, body, new box2d.b2Vec2(0.0, 0.0), axis);
-  
+
       // Non-bouncy limit
       //pjd.Initialize(ground, body, new box2d.b2Vec2(-10.0, 10.0), new box2d.b2Vec2(1.0, 0.0));
-  
+
       pjd.motorSpeed = 10.0;
       pjd.maxMotorForce = 10000.0;
       pjd.enableMotor = true;
       pjd.lowerTranslation = 0.0;
       pjd.upperTranslation = 20.0;
       pjd.enableLimit = true;
-  
+
       this.m_joint = this.m_world.CreateJoint(pjd);
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "l":
         this.m_joint.EnableLimit(!this.m_joint.IsLimitEnabled());
         break;
-  
+
       case "m":
         this.m_joint.EnableMotor(!this.m_joint.IsMotorEnabled());
         break;
-  
+
       case "s":
         this.m_joint.SetMotorSpeed(-this.m_joint.GetMotorSpeed());
         break;

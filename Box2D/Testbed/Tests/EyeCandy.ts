@@ -4,8 +4,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class EyeCandy extends testbed.Test {
-  m_mover: box2d.b2Body;
-  m_joint: box2d.b2RevoluteJoint;
+  public m_mover: box2d.b2Body;
+  public m_joint: box2d.b2RevoluteJoint;
 
   constructor() {
     super();
@@ -61,14 +61,14 @@ export class EyeCandy extends testbed.Test {
     this.m_particleSystem.CreateParticleGroup(pd);
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     const time = new Date().getTime();
     this.m_joint.SetMotorSpeed(0.7 * Math.cos(time / 1000));
 
     super.Step(settings);
   }
 
-  static Create() {
+  public static Create() {
     return new EyeCandy();
   }
 }

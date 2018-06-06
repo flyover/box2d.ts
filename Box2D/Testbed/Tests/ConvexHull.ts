@@ -20,11 +20,11 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ConvexHull extends testbed.Test {
-  static readonly e_count = box2d.b2_maxPolygonVertices;
+  public static readonly e_count = box2d.b2_maxPolygonVertices;
 
-  m_test_points: box2d.b2Vec2[] = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
-  m_count = 0;
-  m_auto = false;
+  public m_test_points: box2d.b2Vec2[] = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
+  public m_count = 0;
+  public m_auto = false;
 
   constructor() {
     super();
@@ -32,18 +32,18 @@ export class ConvexHull extends testbed.Test {
     this.Generate();
   }
 
-  Generate(): void {
+  public Generate(): void {
     for (let i = 0; i < ConvexHull.e_count; ++i) {
       let x = box2d.b2RandomRange(-10.0, 10.0);
       let y = box2d.b2RandomRange(-10.0, 10.0);
-  
+
       // Clamp onto a square to help create collinearities.
       // This will stress the convex hull algorithm.
       x = box2d.b2Clamp(x, -8.0, 8.0);
       y = box2d.b2Clamp(y, -8.0, 8.0);
       this.m_test_points[i].Set(x, y);
     }
-  
+
     this.m_count = ConvexHull.e_count;
   }
 
@@ -52,7 +52,7 @@ export class ConvexHull extends testbed.Test {
       case "a":
         this.m_auto = !this.m_auto;
         break;
-  
+
       case "g":
         this.Generate();
         break;

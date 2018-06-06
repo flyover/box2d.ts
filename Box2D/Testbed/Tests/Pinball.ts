@@ -25,10 +25,10 @@ import * as testbed from "../Testbed";
  */
 
 export class Pinball extends testbed.Test {
-  m_leftJoint: box2d.b2RevoluteJoint = null;
-  m_rightJoint: box2d.b2RevoluteJoint = null;
-  m_ball: box2d.b2Body = null;
-  m_button: boolean = false;
+  public m_leftJoint: box2d.b2RevoluteJoint;
+  public m_rightJoint: box2d.b2RevoluteJoint;
+  public m_ball: box2d.b2Body;
+  public m_button: boolean = false;
 
   constructor() {
     super();
@@ -69,11 +69,11 @@ export class Pinball extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
 
-      bd.position = p1;
+      bd.position.Copy(p1);
       /*box2d.b2Body*/
       const leftFlipper = this.m_world.CreateBody(bd);
 
-      bd.position = p2;
+      bd.position.Copy(p2);
       /*box2d.b2Body*/
       const rightFlipper = this.m_world.CreateBody(bd);
 
@@ -136,7 +136,7 @@ export class Pinball extends testbed.Test {
     this.m_button = false;
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "a":
         this.m_button = true;
@@ -144,7 +144,7 @@ export class Pinball extends testbed.Test {
     }
   }
 
-  KeyboardUp(key: string) {
+  public KeyboardUp(key: string) {
     switch (key) {
       case "a":
         this.m_button = false;

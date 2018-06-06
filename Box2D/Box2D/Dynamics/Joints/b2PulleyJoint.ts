@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2_linearSlop, b2Maybe } from "../../Common/b2Settings";
 import { b2Abs, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
@@ -43,13 +43,13 @@ export interface b2IPulleyJointDef extends b2IJointDef {
 /// Pulley joint definition. This requires two ground anchors,
 /// two dynamic body anchor points, and a pulley ratio.
 export class b2PulleyJointDef extends b2JointDef implements b2IPulleyJointDef {
-  public groundAnchorA: b2Vec2 = new b2Vec2(-1, 1);
+  public readonly groundAnchorA: b2Vec2 = new b2Vec2(-1, 1);
 
-  public groundAnchorB: b2Vec2 = new b2Vec2(1, 1);
+  public readonly groundAnchorB: b2Vec2 = new b2Vec2(1, 1);
 
-  public localAnchorA: b2Vec2 = new b2Vec2(-1, 0);
+  public readonly localAnchorA: b2Vec2 = new b2Vec2(-1, 0);
 
-  public localAnchorB: b2Vec2 = new b2Vec2(1, 0);
+  public readonly localAnchorB: b2Vec2 = new b2Vec2(1, 0);
 
   public lengthA: number = 0;
 
@@ -77,15 +77,15 @@ export class b2PulleyJointDef extends b2JointDef implements b2IPulleyJointDef {
 }
 
 export class b2PulleyJoint extends b2Joint {
-  public m_groundAnchorA: b2Vec2 = new b2Vec2();
-  public m_groundAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_groundAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_groundAnchorB: b2Vec2 = new b2Vec2();
 
   public m_lengthA: number = 0;
   public m_lengthB: number = 0;
 
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
 
   public m_constant: number = 0;
   public m_ratio: number = 0;
@@ -94,12 +94,12 @@ export class b2PulleyJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_uA: b2Vec2 = new b2Vec2();
-  public m_uB: b2Vec2 = new b2Vec2();
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_uA: b2Vec2 = new b2Vec2();
+  public readonly m_uB: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
 
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
@@ -107,30 +107,26 @@ export class b2PulleyJoint extends b2Joint {
   public m_invIB: number = 0;
   public m_mass: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IPulleyJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_groundAnchorA.Copy(maybe(def.groundAnchorA, new b2Vec2(-1, 1)));
-    this.m_groundAnchorB.Copy(maybe(def.groundAnchorB, new b2Vec2(1, 0)));
-    this.m_localAnchorA.Copy(maybe(def.localAnchorA, new b2Vec2(-1, 0)));
-    this.m_localAnchorB.Copy(maybe(def.localAnchorB, new b2Vec2(1, 0)));
+    this.m_groundAnchorA.Copy(b2Maybe(def.groundAnchorA, new b2Vec2(-1, 1)));
+    this.m_groundAnchorB.Copy(b2Maybe(def.groundAnchorB, new b2Vec2(1, 0)));
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, new b2Vec2(-1, 0)));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, new b2Vec2(1, 0)));
 
-    this.m_lengthA = maybe(def.lengthA, 0);
-    this.m_lengthB = maybe(def.lengthB, 0);
+    this.m_lengthA = b2Maybe(def.lengthA, 0);
+    this.m_lengthB = b2Maybe(def.lengthB, 0);
 
-    ///b2Assert(maybe(def.ratio, 1) !== 0);
-    this.m_ratio = maybe(def.ratio, 1);
+    ///b2Assert(b2Maybe(def.ratio, 1) !== 0);
+    this.m_ratio = b2Maybe(def.ratio, 1);
 
-    this.m_constant = maybe(def.lengthA, 0) + this.m_ratio * maybe(def.lengthB, 0);
+    this.m_constant = b2Maybe(def.lengthA, 0) + this.m_ratio * b2Maybe(def.lengthB, 0);
 
     this.m_impulse = 0;
   }

@@ -25,40 +25,40 @@ export class ElasticParticles extends testbed.Test {
   constructor() {
     super();
     {
-      let bd = new box2d.b2BodyDef();
-      let ground = this.m_world.CreateBody(bd);
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(-4, -1),
           new box2d.b2Vec2(4, -1),
           new box2d.b2Vec2(4, 0),
-          new box2d.b2Vec2(-4, 0)
+          new box2d.b2Vec2(-4, 0),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(-4, -0.1),
           new box2d.b2Vec2(-2, -0.1),
           new box2d.b2Vec2(-2, 2),
-          new box2d.b2Vec2(-4, 2)
+          new box2d.b2Vec2(-4, 2),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(2, -0.1),
           new box2d.b2Vec2(4, -0.1),
           new box2d.b2Vec2(4, 2),
-          new box2d.b2Vec2(2, 2)
+          new box2d.b2Vec2(2, 2),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -68,10 +68,10 @@ export class ElasticParticles extends testbed.Test {
     this.m_particleSystem.SetRadius(0.035 * 3); // HACK: increase particle radius
 
     {
-      let shape = new box2d.b2CircleShape();
+      const shape = new box2d.b2CircleShape();
       shape.m_p.Set(0, 3);
       shape.m_radius = 0.5;
-      let pd = new box2d.b2ParticleGroupDef();
+      const pd = new box2d.b2ParticleGroupDef();
       pd.flags = box2d.b2ParticleFlag.b2_springParticle;
       pd.groupFlags = box2d.b2ParticleGroupFlag.b2_solidParticleGroup;
       pd.shape = shape;
@@ -80,10 +80,10 @@ export class ElasticParticles extends testbed.Test {
     }
 
     {
-      let shape = new box2d.b2CircleShape();
+      const shape = new box2d.b2CircleShape();
       shape.m_p.Set(-1, 3);
       shape.m_radius = 0.5;
-      let pd = new box2d.b2ParticleGroupDef();
+      const pd = new box2d.b2ParticleGroupDef();
       pd.flags = box2d.b2ParticleFlag.b2_elasticParticle;
       pd.groupFlags = box2d.b2ParticleGroupFlag.b2_solidParticleGroup;
       pd.shape = shape;
@@ -92,9 +92,9 @@ export class ElasticParticles extends testbed.Test {
     }
 
     {
-      let shape = new box2d.b2PolygonShape();
+      const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(1, 0.5);
-      let pd = new box2d.b2ParticleGroupDef();
+      const pd = new box2d.b2ParticleGroupDef();
       pd.flags = box2d.b2ParticleFlag.b2_elasticParticle;
       pd.groupFlags = box2d.b2ParticleGroupFlag.b2_solidParticleGroup;
       pd.position.Set(1, 4);
@@ -106,19 +106,19 @@ export class ElasticParticles extends testbed.Test {
     }
 
     {
-      let bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
-      let body = this.m_world.CreateBody(bd);
-      let shape = new box2d.b2CircleShape();
+      const body = this.m_world.CreateBody(bd);
+      const shape = new box2d.b2CircleShape();
       shape.m_p.Set(0, 8);
       shape.m_radius = 0.5;
       body.CreateFixture(shape, 0.5);
     }
   }
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
-  static Create() {
+  public static Create() {
     return new ElasticParticles();
   }
 }

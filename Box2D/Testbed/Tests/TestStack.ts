@@ -26,7 +26,7 @@ export class TestStack extends testbed.Test {
     {
       const bd = new box2d.b2BodyDef();
       const ground = this.m_world.CreateBody(bd);
-  
+
       const vertices = [];
       vertices[0] = new box2d.b2Vec2(-30.0, 0.0);
       vertices[1] = new box2d.b2Vec2(30.0, 0.0);
@@ -36,7 +36,7 @@ export class TestStack extends testbed.Test {
       shape.CreateLoop(vertices);
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     // Add bodies
     const bd = new box2d.b2BodyDef();
     const fd = new box2d.b2FixtureDef();
@@ -67,12 +67,12 @@ export class TestStack extends testbed.Test {
     const vxs = [
       new box2d.b2Vec2(-30.0, 0.0),
       new box2d.b2Vec2(-10.0, 0.0),
-      new box2d.b2Vec2(-30.0, 10.0)
+      new box2d.b2Vec2(-30.0, 10.0),
     ];
     polygon.Set(vxs, vxs.length);
     fd.density = 0;
     this.m_world.CreateBody(bd).CreateFixture(fd);
-  
+
     // Create ball
     bd.type = box2d.b2BodyType.b2_dynamicBody;
     bd.position.Set(-25.0, 20.0);

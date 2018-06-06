@@ -20,46 +20,46 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Revolute extends testbed.Test {
-  m_ball: box2d.b2Body;
-  m_joint: box2d.b2RevoluteJoint;
+  public m_ball: box2d.b2Body;
+  public m_joint: box2d.b2RevoluteJoint;
 
   constructor() {
     super();
 
     let ground = null;
-    
+
     {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
-  
+
       /*box2d.b2FixtureDef*/
       const fd = new box2d.b2FixtureDef();
       fd.shape = shape;
       //fd.filter.categoryBits = 2;
-  
+
       ground.CreateFixture(fd);
     }
-  
+
     {
       const shape = new box2d.b2CircleShape();
       shape.m_radius = 0.5;
-  
+
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
-  
+
       const rjd = new box2d.b2RevoluteJointDef();
-  
+
       bd.position.Set(-10.0, 20.0);
       const body = this.m_world.CreateBody(bd);
       body.CreateFixture(shape, 5.0);
-  
+
       const w = 100.0;
       body.SetAngularVelocity(w);
       body.SetLinearVelocity(new box2d.b2Vec2(-8.0 * w, 0.0));
-  
+
       rjd.Initialize(ground, body, new box2d.b2Vec2(-10.0, 12.0));
       rjd.motorSpeed = 1.0 * box2d.b2_pi;
       rjd.maxMotorTorque = 10000.0;
@@ -68,32 +68,32 @@ export class Revolute extends testbed.Test {
       rjd.upperAngle = 0.5 * box2d.b2_pi;
       rjd.enableLimit = true;
       rjd.collideConnected = true;
-  
+
       this.m_joint = this.m_world.CreateJoint(rjd);
     }
-  
+
     {
       /*box2d.b2CircleShape*/
       const circle_shape = new box2d.b2CircleShape();
       circle_shape.m_radius = 3.0;
-  
+
       const circle_bd = new box2d.b2BodyDef();
       circle_bd.type = box2d.b2BodyType.b2_dynamicBody;
       circle_bd.position.Set(5.0, 30.0);
-  
+
       /*box2d.b2FixtureDef*/
       const fd = new box2d.b2FixtureDef();
       fd.density = 5.0;
       fd.filter.maskBits = 1;
       fd.shape = circle_shape;
-  
+
       this.m_ball = this.m_world.CreateBody(circle_bd);
       this.m_ball.CreateFixture(fd);
-  
+
       /*box2d.b2PolygonShape*/
       const polygon_shape = new box2d.b2PolygonShape();
       polygon_shape.SetAsBox(10.0, 0.2, new box2d.b2Vec2(-10.0, 0.0), 0.0);
-  
+
       const polygon_bd = new box2d.b2BodyDef();
       polygon_bd.position.Set(20.0, 10.0);
       polygon_bd.type = box2d.b2BodyType.b2_dynamicBody;
@@ -101,7 +101,7 @@ export class Revolute extends testbed.Test {
       /*box2d.b2Body*/
       const polygon_body = this.m_world.CreateBody(polygon_bd);
       polygon_body.CreateFixture(polygon_shape, 2.0);
-  
+
       const rjd = new box2d.b2RevoluteJointDef();
       rjd.Initialize(ground, polygon_body, new box2d.b2Vec2(20.0, 10.0));
       rjd.lowerAngle = -0.25 * box2d.b2_pi;
@@ -109,14 +109,14 @@ export class Revolute extends testbed.Test {
       rjd.enableLimit = true;
       this.m_world.CreateJoint(rjd);
     }
-  
+
     // Tests mass computation of a small object far from the origin
     {
       const bodyDef = new box2d.b2BodyDef();
       bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
       /*box2d.b2Body*/
       const body = this.m_world.CreateBody(bodyDef);
-  
+
       /*box2d.b2PolygonShape*/
       const polyShape = new box2d.b2PolygonShape();
       /*box2d.b2Vec2*/
@@ -125,22 +125,22 @@ export class Revolute extends testbed.Test {
       verts[1].Set(17.52, 36.69);
       verts[2].Set(17.19, 36.36);
       polyShape.Set(verts, 3);
-  
+
       /*box2d.b2FixtureDef*/
       const polyFixtureDef = new box2d.b2FixtureDef();
       polyFixtureDef.shape = polyShape;
       polyFixtureDef.density = 1;
-  
+
       body.CreateFixture(polyFixtureDef); //assertion hits inside here
-    }  
+    }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "l":
         this.m_joint.EnableLimit(!this.m_joint.IsLimitEnabled());
         break;
-  
+
       case "m":
         this.m_joint.EnableMotor(!this.m_joint.IsMotorEnabled());
         break;

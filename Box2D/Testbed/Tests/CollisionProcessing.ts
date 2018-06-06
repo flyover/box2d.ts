@@ -151,7 +151,7 @@ export class CollisionProcessing extends testbed.Test {
     }
 
     // Sort the nuke array to group duplicates.
-    nuke.sort(function(a, b) {
+    nuke.sort((a, b) => {
       return a - b;
     });
 

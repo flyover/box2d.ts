@@ -72,7 +72,8 @@ export class DumpShell extends testbed.Test {
         fd.shape = shape;
 
         bodies[0].CreateFixture(fd);
-      } {
+      }
+      {
         /*box2d.b2FixtureDef*/
         const fd = new box2d.b2FixtureDef();
         fd.friction = 10.000000000000000;
@@ -95,7 +96,8 @@ export class DumpShell extends testbed.Test {
         fd.shape = shape;
 
         bodies[0].CreateFixture(fd);
-      } {
+      }
+      {
         /*box2d.b2FixtureDef*/
         const fd = new box2d.b2FixtureDef();
         fd.friction = 10.000000000000000;
@@ -118,7 +120,8 @@ export class DumpShell extends testbed.Test {
         fd.shape = shape;
 
         bodies[0].CreateFixture(fd);
-      } {
+      }
+      {
         /*box2d.b2FixtureDef*/
         const fd = new box2d.b2FixtureDef();
         fd.friction = 10.000000000000000;
@@ -142,7 +145,8 @@ export class DumpShell extends testbed.Test {
 
         bodies[0].CreateFixture(fd);
       }
-    } {
+    }
+    {
       /*box2d.b2BodyDef*/
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
@@ -185,7 +189,8 @@ export class DumpShell extends testbed.Test {
 
         bodies[1].CreateFixture(fd);
       }
-    } {
+    }
+    {
       /*box2d.b2BodyDef*/
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
@@ -228,7 +233,8 @@ export class DumpShell extends testbed.Test {
 
         bodies[2].CreateFixture(fd);
       }
-    } {
+    }
+    {
       /*box2d.b2BodyDef*/
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_staticBody;
@@ -247,7 +253,8 @@ export class DumpShell extends testbed.Test {
 
       bodies[3] = this.m_world.CreateBody(bd);
 
-    } {
+    }
+    {
       /*box2d.b2RevoluteJointDef*/
       const jd = new box2d.b2RevoluteJointDef();
       jd.bodyA = bodies[1];
@@ -263,7 +270,8 @@ export class DumpShell extends testbed.Test {
       jd.motorSpeed = 0.000000000000000;
       jd.maxMotorTorque = 0.000000000000000;
       joints[0] = this.m_world.CreateJoint(jd);
-    } {
+    }
+    {
       /*box2d.b2PrismaticJointDef*/
       const jd = new box2d.b2PrismaticJointDef();
       jd.bodyA = bodies[1];

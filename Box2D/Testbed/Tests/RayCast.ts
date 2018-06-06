@@ -21,8 +21,8 @@ import * as testbed from "../Testbed";
 
 class RayCastClosestCallback extends box2d.b2RayCastCallback {
   public m_hit: boolean = false;
-  public m_point: box2d.b2Vec2 = new box2d.b2Vec2();
-  public m_normal: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_point: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_normal: box2d.b2Vec2 = new box2d.b2Vec2();
   constructor() {
     super();
   }
@@ -53,8 +53,8 @@ class RayCastClosestCallback extends box2d.b2RayCastCallback {
 // just checking for obstruction, so the actual fixture and hit point are irrelevant.
 class RayCastAnyCallback extends box2d.b2RayCastCallback {
   public m_hit: boolean = false;
-  public m_point: box2d.b2Vec2 = new box2d.b2Vec2();
-  public m_normal: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_point: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_normal: box2d.b2Vec2 = new box2d.b2Vec2();
   constructor() {
     super();
   }
@@ -123,14 +123,14 @@ class RayCastMultipleCallback extends box2d.b2RayCastCallback {
 const enum RayCastMode {
   e_closest,
   e_any,
-  e_multiple
+  e_multiple,
 }
 
 export class RayCast extends testbed.Test {
   private static e_maxBodies: number = 256;
 
   private m_bodyIndex: number = 0;
-  private m_bodies: box2d.b2Body[] = [];
+  private m_bodies: Array<box2d.b2Body | null> = [];
   private m_polygons: box2d.b2PolygonShape[] = [];
   private m_circle: box2d.b2CircleShape = new box2d.b2CircleShape();
   private m_edge: box2d.b2EdgeShape = new box2d.b2EdgeShape();
@@ -213,8 +213,9 @@ export class RayCast extends testbed.Test {
   }
 
   public CreateBody(index: number): void {
-    if (this.m_bodies[this.m_bodyIndex] !== null) {
-      this.m_world.DestroyBody(this.m_bodies[this.m_bodyIndex]);
+    const old_body = this.m_bodies[this.m_bodyIndex];
+    if (old_body !== null) {
+      this.m_world.DestroyBody(old_body);
       this.m_bodies[this.m_bodyIndex] = null;
     }
 
@@ -232,25 +233,23 @@ export class RayCast extends testbed.Test {
       bd.angularDamping = 0.02;
     }
 
-    this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
+    const new_body = this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
 
     if (index < 4) {
       const fd: box2d.b2FixtureDef = new box2d.b2FixtureDef();
       fd.shape = this.m_polygons[index];
       fd.friction = 0.3;
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+      new_body.CreateFixture(fd);
     } else if (index < 5) {
       const fd: box2d.b2FixtureDef = new box2d.b2FixtureDef();
       fd.shape = this.m_circle;
       fd.friction = 0.3;
-
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+      new_body.CreateFixture(fd);
     } else {
       const fd: box2d.b2FixtureDef = new box2d.b2FixtureDef();
       fd.shape = this.m_edge;
       fd.friction = 0.3;
-
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+      new_body.CreateFixture(fd);
     }
 
     this.m_bodyIndex = (this.m_bodyIndex + 1) % RayCast.e_maxBodies;
@@ -258,8 +257,9 @@ export class RayCast extends testbed.Test {
 
   public DestroyBody(): void {
     for (let i = 0; i < RayCast.e_maxBodies; ++i) {
-      if (this.m_bodies[i] !== null) {
-        this.m_world.DestroyBody(this.m_bodies[i]);
+      const body = this.m_bodies[i];
+      if (body !== null) {
+        this.m_world.DestroyBody(body);
         this.m_bodies[i] = null;
         return;
       }

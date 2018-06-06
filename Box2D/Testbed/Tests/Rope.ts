@@ -20,8 +20,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Rope extends testbed.Test {
-  m_rope = new box2d.b2Rope();
-  m_angle = 0.0;
+  public m_rope = new box2d.b2Rope();
+  public m_angle = 0.0;
 
   constructor() {
     super();
@@ -56,13 +56,13 @@ export class Rope extends testbed.Test {
     this.m_rope.SetAngle(this.m_angle);
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "q":
         this.m_angle = box2d.b2Max(-box2d.b2_pi, this.m_angle - 0.05 * box2d.b2_pi);
         this.m_rope.SetAngle(this.m_angle);
         break;
-  
+
       case "e":
         this.m_angle = box2d.b2Min(box2d.b2_pi, this.m_angle + 0.05 * box2d.b2_pi);
         this.m_rope.SetAngle(this.m_angle);

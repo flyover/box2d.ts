@@ -20,10 +20,10 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ShapeEditing extends testbed.Test {
-  m_body: box2d.b2Body = null;
-  m_fixture1: box2d.b2Fixture = null;
-  m_fixture2: box2d.b2Fixture = null;
-  m_sensor = false;
+  public m_body: box2d.b2Body;
+  public m_fixture1: box2d.b2Fixture;
+  public m_fixture2: box2d.b2Fixture | null = null;
+  public m_sensor = false;
 
   constructor() {
     super();
@@ -31,27 +31,23 @@ export class ShapeEditing extends testbed.Test {
     {
       const bd = new box2d.b2BodyDef();
       const ground = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     const bd = new box2d.b2BodyDef();
     bd.type = box2d.b2BodyType.b2_dynamicBody;
     bd.position.Set(0.0, 10.0);
     this.m_body = this.m_world.CreateBody(bd);
-  
+
     const shape = new box2d.b2PolygonShape();
     shape.SetAsBox(4.0, 4.0, new box2d.b2Vec2(0.0, 0.0), 0.0);
     this.m_fixture1 = this.m_body.CreateFixture(shape, 10.0);
-  
-    this.m_fixture2 = null;
-  
-    this.m_sensor = false;
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "c":
         if (this.m_fixture2 === null) {
@@ -62,7 +58,7 @@ export class ShapeEditing extends testbed.Test {
           this.m_body.SetAwake(true);
         }
         break;
-  
+
       case "d":
         if (this.m_fixture2 !== null) {
           this.m_body.DestroyFixture(this.m_fixture2);
@@ -70,7 +66,7 @@ export class ShapeEditing extends testbed.Test {
           this.m_body.SetAwake(true);
         }
         break;
-  
+
       case "s":
         if (this.m_fixture2 !== null) {
           this.m_sensor = !this.m_sensor;

@@ -50,7 +50,7 @@ export class b2EdgeAndCircleContact extends b2Contact {
     ///b2Assert(shapeB instanceof b2CircleShape);
     b2CollideEdgeAndCircle(
       manifold,
-      <b2EdgeShape> shapeA, xfA,
-      <b2CircleShape> shapeB, xfB);
+      shapeA as b2EdgeShape, xfA,
+      shapeB as b2CircleShape, xfB);
   }
 }

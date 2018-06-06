@@ -40,7 +40,7 @@ export class CornerCase extends testbed.Test {
           new box2d.b2Vec2(-20.0, 30.0),
           new box2d.b2Vec2(-20.0, 0.0),
           new box2d.b2Vec2(-25.0, 0.0),
-          new box2d.b2Vec2(-25.0, 30.0)
+          new box2d.b2Vec2(-25.0, 30.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
@@ -56,7 +56,7 @@ export class CornerCase extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(-25.0, 0.0),
           new box2d.b2Vec2(20.0, 15.0),
-          new box2d.b2Vec2(25.0, 0.0)
+          new box2d.b2Vec2(25.0, 0.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
@@ -67,7 +67,7 @@ export class CornerCase extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(-25.0, 0.0),
           new box2d.b2Vec2(x, 15.0),
-          new box2d.b2Vec2(x + xstep, 15.0)
+          new box2d.b2Vec2(x + xstep, 15.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
@@ -78,7 +78,7 @@ export class CornerCase extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(25.0, y),
           new box2d.b2Vec2(25.0, y + ystep),
-          new box2d.b2Vec2(20.0, 15.0)
+          new box2d.b2Vec2(20.0, 15.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
@@ -102,7 +102,7 @@ export class CornerCase extends testbed.Test {
       }
     }
   }
-  static Create() {
+  public static Create() {
     return new CornerCase();
   }
 }

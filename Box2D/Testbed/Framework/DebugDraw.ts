@@ -19,8 +19,8 @@
 import * as box2d from "Box2D";
 
 export class Camera {
-  public m_center: box2d.b2Vec2 = new box2d.b2Vec2(0, 20);
-  ///public m_roll: box2d.b2Rot = new box2d.b2Rot(box2d.b2DegToRad(0));
+  public readonly m_center: box2d.b2Vec2 = new box2d.b2Vec2(0, 20);
+  ///public readonly m_roll: box2d.b2Rot = new box2d.b2Rot(box2d.b2DegToRad(0));
   public m_extent: number = 25;
   public m_zoom: number = 1;
   public m_width: number = 1280;
@@ -106,7 +106,7 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public PushTransform(xf: box2d.b2Transform): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.save();
       ctx.translate(xf.p.x, xf.p.y);
@@ -115,14 +115,14 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public PopTransform(xf: box2d.b2Transform): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.restore();
     }
   }
 
   public DrawPolygon(vertices: box2d.b2Vec2[], vertexCount: number, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(vertices[0].x, vertices[0].y);
@@ -136,7 +136,7 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public DrawSolidPolygon(vertices: box2d.b2Vec2[], vertexCount: number, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(vertices[0].x, vertices[0].y);
@@ -152,7 +152,7 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public DrawCircle(center: box2d.b2Vec2, radius: number, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.beginPath();
       ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true);
@@ -162,7 +162,7 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public DrawSolidCircle(center: box2d.b2Vec2, radius: number, axis: box2d.b2Vec2, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       const cx: number = center.x;
       const cy: number = center.y;
@@ -178,13 +178,13 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   // #if B2_ENABLE_PARTICLE
-  public DrawParticles(centers: box2d.b2Vec2[], radius: number, colors: box2d.b2Color[], count: number) {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+  public DrawParticles(centers: box2d.b2Vec2[], radius: number, colors: box2d.b2Color[] | null, count: number) {
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       if (colors !== null) {
         for (let i = 0; i < count; ++i) {
-          let center = centers[i];
-          let color = colors[i];
+          const center = centers[i];
+          const color = colors[i];
           ctx.fillStyle = color.MakeStyleString();
           ctx.fillRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
           ///ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
@@ -193,7 +193,7 @@ export class DebugDraw extends box2d.b2Draw {
         ctx.fillStyle = "rgba(255,255,255,0.5)";
         ctx.beginPath();
         for (let i = 0; i < count; ++i) {
-          let center = centers[i];
+          const center = centers[i];
           ctx.rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
           ///ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
         }
@@ -204,7 +204,7 @@ export class DebugDraw extends box2d.b2Draw {
   // #endif
 
   public DrawSegment(p1: box2d.b2Vec2, p2: box2d.b2Vec2, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
@@ -215,7 +215,7 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public DrawTransform(xf: box2d.b2Transform): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       this.PushTransform(xf);
 
@@ -236,7 +236,7 @@ export class DebugDraw extends box2d.b2Draw {
   }
 
   public DrawPoint(p: box2d.b2Vec2, size: number, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.fillStyle = color.MakeStyleString();
       size *= g_camera.m_zoom;
@@ -248,14 +248,14 @@ export class DebugDraw extends box2d.b2Draw {
 
   private static DrawString_s_color: box2d.b2Color = new box2d.b2Color(0.9, 0.6, 0.6);
   public DrawString(x: number, y: number, message: string): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.save();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.font = "15px DroidSans";
-        const color: box2d.b2Color = DebugDraw.DrawString_s_color;
-        ctx.fillStyle = color.MakeStyleString();
-        ctx.fillText(message, x, y);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.font = "15px DroidSans";
+      const color: box2d.b2Color = DebugDraw.DrawString_s_color;
+      ctx.fillStyle = color.MakeStyleString();
+      ctx.fillText(message, x, y);
       ctx.restore();
     }
   }
@@ -264,7 +264,7 @@ export class DebugDraw extends box2d.b2Draw {
   private static DrawStringWorld_s_cc: box2d.b2Vec2 = new box2d.b2Vec2();
   private static DrawStringWorld_s_color: box2d.b2Color = new box2d.b2Color(0.5, 0.9, 0.5);
   public DrawStringWorld(x: number, y: number, message: string): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       const p: box2d.b2Vec2 = DebugDraw.DrawStringWorld_s_p.Set(x, y);
 
@@ -284,17 +284,17 @@ export class DebugDraw extends box2d.b2Draw {
       box2d.b2Vec2.AddVV(p, cc, p);
 
       ctx.save();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.font = "15px DroidSans";
-        const color: box2d.b2Color = DebugDraw.DrawStringWorld_s_color;
-        ctx.fillStyle = color.MakeStyleString();
-        ctx.fillText(message, p.x, p.y);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.font = "15px DroidSans";
+      const color: box2d.b2Color = DebugDraw.DrawStringWorld_s_color;
+      ctx.fillStyle = color.MakeStyleString();
+      ctx.fillText(message, p.x, p.y);
       ctx.restore();
     }
   }
 
   public DrawAABB(aabb: box2d.b2AABB, color: box2d.b2Color): void {
-    const ctx: CanvasRenderingContext2D = this.m_ctx;
+    const ctx: CanvasRenderingContext2D | null = this.m_ctx;
     if (ctx) {
       ctx.strokeStyle = color.MakeStyleString();
       const x: number = aabb.lowerBound.x;

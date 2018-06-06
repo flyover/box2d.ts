@@ -20,10 +20,10 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class SliderCrank extends testbed.Test {
-  static readonly e_count = 30;
+  public static readonly e_count = 30;
 
-  m_joint1: box2d.b2RevoluteJoint = null;
-  m_joint2: box2d.b2PrismaticJoint = null;
+  public m_joint1: box2d.b2RevoluteJoint;
+  public m_joint2: box2d.b2PrismaticJoint;
 
   constructor() {
     super();
@@ -32,85 +32,85 @@ export class SliderCrank extends testbed.Test {
     {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     {
       let prevBody = ground;
-  
+
       // Define crank.
       {
         const shape = new box2d.b2PolygonShape();
         shape.SetAsBox(0.5, 2.0);
-  
+
         const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 7.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
-  
+
         const rjd = new box2d.b2RevoluteJointDef();
         rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 5.0));
         rjd.motorSpeed = 1.0 * box2d.b2_pi;
         rjd.maxMotorTorque = 10000.0;
         rjd.enableMotor = true;
         this.m_joint1 = this.m_world.CreateJoint(rjd);
-  
+
         prevBody = body;
       }
-  
+
       // Define follower.
       {
         const shape = new box2d.b2PolygonShape();
         shape.SetAsBox(0.5, 4.0);
-  
+
         const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 13.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
-  
+
         const rjd = new box2d.b2RevoluteJointDef();
         rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 9.0));
         rjd.enableMotor = false;
         this.m_world.CreateJoint(rjd);
-  
+
         prevBody = body;
       }
-  
+
       // Define piston
       {
         const shape = new box2d.b2PolygonShape();
         shape.SetAsBox(1.5, 1.5);
-  
+
         const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         bd.fixedRotation = true;
         bd.position.Set(0.0, 17.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
-  
+
         const rjd = new box2d.b2RevoluteJointDef();
         rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 17.0));
         this.m_world.CreateJoint(rjd);
-  
+
         const pjd = new box2d.b2PrismaticJointDef();
         pjd.Initialize(ground, body, new box2d.b2Vec2(0.0, 17.0), new box2d.b2Vec2(0.0, 1.0));
-  
+
         pjd.maxMotorForce = 1000.0;
         pjd.enableMotor = true;
-  
+
         this.m_joint2 = this.m_world.CreateJoint(pjd);
       }
-  
+
       // Create a payload
       {
         const shape = new box2d.b2PolygonShape();
         shape.SetAsBox(1.5, 1.5);
-  
+
         const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 23.0);
@@ -120,13 +120,13 @@ export class SliderCrank extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "f":
         this.m_joint2.EnableMotor(!this.m_joint2.IsMotorEnabled());
         this.m_joint2.GetBodyB().SetAwake(true);
         break;
-  
+
       case "m":
         this.m_joint1.EnableMotor(!this.m_joint1.IsMotorEnabled());
         this.m_joint1.GetBodyB().SetAwake(true);

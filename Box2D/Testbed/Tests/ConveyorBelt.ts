@@ -20,7 +20,7 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ConveyorBelt extends testbed.Test {
-  m_platform: box2d.b2Fixture;
+  public m_platform: box2d.b2Fixture;
 
   constructor() {
     super();
@@ -66,18 +66,18 @@ export class ConveyorBelt extends testbed.Test {
     }
   }
 
-  PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
+  public PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
     super.PreSolve(contact, oldManifold);
-  
+
     /*b2Fixture*/
     const fixtureA = contact.GetFixtureA();
     /*b2Fixture*/
     const fixtureB = contact.GetFixtureB();
-  
+
     if (fixtureA === this.m_platform) {
       contact.SetTangentSpeed(5.0);
     }
-  
+
     if (fixtureB === this.m_platform) {
       contact.SetTangentSpeed(-5.0);
     }

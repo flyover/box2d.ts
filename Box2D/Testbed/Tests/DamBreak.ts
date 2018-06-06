@@ -34,7 +34,7 @@ export class DamBreak extends testbed.Test {
         new box2d.b2Vec2(-2, 0),
         new box2d.b2Vec2(2, 0),
         new box2d.b2Vec2(2, 4),
-        new box2d.b2Vec2(-2, 4)
+        new box2d.b2Vec2(-2, 4),
       ];
       shape.CreateLoop(vertices, 4);
       ground.CreateFixture(shape, 0.0);
@@ -57,11 +57,11 @@ export class DamBreak extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new DamBreak();
   }
 }

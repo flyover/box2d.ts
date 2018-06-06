@@ -21,9 +21,12 @@
   },
   "homepage": "https://github.com/flyover/box2d.ts#readme",
   "dependencies": {
-    "@types/systemjs": "^0.20.6",
+    "@types/systemjs": "^0.20.6"
+  },
+  "devDependencies": {
     "plugin-typescript": "^8.0.0",
     "systemjs": "^0.21.4",
+    "tslint": "^5.10.0",
     "typescript": "^2.9.1"
   }
 }

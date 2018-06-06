@@ -50,12 +50,12 @@ export class b2ChainAndPolygonContact extends b2Contact {
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
     ///b2Assert(shapeA instanceof b2ChainShape);
     ///b2Assert(shapeB instanceof b2PolygonShape);
-    const chain: b2ChainShape = <b2ChainShape> shapeA;
+    const chain: b2ChainShape = shapeA as b2ChainShape;
     const edge: b2EdgeShape = b2ChainAndPolygonContact.Evaluate_s_edge;
     chain.GetChildEdge(edge, this.m_indexA);
     b2CollideEdgeAndPolygon(
       manifold,
       edge, xfA,
-      <b2PolygonShape> shapeB, xfB);
+      shapeB as b2PolygonShape, xfB);
   }
 }

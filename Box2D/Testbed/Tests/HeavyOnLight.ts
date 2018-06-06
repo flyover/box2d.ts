@@ -53,7 +53,7 @@ export class HeavyOnLight extends testbed.Test {
     body.CreateFixture(shape, 10.0);
   }
 
-  static Create() {
+  public static Create() {
     return new HeavyOnLight();
   }
 }

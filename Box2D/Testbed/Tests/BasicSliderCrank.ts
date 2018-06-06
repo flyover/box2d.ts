@@ -108,7 +108,7 @@ export class BasicSliderCrank extends testbed.Test {
     }
   }
 
-  static Create() {
+  public static Create() {
     return new BasicSliderCrank();
   }
 }

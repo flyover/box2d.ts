@@ -26,14 +26,14 @@ import { b2ContactFilter, b2ContactListener } from "./b2WorldCallbacks";
 
 // Delegate of b2World.
 export class b2ContactManager {
-  public m_broadPhase: b2BroadPhase = new b2BroadPhase();
+  public readonly m_broadPhase: b2BroadPhase = new b2BroadPhase();
   public m_contactList: b2Contact | null = null;
   public m_contactCount: number = 0;
   public m_contactFilter: b2ContactFilter = b2ContactFilter.b2_defaultFilter;
   public m_contactListener: b2ContactListener = b2ContactListener.b2_defaultListener;
   public m_allocator: any = null;
 
-  public m_contactFactory: b2ContactFactory = null;
+  public m_contactFactory: b2ContactFactory;
 
   constructor() {
     this.m_contactFactory = new b2ContactFactory(this.m_allocator);
@@ -61,7 +61,7 @@ export class b2ContactManager {
     // TODO_ERIN use a hash table to remove a potential bottleneck when both
     // bodies have a lot of contacts.
     // Does a contact already exist?
-    let edge: b2ContactEdge = bodyB.GetContactList();
+    let edge: b2ContactEdge | null = bodyB.GetContactList();
     while (edge) {
       if (edge.other === bodyA) {
         const fA: b2Fixture = edge.contact.GetFixtureA();
@@ -89,7 +89,7 @@ export class b2ContactManager {
     }
 
     // Call the factory.
-    const c: b2Contact = this.m_contactFactory.Create(fixtureA, indexA, fixtureB, indexB);
+    const c: b2Contact | null = this.m_contactFactory.Create(fixtureA, indexA, fixtureB, indexB);
     if (c === null) {
       return;
     }
@@ -206,7 +206,7 @@ export class b2ContactManager {
   // contact list.
   public Collide(): void {
     // Update awake contacts.
-    let c: b2Contact = this.m_contactList;
+    let c: b2Contact | null = this.m_contactList;
     while (c) {
       const fixtureA: b2Fixture = c.GetFixtureA();
       const fixtureB: b2Fixture = c.GetFixtureB();

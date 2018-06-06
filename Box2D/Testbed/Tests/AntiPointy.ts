@@ -27,7 +27,7 @@ import * as testbed from "../Testbed";
  */
 
 export class AntiPointy extends testbed.Test {
-  m_particlesToCreate = 300;
+  public m_particlesToCreate = 300;
 
   constructor() {
     super();
@@ -47,7 +47,7 @@ export class AntiPointy extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(i, -10.0),
           new box2d.b2Vec2(i + step, -10.0),
-          new box2d.b2Vec2(0.0, 15.0)
+          new box2d.b2Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -57,7 +57,7 @@ export class AntiPointy extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(-10.0, i),
           new box2d.b2Vec2(-10.0, i + step),
-          new box2d.b2Vec2(0.0, 15.0)
+          new box2d.b2Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -65,7 +65,7 @@ export class AntiPointy extends testbed.Test {
         const vertices2 = [
           new box2d.b2Vec2(10.0, i),
           new box2d.b2Vec2(10.0, i + step),
-          new box2d.b2Vec2(0.0, 15.0)
+          new box2d.b2Vec2(0.0, 15.0),
         ];
         shape.Set(vertices2, 3);
         ground.CreateFixture(shape, 0.0);
@@ -82,7 +82,7 @@ export class AntiPointy extends testbed.Test {
     }
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     super.Step(settings);
 
     if (this.m_particlesToCreate <= 0) {
@@ -107,7 +107,7 @@ export class AntiPointy extends testbed.Test {
     this.m_particleSystem.CreateParticle(pd);
   }
 
-  static Create() {
+  public static Create() {
     return new AntiPointy();
   }
 }

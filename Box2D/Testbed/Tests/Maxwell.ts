@@ -34,35 +34,29 @@ import * as testbed from "../Testbed";
  */
 
 export class Maxwell extends testbed.Test {
-  m_density = 0.0;
-  m_position = 0.0;
-  m_temperature = 0.0;
-  m_barrierBody: box2d.b2Body;
-  m_particleGroup: box2d.b2ParticleGroup;
+  public m_density = Maxwell.k_densityDefault;
+  public m_position = Maxwell.k_containerHalfHeight;
+  public m_temperature = Maxwell.k_temperatureDefault;
+  public m_barrierBody: box2d.b2Body | null = null;
+  public m_particleGroup: box2d.b2ParticleGroup | null = null;
 
-  static readonly k_containerWidth = 2.0;
-  static readonly k_containerHeight = 4.0;
-  static readonly k_containerHalfWidth = Maxwell.k_containerWidth / 2.0;
-  static readonly k_containerHalfHeight = Maxwell.k_containerHeight / 2.0;
-  static readonly k_barrierHeight = Maxwell.k_containerHalfHeight / 100.0;
-  static readonly k_barrierMovementIncrement = Maxwell.k_containerHalfHeight * 0.1;
-  static readonly k_densityStep = 1.25;
-  static readonly k_densityMin = 0.01;
-  static readonly k_densityMax = 0.8;
-  static readonly k_densityDefault = 0.25;
-  static readonly k_temperatureStep = 0.2;
-  static readonly k_temperatureMin = 0.4;
-  static readonly k_temperatureMax = 10.0;
-  static readonly k_temperatureDefault = 5.0;
+  public static readonly k_containerWidth = 2.0;
+  public static readonly k_containerHeight = 4.0;
+  public static readonly k_containerHalfWidth = Maxwell.k_containerWidth / 2.0;
+  public static readonly k_containerHalfHeight = Maxwell.k_containerHeight / 2.0;
+  public static readonly k_barrierHeight = Maxwell.k_containerHalfHeight / 100.0;
+  public static readonly k_barrierMovementIncrement = Maxwell.k_containerHalfHeight * 0.1;
+  public static readonly k_densityStep = 1.25;
+  public static readonly k_densityMin = 0.01;
+  public static readonly k_densityMax = 0.8;
+  public static readonly k_densityDefault = 0.25;
+  public static readonly k_temperatureStep = 0.2;
+  public static readonly k_temperatureMin = 0.4;
+  public static readonly k_temperatureMax = 10.0;
+  public static readonly k_temperatureDefault = 5.0;
 
   constructor() {
     super();
-
-    this.m_density = Maxwell.k_densityDefault;
-    this.m_position = Maxwell.k_containerHalfHeight;
-    this.m_particleGroup = null;
-    this.m_temperature = Maxwell.k_temperatureDefault;
-    this.m_barrierBody = null;
 
     this.m_world.SetGravity(new box2d.b2Vec2(0, 0));
 
@@ -75,7 +69,7 @@ export class Maxwell extends testbed.Test {
         new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, 0),
         new box2d.b2Vec2(Maxwell.k_containerHalfWidth, 0),
         new box2d.b2Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
-        new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight)
+        new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
       ];
       shape.CreateLoop(vertices, 4);
       const def = new box2d.b2FixtureDef();
@@ -94,7 +88,7 @@ export class Maxwell extends testbed.Test {
   /**
    * Disable the barrier.
    */
-  DisableBarrier() {
+  public DisableBarrier() {
     if (this.m_barrierBody) {
       this.m_world.DestroyBody(this.m_barrierBody);
       this.m_barrierBody = null;
@@ -104,7 +98,7 @@ export class Maxwell extends testbed.Test {
   /**
    * Enable the barrier.
    */
-  EnableBarrier() {
+  public EnableBarrier() {
     if (!this.m_barrierBody) {
       const bd = new box2d.b2BodyDef();
       this.m_barrierBody = this.m_world.CreateBody(bd);
@@ -122,7 +116,7 @@ export class Maxwell extends testbed.Test {
   /**
    * Enable / disable the barrier.
    */
-  ToggleBarrier() {
+  public ToggleBarrier() {
     if (this.m_barrierBody) {
       this.DisableBarrier();
     } else {
@@ -133,7 +127,7 @@ export class Maxwell extends testbed.Test {
   /**
    * Destroy and recreate all particles.
    */
-  ResetParticles() {
+  public ResetParticles() {
     if (this.m_particleGroup !== null) {
       this.m_particleGroup.DestroyParticles(false);
       this.m_particleGroup = null;
@@ -165,7 +159,7 @@ export class Maxwell extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "a":
         // Enable / disable the barrier.
@@ -210,18 +204,18 @@ export class Maxwell extends testbed.Test {
   /**
    * Determine whether a point is in the container.
    */
-  InContainer(p: box2d.b2Vec2) {
+  public InContainer(p: box2d.b2Vec2) {
     return p.x >= -Maxwell.k_containerHalfWidth && p.x <= Maxwell.k_containerHalfWidth &&
       p.y >= 0.0 && p.y <= Maxwell.k_containerHalfHeight * 2.0;
   }
 
-  MouseDown(p: box2d.b2Vec2) {
+  public MouseDown(p: box2d.b2Vec2) {
     if (!this.InContainer(p)) {
       super.MouseDown(p);
     }
   }
 
-  MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: box2d.b2Vec2) {
     // If the pointer is in the container.
     if (this.InContainer(p)) {
       // Enable / disable the barrier.
@@ -234,34 +228,38 @@ export class Maxwell extends testbed.Test {
     }
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     super.Step(settings);
 
     // Number of particles above (top) and below (bottom) the barrier.
     let top = 0;
     let bottom = 0;
-    const index = this.m_particleGroup.GetBufferIndex();
-    ///  b2Vec2* const velocities = this.m_particleSystem.GetVelocityBuffer() + index;
-    const velocities = this.m_particleSystem.GetVelocityBuffer();
-    ///  b2Vec2* const positions = this.m_particleSystem.GetPositionBuffer() + index;
-    const positions = this.m_particleSystem.GetPositionBuffer();
 
-    for (let i = 0; i < this.m_particleGroup.GetParticleCount(); i++) {
-      // Add energy to particles based upon the temperature.
-      ///  b2Vec2& v = velocities[i];
-      const v = velocities[index + i];
-      v.Normalize();
-      ///  v *= this.m_temperature;
-      v.SelfMul(this.m_temperature);
+    if (this.m_particleGroup) {
+      const index = this.m_particleGroup.GetBufferIndex();
+      ///  b2Vec2* const velocities = this.m_particleSystem.GetVelocityBuffer() + index;
+      const velocities = this.m_particleSystem.GetVelocityBuffer();
+      ///  b2Vec2* const positions = this.m_particleSystem.GetPositionBuffer() + index;
+      const positions = this.m_particleSystem.GetPositionBuffer();
 
-      // Keep track of the number of particles above / below the
-      // divider / barrier position.
-      ///  b2Vec2& p = positions[i];
-      const p = positions[index + i];
-      if (p.y > this.m_position)
-        top++;
-      else
-        bottom++;
+      for (let i = 0; i < this.m_particleGroup.GetParticleCount(); i++) {
+        // Add energy to particles based upon the temperature.
+        ///  b2Vec2& v = velocities[i];
+        const v = velocities[index + i];
+        v.Normalize();
+        ///  v *= this.m_temperature;
+        v.SelfMul(this.m_temperature);
+
+        // Keep track of the number of particles above / below the
+        // divider / barrier position.
+        ///  b2Vec2& p = positions[i];
+        const p = positions[index + i];
+        if (p.y > this.m_position) {
+          top++;
+        } else {
+          bottom++;
+        }
+      }
     }
 
     // Calculate a score based upon the difference in pressure between the
@@ -275,7 +273,7 @@ export class Maxwell extends testbed.Test {
   /**
    * Reset the particles and the barrier.
    */
-  Reset() {
+  public Reset() {
     this.DisableBarrier();
     this.ResetParticles();
     this.EnableBarrier();
@@ -284,17 +282,17 @@ export class Maxwell extends testbed.Test {
   /**
    * Move the divider / barrier.
    */
-  MoveDivider(newPosition: number) {
+  public MoveDivider(newPosition: number) {
     this.m_position = box2d.b2Clamp(newPosition, Maxwell.k_barrierMovementIncrement,
       Maxwell.k_containerHeight - Maxwell.k_barrierMovementIncrement);
     this.Reset();
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
-  
-  static Create() {
+
+  public static Create() {
     return new Maxwell();
   }
 }

@@ -34,7 +34,7 @@ export class Particles extends testbed.Test {
           new box2d.b2Vec2(-4, -1),
           new box2d.b2Vec2(4, -1),
           new box2d.b2Vec2(4, 0),
-          new box2d.b2Vec2(-4, 0)
+          new box2d.b2Vec2(-4, 0),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -46,7 +46,7 @@ export class Particles extends testbed.Test {
           new box2d.b2Vec2(-4, -0.1),
           new box2d.b2Vec2(-2, -0.1),
           new box2d.b2Vec2(-2, 2),
-          new box2d.b2Vec2(-4, 3)
+          new box2d.b2Vec2(-4, 3),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -58,7 +58,7 @@ export class Particles extends testbed.Test {
           new box2d.b2Vec2(2, -0.1),
           new box2d.b2Vec2(4, -0.1),
           new box2d.b2Vec2(4, 3),
-          new box2d.b2Vec2(2, 2)
+          new box2d.b2Vec2(2, 2),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -93,11 +93,11 @@ export class Particles extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new Particles();
   }
 }

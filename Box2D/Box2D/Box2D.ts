@@ -17,14 +17,11 @@
 */
 
 /**
-\mainpage Box2D API Documentation
-
-\section intro_sec Getting Started
-
-For documentation please see http://box2d.org/documentation.html
-
-For discussion please visit http://box2d.org/forum
-*/
+ * \mainpage Box2D API Documentation
+ * \section intro_sec Getting Started
+ * For documentation please see http://box2d.org/documentation.html
+ * For discussion please visit http://box2d.org/forum
+ */
 
 // These include files constitute the main Box2D API
 

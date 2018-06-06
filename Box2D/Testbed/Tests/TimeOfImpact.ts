@@ -20,8 +20,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class TimeOfImpact extends testbed.Test {
-  m_shapeA: box2d.b2PolygonShape = new box2d.b2PolygonShape();
-  m_shapeB: box2d.b2PolygonShape = new box2d.b2PolygonShape();
+  public m_shapeA: box2d.b2PolygonShape = new box2d.b2PolygonShape();
+  public m_shapeB: box2d.b2PolygonShape = new box2d.b2PolygonShape();
 
   constructor() {
     super();

@@ -25,17 +25,17 @@ class ParticleVFX {
   private m_initialLifetime = 0.0;
   private m_remainingLifetime = 0.0;
   private m_halfLifetime = 0.0;
-  private m_pg: box2d.b2ParticleGroup = null;
-  private m_particleSystem: box2d.b2ParticleSystem = null;
+  private m_pg: box2d.b2ParticleGroup;
+  private m_particleSystem: box2d.b2ParticleSystem;
   private m_origColor: box2d.b2Color = new box2d.b2Color();
   constructor(particleSystem: box2d.b2ParticleSystem, origin: box2d.b2Vec2, size: number, speed: number, lifetime: number, particleFlags: box2d.b2ParticleFlag) {
     // Create a circle to house the particles of size size
-    let shape = new box2d.b2CircleShape();
+    const shape = new box2d.b2CircleShape();
     shape.m_p.Copy(origin);
     shape.m_radius = size;
 
     // Create particle def of random color.
-    let pd = new box2d.b2ParticleGroupDef();
+    const pd = new box2d.b2ParticleGroupDef();
     pd.flags = particleFlags;
     pd.shape = shape;
     // this.m_origColor.Set(
@@ -49,18 +49,18 @@ class ParticleVFX {
         r = g = b = l; // achromatic
       } else {
         function hue2rgb(p: number, q: number, t: number) {
-          if (t < 0) t += 1;
-          if (t > 1) t -= 1;
-          if (t < 1/6) return p + (q - p) * 6 * t;
-          if (t < 1/2) return q;
-          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          if (t < 0) { t += 1; }
+          if (t > 1) { t -= 1; }
+          if (t < 1 / 6) { return p + (q - p) * 6 * t; }
+          if (t < 1 / 2) { return q; }
+          if (t < 2 / 3) { return p + (q - p) * (2 / 3 - t) * 6; }
           return p;
         }
         const q: number = l < 0.5 ? l * (1 + s) : l + s - l * s;
         const p: number = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3);
+        r = hue2rgb(p, q, h + 1 / 3);
         g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3);
+        b = hue2rgb(p, q, h - 1 / 3);
       }
       return { r, g, b, a };
     }
@@ -76,9 +76,9 @@ class ParticleVFX {
 
     // Set particle initial velocity based on how far away it is from
     // origin, exploding outwards.
-    let bufferIndex = this.m_pg.GetBufferIndex();
-    let pos = this.m_particleSystem.GetPositionBuffer();
-    let vel = this.m_particleSystem.GetVelocityBuffer();
+    const bufferIndex = this.m_pg.GetBufferIndex();
+    const pos = this.m_particleSystem.GetPositionBuffer();
+    const vel = this.m_particleSystem.GetVelocityBuffer();
     for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
       ///  vel[i] = pos[i] - origin;
       box2d.b2Vec2.SubVV(pos[i], origin, vel[i]);
@@ -86,27 +86,27 @@ class ParticleVFX {
       box2d.b2Vec2.MulVS(vel[i], speed, vel[i]);
     }
   }
-  Drop() {
+  public Drop() {
     this.m_pg.DestroyParticles(false);
-    this.m_pg = null;
+    // this.m_pg = null;
   }
-  ColorCoeff() {
+  public ColorCoeff() {
     if (this.m_remainingLifetime >= this.m_halfLifetime) {
       return 1.0;
     }
     return 1.0 - ((this.m_halfLifetime - this.m_remainingLifetime) / this.m_halfLifetime);
   }
-  Step(dt: number) {
+  public Step(dt: number) {
     if (dt > 0 && this.m_remainingLifetime > 0.0) {
       this.m_remainingLifetime = Math.max(this.m_remainingLifetime - dt, 0.0);
-      let coeff = this.ColorCoeff();
+      const coeff = this.ColorCoeff();
 
-      let colors = this.m_particleSystem.GetColorBuffer();
-      let bufferIndex = this.m_pg.GetBufferIndex();
+      const colors = this.m_particleSystem.GetColorBuffer();
+      const bufferIndex = this.m_pg.GetBufferIndex();
 
       // Set particle colors all at once.
       for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
-        let c = colors[i];
+        const c = colors[i];
         // c *= coeff;
         // c.SelfMul(coeff);
         // c.a = this.m_origColor.a;
@@ -114,7 +114,7 @@ class ParticleVFX {
       }
     }
   }
-  IsDone() {
+  public IsDone() {
     return this.m_remainingLifetime <= 0.0;
   }
 }
@@ -125,7 +125,7 @@ export class Sparky extends testbed.Test {
   private static SHAPE_HEIGHT_OFFSET = 7;
   private static SHAPE_OFFSET = 4.5;
   private m_VFXIndex: number = 0;
-  private m_VFX: ParticleVFX[] = [];
+  private m_VFX: Array<ParticleVFX | null> = [];
   private m_contact: boolean = false;
   private m_contactPoint: box2d.b2Vec2 = new box2d.b2Vec2();
   constructor() {
@@ -143,17 +143,17 @@ export class Sparky extends testbed.Test {
 
     // Create a list of circles that will spark.
     for (let i = 0; i < Sparky.c_maxCircles; i++) {
-      let bd = new box2d.b2BodyDef();
+      const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
-      let body = this.m_world.CreateBody(bd);
-      let shape = new box2d.b2CircleShape();
+      const body = this.m_world.CreateBody(bd);
+      const shape = new box2d.b2CircleShape();
       shape.m_p.Set(3.0 * testbed.RandomFloat(),
         Sparky.SHAPE_HEIGHT_OFFSET + Sparky.SHAPE_OFFSET * i);
       shape.m_radius = 2;
-      let f = body.CreateFixture(shape, 0.5);
+      const f = body.CreateFixture(shape, 0.5);
       // Tag this as a sparkable body.
       f.SetUserData({
-        spark: true
+        spark: true,
       });
     }
 
@@ -161,14 +161,14 @@ export class Sparky extends testbed.Test {
     testbed.Main.SetParticleParameterValue(box2d.b2ParticleFlag.b2_powderParticle);
   }
 
-  BeginContact(contact: box2d.b2Contact) {
+  public BeginContact(contact: box2d.b2Contact) {
     super.BeginContact(contact);
     // Check to see if these are two circles hitting one another.
-    let userA = contact.GetFixtureA().GetUserData();
-    let userB = contact.GetFixtureB().GetUserData();
+    const userA = contact.GetFixtureA().GetUserData();
+    const userB = contact.GetFixtureB().GetUserData();
     if ((userA && userA.spark) ||
       (userB && userB.spark)) {
-      let worldManifold = new box2d.b2WorldManifold();
+      const worldManifold = new box2d.b2WorldManifold();
       contact.GetWorldManifold(worldManifold);
 
       // Note that we overwrite any contact; if there are two collisions
@@ -181,7 +181,7 @@ export class Sparky extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    let particleFlags = testbed.Main.GetParticleParameterValue();
+    const particleFlags = testbed.Main.GetParticleParameterValue();
     let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
     if (settings.pause && !settings.singleStep) {
       dt = 0.0;
@@ -198,9 +198,10 @@ export class Sparky extends testbed.Test {
 
     // Step particle explosions.
     for (let i = 0; i < Sparky.c_maxVFX; i++) {
-      let vfx = this.m_VFX[i];
-      if (vfx === null)
+      const vfx = this.m_VFX[i];
+      if (vfx === null) {
         continue;
+      }
       vfx.Step(dt);
       if (vfx.IsDone()) {
         /// delete vfx;
@@ -210,8 +211,8 @@ export class Sparky extends testbed.Test {
     }
   }
 
-  AddVFX(p: box2d.b2Vec2, particleFlags: box2d.b2ParticleFlag) {
-    let vfx = this.m_VFX[this.m_VFXIndex];
+  public AddVFX(p: box2d.b2Vec2, particleFlags: box2d.b2ParticleFlag) {
+    const vfx = this.m_VFX[this.m_VFXIndex];
     if (vfx !== null) {
       /// delete vfx;
       vfx.Drop();
@@ -225,55 +226,55 @@ export class Sparky extends testbed.Test {
     }
   }
 
-  CreateWalls() {
+  public CreateWalls() {
     // Create the walls of the world.
     {
-      let bd = new box2d.b2BodyDef();
-      let ground = this.m_world.CreateBody(bd);
+      const bd = new box2d.b2BodyDef();
+      const ground = this.m_world.CreateBody(bd);
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(-40, -10),
           new box2d.b2Vec2(40, -10),
           new box2d.b2Vec2(40, 0),
-          new box2d.b2Vec2(-40, 0)
+          new box2d.b2Vec2(-40, 0),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(-40, 40),
           new box2d.b2Vec2(40, 40),
           new box2d.b2Vec2(40, 50),
-          new box2d.b2Vec2(-40, 50)
+          new box2d.b2Vec2(-40, 50),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(-40, -1),
           new box2d.b2Vec2(-20, -1),
           new box2d.b2Vec2(-20, 40),
-          new box2d.b2Vec2(-40, 40)
+          new box2d.b2Vec2(-40, 40),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        let shape = new box2d.b2PolygonShape();
-        let vertices = [
+        const shape = new box2d.b2PolygonShape();
+        const vertices = [
           new box2d.b2Vec2(20, -1),
           new box2d.b2Vec2(40, -1),
           new box2d.b2Vec2(40, 40),
-          new box2d.b2Vec2(20, 40)
+          new box2d.b2Vec2(20, 40),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);

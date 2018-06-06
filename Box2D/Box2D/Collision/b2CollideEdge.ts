@@ -138,7 +138,7 @@ export function b2CollideEdgeAndCircle(manifold: b2Manifold, edgeA: b2EdgeShape,
 const enum b2EPAxisType {
   e_unknown = 0,
   e_edgeA = 1,
-  e_edgeB = 2
+  e_edgeB = 2,
 }
 
 class b2EPAxis {
@@ -156,37 +156,37 @@ class b2TempPolygon {
 class b2ReferenceFace {
   public i1: number = 0;
   public i2: number = 0;
-  public v1: b2Vec2 = new b2Vec2();
-  public v2: b2Vec2 = new b2Vec2();
-  public normal: b2Vec2 = new b2Vec2();
-  public sideNormal1: b2Vec2 = new b2Vec2();
+  public readonly v1: b2Vec2 = new b2Vec2();
+  public readonly v2: b2Vec2 = new b2Vec2();
+  public readonly normal: b2Vec2 = new b2Vec2();
+  public readonly sideNormal1: b2Vec2 = new b2Vec2();
   public sideOffset1: number = 0;
-  public sideNormal2: b2Vec2 = new b2Vec2();
+  public readonly sideNormal2: b2Vec2 = new b2Vec2();
   public sideOffset2: number = 0;
 }
 
 const enum b2EPColliderVertexType {
   e_isolated = 0,
   e_concave = 1,
-  e_convex = 2
+  e_convex = 2,
 }
 
 class b2EPCollider {
-  public m_polygonB: b2TempPolygon = new b2TempPolygon();
-  public m_xf: b2Transform = new b2Transform();
-  public m_centroidB: b2Vec2 = new b2Vec2();
-  public m_v0: b2Vec2 = new b2Vec2();
-  public m_v1: b2Vec2 = new b2Vec2();
-  public m_v2: b2Vec2 = new b2Vec2();
-  public m_v3: b2Vec2 = new b2Vec2();
-  public m_normal0: b2Vec2 = new b2Vec2();
-  public m_normal1: b2Vec2 = new b2Vec2();
-  public m_normal2: b2Vec2 = new b2Vec2();
-  public m_normal: b2Vec2 = new b2Vec2();
+  public readonly m_polygonB: b2TempPolygon = new b2TempPolygon();
+  public readonly m_xf: b2Transform = new b2Transform();
+  public readonly m_centroidB: b2Vec2 = new b2Vec2();
+  public readonly m_v0: b2Vec2 = new b2Vec2();
+  public readonly m_v1: b2Vec2 = new b2Vec2();
+  public readonly m_v2: b2Vec2 = new b2Vec2();
+  public readonly m_v3: b2Vec2 = new b2Vec2();
+  public readonly m_normal0: b2Vec2 = new b2Vec2();
+  public readonly m_normal1: b2Vec2 = new b2Vec2();
+  public readonly m_normal2: b2Vec2 = new b2Vec2();
+  public readonly m_normal: b2Vec2 = new b2Vec2();
   public m_type1 = b2EPColliderVertexType.e_isolated;
   public m_type2 = b2EPColliderVertexType.e_isolated;
-  public m_lowerLimit: b2Vec2 = new b2Vec2();
-  public m_upperLimit: b2Vec2 = new b2Vec2();
+  public readonly m_lowerLimit: b2Vec2 = new b2Vec2();
+  public readonly m_upperLimit: b2Vec2 = new b2Vec2();
   public m_radius: number = 0;
   public m_front: boolean = false;
 

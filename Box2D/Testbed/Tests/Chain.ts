@@ -20,34 +20,34 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Chain extends testbed.Test {
-  static readonly e_count = 30;
-  
+  public static readonly e_count = 30;
+
   constructor() {
     super();
 
     let ground = null;
-    
+
     {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     {
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(0.6, 0.125);
-  
+
       const fd = new box2d.b2FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       fd.friction = 0.2;
-  
+
       const jd = new box2d.b2RevoluteJointDef();
       jd.collideConnected = false;
-  
+
       const y = 25.0;
       let prevBody = ground;
       for (let i = 0; i < Chain.e_count; ++i) {
@@ -56,11 +56,11 @@ export class Chain extends testbed.Test {
         bd.position.Set(0.5 + i, y);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(fd);
-  
+
         const anchor = new box2d.b2Vec2(i, y);
         jd.Initialize(prevBody, body, anchor);
         this.m_world.CreateJoint(jd);
-  
+
         prevBody = body;
       }
     }

@@ -20,7 +20,7 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class CharacterCollision extends testbed.Test {
-  m_character: box2d.b2Body;
+  public m_character: box2d.b2Body;
 
   constructor() {
     super();

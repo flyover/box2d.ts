@@ -22,13 +22,13 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Impulse extends testbed.Test {
-  static readonly kBoxLeft = -2;
-  static readonly kBoxRight = 2;
-  static readonly kBoxBottom = 0;
-  static readonly kBoxTop = 4;
+  public static readonly kBoxLeft = -2;
+  public static readonly kBoxRight = 2;
+  public static readonly kBoxBottom = 0;
+  public static readonly kBoxTop = 4;
 
-  m_useLinearImpulse = false;
-  
+  public m_useLinearImpulse = false;
+
   constructor() {
     super();
 
@@ -41,7 +41,7 @@ export class Impulse extends testbed.Test {
         new box2d.b2Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
         new box2d.b2Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
         new box2d.b2Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
-        new box2d.b2Vec2(Impulse.kBoxLeft, Impulse.kBoxTop)
+        new box2d.b2Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
       ];
       const shape = new box2d.b2ChainShape();
       shape.CreateLoop(box, box.length);
@@ -65,7 +65,7 @@ export class Impulse extends testbed.Test {
     }
   }
 
-  MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: box2d.b2Vec2) {
     super.MouseUp(p);
 
     // Apply an impulse to the particles.
@@ -80,7 +80,7 @@ export class Impulse extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     super.Keyboard(key);
 
     switch (key) {
@@ -93,9 +93,11 @@ export class Impulse extends testbed.Test {
     }
   }
 
-  ApplyImpulseOrForce(direction: box2d.b2Vec2) {
+  public ApplyImpulseOrForce(direction: box2d.b2Vec2) {
     const particleSystem = this.m_world.GetParticleSystemList();
+    if (!particleSystem) { throw new Error(); }
     const particleGroup = particleSystem.GetParticleGroupList();
+    if (!particleGroup) { throw new Error(); }
     const numParticles = particleGroup.GetParticleCount();
 
     if (this.m_useLinearImpulse) {
@@ -111,11 +113,11 @@ export class Impulse extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new Impulse();
   }
 }

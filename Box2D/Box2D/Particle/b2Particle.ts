@@ -71,7 +71,7 @@ export enum b2ParticleFlag {
   b2_fixtureContactFilterParticle = 1 << 16,
   /// Call b2ContactFilter when this particle interacts with other
   /// particles.
-  b2_particleContactFilterParticle = 1 << 17
+  b2_particleContactFilterParticle = 1 << 17,
 }
 
 export interface b2IParticleDef {
@@ -81,7 +81,7 @@ export interface b2IParticleDef {
   color?: RGBA;
   lifetime?: number;
   userData?: any;
-  group?: b2ParticleGroup;
+  group?: b2ParticleGroup | null;
 }
 
 export class b2ParticleDef implements b2IParticleDef {

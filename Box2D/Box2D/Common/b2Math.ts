@@ -128,8 +128,8 @@ export function b2RandomRange(lo: number, hi: number): number {
 }
 
 export interface XY {
-  x: number,
-  y: number
+  x: number;
+  y: number;
 }
 
 /// A 2D column vector.
@@ -453,7 +453,7 @@ function b2DistanceSquaredVV(a: XY, b: XY): number {
 function b2NegV<T extends XY>(v: XY, out: T): T { out.x = -v.x; out.y = -v.y; return out; }
 
 export interface XYZ extends XY {
-  z: number
+  z: number;
 }
 
 /// A 2D column vector with 3 elements.

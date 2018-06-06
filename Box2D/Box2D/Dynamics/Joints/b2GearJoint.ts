@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop } from "../../Common/b2Settings";
+import { b2_linearSlop, b2Maybe } from "../../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2PrismaticJoint } from "./b2PrismaticJoint";
@@ -35,9 +35,9 @@ export interface b2IGearJointDef extends b2IJointDef {
 /// Gear joint definition. This definition requires two existing
 /// revolute or prismatic joints (any combination will work).
 export class b2GearJointDef extends b2JointDef implements b2IGearJointDef {
-  public joint1: b2Joint = null;
+  public joint1!: b2Joint;
 
-  public joint2: b2Joint = null;
+  public joint2!: b2Joint;
 
   public ratio: number = 1;
 
@@ -47,25 +47,25 @@ export class b2GearJointDef extends b2JointDef implements b2IGearJointDef {
 }
 
 export class b2GearJoint extends b2Joint {
-  public m_joint1: b2Joint = null;
-  public m_joint2: b2Joint = null;
+  public m_joint1: b2Joint;
+  public m_joint2: b2Joint;
 
   public m_typeA: b2JointType = b2JointType.e_unknownJoint;
   public m_typeB: b2JointType = b2JointType.e_unknownJoint;
 
   // Body A is connected to body C
   // Body B is connected to body D
-  public m_bodyC: b2Body = null;
-  public m_bodyD: b2Body = null;
+  public m_bodyC: b2Body;
+  public m_bodyD: b2Body;
 
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
-  public m_localAnchorC: b2Vec2 = new b2Vec2();
-  public m_localAnchorD: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorC: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorD: b2Vec2 = new b2Vec2();
 
-  public m_localAxisC: b2Vec2 = new b2Vec2();
-  public m_localAxisD: b2Vec2 = new b2Vec2();
+  public readonly m_localAxisC: b2Vec2 = new b2Vec2();
+  public readonly m_localAxisD: b2Vec2 = new b2Vec2();
 
   public m_referenceAngleA: number = 0;
   public m_referenceAngleB: number = 0;
@@ -80,10 +80,10 @@ export class b2GearJoint extends b2Joint {
   public m_indexB: number = 0;
   public m_indexC: number = 0;
   public m_indexD: number = 0;
-  public m_lcA: b2Vec2 = new b2Vec2();
-  public m_lcB: b2Vec2 = new b2Vec2();
-  public m_lcC: b2Vec2 = new b2Vec2();
-  public m_lcD: b2Vec2 = new b2Vec2();
+  public readonly m_lcA: b2Vec2 = new b2Vec2();
+  public readonly m_lcB: b2Vec2 = new b2Vec2();
+  public readonly m_lcC: b2Vec2 = new b2Vec2();
+  public readonly m_lcD: b2Vec2 = new b2Vec2();
   public m_mA: number = 0;
   public m_mB: number = 0;
   public m_mC: number = 0;
@@ -92,30 +92,26 @@ export class b2GearJoint extends b2Joint {
   public m_iB: number = 0;
   public m_iC: number = 0;
   public m_iD: number = 0;
-  public m_JvAC: b2Vec2 = new b2Vec2();
-  public m_JvBD: b2Vec2 = new b2Vec2();
+  public readonly m_JvAC: b2Vec2 = new b2Vec2();
+  public readonly m_JvBD: b2Vec2 = new b2Vec2();
   public m_JwA: number = 0;
   public m_JwB: number = 0;
   public m_JwC: number = 0;
   public m_JwD: number = 0;
   public m_mass: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_qC: b2Rot = new b2Rot();
-  public m_qD: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
-  public m_lalcC: b2Vec2 = new b2Vec2();
-  public m_lalcD: b2Vec2 = new b2Vec2();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_qC: b2Rot = new b2Rot();
+  public readonly m_qD: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_lalcC: b2Vec2 = new b2Vec2();
+  public readonly m_lalcD: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IGearJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
     this.m_joint1 = def.joint1;
     this.m_joint2 = def.joint2;
 
@@ -139,7 +135,7 @@ export class b2GearJoint extends b2Joint {
     const aC: number = this.m_bodyC.m_sweep.a;
 
     if (this.m_typeA === b2JointType.e_revoluteJoint) {
-      const revolute: b2RevoluteJoint = <b2RevoluteJoint> def.joint1;
+      const revolute: b2RevoluteJoint = def.joint1 as b2RevoluteJoint;
       this.m_localAnchorC.Copy(revolute.m_localAnchorA);
       this.m_localAnchorA.Copy(revolute.m_localAnchorB);
       this.m_referenceAngleA = revolute.m_referenceAngle;
@@ -147,7 +143,7 @@ export class b2GearJoint extends b2Joint {
 
       coordinateA = aA - aC - this.m_referenceAngleA;
     } else {
-      const prismatic: b2PrismaticJoint = <b2PrismaticJoint> def.joint1;
+      const prismatic: b2PrismaticJoint = def.joint1 as b2PrismaticJoint;
       this.m_localAnchorC.Copy(prismatic.m_localAnchorA);
       this.m_localAnchorA.Copy(prismatic.m_localAnchorB);
       this.m_referenceAngleA = prismatic.m_referenceAngle;
@@ -177,7 +173,7 @@ export class b2GearJoint extends b2Joint {
     const aD: number = this.m_bodyD.m_sweep.a;
 
     if (this.m_typeB === b2JointType.e_revoluteJoint) {
-      const revolute: b2RevoluteJoint = <b2RevoluteJoint> def.joint2;
+      const revolute: b2RevoluteJoint = def.joint2 as b2RevoluteJoint;
       this.m_localAnchorD.Copy(revolute.m_localAnchorA);
       this.m_localAnchorB.Copy(revolute.m_localAnchorB);
       this.m_referenceAngleB = revolute.m_referenceAngle;
@@ -185,7 +181,7 @@ export class b2GearJoint extends b2Joint {
 
       coordinateB = aB - aD - this.m_referenceAngleB;
     } else {
-      const prismatic: b2PrismaticJoint = <b2PrismaticJoint> def.joint2;
+      const prismatic: b2PrismaticJoint = def.joint2 as b2PrismaticJoint;
       this.m_localAnchorD.Copy(prismatic.m_localAnchorA);
       this.m_localAnchorB.Copy(prismatic.m_localAnchorB);
       this.m_referenceAngleB = prismatic.m_referenceAngle;
@@ -205,7 +201,7 @@ export class b2GearJoint extends b2Joint {
       coordinateB = b2Vec2.DotVV(b2Vec2.SubVV(pB, pD, b2Vec2.s_t0), this.m_localAxisD);
     }
 
-    this.m_ratio = maybe(def.ratio, 1);
+    this.m_ratio = b2Maybe(def.ratio, 1);
 
     this.m_constant = coordinateA + this.m_ratio * coordinateB;
 

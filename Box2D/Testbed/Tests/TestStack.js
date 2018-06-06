@@ -74,7 +74,7 @@ System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, contex
                     const vxs = [
                         new box2d.b2Vec2(-30.0, 0.0),
                         new box2d.b2Vec2(-10.0, 0.0),
-                        new box2d.b2Vec2(-30.0, 10.0)
+                        new box2d.b2Vec2(-30.0, 10.0),
                     ];
                     polygon.Set(vxs, vxs.length);
                     fd.density = 0;

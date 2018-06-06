@@ -16,32 +16,32 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop } from "../../Common/b2Settings";
+import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop, b2Maybe } from "../../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
 
 export interface b2IPrismaticJointDef extends b2IJointDef {
-  localAnchorA: XY;
+  localAnchorA?: XY;
 
-  localAnchorB: XY;
+  localAnchorB?: XY;
 
-  localAxisA: XY;
+  localAxisA?: XY;
 
-  referenceAngle: number;
+  referenceAngle?: number;
 
-  enableLimit: boolean;
+  enableLimit?: boolean;
 
-  lowerTranslation: number;
+  lowerTranslation?: number;
 
-  upperTranslation: number;
+  upperTranslation?: number;
 
-  enableMotor: boolean;
+  enableMotor?: boolean;
 
-  maxMotorForce: number;
+  maxMotorForce?: number;
 
-  motorSpeed: number;
+  motorSpeed?: number;
 }
 
 /// Prismatic joint definition. This requires defining a line of
@@ -51,11 +51,11 @@ export interface b2IPrismaticJointDef extends b2IJointDef {
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
 export class b2PrismaticJointDef extends b2JointDef implements b2IPrismaticJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly localAnchorA: b2Vec2 = new b2Vec2();
 
-  public localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly localAnchorB: b2Vec2 = new b2Vec2();
 
-  public localAxisA: b2Vec2 = new b2Vec2(1, 0);
+  public readonly localAxisA: b2Vec2 = new b2Vec2(1, 0);
 
   public referenceAngle: number = 0;
 
@@ -87,12 +87,12 @@ export class b2PrismaticJointDef extends b2JointDef implements b2IPrismaticJoint
 
 export class b2PrismaticJoint extends b2Joint {
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
-  public m_localXAxisA: b2Vec2 = new b2Vec2();
-  public m_localYAxisA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localXAxisA: b2Vec2 = new b2Vec2();
+  public readonly m_localYAxisA: b2Vec2 = new b2Vec2();
   public m_referenceAngle: number = 0;
-  public m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
+  public readonly m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
   public m_motorImpulse: number = 0;
   public m_lowerTranslation: number = 0;
   public m_upperTranslation: number = 0;
@@ -105,48 +105,44 @@ export class b2PrismaticJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_axis: b2Vec2 = new b2Vec2(0, 0);
-  public m_perp: b2Vec2 = new b2Vec2(0, 0);
+  public readonly m_axis: b2Vec2 = new b2Vec2(0, 0);
+  public readonly m_perp: b2Vec2 = new b2Vec2(0, 0);
   public m_s1: number = 0;
   public m_s2: number = 0;
   public m_a1: number = 0;
   public m_a2: number = 0;
-  public m_K: b2Mat33 = new b2Mat33();
-  public m_K3: b2Mat33 = new b2Mat33();
-  public m_K2: b2Mat22 = new b2Mat22();
+  public readonly m_K: b2Mat33 = new b2Mat33();
+  public readonly m_K3: b2Mat33 = new b2Mat33();
+  public readonly m_K2: b2Mat22 = new b2Mat22();
   public m_motorMass: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IPrismaticJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
-    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
-    this.m_localXAxisA.Copy(maybe(def.localAxisA, new b2Vec2(1, 0))).SelfNormalize();
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_localXAxisA.Copy(b2Maybe(def.localAxisA, new b2Vec2(1, 0))).SelfNormalize();
     b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
-    this.m_referenceAngle = maybe(def.referenceAngle, 0);
-    this.m_lowerTranslation = maybe(def.lowerTranslation, 0);
-    this.m_upperTranslation = maybe(def.upperTranslation, 0);
-    this.m_maxMotorForce = maybe(def.maxMotorForce, 0);
-    this.m_motorSpeed = maybe(def.motorSpeed, 0);
-    this.m_enableLimit = maybe(def.enableLimit, false);
-    this.m_enableMotor = maybe(def.enableMotor, false);
+    this.m_referenceAngle = b2Maybe(def.referenceAngle, 0);
+    this.m_lowerTranslation = b2Maybe(def.lowerTranslation, 0);
+    this.m_upperTranslation = b2Maybe(def.upperTranslation, 0);
+    this.m_maxMotorForce = b2Maybe(def.maxMotorForce, 0);
+    this.m_motorSpeed = b2Maybe(def.motorSpeed, 0);
+    this.m_enableLimit = b2Maybe(def.enableLimit, false);
+    this.m_enableMotor = b2Maybe(def.enableMotor, false);
   }
 
   private static InitVelocityConstraints_s_d = new b2Vec2();
@@ -478,7 +474,7 @@ export class b2PrismaticJoint extends b2Joint {
     const C1_y = aB - aA - this.m_referenceAngle;
 
     let linearError = b2Abs(C1_x);
-    let angularError = b2Abs(C1_y);
+    const angularError = b2Abs(C1_y);
 
     let active = false;
     let C2: number = 0;

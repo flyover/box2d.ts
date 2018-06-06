@@ -27,47 +27,47 @@ import * as testbed from "../Testbed";
  * border.
  */
 export class PolyShapesCallback extends box2d.b2QueryCallback {
-  static readonly e_maxCount = 4;
+  public static readonly e_maxCount = 4;
 
-  m_circle = new box2d.b2CircleShape();
-  m_transform = new box2d.b2Transform();
-  m_count = 0;
+  public m_circle = new box2d.b2CircleShape();
+  public m_transform = new box2d.b2Transform();
+  public m_count = 0;
 
-  ReportFixture(fixture: box2d.b2Fixture) {
+  public ReportFixture(fixture: box2d.b2Fixture) {
     if (this.m_count === PolyShapesCallback.e_maxCount) {
       return false;
     }
-  
+
     const body = fixture.GetBody();
     const shape = fixture.GetShape();
-  
+
     const overlap = box2d.b2TestOverlapShape(shape, 0, this.m_circle, 0, body.GetTransform(), this.m_transform);
-  
+
     if (overlap) {
       this.DrawFixture(fixture);
       ++this.m_count;
     }
-  
+
     return true;
   }
 
-  DrawFixture(fixture: box2d.b2Fixture) {
+  public DrawFixture(fixture: box2d.b2Fixture) {
     const color = new box2d.b2Color(0.95, 0.95, 0.6);
     const xf = fixture.GetBody().GetTransform();
-  
+
     switch (fixture.GetType()) {
       case box2d.b2ShapeType.e_circleShape:
         {
           //const circle = ((shape instanceof box2d.b2CircleShape ? shape : null));
           const circle: box2d.b2CircleShape = fixture.GetShape() as box2d.b2CircleShape;
-  
+
           const center = box2d.b2Transform.MulXV(xf, circle.m_p, new box2d.b2Vec2());
           const radius = circle.m_radius;
-  
+
           testbed.g_debugDraw.DrawCircle(center, radius, color);
         }
         break;
-  
+
       case box2d.b2ShapeType.e_polygonShape:
         {
           //const poly = ((shape instanceof box2d.b2PolygonShape ? shape : null));
@@ -75,15 +75,15 @@ export class PolyShapesCallback extends box2d.b2QueryCallback {
           const vertexCount = poly.m_count;
           box2d.b2Assert(vertexCount <= box2d.b2_maxPolygonVertices);
           const vertices = new Array(box2d.b2_maxPolygonVertices);
-  
+
           for (let i = 0; i < vertexCount; ++i) {
             vertices[i] = box2d.b2Transform.MulXV(xf, poly.m_vertices[i], new box2d.b2Vec2());
           }
-  
+
           testbed.g_debugDraw.DrawPolygon(vertices, vertexCount, color);
         }
         break;
-  
+
       default:
         break;
     }
@@ -91,12 +91,12 @@ export class PolyShapesCallback extends box2d.b2QueryCallback {
 }
 
 export class PolyShapes extends testbed.Test {
-  static readonly e_maxBodies = 256;
+  public static readonly e_maxBodies = 256;
 
-  m_bodyIndex = 0;
-  m_bodies = new Array(PolyShapes.e_maxBodies);
-  m_polygons = box2d.b2MakeArray(4, () => new box2d.b2PolygonShape());
-  m_circle = new box2d.b2CircleShape();
+  public m_bodyIndex = 0;
+  public m_bodies = new Array(PolyShapes.e_maxBodies);
+  public m_polygons = box2d.b2MakeArray(4, () => new box2d.b2PolygonShape());
+  public m_circle = new box2d.b2CircleShape();
 
   constructor() {
     super();
@@ -158,25 +158,25 @@ export class PolyShapes extends testbed.Test {
     }
   }
 
-  CreateBody(index: number) {
+  public CreateBody(index: number) {
     if (this.m_bodies[this.m_bodyIndex] !== null) {
       this.m_world.DestroyBody(this.m_bodies[this.m_bodyIndex]);
       this.m_bodies[this.m_bodyIndex] = null;
     }
-  
+
     const bd = new box2d.b2BodyDef();
     bd.type = box2d.b2BodyType.b2_dynamicBody;
-  
+
     const x = box2d.b2RandomRange(-2.0, 2.0);
     bd.position.Set(x, 10.0);
     bd.angle = box2d.b2RandomRange(-box2d.b2_pi, box2d.b2_pi);
-  
+
     if (index === 4) {
       bd.angularDamping = 0.02;
     }
-  
+
     this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
-  
+
     if (index < 4) {
       const fd = new box2d.b2FixtureDef();
       fd.shape = this.m_polygons[index];
@@ -188,14 +188,14 @@ export class PolyShapes extends testbed.Test {
       fd.shape = this.m_circle;
       fd.density = 1.0;
       fd.friction = 0.3;
-  
+
       this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
     }
-  
+
     this.m_bodyIndex = (this.m_bodyIndex + 1) % PolyShapes.e_maxBodies;
   }
 
-  DestroyBody() {
+  public DestroyBody() {
     for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
       if (this.m_bodies[i] !== null) {
         this.m_world.DestroyBody(this.m_bodies[i]);
@@ -205,7 +205,7 @@ export class PolyShapes extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "1":
       case "2":
@@ -214,7 +214,7 @@ export class PolyShapes extends testbed.Test {
       case "5":
         this.CreateBody(key.charCodeAt(0) - "1".charCodeAt(0));
         break;
-  
+
       case "a":
         for (let i = 0; i < PolyShapes.e_maxBodies; i += 2) {
           if (this.m_bodies[i]) {
@@ -223,7 +223,7 @@ export class PolyShapes extends testbed.Test {
           }
         }
         break;
-  
+
       case "d":
         this.DestroyBody();
         break;

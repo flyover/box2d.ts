@@ -28,7 +28,7 @@ import { b2Controller } from "./b2Controller";
  */
 export class b2TensorDampingController extends b2Controller {
     /// Tensor to use in damping model
-    T = new b2Mat22();
+    public readonly T = new b2Mat22();
     /*Some examples (matrixes in format (row1; row2))
     (-a 0; 0 -a)    Standard isotropic damping with strength a
     ( 0 a; -a 0)    Electron in fixed field - a force at right angles to velocity with proportional magnitude
@@ -37,22 +37,25 @@ export class b2TensorDampingController extends b2Controller {
     //By the way, tensor in this case just means matrix, don't let the terminology get you down.
 
     /// Set this to a positive number to clamp the maximum amount of damping done.
-    maxTimestep = 0;
+    public maxTimestep = 0;
     // Typically one wants maxTimestep to be 1/(max eigenvalue of T), so that damping will never cause something to reverse direction
 
     /**
      * @see b2Controller::Step
      */
-    Step(step: b2TimeStep) {
+    public Step(step: b2TimeStep) {
         let timestep = step.dt;
-        if (timestep <= b2_epsilon)
+        if (timestep <= b2_epsilon) {
             return;
-        if (timestep > this.maxTimestep && this.maxTimestep > 0)
+        }
+        if (timestep > this.maxTimestep && this.maxTimestep > 0) {
             timestep = this.maxTimestep;
+        }
         for (let i = this.m_bodyList; i; i = i.nextBody) {
             const body = i.body;
-            if (!body.IsAwake())
-            continue;
+            if (!body.IsAwake()) {
+                continue;
+            }
             const damping = body.GetWorldVector(
             b2Mat22.MulMV(
                 this.T,
@@ -67,12 +70,12 @@ export class b2TensorDampingController extends b2Controller {
     }
     private static Step_s_damping = new b2Vec2();
 
-    Draw(draw: b2Draw) {}
+    public Draw(draw: b2Draw) {}
 
     /**
      * Sets damping independantly along the x and y axes
      */
-    SetAxisAligned(xDamping: number, yDamping: number) {
+    public SetAxisAligned(xDamping: number, yDamping: number) {
       this.T.ex.x = (-xDamping);
       this.T.ex.y = 0;
       this.T.ey.x = 0;

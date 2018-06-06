@@ -61,14 +61,14 @@ export class DominoTower extends testbed.Test {
       fd.friction = 0.0;
       fd.restitution = 0.85;
       bd.bullet = true;
-      bd.position = new box2d.b2Vec2(30.0, 5.00);
+      bd.position.Set(30.0, 5.00);
       let b = world.CreateBody(bd);
       b.CreateFixture(fd);
-      b.SetLinearVelocity(new box2d.b2Vec2(-25.0, -25.0))
+      b.SetLinearVelocity(new box2d.b2Vec2(-25.0, -25.0));
       b.SetAngularVelocity(6.7);
 
       fd.density = 25.0;
-      bd.position = new box2d.b2Vec2(-30.0, 25.0);
+      bd.position.Set(-30.0, 25.0);
       b = world.CreateBody(bd);
       b.CreateFixture(fd);
       b.SetLinearVelocity(new box2d.b2Vec2(35.0, -10.0));
@@ -88,7 +88,7 @@ export class DominoTower extends testbed.Test {
 
       // Make 'I's
       for (let j = 1; j < BASE_COUNT; ++j) {
-        if (j > 3) dominoDensity *= .8;
+        if (j > 3) { dominoDensity *= .8; }
 
         // The y at the center of the I structure.
         const currY = DOMINO_HEIGHT * 0.5 + (DOMINO_HEIGHT + 2 * DOMINO_WIDTH) * .99 * j;
@@ -96,10 +96,10 @@ export class DominoTower extends testbed.Test {
         for (let i = 0; i < BASE_COUNT - j; ++i) {
           currX = i * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * (BASE_COUNT - j) / 2);
           dominoDensity *= 2.5;
-          if (i == 0) {
+          if (i === 0) {
             makeDomino(currX - (1.25 * DOMINO_HEIGHT) + .5 * DOMINO_WIDTH, currY - DOMINO_WIDTH, false);
           }
-          if (i == BASE_COUNT - j - 1) {
+          if (i === BASE_COUNT - j - 1) {
             makeDomino(currX + (1.25 * DOMINO_HEIGHT) - .5 * DOMINO_WIDTH, currY - DOMINO_WIDTH, false);
           }
 
@@ -112,7 +112,7 @@ export class DominoTower extends testbed.Test {
     }
   }
 
-  static Create() {
+  public static Create() {
     return new DominoTower();
   }
 }

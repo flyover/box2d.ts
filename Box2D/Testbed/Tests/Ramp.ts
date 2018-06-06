@@ -39,7 +39,7 @@ export class Ramp extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(-25.0, y),
           new box2d.b2Vec2(-25.0, y - ystep),
-          new box2d.b2Vec2(0.0, 15.0)
+          new box2d.b2Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -50,7 +50,7 @@ export class Ramp extends testbed.Test {
         const vertices = [
           new box2d.b2Vec2(x, 0.0),
           new box2d.b2Vec2(x + xstep, 0.0),
-          new box2d.b2Vec2(0.0, 15.0)
+          new box2d.b2Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -77,7 +77,7 @@ export class Ramp extends testbed.Test {
     }
   }
 
-  static Create() {
+  public static Create() {
     return new Ramp();
   }
 }

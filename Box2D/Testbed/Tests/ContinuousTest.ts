@@ -20,8 +20,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ContinuousTest extends testbed.Test {
-  m_body: box2d.b2Body;
-  m_angularVelocity = 0.0;
+  public m_body: box2d.b2Body;
+  public m_angularVelocity = 0.0;
 
   constructor() {
     super();
@@ -30,29 +30,29 @@ export class ContinuousTest extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       bd.position.Set(0.0, 0.0);
       const body = this.m_world.CreateBody(bd);
-  
+
       const edge = new box2d.b2EdgeShape();
-  
+
       edge.Set(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
       body.CreateFixture(edge, 0.0);
-  
+
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(0.2, 1.0, new box2d.b2Vec2(0.5, 1.0), 0.0);
       body.CreateFixture(shape, 0.0);
     }
-  
+
     {
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 20.0);
       //bd.angle = 0.1;
-  
+
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(2.0, 0.1);
-  
+
       this.m_body = this.m_world.CreateBody(bd);
       this.m_body.CreateFixture(shape, 1.0);
-  
+
       this.m_angularVelocity = box2d.b2RandomRange(-50.0, 50.0);
       //this.m_angularVelocity = 46.661274;
       this.m_body.SetLinearVelocity(new box2d.b2Vec2(0.0, -100.0));
@@ -76,7 +76,7 @@ export class ContinuousTest extends testbed.Test {
       body.SetLinearVelocity(new box2d.b2Vec2(0.0, -100.0));
     }
     */
-  
+
     // box2d.b2_gjkCalls = 0;
     // box2d.b2_gjkIters = 0;
     // box2d.b2_gjkMaxIters = 0;
@@ -102,13 +102,13 @@ export class ContinuousTest extends testbed.Test {
     // box2d.b2_toiTime = 0.0;
     // box2d.b2_toiMaxTime = 0.0;
     box2d.b2_toi_reset();
-  
+
     this.m_body.SetTransformVec(new box2d.b2Vec2(0.0, 20.0), 0.0);
     this.m_angularVelocity = box2d.b2RandomRange(-50.0, 50.0);
     this.m_body.SetLinearVelocity(new box2d.b2Vec2(0.0, -100.0));
     this.m_body.SetAngularVelocity(this.m_angularVelocity);
   }
-  
+
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
@@ -117,21 +117,21 @@ export class ContinuousTest extends testbed.Test {
       testbed.g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${box2d.b2_gjkCalls.toFixed(0)}, ave gjk iters = ${(box2d.b2_gjkIters / box2d.b2_gjkCalls).toFixed(1)}, max gjk iters = ${box2d.b2_gjkMaxIters.toFixed(0)}`);
       this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
     }
-  
+
     if (box2d.b2_toiCalls > 0) {
       // testbed.g_debugDraw.DrawString(5, this.m_textLine, "toi [max] calls = %d, ave toi iters = %3.1f [%d]",
       testbed.g_debugDraw.DrawString(5, this.m_textLine, `toi [max] calls = ${box2d.b2_toiCalls}, ave toi iters = ${(box2d.b2_toiIters / box2d.b2_toiCalls).toFixed(1)} [${box2d.b2_toiMaxRootIters}]`);
       this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-  
+
       // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi root iters = %3.1f [%d]",
       testbed.g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi root iters = ${(box2d.b2_toiRootIters / box2d.b2_toiCalls).toFixed(1)} [${box2d.b2_toiMaxRootIters.toFixed(0)}]`);
       this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-  
+
       // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi time = %.1f [%.1f] (microseconds)",
       testbed.g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi time = ${(1000.0 * box2d.b2_toiTime / box2d.b2_toiCalls).toFixed(1)} [${(1000.0 * box2d.b2_toiMaxTime).toFixed(1)}] (microseconds)`);
       this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
     }
-  
+
     if (this.m_stepCount % 60 === 0) {
       this.Launch();
     }

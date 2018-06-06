@@ -48,10 +48,10 @@ const b2TimeOfImpact_s_axisB: b2Vec2 = new b2Vec2();
 
 /// Input parameters for b2TimeOfImpact
 export class b2TOIInput {
-  public proxyA: b2DistanceProxy = new b2DistanceProxy();
-  public proxyB: b2DistanceProxy = new b2DistanceProxy();
-  public sweepA: b2Sweep = new b2Sweep();
-  public sweepB: b2Sweep = new b2Sweep();
+  public readonly proxyA: b2DistanceProxy = new b2DistanceProxy();
+  public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
+  public readonly sweepA: b2Sweep = new b2Sweep();
+  public readonly sweepB: b2Sweep = new b2Sweep();
   public tMax: number = 0; // defines sweep interval [0, tMax]
 }
 
@@ -60,7 +60,7 @@ export enum b2TOIOutputState {
   e_failed = 1,
   e_overlapped = 2,
   e_touching = 3,
-  e_separated = 4
+  e_separated = 4,
 }
 
 export class b2TOIOutput {
@@ -72,17 +72,17 @@ export enum b2SeparationFunctionType {
   e_unknown = -1,
   e_points = 0,
   e_faceA = 1,
-  e_faceB = 2
+  e_faceB = 2,
 }
 
 export class b2SeparationFunction {
-  public m_proxyA: b2DistanceProxy;
-  public m_proxyB: b2DistanceProxy;
-  public m_sweepA: b2Sweep = new b2Sweep();
-  public m_sweepB: b2Sweep = new b2Sweep();
+  public m_proxyA!: b2DistanceProxy;
+  public m_proxyB!: b2DistanceProxy;
+  public readonly m_sweepA: b2Sweep = new b2Sweep();
+  public readonly m_sweepB: b2Sweep = new b2Sweep();
   public m_type: b2SeparationFunctionType = b2SeparationFunctionType.e_unknown;
-  public m_localPoint: b2Vec2 = new b2Vec2();
-  public m_axis: b2Vec2 = new b2Vec2();
+  public readonly m_localPoint: b2Vec2 = new b2Vec2();
+  public readonly m_axis: b2Vec2 = new b2Vec2();
 
   public Initialize(cache: b2SimplexCache, proxyA: b2DistanceProxy, sweepA: b2Sweep, proxyB: b2DistanceProxy, sweepB: b2Sweep, t1: number): number {
     this.m_proxyA = proxyA;

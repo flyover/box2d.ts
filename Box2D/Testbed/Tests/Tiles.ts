@@ -26,10 +26,10 @@ import * as testbed from "../Testbed";
  */
 
 export class Tiles extends testbed.Test {
-  static readonly e_count = 20;
+  public static readonly e_count = 20;
 
-  m_fixtureCount = 0;
-  m_createTime = 0.0;
+  public m_fixtureCount = 0;
+  public m_createTime = 0.0;
 
   constructor() {
     super();
@@ -37,7 +37,7 @@ export class Tiles extends testbed.Test {
     this.m_fixtureCount = 0;
     /*box2d.b2Timer*/
     const timer = new box2d.b2Timer();
-  
+
     {
       /*float32*/
       const a = 0.5;
@@ -46,7 +46,7 @@ export class Tiles extends testbed.Test {
       bd.position.y = -a;
       /*box2d.b2Body*/
       const ground = this.m_world.CreateBody(bd);
-  
+
       {
         /*int32*/
         const N = 200;
@@ -88,14 +88,14 @@ export class Tiles extends testbed.Test {
       //      }
       //    }
     }
-  
+
     {
       /*float32*/
       const a = 0.5;
       /*box2d.b2PolygonShape*/
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(a, a);
-  
+
       /*box2d.b2Vec2*/
       const x = new box2d.b2Vec2(-7.0, 0.75);
       /*box2d.b2Vec2*/
@@ -104,16 +104,16 @@ export class Tiles extends testbed.Test {
       const deltaX = new box2d.b2Vec2(0.5625, 1.25);
       /*box2d.b2Vec2*/
       const deltaY = new box2d.b2Vec2(1.125, 0.0);
-  
+
       for ( /*int32*/ let i = 0; i < Tiles.e_count; ++i) {
         y.Copy(x);
-  
+
         for ( /*int32*/ let j = i; j < Tiles.e_count; ++j) {
           /*box2d.b2BodyDef*/
           const bd = new box2d.b2BodyDef();
           bd.type = box2d.b2BodyType.b2_dynamicBody;
           bd.position.Copy(y);
-  
+
           //if (i === 0 && j === 0)
           //{
           //  bd.allowSleep = false;
@@ -122,18 +122,18 @@ export class Tiles extends testbed.Test {
           //{
           //  bd.allowSleep = true;
           //}
-  
+
           /*box2d.b2Body*/
           const body = this.m_world.CreateBody(bd);
           body.CreateFixture(shape, 5.0);
           ++this.m_fixtureCount;
           y.SelfAdd(deltaY);
         }
-  
+
         x.SelfAdd(deltaX);
       }
     }
-  
+
     this.m_createTime = timer.GetMilliseconds();
   }
 
@@ -161,7 +161,7 @@ export class Tiles extends testbed.Test {
     //if (this.m_stepCount === 400)
     //{
     //  tree.RebuildBottomUp();
-    //}    
+    //}
   }
 
   public static Create(): testbed.Test {

@@ -4,9 +4,10 @@ import * as testbed from "../Testbed";
 export class Empty extends testbed.Test {
   constructor() {
     super();
+    console.log(box2d.b2_version);
   }
 
-  static Create() {
+  public static Create() {
     return new Empty();
   }
 }

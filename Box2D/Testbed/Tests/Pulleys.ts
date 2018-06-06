@@ -20,7 +20,7 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Pulleys extends testbed.Test {
-  m_joint1: box2d.b2PulleyJoint;
+  public m_joint1: box2d.b2PulleyJoint;
 
   constructor() {
     super();

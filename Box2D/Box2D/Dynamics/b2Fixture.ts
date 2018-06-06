@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2MakeArray } from "../Common/b2Settings";
-import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
+import { b2MakeArray, b2Maybe } from "../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
@@ -100,7 +100,7 @@ export interface b2IFixtureDef {
 export class b2FixtureDef implements b2IFixtureDef {
   /// The shape, this must be set. The shape will be cloned, so you
   /// can create the shape on the stack.
-  public shape: b2Shape = null;
+  public shape!: b2Shape;
 
   /// Use this to store application specific fixture data.
   public userData: any = null;
@@ -119,7 +119,7 @@ export class b2FixtureDef implements b2IFixtureDef {
   public isSensor: boolean = false;
 
   /// Contact filtering data.
-  public filter: b2Filter = new b2Filter();
+  public readonly filter: b2Filter = new b2Filter();
 }
 
 /// This proxy is used internally to connect fixtures to the broad-phase.
@@ -127,7 +127,7 @@ export class b2FixtureProxy {
   public readonly aabb: b2AABB = new b2AABB();
   public fixture: b2Fixture;
   public childIndex: number = 0;
-  public treeNode: b2TreeNode | null = null;
+  public treeNode!: b2TreeNode;
   // public static MakeArray(length: number): b2FixtureProxy[] {
   //   return b2MakeArray(length, (i) => new b2FixtureProxy());
   // }
@@ -155,7 +155,7 @@ export class b2Fixture {
   public m_proxies: b2FixtureProxy[] = [];
   public m_proxyCount: number = 0;
 
-  public m_filter: b2Filter = new b2Filter();
+  public readonly m_filter: b2Filter = new b2Filter();
 
   public m_isSensor: boolean = false;
 
@@ -350,20 +350,16 @@ export class b2Fixture {
   // We need separation create/destroy functions from the constructor/destructor because
   // the destructor cannot access the allocator (no destructor arguments allowed by C++).
   public Create(/*body: b2Body,*/ def: b2IFixtureDef): void {
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
     this.m_userData = def.userData;
-    this.m_friction = maybe(def.friction,  0.2);
-    this.m_restitution = maybe(def.restitution, 0);
+    this.m_friction = b2Maybe(def.friction,  0.2);
+    this.m_restitution = b2Maybe(def.restitution, 0);
 
     // this.m_body = body;
     this.m_next = null;
 
-    this.m_filter.Copy(maybe(def.filter, b2Filter.DEFAULT));
+    this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
 
-    this.m_isSensor = maybe(def.isSensor, false);
+    this.m_isSensor = b2Maybe(def.isSensor, false);
 
     // this.m_shape = def.shape.Clone();
 
@@ -379,7 +375,7 @@ export class b2Fixture {
     this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
     this.m_proxyCount = 0;
 
-    this.m_density = maybe(def.density, 0);
+    this.m_density = b2Maybe(def.density, 0);
   }
 
   public Destroy(): void {
@@ -416,7 +412,7 @@ export class b2Fixture {
       const proxy = this.m_proxies[i];
       proxy.treeNode.userData = null;
       broadPhase.DestroyProxy(proxy.treeNode);
-      proxy.treeNode = null;
+      delete proxy.treeNode; // = null;
     }
 
     this.m_proxyCount = 0;

@@ -22,7 +22,7 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 const DEGTORAD = 0.0174532925199432957;
-const RADTODEG = 57.295779513082320876;
+// const RADTODEG = 57.295779513082320876;
 
 const TDC_LEFT = 0x1;
 const TDC_RIGHT = 0x2;
@@ -39,13 +39,13 @@ const FUD_GROUND_AREA = 1;
  * a class to allow subclassing of different fixture user data
  */
 export class FixtureUserData {
-  m_type: number;
+  public m_type: number;
 
   constructor(type: number) {
     this.m_type = type;
   }
 
-  getType(): number {
+  public getType(): number {
     return this.m_type;
   }
 }
@@ -63,8 +63,8 @@ export class CarTireFUD extends FixtureUserData {
 //  * class to allow marking a fixture as a ground area
 //  */
 export class GroundAreaFUD extends FixtureUserData {
-  frictionModifier: number;
-  outOfCourse: boolean;
+  public frictionModifier: number;
+  public outOfCourse: boolean;
   constructor(fm: number, ooc: boolean) {
     super(FUD_GROUND_AREA);
     this.frictionModifier = fm;
@@ -73,17 +73,15 @@ export class GroundAreaFUD extends FixtureUserData {
 }
 
 export class TDTire {
-  m_groundAreas: any[];
-  m_body: box2d.b2Body;
-  m_currentTraction: number;
-  m_maxForwardSpeed: number;
-  m_maxBackwardSpeed: number;
-  m_maxDriveForce: number;
-  m_maxLateralImpulse: number;
+  public m_groundAreas: GroundAreaFUD[] = [];
+  public m_body: box2d.b2Body;
+  public m_currentTraction: number = 1;
+  public m_maxForwardSpeed: number = 0;
+  public m_maxBackwardSpeed: number = 0;
+  public m_maxDriveForce: number = 0;
+  public m_maxLateralImpulse: number = 0;
 
   constructor(world: box2d.b2World) {
-    this.m_groundAreas = [];
-
     const bodyDef = new box2d.b2BodyDef();
     bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
     this.m_body = world.CreateBody(bodyDef);
@@ -94,55 +92,55 @@ export class TDTire {
     fixture.SetUserData(new CarTireFUD());
 
     this.m_body.SetUserData(this);
-
-    this.m_currentTraction = 1;
   }
 
-  setCharacteristics(maxForwardSpeed: number, maxBackwardSpeed: number, maxDriveForce: number, maxLateralImpulse: number): void {
+  public setCharacteristics(maxForwardSpeed: number, maxBackwardSpeed: number, maxDriveForce: number, maxLateralImpulse: number): void {
     this.m_maxForwardSpeed = maxForwardSpeed;
     this.m_maxBackwardSpeed = maxBackwardSpeed;
     this.m_maxDriveForce = maxDriveForce;
     this.m_maxLateralImpulse = maxLateralImpulse;
   }
 
-  addGroundArea(ga: FixtureUserData): void {
+  public addGroundArea(ga: GroundAreaFUD): void {
     this.m_groundAreas.push(ga);
     this.updateTraction();
   }
 
-  removeGroundArea(ga: FixtureUserData): void {
+  public removeGroundArea(ga: GroundAreaFUD): void {
     this.m_groundAreas.splice(this.m_groundAreas.indexOf(ga));
     this.updateTraction();
   }
 
-  updateTraction(): void {
-    if (this.m_groundAreas.length === 0)
+  public updateTraction(): void {
+    if (this.m_groundAreas.length === 0) {
       this.m_currentTraction = 1;
-    else {
+    } else {
       //find area with highest traction
       this.m_currentTraction = 0;
       this.m_groundAreas.forEach((ga) => {
-        if (ga.frictionModifier > this.m_currentTraction)
+        if (ga.frictionModifier > this.m_currentTraction) {
           this.m_currentTraction = ga.frictionModifier;
+        }
       });
     }
   }
 
-  getLateralVelocity(): box2d.b2Vec2 {
+  public getLateralVelocity(): box2d.b2Vec2 {
     const currentRightNormal = this.m_body.GetWorldVector(new box2d.b2Vec2(1, 0), new box2d.b2Vec2());
     return currentRightNormal.SelfMul(box2d.b2Vec2.DotVV(currentRightNormal, this.m_body.GetLinearVelocity()));
   }
 
-  getForwardVelocity(): box2d.b2Vec2 {
+  public getForwardVelocity(): box2d.b2Vec2 {
     const currentForwardNormal = this.m_body.GetWorldVector(new box2d.b2Vec2(0, 1), new box2d.b2Vec2());
     return currentForwardNormal.SelfMul(box2d.b2Vec2.DotVV(currentForwardNormal, this.m_body.GetLinearVelocity()));
   }
 
-  updateFriction(): void {
+  public updateFriction(): void {
     //lateral linear velocity
     const impulse = this.getLateralVelocity().SelfMul(-1.0 * this.m_body.GetMass());
-    if (impulse.Length() > this.m_maxLateralImpulse)
+    if (impulse.Length() > this.m_maxLateralImpulse) {
       impulse.SelfMul(this.m_maxLateralImpulse / impulse.Length());
+    }
     this.m_body.ApplyLinearImpulse(impulse.SelfMul(this.m_currentTraction), this.m_body.GetWorldCenter());
 
     //angular velocity
@@ -155,7 +153,7 @@ export class TDTire {
     this.m_body.ApplyForce(currentForwardNormal.SelfMul(this.m_currentTraction * dragForceMagnitude), this.m_body.GetWorldCenter());
   }
 
-  updateDrive(controlState: number): void {
+  public updateDrive(controlState: number): void {
 
     //find desired speed
     let desiredSpeed = 0;
@@ -176,16 +174,17 @@ export class TDTire {
 
     //apply necessary force
     let force = 0;
-    if (desiredSpeed > currentSpeed)
+    if (desiredSpeed > currentSpeed) {
       force = this.m_maxDriveForce;
-    else if (desiredSpeed < currentSpeed)
+    } else if (desiredSpeed < currentSpeed) {
       force = -this.m_maxDriveForce;
-    else
+    } else {
       return;
+    }
     this.m_body.ApplyForce(currentForwardNormal.SelfMul(this.m_currentTraction * force), this.m_body.GetWorldCenter());
   }
 
-  updateTurn(controlState: number): void {
+  public updateTurn(controlState: number): void {
     let desiredTorque = 0;
     switch (controlState & (TDC_LEFT | TDC_RIGHT)) {
       case TDC_LEFT:
@@ -202,10 +201,10 @@ export class TDTire {
 }
 
 export class TDCar {
-  m_tires: any[];
-  m_body: box2d.b2Body;
-  flJoint: box2d.b2RevoluteJoint;
-  frJoint: box2d.b2RevoluteJoint;
+  public m_tires: TDTire[];
+  public m_body: box2d.b2Body;
+  public flJoint: box2d.b2RevoluteJoint;
+  public frJoint: box2d.b2RevoluteJoint;
 
   constructor(world: box2d.b2World) {
     this.m_tires = [];
@@ -227,7 +226,7 @@ export class TDCar {
     vertices[7] = new box2d.b2Vec2(-1.5, 0);
     const polygonShape = new box2d.b2PolygonShape();
     polygonShape.Set(vertices, 8);
-    const fixture = this.m_body.CreateFixture(polygonShape, 0.1); //shape, density
+    this.m_body.CreateFixture(polygonShape, 0.1); //shape, density
 
     //prepare common joint parameters
     const jointDef = new box2d.b2RevoluteJointDef();
@@ -277,12 +276,12 @@ export class TDCar {
     this.m_tires.push(tire);
   }
 
-  update(controlState: number) {
-    this.m_tires.forEach(function(tire) {
-      tire.updateFriction()
+  public update(controlState: number) {
+    this.m_tires.forEach((tire) => {
+      tire.updateFriction();
     });
-    this.m_tires.forEach(function(tire) {
-      tire.updateDrive(controlState)
+    this.m_tires.forEach((tire) => {
+      tire.updateDrive(controlState);
     });
 
     //control steering
@@ -310,7 +309,7 @@ export class TDCar {
 }
 
 export class MyDestructionListener extends testbed.DestructionListener {
-  SayGoodbyeFixture(fixture: box2d.b2Fixture): void {
+  public SayGoodbyeFixture(fixture: box2d.b2Fixture): void {
     ///  if ( FixtureUserData* fud = (FixtureUserData*)fixture.GetUserData() )
     ///    delete fud;
     super.SayGoodbyeFixture(fixture);
@@ -319,14 +318,14 @@ export class MyDestructionListener extends testbed.DestructionListener {
   /**
    * (unused but must implement all pure virtual functions)
    */
-  SayGoodbyeJoint(joint: box2d.b2Joint): void {
+  public SayGoodbyeJoint(joint: box2d.b2Joint): void {
     super.SayGoodbyeJoint(joint);
   }
 }
 
 export class TopdownCar extends testbed.Test {
-  m_car: TDCar;
-  m_controlState: number;
+  public m_car: TDCar;
+  public m_controlState: number;
 
   constructor() {
     super();
@@ -363,7 +362,7 @@ export class TopdownCar extends testbed.Test {
     this.m_controlState = 0;
   }
 
-  Keyboard(key: string): void {
+  public Keyboard(key: string): void {
     switch (key) {
       case "a":
         this.m_controlState |= TDC_LEFT;
@@ -382,7 +381,7 @@ export class TopdownCar extends testbed.Test {
     }
   }
 
-  KeyboardUp(key: string): void {
+  public KeyboardUp(key: string): void {
     switch (key) {
       case "a":
         this.m_controlState &= ~TDC_LEFT;
@@ -401,39 +400,42 @@ export class TopdownCar extends testbed.Test {
     }
   }
 
-  static handleContact(contact: box2d.b2Contact, began: boolean): void {
+  public static handleContact(contact: box2d.b2Contact, began: boolean): void {
     const a = contact.GetFixtureA();
     const b = contact.GetFixtureB();
     const fudA = a.GetUserData();
     const fudB = b.GetUserData();
 
-    if (!fudA || !fudB)
+    if (!fudA || !fudB) {
       return;
+    }
 
-    if (fudA.getType() == FUD_CAR_TIRE || fudB.getType() == FUD_GROUND_AREA)
+    if (fudA.getType() === FUD_CAR_TIRE || fudB.getType() === FUD_GROUND_AREA) {
       TopdownCar.tire_vs_groundArea(a, b, began);
-    else if (fudA.getType() == FUD_GROUND_AREA || fudB.getType() == FUD_CAR_TIRE)
+    } else if (fudA.getType() === FUD_GROUND_AREA || fudB.getType() === FUD_CAR_TIRE) {
       TopdownCar.tire_vs_groundArea(b, a, began);
+    }
   }
 
-  BeginContact(contact: box2d.b2Contact): void {
+  public BeginContact(contact: box2d.b2Contact): void {
     TopdownCar.handleContact(contact, true);
   }
 
-  EndContact(contact: box2d.b2Contact): void {
+  public EndContact(contact: box2d.b2Contact): void {
     TopdownCar.handleContact(contact, false);
   }
 
-  static tire_vs_groundArea(tireFixture: box2d.b2Fixture, groundAreaFixture: box2d.b2Fixture, began: boolean): void {
+  public static tire_vs_groundArea(tireFixture: box2d.b2Fixture, groundAreaFixture: box2d.b2Fixture, began: boolean): void {
     const tire = tireFixture.GetBody().GetUserData();
     const gaFud = groundAreaFixture.GetUserData();
-    if (began)
+    if (began) {
       tire.addGroundArea(gaFud);
-    else
+    } else {
       tire.removeGroundArea(gaFud);
+    }
   }
 
-  Step(settings: testbed.Settings): void {
+  public Step(settings: testbed.Settings): void {
     /*this.m_tire.updateFriction();
     this.m_tire.updateDrive(this.m_controlState);
     this.m_tire.updateTurn(this.m_controlState);*/
@@ -450,7 +452,7 @@ export class TopdownCar extends testbed.Test {
     //this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }
 
-  static Create() {
+  public static Create() {
     return new TopdownCar();
   }
 }

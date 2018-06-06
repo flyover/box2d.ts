@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Controller } from "./b2Controller";
+import { b2Controller, b2ControllerEdge } from "./b2Controller";
 import { b2Vec2, b2_epsilon, b2Color, b2TimeStep, b2Draw } from "../../../Box2D/Box2D/Box2D";
 
 /**
@@ -29,48 +29,49 @@ export class b2BuoyancyController extends b2Controller {
   /**
    * The outer surface normal
    */
-  normal = new b2Vec2(0, 1);
+  public readonly normal = new b2Vec2(0, 1);
   /**
    * The height of the fluid surface along the normal
    */
-  offset = 0;
+  public offset = 0;
   /**
    * The fluid density
    */
-  density = 0;
+  public density = 0;
   /**
    * Fluid velocity, for drag calculations
    */
-  velocity = new b2Vec2(0, 0);
+  public readonly velocity = new b2Vec2(0, 0);
   /**
    * Linear drag co-efficient
    */
-  linearDrag = 0;
+  public linearDrag = 0;
   /**
    * Angular drag co-efficient
    */
-  angularDrag = 0;
+  public angularDrag = 0;
   /**
    * If false, bodies are assumed to be uniformly dense, otherwise
    * use the shapes densities
    */
-  useDensity = false; //False by default to prevent a gotcha
+  public useDensity = false; //False by default to prevent a gotcha
   /**
    * If true, gravity is taken from the world instead of the
    */
-  useWorldGravity = true;
+  public useWorldGravity = true;
   /**
    * Gravity vector, if the world's gravity is not used
    */
-  gravity = new b2Vec2(0, 0);
+  public readonly gravity = new b2Vec2(0, 0);
 
-  Step(step: b2TimeStep) {
-    if (!this.m_bodyList)
+  public Step(step: b2TimeStep) {
+    if (!this.m_bodyList) {
       return;
-    if (this.useWorldGravity) {
-      this.gravity.Copy(this.GetWorld().GetGravity());
     }
-    for (let i = this.m_bodyList; i; i = i.nextBody) {
+    if (this.useWorldGravity) {
+      this.gravity.Copy(this.m_bodyList.body.GetWorld().GetGravity());
+    }
+    for (let i: b2ControllerEdge | null = this.m_bodyList; i; i = i.nextBody) {
       const body = i.body;
       if (!body.IsAwake()) {
         //Buoyancy force is just a function of position,
@@ -103,8 +104,9 @@ export class b2BuoyancyController extends b2Controller {
       //    b2Vec2 localCentroid = b2MulT(body->GetXForm(),areac);
       massc.x /= mass;
       massc.y /= mass;
-      if (area < b2_epsilon)
+      if (area < b2_epsilon) {
         continue;
+      }
       //Buoyancy
       const buoyancyForce = this.gravity.Clone().SelfNeg();
       buoyancyForce.SelfMul(this.density * area);
@@ -120,7 +122,7 @@ export class b2BuoyancyController extends b2Controller {
     }
   }
 
-  Draw(debugDraw: b2Draw) {
+  public Draw(debugDraw: b2Draw) {
     const r = 100;
     const p1 = new b2Vec2();
     const p2 = new b2Vec2();
@@ -128,9 +130,9 @@ export class b2BuoyancyController extends b2Controller {
     p1.y = this.normal.y * this.offset - this.normal.x * r;
     p2.x = this.normal.x * this.offset - this.normal.y * r;
     p2.y = this.normal.y * this.offset + this.normal.x * r;
-  
+
     const color = new b2Color(0, 0, 0.8);
-  
+
     debugDraw.DrawSegment(p1, p2, color);
   }
 }

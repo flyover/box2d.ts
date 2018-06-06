@@ -47,7 +47,7 @@ export class b2PolygonContact extends b2Contact {
     ///b2Assert(shapeB instanceof b2PolygonShape);
     b2CollidePolygons(
       manifold,
-      <b2PolygonShape> shapeA, xfA,
-      <b2PolygonShape> shapeB, xfB);
+      shapeA as b2PolygonShape, xfA,
+      shapeB as b2PolygonShape, xfB);
   }
 }

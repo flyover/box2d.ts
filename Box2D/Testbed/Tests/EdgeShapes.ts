@@ -20,10 +20,10 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class EdgeShapesCallback extends box2d.b2RayCastCallback {
-  m_fixture: box2d.b2Fixture;
-  m_point = new box2d.b2Vec2();
-  m_normal = new box2d.b2Vec2();
-  ReportFixture(fixture: box2d.b2Fixture, point: box2d.b2Vec2, normal: box2d.b2Vec2, fraction: number): number {
+  public m_fixture: box2d.b2Fixture | null = null;
+  public m_point = new box2d.b2Vec2();
+  public m_normal = new box2d.b2Vec2();
+  public ReportFixture(fixture: box2d.b2Fixture, point: box2d.b2Vec2, normal: box2d.b2Vec2, fraction: number): number {
     this.m_fixture = fixture;
     this.m_point.Copy(point);
     this.m_normal.Copy(normal);
@@ -32,13 +32,13 @@ export class EdgeShapesCallback extends box2d.b2RayCastCallback {
 }
 
 export class EdgeShapes extends testbed.Test {
-  static readonly e_maxBodies = 256;
+  public static readonly e_maxBodies = 256;
 
-  m_bodyIndex = 0;
-  m_bodies: box2d.b2Body[];
-  m_polygons: box2d.b2PolygonShape[];
-  m_circle: box2d.b2CircleShape;
-  m_angle = 0.0;
+  public m_bodyIndex = 0;
+  public m_bodies: Array<box2d.b2Body | null>;
+  public m_polygons: box2d.b2PolygonShape[];
+  public m_circle: box2d.b2CircleShape;
+  public m_angle = 0.0;
 
   constructor() {
     super();
@@ -120,55 +120,57 @@ export class EdgeShapes extends testbed.Test {
     }
   }
 
-  CreateBody(index: number) {
-    if (this.m_bodies[this.m_bodyIndex] !== null) {
-      this.m_world.DestroyBody(this.m_bodies[this.m_bodyIndex]);
+  public CreateBody(index: number) {
+    const old_body = this.m_bodies[this.m_bodyIndex];
+    if (old_body !== null) {
+      this.m_world.DestroyBody(old_body);
       this.m_bodies[this.m_bodyIndex] = null;
     }
-  
+
     const bd = new box2d.b2BodyDef();
-  
+
     const x = box2d.b2RandomRange(-10.0, 10.0);
     const y = box2d.b2RandomRange(10.0, 20.0);
     bd.position.Set(x, y);
     bd.angle = box2d.b2RandomRange(-box2d.b2_pi, box2d.b2_pi);
     bd.type = box2d.b2BodyType.b2_dynamicBody;
-  
+
     if (index === 4) {
       bd.angularDamping = 0.02;
     }
-  
-    this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
-  
+
+    const new_body = this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
+
     if (index < 4) {
       const fd = new box2d.b2FixtureDef();
       fd.shape = this.m_polygons[index];
       fd.friction = 0.3;
       fd.density = 20.0;
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+      new_body.CreateFixture(fd);
     } else {
       const fd = new box2d.b2FixtureDef();
       fd.shape = this.m_circle;
       fd.friction = 0.3;
       fd.density = 20.0;
-  
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+
+      new_body.CreateFixture(fd);
     }
-  
+
     this.m_bodyIndex = (this.m_bodyIndex + 1) % EdgeShapes.e_maxBodies;
   }
 
-  DestroyBody() {
+  public DestroyBody() {
     for (let i = 0; i < EdgeShapes.e_maxBodies; ++i) {
-      if (this.m_bodies[i] !== null) {
-        this.m_world.DestroyBody(this.m_bodies[i]);
+      const body = this.m_bodies[i];
+      if (body !== null) {
+        this.m_world.DestroyBody(body);
         this.m_bodies[i] = null;
         return;
       }
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "1":
       case "2":
@@ -177,7 +179,7 @@ export class EdgeShapes extends testbed.Test {
       case "5":
         this.CreateBody(key.charCodeAt(0) - "1".charCodeAt(0));
         break;
-  
+
       case "d":
         this.DestroyBody();
         break;

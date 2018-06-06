@@ -20,8 +20,8 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Web extends testbed.Test {
-  m_bodies: box2d.b2Body[];
-  m_joints: box2d.b2Joint[];
+  public m_bodies: Array<box2d.b2Body | null>;
+  public m_joints: Array<box2d.b2Joint | null>;
   constructor() {
     super();
 
@@ -46,20 +46,20 @@ export class Web extends testbed.Test {
       bd.type = box2d.b2BodyType.b2_dynamicBody;
 
       bd.position.Set(-5.0, 5.0);
-      this.m_bodies[0] = this.m_world.CreateBody(bd);
-      this.m_bodies[0].CreateFixture(shape, 5.0);
+      const body0 = this.m_bodies[0] = this.m_world.CreateBody(bd);
+      body0.CreateFixture(shape, 5.0);
 
       bd.position.Set(5.0, 5.0);
-      this.m_bodies[1] = this.m_world.CreateBody(bd);
-      this.m_bodies[1].CreateFixture(shape, 5.0);
+      const body1 = this.m_bodies[1] = this.m_world.CreateBody(bd);
+      body1.CreateFixture(shape, 5.0);
 
       bd.position.Set(5.0, 15.0);
-      this.m_bodies[2] = this.m_world.CreateBody(bd);
-      this.m_bodies[2].CreateFixture(shape, 5.0);
+      const body2 = this.m_bodies[2] = this.m_world.CreateBody(bd);
+      body2.CreateFixture(shape, 5.0);
 
       bd.position.Set(-5.0, 15.0);
-      this.m_bodies[3] = this.m_world.CreateBody(bd);
-      this.m_bodies[3].CreateFixture(shape, 5.0);
+      const body3 = this.m_bodies[3] = this.m_world.CreateBody(bd);
+      body3.CreateFixture(shape, 5.0);
 
       const jd = new box2d.b2DistanceJointDef();
       let p1, p2, d;
@@ -68,7 +68,7 @@ export class Web extends testbed.Test {
       jd.dampingRatio = 0.0;
 
       jd.bodyA = ground;
-      jd.bodyB = this.m_bodies[0];
+      jd.bodyB = body0;
       jd.localAnchorA.Set(-10.0, 0.0);
       jd.localAnchorB.Set(-0.5, -0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -78,7 +78,7 @@ export class Web extends testbed.Test {
       this.m_joints[0] = this.m_world.CreateJoint(jd);
 
       jd.bodyA = ground;
-      jd.bodyB = this.m_bodies[1];
+      jd.bodyB = body1;
       jd.localAnchorA.Set(10.0, 0.0);
       jd.localAnchorB.Set(0.5, -0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -88,7 +88,7 @@ export class Web extends testbed.Test {
       this.m_joints[1] = this.m_world.CreateJoint(jd);
 
       jd.bodyA = ground;
-      jd.bodyB = this.m_bodies[2];
+      jd.bodyB = body2;
       jd.localAnchorA.Set(10.0, 20.0);
       jd.localAnchorB.Set(0.5, 0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -98,7 +98,7 @@ export class Web extends testbed.Test {
       this.m_joints[2] = this.m_world.CreateJoint(jd);
 
       jd.bodyA = ground;
-      jd.bodyB = this.m_bodies[3];
+      jd.bodyB = body3;
       jd.localAnchorA.Set(-10.0, 20.0);
       jd.localAnchorB.Set(-0.5, 0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -107,8 +107,8 @@ export class Web extends testbed.Test {
       jd.length = d.Length();
       this.m_joints[3] = this.m_world.CreateJoint(jd);
 
-      jd.bodyA = this.m_bodies[0];
-      jd.bodyB = this.m_bodies[1];
+      jd.bodyA = body0;
+      jd.bodyB = body1;
       jd.localAnchorA.Set(0.5, 0.0);
       jd.localAnchorB.Set(-0.5, 0.0);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -117,8 +117,8 @@ export class Web extends testbed.Test {
       jd.length = d.Length();
       this.m_joints[4] = this.m_world.CreateJoint(jd);
 
-      jd.bodyA = this.m_bodies[1];
-      jd.bodyB = this.m_bodies[2];
+      jd.bodyA = body1;
+      jd.bodyB = body2;
       jd.localAnchorA.Set(0.0, 0.5);
       jd.localAnchorB.Set(0.0, -0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -127,8 +127,8 @@ export class Web extends testbed.Test {
       jd.length = d.Length();
       this.m_joints[5] = this.m_world.CreateJoint(jd);
 
-      jd.bodyA = this.m_bodies[2];
-      jd.bodyB = this.m_bodies[3];
+      jd.bodyA = body2;
+      jd.bodyB = body3;
       jd.localAnchorA.Set(-0.5, 0.0);
       jd.localAnchorB.Set(0.5, 0.0);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -137,8 +137,8 @@ export class Web extends testbed.Test {
       jd.length = d.Length();
       this.m_joints[6] = this.m_world.CreateJoint(jd);
 
-      jd.bodyA = this.m_bodies[3];
-      jd.bodyB = this.m_bodies[0];
+      jd.bodyA = body3;
+      jd.bodyB = body0;
       jd.localAnchorA.Set(0.0, -0.5);
       jd.localAnchorB.Set(0.0, 0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -149,7 +149,7 @@ export class Web extends testbed.Test {
     }
   }
 
-  JointDestroyed(joint: box2d.b2Joint) {
+  public JointDestroyed(joint: box2d.b2Joint) {
     for (let i = 0; i < 8; ++i) {
       if (this.m_joints[i] === joint) {
         this.m_joints[i] = null;
@@ -158,22 +158,24 @@ export class Web extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "b":
         for (let i = 0; i < 4; ++i) {
-          if (this.m_bodies[i]) {
-            this.m_world.DestroyBody(this.m_bodies[i]);
+          const body = this.m_bodies[i];
+          if (body) {
+            this.m_world.DestroyBody(body);
             this.m_bodies[i] = null;
             break;
           }
         }
         break;
-  
+
       case "j":
         for (let i = 0; i < 8; ++i) {
-          if (this.m_joints[i]) {
-            this.m_world.DestroyJoint(this.m_joints[i]);
+          const joint = this.m_joints[i];
+          if (joint) {
+            this.m_world.DestroyJoint(joint);
             this.m_joints[i] = null;
             break;
           }

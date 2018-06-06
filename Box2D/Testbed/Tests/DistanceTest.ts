@@ -20,12 +20,12 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class DistanceTest extends testbed.Test {
-  m_positionB = new box2d.b2Vec2();
-  m_angleB = 0;
-  m_transformA = new box2d.b2Transform();
-  m_transformB = new box2d.b2Transform();
-  m_polygonA = new box2d.b2PolygonShape();
-  m_polygonB = new box2d.b2PolygonShape();
+  public m_positionB = new box2d.b2Vec2();
+  public m_angleB = 0;
+  public m_transformA = new box2d.b2Transform();
+  public m_transformB = new box2d.b2Transform();
+  public m_polygonA = new box2d.b2PolygonShape();
+  public m_polygonB = new box2d.b2PolygonShape();
 
   constructor() {
     super();
@@ -45,35 +45,35 @@ export class DistanceTest extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "a":
         this.m_positionB.x -= 0.1;
         break;
-  
+
       case "d":
         this.m_positionB.x += 0.1;
         break;
-  
+
       case "s":
         this.m_positionB.y -= 0.1;
         break;
-  
+
       case "w":
         this.m_positionB.y += 0.1;
         break;
-  
+
       case "q":
         this.m_angleB += 0.1 * box2d.b2_pi;
         break;
-  
+
       case "e":
         this.m_angleB -= 0.1 * box2d.b2_pi;
         break;
     }
-  
+
     this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
-  }  
+  }
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);

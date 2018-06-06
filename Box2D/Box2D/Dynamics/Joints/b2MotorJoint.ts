@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+import { b2Maybe } from "../../Common/b2Settings";
 import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
@@ -49,7 +50,7 @@ export interface b2IMotorJointDef extends b2IJointDef {
 }
 
 export class b2MotorJointDef extends b2JointDef implements b2IMotorJointDef {
-  public linearOffset: b2Vec2 = new b2Vec2(0, 0);
+  public readonly linearOffset: b2Vec2 = new b2Vec2(0, 0);
 
   public angularOffset: number = 0;
 
@@ -78,9 +79,9 @@ export class b2MotorJointDef extends b2JointDef implements b2IMotorJointDef {
 
 export class b2MotorJoint extends b2Joint {
   // Solver shared
-  public m_linearOffset: b2Vec2 = new b2Vec2();
+  public readonly m_linearOffset: b2Vec2 = new b2Vec2();
   public m_angularOffset: number = 0;
-  public m_linearImpulse: b2Vec2 = new b2Vec2();
+  public readonly m_linearImpulse: b2Vec2 = new b2Vec2();
   public m_angularImpulse: number = 0;
   public m_maxForce: number = 0;
   public m_maxTorque: number = 0;
@@ -89,35 +90,31 @@ export class b2MotorJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
-  public m_linearError: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_linearError: b2Vec2 = new b2Vec2();
   public m_angularError: number = 0;
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_linearMass: b2Mat22 = new b2Mat22();
+  public readonly m_linearMass: b2Mat22 = new b2Mat22();
   public m_angularMass: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_K: b2Mat22 = new b2Mat22();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_K: b2Mat22 = new b2Mat22();
 
   constructor(def: b2IMotorJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_linearOffset.Copy(maybe(def.linearOffset, b2Vec2.ZERO));
+    this.m_linearOffset.Copy(b2Maybe(def.linearOffset, b2Vec2.ZERO));
     this.m_linearImpulse.SetZero();
-    this.m_maxForce = maybe(def.maxForce, 0);
-    this.m_maxTorque = maybe(def.maxTorque, 0);
-    this.m_correctionFactor = maybe(def.correctionFactor, 0.3);
+    this.m_maxForce = b2Maybe(def.maxForce, 0);
+    this.m_maxTorque = b2Maybe(def.maxTorque, 0);
+    this.m_correctionFactor = b2Maybe(def.correctionFactor, 0.3);
   }
 
   public GetAnchorA<T extends XY>(out: T): T {

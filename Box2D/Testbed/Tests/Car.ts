@@ -21,14 +21,14 @@ import * as testbed from "../Testbed";
 
 // This is a fun demo that shows off the wheel joint
 export class Car extends testbed.Test {
-  public m_car: box2d.b2Body = null;
-  public m_wheel1: box2d.b2Body = null;
-  public m_wheel2: box2d.b2Body = null;
+  public m_car: box2d.b2Body;
+  public m_wheel1: box2d.b2Body;
+  public m_wheel2: box2d.b2Body;
   public m_hz: number = 0.0;
   public m_zeta: number = 0.0;
   public m_speed: number = 0.0;
-  public m_spring1: box2d.b2WheelJoint = null;
-  public m_spring2: box2d.b2WheelJoint = null;
+  public m_spring1: box2d.b2WheelJoint;
+  public m_spring2: box2d.b2WheelJoint;
 
   constructor() {
     super();
@@ -37,7 +37,7 @@ export class Car extends testbed.Test {
     this.m_zeta = 0.7;
     this.m_speed = 50.0;
 
-    let ground: box2d.b2Body = null;
+    let ground: box2d.b2Body;
     {
       const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
@@ -54,7 +54,8 @@ export class Car extends testbed.Test {
 
       const hs: number[] = [0.25, 1.0, 4.0, 0.0, 0.0, -1.0, -2.0, -2.0, -1.25, 0.0];
 
-      let x: number = 20.0, y1: number = 0.0, dx: number = 5.0;
+      let x: number = 20.0, y1: number = 0.0;
+      const dx: number = 5.0;
 
       for (let i: number = 0; i < 10; ++i) {
         const y2: number = hs[i];
@@ -151,7 +152,7 @@ export class Car extends testbed.Test {
       const box: box2d.b2PolygonShape = new box2d.b2PolygonShape();
       box.SetAsBox(0.5, 0.5);
 
-      let body: box2d.b2Body = null;
+      let body: box2d.b2Body;
       const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
 
@@ -219,7 +220,7 @@ export class Car extends testbed.Test {
       jd.enableMotor = true;
       jd.frequencyHz = this.m_hz;
       jd.dampingRatio = this.m_zeta;
-      this.m_spring1 = <box2d.b2WheelJoint> this.m_world.CreateJoint(jd);
+      this.m_spring1 = this.m_world.CreateJoint(jd);
 
       jd.Initialize(this.m_car, this.m_wheel2, this.m_wheel2.GetPosition(), axis);
       jd.motorSpeed = 0.0;
@@ -227,7 +228,7 @@ export class Car extends testbed.Test {
       jd.enableMotor = false;
       jd.frequencyHz = this.m_hz;
       jd.dampingRatio = this.m_zeta;
-      this.m_spring2 = <box2d.b2WheelJoint> this.m_world.CreateJoint(jd);
+      this.m_spring2 = this.m_world.CreateJoint(jd);
     }
   }
 

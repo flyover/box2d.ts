@@ -39,13 +39,16 @@ export function b2MixRestitution(restitution1: number, restitution2: number): nu
 }
 
 export class b2ContactEdge {
-  public other: b2Body|null = null; ///< provides quick access to the other body attached.
-  public contact: b2Contact|null = null; ///< the contact
-  public prev: b2ContactEdge|null = null; ///< the previous contact edge in the body's contact list
-  public next: b2ContactEdge|null = null; ///< the next contact edge in the body's contact list
+  public other!: b2Body; ///< provides quick access to the other body attached.
+  public contact: b2Contact; ///< the contact
+  public prev: b2ContactEdge | null = null; ///< the previous contact edge in the body's contact list
+  public next: b2ContactEdge | null = null; ///< the next contact edge in the body's contact list
+  constructor(contact: b2Contact) {
+    this.contact = contact;
+  }
 }
 
-export class b2Contact {
+export abstract class b2Contact {
   public m_islandFlag: boolean = false; /// Used when crawling contact graph when forming islands.
   public m_touchingFlag: boolean = false; /// Set when the shapes are touching.
   public m_enabledFlag: boolean = false; /// This contact can be disabled (by user)
@@ -53,19 +56,19 @@ export class b2Contact {
   public m_bulletHitFlag: boolean = false; /// This bullet contact had a TOI event
   public m_toiFlag: boolean = false; /// This contact has a valid TOI in m_toi
 
-  public m_prev: b2Contact|null = null;
-  public m_next: b2Contact|null = null;
+  public m_prev: b2Contact | null = null;
+  public m_next: b2Contact | null = null;
 
-  public m_nodeA: b2ContactEdge = new b2ContactEdge();
-  public m_nodeB: b2ContactEdge = new b2ContactEdge();
+  public readonly m_nodeA: b2ContactEdge; // = new b2ContactEdge(this);
+  public readonly m_nodeB: b2ContactEdge; // = new b2ContactEdge(this);
 
-  public m_fixtureA: b2Fixture|null = null;
-  public m_fixtureB: b2Fixture|null = null;
+  public m_fixtureA!: b2Fixture;
+  public m_fixtureB!: b2Fixture;
 
   public m_indexA: number = 0;
   public m_indexB: number = 0;
 
-  public m_manifold: b2Manifold = new b2Manifold();
+  public m_manifold: b2Manifold = new b2Manifold(); // TODO: readonly
 
   public m_toiCount: number = 0;
   public m_toi: number = 0;
@@ -75,7 +78,12 @@ export class b2Contact {
 
   public m_tangentSpeed: number = 0;
 
-  public m_oldManifold: b2Manifold = new b2Manifold();
+  public m_oldManifold: b2Manifold = new b2Manifold(); // TODO: readonly
+
+  constructor() {
+    this.m_nodeA = new b2ContactEdge(this);
+    this.m_nodeB = new b2ContactEdge(this);
+  }
 
   public GetManifold() {
     return this.m_manifold;
@@ -101,11 +109,11 @@ export class b2Contact {
     return this.m_enabledFlag;
   }
 
-  public GetNext(): b2Contact|null {
+  public GetNext(): b2Contact | null {
     return this.m_next;
   }
 
-  public GetFixtureA(): b2Fixture|null {
+  public GetFixtureA(): b2Fixture {
     return this.m_fixtureA;
   }
 
@@ -113,7 +121,7 @@ export class b2Contact {
     return this.m_indexA;
   }
 
-  public GetFixtureB(): b2Fixture|null {
+  public GetFixtureB(): b2Fixture {
     return this.m_fixtureB;
   }
 
@@ -121,8 +129,7 @@ export class b2Contact {
     return this.m_indexB;
   }
 
-  public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
-  }
+  public abstract Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
 
   public FlagForFiltering(): void {
     this.m_filterFlag = true;
@@ -179,15 +186,15 @@ export class b2Contact {
     this.m_prev = null;
     this.m_next = null;
 
-    this.m_nodeA.contact = null;
+    delete this.m_nodeA.contact; // = null;
     this.m_nodeA.prev = null;
     this.m_nodeA.next = null;
-    this.m_nodeA.other = null;
+    delete this.m_nodeA.other; // = null;
 
-    this.m_nodeB.contact = null;
+    delete this.m_nodeB.contact; // = null;
     this.m_nodeB.prev = null;
     this.m_nodeB.next = null;
-    this.m_nodeB.other = null;
+    delete this.m_nodeB.other; // = null;
 
     this.m_toiCount = 0;
 
@@ -221,9 +228,9 @@ export class b2Contact {
     if (sensor) {
       ///if (aabbOverlap)
       ///{
-        const shapeA: b2Shape = this.m_fixtureA.GetShape();
-        const shapeB: b2Shape = this.m_fixtureB.GetShape();
-        touching = b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
+      const shapeA: b2Shape = this.m_fixtureA.GetShape();
+      const shapeB: b2Shape = this.m_fixtureB.GetShape();
+      touching = b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
       ///}
 
       // Sensors don't generate manifolds.
@@ -231,27 +238,27 @@ export class b2Contact {
     } else {
       ///if (aabbOverlap)
       ///{
-        this.Evaluate(this.m_manifold, xfA, xfB);
-        touching = this.m_manifold.pointCount > 0;
+      this.Evaluate(this.m_manifold, xfA, xfB);
+      touching = this.m_manifold.pointCount > 0;
 
-        // Match old contact ids to new contact ids and copy the
-        // stored impulses to warm start the solver.
-        for (let i: number = 0; i < this.m_manifold.pointCount; ++i) {
-          const mp2: b2ManifoldPoint = this.m_manifold.points[i];
-          mp2.normalImpulse = 0;
-          mp2.tangentImpulse = 0;
-          const id2: b2ContactID = mp2.id;
+      // Match old contact ids to new contact ids and copy the
+      // stored impulses to warm start the solver.
+      for (let i: number = 0; i < this.m_manifold.pointCount; ++i) {
+        const mp2: b2ManifoldPoint = this.m_manifold.points[i];
+        mp2.normalImpulse = 0;
+        mp2.tangentImpulse = 0;
+        const id2: b2ContactID = mp2.id;
 
-          for (let j: number = 0; j < this.m_oldManifold.pointCount; ++j) {
-            const mp1: b2ManifoldPoint = this.m_oldManifold.points[j];
+        for (let j: number = 0; j < this.m_oldManifold.pointCount; ++j) {
+          const mp1: b2ManifoldPoint = this.m_oldManifold.points[j];
 
-            if (mp1.id.key === id2.key) {
-              mp2.normalImpulse = mp1.normalImpulse;
-              mp2.tangentImpulse = mp1.tangentImpulse;
-              break;
-            }
+          if (mp1.id.key === id2.key) {
+            mp2.normalImpulse = mp1.normalImpulse;
+            mp2.tangentImpulse = mp1.tangentImpulse;
+            break;
           }
         }
+      }
       ///}
       ///else
       ///{

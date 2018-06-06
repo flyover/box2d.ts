@@ -22,7 +22,7 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class Soup extends testbed.Test {
-  m_ground: box2d.b2Body;
+  public m_ground: box2d.b2Body;
 
   constructor() {
     super();
@@ -40,7 +40,7 @@ export class Soup extends testbed.Test {
           new box2d.b2Vec2(-4, -1),
           new box2d.b2Vec2(4, -1),
           new box2d.b2Vec2(4, 0),
-          new box2d.b2Vec2(-4, 0)
+          new box2d.b2Vec2(-4, 0),
         ];
         shape.Set(vertices, 4);
         this.m_ground.CreateFixture(shape, 0.0);
@@ -52,7 +52,7 @@ export class Soup extends testbed.Test {
           new box2d.b2Vec2(-4, -0.1),
           new box2d.b2Vec2(-2, -0.1),
           new box2d.b2Vec2(-2, 2),
-          new box2d.b2Vec2(-4, 3)
+          new box2d.b2Vec2(-4, 3),
         ];
         shape.Set(vertices, 4);
         this.m_ground.CreateFixture(shape, 0.0);
@@ -64,7 +64,7 @@ export class Soup extends testbed.Test {
           new box2d.b2Vec2(2, -0.1),
           new box2d.b2Vec2(4, -0.1),
           new box2d.b2Vec2(4, 3),
-          new box2d.b2Vec2(2, 2)
+          new box2d.b2Vec2(2, 2),
         ];
         shape.Set(vertices, 4);
         this.m_ground.CreateFixture(shape, 0.0);
@@ -164,11 +164,11 @@ export class Soup extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new Soup();
   }
 }

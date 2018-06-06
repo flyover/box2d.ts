@@ -26,7 +26,7 @@ export class TestRagdoll extends testbed.Test {
     {
       const bd = new box2d.b2BodyDef();
       const ground = this.m_world.CreateBody(bd);
-  
+
       const vertices = [];
       vertices[0] = new box2d.b2Vec2(-30.0, 0.0);
       vertices[1] = new box2d.b2Vec2(30.0, 0.0);
@@ -36,20 +36,20 @@ export class TestRagdoll extends testbed.Test {
       shape.CreateLoop(vertices);
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     const bd = new box2d.b2BodyDef();
     const fd = new box2d.b2FixtureDef();
     const jd = new box2d.b2RevoluteJointDef();
-  
+
     // Add 2 ragdolls along the top
     for (let i = 0; i < 2; ++i) {
       const startX = -20.0 + Math.random() * 2.0 + 40.0 * i;
       const startY = 30.0 + Math.random() * 5.0;
-  
+
       // BODIES
       // Set these to dynamic bodies
       bd.type = box2d.b2BodyType.b2_dynamicBody;
-  
+
       // Head
       fd.shape = new box2d.b2CircleShape(1.25);
       fd.density = 1.0;
@@ -62,7 +62,7 @@ export class TestRagdoll extends testbed.Test {
       //{
       head.ApplyLinearImpulse(new box2d.b2Vec2(Math.random() * 1000.0 - 500.0, Math.random() * 1000.0 - 500.0), head.GetWorldCenter());
       //}
-  
+
       // Torso1
       const shape = new box2d.b2PolygonShape();
       fd.shape = shape;
@@ -83,7 +83,7 @@ export class TestRagdoll extends testbed.Test {
       bd.position.Set(startX, (startY - 5.8));
       const torso3 = this.m_world.CreateBody(bd);
       torso3.CreateFixture(fd);
-  
+
       // UpperArm
       fd.density = 1.0;
       fd.friction = 0.4;
@@ -98,7 +98,7 @@ export class TestRagdoll extends testbed.Test {
       bd.position.Set((startX + 3.0), (startY - 2.0));
       const upperArmR = this.m_world.CreateBody(bd);
       upperArmR.CreateFixture(fd);
-  
+
       // LowerArm
       fd.density = 1.0;
       fd.friction = 0.4;
@@ -113,7 +113,7 @@ export class TestRagdoll extends testbed.Test {
       bd.position.Set((startX + 5.7), (startY - 2.0));
       const lowerArmR = this.m_world.CreateBody(bd);
       lowerArmR.CreateFixture(fd);
-  
+
       // UpperLeg
       fd.density = 1.0;
       fd.friction = 0.4;
@@ -128,7 +128,7 @@ export class TestRagdoll extends testbed.Test {
       bd.position.Set((startX + 0.8), (startY - 8.5));
       const upperLegR = this.m_world.CreateBody(bd);
       upperLegR.CreateFixture(fd);
-  
+
       // LowerLeg
       fd.density = 1.0;
       fd.friction = 0.4;
@@ -143,16 +143,16 @@ export class TestRagdoll extends testbed.Test {
       bd.position.Set((startX + 0.8), (startY - 12.0));
       const lowerLegR = this.m_world.CreateBody(bd);
       lowerLegR.CreateFixture(fd);
-  
+
       // JOINTS
       jd.enableLimit = true;
-  
+
       // Head to shoulders
       jd.lowerAngle = box2d.b2DegToRad(-40.0);
       jd.upperAngle = box2d.b2DegToRad(40.0);
       jd.Initialize(torso1, head, new box2d.b2Vec2(startX, (startY - 1.5)));
       this.m_world.CreateJoint(jd);
-  
+
       // Upper arm to shoulders
       // L
       jd.lowerAngle = box2d.b2DegToRad(-85.0);
@@ -164,7 +164,7 @@ export class TestRagdoll extends testbed.Test {
       jd.upperAngle = box2d.b2DegToRad(85.0);
       jd.Initialize(torso1, upperArmR, new box2d.b2Vec2((startX + 1.8), (startY - 2.0)));
       this.m_world.CreateJoint(jd);
-  
+
       // Lower arm to upper arm
       // L
       jd.lowerAngle = box2d.b2DegToRad(-130.0);
@@ -176,7 +176,7 @@ export class TestRagdoll extends testbed.Test {
       jd.upperAngle = box2d.b2DegToRad(130.0);
       jd.Initialize(upperArmR, lowerArmR, new box2d.b2Vec2((startX + 4.5), (startY - 2.0)));
       this.m_world.CreateJoint(jd);
-  
+
       // Shoulders/stomach
       jd.lowerAngle = box2d.b2DegToRad(-15.0);
       jd.upperAngle = box2d.b2DegToRad(15.0);
@@ -185,7 +185,7 @@ export class TestRagdoll extends testbed.Test {
       // Stomach/hips
       jd.Initialize(torso2, torso3, new box2d.b2Vec2(startX, (startY - 5.0)));
       this.m_world.CreateJoint(jd);
-  
+
       // Torso to upper leg
       // L
       jd.lowerAngle = box2d.b2DegToRad(-25.0);
@@ -197,7 +197,7 @@ export class TestRagdoll extends testbed.Test {
       jd.upperAngle = box2d.b2DegToRad(25.0);
       jd.Initialize(torso3, upperLegR, new box2d.b2Vec2((startX + 0.8), (startY - 7.2)));
       this.m_world.CreateJoint(jd);
-  
+
       // Upper leg to lower leg
       // L
       jd.lowerAngle = box2d.b2DegToRad(-25.0);
@@ -210,7 +210,7 @@ export class TestRagdoll extends testbed.Test {
       jd.Initialize(upperLegR, lowerLegR, new box2d.b2Vec2((startX + 0.8), (startY - 10.5)));
       this.m_world.CreateJoint(jd);
     }
-  
+
     // these are static bodies so set the type accordingly
     bd.type = box2d.b2BodyType.b2_staticBody;
     const shape = new box2d.b2PolygonShape();
@@ -218,21 +218,21 @@ export class TestRagdoll extends testbed.Test {
     fd.density = 0.0;
     fd.friction = 0.4;
     fd.restitution = 0.3;
-  
+
     // Add stairs on the left
     for (let j = 1; j <= 10; ++j) {
       shape.SetAsBox((1.0 * j), 1.0);
       bd.position.Set((1.0 * j - 30.0), (21.0 - 2.0 * j));
       this.m_world.CreateBody(bd).CreateFixture(fd);
     }
-  
+
     // Add stairs on the right
     for (let k = 1; k <= 10; ++k) {
       shape.SetAsBox((1.0 * k), 1.0);
       bd.position.Set((30.0 - 1.0 * k), (21.0 - 2.0 * k));
       this.m_world.CreateBody(bd).CreateFixture(fd);
     }
-  
+
     shape.SetAsBox(3.0, 4.0);
     bd.position.Set(0.0, 4.0);
     this.m_world.CreateBody(bd).CreateFixture(fd);

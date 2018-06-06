@@ -21,7 +21,7 @@
 /// to increase the size of the stack.
 
 export class b2GrowableStack<T> {
-  public m_stack: T[] = [];
+  public m_stack: Array<T | null> = [];
   public m_count: number = 0;
 
   constructor(N: number) {
@@ -34,15 +34,15 @@ export class b2GrowableStack<T> {
     return this;
   }
 
-  public Push(element: T): void {
+  public Push(element: T | null): void {
     this.m_stack[this.m_count] = element;
     this.m_count++;
   }
 
-  public Pop(): T {
+  public Pop(): T | null {
     ///b2Assert(this.m_count > 0);
     this.m_count--;
-    const element: T = this.m_stack[this.m_count];
+    const element: T | null = this.m_stack[this.m_count];
     this.m_stack[this.m_count] = null;
     return element;
   }

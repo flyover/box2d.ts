@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_maxLinearCorrection } from "../../Common/b2Settings";
+import { b2_linearSlop, b2_maxLinearCorrection, b2Maybe } from "../../Common/b2Settings";
 import { b2Min, b2Clamp, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -34,9 +34,9 @@ export interface b2IRopeJointDef extends b2IJointDef {
 /// Note: by default the connected objects will not collide.
 /// see collideConnected in b2JointDef.
 export class b2RopeJointDef extends b2JointDef implements b2IRopeJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2(-1, 0);
+  public readonly localAnchorA: b2Vec2 = new b2Vec2(-1, 0);
 
-  public localAnchorB: b2Vec2 = new b2Vec2(1, 0);
+  public readonly localAnchorB: b2Vec2 = new b2Vec2(1, 0);
 
   public maxLength: number = 0;
 
@@ -47,8 +47,8 @@ export class b2RopeJointDef extends b2JointDef implements b2IRopeJointDef {
 
 export class b2RopeJoint extends b2Joint {
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public m_maxLength: number = 0;
   public m_length: number = 0;
   public m_impulse: number = 0;
@@ -56,11 +56,11 @@ export class b2RopeJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_u: b2Vec2 = new b2Vec2();
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_u: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
@@ -68,21 +68,17 @@ export class b2RopeJoint extends b2Joint {
   public m_mass: number = 0;
   public m_state = b2LimitState.e_inactiveLimit;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IRopeJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_localAnchorA.Copy(maybe(def.localAnchorA, new b2Vec2(-1, 0)));
-    this.m_localAnchorB.Copy(maybe(def.localAnchorB, new b2Vec2(1, 0)));
-    this.m_maxLength = maybe(def.maxLength, 0);
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, new b2Vec2(-1, 0)));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, new b2Vec2(1, 0)));
+    this.m_maxLength = b2Maybe(def.maxLength, 0);
   }
 
   private static InitVelocityConstraints_s_P = new b2Vec2();

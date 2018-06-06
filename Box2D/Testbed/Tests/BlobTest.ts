@@ -34,11 +34,10 @@ export class BlobTest extends testbed.Test {
       shape.Set(new box2d.b2Vec2(40.0, 0.0), new box2d.b2Vec2(40.0, 25.0));
       ground.CreateFixture(shape, 0.0);
     }
-  
+
     {
       const ajd = new box2d.b2AreaJointDef();
-      ajd.world = this.m_world;
-  
+
       const cx = 0.0;
       const cy = 10.0;
       const rx = 5.0;
@@ -50,21 +49,21 @@ export class BlobTest extends testbed.Test {
         const bd = new box2d.b2BodyDef();
         //bd.isBullet = true;
         bd.fixedRotation = true;
-  
+
         const x = cx + rx * Math.cos(angle);
         const y = cy + ry * Math.sin(angle);
         bd.position.Set(x, y);
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         const body = this.m_world.CreateBody(bd);
-  
+
         const fd = new box2d.b2FixtureDef();
         fd.shape = new box2d.b2CircleShape(bodyRadius);
         fd.density = 1.0;
         body.CreateFixture(fd);
-  
+
         ajd.AddBody(body);
       }
-  
+
       ajd.frequencyHz = 10.0;
       ajd.dampingRatio = 1.0;
       this.m_world.CreateJoint(ajd);

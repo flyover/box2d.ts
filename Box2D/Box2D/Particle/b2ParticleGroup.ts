@@ -36,7 +36,7 @@ export enum b2ParticleGroupFlag {
   /// Updates depth data on next simulation step.
   b2_particleGroupNeedsUpdateDepth = 1 << 4,
 
-  b2_particleGroupInternalMask = b2_particleGroupWillBeDestroyed | b2_particleGroupNeedsUpdateDepth
+  b2_particleGroupInternalMask = b2_particleGroupWillBeDestroyed | b2_particleGroupNeedsUpdateDepth,
 }
 
 export interface b2IParticleGroupDef {
@@ -56,7 +56,7 @@ export interface b2IParticleGroupDef {
   positionData?: XY[];
   lifetime?: number;
   userData?: any;
-  group?: b2ParticleGroup;
+  group?: b2ParticleGroup | null;
 }
 
 export class b2ParticleGroupDef implements b2IParticleGroupDef {
@@ -91,10 +91,10 @@ export class b2ParticleGroup {
   public m_timestamp: number = -1;
   public m_mass: number = 0.0;
   public m_inertia: number = 0.0;
-  public m_center: b2Vec2 = new b2Vec2();
-  public m_linearVelocity: b2Vec2 = new b2Vec2();
+  public readonly m_center: b2Vec2 = new b2Vec2();
+  public readonly m_linearVelocity: b2Vec2 = new b2Vec2();
   public m_angularVelocity: number = 0.0;
-  public m_transform: b2Transform = new b2Transform();
+  public readonly m_transform: b2Transform = new b2Transform();
   ///m_transform.SetIdentity();
   public m_userData: any = null;
 
@@ -102,27 +102,28 @@ export class b2ParticleGroup {
     this.m_system = system;
   }
 
-  GetNext(): b2ParticleGroup | null {
+  public GetNext(): b2ParticleGroup | null {
     return this.m_next;
   }
 
-  GetParticleSystem(): b2ParticleSystem {
+  public GetParticleSystem(): b2ParticleSystem {
     return this.m_system;
   }
 
-  GetParticleCount(): number {
+  public GetParticleCount(): number {
     return this.m_lastIndex - this.m_firstIndex;
   }
 
-  GetBufferIndex(): number {
+  public GetBufferIndex(): number {
     return this.m_firstIndex;
   }
 
-  ContainsParticle(index: number): boolean {
+  public ContainsParticle(index: number): boolean {
     return this.m_firstIndex <= index && index < this.m_lastIndex;
   }
 
-  GetAllParticleFlags(): b2ParticleFlag {
+  public GetAllParticleFlags(): b2ParticleFlag {
+    if (!this.m_system.m_flagsBuffer.data) { throw new Error(); }
     let flags = 0;
     for (let i = this.m_firstIndex; i < this.m_lastIndex; i++) {
       flags |= this.m_system.m_flagsBuffer.data[i];
@@ -130,89 +131,88 @@ export class b2ParticleGroup {
     return flags;
   }
 
-  GetGroupFlags(): b2ParticleGroupFlag {
+  public GetGroupFlags(): b2ParticleGroupFlag {
     return this.m_groupFlags;
   }
 
-  SetGroupFlags(flags: number): void {
+  public SetGroupFlags(flags: number): void {
     ///b2Assert((flags & b2ParticleGroupFlag.b2_particleGroupInternalMask) === 0);
     flags |= this.m_groupFlags & b2ParticleGroupFlag.b2_particleGroupInternalMask;
     this.m_system.SetGroupFlags(this, flags);
   }
 
-  GetMass(): number {
+  public GetMass(): number {
     this.UpdateStatistics();
     return this.m_mass;
   }
 
-  GetInertia(): number {
+  public GetInertia(): number {
     this.UpdateStatistics();
     return this.m_inertia;
   }
 
-  GetCenter(): Readonly<b2Vec2> {
+  public GetCenter(): Readonly<b2Vec2> {
     this.UpdateStatistics();
     return this.m_center;
   }
 
-  GetLinearVelocity(): Readonly<b2Vec2> {
+  public GetLinearVelocity(): Readonly<b2Vec2> {
     this.UpdateStatistics();
     return this.m_linearVelocity;
   }
 
-  GetAngularVelocity(): number {
+  public GetAngularVelocity(): number {
     this.UpdateStatistics();
     return this.m_angularVelocity;
   }
 
-  GetTransform(): Readonly<b2Transform> {
+  public GetTransform(): Readonly<b2Transform> {
     return this.m_transform;
   }
 
-  GetPosition(): Readonly<b2Vec2> {
+  public GetPosition(): Readonly<b2Vec2> {
     return this.m_transform.p;
   }
 
-  GetAngle(): number {
+  public GetAngle(): number {
     return this.m_transform.q.GetAngle();
   }
 
-  GetLinearVelocityFromWorldPoint<T extends XY>(worldPoint: XY, out: T): T {
+  public GetLinearVelocityFromWorldPoint<T extends XY>(worldPoint: XY, out: T): T {
     const s_t0 = b2ParticleGroup.GetLinearVelocityFromWorldPoint_s_t0;
     this.UpdateStatistics();
     ///  return m_linearVelocity + b2Cross(m_angularVelocity, worldPoint - m_center);
     return b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(worldPoint, this.m_center, s_t0), out);
   }
-  static GetLinearVelocityFromWorldPoint_s_t0 = new b2Vec2();
+  public static readonly GetLinearVelocityFromWorldPoint_s_t0 = new b2Vec2();
 
-  GetUserData(): void {
+  public GetUserData(): void {
     return this.m_userData;
   }
 
-  SetUserData(data: any): void {
+  public SetUserData(data: any): void {
     this.m_userData = data;
   }
 
-  ApplyForce(force: XY): void {
+  public ApplyForce(force: XY): void {
     this.m_system.ApplyForce(this.m_firstIndex, this.m_lastIndex, force);
   }
 
-  ApplyLinearImpulse(impulse: XY): void {
+  public ApplyLinearImpulse(impulse: XY): void {
     this.m_system.ApplyLinearImpulse(this.m_firstIndex, this.m_lastIndex, impulse);
   }
 
-  DestroyParticles(callDestructionListener: boolean): void {
-    ///b2Assert(this.m_system.m_world.IsLocked() === false);
-    if (this.m_system.m_world.IsLocked()) {
-      return;
-    }
+  public DestroyParticles(callDestructionListener: boolean): void {
+    if (this.m_system.m_world.IsLocked()) { throw new Error(); }
 
     for (let i = this.m_firstIndex; i < this.m_lastIndex; i++) {
       this.m_system.DestroyParticle(i, callDestructionListener);
     }
   }
 
-  UpdateStatistics(): void {
+  public UpdateStatistics(): void {
+    if (!this.m_system.m_positionBuffer.data) { throw new Error(); }
+    if (!this.m_system.m_velocityBuffer.data) { throw new Error(); }
     const p = new b2Vec2();
     const v = new b2Vec2();
     if (this.m_timestamp !== this.m_system.m_timestamp) {

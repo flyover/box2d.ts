@@ -1,58 +1,29 @@
 {
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
     "rules": {
         "class-name": false,
-        "comment-format": [
-            false,
-            "check-space"
-        ],
-        "indent": [
-            true,
-            "spaces"
-        ],
-        "no-duplicate-variable": true,
-        "no-eval": true,
-        "no-internal-module": true,
-        "no-trailing-whitespace": true,
-        "no-unsafe-finally": true,
-        "no-var-keyword": true,
-        "one-line": [
-            true,
-            "check-open-brace",
-            "check-whitespace"
-        ],
-        "quotemark": [
-            true,
-            "double"
-        ],
-        "semicolon": [
-            true,
-            "always"
-        ],
-        "triple-equals": [
-            true,
-            "allow-null-check"
-        ],
-        "typedef-whitespace": [
-            true,
-            {
-                "call-signature": "nospace",
-                "index-signature": "nospace",
-                "parameter": "nospace",
-                "property-declaration": "nospace",
-                "variable-declaration": "nospace"
-            }
-        ],
-        "variable-name": [
-            true,
-            "ban-keywords"
-        ],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator",
-            "check-type"
-        ]
-    }
+        "comment-format": false,
+        "indent": true,
+        "interface-name": false,
+        "max-classes-per-file": false,
+        "max-line-length": false,
+        "member-access": true,
+        "member-ordering": false,
+        "no-bitwise": false,
+        "no-conditional-assignment": false,
+        "no-console": false,
+        "no-empty": false,
+        "no-namespace": false,
+        "no-shadowed-variable": false,
+        "object-literal-sort-keys": false,
+        "one-variable-per-declaration": false,
+        "ordered-imports": false,
+        "prefer-for-of": false,
+        "variable-name": false
+    },
+    "rulesDirectory": []
 }

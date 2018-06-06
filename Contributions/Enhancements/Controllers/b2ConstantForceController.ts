@@ -28,18 +28,19 @@ export class b2ConstantForceController extends b2Controller {
   /**
    * The force to apply
    */
-  F = new b2Vec2(0, 0);
+  public readonly F = new b2Vec2(0, 0);
 
-  Step(step: b2TimeStep) {
+  public Step(step: b2TimeStep) {
     for (let i = this.m_bodyList; i; i = i.nextBody) {
       const body = i.body;
-      if (!body.IsAwake())
+      if (!body.IsAwake()) {
         continue;
+      }
       body.ApplyForce(this.F, body.GetWorldCenter());
     }
   }
 
-  Draw(draw: b2Draw) {}
+  public Draw(draw: b2Draw) {}
 }
 
 // #endif

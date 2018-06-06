@@ -22,55 +22,55 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class MultipleParticleSystems extends testbed.Test {
-  m_particleSystem2: box2d.b2ParticleSystem = null;
-  m_emitters: testbed.RadialEmitter[];
+  public m_particleSystem2: box2d.b2ParticleSystem;
+  public m_emitters: testbed.RadialEmitter[];
 
   /**
    * Maximum number of particles per system.
    */
-  static readonly k_maxParticleCount = 500;
+  public static readonly k_maxParticleCount = 500;
   /**
    * Size of the box which is pushed around by particles.
    */
-  static readonly k_dynamicBoxSize = new box2d.b2Vec2(0.5, 0.5);
+  public static readonly k_dynamicBoxSize = new box2d.b2Vec2(0.5, 0.5);
   /**
    * Mass of the box.
    */
-  static readonly k_boxMass = 1.0;
+  public static readonly k_boxMass = 1.0;
   /**
    * Emit rate of the emitters in particles per second.
    */
-  static readonly k_emitRate = 100.0;
+  public static readonly k_emitRate = 100.0;
   /**
    * Location of the left emitter (the position of the right one
    * is mirrored along the y-axis).
    */
-  static readonly k_emitterPosition = new box2d.b2Vec2(-5.0, 4.0);
+  public static readonly k_emitterPosition = new box2d.b2Vec2(-5.0, 4.0);
   /**
    * Starting velocity of particles from the left emitter (the
    * velocity of particles from the right emitter are mirrored
    * along the y-axis).
    */
-  static readonly k_emitterVelocity = new box2d.b2Vec2(7.0, -4.0);
+  public static readonly k_emitterVelocity = new box2d.b2Vec2(7.0, -4.0);
   /**
    * Size of particle emitters.
    */
-  static readonly k_emitterSize = new box2d.b2Vec2(1.0, 1.0);
+  public static readonly k_emitterSize = new box2d.b2Vec2(1.0, 1.0);
   /**
    * Color of the left emitter's particles.
    */
-  static readonly k_leftEmitterColor = new box2d.b2Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
+  public static readonly k_leftEmitterColor = new box2d.b2Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
   /**
    * Color of the right emitter's particles.
    */
-  static readonly k_rightEmitterColor = new box2d.b2Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
+  public static readonly k_rightEmitterColor = new box2d.b2Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
 
   constructor() {
     super();
 
     this.m_emitters = [
       new testbed.RadialEmitter(),
-      new testbed.RadialEmitter()
+      new testbed.RadialEmitter(),
     ];
 
     // Configure the default particle system's parameters.
@@ -131,7 +131,7 @@ export class MultipleParticleSystems extends testbed.Test {
     }
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
     if (settings.pause && !settings.singleStep) {
       dt = 0.0;
@@ -144,11 +144,11 @@ export class MultipleParticleSystems extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new MultipleParticleSystems();
   }
 }

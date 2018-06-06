@@ -22,14 +22,14 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class LiquidTimer extends testbed.Test {
-  static readonly k_paramValues = [
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile + viscous")
+  public static readonly k_paramValues = [
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile + viscous"),
   ];
-  static readonly k_paramDef = [
+  public static readonly k_paramDef = [
     new testbed.ParticleParameter.Definition(LiquidTimer.k_paramValues),
-    new testbed.ParticleParameter.Definition(testbed.ParticleParameter.k_particleTypes)
+    new testbed.ParticleParameter.Definition(testbed.ParticleParameter.k_particleTypes),
   ];
-  static readonly k_paramDefCount = LiquidTimer.k_paramDef.length;
+  public static readonly k_paramDefCount = LiquidTimer.k_paramDef.length;
 
   constructor() {
     super();
@@ -46,7 +46,7 @@ export class LiquidTimer extends testbed.Test {
         new box2d.b2Vec2(-2, 0),
         new box2d.b2Vec2(2, 0),
         new box2d.b2Vec2(2, 4),
-        new box2d.b2Vec2(-2, 4)
+        new box2d.b2Vec2(-2, 4),
       ];
       shape.CreateLoop(vertices, 4);
       ground.CreateFixture(shape, 0.0);
@@ -146,11 +146,11 @@ export class LiquidTimer extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new LiquidTimer();
   }
 }

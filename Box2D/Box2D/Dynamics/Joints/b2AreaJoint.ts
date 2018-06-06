@@ -1,13 +1,12 @@
-import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNullArray, b2MakeNumberArray } from "../../Common/b2Settings";
+import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNumberArray, b2Maybe } from "../../Common/b2Settings";
 import { b2Sq, b2Sqrt, b2Vec2, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
 import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
-import { b2World } from "../b2World";
 
 export interface b2IAreaJointDef extends b2IJointDef {
-  world: b2World;
+  // world: b2World;
 
   bodies: b2Body[];
 
@@ -17,8 +16,6 @@ export interface b2IAreaJointDef extends b2IJointDef {
 }
 
 export class b2AreaJointDef extends b2JointDef implements b2IAreaJointDef {
-  public world: b2World = null;
-
   public bodies: b2Body[] = [];
 
   public frequencyHz: number = 0;
@@ -41,7 +38,7 @@ export class b2AreaJointDef extends b2JointDef implements b2IAreaJointDef {
 }
 
 export class b2AreaJoint extends b2Joint {
-  public m_bodies: b2Body[] = null;
+  public m_bodies: b2Body[];
   public m_frequencyHz: number = 0;
   public m_dampingRatio: number = 0;
 
@@ -49,29 +46,25 @@ export class b2AreaJoint extends b2Joint {
   public m_impulse: number = 0;
 
   // Solver temp
-  public m_targetLengths: number[] = null;
+  public m_targetLengths: number[];
   public m_targetArea: number = 0;
-  public m_normals: b2Vec2[] = null;
-  public m_joints: b2DistanceJoint[] = null;
-  public m_deltas: b2Vec2[] = null;
-  public m_delta: b2Vec2 = null;
+  public m_normals: b2Vec2[];
+  public m_joints: b2DistanceJoint[];
+  public m_deltas: b2Vec2[];
+  public m_delta: b2Vec2;
 
   constructor(def: b2IAreaJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
     ///b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
 
     this.m_bodies = def.bodies;
-    this.m_frequencyHz = maybe(def.frequencyHz, 0);
-    this.m_dampingRatio = maybe(def.dampingRatio, 0);
+    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
 
     this.m_targetLengths = b2MakeNumberArray(def.bodies.length);
     this.m_normals = b2Vec2.MakeArray(def.bodies.length);
-    this.m_joints = b2MakeNullArray(def.bodies.length);
+    this.m_joints = []; // b2MakeNullArray(def.bodies.length);
     this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
     this.m_delta = new b2Vec2();
 
@@ -93,7 +86,7 @@ export class b2AreaJoint extends b2Joint {
       this.m_targetArea += b2Vec2.CrossVV(body_c, next_c);
 
       djd.Initialize(body, next, body_c, next_c);
-      this.m_joints[i] = def.world.CreateJoint(djd);
+      this.m_joints[i] = body.GetWorld().CreateJoint(djd);
     }
 
     this.m_targetArea *= 0.5;

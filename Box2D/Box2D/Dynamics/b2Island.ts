@@ -150,7 +150,7 @@ However, we can compute sin+cos of the same angle fast.
 
 export class b2Island {
   public m_allocator: any = null;
-  public m_listener: b2ContactListener = null;
+  public m_listener!: b2ContactListener;
 
   public m_bodies: b2Body[] = [/*1024*/]; // TODO: b2Settings
   public m_contacts: b2Contact[] = [/*1024*/]; // TODO: b2Settings
@@ -179,17 +179,17 @@ export class b2Island {
     this.m_listener = listener;
 
     // TODO:
-    while (this.m_bodies.length < bodyCapacity) {
-      this.m_bodies[this.m_bodies.length] = null;
-    }
+    // while (this.m_bodies.length < bodyCapacity) {
+    //   this.m_bodies[this.m_bodies.length] = null;
+    // }
     // TODO:
-    while (this.m_contacts.length < contactCapacity) {
-      this.m_contacts[this.m_contacts.length] = null;
-    }
+    // while (this.m_contacts.length < contactCapacity) {
+    //   this.m_contacts[this.m_contacts.length] = null;
+    // }
     // TODO:
-    while (this.m_joints.length < jointCapacity) {
-      this.m_joints[this.m_joints.length] = null;
-    }
+    // while (this.m_joints.length < jointCapacity) {
+    //   this.m_joints[this.m_joints.length] = null;
+    // }
 
     // TODO:
     if (this.m_positions.length < bodyCapacity) {
@@ -243,7 +243,8 @@ export class b2Island {
     for (let i: number = 0; i < this.m_bodyCount; ++i) {
       const b: b2Body = this.m_bodies[i];
 
-      /*const c: b2Vec2 =*/ this.m_positions[i].c.Copy(b.m_sweep.c);
+      // const c: b2Vec2 =
+      this.m_positions[i].c.Copy(b.m_sweep.c);
       const a: number = b.m_sweep.a;
       const v: b2Vec2 = this.m_velocities[i].v.Copy(b.m_linearVelocity);
       let w: number = b.m_angularVelocity;

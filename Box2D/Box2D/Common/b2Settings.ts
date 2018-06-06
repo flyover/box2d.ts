@@ -18,8 +18,13 @@
 
 export function b2Assert(condition: boolean, ...args: any[]): void {
   if (!condition) {
-    debugger;
+    // debugger;
+    throw new Error(...args);
   }
+}
+
+export function b2Maybe<T>(value: T | undefined, def: T): T {
+  return value !== undefined ? value : def;
 }
 
 export const b2_maxFloat: number = 1E+37; // FLT_MAX instead of Number.MAX_VALUE;
@@ -67,7 +72,6 @@ export const b2_polygonRadius: number = 2 * b2_linearSlop;
 /// Maximum number of sub-steps per contact in continuous physics simulation.
 export const b2_maxSubSteps: number = 8;
 
-
 // Dynamics
 
 /// Maximum number of contacts to be handled to solve a TOI impact.
@@ -101,7 +105,6 @@ export const b2_maxRotationSquared: number = b2_maxRotation * b2_maxRotation;
 export const b2_baumgarte: number = 0.2;
 export const b2_toiBaumgarte: number = 0.75;
 
-
 // #if B2_ENABLE_PARTICLE
 
 // Particle
@@ -134,7 +137,6 @@ export const b2_minParticleSystemBufferCapacity: number = 256;
 export const b2_barrierCollisionTime: number = 2.5;
 
 // #endif
-
 
 // Sleep
 
@@ -194,16 +196,16 @@ export function b2ParseUInt(v: string): number {
   return Math.abs(parseInt(v, 10));
 }
 
-export function b2MakeArray<T>(length: number, init: { (i: number): T; }): T[] {
-  let a: T[] = [];
+export function b2MakeArray<T>(length: number, init: (i: number) => T): T[] {
+  const a: T[] = [];
   for (let i: number = 0; i < length; ++i) {
     a.push(init(i));
   }
   return a;
 }
 
-export function b2MakeNullArray<T>(length: number): (T | null)[] {
-  const a: (T | null)[] = [];
+export function b2MakeNullArray<T>(length: number): Array<T | null> {
+  const a: Array<T | null> = [];
   for (let i: number = 0; i < length; ++i) {
     a.push(null);
   }

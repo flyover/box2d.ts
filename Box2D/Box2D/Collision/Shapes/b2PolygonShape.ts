@@ -550,10 +550,11 @@ export class b2PolygonShape extends b2Shape {
     let i: number = intoIndex2;
     while (i !== outoIndex2) {
       i = (i + 1) % this.m_count;
-      if (i === outoIndex2)
+      if (i === outoIndex2) {
         p3 = outoVec;
-      else
+      } else {
         p3  = this.m_vertices[i];
+      }
 
       const triangleArea: number = 0.5 * ((p2.x - intoVec.x) * (p3.y - intoVec.y) - (p2.y - intoVec.y) * (p3.x - intoVec.x));
       area += triangleArea;

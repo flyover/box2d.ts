@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_pi, b2_linearSlop, b2_angularSlop } from "../../Common/b2Settings";
+import { b2_pi, b2_linearSlop, b2_angularSlop, b2Maybe } from "../../Common/b2Settings";
 import { b2Abs, b2Vec2, b2Vec3, b2Mat33, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
@@ -38,9 +38,9 @@ export interface b2IWeldJointDef extends b2IJointDef {
 /// where they are attached and the relative body angle. The position
 /// of the anchor points is important for computing the reaction torque.
 export class b2WeldJointDef extends b2JointDef implements b2IWeldJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly localAnchorA: b2Vec2 = new b2Vec2();
 
-  public localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly localAnchorB: b2Vec2 = new b2Vec2();
 
   public referenceAngle: number = 0;
 
@@ -67,44 +67,40 @@ export class b2WeldJoint extends b2Joint {
   public m_bias: number = 0;
 
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public m_referenceAngle: number = 0;
   public m_gamma: number = 0;
-  public m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
+  public readonly m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
 
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_mass: b2Mat33 = new b2Mat33();
+  public readonly m_mass: b2Mat33 = new b2Mat33();
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
-  public m_K: b2Mat33 = new b2Mat33();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_K: b2Mat33 = new b2Mat33();
 
   constructor(def: b2IWeldJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_frequencyHz = maybe(def.frequencyHz, 0);
-    this.m_dampingRatio = maybe(def.dampingRatio, 0);
+    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
 
-    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
-    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
-    this.m_referenceAngle = maybe(def.referenceAngle, 0);
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_referenceAngle = b2Maybe(def.referenceAngle, 0);
     this.m_impulse.SetZero();
   }
 

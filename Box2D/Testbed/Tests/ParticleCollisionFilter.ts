@@ -23,16 +23,16 @@ import * as testbed from "../Testbed";
 
 // Optionally disables particle / fixture and particle / particle contacts.
 export class ParticleContactDisabler extends box2d.b2ContactFilter {
-  m_enableFixtureParticleCollisions = true;
-  m_enableParticleParticleCollisions = true;  
-  
+  public m_enableFixtureParticleCollisions = true;
+  public m_enableParticleParticleCollisions = true;
+
   // Blindly enable / disable collisions between fixtures and particles.
-  ShouldCollideFixtureParticle(): boolean {
+  public ShouldCollideFixtureParticle(): boolean {
     return this.m_enableFixtureParticleCollisions;
   }
 
   // Blindly enable / disable collisions between particles.
-  ShouldCollideParticleParticle(): boolean {
+  public ShouldCollideParticleParticle(): boolean {
     return this.m_enableParticleParticleCollisions;
   }
 }
@@ -53,10 +53,10 @@ export class ParticleCollisionFilter extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
       const shape = new box2d.b2ChainShape();
       const vertices: box2d.b2Vec2[] = [
-      	new box2d.b2Vec2(-ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
-      	new box2d.b2Vec2(ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
-      	new box2d.b2Vec2(ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
-      	new box2d.b2Vec2(-ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+        new box2d.b2Vec2(-ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+        new box2d.b2Vec2(ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+        new box2d.b2Vec2(ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+        new box2d.b2Vec2(-ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
       ];
       shape.CreateLoop(vertices);
       const def = new box2d.b2FixtureDef();
@@ -73,7 +73,7 @@ export class ParticleCollisionFilter extends testbed.Test {
       // b2PolygonShape shape;
       const shape = new box2d.b2PolygonShape();
       // shape.SetAsBox(1.5f, 1.5f, b2Vec2(kBoxSizeHalf, kBoxSizeHalf + kOffset), 0.0f);
-      shape.SetAsBox(1.5, 1.5, new box2d.b2Vec2(ParticleCollisionFilter.kBoxSizeHalf, ParticleCollisionFilter.kBoxSizeHalf + ParticleCollisionFilter.kOffset), 0.0)
+      shape.SetAsBox(1.5, 1.5, new box2d.b2Vec2(ParticleCollisionFilter.kBoxSizeHalf, ParticleCollisionFilter.kBoxSizeHalf + ParticleCollisionFilter.kOffset), 0.0);
       // b2ParticleGroupDef pd;
       const pd = new box2d.b2ParticleGroupDef();
       // pd.shape = &shape;
@@ -108,7 +108,7 @@ export class ParticleCollisionFilter extends testbed.Test {
     }
   }
 
-  Step(settings: testbed.Settings): void {
+  public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
     // const int32 index = m_particleGroup.GetBufferIndex();
@@ -132,7 +132,7 @@ export class ParticleCollisionFilter extends testbed.Test {
     {
       const k_keys: string[] = [
         "Keys: (a) toggle Fixture collisions",
-        "      (s) toggle particle collisions"
+        "      (s) toggle particle collisions",
       ];
       for (let i = 0; i < k_keys.length; ++i) {
         testbed.g_debugDraw.DrawString(5, this.m_textLine, k_keys[i]);
@@ -141,12 +141,12 @@ export class ParticleCollisionFilter extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
-      case 'a':
+      case "a":
         this.ToggleFixtureCollisions();
         break;
-      case 's':
+      case "s":
         this.ToggleParticleCollisions();
         break;
       default:
@@ -155,24 +155,24 @@ export class ParticleCollisionFilter extends testbed.Test {
     }
   }
 
-  ToggleFixtureCollisions(): void {
+  public ToggleFixtureCollisions(): void {
     this.m_contactDisabler.m_enableFixtureParticleCollisions = !this.m_contactDisabler.m_enableFixtureParticleCollisions;
   }
 
-  ToggleParticleCollisions(): void {
+  public ToggleParticleCollisions(): void {
     this.m_contactDisabler.m_enableParticleParticleCollisions = !this.m_contactDisabler.m_enableParticleParticleCollisions;
   }
 
-  m_contactDisabler: ParticleContactDisabler = new ParticleContactDisabler();
-  m_particleGroup: box2d.b2ParticleGroup;
+  public m_contactDisabler: ParticleContactDisabler = new ParticleContactDisabler();
+  public m_particleGroup: box2d.b2ParticleGroup;
 
-  static readonly kBoxSize = 10.0;
-  static readonly kBoxSizeHalf = ParticleCollisionFilter.kBoxSize / 2;
-  static readonly kOffset = 20.0;
-  static readonly kParticlesContainerSize = ParticleCollisionFilter.kOffset + 0.5;
-  static readonly kSpeedup = 8.0;
+  public static readonly kBoxSize = 10.0;
+  public static readonly kBoxSizeHalf = ParticleCollisionFilter.kBoxSize / 2;
+  public static readonly kOffset = 20.0;
+  public static readonly kParticlesContainerSize = ParticleCollisionFilter.kOffset + 0.5;
+  public static readonly kSpeedup = 8.0;
 
-  static Create() {
+  public static Create() {
     return new ParticleCollisionFilter();
   }
 }

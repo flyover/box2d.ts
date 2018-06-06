@@ -25,37 +25,37 @@ export class DrawingParticles extends testbed.Test {
   /**
    * Set bit 31 to distiguish these values from particle flags.
    */
-  static readonly Parameters = {
+  public static readonly Parameters = {
     e_parameterBegin: (1 << 31), // Start of this parameter namespace.
     e_parameterMove: (1 << 31) | (1 << 0),
     e_parameterRigid: (1 << 31) | (1 << 1),
     e_parameterRigidBarrier: (1 << 31) | (1 << 2),
     e_parameterElasticBarrier: (1 << 31) | (1 << 3),
     e_parameterSpringBarrier: (1 << 31) | (1 << 4),
-    e_parameterRepulsive: (1 << 31) | (1 << 5)
+    e_parameterRepulsive: (1 << 31) | (1 << 5),
   };
 
-  m_lastGroup: box2d.b2ParticleGroup;
-  m_drawing = true;
-  m_particleFlags = 0;
-  m_groupFlags = 0;
-  m_colorIndex = 0;
+  public m_lastGroup: box2d.b2ParticleGroup | null;
+  public m_drawing = true;
+  public m_particleFlags = 0;
+  public m_groupFlags = 0;
+  public m_colorIndex = 0;
 
-  static readonly k_paramValues = [
+  public static readonly k_paramValues = [
     new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_zombieParticle, testbed.ParticleParameter.k_DefaultOptions, "erase"),
     new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterMove, testbed.ParticleParameter.k_DefaultOptions, "move"),
     new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRigid, testbed.ParticleParameter.k_DefaultOptions, "rigid"),
     new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRigidBarrier, testbed.ParticleParameter.k_DefaultOptions, "rigid barrier"),
     new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterElasticBarrier, testbed.ParticleParameter.k_DefaultOptions, "elastic barrier"),
     new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterSpringBarrier, testbed.ParticleParameter.k_DefaultOptions, "spring barrier"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRepulsive, testbed.ParticleParameter.k_DefaultOptions, "repulsive wall")
+    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRepulsive, testbed.ParticleParameter.k_DefaultOptions, "repulsive wall"),
   ];
 
-  static readonly k_paramDef = [
+  public static readonly k_paramDef = [
     new testbed.ParticleParameter.Definition(testbed.ParticleParameter.k_particleTypes),
-    new testbed.ParticleParameter.Definition(DrawingParticles.k_paramValues)
+    new testbed.ParticleParameter.Definition(DrawingParticles.k_paramValues),
   ];
-  static readonly k_paramDefCount = DrawingParticles.k_paramDef.length;
+  public static readonly k_paramDefCount = DrawingParticles.k_paramDef.length;
 
   constructor() {
     super();
@@ -70,7 +70,7 @@ export class DrawingParticles extends testbed.Test {
           new box2d.b2Vec2(-4, -2),
           new box2d.b2Vec2(4, -2),
           new box2d.b2Vec2(4, 0),
-          new box2d.b2Vec2(-4, 0)
+          new box2d.b2Vec2(-4, 0),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -82,7 +82,7 @@ export class DrawingParticles extends testbed.Test {
           new box2d.b2Vec2(-4, -2),
           new box2d.b2Vec2(-2, -2),
           new box2d.b2Vec2(-2, 6),
-          new box2d.b2Vec2(-4, 6)
+          new box2d.b2Vec2(-4, 6),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -94,7 +94,7 @@ export class DrawingParticles extends testbed.Test {
           new box2d.b2Vec2(2, -2),
           new box2d.b2Vec2(4, -2),
           new box2d.b2Vec2(4, 6),
-          new box2d.b2Vec2(2, 6)
+          new box2d.b2Vec2(2, 6),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -106,7 +106,7 @@ export class DrawingParticles extends testbed.Test {
           new box2d.b2Vec2(-4, 4),
           new box2d.b2Vec2(4, 4),
           new box2d.b2Vec2(4, 6),
-          new box2d.b2Vec2(-4, 6)
+          new box2d.b2Vec2(-4, 6),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -128,7 +128,7 @@ export class DrawingParticles extends testbed.Test {
 
   // Determine the current particle parameter from the drawing state and
   // group flags.
-  DetermineParticleParameter() {
+  public DetermineParticleParameter() {
     if (this.m_drawing) {
       if (this.m_groupFlags === (box2d.b2ParticleGroupFlag.b2_rigidParticleGroup | box2d.b2ParticleGroupFlag.b2_solidParticleGroup)) {
         return DrawingParticles.Parameters.e_parameterRigid;
@@ -150,7 +150,7 @@ export class DrawingParticles extends testbed.Test {
     return DrawingParticles.Parameters.e_parameterMove;
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     this.m_drawing = key !== "x";
     this.m_particleFlags = 0;
     this.m_groupFlags = 0;
@@ -209,7 +209,7 @@ export class DrawingParticles extends testbed.Test {
     testbed.Main.SetParticleParameterValue(this.DetermineParticleParameter());
   }
 
-  MouseMove(p: box2d.b2Vec2) {
+  public MouseMove(p: box2d.b2Vec2) {
     super.MouseMove(p);
     if (this.m_drawing) {
       const shape = new box2d.b2CircleShape();
@@ -240,19 +240,19 @@ export class DrawingParticles extends testbed.Test {
     }
   }
 
-  MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: box2d.b2Vec2) {
     super.MouseUp(p);
     this.m_lastGroup = null;
   }
 
-  ParticleGroupDestroyed(group: box2d.b2ParticleGroup) {
+  public ParticleGroupDestroyed(group: box2d.b2ParticleGroup) {
     super.ParticleGroupDestroyed(group);
     if (group === this.m_lastGroup) {
       this.m_lastGroup = null;
     }
   }
 
-  SplitParticleGroups() {
+  public SplitParticleGroups() {
     for (let group = this.m_particleSystem.GetParticleGroupList(); group; group = group.GetNext()) {
       if (group !== this.m_lastGroup &&
         (group.GetGroupFlags() & box2d.b2ParticleGroupFlag.b2_rigidParticleGroup) &&
@@ -264,7 +264,7 @@ export class DrawingParticles extends testbed.Test {
     }
   }
 
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     const parameterValue = testbed.Main.GetParticleParameterValue();
     this.m_drawing = (parameterValue & DrawingParticles.Parameters.e_parameterMove) !== DrawingParticles.Parameters.e_parameterMove;
     if (this.m_drawing) {
@@ -321,11 +321,11 @@ export class DrawingParticles extends testbed.Test {
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }
 
-  GetDefaultViewZoom() {
+  public GetDefaultViewZoom() {
     return 0.1;
   }
 
-  static Create() {
+  public static Create() {
     return new DrawingParticles();
   }
 }

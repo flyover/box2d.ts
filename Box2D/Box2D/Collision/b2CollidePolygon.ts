@@ -91,10 +91,11 @@ function b2FindMaxSeparation(edgeIndex: number[], poly1: b2PolygonShape, xf1: b2
 
   // Perform a local search for the best edge normal.
   while (true) {
-    if (increment === -1)
+    if (increment === -1) {
       edge = (bestEdge + count1 - 1) % count1;
-    else
+    } else {
       edge = (bestEdge + 1) % count1;
+    }
 
     s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
 
@@ -175,13 +176,15 @@ export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, x
 
   const edgeA: number[] = b2CollidePolygons_s_edgeA; edgeA[0] = 0;
   const separationA: number = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
-  if (separationA > totalRadius)
+  if (separationA > totalRadius) {
     return;
+  }
 
   const edgeB: number[] = b2CollidePolygons_s_edgeB; edgeB[0] = 0;
   const separationB: number = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
-  if (separationB > totalRadius)
+  if (separationB > totalRadius) {
     return;
+  }
 
   let poly1: b2PolygonShape; // reference polygon
   let poly2: b2PolygonShape; // incident polygon
@@ -249,8 +252,9 @@ export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, x
   const ntangent: b2Vec2 = b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
   np = b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
 
-  if (np < 2)
+  if (np < 2) {
     return;
+  }
 
   // Clip to negative box side 1
   np = b2ClipSegmentToLine(clipPoints2, clipPoints1, tangent, sideOffset2, iv2);

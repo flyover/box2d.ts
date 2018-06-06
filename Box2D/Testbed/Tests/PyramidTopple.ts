@@ -60,7 +60,7 @@ export class PyramidTopple extends testbed.Test {
           add_domino(world, box2d.b2Vec2.AddVV(offset, new box2d.b2Vec2(0.5 * (WIDTH - HEIGHT), HEIGHT + WIDTH), new box2d.b2Vec2()), false);
         }
 
-        if (j != n - i - 1) {
+        if (j !== n - i - 1) {
           add_domino(world, box2d.b2Vec2.AddVV(offset, new box2d.b2Vec2(HEIGHT * 0.75, (HEIGHT + 3 * WIDTH) / 2), new box2d.b2Vec2()), true);
         } else {
           add_domino(world, box2d.b2Vec2.AddVV(offset, new box2d.b2Vec2(0.5 * (HEIGHT - WIDTH), HEIGHT + WIDTH), new box2d.b2Vec2()), false);
@@ -69,11 +69,11 @@ export class PyramidTopple extends testbed.Test {
     }
   }
 
-  GetDefaultViewZoom(): number {
+  public GetDefaultViewZoom(): number {
     return 10.0;
   }
 
-  static Create() {
+  public static Create() {
     return new PyramidTopple();
   }
 }

@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
@@ -35,7 +36,7 @@ export enum b2BodyType {
   b2_unknown = -1,
   b2_staticBody = 0,
   b2_kinematicBody = 1,
-  b2_dynamicBody = 2
+  b2_dynamicBody = 2,
 
   // TODO_ERIN
   // b2_bulletBody = 3
@@ -104,13 +105,13 @@ export class b2BodyDef implements b2IBodyDef {
 
   /// The world position of the body. Avoid creating bodies at the origin
   /// since this can lead to many overlapping shapes.
-  public position: b2Vec2 = new b2Vec2(0, 0);
+  public readonly position: b2Vec2 = new b2Vec2(0, 0);
 
   /// The world angle of the body in radians.
   public angle: number = 0;
 
   /// The linear velocity of the body's origin in world co-ordinates.
-  public linearVelocity: b2Vec2 = new b2Vec2(0, 0);
+  public readonly linearVelocity: b2Vec2 = new b2Vec2(0, 0);
 
   /// The angular velocity of the body.
   public angularVelocity: number = 0;
@@ -208,10 +209,6 @@ export class b2Body {
   // #endif
 
   constructor(bd: b2IBodyDef, world: b2World) {
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-
     ///b2Assert(bd.position.IsValid());
     ///b2Assert(bd.linearVelocity.IsValid());
     ///b2Assert(b2IsValid(bd.angle));
@@ -220,16 +217,16 @@ export class b2Body {
     ///b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
     ///b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
 
-    this.m_bulletFlag = maybe(bd.bullet, false);
-    this.m_fixedRotationFlag = maybe(bd.fixedRotation, false);
-    this.m_autoSleepFlag = maybe(bd.allowSleep, true);
-    this.m_awakeFlag = maybe(bd.awake, true);
-    this.m_activeFlag = maybe(bd.active, true);
+    this.m_bulletFlag = b2Maybe(bd.bullet, false);
+    this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
+    this.m_autoSleepFlag = b2Maybe(bd.allowSleep, true);
+    this.m_awakeFlag = b2Maybe(bd.awake, true);
+    this.m_activeFlag = b2Maybe(bd.active, true);
 
     this.m_world = world;
 
-    this.m_xf.p.Copy(maybe(bd.position, b2Vec2.ZERO));
-    this.m_xf.q.SetAngle(maybe(bd.angle, 0));
+    this.m_xf.p.Copy(b2Maybe(bd.position, b2Vec2.ZERO));
+    this.m_xf.q.SetAngle(b2Maybe(bd.angle, 0));
     // #if B2_ENABLE_PARTICLE
     this.m_xf0.Copy(this.m_xf);
     // #endif
@@ -240,19 +237,19 @@ export class b2Body {
     this.m_sweep.a0 = this.m_sweep.a = this.m_xf.q.GetAngle();
     this.m_sweep.alpha0 = 0;
 
-    this.m_linearVelocity.Copy(maybe(bd.linearVelocity, b2Vec2.ZERO));
-    this.m_angularVelocity = maybe(bd.angularVelocity, 0);
+    this.m_linearVelocity.Copy(b2Maybe(bd.linearVelocity, b2Vec2.ZERO));
+    this.m_angularVelocity = b2Maybe(bd.angularVelocity, 0);
 
-    this.m_linearDamping = maybe(bd.linearDamping, 0);
-    this.m_angularDamping = maybe(bd.angularDamping, 0);
-    this.m_gravityScale = maybe(bd.gravityScale, 1);
+    this.m_linearDamping = b2Maybe(bd.linearDamping, 0);
+    this.m_angularDamping = b2Maybe(bd.angularDamping, 0);
+    this.m_gravityScale = b2Maybe(bd.gravityScale, 1);
 
     this.m_force.SetZero();
     this.m_torque = 0;
 
     this.m_sleepTime = 0;
 
-    this.m_type = maybe(bd.type, b2BodyType.b2_staticBody);
+    this.m_type = b2Maybe(bd.type, b2BodyType.b2_staticBody);
 
     if (bd.type === b2BodyType.b2_dynamicBody) {
       this.m_mass = 1;
@@ -292,10 +289,7 @@ export class b2Body {
   /// @param def the fixture definition.
   /// @warning This function is locked during callbacks.
   public CreateFixtureDef(def: b2IFixtureDef): b2Fixture {
-    ///b2Assert(!this.m_world.IsLocked());
-    if (this.m_world.IsLocked()) {
-      return null;
-    }
+    if (this.m_world.IsLocked()) { throw new Error(); }
 
     const fixture: b2Fixture = new b2Fixture(def, this);
     fixture.Create(/*this,*/ def);
@@ -346,10 +340,7 @@ export class b2Body {
   /// @param fixture the fixture to be removed.
   /// @warning This function is locked during callbacks.
   public DestroyFixture(fixture: b2Fixture): void {
-    ///b2Assert(!this.m_world.IsLocked());
-    if (this.m_world.IsLocked()) {
-      return;
-    }
+    if (this.m_world.IsLocked()) { throw new Error(); }
 
     ///b2Assert(fixture.m_body === this);
 
@@ -360,10 +351,11 @@ export class b2Body {
     // let found: boolean = false;
     while (node !== null) {
       if (node === fixture) {
-        if (ppF)
+        if (ppF) {
           ppF.m_next = fixture.m_next;
-        else
+        } else {
           this.m_fixtureList = fixture.m_next;
+        }
         // found = true;
         break;
       }
@@ -416,10 +408,7 @@ export class b2Body {
   }
 
   public SetTransformXY(x: number, y: number, angle: number): void {
-    ///b2Assert(!this.m_world.IsLocked());
-    if (this.m_world.IsLocked()) {
-      return;
-    }
+    if (this.m_world.IsLocked()) { throw new Error(); }
 
     this.m_xf.q.SetAngle(angle);
     this.m_xf.p.Set(x, y);
@@ -692,10 +681,7 @@ export class b2Body {
   /// @param massData the mass properties.
   private static SetMassData_s_oldCenter: b2Vec2 = new b2Vec2();
   public SetMassData(massData: b2MassData): void {
-    ///b2Assert(!this.m_world.IsLocked());
-    if (this.m_world.IsLocked()) {
-      return;
-    }
+    if (this.m_world.IsLocked()) { throw new Error(); }
 
     if (this.m_type !== b2BodyType.b2_dynamicBody) {
       return;
@@ -871,10 +857,7 @@ export class b2Body {
 
   /// Set the type of this body. This may alter the mass and velocity.
   public SetType(type: b2BodyType): void {
-    ///b2Assert(!this.m_world.IsLocked());
-    if (this.m_world.IsLocked()) {
-      return;
-    }
+    if (this.m_world.IsLocked()) { throw new Error(); }
 
     if (this.m_type === type) {
       return;
@@ -984,7 +967,7 @@ export class b2Body {
   /// An inactive body is still owned by a b2World object and remains
   /// in the body list.
   public SetActive(flag: boolean): void {
-    ///b2Assert(!this.m_world.IsLocked());
+    if (this.m_world.IsLocked()) { throw new Error(); }
 
     if (flag === this.IsActive()) {
       return;
@@ -1175,7 +1158,7 @@ export class b2Body {
   }
 
   // #if B2_ENABLE_CONTROLLER
-  public GetControllerList(): b2ControllerEdge {
+  public GetControllerList(): b2ControllerEdge | null {
     return this.m_controllerList;
   }
 

@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+import { b2Maybe } from "../../Common/b2Settings";
 import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -33,9 +34,9 @@ export interface b2IFrictionJointDef extends b2IJointDef {
 
 /// Friction joint definition.
 export class b2FrictionJointDef extends b2JointDef implements b2IFrictionJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly localAnchorA: b2Vec2 = new b2Vec2();
 
-  public localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly localAnchorB: b2Vec2 = new b2Vec2();
 
   public maxForce: number = 0;
 
@@ -54,11 +55,11 @@ export class b2FrictionJointDef extends b2JointDef implements b2IFrictionJointDe
 }
 
 export class b2FrictionJoint extends b2Joint {
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
 
   // Solver shared
-  public m_linearImpulse: b2Vec2 = new b2Vec2();
+  public readonly m_linearImpulse: b2Vec2 = new b2Vec2();
   public m_angularImpulse: number = 0;
   public m_maxForce: number = 0;
   public m_maxTorque: number = 0;
@@ -66,36 +67,32 @@ export class b2FrictionJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_linearMass: b2Mat22 = new b2Mat22();
+  public readonly m_linearMass: b2Mat22 = new b2Mat22();
   public m_angularMass: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
-  public m_K: b2Mat22 = new b2Mat22();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_K: b2Mat22 = new b2Mat22();
 
   constructor(def: b2IFrictionJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
     this.m_localAnchorA.Copy(def.localAnchorA);
     this.m_localAnchorB.Copy(def.localAnchorB);
 
     this.m_linearImpulse.SetZero();
-    this.m_maxForce = maybe(def.maxForce, 0);
-    this.m_maxTorque = maybe(def.maxTorque, 0);
+    this.m_maxForce = b2Maybe(def.maxForce, 0);
+    this.m_maxTorque = b2Maybe(def.maxTorque, 0);
 
     this.m_linearMass.SetZero();
   }

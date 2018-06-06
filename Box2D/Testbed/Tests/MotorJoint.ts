@@ -20,28 +20,28 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class MotorJoint extends testbed.Test {
-  m_joint: box2d.b2MotorJoint;
-  m_time = 0;
-  m_go = false;
+  public m_joint: box2d.b2MotorJoint;
+  public m_time = 0;
+  public m_go = false;
 
   constructor() {
     super();
 
     let ground = null;
-    
+
     {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2EdgeShape();
       shape.Set(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
-  
+
       const fd = new box2d.b2FixtureDef();
       fd.shape = shape;
-  
+
       ground.CreateFixture(fd);
     }
-  
+
     // Define motorized body
     {
       const bd = new box2d.b2BodyDef();
@@ -49,28 +49,28 @@ export class MotorJoint extends testbed.Test {
       bd.position.Set(0.0, 8.0);
       /*b2Body*/
       const body = this.m_world.CreateBody(bd);
-  
+
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(2.0, 0.5);
-  
+
       const fd = new box2d.b2FixtureDef();
       fd.shape = shape;
       fd.friction = 0.6;
       fd.density = 2.0;
       body.CreateFixture(fd);
-  
+
       const mjd = new box2d.b2MotorJointDef();
       mjd.Initialize(ground, body);
       mjd.maxForce = 1000.0;
       mjd.maxTorque = 1000.0;
       this.m_joint = this.m_world.CreateJoint(mjd);
     }
-  
+
     this.m_go = false;
-    this.m_time = 0.0;  
+    this.m_time = 0.0;
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "s":
         this.m_go = !this.m_go;
@@ -82,20 +82,20 @@ export class MotorJoint extends testbed.Test {
     if (this.m_go && settings.hz > 0.0) {
       this.m_time += 1.0 / settings.hz;
     }
-  
+
     /*b2Vec2*/
     const linearOffset = new box2d.b2Vec2();
     linearOffset.x = 6.0 * box2d.b2Sin(2.0 * this.m_time);
     linearOffset.y = 8.0 + 4.0 * box2d.b2Sin(1.0 * this.m_time);
-  
+
     /*float32*/
     const angularOffset = 4.0 * this.m_time;
-  
+
     this.m_joint.SetLinearOffset(linearOffset);
     this.m_joint.SetAngularOffset(angularOffset);
-  
+
     testbed.g_debugDraw.DrawPoint(linearOffset, 4.0, new box2d.b2Color(0.9, 0.9, 0.9));
-  
+
     super.Step(settings);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (s) pause");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;

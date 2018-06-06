@@ -20,16 +20,16 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class CollisionFiltering extends testbed.Test {
-  static readonly k_smallGroup = 1;
-  static readonly k_largeGroup = -1;
-  static readonly k_defaultCategory = 0x0001;
-  static readonly k_triangleCategory = 0x0002;
-  static readonly k_boxCategory = 0x0004;
-  static readonly k_circleCategory = 0x0008;
-  static readonly k_triangleMask = 0xFFFF;
-  static readonly k_boxMask = 0xFFFF ^ CollisionFiltering.k_triangleCategory;
-  static readonly k_circleMask = 0xFFFF;
-  
+  public static readonly k_smallGroup = 1;
+  public static readonly k_largeGroup = -1;
+  public static readonly k_defaultCategory = 0x0001;
+  public static readonly k_triangleCategory = 0x0002;
+  public static readonly k_boxCategory = 0x0004;
+  public static readonly k_circleCategory = 0x0008;
+  public static readonly k_triangleMask = 0xFFFF;
+  public static readonly k_boxMask = 0xFFFF ^ CollisionFiltering.k_triangleCategory;
+  public static readonly k_circleMask = 0xFFFF;
+
   constructor() {
     super();
 

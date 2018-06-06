@@ -23,9 +23,9 @@ import * as testbed from "../Testbed";
 import { Soup } from "./Soup";
 
 export class SoupStirrer extends Soup {
-  m_stirrer: box2d.b2Body;
-  m_joint: box2d.b2Joint;
-  m_oscillationOffset = 0.0;
+  public m_stirrer: box2d.b2Body;
+  public m_joint: box2d.b2Joint | null = null;
+  public m_oscillationOffset = 0.0;
 
   constructor() {
     super();
@@ -52,7 +52,7 @@ export class SoupStirrer extends Soup {
     this.CreateJoint();
   }
 
-  CreateJoint() {
+  public CreateJoint() {
     box2d.b2Assert(!this.m_joint);
     // Create a prismatic joint and connect to the ground, and have it
     // slide along the x axis.
@@ -70,7 +70,7 @@ export class SoupStirrer extends Soup {
    * Enable the joint if it's disabled, disable it if it's
    * enabled.
    */
-  ToggleJoint() {
+  public ToggleJoint() {
     if (this.m_joint) {
       this.m_world.DestroyJoint(this.m_joint);
       this.m_joint = null;
@@ -83,7 +83,7 @@ export class SoupStirrer extends Soup {
    * Press "t" to enable / disable the joint restricting the
    * stirrer's movement.
    */
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "t":
         this.ToggleJoint();
@@ -98,7 +98,7 @@ export class SoupStirrer extends Soup {
    * Click the soup to toggle between enabling / disabling the
    * joint.
    */
-  MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: box2d.b2Vec2) {
     super.MouseUp(p);
     if (this.InSoup(p)) {
       this.ToggleJoint();
@@ -108,7 +108,7 @@ export class SoupStirrer extends Soup {
   /**
    * Determine whether a point is in the soup.
    */
-  InSoup(pos: box2d.b2Vec2) {
+  public InSoup(pos: box2d.b2Vec2) {
     // The soup dimensions are from the container initialization in the
     // Soup test.
     return pos.y > -1.0 && pos.y < 2.0 && pos.x > -3.0 && pos.x < 3.0;
@@ -117,7 +117,7 @@ export class SoupStirrer extends Soup {
   /**
    * Apply a force to the stirrer.
    */
-  Step(settings: testbed.Settings) {
+  public Step(settings: testbed.Settings) {
     // Magnitude of the force applied to the body.
     const k_forceMagnitude = 10.0;
     // How often the force vector rotates.
@@ -143,7 +143,7 @@ export class SoupStirrer extends Soup {
     super.Step(settings);
   }
 
-  static Create() {
+  public static Create() {
     return new SoupStirrer();
   }
 }

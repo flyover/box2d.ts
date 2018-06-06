@@ -20,17 +20,16 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class VerticalStack extends testbed.Test {
-  static e_columnCount = 1;
-  static e_rowCount = 15;
+  public static readonly e_columnCount = 1;
+  public static readonly e_rowCount = 15;
 
-  m_bullet: box2d.b2Body;
-  m_bodies: box2d.b2Body[];
-  m_indices: number[];
+  public m_bullet: box2d.b2Body | null = null;
+  public m_bodies: box2d.b2Body[];
+  public m_indices: number[];
 
   constructor() {
     super();
 
-    this.m_bullet = null;
     this.m_bodies = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
     this.m_indices = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
 
@@ -79,31 +78,31 @@ export class VerticalStack extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case ",":
         if (this.m_bullet) {
           this.m_world.DestroyBody(this.m_bullet);
           this.m_bullet = null;
         }
-  
+
         {
           const shape = new box2d.b2CircleShape();
           shape.m_radius = 0.25;
-  
+
           const fd = new box2d.b2FixtureDef();
           fd.shape = shape;
           fd.density = 20.0;
           fd.restitution = 0.05;
-  
+
           const bd = new box2d.b2BodyDef();
           bd.type = box2d.b2BodyType.b2_dynamicBody;
           bd.bullet = true;
           bd.position.Set(-31.0, 5.0);
-  
+
           this.m_bullet = this.m_world.CreateBody(bd);
           this.m_bullet.CreateFixture(fd);
-  
+
           this.m_bullet.SetLinearVelocity(new box2d.b2Vec2(400.0, 0.0));
         }
         break;

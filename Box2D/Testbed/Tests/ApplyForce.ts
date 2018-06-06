@@ -20,12 +20,10 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class ApplyForce extends testbed.Test {
-  m_body: box2d.b2Body;
+  public m_body: box2d.b2Body;
 
   constructor() {
     super();
-
-    this.m_body = null;
 
     this.m_world.SetGravity(new box2d.b2Vec2(0.0, 0.0));
 
@@ -167,7 +165,7 @@ export class ApplyForce extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "w":
         {
@@ -178,20 +176,20 @@ export class ApplyForce extends testbed.Test {
           this.m_body.ApplyForce(f, p);
         }
         break;
-  
+
       case "a":
         {
           this.m_body.ApplyTorque(50.0);
         }
         break;
-  
+
       case "d":
         {
           this.m_body.ApplyTorque(-50.0);
         }
         break;
     }
-  
+
     super.Keyboard(key);
   }
 

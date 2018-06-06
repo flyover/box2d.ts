@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_pi, b2_linearSlop } from "../../Common/b2Settings";
+import { b2_pi, b2_linearSlop, b2Maybe } from "../../Common/b2Settings";
 import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -47,11 +47,11 @@ export interface b2IWheelJointDef extends b2IJointDef {
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
 export class b2WheelJointDef extends b2JointDef implements b2IWheelJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2(0, 0);
+  public readonly localAnchorA: b2Vec2 = new b2Vec2(0, 0);
 
-  public localAnchorB: b2Vec2 = new b2Vec2(0, 0);
+  public readonly localAnchorB: b2Vec2 = new b2Vec2(0, 0);
 
-  public localAxisA: b2Vec2 = new b2Vec2(1, 0);
+  public readonly localAxisA: b2Vec2 = new b2Vec2(1, 0);
 
   public enableMotor = false;
 
@@ -81,10 +81,10 @@ export class b2WheelJoint extends b2Joint {
   public m_dampingRatio: number = 0;
 
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
-  public m_localXAxisA: b2Vec2 = new b2Vec2();
-  public m_localYAxisA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localXAxisA: b2Vec2 = new b2Vec2();
+  public readonly m_localYAxisA: b2Vec2 = new b2Vec2();
 
   public m_impulse: number = 0;
   public m_motorImpulse: number = 0;
@@ -97,15 +97,15 @@ export class b2WheelJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
 
-  public m_ax: b2Vec2 = new b2Vec2();
-  public m_ay: b2Vec2 = new b2Vec2();
+  public readonly m_ax: b2Vec2 = new b2Vec2();
+  public readonly m_ay: b2Vec2 = new b2Vec2();
   public m_sAx: number = 0;
   public m_sBx: number = 0;
   public m_sAy: number = 0;
@@ -118,31 +118,27 @@ export class b2WheelJoint extends b2Joint {
   public m_bias: number = 0;
   public m_gamma: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IWheelJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_frequencyHz = maybe(def.frequencyHz, 2);
-    this.m_dampingRatio = maybe(def.dampingRatio, 0.7);
+    this.m_frequencyHz = b2Maybe(def.frequencyHz, 2);
+    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0.7);
 
-    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
-    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
-    this.m_localXAxisA.Copy(maybe(def.localAxisA, b2Vec2.UNITX));
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_localXAxisA.Copy(b2Maybe(def.localAxisA, b2Vec2.UNITX));
     b2Vec2.CrossOneV(this.m_localXAxisA, this.m_localYAxisA);
 
-    this.m_maxMotorTorque = maybe(def.maxMotorTorque, 0);
-    this.m_motorSpeed = maybe(def.motorSpeed, 0);
-    this.m_enableMotor = maybe(def.enableMotor, false);
+    this.m_maxMotorTorque = b2Maybe(def.maxMotorTorque, 0);
+    this.m_motorSpeed = b2Maybe(def.motorSpeed, 0);
+    this.m_enableMotor = b2Maybe(def.enableMotor, false);
 
     this.m_ax.SetZero();
     this.m_ay.SetZero();

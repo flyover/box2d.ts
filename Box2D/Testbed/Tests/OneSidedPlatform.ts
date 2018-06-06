@@ -20,12 +20,12 @@ import * as box2d from "../../Box2D/Box2D";
 import * as testbed from "../Testbed";
 
 export class OneSidedPlatform extends testbed.Test {
-  m_radius = 0.0;
-  m_top = 0.0;
-  m_bottom = 0.0;
-  m_state = OneSidedPlatform.State.e_unknown;
-  m_platform: box2d.b2Fixture = null;
-  m_character: box2d.b2Fixture = null;
+  public m_radius = 0.0;
+  public m_top = 0.0;
+  public m_bottom = 0.0;
+  public m_state = OneSidedPlatform.State.e_unknown;
+  public m_platform: box2d.b2Fixture;
+  public m_character: box2d.b2Fixture;
 
   constructor() {
     super();
@@ -72,22 +72,22 @@ export class OneSidedPlatform extends testbed.Test {
     }
   }
 
-  PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
+  public PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
     super.PreSolve(contact, oldManifold);
-  
+
     const fixtureA = contact.GetFixtureA();
     const fixtureB = contact.GetFixtureB();
-  
+
     if (fixtureA !== this.m_platform && fixtureA !== this.m_character) {
       return;
     }
-  
+
     if (fixtureB !== this.m_platform && fixtureB !== this.m_character) {
       return;
     }
-  
+
     const position = this.m_character.GetBody().GetPosition();
-  
+
     if (position.y < this.m_top + this.m_radius - 3.0 * box2d.b2_linearSlop) {
       contact.SetEnabled(false);
     }
@@ -106,6 +106,6 @@ export namespace OneSidedPlatform {
   export enum State {
     e_unknown = 0,
     e_above = 1,
-    e_below = 2
+    e_below = 2,
   }
 }
