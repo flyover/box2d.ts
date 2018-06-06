@@ -82,6 +82,15 @@ export * from "./Dynamics/Joints/b2RopeJoint";
 export * from "./Dynamics/Joints/b2WeldJoint";
 export * from "./Dynamics/Joints/b2WheelJoint";
 
+// #if B2_ENABLE_CONTROLLER
+export * from "./Controllers/b2Controller";
+export * from "./Controllers/b2BuoyancyController";
+export * from "./Controllers/b2ConstantAccelController";
+export * from "./Controllers/b2ConstantForceController";
+export * from "./Controllers/b2GravityController";
+export * from "./Controllers/b2TensorDampingController";
+// #endif
+
 // #if B2_ENABLE_PARTICLE
 export * from "./Particle/b2Particle";
 export * from "./Particle/b2ParticleGroup";

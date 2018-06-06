@@ -19,7 +19,10 @@
 // #if B2_ENABLE_CONTROLLER
 
 import { b2Controller, b2ControllerEdge } from "./b2Controller";
-import { b2Vec2, b2_epsilon, b2Color, b2TimeStep, b2Draw } from "../../../Box2D/Box2D/Box2D";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2TimeStep } from "../Dynamics/b2TimeStep";
+import { b2_epsilon } from "../Common/b2Settings";
+import { b2Draw, b2Color } from "../Common/b2Draw";
 
 /**
  * Calculates buoyancy forces for fluids in the form of a half

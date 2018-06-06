@@ -18,8 +18,11 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Vec2, b2_epsilon, b2Color, b2TimeStep, b2Draw, b2Sqrt } from "../../../Box2D/Box2D/Box2D";
 import { b2Controller } from "./b2Controller";
+import { b2TimeStep } from "../Dynamics/b2TimeStep";
+import { b2_epsilon } from "../Common/b2Settings";
+import { b2Sqrt, b2Vec2 } from "../Common/b2Math";
+import { b2Draw } from "../Common/b2Draw";
 
 /**
  * Applies simplified gravity between every pair of bodies
@@ -43,7 +46,7 @@ export class b2GravityController extends b2Controller {
         const body1 = i.body;
         const p1 = body1.GetWorldCenter();
         const mass1 = body1.GetMass();
-        for (let j = this.m_bodyList; j !== i; j = j.nextBody) {
+        for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
           const body2 = j.body;
           const p2 = body2.GetWorldCenter();
           const mass2 = body2.GetMass();
@@ -68,7 +71,7 @@ export class b2GravityController extends b2Controller {
         const body1 = i.body;
         const p1 = body1.GetWorldCenter();
         const mass1 = body1.GetMass();
-        for (let j = this.m_bodyList; j !== i; j = j.nextBody) {
+        for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
           const body2 = j.body;
           const p2 = body2.GetWorldCenter();
           const mass2 = body2.GetMass();

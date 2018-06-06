@@ -18,7 +18,9 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2TimeStep, b2Draw, b2Body } from "../../../Box2D/Box2D/Box2D";
+import { b2Body } from "../Dynamics/b2Body";
+import { b2TimeStep } from "../Dynamics/b2TimeStep";
+import { b2Draw } from "../Common/b2Draw";
 
 /**
  * A controller edge is used to connect bodies and controllers

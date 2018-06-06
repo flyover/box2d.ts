@@ -49,8 +49,8 @@ import { b2_maxFloat } from "../Common/b2Settings";
 import { b2CalculateParticleIterations } from "../Particle/b2Particle";
 import { b2ParticleSystemDef, b2ParticleSystem } from "../Particle/b2ParticleSystem";
 // #endif
-// #if B@_ENABLE_CONTROLLER
-import { b2Controller, b2ControllerEdge } from "../../../Contributions/Enhancements/Controllers/b2Controller";
+// #if B2_ENABLE_CONTROLLER
+import { b2Controller, b2ControllerEdge } from "../Controllers/b2Controller";
 // #endif
 
 /// The world class manages all physics entities, dynamic simulation,

@@ -18,18 +18,17 @@
 
 import * as box2d from "Box2D";
 import * as testbed from "Testbed";
-import { b2BuoyancyController } from "Contributions/Enhancements/Controllers/b2BuoyancyController";
 
 export class BuoyancyTest extends testbed.Test {
   public m_bodies: box2d.b2Body[];
-  public m_controller: b2BuoyancyController;
+  public m_controller: box2d.b2BuoyancyController;
 
   constructor() {
     super();
 
     this.m_bodies = new Array();
 
-    const bc = new b2BuoyancyController();
+    const bc = new box2d.b2BuoyancyController();
     this.m_controller = bc;
 
     bc.normal.Set(0.0, 1.0);

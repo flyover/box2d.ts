@@ -27,7 +27,7 @@ import { b2JointEdge } from "./Joints/b2Joint";
 import { b2Fixture, b2FixtureDef, b2IFixtureDef } from "./b2Fixture";
 import { b2World } from "./b2World";
 // #if B2_ENABLE_CONTROLLER
-import { b2ControllerEdge } from "../../../Contributions/Enhancements/Controllers/b2Controller";
+import { b2ControllerEdge } from "../Controllers/b2Controller";
 // #endif
 
 /// The body type.
