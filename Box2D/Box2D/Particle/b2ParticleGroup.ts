@@ -136,7 +136,7 @@ export class b2ParticleGroup {
   }
 
   public SetGroupFlags(flags: number): void {
-    ///b2Assert((flags & b2ParticleGroupFlag.b2_particleGroupInternalMask) === 0);
+    // DEBUG: b2Assert((flags & b2ParticleGroupFlag.b2_particleGroupInternalMask) === 0);
     flags |= this.m_groupFlags & b2ParticleGroupFlag.b2_particleGroupInternalMask;
     this.m_system.SetGroupFlags(this, flags);
   }

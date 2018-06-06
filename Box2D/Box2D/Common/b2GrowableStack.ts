@@ -40,7 +40,7 @@ export class b2GrowableStack<T> {
   }
 
   public Pop(): T | null {
-    ///b2Assert(this.m_count > 0);
+    // DEBUG: b2Assert(this.m_count > 0);
     this.m_count--;
     const element: T | null = this.m_stack[this.m_count];
     this.m_stack[this.m_count] = null;

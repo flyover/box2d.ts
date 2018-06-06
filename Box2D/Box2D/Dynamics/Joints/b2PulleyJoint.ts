@@ -72,7 +72,7 @@ export class b2PulleyJointDef extends b2JointDef implements b2IPulleyJointDef {
     this.lengthA = b2Vec2.DistanceVV(anchorA, groundA);
     this.lengthB = b2Vec2.DistanceVV(anchorB, groundB);
     this.ratio = r;
-    ///b2Assert(this.ratio > b2_epsilon);
+    // DEBUG: b2Assert(this.ratio > b2_epsilon);
   }
 }
 
@@ -123,7 +123,7 @@ export class b2PulleyJoint extends b2Joint {
     this.m_lengthA = b2Maybe(def.lengthA, 0);
     this.m_lengthB = b2Maybe(def.lengthB, 0);
 
-    ///b2Assert(b2Maybe(def.ratio, 1) !== 0);
+    // DEBUG: b2Assert(b2Maybe(def.ratio, 1) !== 0);
     this.m_ratio = b2Maybe(def.ratio, 1);
 
     this.m_constant = b2Maybe(def.lengthA, 0) + this.m_ratio * b2Maybe(def.lengthB, 0);

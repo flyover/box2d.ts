@@ -43,8 +43,8 @@ export class b2PolygonContact extends b2Contact {
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA: b2Shape = this.m_fixtureA.GetShape();
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    ///b2Assert(shapeA instanceof b2PolygonShape);
-    ///b2Assert(shapeB instanceof b2PolygonShape);
+    // DEBUG: b2Assert(shapeA instanceof b2PolygonShape);
+    // DEBUG: b2Assert(shapeB instanceof b2PolygonShape);
     b2CollidePolygons(
       manifold,
       shapeA as b2PolygonShape, xfA,

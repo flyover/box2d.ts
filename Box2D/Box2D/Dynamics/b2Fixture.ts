@@ -60,7 +60,7 @@ export class b2Filter implements b2IFilter {
   }
 
   public Copy(other: b2IFilter): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.categoryBits = other.categoryBits;
     this.maskBits = other.maskBits;
     this.groupIndex = other.groupIndex || 0;
@@ -324,7 +324,7 @@ export class b2Fixture {
   /// If you need a more accurate AABB, compute it using the shape and
   /// the body transform.
   public GetAABB(childIndex: number): Readonly<b2AABB> {
-    ///b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
+    // DEBUG: b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
     return this.m_proxies[childIndex].aabb;
   }
 
@@ -380,7 +380,7 @@ export class b2Fixture {
 
   public Destroy(): void {
     // The proxies must be destroyed before calling this.
-    ///b2Assert(this.m_proxyCount === 0);
+    // DEBUG: b2Assert(this.m_proxyCount === 0);
 
     // Free the proxy array.
     // int32 childCount = m_shape->GetChildCount();
@@ -392,7 +392,7 @@ export class b2Fixture {
 
   // These support body activation/deactivation.
   public CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void {
-    ///b2Assert(this.m_proxyCount === 0);
+    // DEBUG: b2Assert(this.m_proxyCount === 0);
 
     // Create proxies in the broad-phase.
     this.m_proxyCount = this.m_shape.GetChildCount();

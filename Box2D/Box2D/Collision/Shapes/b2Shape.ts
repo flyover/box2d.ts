@@ -57,7 +57,7 @@ export abstract class b2Shape {
   public abstract Clone(): b2Shape;
 
   public Copy(other: b2Shape): b2Shape {
-    ///b2Assert(this.m_type === other.m_type);
+    // DEBUG: b2Assert(this.m_type === other.m_type);
     this.m_radius = other.m_radius;
     return this;
   }

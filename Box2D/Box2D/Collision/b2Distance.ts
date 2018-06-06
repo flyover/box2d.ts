@@ -72,7 +72,7 @@ export class b2DistanceProxy {
   }
 
   public GetVertex(index: number): b2Vec2 {
-    ///b2Assert(0 <= index && index < this.m_count);
+    // DEBUG: b2Assert(0 <= index && index < this.m_count);
     return this.m_vertices[index];
   }
 }
@@ -164,7 +164,7 @@ export class b2Simplex {
   }
 
   public ReadCache(cache: b2SimplexCache, proxyA: b2DistanceProxy, transformA: b2Transform, proxyB: b2DistanceProxy, transformB: b2Transform): void {
-    ///b2Assert(0 <= cache.count && cache.count <= 3);
+    // DEBUG: b2Assert(0 <= cache.count && cache.count <= 3);
 
     // Copy data from cache.
     this.m_count = cache.count;
@@ -235,7 +235,7 @@ export class b2Simplex {
       }
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return out.SetZero();
     }
   }
@@ -243,7 +243,7 @@ export class b2Simplex {
   public GetClosestPoint(out: b2Vec2): b2Vec2 {
     switch (this.m_count) {
     case 0:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return out.SetZero();
 
     case 1:
@@ -258,7 +258,7 @@ export class b2Simplex {
       return out.SetZero();
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return out.SetZero();
     }
   }
@@ -266,7 +266,7 @@ export class b2Simplex {
   public GetWitnessPoints(pA: b2Vec2, pB: b2Vec2): void {
     switch (this.m_count) {
     case 0:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
 
     case 1:
@@ -287,7 +287,7 @@ export class b2Simplex {
       break;
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
     }
   }
@@ -295,7 +295,7 @@ export class b2Simplex {
   public GetMetric(): number {
     switch (this.m_count) {
     case 0:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return 0;
 
     case 1:
@@ -308,7 +308,7 @@ export class b2Simplex {
       return b2Vec2.CrossVV(b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Vec2.s_t0), b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Vec2.s_t1));
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return 0;
     }
   }
@@ -507,7 +507,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
       break;
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
     }
 

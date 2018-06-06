@@ -40,16 +40,16 @@ export class b2ChainAndPolygonContact extends b2Contact {
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
-    ///b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
-    ///b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
+    // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
+    // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
   }
 
   private static Evaluate_s_edge = new b2EdgeShape();
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA: b2Shape = this.m_fixtureA.GetShape();
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    ///b2Assert(shapeA instanceof b2ChainShape);
-    ///b2Assert(shapeB instanceof b2PolygonShape);
+    // DEBUG: b2Assert(shapeA instanceof b2ChainShape);
+    // DEBUG: b2Assert(shapeB instanceof b2PolygonShape);
     const chain: b2ChainShape = shapeA as b2ChainShape;
     const edge: b2EdgeShape = b2ChainAndPolygonContact.Evaluate_s_edge;
     chain.GetChildEdge(edge, this.m_indexA);

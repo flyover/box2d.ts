@@ -160,7 +160,7 @@ export class b2World {
   /// @warning This automatically deletes all associated shapes and joints.
   /// @warning This function is locked during callbacks.
   public DestroyBody(b: b2Body): void {
-    ///b2Assert(this.m_bodyCount > 0);
+    // DEBUG: b2Assert(this.m_bodyCount > 0);
     if (this.IsLocked()) { throw new Error(); }
 
     // Delete the attached joints.
@@ -349,7 +349,7 @@ export class b2World {
 
     b2JointFactory.Destroy(j, null);
 
-    ///b2Assert(this.m_jointCount > 0);
+    // DEBUG: b2Assert(this.m_jointCount > 0);
     --this.m_jointCount;
 
     // If the joint prevents collisions, then flag any contacts for filtering.
@@ -656,7 +656,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldQueryWrapper(proxy: b2TreeNode): boolean {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       ///const index: number = fixture_proxy.childIndex;
       if (callback instanceof b2QueryCallback) {
@@ -682,7 +682,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldQueryWrapper(proxy: b2TreeNode): boolean {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       ///const index: number = fixture_proxy.childIndex;
       if (b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
@@ -713,7 +713,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldQueryWrapper(proxy: b2TreeNode): boolean {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       ///const index: number = fixture_proxy.childIndex;
       if (fixture.TestPoint(point)) {
@@ -753,7 +753,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldRayCastWrapper(input: b2RayCastInput, proxy: b2TreeNode): number {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       const output: b2RayCastOutput = b2World.RayCast_s_output;
@@ -1189,7 +1189,7 @@ export class b2World {
         // Grab the next body off the stack and add it to the island.
         const b: b2Body | null = stack[--stackCount];
         if (!b) { throw new Error(); }
-        ///b2Assert(b.IsActive());
+        // DEBUG: b2Assert(b.IsActive());
         island.AddBody(b);
 
         // Make sure the body is awake.
@@ -1233,7 +1233,7 @@ export class b2World {
             continue;
           }
 
-          ///b2Assert(stackCount < stackSize);
+          // DEBUG: b2Assert(stackCount < stackSize);
           stack[stackCount++] = other;
           other.m_islandFlag = true;
         }
@@ -1258,7 +1258,7 @@ export class b2World {
             continue;
           }
 
-          ///b2Assert(stackCount < stackSize);
+          // DEBUG: b2Assert(stackCount < stackSize);
           stack[stackCount++] = other;
           other.m_islandFlag = true;
         }
@@ -1368,7 +1368,7 @@ export class b2World {
 
           const typeA: b2BodyType = bA.m_type;
           const typeB: b2BodyType = bB.m_type;
-          ///b2Assert(typeA !== b2BodyType.b2_staticBody || typeB !== b2BodyType.b2_staticBody);
+          // DEBUG: b2Assert(typeA !== b2BodyType.b2_staticBody || typeB !== b2BodyType.b2_staticBody);
 
           const activeA: boolean = bA.IsAwake() && typeA !== b2BodyType.b2_staticBody;
           const activeB: boolean = bB.IsAwake() && typeB !== b2BodyType.b2_staticBody;
@@ -1398,7 +1398,7 @@ export class b2World {
             bB.m_sweep.Advance(alpha0);
           }
 
-          ///b2Assert(alpha0 < 1);
+          // DEBUG: b2Assert(alpha0 < 1);
 
           const indexA: number = c.GetChildIndexA();
           const indexB: number = c.GetChildIndexB();
@@ -1602,7 +1602,7 @@ export class b2World {
 
   // #if B2_ENABLE_CONTROLLER
   public AddController(controller: b2Controller): b2Controller {
-    ///b2Assert(controller.m_world === null, "Controller can only be a member of one world");
+    // DEBUG: b2Assert(controller.m_world === null, "Controller can only be a member of one world");
     // controller.m_world = this;
     controller.m_next = this.m_controllerList;
     controller.m_prev = null;
@@ -1615,7 +1615,7 @@ export class b2World {
   }
 
   public RemoveController(controller: b2Controller): b2Controller {
-    ///b2Assert(controller.m_world === this, "Controller is not a member of this world");
+    // DEBUG: b2Assert(controller.m_world === this, "Controller is not a member of this world");
     if (controller.m_prev) {
       controller.m_prev.m_next = controller.m_next;
     }

@@ -68,12 +68,12 @@ export class b2DynamicTree {
   public static readonly s_aabb = new b2AABB();
 
   public GetUserData(proxy: b2TreeNode): any {
-    ///b2Assert(proxy !== null);
+    // DEBUG: b2Assert(proxy !== null);
     return proxy.userData;
   }
 
   public GetFatAABB(proxy: b2TreeNode): b2AABB {
-    ///b2Assert(proxy !== null);
+    // DEBUG: b2Assert(proxy !== null);
     return proxy.aabb;
   }
 
@@ -109,7 +109,7 @@ export class b2DynamicTree {
     const p1: b2Vec2 = input.p1;
     const p2: b2Vec2 = input.p2;
     const r: b2Vec2 = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
-    ///b2Assert(r.LengthSquared() > 0);
+    // DEBUG: b2Assert(r.LengthSquared() > 0);
     r.Normalize();
 
     // v is perpendicular to the segment.
@@ -228,14 +228,14 @@ export class b2DynamicTree {
   }
 
   public DestroyProxy(proxy: b2TreeNode): void {
-    ///b2Assert(proxy.IsLeaf());
+    // DEBUG: b2Assert(proxy.IsLeaf());
 
     this.RemoveLeaf(proxy);
     this.FreeNode(proxy);
   }
 
   public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): boolean {
-    ///b2Assert(proxy.IsLeaf());
+    // DEBUG: b2Assert(proxy.IsLeaf());
 
     if (proxy.aabb.Contains(aabb)) {
       return false;
@@ -434,7 +434,7 @@ export class b2DynamicTree {
   }
 
   public Balance(A: b2TreeNode): b2TreeNode {
-    ///b2Assert(A !== null);
+    // DEBUG: b2Assert(A !== null);
 
     if (A.IsLeaf() || A.height < 2) {
       return A;
@@ -460,7 +460,7 @@ export class b2DynamicTree {
         if (C.parent.child1 === A) {
           C.parent.child1 = C;
         } else {
-          ///b2Assert(C.parent.child2 === A);
+          // DEBUG: b2Assert(C.parent.child2 === A);
           C.parent.child2 = C;
         }
       } else {
@@ -506,7 +506,7 @@ export class b2DynamicTree {
         if (B.parent.child1 === A) {
           B.parent.child1 = B;
         } else {
-          ///b2Assert(B.parent.child2 === A);
+          // DEBUG: b2Assert(B.parent.child2 === A);
           B.parent.child2 = B;
         }
       } else {
@@ -610,7 +610,7 @@ export class b2DynamicTree {
     }
 
     if (index === this.m_root) {
-      ///b2Assert(index.parent === null);
+      // DEBUG: b2Assert(index.parent === null);
     }
 
     const node: b2TreeNode = index;
@@ -619,16 +619,16 @@ export class b2DynamicTree {
     const child2: b2TreeNode | null = node.child2;
 
     if (node.IsLeaf()) {
-      ///b2Assert(child1 === null);
-      ///b2Assert(child2 === null);
+      // DEBUG: b2Assert(child1 === null);
+      // DEBUG: b2Assert(child2 === null);
       if (!child1) { throw new Error(); }
       if (!child2) { throw new Error(); }
-      ///b2Assert(node.height === 0);
+      // DEBUG: b2Assert(node.height === 0);
       return;
     }
 
-    ///b2Assert(child1.parent === index);
-    ///b2Assert(child2.parent === index);
+    // DEBUG: b2Assert(child1.parent === index);
+    // DEBUG: b2Assert(child2.parent === index);
 
     this.ValidateStructure(child1);
     this.ValidateStructure(child2);
@@ -645,9 +645,9 @@ export class b2DynamicTree {
     const child2: b2TreeNode | null = node.child2;
 
     if (node.IsLeaf()) {
-      ///b2Assert(child1 === null);
-      ///b2Assert(child2 === null);
-      ///b2Assert(node.height === 0);
+      // DEBUG: b2Assert(child1 === null);
+      // DEBUG: b2Assert(child2 === null);
+      // DEBUG: b2Assert(node.height === 0);
       return;
     }
 
@@ -656,13 +656,13 @@ export class b2DynamicTree {
   ///const height1: number = child1.height;
     ///const height2: number = child2.height;
     ///const height: number = 1 + b2Max(height1, height2);
-    ///b2Assert(node.height === height);
+    // DEBUG: b2Assert(node.height === height);
 
     const aabb: b2AABB = b2DynamicTree.s_aabb;
     aabb.Combine2(child1.aabb, child2.aabb);
 
-    ///b2Assert(aabb.lowerBound === node.aabb.lowerBound);
-    ///b2Assert(aabb.upperBound === node.aabb.upperBound);
+    // DEBUG: b2Assert(aabb.lowerBound === node.aabb.lowerBound);
+    // DEBUG: b2Assert(aabb.upperBound === node.aabb.upperBound);
 
     this.ValidateMetrics(child1);
     this.ValidateMetrics(child2);
@@ -679,7 +679,7 @@ export class b2DynamicTree {
       // ++freeCount;
     }
 
-    ///b2Assert(this.GetHeight() === this.ComputeHeight());
+    // DEBUG: b2Assert(this.GetHeight() === this.ComputeHeight());
   }
 
   private static GetMaxBalanceNode(node: b2TreeNode | null, maxBalance: number): number {
@@ -691,7 +691,7 @@ export class b2DynamicTree {
       return maxBalance;
     }
 
-    ///b2Assert(!node.IsLeaf());
+    // DEBUG: b2Assert(!node.IsLeaf());
 
     const child1: b2TreeNode | null = node.child1;
     const child2: b2TreeNode | null = node.child2;
@@ -801,7 +801,7 @@ export class b2DynamicTree {
       return;
     }
 
-    ///b2Assert(!node.IsLeaf());
+    // DEBUG: b2Assert(!node.IsLeaf());
 
     const child1: b2TreeNode | null = node.child1;
     const child2: b2TreeNode | null = node.child2;

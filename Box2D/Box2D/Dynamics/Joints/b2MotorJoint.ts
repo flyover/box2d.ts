@@ -162,7 +162,7 @@ export class b2MotorJoint extends b2Joint {
   }
 
   public SetMaxForce(force: number): void {
-    ///b2Assert(b2IsValid(force) && force >= 0);
+    // DEBUG: b2Assert(b2IsValid(force) && force >= 0);
     this.m_maxForce = force;
   }
 
@@ -171,7 +171,7 @@ export class b2MotorJoint extends b2Joint {
   }
 
   public SetMaxTorque(torque: number): void {
-    ///b2Assert(b2IsValid(torque) && torque >= 0);
+    // DEBUG: b2Assert(b2IsValid(torque) && torque >= 0);
     this.m_maxTorque = torque;
   }
 

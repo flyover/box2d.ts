@@ -209,13 +209,13 @@ export class b2Body {
   // #endif
 
   constructor(bd: b2IBodyDef, world: b2World) {
-    ///b2Assert(bd.position.IsValid());
-    ///b2Assert(bd.linearVelocity.IsValid());
-    ///b2Assert(b2IsValid(bd.angle));
-    ///b2Assert(b2IsValid(bd.angularVelocity));
-    ///b2Assert(b2IsValid(bd.gravityScale) && bd.gravityScale >= 0);
-    ///b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
-    ///b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
+    // DEBUG: b2Assert(bd.position.IsValid());
+    // DEBUG: b2Assert(bd.linearVelocity.IsValid());
+    // DEBUG: b2Assert(b2IsValid(bd.angle));
+    // DEBUG: b2Assert(b2IsValid(bd.angularVelocity));
+    // DEBUG: b2Assert(b2IsValid(bd.gravityScale) && bd.gravityScale >= 0);
+    // DEBUG: b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
+    // DEBUG: b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
 
     this.m_bulletFlag = b2Maybe(bd.bullet, false);
     this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
@@ -342,10 +342,10 @@ export class b2Body {
   public DestroyFixture(fixture: b2Fixture): void {
     if (this.m_world.IsLocked()) { throw new Error(); }
 
-    ///b2Assert(fixture.m_body === this);
+    // DEBUG: b2Assert(fixture.m_body === this);
 
     // Remove the fixture from this body's singly linked list.
-    ///b2Assert(this.m_fixtureCount > 0);
+    // DEBUG: b2Assert(this.m_fixtureCount > 0);
     let node: b2Fixture | null = this.m_fixtureList;
     let ppF: b2Fixture | null = null;
     // let found: boolean = false;
@@ -365,7 +365,7 @@ export class b2Body {
     }
 
     // You tried to remove a shape that is not attached to this body.
-    ///b2Assert(found);
+    // DEBUG: b2Assert(found);
 
     // Destroy any contacts associated with the fixture.
     let edge: b2ContactEdge | null = this.m_contactList;
@@ -700,7 +700,7 @@ export class b2Body {
 
     if (massData.I > 0 && !this.m_fixedRotationFlag) {
       this.m_I = massData.I - this.m_mass * b2Vec2.DotVV(massData.center, massData.center);
-      ///b2Assert(this.m_I > 0);
+      // DEBUG: b2Assert(this.m_I > 0);
       this.m_invI = 1 / this.m_I;
     }
 
@@ -736,7 +736,7 @@ export class b2Body {
       return;
     }
 
-    ///b2Assert(this.m_type === b2BodyType.b2_dynamicBody);
+    // DEBUG: b2Assert(this.m_type === b2BodyType.b2_dynamicBody);
 
     // Accumulate mass over all fixtures.
     const localCenter: b2Vec2 = b2Body.ResetMassData_s_localCenter.SetZero();
@@ -766,7 +766,7 @@ export class b2Body {
     if (this.m_I > 0 && !this.m_fixedRotationFlag) {
       // Center the inertia about the center of mass.
       this.m_I -= this.m_mass * b2Vec2.DotVV(localCenter, localCenter);
-      ///b2Assert(this.m_I > 0);
+      // DEBUG: b2Assert(this.m_I > 0);
       this.m_invI = 1 / this.m_I;
     } else {
       this.m_I = 0;
@@ -1078,7 +1078,7 @@ export class b2Body {
       type_str = "b2BodyType.b2_dynamicBody";
       break;
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
     }
     log("  bd.type = %s;\n", type_str);

@@ -111,7 +111,7 @@ export class b2PositionSolverManifold {
     const planePoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_planePoint;
     const clipPoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_clipPoint;
 
-    ///b2Assert(pc.pointCount > 0);
+    // DEBUG: b2Assert(pc.pointCount > 0);
 
     switch (pc.type) {
     case b2ManifoldType.e_circles: {
@@ -213,7 +213,7 @@ export class b2ContactSolver {
       const manifold: b2Manifold = contact.GetManifold();
 
       const pointCount: number = manifold.pointCount;
-      ///b2Assert(pointCount > 0);
+      // DEBUG: b2Assert(pointCount > 0);
 
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
       vc.friction = contact.m_friction;
@@ -309,7 +309,7 @@ export class b2ContactSolver {
       const vB: b2Vec2 = this.m_velocities[indexB].v;
       const wB: number = this.m_velocities[indexB].w;
 
-      ///b2Assert(manifold.pointCount > 0);
+      // DEBUG: b2Assert(manifold.pointCount > 0);
 
       xfA.q.SetAngle(aA);
       xfB.q.SetAngle(aB);
@@ -486,7 +486,7 @@ export class b2ContactSolver {
       const tangent: b2Vec2 = vc.tangent; // precomputed from normal
       const friction: number = vc.friction;
 
-      ///b2Assert(pointCount === 1 || pointCount === 2);
+      // DEBUG: b2Assert(pointCount === 1 || pointCount === 2);
 
       // Solve tangent constraints first because non-penetration is more important
       // than friction.
@@ -599,7 +599,7 @@ export class b2ContactSolver {
 
         // b2Vec2 a(cp1->normalImpulse, cp2->normalImpulse);
         a.Set(cp1.normalImpulse, cp2.normalImpulse);
-        ///b2Assert(a.x >= 0 && a.y >= 0);
+        // DEBUG: b2Assert(a.x >= 0 && a.y >= 0);
 
         // Relative velocity at contact
         // b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
@@ -681,8 +681,8 @@ export class b2ContactSolver {
             vn1 = b2Dot(dv1, normal);
             vn2 = b2Dot(dv2, normal);
 
-            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
-            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            // DEBUG: b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            // DEBUG: b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -732,7 +732,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn1 = b2Dot(dv1, normal);
 
-            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            // DEBUG: b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -782,7 +782,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn2 = b2Dot(dv2, normal);
 
-            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            // DEBUG: b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;

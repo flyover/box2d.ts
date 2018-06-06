@@ -187,7 +187,7 @@ export class b2Manifold {
 
   public Reset(): void {
     for (let i: number = 0; i < b2_maxManifoldPoints; ++i) {
-      ///b2Assert(this.points[i] instanceof b2ManifoldPoint);
+      // DEBUG: b2Assert(this.points[i] instanceof b2ManifoldPoint);
       this.points[i].Reset();
     }
     this.localNormal.SetZero();
@@ -199,7 +199,7 @@ export class b2Manifold {
   public Copy(o: b2Manifold): b2Manifold {
     this.pointCount = o.pointCount;
     for (let i: number = 0; i < b2_maxManifoldPoints; ++i) {
-      ///b2Assert(this.points[i] instanceof b2ManifoldPoint);
+      // DEBUG: b2Assert(this.points[i] instanceof b2ManifoldPoint);
       this.points[i].Copy(o.points[i]);
     }
     this.localNormal.Copy(o.localNormal);

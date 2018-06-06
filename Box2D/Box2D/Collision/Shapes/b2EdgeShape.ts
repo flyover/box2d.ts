@@ -55,7 +55,7 @@ export class b2EdgeShape extends b2Shape {
   public Copy(other: b2EdgeShape): b2EdgeShape {
     super.Copy(other);
 
-    ///b2Assert(other instanceof b2EdgeShape);
+    // DEBUG: b2Assert(other instanceof b2EdgeShape);
 
     this.m_vertex1.Copy(other.m_vertex1);
     this.m_vertex2.Copy(other.m_vertex2);

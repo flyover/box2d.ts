@@ -45,7 +45,7 @@ export class b2PolygonShape extends b2Shape {
   public Copy(other: b2PolygonShape): b2PolygonShape {
     super.Copy(other);
 
-    ///b2Assert(other instanceof b2PolygonShape);
+    // DEBUG: b2Assert(other instanceof b2PolygonShape);
 
     this.m_centroid.Copy(other.m_centroid);
     this.m_count = other.m_count;
@@ -74,7 +74,7 @@ export class b2PolygonShape extends b2Shape {
   private static Set_s_v = new b2Vec2();
   public Set(vertices: XY[], count: number = vertices.length, start: number = 0): b2PolygonShape {
 
-    ///b2Assert(3 <= count && count <= b2_maxPolygonVertices);
+    // DEBUG: b2Assert(3 <= count && count <= b2_maxPolygonVertices);
     if (count < 3) {
       return this.SetAsBox(1, 1);
     }
@@ -103,7 +103,7 @@ export class b2PolygonShape extends b2Shape {
     n = tempCount;
     if (n < 3) {
       // Polygon is degenerate.
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return this.SetAsBox(1.0, 1.0);
     }
 
@@ -170,7 +170,7 @@ export class b2PolygonShape extends b2Shape {
       const vertexi1: b2Vec2 = this.m_vertices[i];
       const vertexi2: b2Vec2 = this.m_vertices[(i + 1) % m];
       const edge: b2Vec2 = b2Vec2.SubVV(vertexi2, vertexi1, b2Vec2.s_t0); // edge uses s_t0
-      ///b2Assert(edge.LengthSquared() > b2_epsilon_sq);
+      // DEBUG: b2Assert(edge.LengthSquared() > b2_epsilon_sq);
       b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
     }
 
@@ -327,7 +327,7 @@ export class b2PolygonShape extends b2Shape {
       }
     }
 
-    ///b2Assert(0 <= lower && lower <= input.maxFraction);
+    // DEBUG: b2Assert(0 <= lower && lower <= input.maxFraction);
 
     if (index >= 0) {
       output.fraction = lower;
@@ -385,7 +385,7 @@ export class b2PolygonShape extends b2Shape {
     //
     // The rest of the derivation is handled by computer algebra.
 
-    ///b2Assert(this.m_count >= 3);
+    // DEBUG: b2Assert(this.m_count >= 3);
 
     const center: b2Vec2 = b2PolygonShape.ComputeMass_s_center.SetZero();
     let area: number = 0;
@@ -431,7 +431,7 @@ export class b2PolygonShape extends b2Shape {
     massData.mass = density * area;
 
     // Center of mass
-    ///b2Assert(area > b2_epsilon);
+    // DEBUG: b2Assert(area > b2_epsilon);
     center.SelfMul(1 / area);
     b2Vec2.AddVV(center, s, massData.center);
 
@@ -585,7 +585,7 @@ export class b2PolygonShape extends b2Shape {
   private static ComputeCentroid_s_e1 = new b2Vec2();
   private static ComputeCentroid_s_e2 = new b2Vec2();
   public static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2 {
-    ///b2Assert(count >= 3);
+    // DEBUG: b2Assert(count >= 3);
 
     const c: b2Vec2 = out; c.SetZero();
     let area: number = 0;
@@ -625,7 +625,7 @@ export class b2PolygonShape extends b2Shape {
     }
 
     // Centroid
-    ///b2Assert(area > b2_epsilon);
+    // DEBUG: b2Assert(area > b2_epsilon);
     c.SelfMul(1 / area);
     return c;
   }

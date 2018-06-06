@@ -18,7 +18,8 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import { b2MakeArray, b2Assert } from "../Common/b2Settings";
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
+import { b2MakeArray } from "../Common/b2Settings";
 
 export class b2StackQueue<T> {
   public m_buffer: Array<T | null>;
@@ -52,12 +53,12 @@ export class b2StackQueue<T> {
     this.m_back++;
   }
   public Pop(): void {
-    b2Assert(this.m_front < this.m_back);
+    // DEBUG: b2Assert(this.m_front < this.m_back);
     this.m_buffer[this.m_front] = null;
     this.m_front++;
   }
   public Empty(): boolean {
-    b2Assert(this.m_front <= this.m_back);
+    // DEBUG: b2Assert(this.m_front <= this.m_back);
     return this.m_front === this.m_back;
   }
   public Front(): T {

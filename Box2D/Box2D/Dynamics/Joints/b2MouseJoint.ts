@@ -75,10 +75,10 @@ export class b2MouseJoint extends b2Joint {
   constructor(def: b2IMouseJointDef) {
     super(def);
 
-    ///b2Assert(def.target.IsValid());
-    ///b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0);
-    ///b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0);
-    ///b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
+    // DEBUG: b2Assert(def.target.IsValid());
+    // DEBUG: b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0);
+    // DEBUG: b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0);
+    // DEBUG: b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
 
     this.m_targetA.Copy(b2Maybe(def.target, b2Vec2.ZERO));
     b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
@@ -156,7 +156,7 @@ export class b2MouseJoint extends b2Joint {
     // gamma has units of inverse mass.
     // beta has units of inverse time.
     const h: number = data.step.dt;
-    ///b2Assert(d + h * k > b2_epsilon);
+    // DEBUG: b2Assert(d + h * k > b2_epsilon);
     this.m_gamma = h * (d + h * k);
     if (this.m_gamma !== 0) {
       this.m_gamma = 1 / this.m_gamma;

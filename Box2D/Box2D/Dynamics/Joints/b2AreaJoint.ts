@@ -56,7 +56,7 @@ export class b2AreaJoint extends b2Joint {
   constructor(def: b2IAreaJointDef) {
     super(def);
 
-    ///b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
+    // DEBUG: b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
 
     this.m_bodies = def.bodies;
     this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);

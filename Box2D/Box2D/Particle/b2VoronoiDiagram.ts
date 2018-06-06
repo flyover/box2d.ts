@@ -18,7 +18,8 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import { b2_maxFloat, b2MakeArray, b2Assert } from "../Common/b2Settings";
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
+import { b2_maxFloat, b2MakeArray } from "../Common/b2Settings";
 import { b2Vec2 } from "../Common/b2Math";
 import { b2StackQueue } from "./b2StackQueue";
 
@@ -46,7 +47,7 @@ export class b2VoronoiDiagram {
    * @param necessary whether to callback for nodes associated with the generator.
    */
   public AddGenerator(center: b2Vec2, tag: number, necessary: boolean): void {
-    b2Assert(this.m_generatorCount < this.m_generatorCapacity);
+    // DEBUG: b2Assert(this.m_generatorCount < this.m_generatorCapacity);
     const g = this.m_generatorBuffer[this.m_generatorCount++];
     g.center.Copy(center);
     g.tag = tag;
@@ -61,7 +62,7 @@ export class b2VoronoiDiagram {
    * @param margin margin for which the range of the diagram is extended.
    */
   public Generate(radius: number, margin: number): void {
-    b2Assert(this.m_diagram === null);
+    // DEBUG: b2Assert(this.m_diagram === null);
     const inverseRadius = 1 / radius;
     const lower = new b2Vec2(+b2_maxFloat, +b2_maxFloat);
     const upper = new b2Vec2(-b2_maxFloat, -b2_maxFloat);

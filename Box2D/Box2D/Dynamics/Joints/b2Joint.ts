@@ -139,7 +139,7 @@ export abstract class b2Joint {
   public m_userData: any = null;
 
   constructor(def: b2IJointDef) {
-    ///b2Assert(def.bodyA !== def.bodyB);
+    // DEBUG: b2Assert(def.bodyA !== def.bodyB);
 
     this.m_type = def.type;
     this.m_edgeA = new b2JointEdge(this, def.bodyB);

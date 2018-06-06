@@ -43,8 +43,8 @@ export class b2CircleContact extends b2Contact {
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA: b2Shape = this.m_fixtureA.GetShape();
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    ///b2Assert(shapeA instanceof b2CircleShape);
-    ///b2Assert(shapeB instanceof b2CircleShape);
+    // DEBUG: b2Assert(shapeA instanceof b2CircleShape);
+    // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
     b2CollideCircles(
       manifold,
       shapeA as b2CircleShape, xfA,

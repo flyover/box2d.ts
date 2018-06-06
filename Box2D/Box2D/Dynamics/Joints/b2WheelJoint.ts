@@ -449,7 +449,7 @@ export class b2WheelJoint extends b2Joint {
   }
 
   public GetDefinition(def: b2WheelJointDef): b2WheelJointDef {
-    ///b2Assert(false); // TODO
+    // DEBUG: b2Assert(false); // TODO
     return def;
   }
 

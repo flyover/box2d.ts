@@ -39,15 +39,15 @@ export class b2EdgeAndPolygonContact extends b2Contact {
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
-    ///b2Assert(fixtureA.GetType() === b2ShapeType.e_edgeShape);
-    ///b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
+    // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_edgeShape);
+    // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
   }
 
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA: b2Shape = this.m_fixtureA.GetShape();
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    ///b2Assert(shapeA instanceof b2EdgeShape);
-    ///b2Assert(shapeB instanceof b2PolygonShape);
+    // DEBUG: b2Assert(shapeA instanceof b2EdgeShape);
+    // DEBUG: b2Assert(shapeB instanceof b2PolygonShape);
     b2CollideEdgeAndPolygon(
       manifold,
       shapeA as b2EdgeShape, xfA,

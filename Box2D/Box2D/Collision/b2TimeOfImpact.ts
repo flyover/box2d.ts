@@ -88,7 +88,7 @@ export class b2SeparationFunction {
     this.m_proxyA = proxyA;
     this.m_proxyB = proxyB;
     const count: number = cache.count;
-    ///b2Assert(0 < count && count < 3);
+    // DEBUG: b2Assert(0 < count && count < 3);
 
     this.m_sweepA.Copy(sweepA);
     this.m_sweepB.Copy(sweepB);
@@ -212,7 +212,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       indexA[0] = -1;
       indexB[0] = -1;
       return 0;
@@ -260,7 +260,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return 0;
     }
   }
@@ -299,7 +299,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const totalRadius: number = proxyA.m_radius + proxyB.m_radius;
   const target: number = b2Max(b2_linearSlop, totalRadius - 3 * b2_linearSlop);
   const tolerance: number = 0.25 * b2_linearSlop;
-  ///b2Assert(target > tolerance);
+  // DEBUG: b2Assert(target > tolerance);
 
   let t1: number = 0;
   const k_maxIterations: number = 20; // TODO_ERIN b2Settings

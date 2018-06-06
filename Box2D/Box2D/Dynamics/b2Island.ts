@@ -214,18 +214,18 @@ export class b2Island {
   }
 
   public AddBody(body: b2Body): void {
-    ///b2Assert(this.m_bodyCount < this.m_bodyCapacity);
+    // DEBUG: b2Assert(this.m_bodyCount < this.m_bodyCapacity);
     body.m_islandIndex = this.m_bodyCount;
     this.m_bodies[this.m_bodyCount++] = body;
   }
 
   public AddContact(contact: b2Contact): void {
-    ///b2Assert(this.m_contactCount < this.m_contactCapacity);
+    // DEBUG: b2Assert(this.m_contactCount < this.m_contactCapacity);
     this.m_contacts[this.m_contactCount++] = contact;
   }
 
   public AddJoint(joint: b2Joint): void {
-    ///b2Assert(this.m_jointCount < this.m_jointCapacity);
+    // DEBUG: b2Assert(this.m_jointCount < this.m_jointCapacity);
     this.m_joints[this.m_jointCount++] = joint;
   }
 
@@ -417,8 +417,8 @@ export class b2Island {
   }
 
   public SolveTOI(subStep: b2TimeStep, toiIndexA: number, toiIndexB: number): void {
-    ///b2Assert(toiIndexA < this.m_bodyCount);
-    ///b2Assert(toiIndexB < this.m_bodyCount);
+    // DEBUG: b2Assert(toiIndexA < this.m_bodyCount);
+    // DEBUG: b2Assert(toiIndexB < this.m_bodyCount);
 
     // Initialize the body state.
     for (let i: number = 0; i < this.m_bodyCount; ++i) {

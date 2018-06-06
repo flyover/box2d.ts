@@ -42,7 +42,7 @@ export function b2Clamp(a: number, lo: number, hi: number): number {
 }
 
 export function b2Swap<T>(a: T[], b: T[]): void {
-  ///b2Assert(false);
+  // DEBUG: b2Assert(false);
   const tmp: T = a[0];
   a[0] = b[0];
   b[0] = tmp;
@@ -168,7 +168,7 @@ export class b2Vec2 implements XY {
   }
 
   public Copy(other: XY): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     return this;
@@ -491,7 +491,7 @@ export class b2Vec3 implements XYZ {
   }
 
   public Copy(other: XYZ): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     this.z = other.z;
@@ -601,7 +601,7 @@ export class b2Mat22 {
   }
 
   public Copy(other: b2Mat22): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     return this;
@@ -761,7 +761,7 @@ export class b2Mat33 {
   }
 
   public Copy(other: b2Mat33): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     this.ez.Copy(other.ez);
@@ -992,7 +992,7 @@ export class b2Transform {
   }
 
   public Copy(other: b2Transform): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.p.Copy(other.p);
     this.q.Copy(other.q);
     return this;
@@ -1114,7 +1114,7 @@ export class b2Sweep {
   }
 
   public Copy(other: b2Sweep): this {
-    ///b2Assert(this !== other);
+    // DEBUG: b2Assert(this !== other);
     this.localCenter.Copy(other.localCenter);
     this.c0.Copy(other.c0);
     this.c.Copy(other.c);
@@ -1136,7 +1136,7 @@ export class b2Sweep {
   }
 
   public Advance(alpha: number): void {
-    ///b2Assert(this.alpha0 < 1);
+    // DEBUG: b2Assert(this.alpha0 < 1);
     const beta: number = (alpha - this.alpha0) / (1 - this.alpha0);
     const one_minus_beta: number = (1 - beta);
     this.c0.x = one_minus_beta * this.c0.x + beta * this.c.x;
