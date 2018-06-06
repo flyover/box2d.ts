@@ -133,6 +133,10 @@ export interface XY {
   y: number;
 }
 
+export interface XYZ extends XY {
+  z: number;
+}
+
 // ===============================================
 //
 /// A 2D column vector.
@@ -464,10 +468,6 @@ export class b2Vec2 implements XY {
 }
 
 export const b2Vec2_zero: Readonly<b2Vec2> = new b2Vec2(0, 0);
-
-export interface XYZ extends XY {
-  z: number;
-}
 
 // ===============================================
 //
