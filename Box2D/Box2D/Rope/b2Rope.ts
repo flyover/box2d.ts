@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_pi, b2MakeNumberArray } from "../Common/b2Settings";
 import { b2Atan2, b2Vec2 } from "../Common/b2Math";
 import { b2Color, b2Draw } from "../Common/b2Draw";
@@ -32,7 +33,7 @@ export class b2RopeDef {
   public masses: number[] = [];
 
   ///
-  public gravity: b2Vec2 = new b2Vec2(0, 0);
+  public readonly gravity: b2Vec2 = new b2Vec2(0, 0);
 
   ///
   public damping: number = 0.1;
@@ -47,16 +48,16 @@ export class b2RopeDef {
 ///
 export class b2Rope {
   public m_count: number = 0;
-  public m_ps: b2Vec2[] = null;
-  public m_p0s: b2Vec2[] = null;
-  public m_vs: b2Vec2[] = null;
+  public m_ps: b2Vec2[] = [];
+  public m_p0s: b2Vec2[] = [];
+  public m_vs: b2Vec2[] = [];
 
-  public m_ims: number[] = null;
+  public m_ims: number[] = [];
 
-  public m_Ls: number[] = null;
-  public m_as: number[] = null;
+  public m_Ls: number[] = [];
+  public m_as: number[] = [];
 
-  public m_gravity: b2Vec2 = new b2Vec2();
+  public readonly m_gravity: b2Vec2 = new b2Vec2();
   public m_damping: number = 0;
 
   public m_k2: number = 1;
@@ -72,7 +73,7 @@ export class b2Rope {
 
   ///
   public Initialize(def: b2RopeDef): void {
-    ///b2Assert(def.count >= 3);
+    // DEBUG: b2Assert(def.count >= 3);
     this.m_count = def.count;
     // this.m_ps = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
     this.m_ps = b2Vec2.MakeArray(this.m_count);

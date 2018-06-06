@@ -16,20 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "Box2D/Box2D";
+import * as box2d from "Box2D";
 import * as testbed from "Testbed";
-import { b2BuoyancyController } from "Contributions/Enhancements/Controllers/b2BuoyancyController";
 
 export class BuoyancyTest extends testbed.Test {
-  m_bodies: box2d.b2Body[];
-  m_controller: b2BuoyancyController;
+  public m_bodies: box2d.b2Body[];
+  public m_controller: box2d.b2BuoyancyController;
 
   constructor() {
     super();
 
     this.m_bodies = new Array();
 
-    const bc = new b2BuoyancyController();
+    const bc = new box2d.b2BuoyancyController();
     this.m_controller = bc;
 
     bc.normal.Set(0.0, 1.0);
@@ -115,7 +114,7 @@ export class BuoyancyTest extends testbed.Test {
             new box2d.b2Vec2(-1.0 - Math.random() * 1.0, 1.0 + Math.random() * 1.0),
             new box2d.b2Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0),
             new box2d.b2Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0),
-            new box2d.b2Vec2(1.0 + Math.random() * 1.0, 1.0 + Math.random() * 1.0)
+            new box2d.b2Vec2(1.0 + Math.random() * 1.0, 1.0 + Math.random() * 1.0),
           ]);
         } else if (Math.random() > 0.5) {
           const array = [];
@@ -131,7 +130,7 @@ export class BuoyancyTest extends testbed.Test {
           polygon.Set([
             new box2d.b2Vec2(0.0, 1.0 + Math.random() * 1.0),
             new box2d.b2Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0),
-            new box2d.b2Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0)
+            new box2d.b2Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0),
           ]);
         }
         body.CreateFixture(fd);
@@ -179,7 +178,7 @@ export class BuoyancyTest extends testbed.Test {
 
       fd.density = 2.0;
       const polygon = new box2d.b2PolygonShape();
-      fd.shape = polygon
+      fd.shape = polygon;
       polygon.SetAsBox(3.0, 0.2);
       body.CreateFixture(fd);
       polygon.SetAsBox(0.2, 3.0);
@@ -194,8 +193,9 @@ export class BuoyancyTest extends testbed.Test {
     //   for (let body_i = 0; i < this.m_bodies.length; ++i)
     //     this.m_controller.RemoveBody(this.m_bodies[body_i]);
     // }
-    for (let body_i = 0; body_i < this.m_bodies.length; ++body_i)
+    for (let body_i = 0; body_i < this.m_bodies.length; ++body_i) {
       this.m_controller.AddBody(this.m_bodies[body_i]);
+    }
     // if (box2d.DEBUG) {
     //   this.m_world.AddController(this.m_controller);
     //   this.m_world.RemoveController(this.m_controller);

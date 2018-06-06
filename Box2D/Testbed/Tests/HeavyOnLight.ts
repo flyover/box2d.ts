@@ -16,8 +16,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
 
 export class HeavyOnLight extends testbed.Test {
   constructor() {
@@ -53,7 +53,7 @@ export class HeavyOnLight extends testbed.Test {
     body.CreateFixture(shape, 10.0);
   }
 
-  static Create() {
+  public static Create() {
     return new HeavyOnLight();
   }
 }

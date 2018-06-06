@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
 import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../../Common/b2Settings";
 import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Manifold } from "../../Collision/b2Collision";
@@ -29,8 +30,8 @@ import { b2Fixture } from "../b2Fixture";
 import { b2TimeStep, b2Position, b2Velocity } from "../b2TimeStep";
 
 export class b2VelocityConstraintPoint {
-  public rA: b2Vec2 = new b2Vec2();
-  public rB: b2Vec2 = new b2Vec2();
+  public readonly rA: b2Vec2 = new b2Vec2();
+  public readonly rB: b2Vec2 = new b2Vec2();
   public normalImpulse: number = 0;
   public tangentImpulse: number = 0;
   public normalMass: number = 0;
@@ -44,10 +45,10 @@ export class b2VelocityConstraintPoint {
 
 export class b2ContactVelocityConstraint {
   public points: b2VelocityConstraintPoint[] = b2VelocityConstraintPoint.MakeArray(b2_maxManifoldPoints);
-  public normal: b2Vec2 = new b2Vec2();
-  public tangent: b2Vec2 = new b2Vec2();
-  public normalMass: b2Mat22 = new b2Mat22();
-  public K: b2Mat22 = new b2Mat22();
+  public readonly normal: b2Vec2 = new b2Vec2();
+  public readonly tangent: b2Vec2 = new b2Vec2();
+  public readonly normalMass: b2Mat22 = new b2Mat22();
+  public readonly K: b2Mat22 = new b2Mat22();
   public indexA: number = 0;
   public indexB: number = 0;
   public invMassA: number = 0;
@@ -67,14 +68,14 @@ export class b2ContactVelocityConstraint {
 
 export class b2ContactPositionConstraint {
   public localPoints: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
-  public localNormal: b2Vec2 = new b2Vec2();
-  public localPoint: b2Vec2 = new b2Vec2();
+  public readonly localNormal: b2Vec2 = new b2Vec2();
+  public readonly localPoint: b2Vec2 = new b2Vec2();
   public indexA: number = 0;
   public indexB: number = 0;
   public invMassA: number = 0;
   public invMassB: number = 0;
-  public localCenterA: b2Vec2 = new b2Vec2();
-  public localCenterB: b2Vec2 = new b2Vec2();
+  public readonly localCenterA: b2Vec2 = new b2Vec2();
+  public readonly localCenterB: b2Vec2 = new b2Vec2();
   public invIA: number = 0;
   public invIB: number = 0;
   public type: b2ManifoldType = b2ManifoldType.e_unknown;
@@ -88,17 +89,17 @@ export class b2ContactPositionConstraint {
 }
 
 export class b2ContactSolverDef {
-  public step: b2TimeStep = new b2TimeStep();
-  public contacts: b2Contact[] = null;
+  public readonly step: b2TimeStep = new b2TimeStep();
+  public contacts!: b2Contact[];
   public count: number = 0;
-  public positions: b2Position[] = null;
-  public velocities: b2Velocity[] = null;
+  public positions!: b2Position[];
+  public velocities!: b2Velocity[];
   public allocator: any = null;
 }
 
 export class b2PositionSolverManifold {
-  public normal: b2Vec2 = new b2Vec2();
-  public point: b2Vec2 = new b2Vec2();
+  public readonly normal: b2Vec2 = new b2Vec2();
+  public readonly point: b2Vec2 = new b2Vec2();
   public separation: number = 0;
 
   private static Initialize_s_pointA = new b2Vec2();
@@ -111,7 +112,7 @@ export class b2PositionSolverManifold {
     const planePoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_planePoint;
     const clipPoint: b2Vec2 = b2PositionSolverManifold.Initialize_s_clipPoint;
 
-    ///b2Assert(pc.pointCount > 0);
+    // DEBUG: b2Assert(pc.pointCount > 0);
 
     switch (pc.type) {
     case b2ManifoldType.e_circles: {
@@ -126,8 +127,8 @@ export class b2PositionSolverManifold {
         b2Vec2.MidVV(pointA, pointB, this.point);
         // separation = b2Dot(pointB - pointA, normal) - pc->radius;
         this.separation = b2Vec2.DotVV(b2Vec2.SubVV(pointB, pointA, b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
+        break;
       }
-      break;
 
     case b2ManifoldType.e_faceA: {
         // normal = b2Mul(xfA.q, pc->localNormal);
@@ -141,8 +142,8 @@ export class b2PositionSolverManifold {
         this.separation = b2Vec2.DotVV(b2Vec2.SubVV(clipPoint, planePoint, b2Vec2.s_t0), this.normal) - pc.radiusA - pc.radiusB;
         // point = clipPoint;
         this.point.Copy(clipPoint);
+        break;
       }
-      break;
 
     case b2ManifoldType.e_faceB: {
         // normal = b2Mul(xfB.q, pc->localNormal);
@@ -160,20 +161,20 @@ export class b2PositionSolverManifold {
         // Ensure normal points from A to B
         // normal = -normal;
         this.normal.SelfNeg();
+        break;
       }
-      break;
     }
   }
 }
 
 export class b2ContactSolver {
-  public m_step: b2TimeStep = new b2TimeStep();
-  public m_positions: b2Position[] = null;
-  public m_velocities: b2Velocity[] = null;
+  public readonly m_step: b2TimeStep = new b2TimeStep();
+  public m_positions!: b2Position[];
+  public m_velocities!: b2Velocity[];
   public m_allocator: any = null;
   public m_positionConstraints: b2ContactPositionConstraint[] = b2ContactPositionConstraint.MakeArray(1024); // TODO: b2Settings
   public m_velocityConstraints: b2ContactVelocityConstraint[] = b2ContactVelocityConstraint.MakeArray(1024); // TODO: b2Settings
-  public m_contacts: b2Contact[] = null;
+  public m_contacts!: b2Contact[];
   public m_count: number = 0;
 
   public Initialize(def: b2ContactSolverDef): b2ContactSolver {
@@ -213,7 +214,7 @@ export class b2ContactSolver {
       const manifold: b2Manifold = contact.GetManifold();
 
       const pointCount: number = manifold.pointCount;
-      ///b2Assert(pointCount > 0);
+      // DEBUG: b2Assert(pointCount > 0);
 
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
       vc.friction = contact.m_friction;
@@ -309,7 +310,7 @@ export class b2ContactSolver {
       const vB: b2Vec2 = this.m_velocities[indexB].v;
       const wB: number = this.m_velocities[indexB].w;
 
-      ///b2Assert(manifold.pointCount > 0);
+      // DEBUG: b2Assert(manifold.pointCount > 0);
 
       xfA.q.SetAngle(aA);
       xfB.q.SetAngle(aB);
@@ -486,7 +487,7 @@ export class b2ContactSolver {
       const tangent: b2Vec2 = vc.tangent; // precomputed from normal
       const friction: number = vc.friction;
 
-      ///b2Assert(pointCount === 1 || pointCount === 2);
+      // DEBUG: b2Assert(pointCount === 1 || pointCount === 2);
 
       // Solve tangent constraints first because non-penetration is more important
       // than friction.
@@ -599,7 +600,7 @@ export class b2ContactSolver {
 
         // b2Vec2 a(cp1->normalImpulse, cp2->normalImpulse);
         a.Set(cp1.normalImpulse, cp2.normalImpulse);
-        ///b2Assert(a.x >= 0 && a.y >= 0);
+        // DEBUG: b2Assert(a.x >= 0 && a.y >= 0);
 
         // Relative velocity at contact
         // b2Vec2 dv1 = vB + b2Cross(wB, cp1->rB) - vA - b2Cross(wA, cp1->rA);
@@ -681,8 +682,8 @@ export class b2ContactSolver {
             vn1 = b2Dot(dv1, normal);
             vn2 = b2Dot(dv2, normal);
 
-            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
-            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -732,12 +733,11 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn1 = b2Dot(dv1, normal);
 
-            ///b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
             #endif
             */
             break;
           }
-
 
           //
           // Case 3: vn2 = 0 and x1 = 0
@@ -783,7 +783,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn2 = b2Dot(dv2, normal);
 
-            ///b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -841,8 +841,8 @@ export class b2ContactSolver {
 
   public StoreImpulses(): void {
     for (let i: number = 0; i < this.m_count; ++i) {
-      let vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
-      let manifold: b2Manifold = this.m_contacts[vc.contactIndex].GetManifold();
+      const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
+      const manifold: b2Manifold = this.m_contacts[vc.contactIndex].GetManifold();
 
       for (let j: number = 0; j < vc.pointCount; ++j) {
         manifold.points[j].normalImpulse = vc.points[j].normalImpulse;

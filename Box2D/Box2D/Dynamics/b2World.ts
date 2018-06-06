@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_epsilon, b2_linearSlop, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
@@ -48,8 +49,8 @@ import { b2_maxFloat } from "../Common/b2Settings";
 import { b2CalculateParticleIterations } from "../Particle/b2Particle";
 import { b2ParticleSystemDef, b2ParticleSystem } from "../Particle/b2ParticleSystem";
 // #endif
-// #if B@_ENABLE_CONTROLLER
-import { b2Controller, b2ControllerEdge } from "../../../Contributions/Enhancements/Controllers/b2Controller";
+// #if B2_ENABLE_CONTROLLER
+import { b2Controller, b2ControllerEdge } from "../Controllers/b2Controller";
 // #endif
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -96,10 +97,10 @@ export class b2World {
 
   public readonly m_island: b2Island = new b2Island();
 
-  public readonly s_stack: b2Body[] = [];
+  public readonly s_stack: Array<b2Body | null> = [];
 
   // #if B2_ENABLE_CONTROLLER
-  public m_controllerList: b2Controller = null;
+  public m_controllerList: b2Controller | null = null;
   public m_controllerCount: number = 0;
   // #endif
 
@@ -111,7 +112,7 @@ export class b2World {
 
   /// Register a destruction listener. The listener is owned by you and must
   /// remain in scope.
-  public SetDestructionListener(listener: b2DestructionListener): void {
+  public SetDestructionListener(listener: b2DestructionListener | null): void {
     this.m_destructionListener = listener;
   }
 
@@ -139,10 +140,7 @@ export class b2World {
   /// is retained.
   /// @warning This function is locked during callbacks.
   public CreateBody(def: b2IBodyDef): b2Body {
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return null;
-    }
+    if (this.IsLocked()) { throw new Error(); }
 
     const b: b2Body = new b2Body(def, this);
 
@@ -163,11 +161,8 @@ export class b2World {
   /// @warning This automatically deletes all associated shapes and joints.
   /// @warning This function is locked during callbacks.
   public DestroyBody(b: b2Body): void {
-    ///b2Assert(this.m_bodyCount > 0);
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return;
-    }
+    // DEBUG: b2Assert(this.m_bodyCount > 0);
+    if (this.IsLocked()) { throw new Error(); }
 
     // Delete the attached joints.
     let je: b2JointEdge | null = b.m_jointList;
@@ -243,10 +238,7 @@ export class b2World {
   /// is retained. This may cause the connected bodies to cease colliding.
   /// @warning This function is locked during callbacks.
   public CreateJoint<T extends b2Joint>(def: b2JointDef): T {
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return null;
-    }
+    if (this.IsLocked()) { throw new Error(); }
 
     const j: b2Joint = b2JointFactory.Create(def, null);
 
@@ -264,14 +256,14 @@ export class b2World {
     // j.m_edgeA.other = j.m_bodyB;
     j.m_edgeA.prev = null;
     j.m_edgeA.next = j.m_bodyA.m_jointList;
-    if (j.m_bodyA.m_jointList) j.m_bodyA.m_jointList.prev = j.m_edgeA;
+    if (j.m_bodyA.m_jointList) { j.m_bodyA.m_jointList.prev = j.m_edgeA; }
     j.m_bodyA.m_jointList = j.m_edgeA;
 
     // j.m_edgeB.joint = j;
     // j.m_edgeB.other = j.m_bodyA;
     j.m_edgeB.prev = null;
     j.m_edgeB.next = j.m_bodyB.m_jointList;
-    if (j.m_bodyB.m_jointList) j.m_bodyB.m_jointList.prev = j.m_edgeB;
+    if (j.m_bodyB.m_jointList) { j.m_bodyB.m_jointList.prev = j.m_edgeB; }
     j.m_bodyB.m_jointList = j.m_edgeB;
 
     const bodyA: b2Body = def.bodyA;
@@ -279,7 +271,7 @@ export class b2World {
 
     // If the joint prevents collisions, then flag any contacts for filtering.
     if (!def.collideConnected) {
-      let edge: b2ContactEdge = bodyB.GetContactList();
+      let edge: b2ContactEdge | null = bodyB.GetContactList();
       while (edge) {
         if (edge.other === bodyA) {
           // Flag the contact for filtering at the next time step (where either
@@ -299,10 +291,7 @@ export class b2World {
   /// Destroy a joint. This may cause the connected bodies to begin colliding.
   /// @warning This function is locked during callbacks.
   public DestroyJoint(j: b2Joint): void {
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return;
-    }
+    if (this.IsLocked()) { throw new Error(); }
 
     const collideConnected: boolean = j.m_collideConnected;
 
@@ -361,12 +350,12 @@ export class b2World {
 
     b2JointFactory.Destroy(j, null);
 
-    ///b2Assert(this.m_jointCount > 0);
+    // DEBUG: b2Assert(this.m_jointCount > 0);
     --this.m_jointCount;
 
     // If the joint prevents collisions, then flag any contacts for filtering.
     if (!collideConnected) {
-      let edge: b2ContactEdge = bodyB.GetContactList();
+      let edge: b2ContactEdge | null = bodyB.GetContactList();
       while (edge) {
         if (edge.other === bodyA) {
           // Flag the contact for filtering at the next time step (where either
@@ -381,11 +370,8 @@ export class b2World {
 
   // #if B2_ENABLE_PARTICLE
 
-  CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem {
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return null;
-    }
+  public CreateParticleSystem(def: b2ParticleSystemDef): b2ParticleSystem {
+    if (this.IsLocked()) { throw new Error(); }
 
     const p = new b2ParticleSystem(def, this);
 
@@ -400,11 +386,8 @@ export class b2World {
     return p;
   }
 
-  DestroyParticleSystem(p: b2ParticleSystem): void {
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return;
-    }
+  public DestroyParticleSystem(p: b2ParticleSystem): void {
+    if (this.IsLocked()) { throw new Error(); }
 
     // Remove world particleSystem list.
     if (p.m_prev) {
@@ -420,7 +403,7 @@ export class b2World {
     }
   }
 
-  CalculateReasonableParticleIterations(timeStep: number): number {
+  public CalculateReasonableParticleIterations(timeStep: number): number {
     if (this.m_particleSystemList === null) {
       return 1;
     }
@@ -532,7 +515,10 @@ export class b2World {
 
   // #if B2_ENABLE_PARTICLE
 
-  DrawParticleSystem(system: b2ParticleSystem): void {
+  public DrawParticleSystem(system: b2ParticleSystem): void {
+    if (this.m_debugDraw === null) {
+      return;
+    }
     const particleCount = system.GetParticleCount();
     if (particleCount) {
       const radius = system.GetRadius();
@@ -561,7 +547,7 @@ export class b2World {
     const color: b2Color = b2World.DrawDebugData_s_color.SetRGB(0, 0, 0);
 
     if (flags & b2DrawFlags.e_shapeBit) {
-      for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+      for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
         const xf: b2Transform = b.m_xf;
 
         this.m_debugDraw.PushTransform(xf);
@@ -623,7 +609,7 @@ export class b2World {
       const bp: b2BroadPhase = this.m_contactManager.m_broadPhase;
       const vs: b2Vec2[] = b2World.DrawDebugData_s_vs;
 
-      for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+      for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
         if (!b.IsActive()) {
           continue;
         }
@@ -645,7 +631,7 @@ export class b2World {
     }
 
     if (flags & b2DrawFlags.e_centerOfMassBit) {
-      for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+      for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
         const xf: b2Transform = b2World.DrawDebugData_s_xf;
         xf.q.Copy(b.m_xf.q);
         xf.p.Copy(b.GetWorldCenter());
@@ -653,7 +639,7 @@ export class b2World {
       }
     }
 
-    // #if B2_ENABLE_CONTROLLER  
+    // #if B2_ENABLE_CONTROLLER
     // @see b2Controller list
     if (flags & b2DrawFlags.e_controllerBit) {
       for (let c = this.m_controllerList; c; c = c.m_next) {
@@ -671,7 +657,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldQueryWrapper(proxy: b2TreeNode): boolean {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       ///const index: number = fixture_proxy.childIndex;
       if (callback instanceof b2QueryCallback) {
@@ -697,7 +683,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldQueryWrapper(proxy: b2TreeNode): boolean {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       ///const index: number = fixture_proxy.childIndex;
       if (b2TestOverlapShape(shape, 0, fixture.GetShape(), 0, transform, fixture.GetBody().GetTransform())) {
@@ -728,7 +714,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldQueryWrapper(proxy: b2TreeNode): boolean {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       ///const index: number = fixture_proxy.childIndex;
       if (fixture.TestPoint(point)) {
@@ -768,7 +754,7 @@ export class b2World {
     const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     function WorldRayCastWrapper(input: b2RayCastInput, proxy: b2TreeNode): number {
       const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      ///b2Assert(fixture_proxy instanceof b2FixtureProxy);
+      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
       const fixture: b2Fixture = fixture_proxy.fixture;
       const index: number = fixture_proxy.childIndex;
       const output: b2RayCastOutput = b2World.RayCast_s_output;
@@ -801,8 +787,8 @@ export class b2World {
     // #endif
   }
 
-  public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture {
-    let result: b2Fixture = null;
+  public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture | null {
+    let result: b2Fixture | null = null;
     let min_fraction: number = 1;
     function WorldRayCastOneWrapper(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number {
       if (fraction < min_fraction) {
@@ -839,7 +825,7 @@ export class b2World {
   }
 
   // #if B2_ENABLE_PARTICLE
-  GetParticleSystemList(): b2ParticleSystem | null {
+  public GetParticleSystemList(): b2ParticleSystem | null {
     return this.m_particleSystemList;
   }
   // #endif
@@ -940,7 +926,7 @@ export class b2World {
       this.m_gravity.Copy(gravity);
 
       if (wake) {
-        for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+        for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
           b.SetAwake(true);
         }
       }
@@ -971,10 +957,7 @@ export class b2World {
   /// The body shift formula is: position -= newOrigin
   /// @param newOrigin the new origin with respect to the old origin
   public ShiftOrigin(newOrigin: XY): void {
-    ///b2Assert(!this.IsLocked());
-    if (this.IsLocked()) {
-      return;
-    }
+    if (this.IsLocked()) { throw new Error(); }
 
     for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
       b.m_xf.p.SelfSub(newOrigin);
@@ -1051,6 +1034,9 @@ export class b2World {
   private static DrawJoint_s_p2: b2Vec2 = new b2Vec2();
   private static DrawJoint_s_color: b2Color = new b2Color(0.5, 0.8, 0.8);
   public DrawJoint(joint: b2Joint): void {
+    if (this.m_debugDraw === null) {
+      return;
+    }
     const bodyA: b2Body = joint.GetBodyA();
     const bodyB: b2Body = joint.GetBodyB();
     const xf1: b2Transform = bodyA.m_xf;
@@ -1068,14 +1054,14 @@ export class b2World {
       break;
 
     case b2JointType.e_pulleyJoint: {
-        const pulley: b2PulleyJoint = <b2PulleyJoint> joint;
+        const pulley: b2PulleyJoint = joint as b2PulleyJoint;
         const s1: b2Vec2 = pulley.GetGroundAnchorA();
         const s2: b2Vec2 = pulley.GetGroundAnchorB();
         this.m_debugDraw.DrawSegment(s1, p1, color);
         this.m_debugDraw.DrawSegment(s2, p2, color);
         this.m_debugDraw.DrawSegment(s1, s2, color);
       }
-      break;
+                                    break;
 
     case b2JointType.e_mouseJoint:
       // don't draw this
@@ -1090,28 +1076,31 @@ export class b2World {
   }
 
   public DrawShape(fixture: b2Fixture, color: b2Color): void {
+    if (this.m_debugDraw === null) {
+      return;
+    }
     const shape: b2Shape = fixture.GetShape();
 
     switch (shape.m_type) {
     case b2ShapeType.e_circleShape: {
-        const circle: b2CircleShape = <b2CircleShape> shape;
+        const circle: b2CircleShape = shape as b2CircleShape;
         const center: b2Vec2 = circle.m_p;
         const radius: number = circle.m_radius;
         const axis: b2Vec2 = b2Vec2.UNITX;
         this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
       }
-      break;
+                                    break;
 
     case b2ShapeType.e_edgeShape: {
-        const edge: b2EdgeShape = <b2EdgeShape> shape;
+        const edge: b2EdgeShape = shape as b2EdgeShape;
         const v1: b2Vec2 = edge.m_vertex1;
         const v2: b2Vec2 = edge.m_vertex2;
         this.m_debugDraw.DrawSegment(v1, v2, color);
       }
-      break;
+                                  break;
 
     case b2ShapeType.e_chainShape: {
-        const chain: b2ChainShape = <b2ChainShape> shape;
+        const chain: b2ChainShape = shape as b2ChainShape;
         const count: number = chain.m_count;
         const vertices: b2Vec2[] = chain.m_vertices;
         let v1: b2Vec2 = vertices[0];
@@ -1123,15 +1112,15 @@ export class b2World {
           v1 = v2;
         }
       }
-      break;
+                                   break;
 
     case b2ShapeType.e_polygonShape: {
-        const poly: b2PolygonShape = <b2PolygonShape> shape;
+        const poly: b2PolygonShape = shape as b2PolygonShape;
         const vertexCount: number = poly.m_count;
         const vertices: b2Vec2[] = poly.m_vertices;
         this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
       }
-      break;
+                                     break;
     }
   }
 
@@ -1174,8 +1163,8 @@ export class b2World {
     }
 
     // Build and simulate all awake islands.
-    ///const stackSize: number = this.m_bodyCount;
-    const stack: b2Body[] = this.s_stack;
+    // DEBUG: const stackSize: number = this.m_bodyCount;
+    const stack: Array<b2Body | null> = this.s_stack;
     for (let seed: b2Body | null = this.m_bodyList; seed; seed = seed.m_next) {
       if (seed.m_islandFlag) {
         continue;
@@ -1199,8 +1188,9 @@ export class b2World {
       // Perform a depth first search (DFS) on the constraint graph.
       while (stackCount > 0) {
         // Grab the next body off the stack and add it to the island.
-        const b: b2Body = stack[--stackCount];
-        ///b2Assert(b.IsActive());
+        const b: b2Body | null = stack[--stackCount];
+        if (!b) { throw new Error(); }
+        // DEBUG: b2Assert(b.IsActive());
         island.AddBody(b);
 
         // Make sure the body is awake.
@@ -1236,14 +1226,15 @@ export class b2World {
           island.AddContact(contact);
           contact.m_islandFlag = true;
 
-          const other: b2Body = ce.other;
+          const other: b2Body | null = ce.other;
+          if (!other) { throw new Error(); }
 
           // Was the other body already added to this island?
           if (other.m_islandFlag) {
             continue;
           }
 
-          ///b2Assert(stackCount < stackSize);
+          // DEBUG: b2Assert(stackCount < stackSize);
           stack[stackCount++] = other;
           other.m_islandFlag = true;
         }
@@ -1268,7 +1259,7 @@ export class b2World {
             continue;
           }
 
-          ///b2Assert(stackCount < stackSize);
+          // DEBUG: b2Assert(stackCount < stackSize);
           stack[stackCount++] = other;
           other.m_islandFlag = true;
         }
@@ -1291,7 +1282,7 @@ export class b2World {
     }
 
     for (let i: number = 0; i < stack.length; ++i) {
-      if (!stack[i]) break;
+      if (!stack[i]) { break; }
       stack[i] = null;
     }
 
@@ -1329,7 +1320,7 @@ export class b2World {
     island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
 
     if (this.m_stepComplete) {
-      for (let b: b2Body = this.m_bodyList; b; b = b.m_next) {
+      for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
         b.m_islandFlag = false;
         b.m_sweep.alpha0 = 0;
       }
@@ -1346,7 +1337,7 @@ export class b2World {
     // Find TOI events and solve them.
     for (; ; ) {
       // Find the first TOI.
-      let minContact: b2Contact = null;
+      let minContact: b2Contact | null = null;
       let minAlpha: number = 1;
 
       for (let c: b2Contact | null = this.m_contactManager.m_contactList; c; c = c.m_next) {
@@ -1378,7 +1369,7 @@ export class b2World {
 
           const typeA: b2BodyType = bA.m_type;
           const typeB: b2BodyType = bB.m_type;
-          ///b2Assert(typeA !== b2BodyType.b2_staticBody || typeB !== b2BodyType.b2_staticBody);
+          // DEBUG: b2Assert(typeA !== b2BodyType.b2_staticBody || typeB !== b2BodyType.b2_staticBody);
 
           const activeA: boolean = bA.IsAwake() && typeA !== b2BodyType.b2_staticBody;
           const activeB: boolean = bB.IsAwake() && typeB !== b2BodyType.b2_staticBody;
@@ -1408,7 +1399,7 @@ export class b2World {
             bB.m_sweep.Advance(alpha0);
           }
 
-          ///b2Assert(alpha0 < 1);
+          // DEBUG: b2Assert(alpha0 < 1);
 
           const indexA: number = c.GetChildIndexA();
           const indexB: number = c.GetChildIndexB();
@@ -1593,7 +1584,7 @@ export class b2World {
         body.SynchronizeFixtures();
 
         // Invalidate all contact TOIs on this displaced body.
-        for (let ce: b2ContactEdge = body.m_contactList; ce; ce = ce.next) {
+        for (let ce: b2ContactEdge | null = body.m_contactList; ce; ce = ce.next) {
           ce.contact.m_toiFlag = false;
           ce.contact.m_islandFlag = false;
         }
@@ -1612,29 +1603,33 @@ export class b2World {
 
   // #if B2_ENABLE_CONTROLLER
   public AddController(controller: b2Controller): b2Controller {
-    ///b2Assert(controller.m_world === null, "Controller can only be a member of one world");
-    controller.m_world = this;
+    // b2Assert(controller.m_world === null, "Controller can only be a member of one world");
+    // controller.m_world = this;
     controller.m_next = this.m_controllerList;
     controller.m_prev = null;
-    if (this.m_controllerList)
+    if (this.m_controllerList) {
       this.m_controllerList.m_prev = controller;
+    }
     this.m_controllerList = controller;
     ++this.m_controllerCount;
     return controller;
   }
 
   public RemoveController(controller: b2Controller): b2Controller {
-    ///b2Assert(controller.m_world === this, "Controller is not a member of this world");
-    if (controller.m_prev)
+    // b2Assert(controller.m_world === this, "Controller is not a member of this world");
+    if (controller.m_prev) {
       controller.m_prev.m_next = controller.m_next;
-    if (controller.m_next)
+    }
+    if (controller.m_next) {
       controller.m_next.m_prev = controller.m_prev;
-    if (this.m_controllerList === controller)
+    }
+    if (this.m_controllerList === controller) {
       this.m_controllerList = controller.m_next;
+    }
     --this.m_controllerCount;
     controller.m_prev = null;
     controller.m_next = null;
-    controller.m_world = null;
+    // delete controller.m_world; // = null;
     return controller;
   }
   // #endif

@@ -16,8 +16,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
 
 export class BasicSliderCrank extends testbed.Test {
   constructor() {
@@ -108,7 +108,7 @@ export class BasicSliderCrank extends testbed.Test {
     }
   }
 
-  static Create() {
+  public static Create() {
     return new BasicSliderCrank();
   }
 }

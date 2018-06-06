@@ -9,8 +9,8 @@ import { ParticleParameter } from "./ParticleParameter";
 
 export class Main {
   // #if B2_ENABLE_PARTICLE
-  public static fullscreenUI = new FullScreenUI();
-  public static particleParameter = new ParticleParameter();
+  public static readonly fullscreenUI = new FullScreenUI();
+  public static readonly particleParameter = new ParticleParameter();
   // #endif
   public m_time_last: number = 0;
   public m_fps_time: number = 0;
@@ -18,16 +18,16 @@ export class Main {
   public m_fps: number = 0;
   public m_fps_div: HTMLDivElement;
   public m_debug_div: HTMLDivElement;
-  public m_settings: Settings = new Settings();
-  public m_test: Test;
+  public readonly m_settings: Settings = new Settings();
+  public m_test?: Test;
   public m_test_index: number = 0;
   public m_test_select: HTMLSelectElement;
   public m_shift: boolean = false;
   public m_ctrl: boolean = false;
   public m_lMouseDown: boolean = false;
   public m_rMouseDown: boolean = false;
-  public m_projection0: box2d.b2Vec2 = new box2d.b2Vec2();
-  public m_viewCenter0: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_projection0: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_viewCenter0: box2d.b2Vec2 = new box2d.b2Vec2();
   public m_demo_mode: boolean = false;
   public m_demo_time: number = 0;
   public m_max_demo_time: number = 1000 * 10;
@@ -273,7 +273,7 @@ export class Main {
     this.m_mouse.Copy(element);
 
     if (this.m_lMouseDown) {
-      this.m_test.MouseMove(world);
+      if (this.m_test) { this.m_test.MouseMove(world); }
     }
 
     if (this.m_rMouseDown) {
@@ -293,9 +293,9 @@ export class Main {
     case 1: // left mouse button
       this.m_lMouseDown = true;
       if (this.m_shift) {
-        this.m_test.ShiftMouseDown(world);
+        if (this.m_test) { this.m_test.ShiftMouseDown(world); }
       } else {
-        this.m_test.MouseDown(world);
+        if (this.m_test) { this.m_test.MouseDown(world); }
       }
       break;
     case 3: // right mouse button
@@ -314,7 +314,7 @@ export class Main {
     switch (e.which) {
     case 1: // left mouse button
       this.m_lMouseDown = false;
-      this.m_test.MouseUp(world);
+      if (this.m_test) { this.m_test.MouseUp(world); }
       break;
     case 3: // right mouse button
       this.m_rMouseDown = false;
@@ -325,19 +325,19 @@ export class Main {
   public HandleTouchMove(e: TouchEvent): void {
     const element: box2d.b2Vec2 = new box2d.b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
     const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
-    this.m_test.MouseMove(world);
+    if (this.m_test) { this.m_test.MouseMove(world); }
     e.preventDefault();
   }
 
   public HandleTouchStart(e: TouchEvent): void {
     const element: box2d.b2Vec2 = new box2d.b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
     const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
-    this.m_test.MouseDown(world);
+    if (this.m_test) { this.m_test.MouseDown(world); }
     e.preventDefault();
   }
 
   public HandleTouchEnd(e: TouchEvent): void {
-    this.m_test.MouseUp(this.m_test.m_mouseWorld);
+    if (this.m_test) { this.m_test.MouseUp(this.m_test.m_mouseWorld); }
     e.preventDefault();
   }
 
@@ -510,7 +510,7 @@ export class Main {
   public LoadTest(restartTest: boolean = false): void {
     // #if B2_ENABLE_PARTICLE
     Main.fullscreenUI.Reset();
-    if (!restartTest) Main.particleParameter.Reset();
+    if (!restartTest) { Main.particleParameter.Reset(); }
     // #endif
     this.m_demo_time = 0;
     // #if B2_ENABLE_PARTICLE
@@ -557,37 +557,41 @@ export class Main {
     }
 
     if (time_elapsed > 0) {
-      const ctx: CanvasRenderingContext2D = this.m_ctx;
+      const ctx: CanvasRenderingContext2D | null = this.m_ctx;
 
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      // #if B2_ENABLE_PARTICLE
+      const restartTest = [false];
+      // #endif
 
-      // ctx.strokeStyle = "blue";
-      // ctx.strokeRect(this.m_mouse.x - 24, this.m_mouse.y - 24, 48, 48);
+      if (ctx) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      // const mouse_world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(this.m_mouse, new box2d.b2Vec2());
+        // ctx.strokeStyle = "blue";
+        // ctx.strokeRect(this.m_mouse.x - 24, this.m_mouse.y - 24, 48, 48);
 
-      ctx.save();
+        // const mouse_world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(this.m_mouse, new box2d.b2Vec2());
 
-        // 0,0 at center of canvas, x right, y up
+        ctx.save();
+
+          // 0,0 at center of canvas, x right, y up
         ctx.translate(0.5 * ctx.canvas.width, 0.5 * ctx.canvas.height);
         ctx.scale(1, -1);
-        ///ctx.scale(g_camera.m_extent, g_camera.m_extent);
-        ///ctx.lineWidth /= g_camera.m_extent;
+          ///ctx.scale(g_camera.m_extent, g_camera.m_extent);
+          ///ctx.lineWidth /= g_camera.m_extent;
         const s: number = 0.5 * g_camera.m_height / g_camera.m_extent;
         ctx.scale(s, s);
         ctx.lineWidth /= s;
 
-        // apply camera
+          // apply camera
         ctx.scale(1 / g_camera.m_zoom, 1 / g_camera.m_zoom);
         ctx.lineWidth *= g_camera.m_zoom;
-        ///ctx.rotate(-g_camera.m_roll.GetAngle());
+          ///ctx.rotate(-g_camera.m_roll.GetAngle());
         ctx.translate(-g_camera.m_center.x, -g_camera.m_center.y);
 
-        this.m_test.Step(this.m_settings);
+        if (this.m_test) { this.m_test.Step(this.m_settings); }
 
         // #if B2_ENABLE_PARTICLE
         // Update the state of the particle parameter.
-        let restartTest = [false];
         Main.particleParameter.Changed(restartTest);
         // #endif
 
@@ -597,15 +601,16 @@ export class Main {
           msg += " : ";
           msg += Main.particleParameter.GetName();
         }
-        this.m_test.DrawTitle(msg);
+        if (this.m_test) { this.m_test.DrawTitle(msg); }
         // #else
-        // this.m_test.DrawTitle(g_testEntries[this.m_test_index].name);
+        // if (this.m_test) { this.m_test.DrawTitle(g_testEntries[this.m_test_index].name); }
         // #endif
 
         // ctx.strokeStyle = "yellow";
         // ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
 
-      ctx.restore();
+        ctx.restore();
+      }
 
       // #if B2_ENABLE_PARTICLE
       if (restartTest[0]) {
@@ -623,7 +628,7 @@ export class Main {
    * Set whether to restart the test on particle parameter
    * changes. This parameter is re-enabled when the test changes.
    */
-  static SetRestartOnParticleParameterChange(enable: boolean): void {
+  public static SetRestartOnParticleParameterChange(enable: boolean): void {
     Main.particleParameter.SetRestartOnChange(enable);
   }
 
@@ -633,7 +638,7 @@ export class Main {
    * Main::k_particleTypes or one of the values referenced by
    * particleParameterDef passed to SetParticleParameters().
    */
-  static SetParticleParameterValue(value: number): number {
+  public static SetParticleParameterValue(value: number): number {
     const index = Main.particleParameter.FindIndexByValue(value);
     // If the particle type isn't found, so fallback to the first entry in the
     // parameter.
@@ -645,7 +650,7 @@ export class Main {
    * Get the currently selected particle parameter value and
    * enable particle parameter selection arrows on Android.
    */
-  static GetParticleParameterValue(): number {
+  public static GetParticleParameterValue(): number {
     // Enable display of particle type selection arrows.
     Main.fullscreenUI.SetParticleParameterSelectionEnabled(true);
     return Main.particleParameter.GetValue();
@@ -654,7 +659,7 @@ export class Main {
   /**
    * Override the default particle parameters for the test.
    */
-  static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount: number = particleParameterDef.length) {
+  public static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount: number = particleParameterDef.length) {
     Main.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
   }
 

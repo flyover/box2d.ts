@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_pi, b2_linearSlop, b2_maxLinearCorrection } from "../../Common/b2Settings";
+import { b2_pi, b2_linearSlop, b2_maxLinearCorrection, b2Maybe } from "../../Common/b2Settings";
 import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
 import { b2SolverData } from "../b2TimeStep";
@@ -37,8 +37,8 @@ export interface b2IDistanceJointDef extends b2IJointDef {
 /// slightly. This helps when saving and loading a game.
 /// @warning Do not use a zero or short length.
 export class b2DistanceJointDef extends b2JointDef implements b2IDistanceJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2();
-  public localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly localAnchorB: b2Vec2 = new b2Vec2();
   public length: number = 1;
   public frequencyHz: number = 0;
   public dampingRatio: number = 0;
@@ -64,8 +64,8 @@ export class b2DistanceJoint extends b2Joint {
   public m_bias: number = 0;
 
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public m_gamma: number = 0;
   public m_impulse: number = 0;
   public m_length: number = 0;
@@ -73,31 +73,27 @@ export class b2DistanceJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_u: b2Vec2 = new b2Vec2();
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_u: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
   public m_mass: number = 0;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IDistanceJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_frequencyHz = maybe(def.frequencyHz, 0);
-    this.m_dampingRatio = maybe(def.dampingRatio, 0);
+    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
+    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
 
     this.m_localAnchorA.Copy(def.localAnchorA);
     this.m_localAnchorB.Copy(def.localAnchorB);

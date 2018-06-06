@@ -93,9 +93,8 @@ export class b2ContactFilter {
   }
   // #endif
 
-  public static b2_defaultFilter: b2ContactFilter = new b2ContactFilter();
+  public static readonly b2_defaultFilter: b2ContactFilter = new b2ContactFilter();
 }
-
 
 /// Contact impulses for reporting. Impulses are used instead of forces because
 /// sub-step forces may approach infinity for rigid body collisions. These
@@ -105,7 +104,6 @@ export class b2ContactImpulse {
   public tangentImpulses: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
   public count: number = 0;
 }
-
 
 /// Implement this class to get contact information. You can use these results for
 /// things like sounds and game logic. You can also get contact results by
@@ -150,7 +148,7 @@ export class b2ContactListener {
   /// Note: this is only called for contacts that are touching, solid, and awake.
   public PostSolve(contact: b2Contact, impulse: b2ContactImpulse): void {}
 
-  public static b2_defaultListener: b2ContactListener = new b2ContactListener();
+  public static readonly b2_defaultListener: b2ContactListener = new b2ContactListener();
 }
 
 /// Callback class for AABB queries.
@@ -172,7 +170,7 @@ export class b2QueryCallback {
   // #endif
 }
 
-export type b2QueryCallbackFunction = { (fixture: b2Fixture): boolean };
+export type b2QueryCallbackFunction = (fixture: b2Fixture) => boolean;
 
 /// Callback class for ray casts.
 /// See b2World::RayCast
@@ -202,4 +200,4 @@ export class b2RayCastCallback {
   // #endif
 }
 
-export type b2RayCastCallbackFunction = { (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number };
+export type b2RayCastCallbackFunction = (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number) => number;

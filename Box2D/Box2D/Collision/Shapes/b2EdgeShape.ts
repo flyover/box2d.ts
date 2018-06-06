@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
 import { b2_polygonRadius } from "../../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
@@ -55,7 +56,7 @@ export class b2EdgeShape extends b2Shape {
   public Copy(other: b2EdgeShape): b2EdgeShape {
     super.Copy(other);
 
-    ///b2Assert(other instanceof b2EdgeShape);
+    // DEBUG: b2Assert(other instanceof b2EdgeShape);
 
     this.m_vertex1.Copy(other.m_vertex1);
     this.m_vertex2.Copy(other.m_vertex2);

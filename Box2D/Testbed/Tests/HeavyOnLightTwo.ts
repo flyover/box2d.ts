@@ -16,11 +16,11 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
 
 export class HeavyOnLightTwo extends testbed.Test {
-  m_heavy: box2d.b2Body | null = null;
+  public m_heavy: box2d.b2Body | null = null;
 
   constructor() {
     super();
@@ -54,7 +54,7 @@ export class HeavyOnLightTwo extends testbed.Test {
     body.CreateFixture(shape, 10.0);
   }
 
-  ToggleHeavy() {
+  public ToggleHeavy() {
     if (this.m_heavy !== null) {
       this.m_world.DestroyBody(this.m_heavy);
       this.m_heavy = null;
@@ -72,15 +72,15 @@ export class HeavyOnLightTwo extends testbed.Test {
     }
   }
 
-  Keyboard(key: string) {
+  public Keyboard(key: string) {
     switch (key) {
       case "h":
         this.ToggleHeavy();
         break;
     }
   }
-  
-  static Create() {
+
+  public static Create() {
     return new HeavyOnLightTwo();
   }
 }

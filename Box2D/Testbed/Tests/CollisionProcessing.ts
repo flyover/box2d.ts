@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
 
 export class CollisionProcessing extends testbed.Test {
   constructor() {
@@ -151,7 +151,7 @@ export class CollisionProcessing extends testbed.Test {
     }
 
     // Sort the nuke array to group duplicates.
-    nuke.sort(function(a, b) {
+    nuke.sort((a, b) => {
       return a - b;
     });
 

@@ -16,7 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, b2Transform, XY } from "../../Common/b2Math";
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
+import { b2Vec2, b2Transform } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 
@@ -26,7 +27,7 @@ export class b2MassData {
   public mass: number = 0;
 
   /// The position of the shape's centroid relative to the shape's origin.
-  public center: b2Vec2 = new b2Vec2(0, 0);
+  public readonly center: b2Vec2 = new b2Vec2(0, 0);
 
   /// The rotational inertia of the shape about the local origin.
   public I: number = 0;
@@ -38,7 +39,7 @@ export enum b2ShapeType {
   e_edgeShape = 1,
   e_polygonShape = 2,
   e_chainShape = 3,
-  e_shapeTypeCount = 4
+  e_shapeTypeCount = 4,
 }
 
 /// A shape is used for collision detection. You can create a shape however you like.
@@ -57,7 +58,7 @@ export abstract class b2Shape {
   public abstract Clone(): b2Shape;
 
   public Copy(other: b2Shape): b2Shape {
-    ///b2Assert(this.m_type === other.m_type);
+    // DEBUG: b2Assert(this.m_type === other.m_type);
     this.m_radius = other.m_radius;
     return this;
   }

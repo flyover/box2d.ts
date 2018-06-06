@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_epsilon, b2_epsilon_sq } from "../Common/b2Settings";
 import { b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
@@ -72,7 +73,7 @@ export class b2DistanceProxy {
   }
 
   public GetVertex(index: number): b2Vec2 {
-    ///b2Assert(0 <= index && index < this.m_count);
+    // DEBUG: b2Assert(0 <= index && index < this.m_count);
     return this.m_vertices[index];
   }
 }
@@ -91,10 +92,10 @@ export class b2SimplexCache {
 }
 
 export class b2DistanceInput {
-  public proxyA: b2DistanceProxy = new b2DistanceProxy();
-  public proxyB: b2DistanceProxy = new b2DistanceProxy();
-  public transformA: b2Transform = new b2Transform();
-  public transformB: b2Transform = new b2Transform();
+  public proxyA: b2DistanceProxy = new b2DistanceProxy(); // TODO: readonly
+  public proxyB: b2DistanceProxy = new b2DistanceProxy(); // TODO: readonly
+  public readonly transformA: b2Transform = new b2Transform();
+  public readonly transformB: b2Transform = new b2Transform();
   public useRadii: boolean = false;
 
   public Reset(): b2DistanceInput {
@@ -108,8 +109,8 @@ export class b2DistanceInput {
 }
 
 export class b2DistanceOutput {
-  public pointA: b2Vec2 = new b2Vec2();
-  public pointB: b2Vec2 = new b2Vec2();
+  public readonly pointA: b2Vec2 = new b2Vec2();
+  public readonly pointB: b2Vec2 = new b2Vec2();
   public distance: number = 0;
   public iterations: number = 0; ///< number of GJK iterations used
 
@@ -122,7 +123,6 @@ export class b2DistanceOutput {
   }
 }
 
-
 export let b2_gjkCalls: number = 0;
 export let b2_gjkIters: number = 0;
 export let b2_gjkMaxIters: number = 0;
@@ -133,9 +133,9 @@ export function b2_gjk_reset(): void {
 }
 
 export class b2SimplexVertex {
-  public wA: b2Vec2 = new b2Vec2(); // support point in proxyA
-  public wB: b2Vec2 = new b2Vec2(); // support point in proxyB
-  public w: b2Vec2 = new b2Vec2(); // wB - wA
+  public readonly wA: b2Vec2 = new b2Vec2(); // support point in proxyA
+  public readonly wB: b2Vec2 = new b2Vec2(); // support point in proxyB
+  public readonly w: b2Vec2 = new b2Vec2(); // wB - wA
   public a: number = 0; // barycentric coordinate for closest point
   public indexA: number = 0; // wA index
   public indexB: number = 0; // wB index
@@ -152,9 +152,9 @@ export class b2SimplexVertex {
 }
 
 export class b2Simplex {
-  public m_v1: b2SimplexVertex = new b2SimplexVertex();
-  public m_v2: b2SimplexVertex = new b2SimplexVertex();
-  public m_v3: b2SimplexVertex = new b2SimplexVertex();
+  public readonly m_v1: b2SimplexVertex = new b2SimplexVertex();
+  public readonly m_v2: b2SimplexVertex = new b2SimplexVertex();
+  public readonly m_v3: b2SimplexVertex = new b2SimplexVertex();
   public m_vertices: b2SimplexVertex[] = [/*3*/];
   public m_count: number = 0;
 
@@ -165,7 +165,7 @@ export class b2Simplex {
   }
 
   public ReadCache(cache: b2SimplexCache, proxyA: b2DistanceProxy, transformA: b2Transform, proxyB: b2DistanceProxy, transformB: b2Transform): void {
-    ///b2Assert(0 <= cache.count && cache.count <= 3);
+    // DEBUG: b2Assert(0 <= cache.count && cache.count <= 3);
 
     // Copy data from cache.
     this.m_count = cache.count;
@@ -236,7 +236,7 @@ export class b2Simplex {
       }
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return out.SetZero();
     }
   }
@@ -244,7 +244,7 @@ export class b2Simplex {
   public GetClosestPoint(out: b2Vec2): b2Vec2 {
     switch (this.m_count) {
     case 0:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return out.SetZero();
 
     case 1:
@@ -259,7 +259,7 @@ export class b2Simplex {
       return out.SetZero();
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return out.SetZero();
     }
   }
@@ -267,7 +267,7 @@ export class b2Simplex {
   public GetWitnessPoints(pA: b2Vec2, pB: b2Vec2): void {
     switch (this.m_count) {
     case 0:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
 
     case 1:
@@ -288,7 +288,7 @@ export class b2Simplex {
       break;
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
     }
   }
@@ -296,7 +296,7 @@ export class b2Simplex {
   public GetMetric(): number {
     switch (this.m_count) {
     case 0:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return 0;
 
     case 1:
@@ -309,7 +309,7 @@ export class b2Simplex {
       return b2Vec2.CrossVV(b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Vec2.s_t0), b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Vec2.s_t1));
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return 0;
     }
   }
@@ -508,7 +508,7 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
       break;
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       break;
     }
 

@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings";
 import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
@@ -48,10 +49,10 @@ const b2TimeOfImpact_s_axisB: b2Vec2 = new b2Vec2();
 
 /// Input parameters for b2TimeOfImpact
 export class b2TOIInput {
-  public proxyA: b2DistanceProxy = new b2DistanceProxy();
-  public proxyB: b2DistanceProxy = new b2DistanceProxy();
-  public sweepA: b2Sweep = new b2Sweep();
-  public sweepB: b2Sweep = new b2Sweep();
+  public readonly proxyA: b2DistanceProxy = new b2DistanceProxy();
+  public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
+  public readonly sweepA: b2Sweep = new b2Sweep();
+  public readonly sweepB: b2Sweep = new b2Sweep();
   public tMax: number = 0; // defines sweep interval [0, tMax]
 }
 
@@ -60,7 +61,7 @@ export enum b2TOIOutputState {
   e_failed = 1,
   e_overlapped = 2,
   e_touching = 3,
-  e_separated = 4
+  e_separated = 4,
 }
 
 export class b2TOIOutput {
@@ -72,23 +73,23 @@ export enum b2SeparationFunctionType {
   e_unknown = -1,
   e_points = 0,
   e_faceA = 1,
-  e_faceB = 2
+  e_faceB = 2,
 }
 
 export class b2SeparationFunction {
-  public m_proxyA: b2DistanceProxy;
-  public m_proxyB: b2DistanceProxy;
-  public m_sweepA: b2Sweep = new b2Sweep();
-  public m_sweepB: b2Sweep = new b2Sweep();
+  public m_proxyA!: b2DistanceProxy;
+  public m_proxyB!: b2DistanceProxy;
+  public readonly m_sweepA: b2Sweep = new b2Sweep();
+  public readonly m_sweepB: b2Sweep = new b2Sweep();
   public m_type: b2SeparationFunctionType = b2SeparationFunctionType.e_unknown;
-  public m_localPoint: b2Vec2 = new b2Vec2();
-  public m_axis: b2Vec2 = new b2Vec2();
+  public readonly m_localPoint: b2Vec2 = new b2Vec2();
+  public readonly m_axis: b2Vec2 = new b2Vec2();
 
   public Initialize(cache: b2SimplexCache, proxyA: b2DistanceProxy, sweepA: b2Sweep, proxyB: b2DistanceProxy, sweepB: b2Sweep, t1: number): number {
     this.m_proxyA = proxyA;
     this.m_proxyB = proxyB;
     const count: number = cache.count;
-    ///b2Assert(0 < count && count < 3);
+    // DEBUG: b2Assert(0 < count && count < 3);
 
     this.m_sweepA.Copy(sweepA);
     this.m_sweepB.Copy(sweepB);
@@ -212,7 +213,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       indexA[0] = -1;
       indexB[0] = -1;
       return 0;
@@ -260,7 +261,7 @@ export class b2SeparationFunction {
       }
 
     default:
-      ///b2Assert(false);
+      // DEBUG: b2Assert(false);
       return 0;
     }
   }
@@ -299,7 +300,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const totalRadius: number = proxyA.m_radius + proxyB.m_radius;
   const target: number = b2Max(b2_linearSlop, totalRadius - 3 * b2_linearSlop);
   const tolerance: number = 0.25 * b2_linearSlop;
-  ///b2Assert(target > tolerance);
+  // DEBUG: b2Assert(target > tolerance);
 
   let t1: number = 0;
   const k_maxIterations: number = 20; // TODO_ERIN b2Settings

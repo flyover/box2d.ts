@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
 
 export class Pulleys extends testbed.Test {
-  m_joint1: box2d.b2PulleyJoint;
+  public m_joint1: box2d.b2PulleyJoint;
 
   constructor() {
     super();

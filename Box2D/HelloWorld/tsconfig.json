@@ -3,7 +3,10 @@
     "target": "ES2016",
     "module": "system",
     "strict": true,
-    "strictNullChecks": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
     "inlineSourceMap": true,
     "baseUrl": ".",
     "paths": {

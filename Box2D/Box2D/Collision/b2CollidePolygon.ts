@@ -1,3 +1,4 @@
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature } from "./b2Collision";
@@ -9,14 +10,14 @@ const b2EdgeSeparation_s_normal1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v2: b2Vec2 = new b2Vec2();
 function b2EdgeSeparation(poly1: b2PolygonShape, xf1: b2Transform, edge1: number, poly2: b2PolygonShape, xf2: b2Transform): number {
-  ///const count1: number = poly1.m_count;
+  // DEBUG: const count1: number = poly1.m_count;
   const vertices1: b2Vec2[] = poly1.m_vertices;
   const normals1: b2Vec2[] = poly1.m_normals;
 
   const count2: number = poly2.m_count;
   const vertices2: b2Vec2[] = poly2.m_vertices;
 
-  ///b2Assert(0 <= edge1 && edge1 < count1);
+  // DEBUG: b2Assert(0 <= edge1 && edge1 < count1);
 
   // Convert normal from poly1's frame into poly2's frame.
   const normal1World: b2Vec2 = b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
@@ -91,10 +92,11 @@ function b2FindMaxSeparation(edgeIndex: number[], poly1: b2PolygonShape, xf1: b2
 
   // Perform a local search for the best edge normal.
   while (true) {
-    if (increment === -1)
+    if (increment === -1) {
       edge = (bestEdge + count1 - 1) % count1;
-    else
+    } else {
       edge = (bestEdge + 1) % count1;
+    }
 
     s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
 
@@ -112,14 +114,14 @@ function b2FindMaxSeparation(edgeIndex: number[], poly1: b2PolygonShape, xf1: b2
 
 const b2FindIncidentEdge_s_normal1: b2Vec2 = new b2Vec2();
 function b2FindIncidentEdge(c: b2ClipVertex[], poly1: b2PolygonShape, xf1: b2Transform, edge1: number, poly2: b2PolygonShape, xf2: b2Transform): void {
-  ///const count1: number = poly1.m_count;
+  // DEBUG: const count1: number = poly1.m_count;
   const normals1: b2Vec2[] = poly1.m_normals;
 
   const count2: number = poly2.m_count;
   const vertices2: b2Vec2[] = poly2.m_vertices;
   const normals2: b2Vec2[] = poly2.m_normals;
 
-  ///b2Assert(0 <= edge1 && edge1 < count1);
+  // DEBUG: b2Assert(0 <= edge1 && edge1 < count1);
 
   // Get the normal of the reference edge in poly2's frame.
   const normal1: b2Vec2 = b2Rot.MulTRV(xf2.q, b2Rot.MulRV(xf1.q, normals1[edge1], b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
@@ -175,13 +177,15 @@ export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, x
 
   const edgeA: number[] = b2CollidePolygons_s_edgeA; edgeA[0] = 0;
   const separationA: number = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
-  if (separationA > totalRadius)
+  if (separationA > totalRadius) {
     return;
+  }
 
   const edgeB: number[] = b2CollidePolygons_s_edgeB; edgeB[0] = 0;
   const separationB: number = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
-  if (separationB > totalRadius)
+  if (separationB > totalRadius) {
     return;
+  }
 
   let poly1: b2PolygonShape; // reference polygon
   let poly2: b2PolygonShape; // incident polygon
@@ -249,8 +253,9 @@ export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, x
   const ntangent: b2Vec2 = b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
   np = b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
 
-  if (np < 2)
+  if (np < 2) {
     return;
+  }
 
   // Clip to negative box side 1
   np = b2ClipSegmentToLine(clipPoints2, clipPoints1, tangent, sideOffset2, iv2);

@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection } from "../../Common/b2Settings";
+import { b2_linearSlop, b2_angularSlop, b2_maxAngularCorrection, b2Maybe } from "../../Common/b2Settings";
 import { b2Abs, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2Joint";
@@ -54,9 +54,9 @@ export interface b2IRevoluteJointDef extends b2IJointDef {
 /// 2. if you add/remove shapes from a body and recompute the mass,
 ///    the joints will be broken.
 export class b2RevoluteJointDef extends b2JointDef implements b2IRevoluteJointDef {
-  public localAnchorA: b2Vec2 = new b2Vec2(0, 0);
+  public readonly localAnchorA: b2Vec2 = new b2Vec2(0, 0);
 
-  public localAnchorB: b2Vec2 = new b2Vec2(0, 0);
+  public readonly localAnchorB: b2Vec2 = new b2Vec2(0, 0);
 
   public referenceAngle: number = 0;
 
@@ -85,12 +85,11 @@ export class b2RevoluteJointDef extends b2JointDef implements b2IRevoluteJointDe
   }
 }
 
-
 export class b2RevoluteJoint extends b2Joint {
   // Solver shared
-  public m_localAnchorA: b2Vec2 = new b2Vec2();
-  public m_localAnchorB: b2Vec2 = new b2Vec2();
-  public m_impulse: b2Vec3 = new b2Vec3();
+  public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
+  public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
+  public readonly m_impulse: b2Vec3 = new b2Vec3();
   public m_motorImpulse: number = 0;
 
   public m_enableMotor: boolean = false;
@@ -105,44 +104,40 @@ export class b2RevoluteJoint extends b2Joint {
   // Solver temp
   public m_indexA: number = 0;
   public m_indexB: number = 0;
-  public m_rA: b2Vec2 = new b2Vec2();
-  public m_rB: b2Vec2 = new b2Vec2();
-  public m_localCenterA: b2Vec2 = new b2Vec2();
-  public m_localCenterB: b2Vec2 = new b2Vec2();
+  public readonly m_rA: b2Vec2 = new b2Vec2();
+  public readonly m_rB: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterA: b2Vec2 = new b2Vec2();
+  public readonly m_localCenterB: b2Vec2 = new b2Vec2();
   public m_invMassA: number = 0;
   public m_invMassB: number = 0;
   public m_invIA: number = 0;
   public m_invIB: number = 0;
-  public m_mass: b2Mat33 = new b2Mat33(); // effective mass for point-to-point constraint.
+  public readonly m_mass: b2Mat33 = new b2Mat33(); // effective mass for point-to-point constraint.
   public m_motorMass: number = 0; // effective mass for motor/limit angular constraint.
   public m_limitState: b2LimitState = b2LimitState.e_inactiveLimit;
 
-  public m_qA: b2Rot = new b2Rot();
-  public m_qB: b2Rot = new b2Rot();
-  public m_lalcA: b2Vec2 = new b2Vec2();
-  public m_lalcB: b2Vec2 = new b2Vec2();
-  public m_K: b2Mat22 = new b2Mat22();
+  public readonly m_qA: b2Rot = new b2Rot();
+  public readonly m_qB: b2Rot = new b2Rot();
+  public readonly m_lalcA: b2Vec2 = new b2Vec2();
+  public readonly m_lalcB: b2Vec2 = new b2Vec2();
+  public readonly m_K: b2Mat22 = new b2Mat22();
 
   constructor(def: b2IRevoluteJointDef) {
     super(def);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
-    this.m_localAnchorA.Copy(maybe(def.localAnchorA, b2Vec2.ZERO));
-    this.m_localAnchorB.Copy(maybe(def.localAnchorB, b2Vec2.ZERO));
-    this.m_referenceAngle = maybe(def.referenceAngle, 0);
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, b2Vec2.ZERO));
+    this.m_referenceAngle = b2Maybe(def.referenceAngle, 0);
 
     this.m_impulse.SetZero();
     this.m_motorImpulse = 0;
 
-    this.m_lowerAngle = maybe(def.lowerAngle, 0);
-    this.m_upperAngle = maybe(def.upperAngle, 0);
-    this.m_maxMotorTorque = maybe(def.maxMotorTorque, 0);
-    this.m_motorSpeed = maybe(def.motorSpeed, 0);
-    this.m_enableLimit = maybe(def.enableLimit, false);
-    this.m_enableMotor = maybe(def.enableMotor, false);
+    this.m_lowerAngle = b2Maybe(def.lowerAngle, 0);
+    this.m_upperAngle = b2Maybe(def.upperAngle, 0);
+    this.m_maxMotorTorque = b2Maybe(def.maxMotorTorque, 0);
+    this.m_motorSpeed = b2Maybe(def.motorSpeed, 0);
+    this.m_enableLimit = b2Maybe(def.enableLimit, false);
+    this.m_enableMotor = b2Maybe(def.enableMotor, false);
     this.m_limitState = b2LimitState.e_inactiveLimit;
   }
 

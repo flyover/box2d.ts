@@ -70,7 +70,7 @@ export class b2TimeStep {
 }
 
 export class b2Position {
-  public c: b2Vec2 = new b2Vec2();
+  public readonly c: b2Vec2 = new b2Vec2();
   public a: number = 0;
 
   public static MakeArray(length: number): b2Position[] {
@@ -79,7 +79,7 @@ export class b2Position {
 }
 
 export class b2Velocity {
-  public v: b2Vec2 = new b2Vec2();
+  public readonly v: b2Vec2 = new b2Vec2();
   public w: number = 0;
 
   public static MakeArray(length: number): b2Velocity[] {
@@ -88,7 +88,7 @@ export class b2Velocity {
 }
 
 export class b2SolverData {
-  public step: b2TimeStep = new b2TimeStep();
-  public positions: b2Position[] = null;
-  public velocities: b2Velocity[] = null;
+  public readonly step: b2TimeStep = new b2TimeStep();
+  public positions!: b2Position[];
+  public velocities!: b2Velocity[];
 }

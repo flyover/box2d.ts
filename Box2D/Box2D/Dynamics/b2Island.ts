@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_timeToSleep } from "../Common/b2Settings";
 import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
 import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";
@@ -150,7 +151,7 @@ However, we can compute sin+cos of the same angle fast.
 
 export class b2Island {
   public m_allocator: any = null;
-  public m_listener: b2ContactListener = null;
+  public m_listener!: b2ContactListener;
 
   public m_bodies: b2Body[] = [/*1024*/]; // TODO: b2Settings
   public m_contacts: b2Contact[] = [/*1024*/]; // TODO: b2Settings
@@ -179,17 +180,17 @@ export class b2Island {
     this.m_listener = listener;
 
     // TODO:
-    while (this.m_bodies.length < bodyCapacity) {
-      this.m_bodies[this.m_bodies.length] = null;
-    }
+    // while (this.m_bodies.length < bodyCapacity) {
+    //   this.m_bodies[this.m_bodies.length] = null;
+    // }
     // TODO:
-    while (this.m_contacts.length < contactCapacity) {
-      this.m_contacts[this.m_contacts.length] = null;
-    }
+    // while (this.m_contacts.length < contactCapacity) {
+    //   this.m_contacts[this.m_contacts.length] = null;
+    // }
     // TODO:
-    while (this.m_joints.length < jointCapacity) {
-      this.m_joints[this.m_joints.length] = null;
-    }
+    // while (this.m_joints.length < jointCapacity) {
+    //   this.m_joints[this.m_joints.length] = null;
+    // }
 
     // TODO:
     if (this.m_positions.length < bodyCapacity) {
@@ -214,18 +215,18 @@ export class b2Island {
   }
 
   public AddBody(body: b2Body): void {
-    ///b2Assert(this.m_bodyCount < this.m_bodyCapacity);
+    // DEBUG: b2Assert(this.m_bodyCount < this.m_bodyCapacity);
     body.m_islandIndex = this.m_bodyCount;
     this.m_bodies[this.m_bodyCount++] = body;
   }
 
   public AddContact(contact: b2Contact): void {
-    ///b2Assert(this.m_contactCount < this.m_contactCapacity);
+    // DEBUG: b2Assert(this.m_contactCount < this.m_contactCapacity);
     this.m_contacts[this.m_contactCount++] = contact;
   }
 
   public AddJoint(joint: b2Joint): void {
-    ///b2Assert(this.m_jointCount < this.m_jointCapacity);
+    // DEBUG: b2Assert(this.m_jointCount < this.m_jointCapacity);
     this.m_joints[this.m_jointCount++] = joint;
   }
 
@@ -243,7 +244,8 @@ export class b2Island {
     for (let i: number = 0; i < this.m_bodyCount; ++i) {
       const b: b2Body = this.m_bodies[i];
 
-      /*const c: b2Vec2 =*/ this.m_positions[i].c.Copy(b.m_sweep.c);
+      // const c: b2Vec2 =
+      this.m_positions[i].c.Copy(b.m_sweep.c);
       const a: number = b.m_sweep.a;
       const v: b2Vec2 = this.m_velocities[i].v.Copy(b.m_linearVelocity);
       let w: number = b.m_angularVelocity;
@@ -416,8 +418,8 @@ export class b2Island {
   }
 
   public SolveTOI(subStep: b2TimeStep, toiIndexA: number, toiIndexB: number): void {
-    ///b2Assert(toiIndexA < this.m_bodyCount);
-    ///b2Assert(toiIndexB < this.m_bodyCount);
+    // DEBUG: b2Assert(toiIndexA < this.m_bodyCount);
+    // DEBUG: b2Assert(toiIndexB < this.m_bodyCount);
 
     // Initialize the body state.
     for (let i: number = 0; i < this.m_bodyCount; ++i) {

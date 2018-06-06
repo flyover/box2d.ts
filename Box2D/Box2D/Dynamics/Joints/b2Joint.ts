@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
+import { b2Maybe } from "../../Common/b2Settings";
 import { b2Vec2, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";
 import { b2SolverData } from "../b2TimeStep";
@@ -33,14 +35,14 @@ export enum b2JointType {
   e_frictionJoint = 9,
   e_ropeJoint = 10,
   e_motorJoint = 11,
-  e_areaJoint = 12
+  e_areaJoint = 12,
 }
 
 export enum b2LimitState {
   e_inactiveLimit = 0,
   e_atLowerLimit = 1,
   e_atUpperLimit = 2,
-  e_equalLimits = 3
+  e_equalLimits = 3,
 }
 
 export class b2Jacobian {
@@ -106,10 +108,10 @@ export class b2JointDef {
   public userData: any = null;
 
   /// The first attached body.
-  public bodyA: b2Body = null;
+  public bodyA!: b2Body;
 
   /// The second attached body.
-  public bodyB: b2Body = null;
+  public bodyB!: b2Body;
 
   /// Set this flag to true if the attached bodies should collide.
   public collideConnected: boolean = false;
@@ -138,19 +140,15 @@ export abstract class b2Joint {
   public m_userData: any = null;
 
   constructor(def: b2IJointDef) {
-    ///b2Assert(def.bodyA !== def.bodyB);
+    // DEBUG: b2Assert(def.bodyA !== def.bodyB);
 
-    function maybe<T>(value: T | undefined, _default: T): T {
-      return value !== undefined ? value : _default;
-    }
-    
     this.m_type = def.type;
     this.m_edgeA = new b2JointEdge(this, def.bodyB);
     this.m_edgeB = new b2JointEdge(this, def.bodyA);
     this.m_bodyA = def.bodyA;
     this.m_bodyB = def.bodyB;
 
-    this.m_collideConnected = maybe(def.collideConnected, false);
+    this.m_collideConnected = b2Maybe(def.collideConnected, false);
 
     this.m_userData = def.userData;
   }

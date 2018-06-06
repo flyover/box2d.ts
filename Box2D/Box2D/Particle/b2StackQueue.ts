@@ -18,21 +18,20 @@
 
 // #if B2_ENABLE_PARTICLE
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2MakeArray } from "../Common/b2Settings";
 
-function b2Assert(condition: boolean) {}
-
 export class b2StackQueue<T> {
-  m_buffer: T[];
-  m_front: number = 0;
-  m_back: number = 0;
-  m_capacity: number = 0;
+  public m_buffer: Array<T | null>;
+  public m_front: number = 0;
+  public m_back: number = 0;
+  public m_capacity: number = 0;
   constructor(capacity: number) {
     this.m_buffer = b2MakeArray(capacity, (index) => null);
     ///this.m_end = capacity; // TODO: this was wrong!
     this.m_capacity = capacity;
   }
-  Push(item: T): void {
+  public Push(item: T): void {
     if (this.m_back >= this.m_capacity) {
       for (let i = this.m_front; i < this.m_back; i++) {
         this.m_buffer[i - this.m_front] = this.m_buffer[i];
@@ -53,17 +52,19 @@ export class b2StackQueue<T> {
     this.m_buffer[this.m_back] = item;
     this.m_back++;
   }
-  Pop(): void {
-    b2Assert(this.m_front < this.m_back);
-    delete this.m_buffer[this.m_front];
+  public Pop(): void {
+    // DEBUG: b2Assert(this.m_front < this.m_back);
+    this.m_buffer[this.m_front] = null;
     this.m_front++;
   }
-  Empty(): boolean {
-    b2Assert(this.m_front <= this.m_back);
+  public Empty(): boolean {
+    // DEBUG: b2Assert(this.m_front <= this.m_back);
     return this.m_front === this.m_back;
   }
-  Front(): T {
-    return this.m_buffer[this.m_front];
+  public Front(): T {
+    const item = this.m_buffer[this.m_front];
+    if (!item) { throw new Error(); }
+    return item;
   }
 }
 

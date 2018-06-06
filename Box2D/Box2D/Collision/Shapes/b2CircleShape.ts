@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
 import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
 import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
@@ -45,7 +46,7 @@ export class b2CircleShape extends b2Shape {
   public Copy(other: b2CircleShape): b2CircleShape {
     super.Copy(other);
 
-    ///b2Assert(other instanceof b2CircleShape);
+    // DEBUG: b2Assert(other instanceof b2CircleShape);
 
     this.m_p.Copy(other.m_p);
     return this;

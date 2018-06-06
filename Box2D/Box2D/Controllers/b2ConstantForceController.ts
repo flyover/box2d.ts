@@ -18,30 +18,31 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Vec2, b2_epsilon, b2Color, b2TimeStep, b2Draw } from "../../../Box2D/Box2D/Box2D";
 import { b2Controller } from "./b2Controller";
+import { b2Vec2 } from "../Common/b2Math";
+import { b2TimeStep } from "../Dynamics/b2TimeStep";
+import { b2Draw } from "../Common/b2Draw";
 
 /**
  * Applies a force every frame
  */
-export class b2ConstantAccelController extends b2Controller {
+export class b2ConstantForceController extends b2Controller {
   /**
-   * The acceleration to apply
+   * The force to apply
    */
-  A = new b2Vec2(0, 0);
+  public readonly F = new b2Vec2(0, 0);
 
-  Step(step: b2TimeStep) {
-    const dtA = b2Vec2.MulSV(step.dt, this.A, b2ConstantAccelController.Step_s_dtA);
+  public Step(step: b2TimeStep) {
     for (let i = this.m_bodyList; i; i = i.nextBody) {
       const body = i.body;
-      if (!body.IsAwake())
+      if (!body.IsAwake()) {
         continue;
-      body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), dtA, b2Vec2.s_t0));
+      }
+      body.ApplyForce(this.F, body.GetWorldCenter());
     }
   }
-  private static Step_s_dtA = new b2Vec2();
 
-  Draw(draw: b2Draw) {}
+  public Draw(draw: b2Draw) {}
 }
 
 // #endif

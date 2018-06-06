@@ -25,26 +25,26 @@ export class AddPair extends testbed.Test {
 
     this.m_world.SetGravity(new box2d.b2Vec2(0.0, 0.0));
     {
-      const a = 0.1;
-  
+      // const a = 0.1;
+
       const shape = new box2d.b2CircleShape();
       shape.m_p.SetZero();
       shape.m_radius = 0.1;
-  
+
       const minX = -6.0;
       const maxX = 0.0;
       const minY = 4.0;
       const maxY = 6.0;
-  
+
       for (let i = 0; i < 400; ++i) {
         const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
-        bd.position = new box2d.b2Vec2(box2d.b2RandomRange(minX, maxX), box2d.b2RandomRange(minY, maxY));
+        bd.position.Set(box2d.b2RandomRange(minX, maxX), box2d.b2RandomRange(minY, maxY));
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 0.01);
       }
     }
-  
+
     {
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(1.5, 1.5);

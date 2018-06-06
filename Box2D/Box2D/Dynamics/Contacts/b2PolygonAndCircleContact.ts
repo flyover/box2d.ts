@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
+// DEBUG: import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Transform } from "../../Common/b2Math";
 import { b2CollidePolygonAndCircle } from "../../Collision/b2CollideCircle";
 import { b2Manifold } from "../../Collision/b2Collision";
@@ -39,18 +41,18 @@ export class b2PolygonAndCircleContact extends b2Contact {
 
   public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
     super.Reset(fixtureA, indexA, fixtureB, indexB);
-    ///b2Assert(fixtureA.GetType() === b2ShapeType.e_polygonShape);
-    ///b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
+    // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_polygonShape);
+    // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
   }
 
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA: b2Shape = this.m_fixtureA.GetShape();
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    ///b2Assert(shapeA instanceof b2PolygonShape);
-    ///b2Assert(shapeB instanceof b2CircleShape);
+    // DEBUG: b2Assert(shapeA instanceof b2PolygonShape);
+    // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
     b2CollidePolygonAndCircle(
       manifold,
-      <b2PolygonShape> shapeA, xfA,
-      <b2CircleShape> shapeB, xfB);
+      shapeA as b2PolygonShape, xfA,
+      shapeB as b2CircleShape, xfB);
   }
 }

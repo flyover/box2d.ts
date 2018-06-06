@@ -17,14 +17,11 @@
 */
 
 /**
-\mainpage Box2D API Documentation
-
-\section intro_sec Getting Started
-
-For documentation please see http://box2d.org/documentation.html
-
-For discussion please visit http://box2d.org/forum
-*/
+ * \mainpage Box2D API Documentation
+ * \section intro_sec Getting Started
+ * For documentation please see http://box2d.org/documentation.html
+ * For discussion please visit http://box2d.org/forum
+ */
 
 // These include files constitute the main Box2D API
 
@@ -84,6 +81,15 @@ export * from "./Dynamics/Joints/b2RevoluteJoint";
 export * from "./Dynamics/Joints/b2RopeJoint";
 export * from "./Dynamics/Joints/b2WeldJoint";
 export * from "./Dynamics/Joints/b2WheelJoint";
+
+// #if B2_ENABLE_CONTROLLER
+export * from "./Controllers/b2Controller";
+export * from "./Controllers/b2BuoyancyController";
+export * from "./Controllers/b2ConstantAccelController";
+export * from "./Controllers/b2ConstantForceController";
+export * from "./Controllers/b2GravityController";
+export * from "./Controllers/b2TensorDampingController";
+// #endif
 
 // #if B2_ENABLE_PARTICLE
 export * from "./Particle/b2Particle";

@@ -23,19 +23,18 @@ import { b2ContactManager } from "../Dynamics/b2ContactManager";
 import { b2FixtureProxy } from "../Box2D";
 
 export class b2Pair {
-  public proxyA: b2TreeNode|null = null;
-  public proxyB: b2TreeNode|null = null;
+  constructor(public proxyA: b2TreeNode, public proxyB: b2TreeNode) {}
 }
 
 /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
 /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
 /// It is up to the client to consume the new pairs and to track subsequent overlap.
 export class b2BroadPhase {
-  public m_tree: b2DynamicTree = new b2DynamicTree();
+  public readonly m_tree: b2DynamicTree = new b2DynamicTree();
   public m_proxyCount: number = 0;
   // public m_moveCapacity: number = 16;
   public m_moveCount: number = 0;
-  public m_moveBuffer: b2TreeNode[] = [];
+  public m_moveBuffer: Array<b2TreeNode | null> = [];
   // public m_pairCapacity: number = 16;
   public m_pairCount: number = 0;
   public m_pairBuffer: b2Pair[] = [];
@@ -100,7 +99,7 @@ export class b2BroadPhase {
 
     // Perform tree queries for all moving proxies.
     for (let i: number = 0; i < this.m_moveCount; ++i) {
-      const queryProxy: b2TreeNode = this.m_moveBuffer[i];
+      const queryProxy: b2TreeNode | null = this.m_moveBuffer[i];
       if (queryProxy === null) {
         continue;
       }
@@ -113,25 +112,31 @@ export class b2BroadPhase {
           return true;
         }
 
-        // Grow the pair buffer as needed.
-        if (this.m_pairCount === this.m_pairBuffer.length) {
-          this.m_pairBuffer[this.m_pairCount] = new b2Pair();
+        // const proxyA = proxy < queryProxy ? proxy : queryProxy;
+        // const proxyB = proxy >= queryProxy ? proxy : queryProxy;
+        let proxyA: b2TreeNode;
+        let proxyB: b2TreeNode;
+        if (proxy.m_id < queryProxy.m_id) {
+          proxyA = proxy;
+          proxyB = queryProxy;
+        } else {
+          proxyA = queryProxy;
+          proxyB = proxy;
         }
 
-        const pair: b2Pair = this.m_pairBuffer[this.m_pairCount];
-        // pair.proxyA = proxy < queryProxy ? proxy : queryProxy;
-        // pair.proxyB = proxy >= queryProxy ? proxy : queryProxy;
-        if (proxy.m_id < queryProxy.m_id) {
-          pair.proxyA = proxy;
-          pair.proxyB = queryProxy;
+        // Grow the pair buffer as needed.
+        if (this.m_pairCount === this.m_pairBuffer.length) {
+          this.m_pairBuffer[this.m_pairCount] = new b2Pair(proxyA, proxyB);
         } else {
-          pair.proxyA = queryProxy;
-          pair.proxyB = proxy;
+          const pair: b2Pair = this.m_pairBuffer[this.m_pairCount];
+          pair.proxyA = proxyA;
+          pair.proxyB = proxyB;
         }
+
         ++this.m_pairCount;
 
         return true;
-      }
+      };
 
       // We have to query the tree with the fat AABB so that
       // we don't fail to create a pair that may touch later.
