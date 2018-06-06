@@ -316,141 +316,117 @@ export class b2Vec2 implements XY {
     return b2MakeArray(length, (i: number): b2Vec2 => new b2Vec2());
   }
 
-  public static AbsV<T extends XY>(v: XY, out: T): T { return b2AbsV(v, out); }
-  public static MinV<T extends XY>(a: XY, b: XY, out: T): T { return b2MinV(a, b, out); }
-  public static MaxV<T extends XY>(a: XY, b: XY, out: T): T { return b2MaxV(a, b, out); }
-  public static ClampV<T extends XY>(v: XY, lo: XY, hi: XY, out: T): T { return b2ClampV(v, lo, hi, out); }
-  public static RotateV<T extends XY>(v: XY, radians: number, out: T): T { return b2RotateV(v, radians, out); }
-  public static DotVV(a: XY, b: XY): number { return b2DotVV(a, b); }
-  public static CrossVV(a: XY, b: XY): number { return b2CrossVV(a, b); }
-  public static CrossVS<T extends XY>(v: XY, s: number, out: T): T { return b2CrossVS(v, s, out); }
-  public static CrossVOne<T extends XY>(v: XY, out: T): T { return b2CrossVOne(v, out); }
-  public static CrossSV<T extends XY>(s: number, v: XY, out: T): T { return b2CrossSV(s, v, out); }
-  public static CrossOneV<T extends XY>(v: XY, out: T): T { return b2CrossOneV(v, out); }
-  public static AddVV<T extends XY>(a: XY, b: XY, out: T): T { return b2AddVV(a, b, out); }
-  public static SubVV<T extends XY>(a: XY, b: XY, out: T): T { return b2SubVV(a, b, out); }
-  public static MulSV<T extends XY>(s: number, v: XY, out: T): T { return b2MulSV(s, v, out); }
-  public static MulVS<T extends XY>(v: XY, s: number, out: T): T { return b2MulVS(v, s, out); }
-  public static AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { return b2AddVMulSV(a, s, b, out); }
-  public static SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { return b2SubVMulSV(a, s, b, out); }
-  public static AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T { return b2AddVCrossSV(a, s, v, out); }
-  public static MidVV<T extends XY>(a: XY, b: XY, out: T): T { return b2MidVV(a, b, out); }
-  public static ExtVV<T extends XY>(a: XY, b: XY, out: T): T { return b2ExtVV(a, b, out); }
-  public static IsEqualToV(a: XY, b: XY): boolean { return b2IsEqualToV(a, b); }
-  public static DistanceVV(a: XY, b: XY): number { return b2DistanceVV(a, b); }
-  public static DistanceSquaredVV(a: XY, b: XY): number { return b2DistanceSquaredVV(a, b); }
-  public static NegV<T extends XY>(v: XY, out: T): T { return b2NegV(v, out); }
+  public static AbsV<T extends XY>(v: XY, out: T): T {
+    out.x = b2Abs(v.x);
+    out.y = b2Abs(v.y);
+    return out;
+  }
+
+  public static MinV<T extends XY>(a: XY, b: XY, out: T): T {
+    out.x = b2Min(a.x, b.x);
+    out.y = b2Min(a.y, b.y);
+    return out;
+  }
+
+  public static MaxV<T extends XY>(a: XY, b: XY, out: T): T {
+    out.x = b2Max(a.x, b.x);
+    out.y = b2Max(a.y, b.y);
+    return out;
+  }
+
+  public static ClampV<T extends XY>(v: XY, lo: XY, hi: XY, out: T): T {
+    out.x = b2Clamp(v.x, lo.x, hi.x);
+    out.y = b2Clamp(v.y, lo.y, hi.y);
+    return out;
+  }
+
+  public static RotateV<T extends XY>(v: XY, radians: number, out: T): T {
+    const v_x: number = v.x, v_y: number = v.y;
+    const c: number = Math.cos(radians);
+    const s: number = Math.sin(radians);
+    out.x = c * v_x - s * v_y;
+    out.y = s * v_x + c * v_y;
+    return out;
+  }
+
+  public static DotVV(a: XY, b: XY): number {
+    return a.x * b.x + a.y * b.y;
+  }
+
+  public static CrossVV(a: XY, b: XY): number {
+    return a.x * b.y - a.y * b.x;
+  }
+
+  public static CrossVS<T extends XY>(v: XY, s: number, out: T): T {
+    const v_x: number = v.x;
+    out.x =  s * v.y;
+    out.y = -s * v_x;
+    return out;
+  }
+
+  public static CrossVOne<T extends XY>(v: XY, out: T): T {
+    const v_x: number = v.x;
+    out.x =  v.y;
+    out.y = -v_x;
+    return out;
+  }
+
+  public static CrossSV<T extends XY>(s: number, v: XY, out: T): T {
+    const v_x: number = v.x;
+    out.x = -s * v.y;
+    out.y =  s * v_x;
+    return out;
+  }
+
+  public static CrossOneV<T extends XY>(v: XY, out: T): T {
+    const v_x: number = v.x;
+    out.x = -v.y;
+    out.y =  v_x;
+    return out;
+  }
+
+  public static AddVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
+
+  public static SubVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
+
+  public static MulSV<T extends XY>(s: number, v: XY, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
+  public static MulVS<T extends XY>(v: XY, s: number, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
+
+  public static AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
+  public static SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
+
+  public static AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T {
+    const v_x: number = v.x;
+    out.x = a.x - (s * v.y);
+    out.y = a.y + (s * v_x);
+    return out;
+  }
+
+  public static MidVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
+
+  public static ExtVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
+
+  public static IsEqualToV(a: XY, b: XY): boolean {
+    return a.x === b.x && a.y === b.y;
+  }
+
+  public static DistanceVV(a: XY, b: XY): number {
+    const c_x: number = a.x - b.x;
+    const c_y: number = a.y - b.y;
+    return Math.sqrt(c_x * c_x + c_y * c_y);
+  }
+
+  public static DistanceSquaredVV(a: XY, b: XY): number {
+    const c_x: number = a.x - b.x;
+    const c_y: number = a.y - b.y;
+    return (c_x * c_x + c_y * c_y);
+  }
+
+  public static NegV<T extends XY>(v: XY, out: T): T { out.x = -v.x; out.y = -v.y; return out; }
+
 }
 
 export const b2Vec2_zero: Readonly<b2Vec2> = new b2Vec2(0, 0);
-
-function b2AbsV<T extends XY>(v: XY, out: T): T {
-  out.x = b2Abs(v.x);
-  out.y = b2Abs(v.y);
-  return out;
-}
-
-function b2MinV<T extends XY>(a: XY, b: XY, out: T): T {
-  out.x = b2Min(a.x, b.x);
-  out.y = b2Min(a.y, b.y);
-  return out;
-}
-
-function b2MaxV<T extends XY>(a: XY, b: XY, out: T): T {
-  out.x = b2Max(a.x, b.x);
-  out.y = b2Max(a.y, b.y);
-  return out;
-}
-
-function b2ClampV<T extends XY>(v: XY, lo: XY, hi: XY, out: T): T {
-  out.x = b2Clamp(v.x, lo.x, hi.x);
-  out.y = b2Clamp(v.y, lo.y, hi.y);
-  return out;
-}
-
-function b2RotateV<T extends XY>(v: XY, radians: number, out: T): T {
-  const v_x: number = v.x, v_y: number = v.y;
-  const c: number = Math.cos(radians);
-  const s: number = Math.sin(radians);
-  out.x = c * v_x - s * v_y;
-  out.y = s * v_x + c * v_y;
-  return out;
-}
-
-function b2DotVV(a: XY, b: XY): number {
-  return a.x * b.x + a.y * b.y;
-}
-
-function b2CrossVV(a: XY, b: XY): number {
-  return a.x * b.y - a.y * b.x;
-}
-
-function b2CrossVS<T extends XY>(v: XY, s: number, out: T): T {
-  const v_x: number = v.x;
-  out.x =  s * v.y;
-  out.y = -s * v_x;
-  return out;
-}
-
-function b2CrossVOne<T extends XY>(v: XY, out: T): T {
-  const v_x: number = v.x;
-  out.x =  v.y;
-  out.y = -v_x;
-  return out;
-}
-
-function b2CrossSV<T extends XY>(s: number, v: XY, out: T): T {
-  const v_x: number = v.x;
-  out.x = -s * v.y;
-  out.y =  s * v_x;
-  return out;
-}
-
-function b2CrossOneV<T extends XY>(v: XY, out: T): T {
-  const v_x: number = v.x;
-  out.x = -v.y;
-  out.y =  v_x;
-  return out;
-}
-
-function b2AddVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
-
-function b2SubVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
-
-function b2MulSV<T extends XY>(s: number, v: XY, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
-function b2MulVS<T extends XY>(v: XY, s: number, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
-
-function b2AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
-function b2SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
-
-function b2AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T {
-  const v_x: number = v.x;
-  out.x = a.x - (s * v.y);
-  out.y = a.y + (s * v_x);
-  return out;
-}
-
-function b2MidVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
-
-function b2ExtVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
-
-function b2IsEqualToV(a: XY, b: XY): boolean {
-  return a.x === b.x && a.y === b.y;
-}
-
-function b2DistanceVV(a: XY, b: XY): number {
-  const c_x: number = a.x - b.x;
-  const c_y: number = a.y - b.y;
-  return Math.sqrt(c_x * c_x + c_y * c_y);
-}
-
-function b2DistanceSquaredVV(a: XY, b: XY): number {
-  const c_x: number = a.x - b.x;
-  const c_y: number = a.y - b.y;
-  return (c_x * c_x + c_y * c_y);
-}
-
-function b2NegV<T extends XY>(v: XY, out: T): T { out.x = -v.x; out.y = -v.y; return out; }
 
 export interface XYZ extends XY {
   z: number;
@@ -539,21 +515,18 @@ export class b2Vec3 implements XYZ {
     return this;
   }
 
-  public static DotV3V3(a: XYZ, b: XYZ): number { return b2DotV3V3(a, b); }
-  public static CrossV3V3<T extends XYZ>(a: XYZ, b: XYZ, out: T): T { return b2CrossV3V3(a, b, out); }
-}
+  public static DotV3V3(a: XYZ, b: XYZ): number {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+  }
 
-function b2DotV3V3(a: XYZ, b: XYZ): number {
-  return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-
-function b2CrossV3V3<T extends XYZ>(a: XYZ, b: XYZ, out: T): T {
-  const a_x: number = a.x, a_y = a.y, a_z = a.z;
-  const b_x: number = b.x, b_y = b.y, b_z = b.z;
-  out.x = a_y * b_z - a_z * b_y;
-  out.y = a_z * b_x - a_x * b_z;
-  out.z = a_x * b_y - a_y * b_x;
-  return out;
+  public static CrossV3V3<T extends XYZ>(a: XYZ, b: XYZ, out: T): T {
+    const a_x: number = a.x, a_y = a.y, a_z = a.z;
+    const b_x: number = b.x, b_y = b.y, b_z = b.z;
+    out.x = a_y * b_z - a_z * b_y;
+    out.y = a_z * b_x - a_x * b_z;
+    out.z = a_x * b_y - a_y * b_x;
+    return out;
+  }
 }
 
 /// A 2-by-2 matrix. Stored in column-major order.
@@ -672,71 +645,64 @@ export class b2Mat22 {
     return this;
   }
 
-  public static AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 { return b2AbsM(M, out); }
-  public static MulMV<T extends XY>(M: b2Mat22, v: XY, out: T): T { return b2MulMV(M, v, out); }
-  public static MulTMV<T extends XY>(M: b2Mat22, v: XY, out: T): T { return b2MulTMV(M, v, out); }
-  public static AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2AddMM(A, B, out); }
-  public static MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2MulMM(A, B, out); }
-  public static MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 { return b2MulTMM(A, B, out); }
-}
+  public static AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 {
+    const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
+    out.ex.x = b2Abs(M_ex.x);
+    out.ex.y = b2Abs(M_ex.y);
+    out.ey.x = b2Abs(M_ey.x);
+    out.ey.y = b2Abs(M_ey.y);
+    return out;
+  }
 
-function b2AbsM(M: b2Mat22, out: b2Mat22): b2Mat22 {
-  const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
-  out.ex.x = b2Abs(M_ex.x);
-  out.ex.y = b2Abs(M_ex.y);
-  out.ey.x = b2Abs(M_ey.x);
-  out.ey.y = b2Abs(M_ey.y);
-  return out;
-}
+  public static MulMV<T extends XY>(M: b2Mat22, v: XY, out: T): T {
+    const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
+    const v_x: number = v.x, v_y: number = v.y;
+    out.x = M_ex.x * v_x + M_ey.x * v_y;
+    out.y = M_ex.y * v_x + M_ey.y * v_y;
+    return out;
+  }
 
-function b2MulMV<T extends XY>(M: b2Mat22, v: XY, out: T): T {
-  const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
-  const v_x: number = v.x, v_y: number = v.y;
-  out.x = M_ex.x * v_x + M_ey.x * v_y;
-  out.y = M_ex.y * v_x + M_ey.y * v_y;
-  return out;
-}
+  public static MulTMV<T extends XY>(M: b2Mat22, v: XY, out: T): T {
+    const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
+    const v_x: number = v.x, v_y: number = v.y;
+    out.x = M_ex.x * v_x + M_ex.y * v_y;
+    out.y = M_ey.x * v_x + M_ey.y * v_y;
+    return out;
+  }
 
-function b2MulTMV<T extends XY>(M: b2Mat22, v: XY, out: T): T {
-  const M_ex: b2Vec2 = M.ex, M_ey: b2Vec2 = M.ey;
-  const v_x: number = v.x, v_y: number = v.y;
-  out.x = M_ex.x * v_x + M_ex.y * v_y;
-  out.y = M_ey.x * v_x + M_ey.y * v_y;
-  return out;
-}
+  public static AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
+    const A_ex: b2Vec2 = A.ex, A_ey: b2Vec2 = A.ey;
+    const B_ex: b2Vec2 = B.ex, B_ey: b2Vec2 = B.ey;
+    out.ex.x = A_ex.x + B_ex.x;
+    out.ex.y = A_ex.y + B_ex.y;
+    out.ey.x = A_ey.x + B_ey.x;
+    out.ey.y = A_ey.y + B_ey.y;
+    return out;
+  }
 
-function b2AddMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
-  const A_ex: b2Vec2 = A.ex, A_ey: b2Vec2 = A.ey;
-  const B_ex: b2Vec2 = B.ex, B_ey: b2Vec2 = B.ey;
-  out.ex.x = A_ex.x + B_ex.x;
-  out.ex.y = A_ex.y + B_ex.y;
-  out.ey.x = A_ey.x + B_ey.x;
-  out.ey.y = A_ey.y + B_ey.y;
-  return out;
-}
+  public static MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
+    const A_ex_x: number = A.ex.x, A_ex_y: number = A.ex.y;
+    const A_ey_x: number = A.ey.x, A_ey_y: number = A.ey.y;
+    const B_ex_x: number = B.ex.x, B_ex_y: number = B.ex.y;
+    const B_ey_x: number = B.ey.x, B_ey_y: number = B.ey.y;
+    out.ex.x = A_ex_x * B_ex_x + A_ey_x * B_ex_y;
+    out.ex.y = A_ex_y * B_ex_x + A_ey_y * B_ex_y;
+    out.ey.x = A_ex_x * B_ey_x + A_ey_x * B_ey_y;
+    out.ey.y = A_ex_y * B_ey_x + A_ey_y * B_ey_y;
+    return out;
+  }
 
-function b2MulMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
-  const A_ex_x: number = A.ex.x, A_ex_y: number = A.ex.y;
-  const A_ey_x: number = A.ey.x, A_ey_y: number = A.ey.y;
-  const B_ex_x: number = B.ex.x, B_ex_y: number = B.ex.y;
-  const B_ey_x: number = B.ey.x, B_ey_y: number = B.ey.y;
-  out.ex.x = A_ex_x * B_ex_x + A_ey_x * B_ex_y;
-  out.ex.y = A_ex_y * B_ex_x + A_ey_y * B_ex_y;
-  out.ey.x = A_ex_x * B_ey_x + A_ey_x * B_ey_y;
-  out.ey.y = A_ex_y * B_ey_x + A_ey_y * B_ey_y;
-  return out;
-}
-
-function b2MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
-  const A_ex_x: number = A.ex.x, A_ex_y: number = A.ex.y;
-  const A_ey_x: number = A.ey.x, A_ey_y: number = A.ey.y;
-  const B_ex_x: number = B.ex.x, B_ex_y: number = B.ex.y;
-  const B_ey_x: number = B.ey.x, B_ey_y: number = B.ey.y;
-  out.ex.x = A_ex_x * B_ex_x + A_ex_y * B_ex_y;
-  out.ex.y = A_ey_x * B_ex_x + A_ey_y * B_ex_y;
-  out.ey.x = A_ex_x * B_ey_x + A_ex_y * B_ey_y;
-  out.ey.y = A_ey_x * B_ey_x + A_ey_y * B_ey_y;
-  return out;
+  public static MulTMM(A: b2Mat22, B: b2Mat22, out: b2Mat22): b2Mat22 {
+    const A_ex_x: number = A.ex.x, A_ex_y: number = A.ex.y;
+    const A_ey_x: number = A.ey.x, A_ey_y: number = A.ey.y;
+    const B_ex_x: number = B.ex.x, B_ex_y: number = B.ex.y;
+    const B_ey_x: number = B.ey.x, B_ey_y: number = B.ey.y;
+    out.ex.x = A_ex_x * B_ex_x + A_ex_y * B_ex_y;
+    out.ex.y = A_ey_x * B_ex_x + A_ey_y * B_ex_y;
+    out.ey.x = A_ex_x * B_ey_x + A_ex_y * B_ey_y;
+    out.ey.y = A_ey_x * B_ey_x + A_ey_y * B_ey_y;
+    return out;
+  }
 }
 
 /// A 3-by-3 matrix. Stored in column-major order.
@@ -825,7 +791,7 @@ export class b2Mat33 {
   }
 
   public GetSymInverse33(M: b2Mat33): void {
-    let det: number = b2DotV3V3(this.ex, b2CrossV3V3(this.ey, this.ez, b2Vec3.s_t0));
+    let det: number = b2Vec3.DotV3V3(this.ex, b2Vec3.CrossV3V3(this.ey, this.ez, b2Vec3.s_t0));
     if (det !== 0) {
       det = 1 / det;
     }
@@ -847,35 +813,30 @@ export class b2Mat33 {
     M.ez.z = det * (a11 * a22 - a12 * a12);
   }
 
-  public static MulM33V3<T extends XYZ>(A: b2Mat33, v: XYZ, out: T): T { return b2MulM33V3(A, v, out); }
-  public static MulM33XYZ<T extends XYZ>(A: b2Mat33, x: number, y: number, z: number, out: T): T { return b2MulM33XYZ(A, x, y, z, out); }
-  public static MulM33V2<T extends XY>(A: b2Mat33, v: XY, out: T): T { return b2MulM33V2(A, v, out); }
-  public static MulM33XY<T extends XY>(A: b2Mat33, x: number, y: number, out: T): T { return b2MulM33XY(A, x, y, out); }
-}
-
-function b2MulM33V3<T extends XYZ>(A: b2Mat33, v: XYZ, out: T): T {
-  const v_x: number = v.x, v_y: number = v.y, v_z: number = v.z;
-  out.x = A.ex.x * v_x + A.ey.x * v_y + A.ez.x * v_z;
-  out.y = A.ex.y * v_x + A.ey.y * v_y + A.ez.y * v_z;
-  out.z = A.ex.z * v_x + A.ey.z * v_y + A.ez.z * v_z;
-  return out;
-}
-function b2MulM33XYZ<T extends XYZ>(A: b2Mat33, x: number, y: number, z: number, out: T): T {
-  out.x = A.ex.x * x + A.ey.x * y + A.ez.x * z;
-  out.y = A.ex.y * x + A.ey.y * y + A.ez.y * z;
-  out.z = A.ex.z * x + A.ey.z * y + A.ez.z * z;
-  return out;
-}
-function b2MulM33V2<T extends XY>(A: b2Mat33, v: XY, out: T): T {
-  const v_x: number = v.x, v_y: number = v.y;
-  out.x = A.ex.x * v_x + A.ey.x * v_y;
-  out.y = A.ex.y * v_x + A.ey.y * v_y;
-  return out;
-}
-function b2MulM33XY<T extends XY>(A: b2Mat33, x: number, y: number, out: T): T {
-  out.x = A.ex.x * x + A.ey.x * y;
-  out.y = A.ex.y * x + A.ey.y * y;
-  return out;
+  public static MulM33V3<T extends XYZ>(A: b2Mat33, v: XYZ, out: T): T {
+    const v_x: number = v.x, v_y: number = v.y, v_z: number = v.z;
+    out.x = A.ex.x * v_x + A.ey.x * v_y + A.ez.x * v_z;
+    out.y = A.ex.y * v_x + A.ey.y * v_y + A.ez.y * v_z;
+    out.z = A.ex.z * v_x + A.ey.z * v_y + A.ez.z * v_z;
+    return out;
+  }
+  public static MulM33XYZ<T extends XYZ>(A: b2Mat33, x: number, y: number, z: number, out: T): T {
+    out.x = A.ex.x * x + A.ey.x * y + A.ez.x * z;
+    out.y = A.ex.y * x + A.ey.y * y + A.ez.y * z;
+    out.z = A.ex.z * x + A.ey.z * y + A.ez.z * z;
+    return out;
+  }
+  public static MulM33V2<T extends XY>(A: b2Mat33, v: XY, out: T): T {
+    const v_x: number = v.x, v_y: number = v.y;
+    out.x = A.ex.x * v_x + A.ey.x * v_y;
+    out.y = A.ex.y * v_x + A.ey.y * v_y;
+    return out;
+  }
+  public static MulM33XY<T extends XY>(A: b2Mat33, x: number, y: number, out: T): T {
+    out.x = A.ex.x * x + A.ey.x * y;
+    out.y = A.ex.y * x + A.ey.y * y;
+    return out;
+  }
 }
 
 /// Rotation
@@ -930,50 +891,45 @@ export class b2Rot {
     return out;
   }
 
-  public static MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot { return b2MulRR(q, r, out); }
-  public static MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot { return b2MulTRR(q, r, out); }
-  public static MulRV<T extends XY>(q: b2Rot, v: XY, out: T): T { return b2MulRV(q, v, out); }
-  public static MulTRV<T extends XY>(q: b2Rot, v: XY, out: T): T { return b2MulTRV(q, v, out); }
-}
+  public static MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
+    // [qc -qs] * [rc -rs] = [qc*rc-qs*rs -qc*rs-qs*rc]
+    // [qs  qc]   [rs  rc]   [qs*rc+qc*rs -qs*rs+qc*rc]
+    // s = qs * rc + qc * rs
+    // c = qc * rc - qs * rs
+    const q_c: number = q.c, q_s: number = q.s;
+    const r_c: number = r.c, r_s: number = r.s;
+    out.s = q_s * r_c + q_c * r_s;
+    out.c = q_c * r_c - q_s * r_s;
+    return out;
+  }
 
-function b2MulRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
-  // [qc -qs] * [rc -rs] = [qc*rc-qs*rs -qc*rs-qs*rc]
-  // [qs  qc]   [rs  rc]   [qs*rc+qc*rs -qs*rs+qc*rc]
-  // s = qs * rc + qc * rs
-  // c = qc * rc - qs * rs
-  const q_c: number = q.c, q_s: number = q.s;
-  const r_c: number = r.c, r_s: number = r.s;
-  out.s = q_s * r_c + q_c * r_s;
-  out.c = q_c * r_c - q_s * r_s;
-  return out;
-}
+  public static MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
+    // [ qc qs] * [rc -rs] = [qc*rc+qs*rs -qc*rs+qs*rc]
+    // [-qs qc]   [rs  rc]   [-qs*rc+qc*rs qs*rs+qc*rc]
+    // s = qc * rs - qs * rc
+    // c = qc * rc + qs * rs
+    const q_c: number = q.c, q_s: number = q.s;
+    const r_c: number = r.c, r_s: number = r.s;
+    out.s = q_c * r_s - q_s * r_c;
+    out.c = q_c * r_c + q_s * r_s;
+    return out;
+  }
 
-function b2MulTRR(q: b2Rot, r: b2Rot, out: b2Rot): b2Rot {
-  // [ qc qs] * [rc -rs] = [qc*rc+qs*rs -qc*rs+qs*rc]
-  // [-qs qc]   [rs  rc]   [-qs*rc+qc*rs qs*rs+qc*rc]
-  // s = qc * rs - qs * rc
-  // c = qc * rc + qs * rs
-  const q_c: number = q.c, q_s: number = q.s;
-  const r_c: number = r.c, r_s: number = r.s;
-  out.s = q_c * r_s - q_s * r_c;
-  out.c = q_c * r_c + q_s * r_s;
-  return out;
-}
+  public static MulRV<T extends XY>(q: b2Rot, v: XY, out: T): T {
+    const q_c: number = q.c, q_s: number = q.s;
+    const v_x: number = v.x, v_y: number = v.y;
+    out.x = q_c * v_x - q_s * v_y;
+    out.y = q_s * v_x + q_c * v_y;
+    return out;
+  }
 
-function b2MulRV<T extends XY>(q: b2Rot, v: XY, out: T): T {
-  const q_c: number = q.c, q_s: number = q.s;
-  const v_x: number = v.x, v_y: number = v.y;
-  out.x = q_c * v_x - q_s * v_y;
-  out.y = q_s * v_x + q_c * v_y;
-  return out;
-}
-
-function b2MulTRV<T extends XY>(q: b2Rot, v: XY, out: T): T {
-  const q_c: number = q.c, q_s: number = q.s;
-  const v_x: number = v.x, v_y: number = v.y;
-  out.x =  q_c * v_x + q_s * v_y;
-  out.y = -q_s * v_x + q_c * v_y;
-  return out;
+  public static MulTRV<T extends XY>(q: b2Rot, v: XY, out: T): T {
+    const q_c: number = q.c, q_s: number = q.s;
+    const v_x: number = v.x, v_y: number = v.y;
+    out.x =  q_c * v_x + q_s * v_y;
+    out.y = -q_s * v_x + q_c * v_y;
+    return out;
+  }
 }
 
 /// A transform contains translation and rotation. It is used to represent
@@ -1048,49 +1004,43 @@ export class b2Transform {
     return this.q.GetAngle();
   }
 
-  public static MulXV<T extends XY>(T: b2Transform, v: XY, out: T): T { return b2MulXV(T, v, out); }
-  public static MulTXV<T extends XY>(T: b2Transform, v: XY, out: T): T { return b2MulTXV(T, v, out); }
-  public static MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform { return b2MulXX(A, B, out); }
-  public static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform { return b2MulTXX(A, B, out); }
-}
+  public static MulXV<T extends XY>(T: b2Transform, v: XY, out: T): T {
+    // float32 x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
+    // float32 y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
+    // return b2Vec2(x, y);
+    const T_q_c: number = T.q.c, T_q_s: number = T.q.s;
+    const v_x: number = v.x, v_y: number = v.y;
+    out.x = (T_q_c * v_x - T_q_s * v_y) + T.p.x;
+    out.y = (T_q_s * v_x + T_q_c * v_y) + T.p.y;
+    return out;
+  }
 
-function b2MulXV<T extends XY>(T: b2Transform, v: XY, out: T): T {
-//  float32 x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
-//  float32 y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
-//
-//  return b2Vec2(x, y);
-  const T_q_c: number = T.q.c, T_q_s: number = T.q.s;
-  const v_x: number = v.x, v_y: number = v.y;
-  out.x = (T_q_c * v_x - T_q_s * v_y) + T.p.x;
-  out.y = (T_q_s * v_x + T_q_c * v_y) + T.p.y;
-  return out;
-}
+  public static MulTXV<T extends XY>(T: b2Transform, v: XY, out: T): T {
+    // float32 px = v.x - T.p.x;
+    // float32 py = v.y - T.p.y;
+    // float32 x = (T.q.c * px + T.q.s * py);
+    // float32 y = (-T.q.s * px + T.q.c * py);
+    // return b2Vec2(x, y);
+    const T_q_c: number = T.q.c, T_q_s: number = T.q.s;
+    const p_x: number = v.x - T.p.x;
+    const p_y: number = v.y - T.p.y;
+    out.x = ( T_q_c * p_x + T_q_s * p_y);
+    out.y = (-T_q_s * p_x + T_q_c * p_y);
+    return out;
+  }
 
-function b2MulTXV<T extends XY>(T: b2Transform, v: XY, out: T): T {
-//  float32 px = v.x - T.p.x;
-//  float32 py = v.y - T.p.y;
-//  float32 x = (T.q.c * px + T.q.s * py);
-//  float32 y = (-T.q.s * px + T.q.c * py);
-//
-//  return b2Vec2(x, y);
-  const T_q_c: number = T.q.c, T_q_s: number = T.q.s;
-  const p_x: number = v.x - T.p.x;
-  const p_y: number = v.y - T.p.y;
-  out.x = ( T_q_c * p_x + T_q_s * p_y);
-  out.y = (-T_q_s * p_x + T_q_c * p_y);
-  return out;
-}
+  public static MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
+    b2Rot.MulRR(A.q, B.q, out.q);
+    b2Vec2.AddVV(b2Rot.MulRV(A.q, B.p, out.p), A.p, out.p);
+    return out;
+  }
 
-function b2MulXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
-  b2MulRR(A.q, B.q, out.q);
-  b2AddVV(b2MulRV(A.q, B.p, out.p), A.p, out.p);
-  return out;
-}
+  public static MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
+    b2Rot.MulTRR(A.q, B.q, out.q);
+    b2Rot.MulTRV(A.q, b2Vec2.SubVV(B.p, A.p, out.p), out.p);
+    return out;
+  }
 
-function b2MulTXX(A: b2Transform, B: b2Transform, out: b2Transform): b2Transform {
-  b2MulTRR(A.q, B.q, out.q);
-  b2MulTRV(A.q, b2SubVV(B.p, A.p, out.p), out.p);
-  return out;
 }
 
 /// This describes the motion of a body/shape for TOI computation.
@@ -1126,7 +1076,7 @@ export class b2Sweep {
     const angle: number = one_minus_beta * this.a0 + beta * this.a;
     xf.q.SetAngle(angle);
 
-    xf.p.SelfSub(b2MulRV(xf.q, this.localCenter, b2Vec2.s_t0));
+    xf.p.SelfSub(b2Rot.MulRV(xf.q, this.localCenter, b2Vec2.s_t0));
     return xf;
   }
 
