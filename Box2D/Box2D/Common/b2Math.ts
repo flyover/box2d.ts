@@ -133,7 +133,11 @@ export interface XY {
   y: number;
 }
 
+// ===============================================
+//
 /// A 2D column vector.
+//
+// ===============================================
 export class b2Vec2 implements XY {
   public static readonly ZERO: Readonly<b2Vec2> = new b2Vec2(0, 0);
   public static readonly UNITX: Readonly<b2Vec2> = new b2Vec2(1, 0);
@@ -358,16 +362,14 @@ export class b2Vec2 implements XY {
   }
 
   public static CrossVS<T extends XY>(v: XY, s: number, out: T): T {
-    const v_x: number = v.x;
     out.x =  s * v.y;
-    out.y = -s * v_x;
+    out.y = -s * v.x;
     return out;
   }
 
   public static CrossVOne<T extends XY>(v: XY, out: T): T {
-    const v_x: number = v.x;
     out.x =  v.y;
-    out.y = -v_x;
+    out.y = -v.x;
     return out;
   }
 
@@ -379,32 +381,64 @@ export class b2Vec2 implements XY {
   }
 
   public static CrossOneV<T extends XY>(v: XY, out: T): T {
-    const v_x: number = v.x;
     out.x = -v.y;
-    out.y =  v_x;
+    out.y =  v.x;
     return out;
   }
 
-  public static AddVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x + b.x; out.y = a.y + b.y; return out; }
+  public static AddVV<T extends XY>(a: XY, b: XY, out: T): T {
+    out.x = a.x + b.x;
+    out.y = a.y + b.y;
+    return out;
+  }
 
-  public static SubVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = a.x - b.x; out.y = a.y - b.y; return out; }
+  public static SubVV<T extends XY>(a: XY, b: XY, out: T): T {
+    out.x = a.x - b.x;
+    out.y = a.y - b.y;
+    return out;
+  }
 
-  public static MulSV<T extends XY>(s: number, v: XY, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
-  public static MulVS<T extends XY>(v: XY, s: number, out: T): T { out.x = v.x * s; out.y = v.y * s; return out; }
+  public static MulSV<T extends XY>(s: number, v: XY, out: T): T {
+    out.x = v.x * s;
+    out.y = v.y * s;
+    return out;
+  }
 
-  public static AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x + (s * b.x); out.y = a.y + (s * b.y); return out; }
-  public static SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T { out.x = a.x - (s * b.x); out.y = a.y - (s * b.y); return out; }
+  public static MulVS<T extends XY>(v: XY, s: number, out: T): T {
+    out.x = v.x * s;
+    out.y = v.y * s;
+    return out;
+  }
+
+  public static AddVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T {
+    out.x = a.x + (s * b.x);
+    out.y = a.y + (s * b.y);
+    return out;
+  }
+
+  public static SubVMulSV<T extends XY>(a: XY, s: number, b: XY, out: T): T {
+    out.x = a.x - (s * b.x);
+    out.y = a.y - (s * b.y);
+    return out;
+  }
 
   public static AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T {
-    const v_x: number = v.x;
     out.x = a.x - (s * v.y);
-    out.y = a.y + (s * v_x);
+    out.y = a.y + (s * v.x);
     return out;
   }
 
-  public static MidVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (a.x + b.x) * 0.5; out.y = (a.y + b.y) * 0.5; return out; }
+  public static MidVV<T extends XY>(a: XY, b: XY, out: T): T {
+    out.x = (a.x + b.x) * 0.5;
+    out.y = (a.y + b.y) * 0.5;
+    return out;
+  }
 
-  public static ExtVV<T extends XY>(a: XY, b: XY, out: T): T { out.x = (b.x - a.x) * 0.5; out.y = (b.y - a.y) * 0.5; return out; }
+  public static ExtVV<T extends XY>(a: XY, b: XY, out: T): T {
+    out.x = (b.x - a.x) * 0.5;
+    out.y = (b.y - a.y) * 0.5;
+    return out;
+  }
 
   public static IsEqualToV(a: XY, b: XY): boolean {
     return a.x === b.x && a.y === b.y;
@@ -422,8 +456,11 @@ export class b2Vec2 implements XY {
     return (c_x * c_x + c_y * c_y);
   }
 
-  public static NegV<T extends XY>(v: XY, out: T): T { out.x = -v.x; out.y = -v.y; return out; }
-
+  public static NegV<T extends XY>(v: XY, out: T): T {
+    out.x = -v.x;
+    out.y = -v.y;
+    return out;
+  }
 }
 
 export const b2Vec2_zero: Readonly<b2Vec2> = new b2Vec2(0, 0);
@@ -432,7 +469,11 @@ export interface XYZ extends XY {
   z: number;
 }
 
+// ===============================================
+//
 /// A 2D column vector with 3 elements.
+//
+// ===============================================
 export class b2Vec3 implements XYZ {
   public static readonly ZERO: Readonly<b2Vec3> = new b2Vec3(0, 0, 0);
 
@@ -529,7 +570,11 @@ export class b2Vec3 implements XYZ {
   }
 }
 
+// ===============================================
+//
 /// A 2-by-2 matrix. Stored in column-major order.
+//
+// ===============================================
 export class b2Mat22 {
   public static readonly IDENTITY: Readonly<b2Mat22> = new b2Mat22();
 
@@ -705,7 +750,11 @@ export class b2Mat22 {
   }
 }
 
+// ===============================================
+//
 /// A 3-by-3 matrix. Stored in column-major order.
+//
+// ===============================================
 export class b2Mat33 {
   public static readonly IDENTITY: Readonly<b2Mat33> = new b2Mat33();
 
@@ -820,18 +869,21 @@ export class b2Mat33 {
     out.z = A.ex.z * v_x + A.ey.z * v_y + A.ez.z * v_z;
     return out;
   }
+
   public static MulM33XYZ<T extends XYZ>(A: b2Mat33, x: number, y: number, z: number, out: T): T {
     out.x = A.ex.x * x + A.ey.x * y + A.ez.x * z;
     out.y = A.ex.y * x + A.ey.y * y + A.ez.y * z;
     out.z = A.ex.z * x + A.ey.z * y + A.ez.z * z;
     return out;
   }
+
   public static MulM33V2<T extends XY>(A: b2Mat33, v: XY, out: T): T {
     const v_x: number = v.x, v_y: number = v.y;
     out.x = A.ex.x * v_x + A.ey.x * v_y;
     out.y = A.ex.y * v_x + A.ey.y * v_y;
     return out;
   }
+
   public static MulM33XY<T extends XY>(A: b2Mat33, x: number, y: number, out: T): T {
     out.x = A.ex.x * x + A.ey.x * y;
     out.y = A.ex.y * x + A.ey.y * y;
@@ -839,7 +891,11 @@ export class b2Mat33 {
   }
 }
 
+// ===============================================
+//
 /// Rotation
+//
+// ===============================================
 export class b2Rot {
   public static readonly IDENTITY: Readonly<b2Rot> = new b2Rot();
 
@@ -932,8 +988,12 @@ export class b2Rot {
   }
 }
 
+// ===============================================
+//
 /// A transform contains translation and rotation. It is used to represent
 /// the position and orientation of rigid frames.
+//
+// ===============================================
 export class b2Transform {
   public static readonly IDENTITY: Readonly<b2Transform> = new b2Transform();
 
@@ -1043,10 +1103,14 @@ export class b2Transform {
 
 }
 
+// ===============================================
+//
 /// This describes the motion of a body/shape for TOI computation.
 /// Shapes are defined with respect to the body origin, which may
 /// no coincide with the center of mass. However, to support dynamics
 /// we must interpolate the center of mass position.
+//
+// ===============================================
 export class b2Sweep {
   public readonly localCenter: b2Vec2 = new b2Vec2();
   public readonly c0: b2Vec2 = new b2Vec2();
