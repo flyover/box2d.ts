@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert, b2_linearSlop } from "../../Common/b2Settings";
 import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
 import { b2Vec2, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
@@ -46,7 +47,6 @@ export class b2ChainShape extends b2Shape {
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
   public CreateLoop(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
-    // DEBUG: b2Assert(this.m_vertices === null && this.m_count === 0);
     // DEBUG: b2Assert(count >= 3);
     // DEBUG: for (let i: number = 1; i < count; ++i) {
     // DEBUG:   const v1 = vertices[start + i - 1];
@@ -72,7 +72,6 @@ export class b2ChainShape extends b2Shape {
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
   public CreateChain(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
-    // DEBUG: b2Assert(this.m_vertices === null && this.m_count === 0);
     // DEBUG: b2Assert(count >= 2);
     // DEBUG: for (let i: number = 1; i < count; ++i) {
     // DEBUG:   const v1 = vertices[start + i - 1];

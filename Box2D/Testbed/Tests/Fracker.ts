@@ -318,10 +318,10 @@ export class Fracker extends testbed.Test {
    * Create the geography / features of the world.
    */
   public CreateGeo(): void {
-    box2d.b2Assert(FrackerSettings.k_dirtProbability +
-      FrackerSettings.k_emptyProbability +
-      FrackerSettings.k_oilProbability +
-      FrackerSettings.k_waterProbability === 100);
+    // DEBUG: box2d.b2Assert(FrackerSettings.k_dirtProbability +
+    // DEBUG:   FrackerSettings.k_emptyProbability +
+    // DEBUG:   FrackerSettings.k_oilProbability +
+    // DEBUG:   FrackerSettings.k_waterProbability === 100);
     for (let x = 0; x < FrackerSettings.k_worldWidthTiles; x++) {
       for (let y = 0; y < FrackerSettings.k_worldHeightTiles; y++) {
         if (this.GetMaterial(x, y) !== Fracker.Material.EMPTY) {
@@ -834,10 +834,10 @@ export class Fracker extends testbed.Test {
    * the specified tile coordinates.
    */
   public static TileToArrayOffset(x: number, y: number): number {
-    box2d.b2Assert(x >= 0);
-    box2d.b2Assert(x < FrackerSettings.k_worldWidthTiles);
-    box2d.b2Assert(y >= 0);
-    box2d.b2Assert(y < FrackerSettings.k_worldHeightTiles);
+    // DEBUG: box2d.b2Assert(x >= 0);
+    // DEBUG: box2d.b2Assert(x < FrackerSettings.k_worldWidthTiles);
+    // DEBUG: box2d.b2Assert(y >= 0);
+    // DEBUG: box2d.b2Assert(y < FrackerSettings.k_worldHeightTiles);
     return x + (y * FrackerSettings.k_worldWidthTiles);
   }
 
@@ -901,7 +901,7 @@ export namespace Fracker {
      */
     constructor(world: box2d.b2World) {
       super();
-      box2d.b2Assert(world !== null);
+      // DEBUG: box2d.b2Assert(world !== null);
       this.m_world = world;
       this.m_previousListener = world.m_destructionListener;
       this.m_world.SetDestructionListener(this);
@@ -945,7 +945,7 @@ export namespace Fracker {
      * Update the score when certain particles are destroyed.
      */
     public SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void {
-      box2d.b2Assert(particleSystem !== null);
+      // DEBUG: box2d.b2Assert(particleSystem !== null);
       ///  const void * const userData = particleSystem.GetUserDataBuffer()[index];
       const userData = particleSystem.GetUserDataBuffer()[index];
       if (userData) {

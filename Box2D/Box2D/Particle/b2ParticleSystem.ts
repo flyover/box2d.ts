@@ -1722,13 +1722,12 @@ export class b2ParticleSystem {
   public ApplyForce(firstIndex: number, lastIndex: number, force: XY): void {
     // Ensure we're not trying to apply force to particles that can't move,
     // such as wall particles.
-    // #if B2_ASSERT_ENABLED
-    ///let flags = 0;
-    ///for (let i = firstIndex; i < lastIndex; i++) {
-    ///flags |= this.m_flagsBuffer.data[i];
-    ///}
+    // DEBUG: if (!this.m_flagsBuffer.data) { throw new Error(); }
+    // DEBUG: let flags = 0;
+    // DEBUG: for (let i = firstIndex; i < lastIndex; i++) {
+    // DEBUG:   flags |= this.m_flagsBuffer.data[i];
+    // DEBUG: }
     // DEBUG: b2Assert(this.ForceCanBeApplied(flags));
-    // #endif
 
     // Early out if force does nothing (optimization).
     ///const b2Vec2 distributedForce = force / (float32)(lastIndex - firstIndex);
@@ -4829,7 +4828,7 @@ export class InsideBoundsEnumerator {
     while (this.m_first < this.m_last) {
       const xTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.xMask) >>> 0;
       // #if B2_ASSERT_ENABLED
-      ///let yTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.yMask) >>> 0;
+      // DEBUG: const yTag = (this.m_system.m_proxyBuffer.data[this.m_first].tag & b2ParticleSystem.yMask) >>> 0;
       // DEBUG: b2Assert(yTag >= this.m_yLower);
       // DEBUG: b2Assert(yTag <= this.m_yUpper);
       // #endif

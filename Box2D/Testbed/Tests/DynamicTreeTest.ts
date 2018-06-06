@@ -248,8 +248,9 @@ export class DynamicTreeTest extends testbed.Test {
         continue;
       }
 
-      const overlap = box2d.b2TestOverlapAABB(this.m_queryAABB, this.m_actors[i].aabb);
-      box2d.b2Assert(overlap === this.m_actors[i].overlap);
+      // DEBUG: const overlap =
+      box2d.b2TestOverlapAABB(this.m_queryAABB, this.m_actors[i].aabb);
+      // DEBUG: box2d.b2Assert(overlap === this.m_actors[i].overlap);
     }
   }
 
@@ -296,7 +297,7 @@ export class DynamicTreeTest extends testbed.Test {
     }
 
     if (bruteActor !== null) {
-      box2d.b2Assert(bruteOutput.fraction === this.m_rayCastOutput.fraction);
+      // DEBUG: box2d.b2Assert(bruteOutput.fraction === this.m_rayCastOutput.fraction);
     }
   }
 

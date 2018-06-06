@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
+// DEBUG: import { b2IsValid } from "../../Common/b2Math";
 import { b2Maybe } from "../../Common/b2Settings";
 import { b2Clamp, b2Vec2, b2Mat22, b2Rot, XY } from "../../Common/b2Math";
 import { b2Body } from "../b2Body";

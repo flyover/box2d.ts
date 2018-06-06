@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "./b2Settings";
 import { b2_pi, b2_epsilon, b2MakeArray } from "./b2Settings";
 
 export const b2_pi_over_180: number = b2_pi / 180;
@@ -168,7 +169,6 @@ export class b2Vec2 implements XY {
   }
 
   public Copy(other: XY): this {
-    // DEBUG: b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     return this;
@@ -491,7 +491,6 @@ export class b2Vec3 implements XYZ {
   }
 
   public Copy(other: XYZ): this {
-    // DEBUG: b2Assert(this !== other);
     this.x = other.x;
     this.y = other.y;
     this.z = other.z;
@@ -601,7 +600,6 @@ export class b2Mat22 {
   }
 
   public Copy(other: b2Mat22): this {
-    // DEBUG: b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     return this;
@@ -761,7 +759,6 @@ export class b2Mat33 {
   }
 
   public Copy(other: b2Mat33): this {
-    // DEBUG: b2Assert(this !== other);
     this.ex.Copy(other.ex);
     this.ey.Copy(other.ey);
     this.ez.Copy(other.ez);
@@ -992,7 +989,6 @@ export class b2Transform {
   }
 
   public Copy(other: b2Transform): this {
-    // DEBUG: b2Assert(this !== other);
     this.p.Copy(other.p);
     this.q.Copy(other.q);
     return this;
@@ -1114,7 +1110,6 @@ export class b2Sweep {
   }
 
   public Copy(other: b2Sweep): this {
-    // DEBUG: b2Assert(this !== other);
     this.localCenter.Copy(other.localCenter);
     this.c0.Copy(other.c0);
     this.c.Copy(other.c);

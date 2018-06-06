@@ -53,7 +53,7 @@ export class SoupStirrer extends Soup {
   }
 
   public CreateJoint() {
-    box2d.b2Assert(!this.m_joint);
+    // DEBUG: box2d.b2Assert(!this.m_joint);
     // Create a prismatic joint and connect to the ground, and have it
     // slide along the x axis.
     // Disconnect the body from this joint to have more fun.

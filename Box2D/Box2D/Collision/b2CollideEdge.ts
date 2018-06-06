@@ -1,3 +1,4 @@
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_polygonRadius, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactID } from "./b2Collision";

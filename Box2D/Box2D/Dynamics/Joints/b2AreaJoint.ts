@@ -1,3 +1,4 @@
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
 import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNumberArray, b2Maybe } from "../../Common/b2Settings";
 import { b2Sq, b2Sqrt, b2Vec2, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";

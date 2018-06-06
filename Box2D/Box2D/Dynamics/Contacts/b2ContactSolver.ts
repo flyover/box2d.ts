@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
 import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../../Common/b2Settings";
 import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
 import { b2Manifold } from "../../Collision/b2Collision";
@@ -681,8 +682,8 @@ export class b2ContactSolver {
             vn1 = b2Dot(dv1, normal);
             vn2 = b2Dot(dv2, normal);
 
-            // DEBUG: b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
-            // DEBUG: b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -732,7 +733,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn1 = b2Dot(dv1, normal);
 
-            // DEBUG: b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn1 - cp1->velocityBias) < k_errorTol);
             #endif
             */
             break;
@@ -782,7 +783,7 @@ export class b2ContactSolver {
             // Compute normal velocity
             vn2 = b2Dot(dv2, normal);
 
-            // DEBUG: b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
+            b2Assert(b2Abs(vn2 - cp2->velocityBias) < k_errorTol);
             #endif
             */
             break;

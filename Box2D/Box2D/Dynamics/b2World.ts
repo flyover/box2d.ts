@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_epsilon, b2_linearSlop, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
@@ -1162,7 +1163,7 @@ export class b2World {
     }
 
     // Build and simulate all awake islands.
-    ///const stackSize: number = this.m_bodyCount;
+    // DEBUG: const stackSize: number = this.m_bodyCount;
     const stack: Array<b2Body | null> = this.s_stack;
     for (let seed: b2Body | null = this.m_bodyList; seed; seed = seed.m_next) {
       if (seed.m_islandFlag) {
@@ -1602,7 +1603,7 @@ export class b2World {
 
   // #if B2_ENABLE_CONTROLLER
   public AddController(controller: b2Controller): b2Controller {
-    // DEBUG: b2Assert(controller.m_world === null, "Controller can only be a member of one world");
+    // b2Assert(controller.m_world === null, "Controller can only be a member of one world");
     // controller.m_world = this;
     controller.m_next = this.m_controllerList;
     controller.m_prev = null;
@@ -1615,7 +1616,7 @@ export class b2World {
   }
 
   public RemoveController(controller: b2Controller): b2Controller {
-    // DEBUG: b2Assert(controller.m_world === this, "Controller is not a member of this world");
+    // b2Assert(controller.m_world === this, "Controller is not a member of this world");
     if (controller.m_prev) {
       controller.m_prev.m_next = controller.m_next;
     }

@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
+// DEBUG: import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Transform } from "../../Common/b2Math";
 import { b2CollideEdgeAndCircle } from "../../Collision/b2CollideEdge";
 import { b2Manifold } from "../../Collision/b2Collision";

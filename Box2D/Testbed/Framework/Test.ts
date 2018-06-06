@@ -621,7 +621,7 @@ export class Test extends box2d.b2ContactListener {
    * particles.
    */
   public ColorParticleGroup(group: box2d.b2ParticleGroup, particlesPerColor: number) {
-    ///box2d.b2Assert(group !== null);
+    // DEBUG: box2d.b2Assert(group !== null);
     const colorBuffer = this.m_particleSystem.GetColorBuffer();
     const particleCount = group.GetParticleCount();
     const groupStart = group.GetBufferIndex();

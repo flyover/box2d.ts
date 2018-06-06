@@ -141,7 +141,7 @@ export class ParticleParameter {
     this.m_changed = this.m_index !== index;
     this.m_index = this.m_valueCount ? index % this.m_valueCount : index;
     this.m_value = this.FindParticleParameterValue();
-    box2d.b2Assert(this.m_value !== null);
+    // DEBUG: box2d.b2Assert(this.m_value !== null);
   }
 
   public Increment(): void {

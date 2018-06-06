@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_timeToSleep } from "../Common/b2Settings";
 import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
 import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";

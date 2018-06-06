@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
+// DEBUG: import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Transform } from "../../Common/b2Math";
 import { b2CollideCircles } from "../../Collision/b2CollideCircle";
 import { b2Manifold } from "../../Collision/b2Collision";
@@ -43,8 +45,8 @@ export class b2CircleContact extends b2Contact {
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
     const shapeA: b2Shape = this.m_fixtureA.GetShape();
     const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    // DEBUG: b2Assert(shapeA instanceof b2CircleShape);
-    // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
+    // DEBUG: b2Assert(shapeA.GetType() === b2ShapeType.e_circleShape);
+    // DEBUG: b2Assert(shapeB.GetType() === b2ShapeType.e_circleShape);
     b2CollideCircles(
       manifold,
       shapeA as b2CircleShape, xfA,

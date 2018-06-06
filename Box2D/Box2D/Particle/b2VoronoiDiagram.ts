@@ -62,7 +62,6 @@ export class b2VoronoiDiagram {
    * @param margin margin for which the range of the diagram is extended.
    */
   public Generate(radius: number, margin: number): void {
-    // DEBUG: b2Assert(this.m_diagram === null);
     const inverseRadius = 1 / radius;
     const lower = new b2Vec2(+b2_maxFloat, +b2_maxFloat);
     const upper = new b2Vec2(-b2_maxFloat, -b2_maxFloat);

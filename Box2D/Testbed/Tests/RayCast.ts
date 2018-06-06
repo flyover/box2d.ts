@@ -103,7 +103,7 @@ class RayCastMultipleCallback extends box2d.b2RayCastCallback {
       }
     }
 
-    ///box2d.b2Assert(this.m_count < RayCastMultipleCallback.e_maxCount);
+    // DEBUG: box2d.b2Assert(this.m_count < RayCastMultipleCallback.e_maxCount);
 
     this.m_points[this.m_count].Copy(point);
     this.m_normals[this.m_count].Copy(normal);

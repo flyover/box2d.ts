@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2MakeArray, b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";

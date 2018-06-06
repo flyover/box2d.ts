@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact";

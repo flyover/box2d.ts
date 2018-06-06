@@ -122,8 +122,8 @@ export class SpecialParticleTracker extends box2d.b2DestructionListener {
    */
   constructor(world: box2d.b2World, system: box2d.b2ParticleSystem) {
     super();
-    box2d.b2Assert(world !== null);
-    box2d.b2Assert(system !== null);
+    // DEBUG: box2d.b2Assert(world !== null);
+    // DEBUG: box2d.b2Assert(system !== null);
     this.m_world = world;
     this.m_particleSystem = system;
     this.m_world.SetDestructionListener(this);
@@ -138,7 +138,7 @@ export class SpecialParticleTracker extends box2d.b2DestructionListener {
    * particles.
    */
   public Add(particleIndices: number[], numberOfParticles: number) {
-    box2d.b2Assert(this.m_particleSystem !== null);
+    // DEBUG: box2d.b2Assert(this.m_particleSystem !== null);
     for (let i = 0; i < numberOfParticles && this.m_particles.length < SandboxParams.k_numberOfSpecialParticles; ++i) {
       const particleIndex = particleIndices[i];
       this.m_particleSystem.SetParticleFlags(particleIndex, this.m_particleSystem.GetFlagsBuffer()[particleIndex] | box2d.b2ParticleFlag.b2_destructionListenerParticle);
@@ -185,11 +185,11 @@ export class SpecialParticleTracker extends box2d.b2DestructionListener {
 
     // NOTE: user data could be used as an alternative method to look up
     // the local handle pointer from the index.
-    const length = this.m_particles.length;
+    // DEBUG: const length = this.m_particles.length;
     this.m_particles = this.m_particles.filter((value) => {
       return value.GetIndex() !== index;
     });
-    box2d.b2Assert((length - this.m_particles.length) === 1);
+    // DEBUG: box2d.b2Assert((length - this.m_particles.length) === 1);
   }
 }
 
@@ -376,7 +376,7 @@ export class Sandbox extends testbed.Test {
       "A        /" +
       "#####KK###";
 
-    box2d.b2Assert(maze.length === SandboxParams.k_tileWidth * SandboxParams.k_tileHeight);
+    // DEBUG: box2d.b2Assert(maze.length === SandboxParams.k_tileWidth * SandboxParams.k_tileHeight);
 
     this.m_faucetEmitterIndex = 0;
     this.m_pumpIndex = 0;
@@ -469,7 +469,7 @@ export class Sandbox extends testbed.Test {
   // Inititalizes a pump and its prismatic joint, and adds it to the world
   public AddPump(center: box2d.b2Vec2) {
     // Don't make too many pumps
-    box2d.b2Assert(this.m_pumpIndex < SandboxParams.k_maxPumps);
+    // DEBUG: box2d.b2Assert(this.m_pumpIndex < SandboxParams.k_maxPumps);
 
     const shape = new box2d.b2PolygonShape();
     shape.SetAsBox(SandboxParams.k_pumpRadius, SandboxParams.k_pumpRadius);
@@ -499,7 +499,7 @@ export class Sandbox extends testbed.Test {
   // Initializes and adds a faucet emitter
   public AddFaucetEmitter(center: box2d.b2Vec2, color: box2d.b2Color) {
     // Don't make too many emitters
-    box2d.b2Assert(this.m_faucetEmitterIndex < SandboxParams.k_maxPumps);
+    // DEBUG: box2d.b2Assert(this.m_faucetEmitterIndex < SandboxParams.k_maxPumps);
 
     const startingVelocity = new box2d.b2Vec2(0, SandboxParams.k_particleExitSpeedY);
 

@@ -1,3 +1,4 @@
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactFeature } from "./b2Collision";
@@ -9,7 +10,7 @@ const b2EdgeSeparation_s_normal1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v1: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_v2: b2Vec2 = new b2Vec2();
 function b2EdgeSeparation(poly1: b2PolygonShape, xf1: b2Transform, edge1: number, poly2: b2PolygonShape, xf2: b2Transform): number {
-  ///const count1: number = poly1.m_count;
+  // DEBUG: const count1: number = poly1.m_count;
   const vertices1: b2Vec2[] = poly1.m_vertices;
   const normals1: b2Vec2[] = poly1.m_normals;
 
@@ -113,7 +114,7 @@ function b2FindMaxSeparation(edgeIndex: number[], poly1: b2PolygonShape, xf1: b2
 
 const b2FindIncidentEdge_s_normal1: b2Vec2 = new b2Vec2();
 function b2FindIncidentEdge(c: b2ClipVertex[], poly1: b2PolygonShape, xf1: b2Transform, edge1: number, poly2: b2PolygonShape, xf2: b2Transform): void {
-  ///const count1: number = poly1.m_count;
+  // DEBUG: const count1: number = poly1.m_count;
   const normals1: b2Vec2[] = poly1.m_normals;
 
   const count2: number = poly2.m_count;

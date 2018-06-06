@@ -61,7 +61,7 @@ export class VerticalStack extends testbed.Test {
         bd.type = box2d.b2BodyType.b2_dynamicBody;
 
         const n = j * VerticalStack.e_rowCount + i;
-        box2d.b2Assert(n < VerticalStack.e_rowCount * VerticalStack.e_columnCount);
+        // DEBUG: box2d.b2Assert(n < VerticalStack.e_rowCount * VerticalStack.e_columnCount);
         this.m_indices[n] = n;
         bd.userData = this.m_indices[n];
 

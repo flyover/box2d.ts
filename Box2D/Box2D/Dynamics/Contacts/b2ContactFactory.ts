@@ -1,3 +1,4 @@
+// DEBUG: import { b2Assert } from "../../Common/b2Settings";
 import { b2MakeArray } from "../../Common/b2Settings";
 import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Contact } from "./b2Contact";

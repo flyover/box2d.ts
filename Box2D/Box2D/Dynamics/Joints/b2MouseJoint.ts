@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert, b2_epsilon } from "../../Common/b2Settings";
+// DEBUG: import { b2IsValid } from "../../Common/b2Math";
 import { b2_pi, b2Maybe } from "../../Common/b2Settings";
 import { b2Vec2, b2Mat22, b2Rot, b2Transform, XY } from "../../Common/b2Math";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
@@ -75,19 +77,18 @@ export class b2MouseJoint extends b2Joint {
   constructor(def: b2IMouseJointDef) {
     super(def);
 
-    // DEBUG: b2Assert(def.target.IsValid());
-    // DEBUG: b2Assert(b2IsValid(def.maxForce) && def.maxForce >= 0);
-    // DEBUG: b2Assert(b2IsValid(def.frequencyHz) && def.frequencyHz >= 0);
-    // DEBUG: b2Assert(b2IsValid(def.dampingRatio) && def.dampingRatio >= 0);
-
     this.m_targetA.Copy(b2Maybe(def.target, b2Vec2.ZERO));
+    // DEBUG: b2Assert(this.m_targetA.IsValid());
     b2Transform.MulTXV(this.m_bodyB.GetTransform(), this.m_targetA, this.m_localAnchorB);
 
     this.m_maxForce = b2Maybe(def.maxForce, 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_maxForce) && this.m_maxForce >= 0);
     this.m_impulse.SetZero();
 
     this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_frequencyHz) && this.m_frequencyHz >= 0);
     this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_dampingRatio) && this.m_dampingRatio >= 0);
 
     this.m_beta = 0;
     this.m_gamma = 0;

@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
+// DEBUG: import { b2IsValid } from "../Common/b2Math";
 import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
@@ -209,14 +211,6 @@ export class b2Body {
   // #endif
 
   constructor(bd: b2IBodyDef, world: b2World) {
-    // DEBUG: b2Assert(bd.position.IsValid());
-    // DEBUG: b2Assert(bd.linearVelocity.IsValid());
-    // DEBUG: b2Assert(b2IsValid(bd.angle));
-    // DEBUG: b2Assert(b2IsValid(bd.angularVelocity));
-    // DEBUG: b2Assert(b2IsValid(bd.gravityScale) && bd.gravityScale >= 0);
-    // DEBUG: b2Assert(b2IsValid(bd.angularDamping) && bd.angularDamping >= 0);
-    // DEBUG: b2Assert(b2IsValid(bd.linearDamping) && bd.linearDamping >= 0);
-
     this.m_bulletFlag = b2Maybe(bd.bullet, false);
     this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
     this.m_autoSleepFlag = b2Maybe(bd.allowSleep, true);
@@ -226,7 +220,9 @@ export class b2Body {
     this.m_world = world;
 
     this.m_xf.p.Copy(b2Maybe(bd.position, b2Vec2.ZERO));
+    // DEBUG: b2Assert(this.m_xf.p.IsValid());
     this.m_xf.q.SetAngle(b2Maybe(bd.angle, 0));
+    // DEBUG: b2Assert(b2IsValid(this.m_xf.q.GetAngle()));
     // #if B2_ENABLE_PARTICLE
     this.m_xf0.Copy(this.m_xf);
     // #endif
@@ -238,11 +234,16 @@ export class b2Body {
     this.m_sweep.alpha0 = 0;
 
     this.m_linearVelocity.Copy(b2Maybe(bd.linearVelocity, b2Vec2.ZERO));
+    // DEBUG: b2Assert(this.m_linearVelocity.IsValid());
     this.m_angularVelocity = b2Maybe(bd.angularVelocity, 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_angularVelocity));
 
     this.m_linearDamping = b2Maybe(bd.linearDamping, 0);
     this.m_angularDamping = b2Maybe(bd.angularDamping, 0);
     this.m_gravityScale = b2Maybe(bd.gravityScale, 1);
+    // DEBUG: b2Assert(b2IsValid(this.m_gravityScale) && this.m_gravityScale >= 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_angularDamping) && this.m_angularDamping >= 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_linearDamping) && this.m_linearDamping >= 0);
 
     this.m_force.SetZero();
     this.m_torque = 0;
@@ -348,7 +349,7 @@ export class b2Body {
     // DEBUG: b2Assert(this.m_fixtureCount > 0);
     let node: b2Fixture | null = this.m_fixtureList;
     let ppF: b2Fixture | null = null;
-    // let found: boolean = false;
+    // DEBUG: let found: boolean = false;
     while (node !== null) {
       if (node === fixture) {
         if (ppF) {
@@ -356,7 +357,7 @@ export class b2Body {
         } else {
           this.m_fixtureList = fixture.m_next;
         }
-        // found = true;
+        // DEBUG: found = true;
         break;
       }
 

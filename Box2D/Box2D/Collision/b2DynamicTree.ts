@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_aabbExtension, b2_aabbMultiplier } from "../Common/b2Settings";
 import { b2Abs, b2Min, b2Max, b2Vec2, XY } from "../Common/b2Math";
 import { b2GrowableStack } from "../Common/b2GrowableStack";
@@ -621,12 +622,12 @@ export class b2DynamicTree {
     if (node.IsLeaf()) {
       // DEBUG: b2Assert(child1 === null);
       // DEBUG: b2Assert(child2 === null);
-      if (!child1) { throw new Error(); }
-      if (!child2) { throw new Error(); }
       // DEBUG: b2Assert(node.height === 0);
       return;
     }
 
+    if (!child1) { throw new Error(); }
+    if (!child2) { throw new Error(); }
     // DEBUG: b2Assert(child1.parent === index);
     // DEBUG: b2Assert(child2.parent === index);
 
@@ -653,9 +654,9 @@ export class b2DynamicTree {
 
     if (!child1) { throw new Error(); }
     if (!child2) { throw new Error(); }
-  ///const height1: number = child1.height;
-    ///const height2: number = child2.height;
-    ///const height: number = 1 + b2Max(height1, height2);
+    // DEBUG: const height1: number = child1.height;
+    // DEBUG: const height2: number = child2.height;
+    // DEBUG: const height: number = 1 + b2Max(height1, height2);
     // DEBUG: b2Assert(node.height === height);
 
     const aabb: b2AABB = b2DynamicTree.s_aabb;

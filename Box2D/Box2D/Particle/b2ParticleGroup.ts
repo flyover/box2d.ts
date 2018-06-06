@@ -18,6 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
 import { b2Color, RGBA } from "../Common/b2Draw";
 import { b2Shape } from "../Collision/Shapes/b2Shape";
