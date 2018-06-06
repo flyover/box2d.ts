@@ -1,7 +1,7 @@
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
 
 export class EyeCandy extends testbed.Test {
   public m_mover: box2d.b2Body;

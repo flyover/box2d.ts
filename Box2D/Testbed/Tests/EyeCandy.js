@@ -1,5 +1,5 @@
 // #if B2_ENABLE_PARTICLE
-System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, context_1) {
+System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
     "use strict";
     var box2d, testbed, EyeCandy;
     var __moduleName = context_1 && context_1.id;

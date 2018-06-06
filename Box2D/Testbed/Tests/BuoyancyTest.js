@@ -15,7 +15,7 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["Box2D/Box2D", "Testbed", "Contributions/Enhancements/Controllers/b2BuoyancyController"], function (exports_1, context_1) {
+System.register(["Box2D", "Testbed", "Contributions/Enhancements/Controllers/b2BuoyancyController"], function (exports_1, context_1) {
     "use strict";
     var box2d, testbed, b2BuoyancyController_1, BuoyancyTest;
     var __moduleName = context_1 && context_1.id;

@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "Box2D/Box2D";
+import * as box2d from "Box2D";
 import * as testbed from "Testbed";
 import { b2BuoyancyController } from "Contributions/Enhancements/Controllers/b2BuoyancyController";
 

@@ -18,10 +18,10 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "../../Box2D/Box2D";
-import * as testbed from "../Testbed";
-import { ParticleParameter } from "../Framework/ParticleParameter";
-import { EmittedParticleCallback, RadialEmitter } from "../Framework/ParticleEmitter";
+import * as box2d from "Box2D";
+import * as testbed from "Testbed";
+import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
+import { EmittedParticleCallback, RadialEmitter } from "Testbed/Framework/ParticleEmitter";
 
 export class ParticleLifetimeRandomizer extends EmittedParticleCallback {
   public m_minLifetime = 0.0;

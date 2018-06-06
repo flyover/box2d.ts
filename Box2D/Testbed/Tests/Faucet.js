@@ -15,7 +15,7 @@
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register(["../../Box2D/Box2D", "../Testbed", "../Framework/ParticleParameter", "../Framework/ParticleEmitter"], function (exports_1, context_1) {
+System.register(["Box2D", "Testbed", "Testbed/Framework/ParticleParameter", "Testbed/Framework/ParticleEmitter"], function (exports_1, context_1) {
     "use strict";
     var box2d, testbed, ParticleParameter_1, ParticleEmitter_1, ParticleLifetimeRandomizer, Faucet;
     var __moduleName = context_1 && context_1.id;

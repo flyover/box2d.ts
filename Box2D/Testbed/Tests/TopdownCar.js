@@ -17,7 +17,7 @@
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register(["../../Box2D/Box2D", "../Testbed"], function (exports_1, context_1) {
+System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
     "use strict";
     var box2d, testbed, DEGTORAD, TDC_LEFT, TDC_RIGHT, TDC_UP, TDC_DOWN, FUD_CAR_TIRE, FUD_GROUND_AREA, FixtureUserData, CarTireFUD, GroundAreaFUD, TDTire, TDCar, MyDestructionListener, TopdownCar;
     var __moduleName = context_1 && context_1.id;
