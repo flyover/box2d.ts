@@ -20,6 +20,7 @@ import { TestEntry } from "Testbed/Framework/Test";
 
 import { AddPair } from "./AddPair";
 import { ApplyForce } from "./ApplyForce";
+import { BasicSliderCrank } from "./BasicSliderCrank";
 import { BodyTypes } from "./BodyTypes";
 import { Breakable } from "./Breakable";
 import { Bridge } from "./Bridge";
@@ -75,7 +76,6 @@ import { BlobTest } from "./BlobTest";
 import { TestCCD } from "./TestCCD";
 import { TestRagdoll } from "./TestRagdoll";
 import { TestStack } from "./TestStack";
-import { BasicSliderCrank } from "./BasicSliderCrank";
 import { PyramidTopple } from "./PyramidTopple";
 import { DominoTower } from "./DominoTower";
 import { HeavyOnLight } from "./HeavyOnLight";
@@ -177,7 +177,6 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Continuous Collision", TestCCD.Create),
   new TestEntry("Ragdolls", TestRagdoll.Create),
   new TestEntry("Stacked Boxes", TestStack.Create),
-  new TestEntry("Basic Slider Crank", BasicSliderCrank.Create),
   new TestEntry("Pyramid Topple", PyramidTopple.Create),
   new TestEntry("Domino Tower", DominoTower.Create),
   new TestEntry("Heavy on Light", HeavyOnLight.Create),
