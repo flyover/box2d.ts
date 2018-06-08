@@ -366,14 +366,16 @@ export class b2Vec2 implements XY {
   }
 
   public static CrossVS<T extends XY>(v: XY, s: number, out: T): T {
+    const v_x: number = v.x;
     out.x =  s * v.y;
-    out.y = -s * v.x;
+    out.y = -s * v_x;
     return out;
   }
 
   public static CrossVOne<T extends XY>(v: XY, out: T): T {
+    const v_x: number = v.x;
     out.x =  v.y;
-    out.y = -v.x;
+    out.y = -v_x;
     return out;
   }
 
@@ -385,8 +387,9 @@ export class b2Vec2 implements XY {
   }
 
   public static CrossOneV<T extends XY>(v: XY, out: T): T {
+    const v_x: number = v.x;
     out.x = -v.y;
-    out.y =  v.x;
+    out.y =  v_x;
     return out;
   }
 
@@ -427,8 +430,9 @@ export class b2Vec2 implements XY {
   }
 
   public static AddVCrossSV<T extends XY>(a: XY, s: number, v: XY, out: T): T {
+    const v_x: number = v.x;
     out.x = a.x - (s * v.y);
-    out.y = a.y + (s * v.x);
+    out.y = a.y + (s * v_x);
     return out;
   }
 
