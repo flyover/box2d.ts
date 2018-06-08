@@ -41,8 +41,6 @@ export function b2MixRestitution(restitution1: number, restitution2: number): nu
 export class b2ContactEdge {
   public other!: b2Body; ///< provides quick access to the other body attached.
   public contact: b2Contact; ///< the contact
-  public prev: b2ContactEdge | null = null; ///< the previous contact edge in the body's contact list
-  public next: b2ContactEdge | null = null; ///< the next contact edge in the body's contact list
   constructor(contact: b2Contact) {
     this.contact = contact;
   }
@@ -55,9 +53,6 @@ export abstract class b2Contact {
   public m_filterFlag: boolean = false; /// This contact needs filtering because a fixture filter was changed.
   public m_bulletHitFlag: boolean = false; /// This bullet contact had a TOI event
   public m_toiFlag: boolean = false; /// This contact has a valid TOI in m_toi
-
-  public m_prev: b2Contact | null = null;
-  public m_next: b2Contact | null = null;
 
   public readonly m_nodeA: b2ContactEdge; // = new b2ContactEdge(this);
   public readonly m_nodeB: b2ContactEdge; // = new b2ContactEdge(this);
@@ -107,10 +102,6 @@ export abstract class b2Contact {
 
   public IsEnabled(): boolean {
     return this.m_enabledFlag;
-  }
-
-  public GetNext(): b2Contact | null {
-    return this.m_next;
   }
 
   public GetFixtureA(): b2Fixture {
@@ -183,17 +174,10 @@ export abstract class b2Contact {
 
     this.m_manifold.pointCount = 0;
 
-    this.m_prev = null;
-    this.m_next = null;
-
     delete this.m_nodeA.contact; // = null;
-    this.m_nodeA.prev = null;
-    this.m_nodeA.next = null;
     delete this.m_nodeA.other; // = null;
 
     delete this.m_nodeB.contact; // = null;
-    this.m_nodeB.prev = null;
-    this.m_nodeB.next = null;
     delete this.m_nodeB.other; // = null;
 
     this.m_toiCount = 0;

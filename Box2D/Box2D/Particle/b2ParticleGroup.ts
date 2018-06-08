@@ -87,8 +87,6 @@ export class b2ParticleGroup {
   public m_lastIndex: number = 0;
   public m_groupFlags: b2ParticleGroupFlag = 0;
   public m_strength: number = 1.0;
-  public m_prev: b2ParticleGroup | null = null;
-  public m_next: b2ParticleGroup | null = null;
   public m_timestamp: number = -1;
   public m_mass: number = 0.0;
   public m_inertia: number = 0.0;
@@ -101,10 +99,6 @@ export class b2ParticleGroup {
 
   constructor(system: b2ParticleSystem) {
     this.m_system = system;
-  }
-
-  public GetNext(): b2ParticleGroup | null {
-    return this.m_next;
   }
 
   public GetParticleSystem(): b2ParticleSystem {

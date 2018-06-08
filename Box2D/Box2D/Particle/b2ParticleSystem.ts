@@ -641,12 +641,9 @@ export class b2ParticleSystem {
    * needs to be resorted.
    */
   public m_expirationTimeBufferRequiresSorting: boolean = false;
-  public m_groupCount: number = 0;
-  public m_groupList: b2ParticleGroup | null = null;
+  public readonly m_groupList = new Set<b2ParticleGroup>();
   public m_def: b2ParticleSystemDef = new b2ParticleSystemDef();
   public m_world: b2World;
-  public m_prev: b2ParticleSystem | null = null;
-  public m_next: b2ParticleSystem | null = null;
 
   public static readonly xTruncBits: number = 12;
   public static readonly yTruncBits: number = 12;
@@ -682,8 +679,8 @@ export class b2ParticleSystem {
   }
 
   public Drop(): void {
-    while (this.m_groupList) {
-      this.DestroyParticleGroup(this.m_groupList);
+    for (const group of this.m_groupList) {
+      this.DestroyParticleGroup(group);
     }
 
     this.FreeUserOverridableBuffer(this.m_handleIndexBuffer);
@@ -948,13 +945,7 @@ export class b2ParticleSystem {
     group.m_strength = b2Maybe(groupDef.strength, 1);
     group.m_userData = groupDef.userData;
     group.m_transform.Copy(transform);
-    group.m_prev = null;
-    group.m_next = this.m_groupList;
-    if (this.m_groupList) {
-      this.m_groupList.m_prev = group;
-    }
-    this.m_groupList = group;
-    ++this.m_groupCount;
+    this.m_groupList.add(group);
     for (let i = firstIndex; i < lastIndex; i++) {
       this.m_groupBuffer[i] = group;
     }
@@ -1037,7 +1028,7 @@ export class b2ParticleSystem {
    *
    * @return the head of the world particle group list.
    */
-  public GetParticleGroupList(): b2ParticleGroup | null {
+  public GetParticleGroupList(): Set<b2ParticleGroup> {
     return this.m_groupList;
   }
 
@@ -1045,7 +1036,7 @@ export class b2ParticleSystem {
    * Get the number of particle groups.
    */
   public GetParticleGroupCount(): number {
-    return this.m_groupCount;
+    return this.m_groupList.size;
   }
 
   /**
@@ -1744,14 +1735,6 @@ export class b2ParticleSystem {
   }
 
   /**
-   * Get the next particle-system in the world's particle-system
-   * list.
-   */
-  public GetNext(): b2ParticleSystem | null {
-    return this.m_next;
-  }
-
-  /**
    * Query the particle system for all particles that potentially
    * overlap the provided AABB.
    * b2QueryCallback::ShouldQueryParticleSystem is ignored.
@@ -2217,7 +2200,7 @@ export class b2ParticleSystem {
   }
 
   public DestroyParticleGroup(group: b2ParticleGroup): void {
-    // DEBUG: b2Assert(this.m_groupCount > 0);
+    // DEBUG: b2Assert(this.m_groupList.size > 0);
     // DEBUG: b2Assert(group !== null);
 
     if (this.m_world.m_destructionListener) {
@@ -2229,17 +2212,7 @@ export class b2ParticleSystem {
       this.m_groupBuffer[i] = null;
     }
 
-    if (group.m_prev) {
-      group.m_prev.m_next = group.m_next;
-    }
-    if (group.m_next) {
-      group.m_next.m_prev = group.m_prev;
-    }
-    if (group === this.m_groupList) {
-      this.m_groupList = group.m_next;
-    }
-
-    --this.m_groupCount;
+    this.m_groupList.delete(group);
   }
 
   public static ParticleCanBeConnected(flags: b2ParticleFlag, group: b2ParticleGroup | null): boolean {
@@ -2596,10 +2569,10 @@ export class b2ParticleSystem {
         contactGroups[contactGroupsCount++] = contact;
       }
     }
-    ///b2ParticleGroup** groupsToUpdate = (b2ParticleGroup**) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleGroup*) * this.m_groupCount);
+    ///b2ParticleGroup** groupsToUpdate = (b2ParticleGroup**) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleGroup*) * this.m_groupList.size);
     const groupsToUpdate: b2ParticleGroup[] = []; // TODO: static
     let groupsToUpdateCount = 0;
-    for (let group = this.m_groupList; group; group = group.GetNext()) {
+    for (const group of this.m_groupList) {
       if (group.m_groupFlags & b2ParticleGroupFlag.b2_particleGroupNeedsUpdateDepth) {
         groupsToUpdate[groupsToUpdateCount++] = group;
         this.SetGroupFlags(group,
@@ -2707,7 +2680,7 @@ export class b2ParticleSystem {
 
   public UpdateAllGroupFlags(): void {
     this.m_allGroupFlags = 0;
-    for (let group = this.m_groupList; group; group = group.GetNext()) {
+    for (const group of this.m_groupList) {
       this.m_allGroupFlags |= group.m_groupFlags;
     }
     this.m_needsUpdateAllGroupFlags = false;
@@ -3651,7 +3624,7 @@ export class b2ParticleSystem {
     if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
-    for (let group = this.m_groupList; group; group = group.GetNext()) {
+    for (const group of this.m_groupList) {
       if (group.m_groupFlags & b2ParticleGroupFlag.b2_rigidParticleGroup) {
         group.UpdateStatistics();
         ///b2Rot rotation(step.dt * group.m_angularVelocity);
@@ -4200,7 +4173,7 @@ export class b2ParticleSystem {
     }
 
     // update groups
-    for (let group = this.m_groupList; group; group = group.GetNext()) {
+    for (const group of this.m_groupList) {
       let firstIndex = newCount;
       let lastIndex = 0;
       let modified = false;
@@ -4237,12 +4210,10 @@ export class b2ParticleSystem {
     this.m_needsUpdateAllParticleFlags = false;
 
     // destroy bodies with no particles
-    for (let group = this.m_groupList; group; ) {
-      const next = group.GetNext();
+    for (const group of this.m_groupList) {
       if (group.m_groupFlags & b2ParticleGroupFlag.b2_particleGroupWillBeDestroyed) {
         this.DestroyParticleGroup(group);
       }
-      group = next;
     }
   }
 
@@ -4428,7 +4399,7 @@ export class b2ParticleSystem {
     }
 
     // update groups
-    for (let group = this.m_groupList; group; group = group.GetNext()) {
+    for (const group of this.m_groupList) {
       group.m_firstIndex = newIndices(group.m_firstIndex);
       group.m_lastIndex = newIndices(group.m_lastIndex - 1) + 1;
     }

@@ -94,22 +94,22 @@ export class Impulse extends testbed.Test {
   }
 
   public ApplyImpulseOrForce(direction: box2d.b2Vec2) {
-    const particleSystem = this.m_world.GetParticleSystemList();
-    if (!particleSystem) { throw new Error(); }
-    const particleGroup = particleSystem.GetParticleGroupList();
-    if (!particleGroup) { throw new Error(); }
-    const numParticles = particleGroup.GetParticleCount();
+    for (const particleSystem of this.m_world.GetParticleSystemList()) {
+      for (const particleGroup of particleSystem.GetParticleGroupList()) {
+        const numParticles = particleGroup.GetParticleCount();
 
-    if (this.m_useLinearImpulse) {
-      const kImpulseMagnitude = 0.005;
-      ///  const b2Vec2 impulse = kImpulseMagnitude * direction * (float32)numParticles;
-      const impulse = box2d.b2Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new box2d.b2Vec2());
-      particleGroup.ApplyLinearImpulse(impulse);
-    } else {
-      const kForceMagnitude = 1.0;
-      ///  const b2Vec2 force = kForceMagnitude * direction * (float32)numParticles;
-      const force = box2d.b2Vec2.MulSV(kForceMagnitude * numParticles, direction, new box2d.b2Vec2());
-      particleGroup.ApplyForce(force);
+        if (this.m_useLinearImpulse) {
+          const kImpulseMagnitude = 0.005;
+          ///  const b2Vec2 impulse = kImpulseMagnitude * direction * (float32)numParticles;
+          const impulse = box2d.b2Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new box2d.b2Vec2());
+          particleGroup.ApplyLinearImpulse(impulse);
+        } else {
+          const kForceMagnitude = 1.0;
+          ///  const b2Vec2 force = kForceMagnitude * direction * (float32)numParticles;
+          const force = box2d.b2Vec2.MulSV(kForceMagnitude * numParticles, direction, new box2d.b2Vec2());
+          particleGroup.ApplyForce(force);
+        }
+      }
     }
   }
 

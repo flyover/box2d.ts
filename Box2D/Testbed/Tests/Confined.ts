@@ -104,7 +104,7 @@ export class Confined extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     let sleeping = true;
-    for (let b = this.m_world.GetBodyList(); b; b = b.m_next) {
+    for (const b of this.m_world.GetBodyList()) {
       if (b.GetType() !== box2d.b2BodyType.b2_dynamicBody) {
         continue;
       }
@@ -124,7 +124,7 @@ export class Confined extends testbed.Test {
 
     super.Step(settings);
 
-    for (let b = this.m_world.GetBodyList(); b; b = b.m_next) {
+    for (const b of this.m_world.GetBodyList()) {
       if (b.GetType() !== box2d.b2BodyType.b2_dynamicBody) {
         continue;
       }
