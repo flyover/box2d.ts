@@ -31,7 +31,7 @@ import { b2CircleShape } from "../Collision/Shapes/b2CircleShape";
 import { b2EdgeShape } from "../Collision/Shapes/b2EdgeShape";
 import { b2PolygonShape } from "../Collision/Shapes/b2PolygonShape";
 import { b2Contact } from "./Contacts/b2Contact";
-import { b2Joint, b2JointDef, b2JointType } from "./Joints/b2Joint";
+import { b2Joint, b2IJointDef, b2JointType } from "./Joints/b2Joint";
 import { b2JointFactory } from "./Joints/b2JointFactory";
 import { b2PulleyJoint } from "./Joints/b2PulleyJoint";
 import { b2Body, b2IBodyDef, b2BodyType } from "./b2Body";
@@ -135,7 +135,7 @@ export class b2World {
   /// Create a rigid body given a definition. No reference to the definition
   /// is retained.
   /// @warning This function is locked during callbacks.
-  public CreateBody(def: b2IBodyDef): b2Body {
+  public CreateBody(def: b2IBodyDef = {}): b2Body {
     if (this.IsLocked()) { throw new Error(); }
 
     const b: b2Body = new b2Body(def, this);
@@ -195,7 +195,7 @@ export class b2World {
   /// Create a joint to constrain bodies together. No reference to the definition
   /// is retained. This may cause the connected bodies to cease colliding.
   /// @warning This function is locked during callbacks.
-  public CreateJoint<T extends b2Joint>(def: b2JointDef): T {
+  public CreateJoint<T extends b2Joint>(def: b2IJointDef): T {
     if (this.IsLocked()) { throw new Error(); }
 
     const j: b2Joint = b2JointFactory.Create(def, null);

@@ -47,48 +47,21 @@ System.register(["./b2Joint", "./b2AreaJoint", "./b2DistanceJoint", "./b2Frictio
         execute: function () {
             b2JointFactory = class b2JointFactory {
                 static Create(def, allocator) {
-                    let joint;
                     switch (def.type) {
-                        case b2Joint_1.b2JointType.e_distanceJoint:
-                            joint = new b2DistanceJoint_1.b2DistanceJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_mouseJoint:
-                            joint = new b2MouseJoint_1.b2MouseJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_prismaticJoint:
-                            joint = new b2PrismaticJoint_1.b2PrismaticJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_revoluteJoint:
-                            joint = new b2RevoluteJoint_1.b2RevoluteJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_pulleyJoint:
-                            joint = new b2PulleyJoint_1.b2PulleyJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_gearJoint:
-                            joint = new b2GearJoint_1.b2GearJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_wheelJoint:
-                            joint = new b2WheelJoint_1.b2WheelJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_weldJoint:
-                            joint = new b2WeldJoint_1.b2WeldJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_frictionJoint:
-                            joint = new b2FrictionJoint_1.b2FrictionJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_ropeJoint:
-                            joint = new b2RopeJoint_1.b2RopeJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_motorJoint:
-                            joint = new b2MotorJoint_1.b2MotorJoint(def);
-                            break;
-                        case b2Joint_1.b2JointType.e_areaJoint:
-                            joint = new b2AreaJoint_1.b2AreaJoint(def);
-                            break;
-                        default:
-                            throw new Error();
+                        case b2Joint_1.b2JointType.e_distanceJoint: return new b2DistanceJoint_1.b2DistanceJoint(def);
+                        case b2Joint_1.b2JointType.e_mouseJoint: return new b2MouseJoint_1.b2MouseJoint(def);
+                        case b2Joint_1.b2JointType.e_prismaticJoint: return new b2PrismaticJoint_1.b2PrismaticJoint(def);
+                        case b2Joint_1.b2JointType.e_revoluteJoint: return new b2RevoluteJoint_1.b2RevoluteJoint(def);
+                        case b2Joint_1.b2JointType.e_pulleyJoint: return new b2PulleyJoint_1.b2PulleyJoint(def);
+                        case b2Joint_1.b2JointType.e_gearJoint: return new b2GearJoint_1.b2GearJoint(def);
+                        case b2Joint_1.b2JointType.e_wheelJoint: return new b2WheelJoint_1.b2WheelJoint(def);
+                        case b2Joint_1.b2JointType.e_weldJoint: return new b2WeldJoint_1.b2WeldJoint(def);
+                        case b2Joint_1.b2JointType.e_frictionJoint: return new b2FrictionJoint_1.b2FrictionJoint(def);
+                        case b2Joint_1.b2JointType.e_ropeJoint: return new b2RopeJoint_1.b2RopeJoint(def);
+                        case b2Joint_1.b2JointType.e_motorJoint: return new b2MotorJoint_1.b2MotorJoint(def);
+                        case b2Joint_1.b2JointType.e_areaJoint: return new b2AreaJoint_1.b2AreaJoint(def);
                     }
-                    return joint;
+                    throw new Error();
                 }
                 static Destroy(joint, allocator) {
                 }
@@ -97,4 +70,4 @@ System.register(["./b2Joint", "./b2AreaJoint", "./b2DistanceJoint", "./b2Frictio
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJKb2ludEZhY3RvcnkuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJiMkpvaW50RmFjdG9yeS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztZQWNBLGlCQUFBO2dCQUNTLE1BQU0sQ0FBQyxNQUFNLENBQUMsR0FBZ0IsRUFBRSxTQUFjO29CQUNuRCxJQUFJLEtBQWMsQ0FBQztvQkFFbkIsUUFBUSxHQUFHLENBQUMsSUFBSSxFQUFFO3dCQUNsQixLQUFLLHFCQUFXLENBQUMsZUFBZTs0QkFDOUIsS0FBSyxHQUFHLElBQUksaUNBQWUsQ0FBQyxHQUEwQixDQUFDLENBQUM7NEJBQ3hELE1BQU07d0JBRVIsS0FBSyxxQkFBVyxDQUFDLFlBQVk7NEJBQzNCLEtBQUssR0FBRyxJQUFJLDJCQUFZLENBQUMsR0FBdUIsQ0FBQyxDQUFDOzRCQUNsRCxNQUFNO3dCQUVSLEtBQUsscUJBQVcsQ0FBQyxnQkFBZ0I7NEJBQy9CLEtBQUssR0FBRyxJQUFJLG1DQUFnQixDQUFDLEdBQTJCLENBQUMsQ0FBQzs0QkFDMUQsTUFBTTt3QkFFUixLQUFLLHFCQUFXLENBQUMsZUFBZTs0QkFDOUIsS0FBSyxHQUFHLElBQUksaUNBQWUsQ0FBQyxHQUEwQixDQUFDLENBQUM7NEJBQ3hELE1BQU07d0JBRVIsS0FBSyxxQkFBVyxDQUFDLGFBQWE7NEJBQzVCLEtBQUssR0FBRyxJQUFJLDZCQUFhLENBQUMsR0FBd0IsQ0FBQyxDQUFDOzRCQUNwRCxNQUFNO3dCQUVSLEtBQUsscUJBQVcsQ0FBQyxXQUFXOzRCQUMxQixLQUFLLEdBQUcsSUFBSSx5QkFBVyxDQUFDLEdBQXNCLENBQUMsQ0FBQzs0QkFDaEQsTUFBTTt3QkFFUixLQUFLLHFCQUFXLENBQUMsWUFBWTs0QkFDM0IsS0FBSyxHQUFHLElBQUksMkJBQVksQ0FBQyxHQUF1QixDQUFDLENBQUM7NEJBQ2xELE1BQU07d0JBRVIsS0FBSyxxQkFBVyxDQUFDLFdBQVc7NEJBQzFCLEtBQUssR0FBRyxJQUFJLHlCQUFXLENBQUMsR0FBc0IsQ0FBQyxDQUFDOzRCQUNoRCxNQUFNO3dCQUVSLEtBQUsscUJBQVcsQ0FBQyxlQUFlOzRCQUM5QixLQUFLLEdBQUcsSUFBSSxpQ0FBZSxDQUFDLEdBQTBCLENBQUMsQ0FBQzs0QkFDeEQsTUFBTTt3QkFFUixLQUFLLHFCQUFXLENBQUMsV0FBVzs0QkFDMUIsS0FBSyxHQUFHLElBQUkseUJBQVcsQ0FBQyxHQUFzQixDQUFDLENBQUM7NEJBQ2hELE1BQU07d0JBRVIsS0FBSyxxQkFBVyxDQUFDLFlBQVk7NEJBQzNCLEtBQUssR0FBRyxJQUFJLDJCQUFZLENBQUMsR0FBdUIsQ0FBQyxDQUFDOzRCQUNsRCxNQUFNO3dCQUVSLEtBQUsscUJBQVcsQ0FBQyxXQUFXOzRCQUMxQixLQUFLLEdBQUcsSUFBSSx5QkFBVyxDQUFDLEdBQXNCLENBQUMsQ0FBQzs0QkFDaEQsTUFBTTt3QkFFUjs0QkFDRSxNQUFNLElBQUksS0FBSyxFQUFFLENBQUM7cUJBQ25CO29CQUVELE9BQU8sS0FBSyxDQUFDO2dCQUNmLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE9BQU8sQ0FBQyxLQUFjLEVBQUUsU0FBYztnQkFDcEQsQ0FBQzthQUNGLENBQUEifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJKb2ludEZhY3RvcnkuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJiMkpvaW50RmFjdG9yeS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztZQWNBLGlCQUFBO2dCQUNTLE1BQU0sQ0FBQyxNQUFNLENBQUMsR0FBZ0IsRUFBRSxTQUFjO29CQUNuRCxRQUFRLEdBQUcsQ0FBQyxJQUFJLEVBQUU7d0JBQ2xCLEtBQUsscUJBQVcsQ0FBQyxlQUFlLENBQUMsQ0FBQyxPQUFPLElBQUksaUNBQWUsQ0FBQyxHQUEwQixDQUFDLENBQUM7d0JBQ3pGLEtBQUsscUJBQVcsQ0FBQyxZQUFZLENBQUMsQ0FBQyxPQUFPLElBQUksMkJBQVksQ0FBQyxHQUF1QixDQUFDLENBQUM7d0JBQ2hGLEtBQUsscUJBQVcsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDLE9BQU8sSUFBSSxtQ0FBZ0IsQ0FBQyxHQUEyQixDQUFDLENBQUM7d0JBQzVGLEtBQUsscUJBQVcsQ0FBQyxlQUFlLENBQUMsQ0FBQyxPQUFPLElBQUksaUNBQWUsQ0FBQyxHQUEwQixDQUFDLENBQUM7d0JBQ3pGLEtBQUsscUJBQVcsQ0FBQyxhQUFhLENBQUMsQ0FBQyxPQUFPLElBQUksNkJBQWEsQ0FBQyxHQUF3QixDQUFDLENBQUM7d0JBQ25GLEtBQUsscUJBQVcsQ0FBQyxXQUFXLENBQUMsQ0FBQyxPQUFPLElBQUkseUJBQVcsQ0FBQyxHQUFzQixDQUFDLENBQUM7d0JBQzdFLEtBQUsscUJBQVcsQ0FBQyxZQUFZLENBQUMsQ0FBQyxPQUFPLElBQUksMkJBQVksQ0FBQyxHQUF1QixDQUFDLENBQUM7d0JBQ2hGLEtBQUsscUJBQVcsQ0FBQyxXQUFXLENBQUMsQ0FBQyxPQUFPLElBQUkseUJBQVcsQ0FBQyxHQUFzQixDQUFDLENBQUM7d0JBQzdFLEtBQUsscUJBQVcsQ0FBQyxlQUFlLENBQUMsQ0FBQyxPQUFPLElBQUksaUNBQWUsQ0FBQyxHQUEwQixDQUFDLENBQUM7d0JBQ3pGLEtBQUsscUJBQVcsQ0FBQyxXQUFXLENBQUMsQ0FBQyxPQUFPLElBQUkseUJBQVcsQ0FBQyxHQUFzQixDQUFDLENBQUM7d0JBQzdFLEtBQUsscUJBQVcsQ0FBQyxZQUFZLENBQUMsQ0FBQyxPQUFPLElBQUksMkJBQVksQ0FBQyxHQUF1QixDQUFDLENBQUM7d0JBQ2hGLEtBQUsscUJBQVcsQ0FBQyxXQUFXLENBQUMsQ0FBQyxPQUFPLElBQUkseUJBQVcsQ0FBQyxHQUFzQixDQUFDLENBQUM7cUJBQzVFO29CQUNDLE1BQU0sSUFBSSxLQUFLLEVBQUUsQ0FBQztnQkFDcEIsQ0FBQztnQkFFSSxNQUFNLENBQUMsT0FBTyxDQUFDLEtBQWMsRUFBRSxTQUFjO2dCQUNwRCxDQUFDO2FBQ0YsQ0FBQSJ9

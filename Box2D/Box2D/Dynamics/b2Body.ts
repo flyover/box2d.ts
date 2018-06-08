@@ -281,7 +281,7 @@ export class b2Body {
     if (this.m_world.IsLocked()) { throw new Error(); }
 
     const fixture: b2Fixture = new b2Fixture(def, this);
-    fixture.Create(/*this,*/ def);
+    fixture.Create(def);
 
     if (this.m_activeFlag) {
       const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;

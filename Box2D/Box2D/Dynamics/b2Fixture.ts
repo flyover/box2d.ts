@@ -129,9 +129,6 @@ export class b2FixtureProxy {
   public fixture: b2Fixture;
   public childIndex: number = 0;
   public treeNode!: b2TreeNode;
-  // public static MakeArray(length: number): b2FixtureProxy[] {
-  //   return b2MakeArray(length, (i) => new b2FixtureProxy());
-  // }
   constructor(fixture: b2Fixture) {
     this.fixture = fixture;
   }
@@ -332,18 +329,14 @@ export class b2Fixture {
 
   // We need separation create/destroy functions from the constructor/destructor because
   // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-  public Create(/*body: b2Body,*/ def: b2IFixtureDef): void {
+  public Create(def: b2IFixtureDef): void {
     this.m_userData = def.userData;
     this.m_friction = b2Maybe(def.friction,  0.2);
     this.m_restitution = b2Maybe(def.restitution, 0);
 
-    // this.m_body = body;
-
     this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
 
     this.m_isSensor = b2Maybe(def.isSensor, false);
-
-    // this.m_shape = def.shape.Clone();
 
     // Reserve proxy space
     // const childCount = m_shape->GetChildCount();
@@ -383,7 +376,6 @@ export class b2Fixture {
       const proxy = this.m_proxies[i] = new b2FixtureProxy(this);
       this.m_shape.ComputeAABB(proxy.aabb, xf, i);
       proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
-      // proxy.fixture = this;
       proxy.childIndex = i;
     }
   }
