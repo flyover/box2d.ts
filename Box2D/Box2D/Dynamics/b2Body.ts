@@ -22,12 +22,12 @@ import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
-import { b2ContactEdge } from "./Contacts/b2Contact";
-import { b2JointEdge } from "./Joints/b2Joint";
+import { b2Contact } from "./Contacts/b2Contact";
+import { b2Joint } from "./Joints/b2Joint";
 import { b2Fixture, b2FixtureDef, b2IFixtureDef } from "./b2Fixture";
 import { b2World } from "./b2World";
 // #if B2_ENABLE_CONTROLLER
-import { b2ControllerEdge } from "../Controllers/b2Controller";
+import { b2Controller } from "../Controllers/b2Controller";
 // #endif
 
 /// The body type.
@@ -184,8 +184,8 @@ export class b2Body {
 
   public readonly m_fixtureList: Set<b2Fixture> = new Set<b2Fixture>();
 
-  public readonly m_jointList: Set<b2JointEdge> = new Set<b2JointEdge>();
-  public readonly m_contactList: Set<b2ContactEdge> = new Set<b2ContactEdge>();
+  public readonly m_jointList: Set<b2Joint> = new Set<b2Joint>();
+  public readonly m_contactList: Set<b2Contact> = new Set<b2Contact>();
 
   public m_mass: number = 1;
   public m_invMass: number = 1;
@@ -203,7 +203,7 @@ export class b2Body {
   public m_userData: any = null;
 
   // #if B2_ENABLE_CONTROLLER
-  public readonly m_controllerList: Set<b2ControllerEdge> = new Set<b2ControllerEdge>();
+  public readonly m_controllerList: Set<b2Controller> = new Set<b2Controller>();
   // #endif
 
   constructor(bd: b2IBodyDef, world: b2World) {
@@ -341,16 +341,14 @@ export class b2Body {
     // DEBUG: b2Assert(found);
 
     // Destroy any contacts associated with the fixture.
-    for (const edge of this.m_contactList) {
-      const c = edge.contact;
-
-      const fixtureA: b2Fixture = c.GetFixtureA();
-      const fixtureB: b2Fixture = c.GetFixtureB();
+    for (const contact of this.m_contactList) {
+      const fixtureA: b2Fixture = contact.GetFixtureA();
+      const fixtureB: b2Fixture = contact.GetFixtureB();
 
       if (fixture === fixtureA || fixture === fixtureB) {
         // This destroys the contact and removes it from
         // this body's contact list.
-        this.m_world.m_contactManager.Destroy(c);
+        this.m_world.m_contactManager.Destroy(contact);
       }
     }
 
@@ -848,8 +846,8 @@ export class b2Body {
     this.m_torque = 0;
 
     // Delete the attached contacts.
-    for (const ce of this.m_contactList) {
-      this.m_world.m_contactManager.Destroy(ce.contact);
+    for (const contact of this.m_contactList) {
+      this.m_world.m_contactManager.Destroy(contact);
     }
     this.m_contactList.clear();
 
@@ -953,8 +951,8 @@ export class b2Body {
         f.DestroyProxies(broadPhase);
       }
       // Destroy the attached contacts.
-      for (const ce of this.m_contactList) {
-        this.m_world.m_contactManager.Destroy(ce.contact);
+      for (const contact of this.m_contactList) {
+        this.m_world.m_contactManager.Destroy(contact);
       }
       this.m_contactList.clear();
     }
@@ -990,14 +988,14 @@ export class b2Body {
   }
 
   /// Get the list of all joints attached to this body.
-  public GetJointList(): Set<b2JointEdge> {
+  public GetJointList(): Set<b2Joint> {
     return this.m_jointList;
   }
 
   /// Get the list of all contacts attached to this body.
   /// @warning this list changes during the time step and you may
   /// miss some collisions if you don't use b2ContactListener.
-  public GetContactList(): Set<b2ContactEdge> {
+  public GetContactList(): Set<b2Contact> {
     return this.m_contactList;
   }
 
@@ -1092,9 +1090,9 @@ export class b2Body {
 
   public ShouldCollideConnected(other: b2Body): boolean {
     // Does a joint prevent collision?
-    for (const jn of this.m_jointList) {
-      if (jn.other === other) {
-        if (!jn.joint.m_collideConnected) {
+    for (const joint of this.m_jointList) {
+      if (joint.GetOtherBody(this) === other) {
+        if (!joint.m_collideConnected) {
           return false;
         }
       }
@@ -1114,7 +1112,7 @@ export class b2Body {
   }
 
   // #if B2_ENABLE_CONTROLLER
-  public GetControllerList(): Set<b2ControllerEdge> {
+  public GetControllerList(): Set<b2Controller> {
     return this.m_controllerList;
   }
 

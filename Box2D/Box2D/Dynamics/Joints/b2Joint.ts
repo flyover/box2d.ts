@@ -65,20 +65,6 @@ export class b2Jacobian {
   }
 }
 
-/// A joint edge is used to connect bodies and joints together
-/// in a joint graph where each body is a node and each joint
-/// is an edge. A joint edge belongs to a doubly linked list
-/// maintained in each attached body. Each joint has two joint
-/// nodes, one for each attached body.
-export class b2JointEdge {
-  public readonly other: b2Body;    ///< provides quick access to the other body attached.
-  public readonly joint: b2Joint;    ///< the joint
-  constructor(joint: b2Joint, other: b2Body) {
-    this.joint = joint;
-    this.other = other;
-  }
-}
-
 /// Joint definitions are used to construct joints.
 export interface b2IJointDef {
   /// The joint type is set automatically for concrete joint types.
@@ -123,8 +109,6 @@ export class b2JointDef {
 /// various fashions. Some joints also feature limits and motors.
 export abstract class b2Joint {
   public m_type: b2JointType = b2JointType.e_unknownJoint;
-  public m_edgeA: b2JointEdge;
-  public m_edgeB: b2JointEdge;
   public m_bodyA: b2Body;
   public m_bodyB: b2Body;
 
@@ -139,8 +123,6 @@ export abstract class b2Joint {
     // DEBUG: b2Assert(def.bodyA !== def.bodyB);
 
     this.m_type = def.type;
-    this.m_edgeA = new b2JointEdge(this, def.bodyB);
-    this.m_edgeB = new b2JointEdge(this, def.bodyA);
     this.m_bodyA = def.bodyA;
     this.m_bodyB = def.bodyB;
 
@@ -162,6 +144,11 @@ export abstract class b2Joint {
   /// Get the second body attached to this joint.
   public GetBodyB(): b2Body {
     return this.m_bodyB;
+  }
+
+  public GetOtherBody(body: b2Body): b2Body {
+    const bodyA = this.m_bodyA;
+    return body === bodyA ? this.m_bodyB : bodyA;
   }
 
   /// Get the anchor point on bodyA in world coordinates.

@@ -54,8 +54,7 @@ export class b2TensorDampingController extends b2Controller {
         if (timestep > this.maxTimestep && this.maxTimestep > 0) {
             timestep = this.maxTimestep;
         }
-        for (const i of this.m_bodyList) {
-            const body = i.body;
+        for (const body of this.m_bodyList) {
             if (!body.IsAwake()) {
                 continue;
             }

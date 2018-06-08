@@ -34,8 +34,7 @@ export class b2ConstantAccelController extends b2Controller {
 
   public Step(step: b2TimeStep) {
     const dtA = b2Vec2.MulSV(step.dt, this.A, b2ConstantAccelController.Step_s_dtA);
-    for (const i of this.m_bodyList) {
-      const body = i.body;
+    for (const body of this.m_bodyList) {
       if (!body.IsAwake()) {
         continue;
       }

@@ -71,8 +71,7 @@ export class b2BuoyancyController extends b2Controller {
     if (this.m_bodyList.size === 0) {
       return;
     }
-    for (const i of this.m_bodyList) {
-      const body = i.body;
+    for (const body of this.m_bodyList) {
       if (!body.IsAwake()) {
         //Buoyancy force is just a function of position,
         //so unlike most forces, it is safe to ignore sleeping bodes
