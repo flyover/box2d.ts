@@ -24,10 +24,11 @@ import { b2ContactFactory } from "./Contacts/b2ContactFactory";
 import { b2Body, b2BodyType } from "./b2Body";
 import { b2Fixture, b2FixtureProxy } from "./b2Fixture";
 import { b2ContactFilter, b2ContactListener } from "./b2WorldCallbacks";
+import { b2TestOverlapAABB } from "../Collision/b2Collision";
 
 // Delegate of b2World.
 export class b2ContactManager {
-  public readonly m_broadPhase: b2BroadPhase = new b2BroadPhase();
+  public readonly m_broadPhase: b2BroadPhase<b2FixtureProxy> = new b2BroadPhase<b2FixtureProxy>();
   public readonly m_contactList: Set<b2Contact> = new Set<b2Contact>();
   public m_contactFilter: b2ContactFilter = b2ContactFilter.b2_defaultFilter;
   public m_contactListener: b2ContactListener = b2ContactListener.b2_defaultListener;
@@ -118,7 +119,9 @@ export class b2ContactManager {
   }
 
   public FindNewContacts(): void {
-    this.m_broadPhase.UpdatePairs(this);
+    this.m_broadPhase.UpdatePairs((a: b2FixtureProxy, b: b2FixtureProxy): void => {
+      this.AddPair(a, b);
+    });
   }
 
   public Destroy(c: b2Contact): void {
@@ -178,9 +181,9 @@ export class b2ContactManager {
         continue;
       }
 
-      const proxyA: b2TreeNode = fixtureA.m_proxies[indexA].treeNode;
-      const proxyB: b2TreeNode = fixtureB.m_proxies[indexB].treeNode;
-      const overlap: boolean = this.m_broadPhase.TestOverlap(proxyA, proxyB);
+      const proxyA: b2TreeNode<b2FixtureProxy> = fixtureA.m_proxies[indexA].treeNode;
+      const proxyB: b2TreeNode<b2FixtureProxy> = fixtureB.m_proxies[indexB].treeNode;
+      const overlap: boolean = b2TestOverlapAABB(proxyA.aabb, proxyB.aabb);
 
       // Here we destroy contacts that cease to overlap in the broad-phase.
       if (!overlap) {

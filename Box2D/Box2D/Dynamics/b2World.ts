@@ -21,7 +21,6 @@ import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Setti
 import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw";
-import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput, b2TestOverlapShape } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2TimeOfImpact, b2TOIInput, b2TOIOutput, b2TOIOutputState } from "../Collision/b2TimeOfImpact";
@@ -92,7 +91,8 @@ export class b2World {
 
   public readonly m_profile: b2Profile = new b2Profile();
 
-  public readonly m_island: b2Island = new b2Island();
+  public readonly m_island: b2Island = new b2Island(null, this.m_contactManager.m_contactListener);
+  public readonly m_islandTOI: b2Island = new b2Island(null, this.m_contactManager.m_contactListener);
 
   public readonly s_stack: Array<b2Body | null> = [];
 
@@ -183,7 +183,7 @@ export class b2World {
         this.m_destructionListener.SayGoodbyeFixture(f);
       }
 
-      f.DestroyProxies(this.m_contactManager.m_broadPhase);
+      f.DestroyProxies();
       f.Destroy();
     }
     b.GetFixtureList().clear();
@@ -473,7 +473,7 @@ export class b2World {
       }
     }
 
-    // /*
+    /*
     if (flags & b2DrawFlags.e_pairBit) {
       color.SetRGB(0.3, 0.9, 0.9);
       for (const contact of this.m_contactManager.m_contactList) {
@@ -486,11 +486,10 @@ export class b2World {
         this.m_debugDraw.DrawSegment(cA, cB, color);
       }
     }
-    // */
+    */
 
     if (flags & b2DrawFlags.e_aabbBit) {
       color.SetRGB(0.9, 0.3, 0.9);
-      const bp: b2BroadPhase = this.m_contactManager.m_broadPhase;
       const vs: b2Vec2[] = b2World.DrawDebugData_s_vs;
 
       for (const b of this.m_bodyList) {
@@ -499,10 +498,10 @@ export class b2World {
         }
 
         for (const f of b.GetFixtureList()) {
-          for (let i: number = 0; i < f.m_proxyCount; ++i) {
+          for (let i: number = 0; i < f.m_proxies.length; ++i) {
             const proxy: b2FixtureProxy = f.m_proxies[i];
 
-            const aabb: b2AABB = bp.GetFatAABB(proxy.treeNode);
+            const aabb: b2AABB = proxy.treeNode.aabb;
             vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
             vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
             vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
@@ -538,11 +537,8 @@ export class b2World {
   /// @param callback a user implemented callback class.
   /// @param aabb the query box.
   public QueryAABB(callback: b2QueryCallback | null, aabb: b2AABB, fn?: b2QueryCallbackFunction): void {
-    const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    broadPhase.Query(aabb, (proxy: b2TreeNode): boolean => {
-      const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
-      const fixture: b2Fixture = fixture_proxy.fixture;
+    this.m_contactManager.m_broadPhase.Query(aabb, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
+      const fixture: b2Fixture = proxy.userData.fixture;
       if (callback) {
         return callback.ReportFixture(fixture);
       } else if (fn) {
@@ -571,11 +567,8 @@ export class b2World {
   /// @param callback a user implemented callback class.
   /// @param point the query point.
   public QueryPointAABB(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
-    const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    broadPhase.QueryPoint(point, (proxy: b2TreeNode): boolean => {
-      const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
-      const fixture: b2Fixture = fixture_proxy.fixture;
+    this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
+      const fixture: b2Fixture = proxy.userData.fixture;
       if (callback) {
         return callback.ReportFixture(fixture);
       } else if (fn) {
@@ -601,14 +594,11 @@ export class b2World {
 
   private static QueryFixtureShape_s_aabb = new b2AABB();
   public QueryFixtureShape(callback: b2QueryCallback | null, shape: b2Shape, index: number, transform: b2Transform, fn?: b2QueryCallbackFunction): void {
-    const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     const aabb: b2AABB = b2World.QueryFixtureShape_s_aabb;
     shape.ComputeAABB(aabb, transform, index);
-    broadPhase.Query(aabb, (proxy: b2TreeNode): boolean => {
-      const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
-      const fixture: b2Fixture = fixture_proxy.fixture;
-      if (b2TestOverlapShape(shape, index, fixture.GetShape(), fixture_proxy.childIndex, transform, fixture.GetBody().GetTransform())) {
+    this.m_contactManager.m_broadPhase.Query(aabb, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
+      const fixture: b2Fixture = proxy.userData.fixture;
+      if (b2TestOverlapShape(shape, index, fixture.GetShape(), proxy.userData.childIndex, transform, fixture.GetBody().GetTransform())) {
         if (callback) {
           return callback.ReportFixture(fixture);
         } else if (fn) {
@@ -634,11 +624,8 @@ export class b2World {
   }
 
   public QueryFixturePoint(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
-    const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
-    broadPhase.QueryPoint(point, (proxy: b2TreeNode): boolean => {
-      const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
-      const fixture: b2Fixture = fixture_proxy.fixture;
+    this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
+      const fixture: b2Fixture = proxy.userData.fixture;
       if (fixture.TestPoint(point)) {
         if (callback) {
           return callback.ReportFixture(fixture);
@@ -674,16 +661,13 @@ export class b2World {
   private static RayCast_s_output = new b2RayCastOutput();
   private static RayCast_s_point = new b2Vec2();
   public RayCast(callback: b2RayCastCallback | null, point1: b2Vec2, point2: b2Vec2, fn?: b2RayCastCallbackFunction): void {
-    const broadPhase: b2BroadPhase = this.m_contactManager.m_broadPhase;
     const input: b2RayCastInput = b2World.RayCast_s_input;
     input.maxFraction = 1;
     input.p1.Copy(point1);
     input.p2.Copy(point2);
-    broadPhase.RayCast(input, (input: b2RayCastInput, proxy: b2TreeNode): number => {
-      const fixture_proxy: b2FixtureProxy = broadPhase.GetUserData(proxy);
-      // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
-      const fixture: b2Fixture = fixture_proxy.fixture;
-      const index: number = fixture_proxy.childIndex;
+    this.m_contactManager.m_broadPhase.RayCast(input, (input: b2RayCastInput, proxy: b2TreeNode<b2FixtureProxy>): number => {
+      const fixture: b2Fixture = proxy.userData.fixture;
+      const index: number = proxy.userData.childIndex;
       const output: b2RayCastOutput = b2World.RayCast_s_output;
       const hit: boolean = fixture.RayCast(output, input, index);
       if (hit) {
@@ -1064,12 +1048,9 @@ export class b2World {
     this.m_profile.solvePosition = 0;
 
     // Size the island for the worst case.
-    const island: b2Island = this.m_island;
-    island.Initialize(this.m_bodyList.size,
+    const island: b2Island = this.m_island.Initialize(this.m_bodyList.size,
       this.m_contactManager.m_contactList.size,
-      this.m_jointList.size,
-      null, // this.m_stackAllocator,
-      this.m_contactManager.m_contactListener);
+      this.m_jointList.size);
 
     // Clear all the island flags.
     for (const b of this.m_bodyList) {
@@ -1233,8 +1214,7 @@ export class b2World {
   private static SolveTOI_s_toi_output = new b2TOIOutput();
   public SolveTOI(step: b2TimeStep): void {
     // b2Island island(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, &m_stackAllocator, m_contactManager.m_contactListener);
-    const island: b2Island = this.m_island;
-    island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
+    const island: b2Island = this.m_islandTOI.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0);
 
     if (this.m_stepComplete) {
       for (const b of this.m_bodyList) {

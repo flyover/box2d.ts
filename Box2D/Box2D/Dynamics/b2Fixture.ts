@@ -17,9 +17,8 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2MakeArray, b2Maybe } from "../Common/b2Settings";
+import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
-import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2Shape, b2ShapeType, b2MassData } from "../Collision/Shapes/b2Shape";
@@ -128,9 +127,10 @@ export class b2FixtureProxy {
   public readonly aabb: b2AABB = new b2AABB();
   public fixture: b2Fixture;
   public childIndex: number = 0;
-  public treeNode!: b2TreeNode;
-  constructor(fixture: b2Fixture) {
+  public treeNode!: b2TreeNode<b2FixtureProxy>;
+  constructor(fixture: b2Fixture, childIndex: number) {
     this.fixture = fixture;
+    this.childIndex = childIndex;
   }
 }
 
@@ -149,8 +149,7 @@ export class b2Fixture {
   public m_friction: number = 0;
   public m_restitution: number = 0;
 
-  public m_proxies: b2FixtureProxy[] = [];
-  public m_proxyCount: number = 0;
+  public readonly m_proxies: b2FixtureProxy[] = [];
 
   public readonly m_filter: b2Filter = new b2Filter();
 
@@ -217,7 +216,7 @@ export class b2Fixture {
 
     // Touch each proxy so that new pairs may be created
     const broadPhase = this.m_body.GetWorld().m_contactManager.m_broadPhase;
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
+    for (let i: number = 0; i < this.m_proxies.length; ++i) {
       broadPhase.TouchProxy(this.m_proxies[i].treeNode);
     }
   }
@@ -346,9 +345,6 @@ export class b2Fixture {
     //   m_proxies[i].fixture = NULL;
     //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
     // }
-    // this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
-    this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
-    this.m_proxyCount = 0;
 
     this.m_density = b2Maybe(def.density, 0);
   }
@@ -361,46 +357,48 @@ export class b2Fixture {
     // int32 childCount = m_shape->GetChildCount();
     // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
     // m_proxies = NULL;
-
-    // this.m_shape = null;
   }
 
   // These support body activation/deactivation.
-  public CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void {
+  public CreateProxies(xf: b2Transform): void {
     // DEBUG: b2Assert(this.m_proxyCount === 0);
 
-    // Create proxies in the broad-phase.
-    this.m_proxyCount = this.m_shape.GetChildCount();
+    const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
 
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      const proxy = this.m_proxies[i] = new b2FixtureProxy(this);
+    // Create proxies in the broad-phase.
+    this.m_proxies.length = this.m_shape.GetChildCount();
+
+    for (let i: number = 0; i < this.m_proxies.length; ++i) {
+      const proxy = this.m_proxies[i] = new b2FixtureProxy(this, i);
       this.m_shape.ComputeAABB(proxy.aabb, xf, i);
       proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
-      proxy.childIndex = i;
     }
   }
 
-  public DestroyProxies(broadPhase: b2BroadPhase): void {
+  public DestroyProxies(): void {
+    const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
+
     // Destroy proxies in the broad-phase.
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
+    for (let i: number = 0; i < this.m_proxies.length; ++i) {
       const proxy = this.m_proxies[i];
-      proxy.treeNode.userData = null;
       broadPhase.DestroyProxy(proxy.treeNode);
-      delete proxy.treeNode; // = null;
+      delete proxy.treeNode;
     }
 
-    this.m_proxyCount = 0;
+    this.m_proxies.length = 0;
   }
 
   private static Synchronize_s_aabb1 = new b2AABB();
   private static Synchronize_s_aabb2 = new b2AABB();
   private static Synchronize_s_displacement = new b2Vec2();
-  public Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void {
-    if (this.m_proxyCount === 0) {
+  public Synchronize(transform1: b2Transform, transform2: b2Transform): void {
+    if (this.m_proxies.length === 0) {
       return;
     }
 
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
+    const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
+
+    for (let i: number = 0; i < this.m_proxies.length; ++i) {
       const proxy = this.m_proxies[i];
 
       // Compute an AABB that covers the swept shape (may miss some rotation effect).
