@@ -186,18 +186,18 @@ export class DebugDraw extends box2d.b2Draw {
           const center = centers[i];
           const color = colors[i];
           ctx.fillStyle = color.MakeStyleString();
-          ctx.fillRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
-          ///ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
+          // ctx.fillRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+          ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
         }
       } else {
         ctx.fillStyle = "rgba(255,255,255,0.5)";
-        ctx.beginPath();
+        // ctx.beginPath();
         for (let i = 0; i < count; ++i) {
           const center = centers[i];
-          ctx.rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
-          ///ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
+          // ctx.rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+          ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, box2d.b2_pi * 2, true); ctx.fill();
         }
-        ctx.fill();
+        // ctx.fill();
       }
     }
   }
