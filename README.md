@@ -4,7 +4,7 @@
 
 A TypeScript port of Box2D.
 
-https://rawgit.com/flyover/box2d.ts/master/Box2D/Testbed/index.html
+https://flyover.github.io/box2d.ts/Box2D/Testbed/
 
 
 ## How to build it
