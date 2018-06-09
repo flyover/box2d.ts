@@ -48,7 +48,7 @@ export class Impulse extends testbed.Test {
       ground.CreateFixture(shape, 0.0);
     }
 
-    this.m_particleSystem.SetRadius(0.025 * 3); // HACK: increase particle radius
+    this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
     this.m_particleSystem.SetDamping(0.2);
 
     // Create the particles.

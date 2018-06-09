@@ -66,7 +66,7 @@ export class ParticlesSurfaceTension extends testbed.Test {
       }
     }
 
-    this.m_particleSystem.SetRadius(0.035 * 3); // HACK: increase particle radius
+    this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
 
     {
       const shape = new box2d.b2CircleShape();

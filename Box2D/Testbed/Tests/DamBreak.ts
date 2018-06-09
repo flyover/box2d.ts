@@ -41,7 +41,7 @@ export class DamBreak extends testbed.Test {
 
     }
 
-    this.m_particleSystem.SetRadius(0.025 * 3); // HACK: increase particle radius
+    this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
     this.m_particleSystem.SetDamping(0.2);
 
     {

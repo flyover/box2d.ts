@@ -63,7 +63,7 @@ export class WaveMachine extends testbed.Test {
       this.m_joint = this.m_world.CreateJoint(jd);
     }
 
-    this.m_particleSystem.SetRadius(0.025 * 3); // HACK: increase particle radius
+    this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
     const particleType = testbed.Main.GetParticleParameterValue();
     this.m_particleSystem.SetDamping(0.2);
 

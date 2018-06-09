@@ -55,7 +55,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                             ground.CreateFixture(shape, 0.0);
                         }
                     }
-                    this.m_particleSystem.SetRadius(0.25 * 3); // HACK: increase particle radius
+                    this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
                     const particleType = testbed.Main.GetParticleParameterValue();
                     if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
                         this.m_particleSystem.SetDamping(0.2);

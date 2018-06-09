@@ -71,7 +71,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                             this.m_ground.CreateFixture(shape, 0.0);
                         }
                     }
-                    this.m_particleSystem.SetRadius(0.035 * 3); // HACK: increase particle radius
+                    this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
                     {
                         const shape = new box2d.b2PolygonShape();
                         shape.SetAsBox(2, 1, new box2d.b2Vec2(0, 1), 0);
