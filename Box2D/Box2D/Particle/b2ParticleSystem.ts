@@ -19,7 +19,7 @@
 // #if B2_ENABLE_PARTICLE
 
 // DEBUG: import { b2Assert, b2_maxParticleIndex } from "../Common/b2Settings";
-import { b2_linearSlop, b2_maxFloat, b2_invalidParticleIndex, b2_minParticleSystemBufferCapacity, b2_maxTriadDistanceSquared, b2_barrierCollisionTime, b2MakeArray, b2Maybe } from "../Common/b2Settings";
+import { b2_linearSlop, b2_maxFloat, b2_invalidParticleIndex, b2_minParticleSystemBufferCapacity, b2_maxTriadDistanceSquared, b2_barrierCollisionTime, b2MakeArray, b2Maybe, b2List } from "../Common/b2Settings";
 import { b2_maxParticlePressure, b2_minParticleWeight, b2_maxParticleForce, b2_particleStride } from "../Common/b2Settings";
 import { b2Min, b2Max, b2Abs, b2Clamp, b2Sqrt, b2InvSqrt, b2Vec2, b2Rot, b2Transform, XY } from "../Common/b2Math";
 import { b2Color } from "../Common/b2Draw";
@@ -641,7 +641,7 @@ export class b2ParticleSystem {
    * needs to be resorted.
    */
   public m_expirationTimeBufferRequiresSorting: boolean = false;
-  public readonly m_groupList = new Set<b2ParticleGroup>();
+  public readonly m_groupList = new b2List<b2ParticleGroup>();
   public m_def: b2ParticleSystemDef = new b2ParticleSystemDef();
   public m_world: b2World;
 
@@ -1028,7 +1028,7 @@ export class b2ParticleSystem {
    *
    * @return the head of the world particle group list.
    */
-  public GetParticleGroupList(): Set<b2ParticleGroup> {
+  public GetParticleGroupList(): b2List<b2ParticleGroup> {
     return this.m_groupList;
   }
 

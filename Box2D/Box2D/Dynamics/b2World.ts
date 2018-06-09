@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
+import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts, b2List } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw";
@@ -65,11 +65,11 @@ export class b2World {
 
   public readonly m_contactManager: b2ContactManager = new b2ContactManager();
 
-  public readonly m_bodyList: Set<b2Body> = new Set<b2Body>();
-  public readonly m_jointList: Set<b2Joint> = new Set<b2Joint>();
+  public readonly m_bodyList: b2List<b2Body> = new b2List<b2Body>();
+  public readonly m_jointList: b2List<b2Joint> = new b2List<b2Joint>();
 
   // #if B2_ENABLE_PARTICLE
-  public readonly m_particleSystemList: Set<b2ParticleSystem> = new Set<b2ParticleSystem>();
+  public readonly m_particleSystemList: b2List<b2ParticleSystem> = new b2List<b2ParticleSystem>();
   // #endif
 
   public readonly m_gravity: b2Vec2 = new b2Vec2();
@@ -97,7 +97,7 @@ export class b2World {
   public readonly s_stack: Array<b2Body | null> = [];
 
   // #if B2_ENABLE_CONTROLLER
-  public readonly m_controllerList: Set<b2Controller> = new Set<b2Controller>();
+  public readonly m_controllerList: b2List<b2Controller> = new b2List<b2Controller>();
   // #endif
 
   /// Construct a world object.
@@ -717,19 +717,19 @@ export class b2World {
   /// Get the world body list. With the returned body, use b2Body::GetNext to get
   /// the next body in the world list. A NULL body indicates the end of the list.
   /// @return the head of the world body list.
-  public GetBodyList(): Set<b2Body> {
+  public GetBodyList(): b2List<b2Body> {
     return this.m_bodyList;
   }
 
   /// Get the world joint list. With the returned joint, use b2Joint::GetNext to get
   /// the next joint in the world list. A NULL joint indicates the end of the list.
   /// @return the head of the world joint list.
-  public GetJointList(): Set<b2Joint> {
+  public GetJointList(): b2List<b2Joint> {
     return this.m_jointList;
   }
 
   // #if B2_ENABLE_PARTICLE
-  public GetParticleSystemList(): Set<b2ParticleSystem> {
+  public GetParticleSystemList(): b2List<b2ParticleSystem> {
     return this.m_particleSystemList;
   }
   // #endif
@@ -739,7 +739,7 @@ export class b2World {
   /// @return the head of the world contact list.
   /// @warning contacts are created and destroyed in the middle of a time step.
   /// Use b2ContactListener to avoid missing contacts.
-  public GetContactList(): Set<b2Contact> {
+  public GetContactList(): b2List<b2Contact> {
     return this.m_contactManager.m_contactList;
   }
 

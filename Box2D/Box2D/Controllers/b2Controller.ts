@@ -18,6 +18,7 @@
 
 // #if B2_ENABLE_CONTROLLER
 
+import { b2List } from "../Common/b2Settings";
 import { b2Body } from "../Dynamics/b2Body";
 import { b2TimeStep } from "../Dynamics/b2TimeStep";
 import { b2Draw } from "../Common/b2Draw";
@@ -28,7 +29,7 @@ import { b2Draw } from "../Common/b2Draw";
  */
 export abstract class b2Controller {
   // m_world: b2World;
-  public readonly m_bodyList: Set<b2Body> = new Set<b2Body>();
+  public readonly m_bodyList: b2List<b2Body> = new b2List<b2Body>();
 
   /**
    * Controllers override this to implement per-step functionality.
@@ -50,7 +51,7 @@ export abstract class b2Controller {
   /**
    * Get the attached body list
    */
-  public GetBodyList(): Set<b2Body> {
+  public GetBodyList(): b2List<b2Body> {
     return this.m_bodyList;
   }
 

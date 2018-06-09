@@ -17,6 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
+import { b2List } from "../Common/b2Settings";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2Contact } from "./Contacts/b2Contact";
@@ -29,7 +30,7 @@ import { b2TestOverlapAABB } from "../Collision/b2Collision";
 // Delegate of b2World.
 export class b2ContactManager {
   public readonly m_broadPhase: b2BroadPhase<b2FixtureProxy> = new b2BroadPhase<b2FixtureProxy>();
-  public readonly m_contactList: Set<b2Contact> = new Set<b2Contact>();
+  public readonly m_contactList: b2List<b2Contact> = new b2List<b2Contact>();
   public m_contactFilter: b2ContactFilter = b2ContactFilter.b2_defaultFilter;
   public m_contactListener: b2ContactListener = b2ContactListener.b2_defaultListener;
   public m_allocator: any = null;

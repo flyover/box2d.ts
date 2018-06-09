@@ -18,7 +18,7 @@
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
 // DEBUG: import { b2IsValid } from "../Common/b2Math";
-import { b2Maybe } from "../Common/b2Settings";
+import { b2Maybe, b2List } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
@@ -182,10 +182,10 @@ export class b2Body {
 
   public m_world: b2World;
 
-  public readonly m_fixtureList: Set<b2Fixture> = new Set<b2Fixture>();
+  public readonly m_fixtureList: b2List<b2Fixture> = new b2List<b2Fixture>();
 
-  public readonly m_jointList: Set<b2Joint> = new Set<b2Joint>();
-  public readonly m_contactList: Set<b2Contact> = new Set<b2Contact>();
+  public readonly m_jointList: b2List<b2Joint> = new b2List<b2Joint>();
+  public readonly m_contactList: b2List<b2Contact> = new b2List<b2Contact>();
 
   public m_mass: number = 1;
   public m_invMass: number = 1;
@@ -203,7 +203,7 @@ export class b2Body {
   public m_userData: any = null;
 
   // #if B2_ENABLE_CONTROLLER
-  public readonly m_controllerList: Set<b2Controller> = new Set<b2Controller>();
+  public readonly m_controllerList: b2List<b2Controller> = new b2List<b2Controller>();
   // #endif
 
   constructor(bd: b2IBodyDef, world: b2World) {
@@ -977,19 +977,19 @@ export class b2Body {
   }
 
   /// Get the list of all fixtures attached to this body.
-  public GetFixtureList(): Set<b2Fixture> {
+  public GetFixtureList(): b2List<b2Fixture> {
     return this.m_fixtureList;
   }
 
   /// Get the list of all joints attached to this body.
-  public GetJointList(): Set<b2Joint> {
+  public GetJointList(): b2List<b2Joint> {
     return this.m_jointList;
   }
 
   /// Get the list of all contacts attached to this body.
   /// @warning this list changes during the time step and you may
   /// miss some collisions if you don't use b2ContactListener.
-  public GetContactList(): Set<b2Contact> {
+  public GetContactList(): b2List<b2Contact> {
     return this.m_contactList;
   }
 
@@ -1105,7 +1105,7 @@ export class b2Body {
   }
 
   // #if B2_ENABLE_CONTROLLER
-  public GetControllerList(): Set<b2Controller> {
+  public GetControllerList(): b2List<b2Controller> {
     return this.m_controllerList;
   }
 
