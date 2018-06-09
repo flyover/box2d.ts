@@ -43,6 +43,8 @@ import { DynamicTreeTest } from "./DynamicTreeTest";
 import { EdgeShapes } from "./EdgeShapes";
 import { EdgeTest } from "./EdgeTest";
 import { Gears } from "./Gears";
+import { HeavyOnLight } from "./HeavyOnLight";
+import { HeavyOnLightTwo } from "./HeavyOnLightTwo";
 import { Mobile } from "./Mobile";
 import { MobileBalanced } from "./MobileBalanced";
 import { MotorJoint } from "./MotorJoint";
@@ -78,8 +80,6 @@ import { TestRagdoll } from "./TestRagdoll";
 import { TestStack } from "./TestStack";
 import { PyramidTopple } from "./PyramidTopple";
 import { DominoTower } from "./DominoTower";
-import { HeavyOnLight } from "./HeavyOnLight";
-import { HeavyOnLightTwo } from "./HeavyOnLightTwo";
 import { TopdownCar } from "./TopdownCar";
 
 // #if B2_ENABLE_CONTROLLER
@@ -179,8 +179,6 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Stacked Boxes", TestStack.Create),
   new TestEntry("Pyramid Topple", PyramidTopple.Create),
   new TestEntry("Domino Tower", DominoTower.Create),
-  new TestEntry("Heavy on Light", HeavyOnLight.Create),
-  new TestEntry("Heavy on Light 2", HeavyOnLightTwo.Create),
   new TestEntry("TopDown Car", TopdownCar.Create),
 
   // #if B2_ENABLE_CONTROLLER
