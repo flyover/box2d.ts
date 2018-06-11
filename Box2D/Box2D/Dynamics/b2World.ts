@@ -91,8 +91,8 @@ export class b2World {
 
   public readonly m_profile: b2Profile = new b2Profile();
 
-  public readonly m_island: b2Island = new b2Island(null, () => this.m_contactManager.m_contactListener);
-  public readonly m_islandTOI: b2Island = new b2Island(null, () => this.m_contactManager.m_contactListener);
+  public readonly m_island: b2Island = new b2Island(null, this.m_contactManager.m_contactListener);
+  public readonly m_islandTOI: b2Island = new b2Island(null, this.m_contactManager.m_contactListener);
 
   public readonly s_stack: Array<b2Body | null> = [];
 
