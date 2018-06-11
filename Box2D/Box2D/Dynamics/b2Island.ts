@@ -151,7 +151,7 @@ However, we can compute sin+cos of the same angle fast.
 
 export class b2Island {
   public m_allocator: any = null;
-  public m_listener: b2ContactListener;
+  public m_listener: () => b2ContactListener;
 
   public m_bodies: b2Body[] = new Array(1024); // TODO: b2Settings
   public m_contacts: b2Contact[] = new Array(1024); // TODO: b2Settings
@@ -168,7 +168,7 @@ export class b2Island {
   public m_contactCapacity: number = 0;
   public m_jointCapacity: number = 0;
 
-  constructor(allocator: any, listener: b2ContactListener) {
+  constructor(allocator: any, listener: () => b2ContactListener) {
     this.m_allocator = allocator;
     this.m_listener = listener;
   }
@@ -565,7 +565,7 @@ export class b2Island {
         impulse.tangentImpulses[j] = vc.points[j].tangentImpulse;
       }
 
-      this.m_listener.PostSolve(c, impulse);
+      this.m_listener().PostSolve(c, impulse);
     }
   }
 }
