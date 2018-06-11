@@ -253,7 +253,7 @@ export class DrawingParticles extends testbed.Test {
   }
 
   public SplitParticleGroups() {
-    for (const group of this.m_particleSystem.GetParticleGroupList()) {
+    for (let group = this.m_particleSystem.GetParticleGroupList(); group; group = group.GetNext()) {
       if (group !== this.m_lastGroup &&
         (group.GetGroupFlags() & box2d.b2ParticleGroupFlag.b2_rigidParticleGroup) &&
         (group.GetAllParticleFlags() & box2d.b2ParticleFlag.b2_zombieParticle)) {

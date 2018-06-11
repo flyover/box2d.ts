@@ -73,6 +73,8 @@ export class b2Jacobian {
 export class b2JointEdge {
   public readonly other: b2Body;    ///< provides quick access to the other body attached.
   public readonly joint: b2Joint;    ///< the joint
+  public prev: b2JointEdge | null = null;  ///< the previous joint edge in the body's joint list
+  public next: b2JointEdge | null = null;  ///< the next joint edge in the body's joint list
   constructor(joint: b2Joint, other: b2Body) {
     this.joint = joint;
     this.other = other;
@@ -123,6 +125,8 @@ export class b2JointDef {
 /// various fashions. Some joints also feature limits and motors.
 export abstract class b2Joint {
   public m_type: b2JointType = b2JointType.e_unknownJoint;
+  public m_prev: b2Joint | null = null;
+  public m_next: b2Joint | null = null;
   public m_edgeA: b2JointEdge;
   public m_edgeB: b2JointEdge;
   public m_bodyA: b2Body;
@@ -175,6 +179,11 @@ export abstract class b2Joint {
 
   /// Get the reaction torque on bodyB in N*m.
   public abstract GetReactionTorque(inv_dt: number): number;
+
+  /// Get the next joint the world joint list.
+  public GetNext(): b2Joint | null {
+    return this.m_next;
+  }
 
   /// Get the user data pointer.
   public GetUserData(): any {

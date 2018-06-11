@@ -28,6 +28,10 @@ System.register([], function (exports_1, context_1) {
              */
             b2ControllerEdge = class b2ControllerEdge {
                 constructor(controller, body) {
+                    this.prevBody = null; ///< the previous controller edge in the controllers's joint list
+                    this.nextBody = null; ///< the next controller edge in the controllers's joint list
+                    this.prevController = null; ///< the previous controller edge in the body's joint list
+                    this.nextController = null; ///< the next controller edge in the body's joint list
                     this.controller = controller;
                     this.body = body;
                 }
@@ -40,7 +44,22 @@ System.register([], function (exports_1, context_1) {
             b2Controller = class b2Controller {
                 constructor() {
                     // m_world: b2World;
-                    this.m_bodyList = new Set();
+                    this.m_bodyList = null;
+                    this.m_bodyCount = 0;
+                    this.m_prev = null;
+                    this.m_next = null;
+                }
+                /**
+                 * Get the next controller in the world's body list.
+                 */
+                GetNext() {
+                    return this.m_next;
+                }
+                /**
+                 * Get the previous controller in the world's body list.
+                 */
+                GetPrev() {
+                    return this.m_prev;
                 }
                 /**
                  * Get the parent world of this body.
@@ -60,46 +79,75 @@ System.register([], function (exports_1, context_1) {
                 AddBody(body) {
                     const edge = new b2ControllerEdge(this, body);
                     //Add edge to controller list
-                    this.m_bodyList.add(edge);
+                    edge.nextBody = this.m_bodyList;
+                    edge.prevBody = null;
+                    if (this.m_bodyList) {
+                        this.m_bodyList.prevBody = edge;
+                    }
+                    this.m_bodyList = edge;
+                    ++this.m_bodyCount;
                     //Add edge to body list
-                    body.m_controllerList.add(edge);
+                    edge.nextController = body.m_controllerList;
+                    edge.prevController = null;
+                    if (body.m_controllerList) {
+                        body.m_controllerList.prevController = edge;
+                    }
+                    body.m_controllerList = edge;
+                    ++body.m_controllerCount;
                 }
                 /**
                  * Removes a body from the controller list.
                  */
                 RemoveBody(body) {
                     //Assert that the controller is not empty
-                    if (this.m_bodyList.size <= 0) {
+                    if (this.m_bodyCount <= 0) {
                         throw new Error();
                     }
                     //Find the corresponding edge
                     /*b2ControllerEdge*/
-                    let edge = null;
-                    for (const e of this.m_bodyList) {
-                        if (e.body === body) {
-                            edge = e;
-                        }
+                    let edge = this.m_bodyList;
+                    while (edge && edge.body !== body) {
+                        edge = edge.nextBody;
                     }
                     //Assert that we are removing a body that is currently attached to the controller
                     if (edge === null) {
                         throw new Error();
                     }
                     //Remove edge from controller list
-                    this.m_bodyList.delete(edge);
+                    if (edge.prevBody) {
+                        edge.prevBody.nextBody = edge.nextBody;
+                    }
+                    if (edge.nextBody) {
+                        edge.nextBody.prevBody = edge.prevBody;
+                    }
+                    if (this.m_bodyList === edge) {
+                        this.m_bodyList = edge.nextBody;
+                    }
+                    --this.m_bodyCount;
                     //Remove edge from body list
-                    body.m_controllerList.delete(edge);
+                    if (edge.nextController) {
+                        edge.nextController.prevController = edge.prevController;
+                    }
+                    if (edge.prevController) {
+                        edge.prevController.nextController = edge.nextController;
+                    }
+                    if (body.m_controllerList === edge) {
+                        body.m_controllerList = edge.nextController;
+                    }
+                    --body.m_controllerCount;
                 }
                 /**
                  * Removes all bodies from the controller list.
                  */
                 Clear() {
-                    for (const edge of this.m_bodyList) {
-                        this.RemoveBody(edge.body);
+                    while (this.m_bodyList) {
+                        this.RemoveBody(this.m_bodyList.body);
                     }
+                    this.m_bodyCount = 0;
                 }
             };
             exports_1("b2Controller", b2Controller);
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb250cm9sbGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDb250cm9sbGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0dBZ0JHOzs7Ozs7OztZQVFIOzs7ZUFHRztZQUNILG1CQUFBO2dCQUdFLFlBQVksVUFBd0IsRUFBRSxJQUFZO29CQUNoRCxJQUFJLENBQUMsVUFBVSxHQUFHLFVBQVUsQ0FBQztvQkFDN0IsSUFBSSxDQUFDLElBQUksR0FBRyxJQUFJLENBQUM7Z0JBQ25CLENBQUM7YUFDRixDQUFBOztZQUVEOzs7ZUFHRztZQUNILGVBQUE7Z0JBQUE7b0JBQ0Usb0JBQW9CO29CQUNKLGVBQVUsR0FBMEIsSUFBSSxHQUFHLEVBQW9CLENBQUM7Z0JBeUVsRixDQUFDO2dCQTdEQzs7bUJBRUc7Z0JBQ0gsZUFBZTtnQkFDZix5QkFBeUI7Z0JBQ3pCLElBQUk7Z0JBRUo7O21CQUVHO2dCQUNJLFdBQVc7b0JBQ2hCLE9BQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQztnQkFDekIsQ0FBQztnQkFFRDs7bUJBRUc7Z0JBQ0ksT0FBTyxDQUFDLElBQVk7b0JBQ3pCLE1BQU0sSUFBSSxHQUFHLElBQUksZ0JBQWdCLENBQUMsSUFBSSxFQUFFLElBQUksQ0FBQyxDQUFDO29CQUU5Qyw2QkFBNkI7b0JBQzdCLElBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxDQUFDO29CQUUxQix1QkFBdUI7b0JBQ3ZCLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLENBQUM7Z0JBQ2xDLENBQUM7Z0JBRUQ7O21CQUVHO2dCQUNJLFVBQVUsQ0FBQyxJQUFZO29CQUM1Qix5Q0FBeUM7b0JBQ3pDLElBQUksSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLElBQUksQ0FBQyxFQUFFO3dCQUFFLE1BQU0sSUFBSSxLQUFLLEVBQUUsQ0FBQztxQkFBRTtvQkFFckQsNkJBQTZCO29CQUM3QixvQkFBb0I7b0JBQ3BCLElBQUksSUFBSSxHQUFHLElBQUksQ0FBQztvQkFDaEIsS0FBSyxNQUFNLENBQUMsSUFBSSxJQUFJLENBQUMsVUFBVSxFQUFFO3dCQUMvQixJQUFJLENBQUMsQ0FBQyxJQUFJLEtBQUssSUFBSSxFQUFFOzRCQUNuQixJQUFJLEdBQUcsQ0FBQyxDQUFDO3lCQUNWO3FCQUNGO29CQUVELGlGQUFpRjtvQkFDakYsSUFBSSxJQUFJLEtBQUssSUFBSSxFQUFFO3dCQUFFLE1BQU0sSUFBSSxLQUFLLEVBQUUsQ0FBQztxQkFBRTtvQkFFekMsa0NBQWtDO29CQUNsQyxJQUFJLENBQUMsVUFBVSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQztvQkFFN0IsNEJBQTRCO29CQUM1QixJQUFJLENBQUMsZ0JBQWdCLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxDQUFDO2dCQUNyQyxDQUFDO2dCQUVEOzttQkFFRztnQkFDSSxLQUFLO29CQUNWLEtBQUssTUFBTSxJQUFJLElBQUksSUFBSSxDQUFDLFVBQVUsRUFBRTt3QkFDbEMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUM7cUJBQzVCO2dCQUNILENBQUM7YUFDRixDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb250cm9sbGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDb250cm9sbGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0dBZ0JHOzs7Ozs7OztZQVFIOzs7ZUFHRztZQUNILG1CQUFBO2dCQU9FLFlBQVksVUFBd0IsRUFBRSxJQUFZO29CQUozQyxhQUFRLEdBQTRCLElBQUksQ0FBQyxDQUFDLGlFQUFpRTtvQkFDM0csYUFBUSxHQUE0QixJQUFJLENBQUMsQ0FBQyw2REFBNkQ7b0JBQ3ZHLG1CQUFjLEdBQTRCLElBQUksQ0FBQyxDQUFDLDBEQUEwRDtvQkFDMUcsbUJBQWMsR0FBNEIsSUFBSSxDQUFDLENBQUMsc0RBQXNEO29CQUUzRyxJQUFJLENBQUMsVUFBVSxHQUFHLFVBQVUsQ0FBQztvQkFDN0IsSUFBSSxDQUFDLElBQUksR0FBRyxJQUFJLENBQUM7Z0JBQ25CLENBQUM7YUFDRixDQUFBOztZQUVEOzs7ZUFHRztZQUNILGVBQUE7Z0JBQUE7b0JBQ0Usb0JBQW9CO29CQUNiLGVBQVUsR0FBNEIsSUFBSSxDQUFDO29CQUMzQyxnQkFBVyxHQUFXLENBQUMsQ0FBQztvQkFDeEIsV0FBTSxHQUF3QixJQUFJLENBQUM7b0JBQ25DLFdBQU0sR0FBd0IsSUFBSSxDQUFDO2dCQXFINUMsQ0FBQztnQkF6R0M7O21CQUVHO2dCQUNJLE9BQU87b0JBQ1osT0FBTyxJQUFJLENBQUMsTUFBTSxDQUFDO2dCQUNyQixDQUFDO2dCQUVEOzttQkFFRztnQkFDSSxPQUFPO29CQUNaLE9BQU8sSUFBSSxDQUFDLE1BQU0sQ0FBQztnQkFDckIsQ0FBQztnQkFFRDs7bUJBRUc7Z0JBQ0gsZUFBZTtnQkFDZix5QkFBeUI7Z0JBQ3pCLElBQUk7Z0JBRUo7O21CQUVHO2dCQUNJLFdBQVc7b0JBQ2hCLE9BQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQztnQkFDekIsQ0FBQztnQkFFRDs7bUJBRUc7Z0JBQ0ksT0FBTyxDQUFDLElBQVk7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

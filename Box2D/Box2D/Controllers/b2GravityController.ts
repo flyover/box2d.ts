@@ -42,11 +42,11 @@ export class b2GravityController extends b2Controller {
    */
   public Step(step: b2TimeStep) {
     if (this.invSqr) {
-      for (const i of this.m_bodyList) {
+      for (let i = this.m_bodyList; i; i = i.nextBody) {
         const body1 = i.body;
         const p1 = body1.GetWorldCenter();
         const mass1 = body1.GetMass();
-        for (const j of this.m_bodyList) {
+        for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
           const body2 = j.body;
           const p2 = body2.GetWorldCenter();
           const mass2 = body2.GetMass();
@@ -67,11 +67,11 @@ export class b2GravityController extends b2Controller {
         }
       }
     } else {
-      for (const i of this.m_bodyList) {
+      for (let i = this.m_bodyList; i; i = i.nextBody) {
         const body1 = i.body;
         const p1 = body1.GetWorldCenter();
         const mass1 = body1.GetMass();
-        for (const j of this.m_bodyList) {
+        for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
           const body2 = j.body;
           const p2 = body2.GetWorldCenter();
           const mass2 = body2.GetMass();

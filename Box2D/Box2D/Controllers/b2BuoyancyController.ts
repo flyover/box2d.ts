@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Controller } from "./b2Controller";
+import { b2Controller, b2ControllerEdge } from "./b2Controller";
 import { b2Vec2 } from "../Common/b2Math";
 import { b2TimeStep } from "../Dynamics/b2TimeStep";
 import { b2_epsilon } from "../Common/b2Settings";
@@ -68,10 +68,13 @@ export class b2BuoyancyController extends b2Controller {
   public readonly gravity = new b2Vec2(0, 0);
 
   public Step(step: b2TimeStep) {
-    if (this.m_bodyList.size === 0) {
+    if (!this.m_bodyList) {
       return;
     }
-    for (const i of this.m_bodyList) {
+    if (this.useWorldGravity) {
+      this.gravity.Copy(this.m_bodyList.body.GetWorld().GetGravity());
+    }
+    for (let i: b2ControllerEdge | null = this.m_bodyList; i; i = i.nextBody) {
       const body = i.body;
       if (!body.IsAwake()) {
         //Buoyancy force is just a function of position,
@@ -82,7 +85,7 @@ export class b2BuoyancyController extends b2Controller {
       const massc = new b2Vec2();
       let area = 0;
       let mass = 0;
-      for (const fixture of body.GetFixtureList()) {
+      for (let fixture = body.GetFixtureList(); fixture; fixture = fixture.m_next) {
         const sc = new b2Vec2();
         const sarea = fixture.GetShape().ComputeSubmergedArea(this.normal, this.offset, body.GetTransform(), sc);
         area += sarea;
@@ -108,7 +111,7 @@ export class b2BuoyancyController extends b2Controller {
         continue;
       }
       //Buoyancy
-      const buoyancyForce = (this.useWorldGravity ? body.GetWorld().GetGravity() : this.gravity).Clone().SelfNeg();
+      const buoyancyForce = this.gravity.Clone().SelfNeg();
       buoyancyForce.SelfMul(this.density * area);
       body.ApplyForce(buoyancyForce, massc);
       //Linear drag
