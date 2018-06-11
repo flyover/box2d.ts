@@ -38,6 +38,14 @@ export function b2MixRestitution(restitution1: number, restitution2: number): nu
   return restitution1 > restitution2 ? restitution1 : restitution2;
 }
 
+export class b2ContactEdge {
+  public other!: b2Body; ///< provides quick access to the other body attached.
+  public contact: b2Contact; ///< the contact
+  constructor(contact: b2Contact) {
+    this.contact = contact;
+  }
+}
+
 export abstract class b2Contact {
   public m_islandFlag: boolean = false; /// Used when crawling contact graph when forming islands.
   public m_touchingFlag: boolean = false; /// Set when the shapes are touching.
@@ -45,6 +53,9 @@ export abstract class b2Contact {
   public m_filterFlag: boolean = false; /// This contact needs filtering because a fixture filter was changed.
   public m_bulletHitFlag: boolean = false; /// This bullet contact had a TOI event
   public m_toiFlag: boolean = false; /// This contact has a valid TOI in m_toi
+
+  public readonly m_nodeA: b2ContactEdge; // = new b2ContactEdge(this);
+  public readonly m_nodeB: b2ContactEdge; // = new b2ContactEdge(this);
 
   public m_fixtureA!: b2Fixture;
   public m_fixtureB!: b2Fixture;
@@ -63,6 +74,11 @@ export abstract class b2Contact {
   public m_tangentSpeed: number = 0;
 
   public m_oldManifold: b2Manifold = new b2Manifold(); // TODO: readonly
+
+  constructor() {
+    this.m_nodeA = new b2ContactEdge(this);
+    this.m_nodeB = new b2ContactEdge(this);
+  }
 
   public GetManifold() {
     return this.m_manifold;
@@ -102,16 +118,6 @@ export abstract class b2Contact {
 
   public GetChildIndexB(): number {
     return this.m_indexB;
-  }
-
-  public GetOtherFixture(fixture: b2Fixture): b2Fixture {
-    const fixtureA = this.m_fixtureA;
-    return fixture === fixtureA ? this.m_fixtureB : fixtureA;
-  }
-
-  public GetOtherBody(body: b2Body): b2Body {
-    const bodyA = this.m_fixtureA.GetBody();
-    return body === bodyA ? this.m_fixtureB.GetBody() : bodyA;
   }
 
   public abstract Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
@@ -168,11 +174,11 @@ export abstract class b2Contact {
 
     this.m_manifold.pointCount = 0;
 
-    // delete this.m_nodeA.contact; // = null;
-    // delete this.m_nodeA.other; // = null;
+    delete this.m_nodeA.contact; // = null;
+    delete this.m_nodeA.other; // = null;
 
-    // delete this.m_nodeB.contact; // = null;
-    // delete this.m_nodeB.other; // = null;
+    delete this.m_nodeB.contact; // = null;
+    delete this.m_nodeB.other; // = null;
 
     this.m_toiCount = 0;
 

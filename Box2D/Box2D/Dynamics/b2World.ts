@@ -155,25 +155,25 @@ export class b2World {
     if (this.IsLocked()) { throw new Error(); }
 
     // Delete the attached joints.
-    for (const joint of b.GetJointList()) {
+    for (const je of b.GetJointList()) {
       if (this.m_destructionListener) {
-        this.m_destructionListener.SayGoodbyeJoint(joint);
+        this.m_destructionListener.SayGoodbyeJoint(je.joint);
       }
 
-      this.DestroyJoint(joint);
+      this.DestroyJoint(je.joint);
     }
     b.GetJointList().clear();
 
     // #if B2_ENABLE_CONTROLLER
     // @see b2Controller list
-    for (const controller of b.GetControllerList()) {
-      controller.RemoveBody(b);
+    for (const coe of b.m_controllerList) {
+      coe.controller.RemoveBody(b);
     }
     // #endif
 
     // Delete the attached contacts.
-    for (const contact of b.GetContactList()) {
-      this.m_contactManager.Destroy(contact);
+    for (const ce of b.GetContactList()) {
+      this.m_contactManager.Destroy(ce.contact);
     }
     b.GetContactList().clear();
 
@@ -204,20 +204,24 @@ export class b2World {
     this.m_jointList.add(j);
 
     // Connect to the bodies' doubly linked lists.
-    j.m_bodyA.GetJointList().add(j);
+    // j.m_edgeA.joint = j;
+    // j.m_edgeA.other = j.m_bodyB;
+    j.m_bodyA.GetJointList().add(j.m_edgeA);
 
-    j.m_bodyB.GetJointList().add(j);
+    // j.m_edgeB.joint = j;
+    // j.m_edgeB.other = j.m_bodyA;
+    j.m_bodyB.GetJointList().add(j.m_edgeB);
 
     const bodyA: b2Body = def.bodyA;
     const bodyB: b2Body = def.bodyB;
 
     // If the joint prevents collisions, then flag any contacts for filtering.
     if (!def.collideConnected) {
-      for (const contact of bodyB.GetContactList()) {
-        if (contact.GetOtherBody(bodyB) === bodyA) {
+      for (const edge of bodyB.GetContactList()) {
+        if (edge.other === bodyA) {
           // Flag the contact for filtering at the next time step (where either
           // body is awake).
-          contact.FlagForFiltering();
+          edge.contact.FlagForFiltering();
         }
       }
     }
@@ -246,10 +250,10 @@ export class b2World {
     bodyB.SetAwake(true);
 
     // Remove from body 1.
-    bodyA.GetJointList().delete(j);
+    bodyA.GetJointList().delete(j.m_edgeA);
 
     // Remove from body 2
-    bodyB.GetJointList().delete(j);
+    bodyB.GetJointList().delete(j.m_edgeB);
 
     b2JointFactory.Destroy(j, null);
 
@@ -257,11 +261,11 @@ export class b2World {
 
     // If the joint prevents collisions, then flag any contacts for filtering.
     if (!collideConnected) {
-      for (const contact of bodyB.GetContactList()) {
-        if (contact.GetOtherBody(bodyB) === bodyA) {
+      for (const edge of bodyB.GetContactList()) {
+        if (edge.other === bodyA) {
           // Flag the contact for filtering at the next time step (where either
           // body is awake).
-          contact.FlagForFiltering();
+          edge.contact.FlagForFiltering();
         }
       }
     }
@@ -1123,7 +1127,9 @@ export class b2World {
         }
 
         // Search all contacts connected to this body.
-        for (const contact of b.GetContactList()) {
+        for (const ce of b.GetContactList()) {
+          const contact: b2Contact = ce.contact;
+
           // Has this contact already been added to an island?
           if (contact.m_islandFlag) {
             continue;
@@ -1144,7 +1150,8 @@ export class b2World {
           island.AddContact(contact);
           contact.m_islandFlag = true;
 
-          const other: b2Body = contact.GetOtherBody(b);
+          const other: b2Body | null = ce.other;
+          if (!other) { throw new Error(); }
 
           // Was the other body already added to this island?
           if (other.m_islandFlag) {
@@ -1157,20 +1164,20 @@ export class b2World {
         }
 
         // Search all joints connect to this body.
-        for (const joint of b.GetJointList()) {
-          if (joint.m_islandFlag) {
+        for (const je of b.GetJointList()) {
+          if (je.joint.m_islandFlag) {
             continue;
           }
 
-          const other: b2Body = joint.GetOtherBody(b);
+          const other: b2Body = je.other;
 
           // Don't simulate joints connected to inactive bodies.
           if (!other.IsActive()) {
             continue;
           }
 
-          island.AddJoint(joint);
-          joint.m_islandFlag = true;
+          island.AddJoint(je.joint);
+          je.joint.m_islandFlag = true;
 
           if (other.m_islandFlag) {
             continue;
@@ -1403,7 +1410,7 @@ export class b2World {
       for (let i: number = 0; i < 2; ++i) {
         const body: b2Body = (i === 0) ? (bA) : (bB); // bodies[i];
         if (body.m_type === b2BodyType.b2_dynamicBody) {
-          for (const contact of body.GetContactList()) {
+          for (const ce of body.GetContactList()) {
             if (island.m_bodyCount === island.m_bodyCapacity) {
               break;
             }
@@ -1412,13 +1419,15 @@ export class b2World {
               break;
             }
 
+            const contact: b2Contact = ce.contact;
+
             // Has this contact already been added to the island?
             if (contact.m_islandFlag) {
               continue;
             }
 
             // Only add static, kinematic, or bullet bodies.
-            const other: b2Body = contact.GetOtherBody(body);
+            const other: b2Body = ce.other;
             if (other.m_type === b2BodyType.b2_dynamicBody &&
               !body.IsBullet() && !other.IsBullet()) {
               continue;
@@ -1499,9 +1508,9 @@ export class b2World {
         body.SynchronizeFixtures();
 
         // Invalidate all contact TOIs on this displaced body.
-        for (const contact of body.GetContactList()) {
-          contact.m_toiFlag = false;
-          contact.m_islandFlag = false;
+        for (const ce of body.GetContactList()) {
+          ce.contact.m_toiFlag = false;
+          ce.contact.m_islandFlag = false;
         }
       }
 

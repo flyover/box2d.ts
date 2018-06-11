@@ -17,11 +17,22 @@
  */
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var b2Controller;
+    var b2ControllerEdge, b2Controller;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
+            /**
+             * A controller edge is used to connect bodies and controllers
+             * together in a bipartite graph.
+             */
+            b2ControllerEdge = class b2ControllerEdge {
+                constructor(controller, body) {
+                    this.controller = controller;
+                    this.body = body;
+                }
+            };
+            exports_1("b2ControllerEdge", b2ControllerEdge);
             /**
              * Base class for controllers. Controllers are a convience for
              * encapsulating common per-step functionality.
@@ -47,10 +58,11 @@ System.register([], function (exports_1, context_1) {
                  * Adds a body to the controller list.
                  */
                 AddBody(body) {
-                    //Add body to controller list
-                    this.m_bodyList.add(body);
-                    //Add body to body list
-                    body.m_controllerList.add(this);
+                    const edge = new b2ControllerEdge(this, body);
+                    //Add edge to controller list
+                    this.m_bodyList.add(edge);
+                    //Add edge to body list
+                    body.m_controllerList.add(edge);
                 }
                 /**
                  * Removes a body from the controller list.
@@ -60,21 +72,29 @@ System.register([], function (exports_1, context_1) {
                     if (this.m_bodyList.size <= 0) {
                         throw new Error();
                     }
-                    //Remove body from controller list
-                    const found = this.m_bodyList.delete(body);
+                    //Find the corresponding edge
+                    /*b2ControllerEdge*/
+                    let edge = null;
+                    for (const e of this.m_bodyList) {
+                        if (e.body === body) {
+                            edge = e;
+                        }
+                    }
                     //Assert that we are removing a body that is currently attached to the controller
-                    if (!found) {
+                    if (edge === null) {
                         throw new Error();
                     }
-                    //Remove body from body list
-                    body.m_controllerList.delete(this);
+                    //Remove edge from controller list
+                    this.m_bodyList.delete(edge);
+                    //Remove edge from body list
+                    body.m_controllerList.delete(edge);
                 }
                 /**
                  * Removes all bodies from the controller list.
                  */
                 Clear() {
-                    for (const body of this.m_bodyList) {
-                        this.RemoveBody(body);
+                    for (const edge of this.m_bodyList) {
+                        this.RemoveBody(edge.body);
                     }
                 }
             };
@@ -82,4 +102,4 @@ System.register([], function (exports_1, context_1) {
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb250cm9sbGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDb250cm9sbGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0dBZ0JHOzs7Ozs7OztZQVFIOzs7ZUFHRztZQUNILGVBQUE7Z0JBQUE7b0JBQ0Usb0JBQW9CO29CQUNKLGVBQVUsR0FBZ0IsSUFBSSxHQUFHLEVBQVUsQ0FBQztnQkE4RDlELENBQUM7Z0JBbERDOzttQkFFRztnQkFDSCxlQUFlO2dCQUNmLHlCQUF5QjtnQkFDekIsSUFBSTtnQkFFSjs7bUJBRUc7Z0JBQ0ksV0FBVztvQkFDaEIsT0FBTyxJQUFJLENBQUMsVUFBVSxDQUFDO2dCQUN6QixDQUFDO2dCQUVEOzttQkFFRztnQkFDSSxPQUFPLENBQUMsSUFBWTtvQkFDekIsNkJBQTZCO29CQUM3QixJQUFJLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsQ0FBQztvQkFFMUIsdUJBQXVCO29CQUN2QixJQUFJLENBQUMsZ0JBQWdCLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxDQUFDO2dCQUNsQyxDQUFDO2dCQUVEOzttQkFFRztnQkFDSSxVQUFVLENBQUMsSUFBWTtvQkFDNUIseUNBQXlDO29CQUN6QyxJQUFJLElBQUksQ0FBQyxVQUFVLENBQUMsSUFBSSxJQUFJLENBQUMsRUFBRTt3QkFBRSxNQUFNLElBQUksS0FBSyxFQUFFLENBQUM7cUJBQUU7b0JBRXJELGtDQUFrQztvQkFDbEMsTUFBTSxLQUFLLEdBQUcsSUFBSSxDQUFDLFVBQVUsQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLENBQUM7b0JBRTNDLGlGQUFpRjtvQkFDakYsSUFBSSxDQUFDLEtBQUssRUFBRTt3QkFBRSxNQUFNLElBQUksS0FBSyxFQUFFLENBQUM7cUJBQUU7b0JBRWxDLDRCQUE0QjtvQkFDNUIsSUFBSSxDQUFDLGdCQUFnQixDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQztnQkFDckMsQ0FBQztnQkFFRDs7bUJBRUc7Z0JBQ0ksS0FBSztvQkFDVixLQUFLLE1BQU0sSUFBSSxJQUFJLElBQUksQ0FBQyxVQUFVLEVBQUU7d0JBQ2xDLElBQUksQ0FBQyxVQUFVLENBQUMsSUFBSSxDQUFDLENBQUM7cUJBQ3ZCO2dCQUNILENBQUM7YUFDRixDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb250cm9sbGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDb250cm9sbGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0dBZ0JHOzs7Ozs7OztZQVFIOzs7ZUFHRztZQUNILG1CQUFBO2dCQUdFLFlBQVksVUFBd0IsRUFBRSxJQUFZO29CQUNoRCxJQUFJLENBQUMsVUFBVSxHQUFHLFVBQVUsQ0FBQztvQkFDN0IsSUFBSSxDQUFDLElBQUksR0FBRyxJQUFJLENBQUM7Z0JBQ25CLENBQUM7YUFDRixDQUFBOztZQUVEOzs7ZUFHRztZQUNILGVBQUE7Z0JBQUE7b0JBQ0Usb0JBQW9CO29CQUNKLGVBQVUsR0FBMEIsSUFBSSxHQUFHLEVBQW9CLENBQUM7Z0JBeUVsRixDQUFDO2dCQTdEQzs7bUJBRUc7Z0JBQ0gsZUFBZTtnQkFDZix5QkFBeUI7Z0JBQ3pCLElBQUk7Z0JBRUo7O21CQUVHO2dCQUNJLFdBQVc7b0JBQ2hCLE9BQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQztnQkFDekIsQ0FBQztnQkFFRDs7bUJBRUc7Z0JBQ0ksT0FBTyxDQUFDLElBQVk7b0JBQ3pCLE1BQU0sSUFBSSxHQUFHLElBQUksZ0JBQWdCLENBQUMsSUFBSSxFQUFFLElBQUksQ0FBQyxDQUFDO29CQUU5Qyw2QkFBNkI7b0JBQzdCLElBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxDQUFDO29CQUUxQix1QkFBdUI7b0JBQ3ZCLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLENBQUM7Z0JBQ2xDLENBQUM7Z0JBRUQ7O21CQUVHO2dCQUNJLFVBQVUsQ0FBQyxJQUFZO29CQUM1Qix5Q0FBeUM7b0JBQ3pDLElBQUksSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLElBQUksQ0FBQyxFQUFFO3dCQUFFLE1BQU0sSUFBSSxLQUFLLEVBQUUsQ0FBQztxQkFBRTtvQkFFckQsNkJBQTZCO29CQUM3QixvQkFBb0I7b0JBQ3BCLElBQUksSUFBSSxHQUFHLElBQUksQ0FBQztvQkFDaEIsS0FBSyxNQUFNLENBQUMsSUFBSSxJQUFJLENBQUMsVUFBVSxFQUFFO3dCQUMvQixJQUFJLENBQUMsQ0FBQyxJQUFJLEtBQUssSUFBSSxFQUFFOzRCQUNuQixJQUFJLEdBQUcsQ0FBQyxDQUFDO3lCQUNWO3FCQUNGO29CQUVELGlGQUFpRjtvQkFDakYsSUFBSSxJQUFJLEtBQUssSUFBSSxFQUFFO3dCQUFFLE1BQU0sSUFBSSxLQUFLLEVBQUUsQ0FBQztxQkFBRTtvQkFFekMsa0NBQWtDO29CQUNsQyxJQUFJLENBQUMsVUFBVSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQztvQkFFN0IsNEJBQTRCO29CQUM1QixJQUFJLENBQUMsZ0JBQWdCLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxDQUFDO2dCQUNyQyxDQUFDO2dCQUVEOzttQkFFRztnQkFDSSxLQUFLO29CQUNWLEtBQUssTUFBTSxJQUFJLElBQUksSUFBSSxDQUFDLFVBQVUsRUFBRTt3QkFDbEMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUM7cUJBQzVCO2dCQUNILENBQUM7YUFDRixDQUFBIn0=

@@ -207,7 +207,8 @@ export class b2Fixture {
   /// Call this if you want to establish collision that was previously disabled by b2ContactFilter::ShouldCollide.
   public Refilter(): void {
     // Flag associated contacts for filtering.
-    for (const contact of this.m_body.GetContactList()) {
+    for (const edge of this.m_body.GetContactList()) {
+      const contact = edge.contact;
       const fixtureA = contact.GetFixtureA();
       const fixtureB = contact.GetFixtureB();
       if (fixtureA === this || fixtureB === this) {
@@ -215,8 +216,14 @@ export class b2Fixture {
       }
     }
 
+    const world = this.m_body.GetWorld();
+
+    if (world === null) {
+      return;
+    }
+
     // Touch each proxy so that new pairs may be created
-    const broadPhase = this.m_body.GetWorld().m_contactManager.m_broadPhase;
+    const broadPhase = world.m_contactManager.m_broadPhase;
     for (let i: number = 0; i < this.m_proxyCount; ++i) {
       broadPhase.TouchProxy(this.m_proxies[i].treeNode);
     }

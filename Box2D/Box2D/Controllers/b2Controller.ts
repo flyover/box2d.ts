@@ -23,12 +23,25 @@ import { b2TimeStep } from "../Dynamics/b2TimeStep";
 import { b2Draw } from "../Common/b2Draw";
 
 /**
+ * A controller edge is used to connect bodies and controllers
+ * together in a bipartite graph.
+ */
+export class b2ControllerEdge {
+  public controller: b2Controller; ///< provides quick access to other end of this edge.
+  public body: b2Body; ///< the body
+  constructor(controller: b2Controller, body: b2Body) {
+    this.controller = controller;
+    this.body = body;
+  }
+}
+
+/**
  * Base class for controllers. Controllers are a convience for
  * encapsulating common per-step functionality.
  */
 export abstract class b2Controller {
   // m_world: b2World;
-  public readonly m_bodyList: Set<b2Body> = new Set<b2Body>();
+  public readonly m_bodyList: Set<b2ControllerEdge> = new Set<b2ControllerEdge>();
 
   /**
    * Controllers override this to implement per-step functionality.
@@ -50,7 +63,7 @@ export abstract class b2Controller {
   /**
    * Get the attached body list
    */
-  public GetBodyList(): Set<b2Body> {
+  public GetBodyList(): Set<b2ControllerEdge> {
     return this.m_bodyList;
   }
 
@@ -58,11 +71,13 @@ export abstract class b2Controller {
    * Adds a body to the controller list.
    */
   public AddBody(body: b2Body): void {
-    //Add body to controller list
-    this.m_bodyList.add(body);
+    const edge = new b2ControllerEdge(this, body);
 
-    //Add body to body list
-    body.m_controllerList.add(this);
+    //Add edge to controller list
+    this.m_bodyList.add(edge);
+
+    //Add edge to body list
+    body.m_controllerList.add(edge);
   }
 
   /**
@@ -72,22 +87,31 @@ export abstract class b2Controller {
     //Assert that the controller is not empty
     if (this.m_bodyList.size <= 0) { throw new Error(); }
 
-    //Remove body from controller list
-    const found = this.m_bodyList.delete(body);
+    //Find the corresponding edge
+    /*b2ControllerEdge*/
+    let edge = null;
+    for (const e of this.m_bodyList) {
+      if (e.body === body) {
+        edge = e;
+      }
+    }
 
     //Assert that we are removing a body that is currently attached to the controller
-    if (!found) { throw new Error(); }
+    if (edge === null) { throw new Error(); }
 
-    //Remove body from body list
-    body.m_controllerList.delete(this);
+    //Remove edge from controller list
+    this.m_bodyList.delete(edge);
+
+    //Remove edge from body list
+    body.m_controllerList.delete(edge);
   }
 
   /**
    * Removes all bodies from the controller list.
    */
   public Clear(): void {
-    for (const body of this.m_bodyList) {
-      this.RemoveBody(body);
+    for (const edge of this.m_bodyList) {
+      this.RemoveBody(edge.body);
     }
   }
 }

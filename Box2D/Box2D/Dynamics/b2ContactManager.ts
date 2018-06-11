@@ -61,12 +61,12 @@ export class b2ContactManager {
     // TODO_ERIN use a hash table to remove a potential bottleneck when both
     // bodies have a lot of contacts.
     // Does a contact already exist?
-    for (const contact of bodyB.GetContactList()) {
-      if (contact.GetOtherBody(bodyB) === bodyA) {
-        const fA: b2Fixture = contact.GetFixtureA();
-        const fB: b2Fixture = contact.GetFixtureB();
-        const iA: number = contact.GetChildIndexA();
-        const iB: number = contact.GetChildIndexB();
+    for (const edge of bodyB.GetContactList()) {
+      if (edge.other === bodyA) {
+        const fA: b2Fixture = edge.contact.GetFixtureA();
+        const fB: b2Fixture = edge.contact.GetFixtureB();
+        const iA: number = edge.contact.GetChildIndexA();
+        const iB: number = edge.contact.GetChildIndexB();
 
         if (fA === fixtureA && fB === fixtureB && iA === indexA && iB === indexB) {
           // A contact already exists.
@@ -105,10 +105,16 @@ export class b2ContactManager {
     // Connect to island graph.
 
     // Connect to body A
-    bodyA.GetContactList().add(c);
+    c.m_nodeA.contact = c;
+    c.m_nodeA.other = bodyB;
+
+    bodyA.GetContactList().add(c.m_nodeA);
 
     // Connect to body B
-    bodyB.GetContactList().add(c);
+    c.m_nodeB.contact = c;
+    c.m_nodeB.other = bodyA;
+
+    bodyB.GetContactList().add(c.m_nodeB);
 
     // Wake up the bodies
     if (!fixtureA.IsSensor() && !fixtureB.IsSensor()) {
@@ -135,10 +141,10 @@ export class b2ContactManager {
     this.m_contactList.delete(c);
 
     // Remove from body 1
-    bodyA.GetContactList().delete(c);
+    bodyA.GetContactList().delete(c.m_nodeA);
 
     // Remove from body 2
-    bodyB.GetContactList().delete(c);
+    bodyB.GetContactList().delete(c.m_nodeB);
 
     // Call the factory.
     this.m_contactFactory.Destroy(c);

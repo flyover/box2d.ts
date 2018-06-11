@@ -33,7 +33,8 @@ export class b2ConstantForceController extends b2Controller {
   public readonly F = new b2Vec2(0, 0);
 
   public Step(step: b2TimeStep) {
-    for (const body of this.m_bodyList) {
+    for (const i of this.m_bodyList) {
+      const body = i.body;
       if (!body.IsAwake()) {
         continue;
       }
