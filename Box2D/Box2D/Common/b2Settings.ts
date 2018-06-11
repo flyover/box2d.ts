@@ -27,29 +27,6 @@ export function b2Maybe<T>(value: T | undefined, def: T): T {
   return value !== undefined ? value : def;
 }
 
-// export class b2List<T> extends Set<T> {}
-export class b2List<T> implements Iterable<T> {
-  private readonly m_array: T[] = [];
-  public get size(): number { return this.m_array.length; }
-  public clear(): void { this.m_array.length = 0; }
-  public add(value: T): void {
-    const index: number = this.m_array.indexOf(value);
-    if (index !== -1) { throw new Error(); }
-    this.m_array.unshift(value); // add to front of array
-  }
-  public delete(value: T): void {
-    const index: number = this.m_array.indexOf(value);
-    if (index === -1) { throw new Error(); }
-    this.m_array.splice(index, 1);
-  }
-  public *[Symbol.iterator](): Iterator<T> {
-    const array = this.m_array.slice();
-    for (let index = 0; index < array.length; ++index) {
-      yield array[index];
-    }
-  }
-}
-
 export const b2_maxFloat: number = 1E+37; // FLT_MAX instead of Number.MAX_VALUE;
 export const b2_epsilon: number = 1E-5; // FLT_EPSILON instead of Number.MIN_VALUE;
 export const b2_epsilon_sq: number = (b2_epsilon * b2_epsilon);
