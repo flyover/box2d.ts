@@ -20,7 +20,7 @@ export class b2ContactRegister {
 
 export class b2ContactFactory {
   public m_allocator: any = null;
-  public readonly m_registers: b2ContactRegister[][] = new Array(b2ShapeType.e_shapeTypeCount);
+  public m_registers!: b2ContactRegister[][];
 
   constructor(allocator: any) {
     this.m_allocator = allocator;
@@ -31,6 +31,11 @@ export class b2ContactFactory {
     const pool: b2Contact[] = b2MakeArray(256, (i: number) => createFcn(this.m_allocator)); // TODO: b2Settings
 
     function poolCreateFcn(allocator: any): b2Contact {
+      // if (pool.length > 0) {
+      //   return pool.pop();
+      // }
+
+      // return createFcn(allocator);
       return pool.pop() || createFcn(allocator);
     }
 
@@ -64,8 +69,10 @@ export class b2ContactFactory {
   }
 
   private InitializeRegisters(): void {
+    this.m_registers = [/*b2ShapeType.e_shapeTypeCount*/];
+
     for (let i: number = 0; i < b2ShapeType.e_shapeTypeCount; i++) {
-      this.m_registers[i] = new Array(b2ShapeType.e_shapeTypeCount);
+      this.m_registers[i] = [/*b2ShapeType.e_shapeTypeCount*/];
 
       for (let j: number = 0; j < b2ShapeType.e_shapeTypeCount; j++) {
         this.m_registers[i][j] = new b2ContactRegister();

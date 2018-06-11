@@ -25,7 +25,7 @@ export class DynamicTreeTest extends testbed.Test {
   public m_worldExtent = 0.0;
   public m_proxyExtent = 0.0;
 
-  public m_tree = new box2d.b2DynamicTree<DynamicTreeTest.Actor>();
+  public m_tree = new box2d.b2DynamicTree();
   public m_queryAABB = new box2d.b2AABB();
   public m_rayCastInput = new box2d.b2RayCastInput();
   public m_rayCastOutput = new box2d.b2RayCastOutput();
@@ -239,8 +239,8 @@ export class DynamicTreeTest extends testbed.Test {
   }
 
   public Query(): void {
-    this.m_tree.Query(this.m_queryAABB, (proxyId: box2d.b2TreeNode<DynamicTreeTest.Actor>): boolean => {
-      const actor = proxyId.userData; // this.m_tree.GetUserData(proxyId);
+    this.m_tree.Query(this.m_queryAABB, (proxyId: box2d.b2TreeNode): boolean => {
+      const actor = this.m_tree.GetUserData(proxyId);
       actor.overlap = box2d.b2TestOverlapAABB(this.m_queryAABB, actor.aabb);
       return true;
     });
@@ -263,8 +263,8 @@ export class DynamicTreeTest extends testbed.Test {
     input.Copy(this.m_rayCastInput);
 
     // Ray cast against the dynamic tree.
-    this.m_tree.RayCast(input, (input: box2d.b2RayCastInput, proxyId: box2d.b2TreeNode<DynamicTreeTest.Actor>): number => {
-      const actor: DynamicTreeTest.Actor = proxyId.userData; // this.m_tree.GetUserData(proxyId);
+    this.m_tree.RayCast(input, (input: box2d.b2RayCastInput, proxyId: box2d.b2TreeNode): number => {
+      const actor: DynamicTreeTest.Actor = this.m_tree.GetUserData(proxyId);
 
       const output = new box2d.b2RayCastOutput();
       const hit = actor.aabb.RayCast(output, input);
@@ -311,6 +311,6 @@ export namespace DynamicTreeTest {
     public aabb = new box2d.b2AABB();
     public fraction = 0.0;
     public overlap = false;
-    public proxyId: box2d.b2TreeNode<Actor> | null = null;
+    public proxyId: box2d.b2TreeNode | null = null;
   }
 }

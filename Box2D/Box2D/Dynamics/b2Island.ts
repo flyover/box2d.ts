@@ -151,11 +151,11 @@ However, we can compute sin+cos of the same angle fast.
 
 export class b2Island {
   public m_allocator: any = null;
-  public m_listener: b2ContactListener;
+  public m_listener!: b2ContactListener;
 
-  public m_bodies: b2Body[] = new Array(1024); // TODO: b2Settings
-  public m_contacts: b2Contact[] = new Array(1024); // TODO: b2Settings
-  public m_joints: b2Joint[] = new Array(1024); // TODO: b2Settings
+  public m_bodies: b2Body[] = [/*1024*/]; // TODO: b2Settings
+  public m_contacts: b2Contact[] = [/*1024*/]; // TODO: b2Settings
+  public m_joints: b2Joint[] = [/*1024*/]; // TODO: b2Settings
 
   public m_positions: b2Position[] = b2Position.MakeArray(1024); // TODO: b2Settings
   public m_velocities: b2Velocity[] = b2Velocity.MakeArray(1024); // TODO: b2Settings
@@ -168,18 +168,16 @@ export class b2Island {
   public m_contactCapacity: number = 0;
   public m_jointCapacity: number = 0;
 
-  constructor(allocator: any, listener: b2ContactListener) {
-    this.m_allocator = allocator;
-    this.m_listener = listener;
-  }
-
-  public Initialize(bodyCapacity: number, contactCapacity: number, jointCapacity: number): this {
+  public Initialize(bodyCapacity: number, contactCapacity: number, jointCapacity: number, allocator: any, listener: b2ContactListener): void {
     this.m_bodyCapacity = bodyCapacity;
     this.m_contactCapacity = contactCapacity;
     this.m_jointCapacity = jointCapacity;
     this.m_bodyCount = 0;
     this.m_contactCount = 0;
     this.m_jointCount = 0;
+
+    this.m_allocator = allocator;
+    this.m_listener = listener;
 
     // TODO:
     // while (this.m_bodies.length < bodyCapacity) {
@@ -208,8 +206,6 @@ export class b2Island {
         this.m_velocities[this.m_velocities.length] = new b2Velocity();
       }
     }
-
-    return this;
   }
 
   public Clear(): void {
