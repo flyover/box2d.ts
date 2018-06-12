@@ -128,7 +128,7 @@ export class b2FixtureProxy {
   public readonly aabb: b2AABB = new b2AABB();
   public fixture: b2Fixture;
   public childIndex: number = 0;
-  public treeNode!: b2TreeNode;
+  public treeNode!: b2TreeNode<b2FixtureProxy>;
   constructor(fixture: b2Fixture) {
     this.fixture = fixture;
   }
@@ -387,7 +387,8 @@ export class b2Fixture {
   }
 
   // These support body activation/deactivation.
-  public CreateProxies(broadPhase: b2BroadPhase, xf: b2Transform): void {
+  public CreateProxies(xf: b2Transform): void {
+    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
     // DEBUG: b2Assert(this.m_proxyCount === 0);
 
     // Create proxies in the broad-phase.
@@ -401,25 +402,36 @@ export class b2Fixture {
     }
   }
 
-  public DestroyProxies(broadPhase: b2BroadPhase): void {
+  public DestroyProxies(): void {
+    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
     // Destroy proxies in the broad-phase.
     for (let i: number = 0; i < this.m_proxyCount; ++i) {
       const proxy = this.m_proxies[i];
-      proxy.treeNode.userData = null;
+      delete proxy.treeNode.userData;
       broadPhase.DestroyProxy(proxy.treeNode);
-      delete proxy.treeNode; // = null;
+      delete proxy.treeNode;
     }
 
     this.m_proxyCount = 0;
   }
 
+  public TouchProxies(): void {
+    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
+    const proxyCount: number = this.m_proxyCount;
+    for (let i: number = 0; i < proxyCount; ++i) {
+      broadPhase.TouchProxy(this.m_proxies[i].treeNode);
+    }
+  }
+
   private static Synchronize_s_aabb1 = new b2AABB();
   private static Synchronize_s_aabb2 = new b2AABB();
   private static Synchronize_s_displacement = new b2Vec2();
-  public Synchronize(broadPhase: b2BroadPhase, transform1: b2Transform, transform2: b2Transform): void {
+  public Synchronize(transform1: b2Transform, transform2: b2Transform): void {
     if (this.m_proxyCount === 0) {
       return;
     }
+
+    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
 
     for (let i: number = 0; i < this.m_proxyCount; ++i) {
       const proxy = this.m_proxies[i];

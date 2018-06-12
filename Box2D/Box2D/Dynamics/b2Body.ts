@@ -20,7 +20,6 @@
 // DEBUG: import { b2IsValid } from "../Common/b2Math";
 import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
-import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
 import { b2ContactEdge } from "./Contacts/b2Contact";
 import { b2JointEdge } from "./Joints/b2Joint";
@@ -296,8 +295,7 @@ export class b2Body {
     fixture.Create(def);
 
     if (this.m_activeFlag) {
-      const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-      fixture.CreateProxies(broadPhase, this.m_xf);
+      fixture.CreateProxies(this.m_xf);
     }
 
     fixture.m_next = this.m_fixtureList;
@@ -385,8 +383,7 @@ export class b2Body {
     }
 
     if (this.m_activeFlag) {
-      const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
-      fixture.DestroyProxies(broadPhase);
+      fixture.DestroyProxies();
     }
 
     fixture.Destroy();
@@ -423,9 +420,8 @@ export class b2Body {
     this.m_sweep.c0.Copy(this.m_sweep.c);
     this.m_sweep.a0 = angle;
 
-    const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.Synchronize(broadPhase, this.m_xf, this.m_xf);
+      f.Synchronize(this.m_xf, this.m_xf);
     }
 
     this.m_world.m_contactManager.FindNewContacts();
@@ -891,12 +887,8 @@ export class b2Body {
     this.m_contactList = null;
 
     // Touch the proxies so that new contacts will be created (when appropriate)
-    const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      const proxyCount: number = f.m_proxyCount;
-      for (let i: number = 0; i < proxyCount; ++i) {
-        broadPhase.TouchProxy(f.m_proxies[i].treeNode);
-      }
+      f.TouchProxies();
     }
   }
 
@@ -978,16 +970,14 @@ export class b2Body {
 
     if (flag) {
       // Create all proxies.
-      const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
       for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-        f.CreateProxies(broadPhase, this.m_xf);
+        f.CreateProxies(this.m_xf);
       }
       // Contacts are created the next time step.
     } else {
       // Destroy all proxies.
-      const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
       for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-        f.DestroyProxies(broadPhase);
+        f.DestroyProxies();
       }
       // Destroy the attached contacts.
       let ce: b2ContactEdge | null = this.m_contactList;
@@ -1113,9 +1103,8 @@ export class b2Body {
     b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
     b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
-    const broadPhase: b2BroadPhase = this.m_world.m_contactManager.m_broadPhase;
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.Synchronize(broadPhase, xf1, this.m_xf);
+      f.Synchronize(xf1, this.m_xf);
     }
   }
 

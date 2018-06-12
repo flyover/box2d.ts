@@ -17,40 +17,38 @@
 */
 
 import { b2Vec2, XY } from "../Common/b2Math";
-import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
+import { b2AABB, b2RayCastInput } from "./b2Collision";
 import { b2TreeNode, b2DynamicTree } from "./b2DynamicTree";
-import { b2ContactManager } from "../Dynamics/b2ContactManager";
-import { b2FixtureProxy } from "../Box2D";
 
-export class b2Pair {
-  constructor(public proxyA: b2TreeNode, public proxyB: b2TreeNode) {}
+export class b2Pair<T> {
+  constructor(public proxyA: b2TreeNode<T>, public proxyB: b2TreeNode<T>) {}
 }
 
 /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
 /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
 /// It is up to the client to consume the new pairs and to track subsequent overlap.
-export class b2BroadPhase {
-  public readonly m_tree: b2DynamicTree = new b2DynamicTree();
+export class b2BroadPhase<T> {
+  public readonly m_tree: b2DynamicTree<T> = new b2DynamicTree<T>();
   public m_proxyCount: number = 0;
   // public m_moveCapacity: number = 16;
   public m_moveCount: number = 0;
-  public m_moveBuffer: Array<b2TreeNode | null> = [];
+  public readonly m_moveBuffer: Array<b2TreeNode<T> | null> = [];
   // public m_pairCapacity: number = 16;
   public m_pairCount: number = 0;
-  public m_pairBuffer: b2Pair[] = [];
+  public readonly m_pairBuffer: Array<b2Pair<T>> = [];
   // public m_queryProxyId: number = 0;
 
   /// Create a proxy with an initial AABB. Pairs are not reported until
   /// UpdatePairs is called.
-  public CreateProxy(aabb: b2AABB, userData: any): b2TreeNode {
-    const proxy: b2TreeNode = this.m_tree.CreateProxy(aabb, userData);
+  public CreateProxy(aabb: b2AABB, userData: T): b2TreeNode<T> {
+    const proxy: b2TreeNode<T> = this.m_tree.CreateProxy(aabb, userData);
     ++this.m_proxyCount;
     this.BufferMove(proxy);
     return proxy;
   }
 
   /// Destroy a proxy. It is up to the client to remove any pairs.
-  public DestroyProxy(proxy: b2TreeNode): void {
+  public DestroyProxy(proxy: b2TreeNode<T>): void {
     this.UnBufferMove(proxy);
     --this.m_proxyCount;
     this.m_tree.DestroyProxy(proxy);
@@ -58,7 +56,7 @@ export class b2BroadPhase {
 
   /// Call MoveProxy as many times as you like, then when you are done
   /// call UpdatePairs to finalized the proxy pairs (for your time step).
-  public MoveProxy(proxy: b2TreeNode, aabb: b2AABB, displacement: b2Vec2): void {
+  public MoveProxy(proxy: b2TreeNode<T>, aabb: b2AABB, displacement: b2Vec2): void {
     const buffer: boolean = this.m_tree.MoveProxy(proxy, aabb, displacement);
     if (buffer) {
       this.BufferMove(proxy);
@@ -66,26 +64,26 @@ export class b2BroadPhase {
   }
 
   /// Call to trigger a re-processing of it's pairs on the next call to UpdatePairs.
-  public TouchProxy(proxy: b2TreeNode): void {
+  public TouchProxy(proxy: b2TreeNode<T>): void {
     this.BufferMove(proxy);
   }
 
   /// Get the fat AABB for a proxy.
-  public GetFatAABB(proxy: b2TreeNode): b2AABB {
-    return this.m_tree.GetFatAABB(proxy);
-  }
+  // public GetFatAABB(proxy: b2TreeNode<T>): b2AABB {
+  //   return this.m_tree.GetFatAABB(proxy);
+  // }
 
   /// Get user data from a proxy. Returns NULL if the id is invalid.
-  public GetUserData(proxy: b2TreeNode): any {
-    return this.m_tree.GetUserData(proxy);
-  }
+  // public GetUserData(proxy: b2TreeNode<T>): T {
+  //   return this.m_tree.GetUserData(proxy);
+  // }
 
   /// Test overlap of fat AABBs.
-  public TestOverlap(proxyA: b2TreeNode, proxyB: b2TreeNode): boolean {
-    const aabbA: b2AABB = this.m_tree.GetFatAABB(proxyA);
-    const aabbB: b2AABB = this.m_tree.GetFatAABB(proxyB);
-    return b2TestOverlapAABB(aabbA, aabbB);
-  }
+  // public TestOverlap(proxyA: b2TreeNode<T>, proxyB: b2TreeNode<T>): boolean {
+  //   const aabbA: b2AABB = this.m_tree.GetFatAABB(proxyA);
+  //   const aabbB: b2AABB = this.m_tree.GetFatAABB(proxyB);
+  //   return b2TestOverlapAABB(aabbA, aabbB);
+  // }
 
   /// Get the number of proxies.
   public GetProxyCount(): number {
@@ -93,13 +91,13 @@ export class b2BroadPhase {
   }
 
   /// Update the pairs. This results in pair callbacks. This can only add pairs.
-  public UpdatePairs(contactManager: b2ContactManager): void {
+  public UpdatePairs(callback: (a: T, b: T) => void): void {
     // Reset pair buffer
     this.m_pairCount = 0;
 
     // Perform tree queries for all moving proxies.
     for (let i: number = 0; i < this.m_moveCount; ++i) {
-      const queryProxy: b2TreeNode | null = this.m_moveBuffer[i];
+      const queryProxy: b2TreeNode<T> | null = this.m_moveBuffer[i];
       if (queryProxy === null) {
         continue;
       }
@@ -109,10 +107,10 @@ export class b2BroadPhase {
 
       // We have to query the tree with the fat AABB so that
       // we don't fail to create a pair that may touch later.
-      const fatAABB: b2AABB = this.m_tree.GetFatAABB(queryProxy);
+      const fatAABB: b2AABB = queryProxy.aabb; // this.m_tree.GetFatAABB(queryProxy);
 
       // Query tree, create pairs and add them pair buffer.
-      this.m_tree.Query(fatAABB, (proxy: b2TreeNode): boolean => {
+      this.m_tree.Query(fatAABB, (proxy: b2TreeNode<T>): boolean => {
         // A proxy cannot form a pair with itself.
         if (proxy.m_id === queryProxy.m_id) {
           return true;
@@ -120,8 +118,8 @@ export class b2BroadPhase {
 
         // const proxyA = proxy < queryProxy ? proxy : queryProxy;
         // const proxyB = proxy >= queryProxy ? proxy : queryProxy;
-        let proxyA: b2TreeNode;
-        let proxyB: b2TreeNode;
+        let proxyA: b2TreeNode<T>;
+        let proxyB: b2TreeNode<T>;
         if (proxy.m_id < queryProxy.m_id) {
           proxyA = proxy;
           proxyB = queryProxy;
@@ -134,7 +132,7 @@ export class b2BroadPhase {
         if (this.m_pairCount === this.m_pairBuffer.length) {
           this.m_pairBuffer[this.m_pairCount] = new b2Pair(proxyA, proxyB);
         } else {
-          const pair: b2Pair = this.m_pairBuffer[this.m_pairCount];
+          const pair: b2Pair<T> = this.m_pairBuffer[this.m_pairCount];
           pair.proxyA = proxyA;
           pair.proxyB = proxyB;
         }
@@ -155,16 +153,16 @@ export class b2BroadPhase {
     // Send the pairs back to the client.
     let i: number = 0;
     while (i < this.m_pairCount) {
-      const primaryPair: b2Pair = this.m_pairBuffer[i];
-      const userDataA: b2FixtureProxy = this.m_tree.GetUserData(primaryPair.proxyA);
-      const userDataB: b2FixtureProxy = this.m_tree.GetUserData(primaryPair.proxyB);
+      const primaryPair: b2Pair<T> = this.m_pairBuffer[i];
+      const userDataA: T = primaryPair.proxyA.userData; // this.m_tree.GetUserData(primaryPair.proxyA);
+      const userDataB: T = primaryPair.proxyB.userData; // this.m_tree.GetUserData(primaryPair.proxyB);
 
-      contactManager.AddPair(userDataA, userDataB);
+      callback(userDataA, userDataB);
       ++i;
 
       // Skip any duplicate pairs.
       while (i < this.m_pairCount) {
-        const pair: b2Pair = this.m_pairBuffer[i];
+        const pair: b2Pair<T> = this.m_pairBuffer[i];
         if (pair.proxyA.m_id !== primaryPair.proxyA.m_id || pair.proxyB.m_id !== primaryPair.proxyB.m_id) {
           break;
         }
@@ -178,11 +176,11 @@ export class b2BroadPhase {
 
   /// Query an AABB for overlapping proxies. The callback class
   /// is called for each proxy that overlaps the supplied AABB.
-  public Query(aabb: b2AABB, callback: (node: b2TreeNode) => boolean): void {
+  public Query(aabb: b2AABB, callback: (node: b2TreeNode<T>) => boolean): void {
     this.m_tree.Query(aabb, callback);
   }
 
-  public QueryPoint(point: b2Vec2, callback: (node: b2TreeNode) => boolean): void {
+  public QueryPoint(point: b2Vec2, callback: (node: b2TreeNode<T>) => boolean): void {
     this.m_tree.QueryPoint(point, callback);
   }
 
@@ -193,7 +191,7 @@ export class b2BroadPhase {
   /// number of proxies in the tree.
   /// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
   /// @param callback a callback class that is called for each proxy that is hit by the ray.
-  public RayCast(input: b2RayCastInput, callback: (input: b2RayCastInput, node: b2TreeNode) => number): void {
+  public RayCast(input: b2RayCastInput, callback: (input: b2RayCastInput, node: b2TreeNode<T>) => number): void {
     this.m_tree.RayCast(input, callback);
   }
 
@@ -219,19 +217,19 @@ export class b2BroadPhase {
     this.m_tree.ShiftOrigin(newOrigin);
   }
 
-  public BufferMove(proxy: b2TreeNode): void {
+  public BufferMove(proxy: b2TreeNode<T>): void {
     this.m_moveBuffer[this.m_moveCount] = proxy;
     ++this.m_moveCount;
   }
 
-  public UnBufferMove(proxy: b2TreeNode): void {
+  public UnBufferMove(proxy: b2TreeNode<T>): void {
     const i: number = this.m_moveBuffer.indexOf(proxy);
     this.m_moveBuffer[i] = null;
   }
 }
 
 /// This is used to sort pairs.
-export function b2PairLessThan(pair1: b2Pair, pair2: b2Pair): number {
+export function b2PairLessThan<T>(pair1: b2Pair<T>, pair2: b2Pair<T>): number {
   if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
     return pair1.proxyB.m_id - pair2.proxyB.m_id;
   }
