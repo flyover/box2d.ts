@@ -25,24 +25,35 @@
           transpiler: "plugin-typescript",
           typescriptOptions: { tsconfig: true, module: "system" }
         });
+        SystemJS.config({
+          map: {
+            "Box2D": "../Box2D/Box2D",
+            "Box2D/": "../Box2D/",
+            "Testbed": "./Testbed",
+            "Testbed/": "./"
+          },
+          packages: {
+            "Box2D": { defaultExtension: "ts" },
+            "Testbed": { defaultExtension: "ts" },
+            ".": { defaultExtension: "ts" }
+          }
+        });
+      } else {
+        SystemJS.config({
+          map: {
+            "Box2D": "./dist/Box2D/Box2D",
+            "Box2D/": "./dist/Box2D/",
+            "Testbed": "./dist/Testbed/Testbed",
+            "Testbed/": "./dist/Testbed/"
+          },
+          packages: {
+            "Box2D": { defaultExtension: "js" },
+            "Testbed": { defaultExtension: "js" },
+            ".": { defaultExtension: "js" }
+          }
+        });
       }
-      SystemJS.config({
-        map: {
-          "Box2D": "../Box2D/Box2D",
-          "Box2D/": "../Box2D/",
-          "Contributions": "../../Contributions",
-          "Contributions/": "../../Contributions/",
-          "Testbed": "./Testbed",
-          "Testbed/": "./"
-        },
-        packages: {
-          "Box2D": { defaultExtension: transpile ? "ts" : "js" },
-          "Contributions": { defaultExtension: transpile ? "ts" : "js" },
-          "Testbed": { defaultExtension: transpile ? "ts" : "js" },
-          ".": { defaultExtension: transpile ? "ts" : "js" }
-        }
-      });
-      System.import("./Testbed").then(function(Testbed) {
+      System.import("Testbed").then(function(Testbed) {
         let app;
         const init = function(time) {
           app = new Testbed.Main(time);
