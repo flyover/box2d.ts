@@ -15,7 +15,7 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["../Box2D/Common/b2Math", "../Box2D/Dynamics/b2World", "../Box2D/Dynamics/b2Body", "../Box2D/Dynamics/b2Fixture", "../Box2D/Collision/Shapes/b2PolygonShape"], function (exports_1, context_1) {
+System.register(["Box2D/Common/b2Math", "Box2D/Dynamics/b2World", "Box2D/Dynamics/b2Body", "Box2D/Dynamics/b2Fixture", "Box2D/Collision/Shapes/b2PolygonShape"], function (exports_1, context_1) {
     "use strict";
     var b2Math_1, b2World_1, b2Body_1, b2Fixture_1, b2PolygonShape_1;
     var __moduleName = context_1 && context_1.id;

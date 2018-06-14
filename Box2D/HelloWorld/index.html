@@ -21,18 +21,33 @@
           transpiler: "plugin-typescript",
           typescriptOptions: { tsconfig: true, module: "system" }
         });
+        SystemJS.config({
+          map: {
+            "Box2D": "../Box2D/Box2D",
+            "Box2D/": "../Box2D/",
+            "HelloWorld": "./HelloWorld",
+          },
+          packages: {
+            "Box2D": { defaultExtension: "ts" },
+            "HelloWorld": { defaultExtension: "ts" },
+            ".": { defaultExtension: "ts" },
+          }
+        });
+      } else {
+        SystemJS.config({
+          map: {
+            "Box2D": "./dist/Box2D/Box2D",
+            "Box2D/": "./dist/Box2D/",
+            "HelloWorld": "./dist/HelloWorld/HelloWorld.js",
+          },
+          packages: {
+            "Box2D": { defaultExtension: "js" },
+            "HelloWorld": { defaultExtension: "js" },
+            ".": { defaultExtension: "js" }
+          }
+        });
       }
-      SystemJS.config({
-        map: {
-          "Box2D": "../Box2D/Box2D",
-          "Box2D/": "../Box2D/",
-        },
-        packages: {
-          "Box2D": { defaultExtension: transpile ? "ts" : "js" },
-          ".": { defaultExtension: transpile ? "ts" : "js" },
-        }
-      });
-      System.import("./HelloWorld").then(function(HelloWorld) {
+      System.import("HelloWorld").then(function(HelloWorld) {
         HelloWorld.main();
       }).catch(function (error) {
         console.error(error);
