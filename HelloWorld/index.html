@@ -1,12 +1,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Box2D Testbed</title>
-    <style>
-    @font-face { font-family: DroidSans; src: url('Data/DroidSans.ttf'); }
-    body { font-family: DroidSans; font-size: 15px; }
-    </style>
-    <!-- <script type="text/javascript" src="../../node_modules/systemjs/dist/system.js"></script> -->
+    <title>Box2D Hello World</title>
+    <!-- <script type="text/javascript" src="../node_modules/systemjs/dist/system.js"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.3/system.js"></script>
     <script type="text/javascript">
 
@@ -15,12 +11,12 @@
       if (transpile) {
         SystemJS.config({
           packages: { "typescript": { main: "typescript.js", meta: { "typescript.js": { exports: "ts" } } } },
-          // map: { "typescript": "../../node_modules/typescript/lib", }
+          // map: { "typescript": "../node_modules/typescript/lib", }
           map: { "typescript": "https://cdnjs.cloudflare.com/ajax/libs/typescript/2.8.3", }
         });
         SystemJS.config({
           packages: { "plugin-typescript": { main: "plugin.js" } },
-          // map: { "plugin-typescript": "../../node_modules/plugin-typescript/lib" },
+          // map: { "plugin-typescript": "../node_modules/plugin-typescript/lib" },
           map: { "plugin-typescript": "https://raw.githubusercontent.com/frankwallis/plugin-typescript/8.0.0/lib" },
           transpiler: "plugin-typescript",
           typescriptOptions: { tsconfig: true, module: "system" }
@@ -29,13 +25,12 @@
           map: {
             "Box2D": "../Box2D/Box2D",
             "Box2D/": "../Box2D/",
-            "Testbed": "./Testbed",
-            "Testbed/": "./"
+            "HelloWorld": "./HelloWorld",
           },
           packages: {
             "Box2D": { defaultExtension: "ts" },
-            "Testbed": { defaultExtension: "ts" },
-            ".": { defaultExtension: "ts" }
+            "HelloWorld": { defaultExtension: "ts" },
+            ".": { defaultExtension: "ts" },
           }
         });
       } else {
@@ -43,27 +38,17 @@
           map: {
             "Box2D": "./dist/Box2D/Box2D",
             "Box2D/": "./dist/Box2D/",
-            "Testbed": "./dist/Testbed/Testbed",
-            "Testbed/": "./dist/Testbed/"
+            "HelloWorld": "./dist/HelloWorld/HelloWorld.js",
           },
           packages: {
             "Box2D": { defaultExtension: "js" },
-            "Testbed": { defaultExtension: "js" },
+            "HelloWorld": { defaultExtension: "js" },
             ".": { defaultExtension: "js" }
           }
         });
       }
-      System.import("Testbed").then(function(Testbed) {
-        let app;
-        const init = function(time) {
-          app = new Testbed.Main(time);
-          window.requestAnimationFrame(loop);
-        }
-        const loop = function(time) {
-          window.requestAnimationFrame(loop);
-          app.SimulationLoop(time);
-        }
-        window.requestAnimationFrame(init);
+      System.import("HelloWorld").then(function(HelloWorld) {
+        HelloWorld.main();
       }).catch(function (error) {
         console.error(error);
       });

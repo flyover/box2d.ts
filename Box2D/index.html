@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Box2D</title>
-    <!-- <script type="text/javascript" src="../../node_modules/systemjs/dist/system.js"></script> -->
+    <!-- <script type="text/javascript" src="../node_modules/systemjs/dist/system.js"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.3/system.js"></script>
     <script type="text/javascript">
 
@@ -11,12 +11,12 @@
       if (transpile) {
         SystemJS.config({
           packages: { "typescript": { main: "typescript.js", meta: { "typescript.js": { exports: "ts" } } } },
-          // map: { "typescript": "../../node_modules/typescript/lib", }
+          // map: { "typescript": "../node_modules/typescript/lib", }
           map: { "typescript": "https://cdnjs.cloudflare.com/ajax/libs/typescript/2.8.3", }
         });
         SystemJS.config({
           packages: { "plugin-typescript": { main: "plugin.js" } },
-          // map: { "plugin-typescript": "../../node_modules/plugin-typescript/lib" },
+          // map: { "plugin-typescript": "../node_modules/plugin-typescript/lib" },
           map: { "plugin-typescript": "https://raw.githubusercontent.com/frankwallis/plugin-typescript/8.0.0/lib" },
           transpiler: "plugin-typescript",
           typescriptOptions: { tsconfig: true, module: "system" }

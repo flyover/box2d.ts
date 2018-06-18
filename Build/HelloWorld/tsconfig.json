@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2015",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "inlineSourceMap": true,
+    "outDir": "dist",
+    "rootDirs": [ "../.." ],
+    "baseUrl": ".",
+    "paths": {
+      "Box2D": [ "../../Box2D/Box2D" ],
+      "Box2D/*": [ "../../Box2D/*" ],
+      "HelloWorld": [ "../../HelloWorld/HelloWorld" ],
+      "HelloWorld/*": [ "../../HelloWorld/*" ]
+    }
+  },
+  "include": [
+    "main.ts"
+  ]
+}

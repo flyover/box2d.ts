@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-///import * as box2d from "Box2D/Box2D";
+///import * as box2d from "Box2D";
 
 import { b2Vec2 } from "Box2D/Common/b2Math";
 import { b2World } from "Box2D/Dynamics/b2World";

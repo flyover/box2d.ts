@@ -39,29 +39,29 @@ build: build-box2d-testbed
 # box2d
 
 clean-box2d:
-	find Box2D/Box2D -name "*.js" -delete
+	find Box2D -name "*.js" -delete
 	$(DONE)
 
 build-box2d:
-	$$(npm bin)/tsc -p Box2D/Box2D
+	$$(npm bin)/tsc -p Box2D
 	$(DONE)
 
 # box2d-helloworld
 
 clean-box2d-helloworld:
-	find Box2D/HelloWorld -name "*.js" -delete
+	find HelloWorld -name "*.js" -delete
 	$(DONE)
 
 build-box2d-helloworld:
-	$$(npm bin)/tsc -p Box2D/HelloWorld
+	$$(npm bin)/tsc -p HelloWorld
 	$(DONE)
 
 # box2d-testbed
 
 clean-box2d-testbed:
-	find Box2D/Testbed -name "*.js" -delete
+	find Testbed -name "*.js" -delete
 	$(DONE)
 
 build-box2d-testbed:
-	$$(npm bin)/tsc -p Box2D/Testbed
+	$$(npm bin)/tsc -p Testbed
 	$(DONE)

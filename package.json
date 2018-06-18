@@ -2,15 +2,15 @@
   "name": "@flyover/box2d",
   "version": "1.0.0",
   "description": "A TypeScript port of Box2D",
-  "main": "./Box2D/Build/Box2D/dist/bundle.js",
-  "types": "./Box2D/Box2D/Box2D.ts",
+  "main": "./Build/Box2D/dist/bundle.js",
+  "types": "./Box2D/Box2D.ts",
   "scripts": {
-    "build": "tsc -p Box2D/Testbed",
-    "watch": "tsc -p Box2D/Testbed --watch",
+    "build": "tsc -p Testbed",
+    "watch": "tsc -p Testbed --watch",
     "debug": "npx http-server -c-1 -o",
-    "dist": "(cd Box2D/Build/Box2D && rollup -c)",
-    "dist-helloworld": "(cd Box2D/Build/HelloWorld && rollup -c)",
-    "dist-testbed": "(cd Box2D/Build/Testbed && rollup -c)",
+    "dist": "(cd Build/Box2D && rollup -c)",
+    "dist-helloworld": "(cd Build/HelloWorld && rollup -c)",
+    "dist-testbed": "(cd Build/Testbed && rollup -c)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
