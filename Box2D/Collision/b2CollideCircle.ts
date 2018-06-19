@@ -103,7 +103,7 @@ export function b2CollidePolygonAndCircle(manifold: b2Manifold, polygonA: b2Poly
     manifold.points[0].id.key = 0;
   } else {
     const faceCenter: b2Vec2 = b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
-    separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
+    const separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
     if (separation > radius) {
       return;
     }

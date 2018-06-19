@@ -259,10 +259,10 @@ export class Sparky extends testbed.Test {
       {
         const shape = new box2d.b2PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-40, -1),
-          new box2d.b2Vec2(-20, -1),
-          new box2d.b2Vec2(-20, 40),
-          new box2d.b2Vec2(-40, 40),
+          new box2d.b2Vec2(-40, -10),
+          new box2d.b2Vec2(-20, -10),
+          new box2d.b2Vec2(-20, 50),
+          new box2d.b2Vec2(-40, 50),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -271,10 +271,10 @@ export class Sparky extends testbed.Test {
       {
         const shape = new box2d.b2PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(20, -1),
-          new box2d.b2Vec2(40, -1),
-          new box2d.b2Vec2(40, 40),
-          new box2d.b2Vec2(20, 40),
+          new box2d.b2Vec2(20, -10),
+          new box2d.b2Vec2(40, -10),
+          new box2d.b2Vec2(40, 50),
+          new box2d.b2Vec2(20, 50),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);

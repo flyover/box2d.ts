@@ -248,14 +248,14 @@ export class b2WheelJoint extends b2Joint {
         const omega: number = 2 * b2_pi * this.m_frequencyHz;
 
         // Damping coefficient
-        const dc: number = 2 * this.m_springMass * this.m_dampingRatio * omega;
+        const damp: number = 2 * this.m_springMass * this.m_dampingRatio * omega;
 
         // Spring stiffness
         const k: number = this.m_springMass * omega * omega;
 
         // magic formulas
         const h: number = data.step.dt;
-        this.m_gamma = h * (dc + h * k);
+        this.m_gamma = h * (damp + h * k);
         if (this.m_gamma > 0) {
           this.m_gamma = 1 / this.m_gamma;
         }
@@ -483,7 +483,15 @@ export class b2WheelJoint extends b2Joint {
     return this.GetPrismaticJointTranslation();
   }
 
-  public GetJointSpeed(): number {
+  public GetJointLinearSpeed(): number {
+    return this.GetPrismaticJointSpeed();
+  }
+
+  public GetJointAngle(): number {
+    return this.GetRevoluteJointAngle();
+  }
+
+  public GetJointAngularSpeed(): number {
     return this.GetRevoluteJointSpeed();
   }
 
@@ -554,21 +562,27 @@ export class b2WheelJoint extends b2Joint {
   }
 
   public EnableMotor(flag: boolean): void {
-    this.m_bodyA.SetAwake(true);
-    this.m_bodyB.SetAwake(true);
-    this.m_enableMotor = flag;
+    if (flag !== this.m_enableMotor) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_enableMotor = flag;
+    }
   }
 
   public SetMotorSpeed(speed: number): void {
-    this.m_bodyA.SetAwake(true);
-    this.m_bodyB.SetAwake(true);
-    this.m_motorSpeed = speed;
+    if (speed !== this.m_motorSpeed) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_motorSpeed = speed;
+    }
   }
 
   public SetMaxMotorTorque(force: number): void {
-    this.m_bodyA.SetAwake(true);
-    this.m_bodyB.SetAwake(true);
-    this.m_maxMotorTorque = force;
+    if (force !== this.m_maxMotorTorque) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_maxMotorTorque = force;
+    }
   }
 
   public GetMotorTorque(inv_dt: number): number {

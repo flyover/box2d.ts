@@ -48,6 +48,9 @@ export class b2ChainShape extends b2Shape {
   /// @param count the vertex count
   public CreateLoop(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
     // DEBUG: b2Assert(count >= 3);
+    if (count < 3) {
+      return this;
+    }
     // DEBUG: for (let i: number = 1; i < count; ++i) {
     // DEBUG:   const v1 = vertices[start + i - 1];
     // DEBUG:   const v2 = vertices[start + i];

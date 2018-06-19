@@ -1205,6 +1205,11 @@
       SetShape(shape, index) {
           shape.SetupDistanceProxy(this, index);
       }
+      SetVerticesRadius(vertices, count, radius) {
+          this.m_vertices = vertices;
+          this.m_count = count;
+          this.m_radius = radius;
+      }
       GetSupport(d) {
           let bestIndex = 0;
           let bestValue = b2Vec2.DotVV(this.m_vertices[0], d);
@@ -1582,8 +1587,6 @@
       const saveA = b2Distance_s_saveA;
       const saveB = b2Distance_s_saveB;
       let saveCount = 0;
-      let distanceSqr1 = b2_maxFloat;
-      let distanceSqr2 = distanceSqr1;
       // Main iteration loop.
       let iter = 0;
       while (iter < k_maxIters) {
@@ -1610,17 +1613,6 @@
           if (simplex.m_count === 3) {
               break;
           }
-          // Compute closest point.
-          const p = simplex.GetClosestPoint(b2Distance_s_p);
-          distanceSqr2 = p.LengthSquared();
-          // Ensure progress
-          /*
-          TODO: to fix compile warning
-          if (distanceSqr2 > distanceSqr1) {
-            //break;
-          }
-          */
-          distanceSqr1 = distanceSqr2;
           // Get search direction.
           const d = simplex.GetSearchDirection(b2Distance_s_d);
           // Ensure the search direction is numerically fit.
@@ -1685,6 +1677,7 @@
           }
       }
   }
+  const b2ShapeCast_s_simplex = new b2Simplex();
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -2254,6 +2247,7 @@
           this.tMax = 0; // defines sweep interval [0, tMax]
       }
   }
+  /// Output parameters for b2TimeOfImpact.
   var b2TOIOutputState;
   (function (b2TOIOutputState) {
       b2TOIOutputState[b2TOIOutputState["e_unknown"] = 0] = "e_unknown";
@@ -2656,6 +2650,8 @@
   class b2Shape {
       constructor(type, radius) {
           this.m_type = b2ShapeType.e_unknown;
+          /// Radius of a shape. For polygonal shapes this must be b2_polygonRadius. There is no support for
+          /// making rounded polygons.
           this.m_radius = 0;
           this.m_type = type;
           this.m_radius = radius;
@@ -4855,22 +4851,28 @@
           return this.m_enableMotor;
       }
       EnableMotor(flag) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_enableMotor = flag;
+          if (flag !== this.m_enableMotor) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_enableMotor = flag;
+          }
       }
       SetMotorSpeed(speed) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_motorSpeed = speed;
+          if (speed !== this.m_motorSpeed) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_motorSpeed = speed;
+          }
       }
       GetMotorSpeed() {
           return this.m_motorSpeed;
       }
       SetMaxMotorForce(force) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_maxMotorForce = force;
+          if (force !== this.m_maxMotorForce) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_maxMotorForce = force;
+          }
       }
       GetMaxMotorForce() { return this.m_maxMotorForce; }
       GetMotorForce(inv_dt) {
@@ -4903,6 +4905,13 @@
   b2PrismaticJoint.SolveVelocityConstraints_s_f1 = new b2Vec3();
   b2PrismaticJoint.SolveVelocityConstraints_s_df3 = new b2Vec3();
   b2PrismaticJoint.SolveVelocityConstraints_s_df2 = new b2Vec2();
+  // A velocity based solver computes reaction forces(impulses) using the velocity constraint solver.Under this context,
+  // the position solver is not there to resolve forces.It is only there to cope with integration error.
+  //
+  // Therefore, the pseudo impulses in the position solver do not have any physical meaning.Thus it is okay if they suck.
+  //
+  // We could take the active state from the velocity solver.However, the joint might push past the limit when the velocity
+  // solver indicates the limit is inactive.
   b2PrismaticJoint.SolvePositionConstraints_s_d = new b2Vec2();
   b2PrismaticJoint.SolvePositionConstraints_s_impulse = new b2Vec3();
   b2PrismaticJoint.SolvePositionConstraints_s_impulse1 = new b2Vec2();
@@ -5578,7 +5587,7 @@
           return this.m_enableMotor;
       }
       EnableMotor(flag) {
-          if (this.m_enableMotor !== flag) {
+          if (flag !== this.m_enableMotor) {
               this.m_bodyA.SetAwake(true);
               this.m_bodyB.SetAwake(true);
               this.m_enableMotor = flag;
@@ -5591,7 +5600,11 @@
           return this.m_motorSpeed;
       }
       SetMaxMotorTorque(torque) {
-          this.m_maxMotorTorque = torque;
+          if (torque !== this.m_maxMotorTorque) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_maxMotorTorque = torque;
+          }
       }
       GetMaxMotorTorque() { return this.m_maxMotorTorque; }
       IsLimitEnabled() {
@@ -5621,7 +5634,7 @@
           }
       }
       SetMotorSpeed(speed) {
-          if (this.m_motorSpeed !== speed) {
+          if (speed !== this.m_motorSpeed) {
               this.m_bodyA.SetAwake(true);
               this.m_bodyB.SetAwake(true);
               this.m_motorSpeed = speed;
@@ -6329,12 +6342,12 @@
                   // Frequency
                   const omega = 2 * b2_pi * this.m_frequencyHz;
                   // Damping coefficient
-                  const dc = 2 * this.m_springMass * this.m_dampingRatio * omega;
+                  const damp = 2 * this.m_springMass * this.m_dampingRatio * omega;
                   // Spring stiffness
                   const k = this.m_springMass * omega * omega;
                   // magic formulas
                   const h = data.step.dt;
-                  this.m_gamma = h * (dc + h * k);
+                  this.m_gamma = h * (damp + h * k);
                   if (this.m_gamma > 0) {
                       this.m_gamma = 1 / this.m_gamma;
                   }
@@ -6513,7 +6526,13 @@
       GetJointTranslation() {
           return this.GetPrismaticJointTranslation();
       }
-      GetJointSpeed() {
+      GetJointLinearSpeed() {
+          return this.GetPrismaticJointSpeed();
+      }
+      GetJointAngle() {
+          return this.GetRevoluteJointAngle();
+      }
+      GetJointAngularSpeed() {
           return this.GetRevoluteJointSpeed();
       }
       GetPrismaticJointTranslation() {
@@ -6567,19 +6586,25 @@
           return this.m_enableMotor;
       }
       EnableMotor(flag) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_enableMotor = flag;
+          if (flag !== this.m_enableMotor) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_enableMotor = flag;
+          }
       }
       SetMotorSpeed(speed) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_motorSpeed = speed;
+          if (speed !== this.m_motorSpeed) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_motorSpeed = speed;
+          }
       }
       SetMaxMotorTorque(force) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_maxMotorTorque = force;
+          if (force !== this.m_maxMotorTorque) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_maxMotorTorque = force;
+          }
       }
       GetMotorTorque(inv_dt) {
           return inv_dt * this.m_motorImpulse;
@@ -7210,9 +7235,9 @@
           if (this.m_activeFlag) {
               fixture.DestroyProxies();
           }
-          fixture.Destroy();
           // fixture.m_body = null;
           fixture.m_next = null;
+          fixture.Destroy();
           --this.m_fixtureCount;
           // Reset the mass data.
           this.ResetMassData();
@@ -7364,7 +7389,6 @@
       }
       /// Apply a torque. This affects the angular velocity
       /// without affecting the linear velocity of the center of mass.
-      /// This wakes up the body.
       /// @param torque about the z-axis (out of the screen), usually in N-m.
       /// @param wake also wake up the body
       ApplyTorque(torque, wake = true) {
@@ -7654,10 +7678,8 @@
       /// @param flag set to true to wake the body, false to put it to sleep.
       SetAwake(flag) {
           if (flag) {
-              if (!this.m_awakeFlag) {
-                  this.m_awakeFlag = true;
-                  this.m_sleepTime = 0;
-              }
+              this.m_awakeFlag = true;
+              this.m_sleepTime = 0;
           }
           else {
               this.m_awakeFlag = false;
@@ -8496,15 +8518,16 @@
           this.ValidateMetrics(child2);
       }
       Validate() {
-          this.ValidateStructure(this.m_root);
-          this.ValidateMetrics(this.m_root);
+          // DEBUG: this.ValidateStructure(this.m_root);
+          // DEBUG: this.ValidateMetrics(this.m_root);
           // let freeCount: number = 0;
-          let freeIndex = this.m_freeList;
-          while (freeIndex !== null) {
-              freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-              // ++freeCount;
-          }
+          // let freeIndex: b2TreeNode<T> | null = this.m_freeList;
+          // while (freeIndex !== null) {
+          //   freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
+          //   ++freeCount;
+          // }
           // DEBUG: b2Assert(this.GetHeight() === this.ComputeHeight());
+          // b2Assert(this.m_nodeCount + freeCount === this.m_nodeCapacity);
       }
       static GetMaxBalanceNode(node, maxBalance) {
           if (node === null) {
@@ -8932,7 +8955,7 @@
       }
       else {
           const faceCenter = b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
-          separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
+          const separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
           if (separation > radius) {
               return;
           }
@@ -8962,7 +8985,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
+  /// Friction mixing law. The idea is to allow either fixture to drive the friction to zero.
   /// For example, anything slides on ice.
   function b2MixFriction(friction1, friction2) {
       return b2Sqrt(friction1 * friction2);
@@ -9857,7 +9880,7 @@
               b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
               b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
           }
-          this.m_radius = 2 * b2_polygonRadius;
+          this.m_radius = polygonB.m_radius + edgeA.m_radius;
           manifold.pointCount = 0;
           const edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
           // If no valid normal can be found than this edge should not collide.
@@ -10949,6 +10972,9 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
+  // #define B2_DEBUG_SOLVER 0
+  let g_blockSolve = false;
   class b2VelocityConstraintPoint {
       constructor() {
           this.rA = new b2Vec2();
@@ -11232,7 +11258,7 @@
                   }
               }
               // If we have two points, then prepare the block solver.
-              if (vc.pointCount === 2) {
+              if (vc.pointCount === 2 && g_blockSolve) {
                   const vcp1 = vc.points[0];
                   const vcp2 = vc.points[1];
                   const rn1A = b2Vec2.CrossVV(vcp1.rA, vc.normal);
@@ -11356,37 +11382,39 @@
                   wB += iB * b2Vec2.CrossVV(vcp.rB, P);
               }
               // Solve normal constraints
-              if (vc.pointCount === 1) {
-                  const vcp = vc.points[0];
-                  // Relative velocity at contact
-                  // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-                  b2Vec2.SubVV(b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0), b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1), dv);
-                  // Compute normal impulse
-                  // float32 vn = b2Dot(dv, normal);
-                  const vn = b2Vec2.DotVV(dv, normal);
-                  let lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
-                  // b2Clamp the accumulated impulse
-                  // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
-                  const newImpulse = b2Max(vcp.normalImpulse + lambda, 0);
-                  lambda = newImpulse - vcp.normalImpulse;
-                  vcp.normalImpulse = newImpulse;
-                  // Apply contact impulse
-                  // b2Vec2 P = lambda * normal;
-                  b2Vec2.MulSV(lambda, normal, P);
-                  // vA -= mA * P;
-                  vA.SelfMulSub(mA, P);
-                  // wA -= iA * b2Cross(vcp->rA, P);
-                  wA -= iA * b2Vec2.CrossVV(vcp.rA, P);
-                  // vB += mB * P;
-                  vB.SelfMulAdd(mB, P);
-                  // wB += iB * b2Cross(vcp->rB, P);
-                  wB += iB * b2Vec2.CrossVV(vcp.rB, P);
+              if (vc.pointCount === 1 || g_blockSolve === false) {
+                  for (let j = 0; j < pointCount; ++j) {
+                      const vcp = vc.points[j];
+                      // Relative velocity at contact
+                      // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
+                      b2Vec2.SubVV(b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0), b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1), dv);
+                      // Compute normal impulse
+                      // float32 vn = b2Dot(dv, normal);
+                      const vn = b2Vec2.DotVV(dv, normal);
+                      let lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
+                      // b2Clamp the accumulated impulse
+                      // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
+                      const newImpulse = b2Max(vcp.normalImpulse + lambda, 0);
+                      lambda = newImpulse - vcp.normalImpulse;
+                      vcp.normalImpulse = newImpulse;
+                      // Apply contact impulse
+                      // b2Vec2 P = lambda * normal;
+                      b2Vec2.MulSV(lambda, normal, P);
+                      // vA -= mA * P;
+                      vA.SelfMulSub(mA, P);
+                      // wA -= iA * b2Cross(vcp->rA, P);
+                      wA -= iA * b2Vec2.CrossVV(vcp.rA, P);
+                      // vB += mB * P;
+                      vB.SelfMulAdd(mB, P);
+                      // wB += iB * b2Cross(vcp->rB, P);
+                      wB += iB * b2Vec2.CrossVV(vcp.rB, P);
+                  }
               }
               else {
                   // Block solver developed in collaboration with Dirk Gregorius (back in 01/07 on Box2D_Lite).
                   // Build the mini LCP for this contact patch
                   //
-                  // vn = A * x + b, vn >= 0, , vn >= 0, x >= 0 and vn_i * x_i = 0 with i = 1..2
+                  // vn = A * x + b, vn >= 0, x >= 0 and vn_i * x_i = 0 with i = 1..2
                   //
                   // A = J * W * JT and J = ( -n, -r1 x n, n, r2 x n )
                   // b = vn0 - velocityBias
@@ -18800,20 +18828,24 @@
               case b2JointType.e_distanceJoint:
                   this.m_debugDraw.DrawSegment(p1, p2, color);
                   break;
-              case b2JointType.e_pulleyJoint:
-                  {
-                      const pulley = joint;
-                      const s1 = pulley.GetGroundAnchorA();
-                      const s2 = pulley.GetGroundAnchorB();
-                      this.m_debugDraw.DrawSegment(s1, p1, color);
-                      this.m_debugDraw.DrawSegment(s2, p2, color);
-                      this.m_debugDraw.DrawSegment(s1, s2, color);
-                  }
+              case b2JointType.e_pulleyJoint: {
+                  const pulley = joint;
+                  const s1 = pulley.GetGroundAnchorA();
+                  const s2 = pulley.GetGroundAnchorB();
+                  this.m_debugDraw.DrawSegment(s1, p1, color);
+                  this.m_debugDraw.DrawSegment(s2, p2, color);
+                  this.m_debugDraw.DrawSegment(s1, s2, color);
                   break;
-              case b2JointType.e_mouseJoint:
-                  // don't draw this
-                  this.m_debugDraw.DrawSegment(p1, p2, color);
+              }
+              case b2JointType.e_mouseJoint: {
+                  const c = b2World.DrawJoint_s_c;
+                  c.Set(0.0, 1.0, 0.0);
+                  this.m_debugDraw.DrawPoint(p1, 4.0, c);
+                  this.m_debugDraw.DrawPoint(p2, 4.0, c);
+                  c.Set(0.8, 0.8, 0.8);
+                  this.m_debugDraw.DrawSegment(p1, p2, c);
                   break;
+              }
               default:
                   this.m_debugDraw.DrawSegment(x1, p1, color);
                   this.m_debugDraw.DrawSegment(p1, p2, color);
@@ -18826,46 +18858,53 @@
           }
           const shape = fixture.GetShape();
           switch (shape.m_type) {
-              case b2ShapeType.e_circleShape:
-                  {
-                      const circle = shape;
-                      const center = circle.m_p;
-                      const radius = circle.m_radius;
-                      const axis = b2Vec2.UNITX;
-                      this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
-                  }
+              case b2ShapeType.e_circleShape: {
+                  const circle = shape;
+                  const center = circle.m_p;
+                  const radius = circle.m_radius;
+                  const axis = b2Vec2.UNITX;
+                  this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
                   break;
-              case b2ShapeType.e_edgeShape:
-                  {
-                      const edge = shape;
-                      const v1 = edge.m_vertex1;
-                      const v2 = edge.m_vertex2;
+              }
+              case b2ShapeType.e_edgeShape: {
+                  const edge = shape;
+                  const v1 = edge.m_vertex1;
+                  const v2 = edge.m_vertex2;
+                  this.m_debugDraw.DrawSegment(v1, v2, color);
+                  break;
+              }
+              case b2ShapeType.e_chainShape: {
+                  const chain = shape;
+                  const count = chain.m_count;
+                  const vertices = chain.m_vertices;
+                  const ghostColor = b2World.DrawShape_s_ghostColor.SetRGBA(0.75 * color.r, 0.75 * color.g, 0.75 * color.b, color.a);
+                  let v1 = vertices[0];
+                  this.m_debugDraw.DrawPoint(v1, 4.0, color);
+                  if (chain.m_hasPrevVertex) {
+                      const vp = chain.m_prevVertex;
+                      this.m_debugDraw.DrawSegment(vp, v1, ghostColor);
+                      this.m_debugDraw.DrawCircle(vp, 0.1, ghostColor);
+                  }
+                  for (let i = 1; i < count; ++i) {
+                      const v2 = vertices[i];
                       this.m_debugDraw.DrawSegment(v1, v2, color);
+                      this.m_debugDraw.DrawPoint(v2, 4.0, color);
+                      v1 = v2;
+                  }
+                  if (chain.m_hasNextVertex) {
+                      const vn = chain.m_nextVertex;
+                      this.m_debugDraw.DrawSegment(vn, v1, ghostColor);
+                      this.m_debugDraw.DrawCircle(vn, 0.1, ghostColor);
                   }
                   break;
-              case b2ShapeType.e_chainShape:
-                  {
-                      const chain = shape;
-                      const count = chain.m_count;
-                      const vertices = chain.m_vertices;
-                      let v1 = vertices[0];
-                      this.m_debugDraw.DrawCircle(v1, 0.05, color);
-                      for (let i = 1; i < count; ++i) {
-                          const v2 = vertices[i];
-                          this.m_debugDraw.DrawSegment(v1, v2, color);
-                          this.m_debugDraw.DrawCircle(v2, 0.05, color);
-                          v1 = v2;
-                      }
-                  }
+              }
+              case b2ShapeType.e_polygonShape: {
+                  const poly = shape;
+                  const vertexCount = poly.m_count;
+                  const vertices = poly.m_vertices;
+                  this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
                   break;
-              case b2ShapeType.e_polygonShape:
-                  {
-                      const poly = shape;
-                      const vertexCount = poly.m_count;
-                      const vertices = poly.m_vertices;
-                      this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
-                  }
-                  break;
+              }
           }
       }
       Solve(step) {
@@ -18926,8 +18965,8 @@
                   }
                   // DEBUG: b2Assert(b.IsActive());
                   island.AddBody(b);
-                  // Make sure the body is awake.
-                  b.SetAwake(true);
+                  // Make sure the body is awake. (without resetting sleep timer).
+                  b.m_awakeFlag = true;
                   // To keep islands as small as possible, we don't
                   // propagate islands across static bodies.
                   if (b.GetType() === b2BodyType.b2_staticBody) {
@@ -19315,6 +19354,8 @@
   b2World.DrawJoint_s_p1 = new b2Vec2();
   b2World.DrawJoint_s_p2 = new b2Vec2();
   b2World.DrawJoint_s_color = new b2Color(0.5, 0.8, 0.8);
+  b2World.DrawJoint_s_c = new b2Color();
+  b2World.DrawShape_s_ghostColor = new b2Color();
   b2World.SolveTOI_s_subStep = new b2TimeStep();
   b2World.SolveTOI_s_backup = new b2Sweep();
   b2World.SolveTOI_s_backup1 = new b2Sweep();
@@ -19416,6 +19457,7 @@
           let m = 0;
           let ih = i0;
           for (;;) {
+              // DEBUG: b2Assert(m < b2_maxPolygonVertices);
               hull[m] = ih;
               let ie = 0;
               for (let j = 1; j < n; ++j) {

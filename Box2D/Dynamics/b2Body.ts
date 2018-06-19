@@ -64,11 +64,13 @@ export interface b2IBodyDef {
   /// Linear damping is use to reduce the linear velocity. The damping parameter
   /// can be larger than 1.0f but the damping effect becomes sensitive to the
   /// time step when the damping parameter is large.
+	/// Units are 1/time
   linearDamping?: number;
 
   /// Angular damping is use to reduce the angular velocity. The damping parameter
   /// can be larger than 1.0f but the damping effect becomes sensitive to the
   /// time step when the damping parameter is large.
+	/// Units are 1/time
   angularDamping?: number;
 
   /// Set this flag to false if this body should never fall asleep. Note that
@@ -386,9 +388,9 @@ export class b2Body {
       fixture.DestroyProxies();
     }
 
-    fixture.Destroy();
     // fixture.m_body = null;
     fixture.m_next = null;
+    fixture.Destroy();
 
     --this.m_fixtureCount;
 
@@ -572,7 +574,6 @@ export class b2Body {
 
   /// Apply a torque. This affects the angular velocity
   /// without affecting the linear velocity of the center of mass.
-  /// This wakes up the body.
   /// @param torque about the z-axis (out of the screen), usually in N-m.
   /// @param wake also wake up the body
   public ApplyTorque(torque: number, wake: boolean = true): void {
@@ -926,10 +927,8 @@ export class b2Body {
   /// @param flag set to true to wake the body, false to put it to sleep.
   public SetAwake(flag: boolean): void {
     if (flag) {
-      if (!this.m_awakeFlag) {
-        this.m_awakeFlag = true;
-        this.m_sleepTime = 0;
-      }
+      this.m_awakeFlag = true;
+      this.m_sleepTime = 0;
     } else {
       this.m_awakeFlag = false;
       this.m_sleepTime = 0;

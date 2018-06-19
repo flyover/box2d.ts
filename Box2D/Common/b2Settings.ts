@@ -186,7 +186,8 @@ export class b2Version {
 /// Current version.
 export const b2_version: b2Version = new b2Version(2, 3, 2);
 
-export const b2_changelist: number = 313;
+export const b2_branch: string = "master";
+export const b2_commit: string = "fbf51801d80fc389d43dc46524520e89043b6faf";
 
 export function b2ParseInt(v: string): number {
   return parseInt(v, 10);

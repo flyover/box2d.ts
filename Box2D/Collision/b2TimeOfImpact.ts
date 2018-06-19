@@ -56,6 +56,7 @@ export class b2TOIInput {
   public tMax: number = 0; // defines sweep interval [0, tMax]
 }
 
+/// Output parameters for b2TimeOfImpact.
 export enum b2TOIOutputState {
   e_unknown = 0,
   e_failed = 1,

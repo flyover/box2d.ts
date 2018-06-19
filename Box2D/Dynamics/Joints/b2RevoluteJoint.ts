@@ -508,7 +508,7 @@ export class b2RevoluteJoint extends b2Joint {
   }
 
   public EnableMotor(flag: boolean): void {
-    if (this.m_enableMotor !== flag) {
+    if (flag !== this.m_enableMotor) {
       this.m_bodyA.SetAwake(true);
       this.m_bodyB.SetAwake(true);
       this.m_enableMotor = flag;
@@ -524,7 +524,11 @@ export class b2RevoluteJoint extends b2Joint {
   }
 
   public SetMaxMotorTorque(torque: number): void {
-    this.m_maxMotorTorque = torque;
+    if (torque !== this.m_maxMotorTorque) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_maxMotorTorque = torque;
+    }
   }
 
   public GetMaxMotorTorque(): number { return this.m_maxMotorTorque; }
@@ -562,7 +566,7 @@ export class b2RevoluteJoint extends b2Joint {
   }
 
   public SetMotorSpeed(speed: number): void {
-    if (this.m_motorSpeed !== speed) {
+    if (speed !== this.m_motorSpeed) {
       this.m_bodyA.SetAwake(true);
       this.m_bodyB.SetAwake(true);
       this.m_motorSpeed = speed;

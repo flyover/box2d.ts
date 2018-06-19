@@ -76,7 +76,7 @@ export class Main {
     const title_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
     title_div.style.textAlign = "center";
     title_div.style.color = "grey";
-    title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version + " (revision " + box2d.b2_changelist + ")";
+    title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version + "<br>(branch: " + box2d.b2_branch + " commit: " + box2d.b2_commit + ")";
 
     const view_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
 
@@ -206,7 +206,7 @@ export class Main {
     function connect_button_input(parent: Node, label: string, callback: (e: MouseEvent) => void): HTMLInputElement {
       const button_input: HTMLInputElement = document.createElement("input");
       button_input.type = "button";
-      button_input.style.width = "100";
+      button_input.style.width = "120";
       button_input.value = label;
       button_input.addEventListener("click", callback);
       parent.appendChild(button_input);
@@ -216,9 +216,9 @@ export class Main {
 
     const button_div: HTMLDivElement = controls_div.appendChild(document.createElement("div"));
     button_div.align = "center";
-    connect_button_input(button_div, "Pause", (e: MouseEvent): void => { this.Pause(); });
-    connect_button_input(button_div, "Step", (e: MouseEvent): void => { this.SingleStep(); });
-    connect_button_input(button_div, "Restart", (e: MouseEvent): void => { this.LoadTest(); });
+    connect_button_input(button_div, "Pause (P)", (e: MouseEvent): void => { this.Pause(); });
+    connect_button_input(button_div, "Single Step (O)", (e: MouseEvent): void => { this.SingleStep(); });
+    connect_button_input(button_div, "Restart (R)", (e: MouseEvent): void => { this.LoadTest(); });
     this.m_demo_button = connect_button_input(button_div, "Demo", (e: MouseEvent): void => { this.ToggleDemo(); });
 
     // disable context menu to use right-click
@@ -417,6 +417,9 @@ export class Main {
         this.m_test.LaunchBomb();
       }
       break;
+    case "o":
+      this.SingleStep();
+      break;
     case "p":
       this.Pause();
       break;
@@ -437,14 +440,8 @@ export class Main {
       if (this.m_shift) {
         // Press > to select the next particle parameter setting.
         Main.particleParameter.Increment();
-      } else {
-        this.SingleStep();
       }
       break;
-    // #else
-    // case ".":
-    //   this.SingleStep();
-    //   break;
     // #endif
     default:
       // console.log(e.keyCode);

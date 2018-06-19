@@ -127,6 +127,7 @@ export class b2PolygonShape extends b2Shape {
     let ih: number = i0;
 
     for (; ; ) {
+      // DEBUG: b2Assert(m < b2_maxPolygonVertices);
       hull[m] = ih;
 
       let ie: number = 0;

@@ -59,7 +59,9 @@ import { RayCast } from "./RayCast";
 import { Revolute } from "./Revolute";
 import { RopeJoint } from "./RopeJoint";
 import { SensorTest } from "./SensorTest";
+import { ShapeCast } from "./ShapeCast";
 import { ShapeEditing } from "./ShapeEditing";
+import { Skier } from "./Skier";
 import { SliderCrank } from "./SliderCrank";
 import { SphereStack } from "./SphereStack";
 import { TheoJansen } from "./TheoJansen";
@@ -117,6 +119,8 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Sparky", Sparky.Create),
   // #endif
 
+  new TestEntry("Shape Cast", ShapeCast.Create),
+  new TestEntry("Time of Impact", TimeOfImpact.Create),
   new TestEntry("Character Collision", CharacterCollision.Create),
   new TestEntry("Tiles", Tiles.Create),
   new TestEntry("Heavy on Light", HeavyOnLight.Create),
@@ -131,7 +135,6 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Dump Shell", DumpShell.Create),
   new TestEntry("Apply Force", ApplyForce.Create),
   new TestEntry("Continuous Test", ContinuousTest.Create),
-  new TestEntry("Time of Impact", TimeOfImpact.Create),
   new TestEntry("Motor Joint", MotorJoint.Create),
   new TestEntry("One-Sided Platform", OneSidedPlatform.Create),
   new TestEntry("Mobile", Mobile.Create),
@@ -169,6 +172,7 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Sensor Test", SensorTest.Create),
   new TestEntry("Varying Friction", VaryingFriction.Create),
   new TestEntry("Add Pair Stress Test", AddPair.Create),
+  new TestEntry("Skier", Skier.Create),
 
   new TestEntry("Rope", Rope.Create),
 

@@ -26,7 +26,7 @@ import { b2Fixture } from "../b2Fixture";
 import { b2Shape } from "../../Collision/Shapes/b2Shape";
 import { b2ContactListener } from "../b2WorldCallbacks";
 
-/// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
+/// Friction mixing law. The idea is to allow either fixture to drive the friction to zero.
 /// For example, anything slides on ice.
 export function b2MixFriction(friction1: number, friction2: number): number {
   return b2Sqrt(friction1 * friction2);

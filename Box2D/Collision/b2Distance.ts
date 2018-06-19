@@ -17,8 +17,8 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_epsilon, b2_epsilon_sq } from "../Common/b2Settings";
-import { b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
+import { b2_epsilon, b2_epsilon_sq, b2_polygonRadius, b2_linearSlop } from "../Common/b2Settings";
+import { b2Max, b2Vec2, b2Rot, b2Transform, b2Abs } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 
 /// A distance proxy is used by the GJK algorithm.
@@ -38,6 +38,12 @@ export class b2DistanceProxy {
 
   public SetShape(shape: b2Shape, index: number): void {
     shape.SetupDistanceProxy(this, index);
+  }
+
+  public SetVerticesRadius(vertices: b2Vec2[], count: number, radius: number): void {
+    this.m_vertices = vertices;
+    this.m_count = count;
+    this.m_radius = radius;
   }
 
   public GetSupport(d: b2Vec2): number {
@@ -121,6 +127,23 @@ export class b2DistanceOutput {
     this.iterations = 0;
     return this;
   }
+}
+
+/// Input parameters for b2ShapeCast
+export class b2ShapeCastInput {
+	public readonly proxyA: b2DistanceProxy = new b2DistanceProxy();
+	public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
+	public readonly transformA: b2Transform = new b2Transform();
+	public readonly transformB: b2Transform = new b2Transform();
+	public readonly translationB: b2Vec2 = new b2Vec2();
+}
+
+/// Output results for b2ShapeCast
+export class b2ShapeCastOutput {
+	public readonly point: b2Vec2 = new b2Vec2();
+	public readonly normal: b2Vec2 = new b2Vec2();
+	public lambda: number = 0.0;
+	public iterations: number = 0;
 }
 
 export let b2_gjkCalls: number = 0;
@@ -482,9 +505,6 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
   const saveB: number[] = b2Distance_s_saveB;
   let saveCount: number = 0;
 
-  let distanceSqr1: number = b2_maxFloat;
-  let distanceSqr2: number = distanceSqr1;
-
   // Main iteration loop.
   let iter: number = 0;
   while (iter < k_maxIters) {
@@ -516,19 +536,6 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     if (simplex.m_count === 3) {
       break;
     }
-
-    // Compute closest point.
-    const p: b2Vec2 = simplex.GetClosestPoint(b2Distance_s_p);
-    distanceSqr2 = p.LengthSquared();
-
-    // Ensure progress
-    /*
-    TODO: to fix compile warning
-    if (distanceSqr2 > distanceSqr1) {
-      //break;
-    }
-    */
-    distanceSqr1 = distanceSqr2;
 
     // Get search direction.
     const d: b2Vec2 = simplex.GetSearchDirection(b2Distance_s_d);
@@ -606,4 +613,183 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
       output.distance = 0;
     }
   }
+}
+
+/// Perform a linear shape cast of shape B moving and shape A fixed. Determines the hit point, normal, and translation fraction.
+
+// GJK-raycast
+// Algorithm by Gino van den Bergen.
+// "Smooth Mesh Contacts with GJK" in Game Physics Pearls. 2010
+// bool b2ShapeCast(b2ShapeCastOutput* output, const b2ShapeCastInput* input);
+const b2ShapeCast_s_n = new b2Vec2();
+const b2ShapeCast_s_simplex = new b2Simplex();
+const b2ShapeCast_s_wA = new b2Vec2();
+const b2ShapeCast_s_wB = new b2Vec2();
+const b2ShapeCast_s_v = new b2Vec2();
+const b2ShapeCast_s_p = new b2Vec2();
+const b2ShapeCast_s_pointA = new b2Vec2();
+const b2ShapeCast_s_pointB = new b2Vec2();
+export function b2ShapeCast(output: b2ShapeCastOutput, input: b2ShapeCastInput): boolean {
+  output.iterations = 0;
+  output.lambda = 1.0;
+  output.normal.SetZero();
+  output.point.SetZero();
+
+  // const b2DistanceProxy* proxyA = &input.proxyA;
+  const proxyA = input.proxyA;
+  // const b2DistanceProxy* proxyB = &input.proxyB;
+  const proxyB = input.proxyB;
+
+  // float32 radiusA = b2Max(proxyA.m_radius, b2_polygonRadius);
+  const radiusA = b2Max(proxyA.m_radius, b2_polygonRadius);
+  // float32 radiusB = b2Max(proxyB.m_radius, b2_polygonRadius);
+  const radiusB = b2Max(proxyB.m_radius, b2_polygonRadius);
+  // float32 radius = radiusA + radiusB;
+  const radius = radiusA + radiusB;
+
+  // b2Transform xfA = input.transformA;
+  const xfA = input.transformA;
+  // b2Transform xfB = input.transformB;
+  const xfB = input.transformB;
+
+  // b2Vec2 r = input.translationB;
+  const r = input.translationB;
+  // b2Vec2 n(0.0f, 0.0f);
+  const n = b2ShapeCast_s_n.Set(0.0, 0.0);
+  // float32 lambda = 0.0f;
+  let lambda = 0.0;
+
+  // Initial simplex
+  const simplex = b2ShapeCast_s_simplex;
+  simplex.m_count = 0;
+
+  // Get simplex vertices as an array.
+  // b2SimplexVertex* vertices = &simplex.m_v1;
+  const vertices = simplex.m_vertices;
+
+  // Get support point in -r direction
+  // int32 indexA = proxyA.GetSupport(b2MulT(xfA.q, -r));
+  let indexA = proxyA.GetSupport(b2Rot.MulTRV(xfA.q, b2Vec2.NegV(r, b2Vec2.s_t1), b2Vec2.s_t0));
+  // b2Vec2 wA = b2Mul(xfA, proxyA.GetVertex(indexA));
+  let wA = b2Transform.MulXV(xfA, proxyA.GetVertex(indexA), b2ShapeCast_s_wA);
+  // int32 indexB = proxyB.GetSupport(b2MulT(xfB.q, r));
+  let indexB = proxyB.GetSupport(b2Rot.MulTRV(xfB.q, r, b2Vec2.s_t0));
+  // b2Vec2 wB = b2Mul(xfB, proxyB.GetVertex(indexB));
+  let wB = b2Transform.MulXV(xfB, proxyB.GetVertex(indexB), b2ShapeCast_s_wB);
+  // b2Vec2 v = wA - wB;
+  const v = b2Vec2.SubVV(wA, wB, b2ShapeCast_s_v);
+
+  // Sigma is the target distance between polygons
+  // float32 sigma = b2Max(b2_polygonRadius, radius - b2_polygonRadius);
+  const sigma = b2Max(b2_polygonRadius, radius - b2_polygonRadius);
+  // const float32 tolerance = 0.5f * b2_linearSlop;
+  const tolerance = 0.5 * b2_linearSlop;
+
+  // Main iteration loop.
+  // const int32 k_maxIters = 20;
+  const k_maxIters = 20;
+  // int32 iter = 0;
+  let iter = 0;
+  // while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance)
+  while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance) {
+    // DEBUG: b2Assert(simplex.m_count < 3);
+
+    output.iterations += 1;
+
+    // Support in direction -v (A - B)
+    // indexA = proxyA.GetSupport(b2MulT(xfA.q, -v));
+    indexA = proxyA.GetSupport(b2Rot.MulTRV(xfA.q, b2Vec2.NegV(v, b2Vec2.s_t1), b2Vec2.s_t0));
+    // wA = b2Mul(xfA, proxyA.GetVertex(indexA));
+    wA = b2Transform.MulXV(xfA, proxyA.GetVertex(indexA), b2ShapeCast_s_wA);
+    // indexB = proxyB.GetSupport(b2MulT(xfB.q, v));
+    indexB = proxyB.GetSupport(b2Rot.MulTRV(xfB.q, v, b2Vec2.s_t0));
+    // wB = b2Mul(xfB, proxyB.GetVertex(indexB));
+    wB = b2Transform.MulXV(xfB, proxyB.GetVertex(indexB), b2ShapeCast_s_wB);
+    // b2Vec2 p = wA - wB;
+    const p = b2Vec2.SubVV(wA, wB, b2ShapeCast_s_p);
+
+    // -v is a normal at p
+    v.Normalize();
+
+    // Intersect ray with plane
+    const vp = b2Vec2.DotVV(v, p);
+    const vr = b2Vec2.DotVV(v, r);
+    if (vp - sigma > lambda * vr) {
+      if (vr <= 0.0) {
+        return false;
+      }
+
+      lambda = (vp - sigma) / vr;
+      if (lambda > 1.0) {
+        return false;
+      }
+
+      // n = -v;
+      n.Copy(v).SelfNeg();
+      simplex.m_count = 0;
+    }
+
+    // Reverse simplex since it works with B - A.
+    // Shift by lambda * r because we want the closest point to the current clip point.
+    // Note that the support point p is not shifted because we want the plane equation
+    // to be formed in unshifted space.
+    // b2SimplexVertex* vertex = vertices + simplex.m_count;
+    const vertex: b2SimplexVertex = vertices[simplex.m_count];
+    vertex.indexA = indexB;
+    // vertex.wA = wB + lambda * r;
+    vertex.wA.Copy(wB).SelfMulAdd(lambda, r);
+    vertex.indexB = indexA;
+    // vertex.wB = wA;
+    vertex.wB.Copy(wA);
+    // vertex.w = vertex.wB - vertex.wA;
+    vertex.w.Copy(vertex.wB).SelfSub(vertex.wA);
+    vertex.a = 1.0;
+    simplex.m_count += 1;
+
+    switch (simplex.m_count) {
+    case 1:
+      break;
+
+    case 2:
+      simplex.Solve2();
+      break;
+
+    case 3:
+      simplex.Solve3();
+      break;
+
+    default:
+      // DEBUG: b2Assert(false);
+    }
+
+    // If we have 3 points, then the origin is in the corresponding triangle.
+    if (simplex.m_count === 3) {
+      // Overlap
+      return false;
+    }
+
+    // Get search direction.
+    // v = simplex.GetClosestPoint();
+    simplex.GetClosestPoint(v);
+
+    // Iteration count is equated to the number of support point calls.
+    ++iter;
+  }
+
+  // Prepare output.
+  const pointA = b2ShapeCast_s_pointA;
+  const pointB = b2ShapeCast_s_pointB;
+  simplex.GetWitnessPoints(pointA, pointB);
+
+  if (v.LengthSquared() > 0.0) {
+    // n = -v;
+    n.Copy(v).SelfNeg();
+    n.Normalize();
+  }
+
+  // output.point = pointA + radiusA * n;
+  output.normal.Copy(n);
+  output.lambda = lambda;
+  output.iterations = iter;
+  return true;
 }

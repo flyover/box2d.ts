@@ -521,18 +521,6 @@ export class Test extends box2d.b2ContactListener {
     }
     // #endif
 
-    if (this.m_mouseJoint) {
-      const p1 = this.m_mouseJoint.GetAnchorB(new box2d.b2Vec2());
-      const p2 = this.m_mouseJoint.GetTarget();
-
-      const c: box2d.b2Color = new box2d.b2Color(0, 1, 0);
-      g_debugDraw.DrawPoint(p1, 4, c);
-      g_debugDraw.DrawPoint(p2, 4, c);
-
-      c.SetRGB(0.8, 0.8, 0.8);
-      g_debugDraw.DrawSegment(p1, p2, c);
-    }
-
     if (this.m_bombSpawning) {
       const c: box2d.b2Color = new box2d.b2Color(0, 0, 1);
       g_debugDraw.DrawPoint(this.m_bombSpawnPoint, 4, c);

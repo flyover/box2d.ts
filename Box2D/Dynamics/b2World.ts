@@ -1062,6 +1062,7 @@ export class b2World {
   private static DrawJoint_s_p1: b2Vec2 = new b2Vec2();
   private static DrawJoint_s_p2: b2Vec2 = new b2Vec2();
   private static DrawJoint_s_color: b2Color = new b2Color(0.5, 0.8, 0.8);
+  private static DrawJoint_s_c: b2Color = new b2Color();
   public DrawJoint(joint: b2Joint): void {
     if (this.m_debugDraw === null) {
       return;
@@ -1083,19 +1084,25 @@ export class b2World {
       break;
 
     case b2JointType.e_pulleyJoint: {
-        const pulley: b2PulleyJoint = joint as b2PulleyJoint;
-        const s1: b2Vec2 = pulley.GetGroundAnchorA();
-        const s2: b2Vec2 = pulley.GetGroundAnchorB();
-        this.m_debugDraw.DrawSegment(s1, p1, color);
-        this.m_debugDraw.DrawSegment(s2, p2, color);
-        this.m_debugDraw.DrawSegment(s1, s2, color);
-      }
-                                    break;
-
-    case b2JointType.e_mouseJoint:
-      // don't draw this
-      this.m_debugDraw.DrawSegment(p1, p2, color);
+      const pulley: b2PulleyJoint = joint as b2PulleyJoint;
+      const s1: b2Vec2 = pulley.GetGroundAnchorA();
+      const s2: b2Vec2 = pulley.GetGroundAnchorB();
+      this.m_debugDraw.DrawSegment(s1, p1, color);
+      this.m_debugDraw.DrawSegment(s2, p2, color);
+      this.m_debugDraw.DrawSegment(s1, s2, color);
       break;
+    }
+
+    case b2JointType.e_mouseJoint: {
+      const c = b2World.DrawJoint_s_c;
+      c.Set(0.0, 1.0, 0.0);
+      this.m_debugDraw.DrawPoint(p1, 4.0, c);
+      this.m_debugDraw.DrawPoint(p2, 4.0, c);
+
+      c.Set(0.8, 0.8, 0.8);
+      this.m_debugDraw.DrawSegment(p1, p2, c);
+      break;
+    }
 
     default:
       this.m_debugDraw.DrawSegment(x1, p1, color);
@@ -1104,6 +1111,7 @@ export class b2World {
     }
   }
 
+  private static DrawShape_s_ghostColor: b2Color = new b2Color();
   public DrawShape(fixture: b2Fixture, color: b2Color): void {
     if (this.m_debugDraw === null) {
       return;
@@ -1112,44 +1120,58 @@ export class b2World {
 
     switch (shape.m_type) {
     case b2ShapeType.e_circleShape: {
-        const circle: b2CircleShape = shape as b2CircleShape;
-        const center: b2Vec2 = circle.m_p;
-        const radius: number = circle.m_radius;
-        const axis: b2Vec2 = b2Vec2.UNITX;
-        this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
-      }
-                                    break;
+      const circle: b2CircleShape = shape as b2CircleShape;
+      const center: b2Vec2 = circle.m_p;
+      const radius: number = circle.m_radius;
+      const axis: b2Vec2 = b2Vec2.UNITX;
+      this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
+      break;
+    }
 
     case b2ShapeType.e_edgeShape: {
-        const edge: b2EdgeShape = shape as b2EdgeShape;
-        const v1: b2Vec2 = edge.m_vertex1;
-        const v2: b2Vec2 = edge.m_vertex2;
-        this.m_debugDraw.DrawSegment(v1, v2, color);
-      }
-                                  break;
+      const edge: b2EdgeShape = shape as b2EdgeShape;
+      const v1: b2Vec2 = edge.m_vertex1;
+      const v2: b2Vec2 = edge.m_vertex2;
+      this.m_debugDraw.DrawSegment(v1, v2, color);
+      break;
+    }
 
     case b2ShapeType.e_chainShape: {
-        const chain: b2ChainShape = shape as b2ChainShape;
-        const count: number = chain.m_count;
-        const vertices: b2Vec2[] = chain.m_vertices;
-        let v1: b2Vec2 = vertices[0];
-        this.m_debugDraw.DrawCircle(v1, 0.05, color);
-        for (let i: number = 1; i < count; ++i) {
-          const v2: b2Vec2 = vertices[i];
-          this.m_debugDraw.DrawSegment(v1, v2, color);
-          this.m_debugDraw.DrawCircle(v2, 0.05, color);
-          v1 = v2;
-        }
+      const chain: b2ChainShape = shape as b2ChainShape;
+      const count: number = chain.m_count;
+      const vertices: b2Vec2[] = chain.m_vertices;
+      const ghostColor: b2Color = b2World.DrawShape_s_ghostColor.SetRGBA(0.75 * color.r, 0.75 * color.g, 0.75 * color.b, color.a);
+      let v1: b2Vec2 = vertices[0];
+      this.m_debugDraw.DrawPoint(v1, 4.0, color);
+
+      if (chain.m_hasPrevVertex) {
+        const vp = chain.m_prevVertex;
+        this.m_debugDraw.DrawSegment(vp, v1, ghostColor);
+        this.m_debugDraw.DrawCircle(vp, 0.1, ghostColor);
       }
-                                   break;
+
+      for (let i: number = 1; i < count; ++i) {
+        const v2: b2Vec2 = vertices[i];
+        this.m_debugDraw.DrawSegment(v1, v2, color);
+        this.m_debugDraw.DrawPoint(v2, 4.0, color);
+        v1 = v2;
+      }
+
+      if (chain.m_hasNextVertex) {
+        const vn = chain.m_nextVertex;
+        this.m_debugDraw.DrawSegment(vn, v1, ghostColor);
+        this.m_debugDraw.DrawCircle(vn, 0.1, ghostColor);
+      }
+      break;
+    }
 
     case b2ShapeType.e_polygonShape: {
-        const poly: b2PolygonShape = shape as b2PolygonShape;
-        const vertexCount: number = poly.m_count;
-        const vertices: b2Vec2[] = poly.m_vertices;
-        this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
-      }
-                                     break;
+      const poly: b2PolygonShape = shape as b2PolygonShape;
+      const vertexCount: number = poly.m_count;
+      const vertices: b2Vec2[] = poly.m_vertices;
+      this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
+      break;
+    }
     }
   }
 
@@ -1222,8 +1244,8 @@ export class b2World {
         // DEBUG: b2Assert(b.IsActive());
         island.AddBody(b);
 
-        // Make sure the body is awake.
-        b.SetAwake(true);
+        // Make sure the body is awake. (without resetting sleep timer).
+        b.m_awakeFlag = true;
 
         // To keep islands as small as possible, we don't
         // propagate islands across static bodies.

@@ -426,6 +426,13 @@ export class b2PrismaticJoint extends b2Joint {
     data.velocities[this.m_indexB].w = wB;
   }
 
+  // A velocity based solver computes reaction forces(impulses) using the velocity constraint solver.Under this context,
+  // the position solver is not there to resolve forces.It is only there to cope with integration error.
+  //
+  // Therefore, the pseudo impulses in the position solver do not have any physical meaning.Thus it is okay if they suck.
+  //
+  // We could take the active state from the velocity solver.However, the joint might push past the limit when the velocity
+  // solver indicates the limit is inactive.
   private static SolvePositionConstraints_s_d = new b2Vec2();
   private static SolvePositionConstraints_s_impulse = new b2Vec3();
   private static SolvePositionConstraints_s_impulse1 = new b2Vec2();
@@ -701,15 +708,19 @@ export class b2PrismaticJoint extends b2Joint {
   }
 
   public EnableMotor(flag: boolean): void {
-    this.m_bodyA.SetAwake(true);
-    this.m_bodyB.SetAwake(true);
-    this.m_enableMotor = flag;
+    if (flag !== this.m_enableMotor) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_enableMotor = flag;
+    }
   }
 
   public SetMotorSpeed(speed: number): void {
-    this.m_bodyA.SetAwake(true);
-    this.m_bodyB.SetAwake(true);
-    this.m_motorSpeed = speed;
+    if (speed !== this.m_motorSpeed) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_motorSpeed = speed;
+    }
   }
 
   public GetMotorSpeed() {
@@ -717,9 +728,11 @@ export class b2PrismaticJoint extends b2Joint {
   }
 
   public SetMaxMotorForce(force: number): void {
-    this.m_bodyA.SetAwake(true);
-    this.m_bodyB.SetAwake(true);
-    this.m_maxMotorForce = force;
+    if (force !== this.m_maxMotorForce) {
+      this.m_bodyA.SetAwake(true);
+      this.m_bodyB.SetAwake(true);
+      this.m_maxMotorForce = force;
+    }
   }
 
   public GetMaxMotorForce(): number { return this.m_maxMotorForce; }

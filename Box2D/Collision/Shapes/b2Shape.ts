@@ -47,6 +47,9 @@ export enum b2ShapeType {
 /// is created. Shapes may encapsulate a one or more child shapes.
 export abstract class b2Shape {
   public m_type: b2ShapeType = b2ShapeType.e_unknown;
+
+	/// Radius of a shape. For polygonal shapes this must be b2_polygonRadius. There is no support for
+	/// making rounded polygons.
   public m_radius: number = 0;
 
   constructor(type: b2ShapeType, radius: number) {

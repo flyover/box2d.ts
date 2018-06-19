@@ -1,5 +1,5 @@
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_polygonRadius, b2_maxManifoldPoints } from "../Common/b2Settings";
+import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactID } from "./b2Collision";
 import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
@@ -355,7 +355,7 @@ class b2EPCollider {
       b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
     }
 
-    this.m_radius = 2 * b2_polygonRadius;
+    this.m_radius = polygonB.m_radius + edgeA.m_radius;
 
     manifold.pointCount = 0;
 

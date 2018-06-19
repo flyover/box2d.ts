@@ -203,7 +203,7 @@ export enum b2DrawFlags {
 
 /// Implement and register this class with a b2World to provide debug drawing of physics
 /// entities in your game.
-export class b2Draw {
+export abstract class b2Draw {
   public m_drawFlags: b2DrawFlags = 0;
 
   public SetFlags(flags: b2DrawFlags): void {
@@ -222,23 +222,25 @@ export class b2Draw {
     this.m_drawFlags &= ~flags;
   }
 
-  public PushTransform(xf: b2Transform): void {}
+  public abstract PushTransform(xf: b2Transform): void;
 
-  public PopTransform(xf: b2Transform): void {}
+  public abstract PopTransform(xf: b2Transform): void;
 
-  public DrawPolygon(vertices: XY[], vertexCount: number, color: RGBA): void {}
+  public abstract DrawPolygon(vertices: XY[], vertexCount: number, color: RGBA): void;
 
-  public DrawSolidPolygon(vertices: XY[], vertexCount: number, color: RGBA): void {}
+  public abstract DrawSolidPolygon(vertices: XY[], vertexCount: number, color: RGBA): void;
 
-  public DrawCircle(center: XY, radius: number, color: RGBA): void {}
+  public abstract DrawCircle(center: XY, radius: number, color: RGBA): void;
 
-  public DrawSolidCircle(center: XY, radius: number, axis: XY, color: RGBA): void {}
+  public abstract DrawSolidCircle(center: XY, radius: number, axis: XY, color: RGBA): void;
 
   // #if B2_ENABLE_PARTICLE
-  public DrawParticles(centers: XY[], radius: number, colors: RGBA[] | null, count: number): void {}
+  public abstract DrawParticles(centers: XY[], radius: number, colors: RGBA[] | null, count: number): void;
   // #endif
 
-  public DrawSegment(p1: XY, p2: XY, color: RGBA): void {}
+  public abstract DrawSegment(p1: XY, p2: XY, color: RGBA): void;
 
-  public DrawTransform(xf: b2Transform): void {}
+  public abstract DrawTransform(xf: b2Transform): void;
+
+  public abstract DrawPoint(p: XY, size: number, color: RGBA): void;
 }

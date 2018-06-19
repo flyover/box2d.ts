@@ -29,6 +29,11 @@ import { b2Body } from "../b2Body";
 import { b2Fixture } from "../b2Fixture";
 import { b2TimeStep, b2Position, b2Velocity } from "../b2TimeStep";
 
+// Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
+// #define B2_DEBUG_SOLVER 0
+
+export let g_blockSolve: boolean = false;
+
 export class b2VelocityConstraintPoint {
   public readonly rA: b2Vec2 = new b2Vec2();
   public readonly rB: b2Vec2 = new b2Vec2();
@@ -363,7 +368,7 @@ export class b2ContactSolver {
       }
 
       // If we have two points, then prepare the block solver.
-      if (vc.pointCount === 2) {
+      if (vc.pointCount === 2 && g_blockSolve) {
         const vcp1: b2VelocityConstraintPoint = vc.points[0];
         const vcp2: b2VelocityConstraintPoint = vc.points[1];
 
@@ -528,44 +533,46 @@ export class b2ContactSolver {
       }
 
       // Solve normal constraints
-      if (vc.pointCount === 1) {
-        const vcp: b2VelocityConstraintPoint = vc.points[0];
+      if (vc.pointCount === 1 || g_blockSolve === false) {
+        for (let j = 0; j < pointCount; ++j) {
+          const vcp: b2VelocityConstraintPoint = vc.points[j];
 
-        // Relative velocity at contact
-        // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-        b2Vec2.SubVV(
-          b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0),
-          b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1),
-          dv);
+          // Relative velocity at contact
+          // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
+          b2Vec2.SubVV(
+            b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0),
+            b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1),
+            dv);
 
-        // Compute normal impulse
-        // float32 vn = b2Dot(dv, normal);
-        const vn: number = b2Vec2.DotVV(dv, normal);
-        let lambda: number = (-vcp.normalMass * (vn - vcp.velocityBias));
+          // Compute normal impulse
+          // float32 vn = b2Dot(dv, normal);
+          const vn: number = b2Vec2.DotVV(dv, normal);
+          let lambda: number = (-vcp.normalMass * (vn - vcp.velocityBias));
 
-        // b2Clamp the accumulated impulse
-        // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
-        const newImpulse: number = b2Max(vcp.normalImpulse + lambda, 0);
-        lambda = newImpulse - vcp.normalImpulse;
-        vcp.normalImpulse = newImpulse;
+          // b2Clamp the accumulated impulse
+          // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
+          const newImpulse: number = b2Max(vcp.normalImpulse + lambda, 0);
+          lambda = newImpulse - vcp.normalImpulse;
+          vcp.normalImpulse = newImpulse;
 
-        // Apply contact impulse
-        // b2Vec2 P = lambda * normal;
-        b2Vec2.MulSV(lambda, normal, P);
-        // vA -= mA * P;
-        vA.SelfMulSub(mA, P);
-        // wA -= iA * b2Cross(vcp->rA, P);
-        wA -= iA * b2Vec2.CrossVV(vcp.rA, P);
+          // Apply contact impulse
+          // b2Vec2 P = lambda * normal;
+          b2Vec2.MulSV(lambda, normal, P);
+          // vA -= mA * P;
+          vA.SelfMulSub(mA, P);
+          // wA -= iA * b2Cross(vcp->rA, P);
+          wA -= iA * b2Vec2.CrossVV(vcp.rA, P);
 
-        // vB += mB * P;
-        vB.SelfMulAdd(mB, P);
-        // wB += iB * b2Cross(vcp->rB, P);
-        wB += iB * b2Vec2.CrossVV(vcp.rB, P);
+          // vB += mB * P;
+          vB.SelfMulAdd(mB, P);
+          // wB += iB * b2Cross(vcp->rB, P);
+          wB += iB * b2Vec2.CrossVV(vcp.rB, P);
+        }
       } else {
         // Block solver developed in collaboration with Dirk Gregorius (back in 01/07 on Box2D_Lite).
         // Build the mini LCP for this contact patch
         //
-        // vn = A * x + b, vn >= 0, , vn >= 0, x >= 0 and vn_i * x_i = 0 with i = 1..2
+        // vn = A * x + b, vn >= 0, x >= 0 and vn_i * x_i = 0 with i = 1..2
         //
         // A = J * W * JT and J = ( -n, -r1 x n, n, r2 x n )
         // b = vn0 - velocityBias

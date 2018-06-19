@@ -679,17 +679,19 @@ export class b2DynamicTree<T> {
   }
 
   public Validate(): void {
-    this.ValidateStructure(this.m_root);
-    this.ValidateMetrics(this.m_root);
+    // DEBUG: this.ValidateStructure(this.m_root);
+    // DEBUG: this.ValidateMetrics(this.m_root);
 
     // let freeCount: number = 0;
-    let freeIndex: b2TreeNode<T> | null = this.m_freeList;
-    while (freeIndex !== null) {
-      freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-      // ++freeCount;
-    }
+    // let freeIndex: b2TreeNode<T> | null = this.m_freeList;
+    // while (freeIndex !== null) {
+    //   freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
+    //   ++freeCount;
+    // }
 
     // DEBUG: b2Assert(this.GetHeight() === this.ComputeHeight());
+
+    // b2Assert(this.m_nodeCount + freeCount === this.m_nodeCapacity);
   }
 
   private static GetMaxBalanceNode<T>(node: b2TreeNode<T> | null, maxBalance: number): number {

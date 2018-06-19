@@ -146,7 +146,8 @@
   }
   /// Current version.
   const b2_version = new b2Version(2, 3, 2);
-  const b2_changelist = 313;
+  const b2_branch = "master";
+  const b2_commit = "fbf51801d80fc389d43dc46524520e89043b6faf";
   function b2ParseInt(v) {
       return parseInt(v, 10);
   }
@@ -1243,17 +1244,6 @@
       ClearFlags(flags) {
           this.m_drawFlags &= ~flags;
       }
-      PushTransform(xf) { }
-      PopTransform(xf) { }
-      DrawPolygon(vertices, vertexCount, color) { }
-      DrawSolidPolygon(vertices, vertexCount, color) { }
-      DrawCircle(center, radius, color) { }
-      DrawSolidCircle(center, radius, axis, color) { }
-      // #if B2_ENABLE_PARTICLE
-      DrawParticles(centers, radius, colors, count) { }
-      // #endif
-      DrawSegment(p1, p2, color) { }
-      DrawTransform(xf) { }
   }
 
   /*
@@ -1454,6 +1444,11 @@
       SetShape(shape, index) {
           shape.SetupDistanceProxy(this, index);
       }
+      SetVerticesRadius(vertices, count, radius) {
+          this.m_vertices = vertices;
+          this.m_count = count;
+          this.m_radius = radius;
+      }
       GetSupport(d) {
           let bestIndex = 0;
           let bestValue = b2Vec2.DotVV(this.m_vertices[0], d);
@@ -1529,6 +1524,25 @@
           this.distance = 0;
           this.iterations = 0;
           return this;
+      }
+  }
+  /// Input parameters for b2ShapeCast
+  class b2ShapeCastInput {
+      constructor() {
+          this.proxyA = new b2DistanceProxy();
+          this.proxyB = new b2DistanceProxy();
+          this.transformA = new b2Transform();
+          this.transformB = new b2Transform();
+          this.translationB = new b2Vec2();
+      }
+  }
+  /// Output results for b2ShapeCast
+  class b2ShapeCastOutput {
+      constructor() {
+          this.point = new b2Vec2();
+          this.normal = new b2Vec2();
+          this.lambda = 0.0;
+          this.iterations = 0;
       }
   }
   exports.b2_gjkCalls = 0;
@@ -1840,8 +1854,6 @@
       const saveA = b2Distance_s_saveA;
       const saveB = b2Distance_s_saveB;
       let saveCount = 0;
-      let distanceSqr1 = b2_maxFloat;
-      let distanceSqr2 = distanceSqr1;
       // Main iteration loop.
       let iter = 0;
       while (iter < k_maxIters) {
@@ -1868,17 +1880,6 @@
           if (simplex.m_count === 3) {
               break;
           }
-          // Compute closest point.
-          const p = simplex.GetClosestPoint(b2Distance_s_p);
-          distanceSqr2 = p.LengthSquared();
-          // Ensure progress
-          /*
-          TODO: to fix compile warning
-          if (distanceSqr2 > distanceSqr1) {
-            //break;
-          }
-          */
-          distanceSqr1 = distanceSqr2;
           // Get search direction.
           const d = simplex.GetSearchDirection(b2Distance_s_d);
           // Ensure the search direction is numerically fit.
@@ -1944,6 +1945,157 @@
               output.distance = 0;
           }
       }
+  }
+  /// Perform a linear shape cast of shape B moving and shape A fixed. Determines the hit point, normal, and translation fraction.
+  // GJK-raycast
+  // Algorithm by Gino van den Bergen.
+  // "Smooth Mesh Contacts with GJK" in Game Physics Pearls. 2010
+  // bool b2ShapeCast(b2ShapeCastOutput* output, const b2ShapeCastInput* input);
+  const b2ShapeCast_s_n = new b2Vec2();
+  const b2ShapeCast_s_simplex = new b2Simplex();
+  const b2ShapeCast_s_wA = new b2Vec2();
+  const b2ShapeCast_s_wB = new b2Vec2();
+  const b2ShapeCast_s_v = new b2Vec2();
+  const b2ShapeCast_s_p = new b2Vec2();
+  const b2ShapeCast_s_pointA = new b2Vec2();
+  const b2ShapeCast_s_pointB = new b2Vec2();
+  function b2ShapeCast(output, input) {
+      output.iterations = 0;
+      output.lambda = 1.0;
+      output.normal.SetZero();
+      output.point.SetZero();
+      // const b2DistanceProxy* proxyA = &input.proxyA;
+      const proxyA = input.proxyA;
+      // const b2DistanceProxy* proxyB = &input.proxyB;
+      const proxyB = input.proxyB;
+      // float32 radiusA = b2Max(proxyA.m_radius, b2_polygonRadius);
+      const radiusA = b2Max(proxyA.m_radius, b2_polygonRadius);
+      // float32 radiusB = b2Max(proxyB.m_radius, b2_polygonRadius);
+      const radiusB = b2Max(proxyB.m_radius, b2_polygonRadius);
+      // float32 radius = radiusA + radiusB;
+      const radius = radiusA + radiusB;
+      // b2Transform xfA = input.transformA;
+      const xfA = input.transformA;
+      // b2Transform xfB = input.transformB;
+      const xfB = input.transformB;
+      // b2Vec2 r = input.translationB;
+      const r = input.translationB;
+      // b2Vec2 n(0.0f, 0.0f);
+      const n = b2ShapeCast_s_n.Set(0.0, 0.0);
+      // float32 lambda = 0.0f;
+      let lambda = 0.0;
+      // Initial simplex
+      const simplex = b2ShapeCast_s_simplex;
+      simplex.m_count = 0;
+      // Get simplex vertices as an array.
+      // b2SimplexVertex* vertices = &simplex.m_v1;
+      const vertices = simplex.m_vertices;
+      // Get support point in -r direction
+      // int32 indexA = proxyA.GetSupport(b2MulT(xfA.q, -r));
+      let indexA = proxyA.GetSupport(b2Rot.MulTRV(xfA.q, b2Vec2.NegV(r, b2Vec2.s_t1), b2Vec2.s_t0));
+      // b2Vec2 wA = b2Mul(xfA, proxyA.GetVertex(indexA));
+      let wA = b2Transform.MulXV(xfA, proxyA.GetVertex(indexA), b2ShapeCast_s_wA);
+      // int32 indexB = proxyB.GetSupport(b2MulT(xfB.q, r));
+      let indexB = proxyB.GetSupport(b2Rot.MulTRV(xfB.q, r, b2Vec2.s_t0));
+      // b2Vec2 wB = b2Mul(xfB, proxyB.GetVertex(indexB));
+      let wB = b2Transform.MulXV(xfB, proxyB.GetVertex(indexB), b2ShapeCast_s_wB);
+      // b2Vec2 v = wA - wB;
+      const v = b2Vec2.SubVV(wA, wB, b2ShapeCast_s_v);
+      // Sigma is the target distance between polygons
+      // float32 sigma = b2Max(b2_polygonRadius, radius - b2_polygonRadius);
+      const sigma = b2Max(b2_polygonRadius, radius - b2_polygonRadius);
+      // const float32 tolerance = 0.5f * b2_linearSlop;
+      const tolerance = 0.5 * b2_linearSlop;
+      // Main iteration loop.
+      // const int32 k_maxIters = 20;
+      const k_maxIters = 20;
+      // int32 iter = 0;
+      let iter = 0;
+      // while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance)
+      while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance) {
+          // DEBUG: b2Assert(simplex.m_count < 3);
+          output.iterations += 1;
+          // Support in direction -v (A - B)
+          // indexA = proxyA.GetSupport(b2MulT(xfA.q, -v));
+          indexA = proxyA.GetSupport(b2Rot.MulTRV(xfA.q, b2Vec2.NegV(v, b2Vec2.s_t1), b2Vec2.s_t0));
+          // wA = b2Mul(xfA, proxyA.GetVertex(indexA));
+          wA = b2Transform.MulXV(xfA, proxyA.GetVertex(indexA), b2ShapeCast_s_wA);
+          // indexB = proxyB.GetSupport(b2MulT(xfB.q, v));
+          indexB = proxyB.GetSupport(b2Rot.MulTRV(xfB.q, v, b2Vec2.s_t0));
+          // wB = b2Mul(xfB, proxyB.GetVertex(indexB));
+          wB = b2Transform.MulXV(xfB, proxyB.GetVertex(indexB), b2ShapeCast_s_wB);
+          // b2Vec2 p = wA - wB;
+          const p = b2Vec2.SubVV(wA, wB, b2ShapeCast_s_p);
+          // -v is a normal at p
+          v.Normalize();
+          // Intersect ray with plane
+          const vp = b2Vec2.DotVV(v, p);
+          const vr = b2Vec2.DotVV(v, r);
+          if (vp - sigma > lambda * vr) {
+              if (vr <= 0.0) {
+                  return false;
+              }
+              lambda = (vp - sigma) / vr;
+              if (lambda > 1.0) {
+                  return false;
+              }
+              // n = -v;
+              n.Copy(v).SelfNeg();
+              simplex.m_count = 0;
+          }
+          // Reverse simplex since it works with B - A.
+          // Shift by lambda * r because we want the closest point to the current clip point.
+          // Note that the support point p is not shifted because we want the plane equation
+          // to be formed in unshifted space.
+          // b2SimplexVertex* vertex = vertices + simplex.m_count;
+          const vertex = vertices[simplex.m_count];
+          vertex.indexA = indexB;
+          // vertex.wA = wB + lambda * r;
+          vertex.wA.Copy(wB).SelfMulAdd(lambda, r);
+          vertex.indexB = indexA;
+          // vertex.wB = wA;
+          vertex.wB.Copy(wA);
+          // vertex.w = vertex.wB - vertex.wA;
+          vertex.w.Copy(vertex.wB).SelfSub(vertex.wA);
+          vertex.a = 1.0;
+          simplex.m_count += 1;
+          switch (simplex.m_count) {
+              case 1:
+                  break;
+              case 2:
+                  simplex.Solve2();
+                  break;
+              case 3:
+                  simplex.Solve3();
+                  break;
+              default:
+              // DEBUG: b2Assert(false);
+          }
+          // If we have 3 points, then the origin is in the corresponding triangle.
+          if (simplex.m_count === 3) {
+              // Overlap
+              return false;
+          }
+          // Get search direction.
+          // v = simplex.GetClosestPoint();
+          simplex.GetClosestPoint(v);
+          // Iteration count is equated to the number of support point calls.
+          ++iter;
+      }
+      // Prepare output.
+      const pointA = b2ShapeCast_s_pointA;
+      const pointB = b2ShapeCast_s_pointB;
+      simplex.GetWitnessPoints(pointA, pointB);
+      if (v.LengthSquared() > 0.0) {
+          // n = -v;
+          n.Copy(v).SelfNeg();
+          n.Normalize();
+      }
+      // output.point = pointA + radiusA * n;
+      output.normal.Copy(n);
+      output.lambda = lambda;
+      output.iterations = iter;
+      return true;
   }
 
   /*
@@ -3074,15 +3226,16 @@
           this.ValidateMetrics(child2);
       }
       Validate() {
-          this.ValidateStructure(this.m_root);
-          this.ValidateMetrics(this.m_root);
+          // DEBUG: this.ValidateStructure(this.m_root);
+          // DEBUG: this.ValidateMetrics(this.m_root);
           // let freeCount: number = 0;
-          let freeIndex = this.m_freeList;
-          while (freeIndex !== null) {
-              freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-              // ++freeCount;
-          }
+          // let freeIndex: b2TreeNode<T> | null = this.m_freeList;
+          // while (freeIndex !== null) {
+          //   freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
+          //   ++freeCount;
+          // }
           // DEBUG: b2Assert(this.GetHeight() === this.ComputeHeight());
+          // b2Assert(this.m_nodeCount + freeCount === this.m_nodeCapacity);
       }
       static GetMaxBalanceNode(node, maxBalance) {
           if (node === null) {
@@ -3924,7 +4077,7 @@
       }
       else {
           const faceCenter = b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
-          separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
+          const separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
           if (separation > radius) {
               return;
           }
@@ -4506,7 +4659,7 @@
               b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
               b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
           }
-          this.m_radius = 2 * b2_polygonRadius;
+          this.m_radius = polygonB.m_radius + edgeA.m_radius;
           manifold.pointCount = 0;
           const edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
           // If no valid normal can be found than this edge should not collide.
@@ -4755,6 +4908,8 @@
   class b2Shape {
       constructor(type, radius) {
           this.m_type = exports.b2ShapeType.e_unknown;
+          /// Radius of a shape. For polygonal shapes this must be b2_polygonRadius. There is no support for
+          /// making rounded polygons.
           this.m_radius = 0;
           this.m_type = type;
           this.m_radius = radius;
@@ -5005,6 +5160,7 @@
           let m = 0;
           let ih = i0;
           for (;;) {
+              // DEBUG: b2Assert(m < b2_maxPolygonVertices);
               hull[m] = ih;
               let ie = 0;
               for (let j = 1; j < n; ++j) {
@@ -5661,6 +5817,9 @@
       /// @param count the vertex count
       CreateLoop(vertices, count = vertices.length, start = 0) {
           // DEBUG: b2Assert(count >= 3);
+          if (count < 3) {
+              return this;
+          }
           // DEBUG: for (let i: number = 1; i < count; ++i) {
           // DEBUG:   const v1 = vertices[start + i - 1];
           // DEBUG:   const v2 = vertices[start + i];
@@ -6405,9 +6564,9 @@
           if (this.m_activeFlag) {
               fixture.DestroyProxies();
           }
-          fixture.Destroy();
           // fixture.m_body = null;
           fixture.m_next = null;
+          fixture.Destroy();
           --this.m_fixtureCount;
           // Reset the mass data.
           this.ResetMassData();
@@ -6559,7 +6718,6 @@
       }
       /// Apply a torque. This affects the angular velocity
       /// without affecting the linear velocity of the center of mass.
-      /// This wakes up the body.
       /// @param torque about the z-axis (out of the screen), usually in N-m.
       /// @param wake also wake up the body
       ApplyTorque(torque, wake = true) {
@@ -6849,10 +7007,8 @@
       /// @param flag set to true to wake the body, false to put it to sleep.
       SetAwake(flag) {
           if (flag) {
-              if (!this.m_awakeFlag) {
-                  this.m_awakeFlag = true;
-                  this.m_sleepTime = 0;
-              }
+              this.m_awakeFlag = true;
+              this.m_sleepTime = 0;
           }
           else {
               this.m_awakeFlag = false;
@@ -9376,22 +9532,28 @@
           return this.m_enableMotor;
       }
       EnableMotor(flag) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_enableMotor = flag;
+          if (flag !== this.m_enableMotor) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_enableMotor = flag;
+          }
       }
       SetMotorSpeed(speed) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_motorSpeed = speed;
+          if (speed !== this.m_motorSpeed) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_motorSpeed = speed;
+          }
       }
       GetMotorSpeed() {
           return this.m_motorSpeed;
       }
       SetMaxMotorForce(force) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_maxMotorForce = force;
+          if (force !== this.m_maxMotorForce) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_maxMotorForce = force;
+          }
       }
       GetMaxMotorForce() { return this.m_maxMotorForce; }
       GetMotorForce(inv_dt) {
@@ -9424,6 +9586,13 @@
   b2PrismaticJoint.SolveVelocityConstraints_s_f1 = new b2Vec3();
   b2PrismaticJoint.SolveVelocityConstraints_s_df3 = new b2Vec3();
   b2PrismaticJoint.SolveVelocityConstraints_s_df2 = new b2Vec2();
+  // A velocity based solver computes reaction forces(impulses) using the velocity constraint solver.Under this context,
+  // the position solver is not there to resolve forces.It is only there to cope with integration error.
+  //
+  // Therefore, the pseudo impulses in the position solver do not have any physical meaning.Thus it is okay if they suck.
+  //
+  // We could take the active state from the velocity solver.However, the joint might push past the limit when the velocity
+  // solver indicates the limit is inactive.
   b2PrismaticJoint.SolvePositionConstraints_s_d = new b2Vec2();
   b2PrismaticJoint.SolvePositionConstraints_s_impulse = new b2Vec3();
   b2PrismaticJoint.SolvePositionConstraints_s_impulse1 = new b2Vec2();
@@ -10159,7 +10328,7 @@
           return this.m_enableMotor;
       }
       EnableMotor(flag) {
-          if (this.m_enableMotor !== flag) {
+          if (flag !== this.m_enableMotor) {
               this.m_bodyA.SetAwake(true);
               this.m_bodyB.SetAwake(true);
               this.m_enableMotor = flag;
@@ -10172,7 +10341,11 @@
           return this.m_motorSpeed;
       }
       SetMaxMotorTorque(torque) {
-          this.m_maxMotorTorque = torque;
+          if (torque !== this.m_maxMotorTorque) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_maxMotorTorque = torque;
+          }
       }
       GetMaxMotorTorque() { return this.m_maxMotorTorque; }
       IsLimitEnabled() {
@@ -10202,7 +10375,7 @@
           }
       }
       SetMotorSpeed(speed) {
-          if (this.m_motorSpeed !== speed) {
+          if (speed !== this.m_motorSpeed) {
               this.m_bodyA.SetAwake(true);
               this.m_bodyB.SetAwake(true);
               this.m_motorSpeed = speed;
@@ -10968,12 +11141,12 @@
                   // Frequency
                   const omega = 2 * b2_pi * this.m_frequencyHz;
                   // Damping coefficient
-                  const dc = 2 * this.m_springMass * this.m_dampingRatio * omega;
+                  const damp = 2 * this.m_springMass * this.m_dampingRatio * omega;
                   // Spring stiffness
                   const k = this.m_springMass * omega * omega;
                   // magic formulas
                   const h = data.step.dt;
-                  this.m_gamma = h * (dc + h * k);
+                  this.m_gamma = h * (damp + h * k);
                   if (this.m_gamma > 0) {
                       this.m_gamma = 1 / this.m_gamma;
                   }
@@ -11152,7 +11325,13 @@
       GetJointTranslation() {
           return this.GetPrismaticJointTranslation();
       }
-      GetJointSpeed() {
+      GetJointLinearSpeed() {
+          return this.GetPrismaticJointSpeed();
+      }
+      GetJointAngle() {
+          return this.GetRevoluteJointAngle();
+      }
+      GetJointAngularSpeed() {
           return this.GetRevoluteJointSpeed();
       }
       GetPrismaticJointTranslation() {
@@ -11206,19 +11385,25 @@
           return this.m_enableMotor;
       }
       EnableMotor(flag) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_enableMotor = flag;
+          if (flag !== this.m_enableMotor) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_enableMotor = flag;
+          }
       }
       SetMotorSpeed(speed) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_motorSpeed = speed;
+          if (speed !== this.m_motorSpeed) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_motorSpeed = speed;
+          }
       }
       SetMaxMotorTorque(force) {
-          this.m_bodyA.SetAwake(true);
-          this.m_bodyB.SetAwake(true);
-          this.m_maxMotorTorque = force;
+          if (force !== this.m_maxMotorTorque) {
+              this.m_bodyA.SetAwake(true);
+              this.m_bodyB.SetAwake(true);
+              this.m_maxMotorTorque = force;
+          }
       }
       GetMotorTorque(inv_dt) {
           return inv_dt * this.m_motorImpulse;
@@ -11286,7 +11471,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
+  /// Friction mixing law. The idea is to allow either fixture to drive the friction to zero.
   /// For example, anything slides on ice.
   function b2MixFriction(friction1, friction2) {
       return b2Sqrt(friction1 * friction2);
@@ -12365,6 +12550,9 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
+  // #define B2_DEBUG_SOLVER 0
+  let g_blockSolve = false;
   class b2VelocityConstraintPoint {
       constructor() {
           this.rA = new b2Vec2();
@@ -12648,7 +12836,7 @@
                   }
               }
               // If we have two points, then prepare the block solver.
-              if (vc.pointCount === 2) {
+              if (vc.pointCount === 2 && g_blockSolve) {
                   const vcp1 = vc.points[0];
                   const vcp2 = vc.points[1];
                   const rn1A = b2Vec2.CrossVV(vcp1.rA, vc.normal);
@@ -12772,37 +12960,39 @@
                   wB += iB * b2Vec2.CrossVV(vcp.rB, P);
               }
               // Solve normal constraints
-              if (vc.pointCount === 1) {
-                  const vcp = vc.points[0];
-                  // Relative velocity at contact
-                  // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
-                  b2Vec2.SubVV(b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0), b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1), dv);
-                  // Compute normal impulse
-                  // float32 vn = b2Dot(dv, normal);
-                  const vn = b2Vec2.DotVV(dv, normal);
-                  let lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
-                  // b2Clamp the accumulated impulse
-                  // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
-                  const newImpulse = b2Max(vcp.normalImpulse + lambda, 0);
-                  lambda = newImpulse - vcp.normalImpulse;
-                  vcp.normalImpulse = newImpulse;
-                  // Apply contact impulse
-                  // b2Vec2 P = lambda * normal;
-                  b2Vec2.MulSV(lambda, normal, P);
-                  // vA -= mA * P;
-                  vA.SelfMulSub(mA, P);
-                  // wA -= iA * b2Cross(vcp->rA, P);
-                  wA -= iA * b2Vec2.CrossVV(vcp.rA, P);
-                  // vB += mB * P;
-                  vB.SelfMulAdd(mB, P);
-                  // wB += iB * b2Cross(vcp->rB, P);
-                  wB += iB * b2Vec2.CrossVV(vcp.rB, P);
+              if (vc.pointCount === 1 || g_blockSolve === false) {
+                  for (let j = 0; j < pointCount; ++j) {
+                      const vcp = vc.points[j];
+                      // Relative velocity at contact
+                      // b2Vec2 dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
+                      b2Vec2.SubVV(b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0), b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1), dv);
+                      // Compute normal impulse
+                      // float32 vn = b2Dot(dv, normal);
+                      const vn = b2Vec2.DotVV(dv, normal);
+                      let lambda = (-vcp.normalMass * (vn - vcp.velocityBias));
+                      // b2Clamp the accumulated impulse
+                      // float32 newImpulse = b2Max(vcp->normalImpulse + lambda, 0.0f);
+                      const newImpulse = b2Max(vcp.normalImpulse + lambda, 0);
+                      lambda = newImpulse - vcp.normalImpulse;
+                      vcp.normalImpulse = newImpulse;
+                      // Apply contact impulse
+                      // b2Vec2 P = lambda * normal;
+                      b2Vec2.MulSV(lambda, normal, P);
+                      // vA -= mA * P;
+                      vA.SelfMulSub(mA, P);
+                      // wA -= iA * b2Cross(vcp->rA, P);
+                      wA -= iA * b2Vec2.CrossVV(vcp.rA, P);
+                      // vB += mB * P;
+                      vB.SelfMulAdd(mB, P);
+                      // wB += iB * b2Cross(vcp->rB, P);
+                      wB += iB * b2Vec2.CrossVV(vcp.rB, P);
+                  }
               }
               else {
                   // Block solver developed in collaboration with Dirk Gregorius (back in 01/07 on Box2D_Lite).
                   // Build the mini LCP for this contact patch
                   //
-                  // vn = A * x + b, vn >= 0, , vn >= 0, x >= 0 and vn_i * x_i = 0 with i = 1..2
+                  // vn = A * x + b, vn >= 0, x >= 0 and vn_i * x_i = 0 with i = 1..2
                   //
                   // A = J * W * JT and J = ( -n, -r1 x n, n, r2 x n )
                   // b = vn0 - velocityBias
@@ -20211,20 +20401,24 @@
               case exports.b2JointType.e_distanceJoint:
                   this.m_debugDraw.DrawSegment(p1, p2, color);
                   break;
-              case exports.b2JointType.e_pulleyJoint:
-                  {
-                      const pulley = joint;
-                      const s1 = pulley.GetGroundAnchorA();
-                      const s2 = pulley.GetGroundAnchorB();
-                      this.m_debugDraw.DrawSegment(s1, p1, color);
-                      this.m_debugDraw.DrawSegment(s2, p2, color);
-                      this.m_debugDraw.DrawSegment(s1, s2, color);
-                  }
+              case exports.b2JointType.e_pulleyJoint: {
+                  const pulley = joint;
+                  const s1 = pulley.GetGroundAnchorA();
+                  const s2 = pulley.GetGroundAnchorB();
+                  this.m_debugDraw.DrawSegment(s1, p1, color);
+                  this.m_debugDraw.DrawSegment(s2, p2, color);
+                  this.m_debugDraw.DrawSegment(s1, s2, color);
                   break;
-              case exports.b2JointType.e_mouseJoint:
-                  // don't draw this
-                  this.m_debugDraw.DrawSegment(p1, p2, color);
+              }
+              case exports.b2JointType.e_mouseJoint: {
+                  const c = b2World.DrawJoint_s_c;
+                  c.Set(0.0, 1.0, 0.0);
+                  this.m_debugDraw.DrawPoint(p1, 4.0, c);
+                  this.m_debugDraw.DrawPoint(p2, 4.0, c);
+                  c.Set(0.8, 0.8, 0.8);
+                  this.m_debugDraw.DrawSegment(p1, p2, c);
                   break;
+              }
               default:
                   this.m_debugDraw.DrawSegment(x1, p1, color);
                   this.m_debugDraw.DrawSegment(p1, p2, color);
@@ -20237,46 +20431,53 @@
           }
           const shape = fixture.GetShape();
           switch (shape.m_type) {
-              case exports.b2ShapeType.e_circleShape:
-                  {
-                      const circle = shape;
-                      const center = circle.m_p;
-                      const radius = circle.m_radius;
-                      const axis = b2Vec2.UNITX;
-                      this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
-                  }
+              case exports.b2ShapeType.e_circleShape: {
+                  const circle = shape;
+                  const center = circle.m_p;
+                  const radius = circle.m_radius;
+                  const axis = b2Vec2.UNITX;
+                  this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
                   break;
-              case exports.b2ShapeType.e_edgeShape:
-                  {
-                      const edge = shape;
-                      const v1 = edge.m_vertex1;
-                      const v2 = edge.m_vertex2;
+              }
+              case exports.b2ShapeType.e_edgeShape: {
+                  const edge = shape;
+                  const v1 = edge.m_vertex1;
+                  const v2 = edge.m_vertex2;
+                  this.m_debugDraw.DrawSegment(v1, v2, color);
+                  break;
+              }
+              case exports.b2ShapeType.e_chainShape: {
+                  const chain = shape;
+                  const count = chain.m_count;
+                  const vertices = chain.m_vertices;
+                  const ghostColor = b2World.DrawShape_s_ghostColor.SetRGBA(0.75 * color.r, 0.75 * color.g, 0.75 * color.b, color.a);
+                  let v1 = vertices[0];
+                  this.m_debugDraw.DrawPoint(v1, 4.0, color);
+                  if (chain.m_hasPrevVertex) {
+                      const vp = chain.m_prevVertex;
+                      this.m_debugDraw.DrawSegment(vp, v1, ghostColor);
+                      this.m_debugDraw.DrawCircle(vp, 0.1, ghostColor);
+                  }
+                  for (let i = 1; i < count; ++i) {
+                      const v2 = vertices[i];
                       this.m_debugDraw.DrawSegment(v1, v2, color);
+                      this.m_debugDraw.DrawPoint(v2, 4.0, color);
+                      v1 = v2;
+                  }
+                  if (chain.m_hasNextVertex) {
+                      const vn = chain.m_nextVertex;
+                      this.m_debugDraw.DrawSegment(vn, v1, ghostColor);
+                      this.m_debugDraw.DrawCircle(vn, 0.1, ghostColor);
                   }
                   break;
-              case exports.b2ShapeType.e_chainShape:
-                  {
-                      const chain = shape;
-                      const count = chain.m_count;
-                      const vertices = chain.m_vertices;
-                      let v1 = vertices[0];
-                      this.m_debugDraw.DrawCircle(v1, 0.05, color);
-                      for (let i = 1; i < count; ++i) {
-                          const v2 = vertices[i];
-                          this.m_debugDraw.DrawSegment(v1, v2, color);
-                          this.m_debugDraw.DrawCircle(v2, 0.05, color);
-                          v1 = v2;
-                      }
-                  }
+              }
+              case exports.b2ShapeType.e_polygonShape: {
+                  const poly = shape;
+                  const vertexCount = poly.m_count;
+                  const vertices = poly.m_vertices;
+                  this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
                   break;
-              case exports.b2ShapeType.e_polygonShape:
-                  {
-                      const poly = shape;
-                      const vertexCount = poly.m_count;
-                      const vertices = poly.m_vertices;
-                      this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
-                  }
-                  break;
+              }
           }
       }
       Solve(step) {
@@ -20337,8 +20538,8 @@
                   }
                   // DEBUG: b2Assert(b.IsActive());
                   island.AddBody(b);
-                  // Make sure the body is awake.
-                  b.SetAwake(true);
+                  // Make sure the body is awake. (without resetting sleep timer).
+                  b.m_awakeFlag = true;
                   // To keep islands as small as possible, we don't
                   // propagate islands across static bodies.
                   if (b.GetType() === exports.b2BodyType.b2_staticBody) {
@@ -20726,6 +20927,8 @@
   b2World.DrawJoint_s_p1 = new b2Vec2();
   b2World.DrawJoint_s_p2 = new b2Vec2();
   b2World.DrawJoint_s_color = new b2Color(0.5, 0.8, 0.8);
+  b2World.DrawJoint_s_c = new b2Color();
+  b2World.DrawShape_s_ghostColor = new b2Color();
   b2World.SolveTOI_s_subStep = new b2TimeStep();
   b2World.SolveTOI_s_backup = new b2Sweep();
   b2World.SolveTOI_s_backup1 = new b2Sweep();
@@ -21545,7 +21748,8 @@
   exports.b2Log = b2Log;
   exports.b2Version = b2Version;
   exports.b2_version = b2_version;
-  exports.b2_changelist = b2_changelist;
+  exports.b2_branch = b2_branch;
+  exports.b2_commit = b2_commit;
   exports.b2ParseInt = b2ParseInt;
   exports.b2ParseUInt = b2ParseUInt;
   exports.b2MakeArray = b2MakeArray;
@@ -21607,10 +21811,13 @@
   exports.b2SimplexCache = b2SimplexCache;
   exports.b2DistanceInput = b2DistanceInput;
   exports.b2DistanceOutput = b2DistanceOutput;
+  exports.b2ShapeCastInput = b2ShapeCastInput;
+  exports.b2ShapeCastOutput = b2ShapeCastOutput;
   exports.b2_gjk_reset = b2_gjk_reset;
   exports.b2SimplexVertex = b2SimplexVertex;
   exports.b2Simplex = b2Simplex;
   exports.b2Distance = b2Distance;
+  exports.b2ShapeCast = b2ShapeCast;
   exports.b2Pair = b2Pair;
   exports.b2BroadPhase = b2BroadPhase;
   exports.b2PairLessThan = b2PairLessThan;
@@ -21658,6 +21865,7 @@
   exports.b2Contact = b2Contact;
   exports.b2ContactRegister = b2ContactRegister;
   exports.b2ContactFactory = b2ContactFactory;
+  exports.g_blockSolve = g_blockSolve;
   exports.b2VelocityConstraintPoint = b2VelocityConstraintPoint;
   exports.b2ContactVelocityConstraint = b2ContactVelocityConstraint;
   exports.b2ContactPositionConstraint = b2ContactPositionConstraint;
