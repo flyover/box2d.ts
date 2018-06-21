@@ -8,6 +8,8 @@ A [TypeScript](https://github.com/Microsoft/TypeScript) port of [Box2D](https://
 
 [Box2D Testbed Demo](https://flyover.github.io/box2d.ts/Testbed?transpile) (transpile in the browser into [SystemJS](https://github.com/systemjs/systemjs) modules)
 
+[Box2D Testbed Demo](https://flyover.github.io/box2d.ts/Build/Testbed) (bundled by [Rollup](https://github.com/rollup/rollup) into a [UMD](https://github.com/umdjs/umd) module)
+
 ## How to build it
 
 ```
