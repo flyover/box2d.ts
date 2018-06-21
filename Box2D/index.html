@@ -3,39 +3,42 @@
     <meta charset="utf-8" />
     <title>Box2D</title>
     <!-- <script type="text/javascript" src="../node_modules/systemjs/dist/system.js"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.3/system.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/systemjs@0.21.4/dist/system.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
-      var transpile = false;
+      const transpile = args.indexOf("transpile") !== -1;
+      console.log("transpile", transpile);
       if (transpile) {
         SystemJS.config({
-          packages: { "typescript": { main: "typescript.js", meta: { "typescript.js": { exports: "ts" } } } },
-          // map: { "typescript": "../node_modules/typescript/lib", }
-          map: { "typescript": "https://cdnjs.cloudflare.com/ajax/libs/typescript/2.8.3", }
+          // map: { "typescript": "../node_modules/typescript", }
+          map: { "typescript": "https://cdn.jsdelivr.net/npm/typescript@2.9.2", },
+          packages: { "typescript": { main: "lib/typescript.js", meta: { "lib/typescript.js": { exports: "ts" } } } },
         });
         SystemJS.config({
-          packages: { "plugin-typescript": { main: "plugin.js" } },
-          // map: { "plugin-typescript": "../node_modules/plugin-typescript/lib" },
-          map: { "plugin-typescript": "https://raw.githubusercontent.com/frankwallis/plugin-typescript/8.0.0/lib" },
+          // map: { "plugin-typescript": "../node_modules/plugin-typescript" },
+          map: { "plugin-typescript": "https://cdn.jsdelivr.net/npm/plugin-typescript@8.0.0" },
+          packages: { "plugin-typescript": { main: "lib/plugin.js" } },
           transpiler: "plugin-typescript",
           typescriptOptions: { tsconfig: true, module: "system" }
         });
+        SystemJS.config({
+          map: { "Box2D": "./" },
+          packages: { "Box2D": { main: "Box2D.ts", defaultExtension: "ts" } }
+        });
+      } else {
+        SystemJS.config({
+          map: { "Box2D": "./dist/" },
+          packages: { "Box2D": { main: "Box2D.js", defaultExtension: "js" } }
+        });
       }
-      SystemJS.config({
-        packages: {
-          ".": { defaultExtension: transpile ? "ts" : "js" }
-        }
-      });
-      System.import("./Box2D").then(function(box2d) {
+      System.import("Box2D").then(function(box2d) {
         console.log(box2d.b2_version);
-      }).catch(function (error) {
-        console.error(error);
-      });
+      }).catch(console.error);
     }
 
     window.addEventListener('load', function(event) {
-      var args = window.location.search.substring(1).split('&'); // args from window location
+      const args = window.location.search.substring(1).split('&'); // args from window location
       console.log(args);
       boot(args);
     });

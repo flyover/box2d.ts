@@ -3,59 +3,49 @@
     <meta charset="utf-8" />
     <title>Box2D Hello World</title>
     <!-- <script type="text/javascript" src="../node_modules/systemjs/dist/system.js"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.21.3/system.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/systemjs@0.21.4/dist/system.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
-      var transpile = false;
+      const transpile = args.indexOf("transpile") !== -1;
       if (transpile) {
         SystemJS.config({
-          packages: { "typescript": { main: "typescript.js", meta: { "typescript.js": { exports: "ts" } } } },
-          // map: { "typescript": "../node_modules/typescript/lib", }
-          map: { "typescript": "https://cdnjs.cloudflare.com/ajax/libs/typescript/2.8.3", }
+          // map: { "typescript": "../node_modules/typescript", }
+          map: { "typescript": "https://cdn.jsdelivr.net/npm/typescript@2.9.2", },
+          packages: { "typescript": { main: "lib/typescript.js", meta: { "lib/typescript.js": { exports: "ts" } } } },
         });
         SystemJS.config({
-          packages: { "plugin-typescript": { main: "plugin.js" } },
-          // map: { "plugin-typescript": "../node_modules/plugin-typescript/lib" },
-          map: { "plugin-typescript": "https://raw.githubusercontent.com/frankwallis/plugin-typescript/8.0.0/lib" },
+          // map: { "plugin-typescript": "../node_modules/plugin-typescript" },
+          map: { "plugin-typescript": "https://cdn.jsdelivr.net/npm/plugin-typescript@8.0.0" },
+          packages: { "plugin-typescript": { main: "lib/plugin.js" } },
           transpiler: "plugin-typescript",
           typescriptOptions: { tsconfig: true, module: "system" }
         });
         SystemJS.config({
-          map: {
-            "Box2D": "../Box2D/Box2D",
-            "Box2D/": "../Box2D/",
-            "HelloWorld": "./HelloWorld",
-          },
-          packages: {
-            "Box2D": { defaultExtension: "ts" },
-            "HelloWorld": { defaultExtension: "ts" },
-            ".": { defaultExtension: "ts" },
-          }
+          map: { "Box2D": "../Box2D/" },
+          packages: { "Box2D": { main: "Box2D.ts", defaultExtension: "ts" } }
+        });
+        SystemJS.config({
+          map: { "HelloWorld": "./" },
+          packages: { "HelloWorld": { main: "HelloWorld.ts", defaultExtension: "ts" } }
         });
       } else {
         SystemJS.config({
-          map: {
-            "Box2D": "./dist/Box2D/Box2D",
-            "Box2D/": "./dist/Box2D/",
-            "HelloWorld": "./dist/HelloWorld/HelloWorld.js",
-          },
-          packages: {
-            "Box2D": { defaultExtension: "js" },
-            "HelloWorld": { defaultExtension: "js" },
-            ".": { defaultExtension: "js" }
-          }
+          map: { "Box2D": "./dist/Box2D/" },
+          packages: { "Box2D": { main: "Box2D.js", defaultExtension: "js" } }
+        });
+        SystemJS.config({
+          map: { "HelloWorld": "./dist/HelloWorld/" },
+          packages: { "HelloWorld": { main: "HelloWorld.js", defaultExtension: "js" } }
         });
       }
       System.import("HelloWorld").then(function(HelloWorld) {
         HelloWorld.main();
-      }).catch(function (error) {
-        console.error(error);
-      });
+      }).catch(console.error);
     }
 
     window.addEventListener('load', function(event) {
-      var args = window.location.search.substring(1).split('&'); // args from window location
+      const args = window.location.search.substring(1).split('&'); // args from window location
       console.log(args);
       boot(args);
     });
