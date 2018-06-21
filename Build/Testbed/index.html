@@ -6,6 +6,16 @@
     @font-face { font-family: DroidSans; src: url('../../Testbed/Data/DroidSans.ttf'); }
     body { font-family: DroidSans; font-size: 15px; }
     </style>
-    <script type="text/javascript" src="dist/bundle.js"></script>
+    <script type="text/javascript" src="../../dist/box2d-testbed.umd.js"></script>
+    <script type="text/javascript">
+      window.addEventListener("load", function() {
+        var app = new testbed.Main();
+        function loop(time) {
+          window.requestAnimationFrame(loop);
+          app.SimulationLoop(time);
+        }
+        window.requestAnimationFrame(loop);
+      });
+    </script>
   </head>
 </html>

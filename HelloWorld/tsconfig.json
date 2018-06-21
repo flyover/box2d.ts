@@ -8,7 +8,8 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "inlineSourceMap": true,
-    "outDir": "dist",
+    "outDir": "../dist",
+    "rootDirs": [ ".." ],
     "baseUrl": ".",
     "paths": {
       "Box2D": [ "../Box2D/Box2D" ]

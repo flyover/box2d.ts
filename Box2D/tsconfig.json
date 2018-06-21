@@ -8,7 +8,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "inlineSourceMap": true,
-    "outDir": "dist"
+    "outDir": "../dist/Box2D"
   },
   "include": [
     "**/*.ts"
