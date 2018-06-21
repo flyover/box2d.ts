@@ -15,7 +15,7 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["./Framework/Main", "./Framework/DebugDraw", "./Framework/FullscreenUI", "./Framework/ParticleEmitter", "./Framework/ParticleParameter", "./Framework/Test", "./Tests/TestEntries"], function (exports_1, context_1) {
+System.register(["./Framework/DebugDraw", "./Framework/FullscreenUI", "./Framework/ParticleEmitter", "./Framework/ParticleParameter", "./Framework/Test", "./Framework/Main"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function exportStar_1(m) {
@@ -27,9 +27,6 @@ System.register(["./Framework/Main", "./Framework/DebugDraw", "./Framework/Fulls
     }
     return {
         setters: [
-            function (Main_1_1) {
-                exportStar_1(Main_1_1);
-            },
             function (DebugDraw_1_1) {
                 exportStar_1(DebugDraw_1_1);
             },
@@ -45,8 +42,8 @@ System.register(["./Framework/Main", "./Framework/DebugDraw", "./Framework/Fulls
             function (Test_1_1) {
                 exportStar_1(Test_1_1);
             },
-            function (TestEntries_1_1) {
-                exportStar_1(TestEntries_1_1);
+            function (Main_1_1) {
+                exportStar_1(Main_1_1);
             }
         ],
         execute: function () {

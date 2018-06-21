@@ -65,7 +65,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         this.m_joint = this.m_world.CreateJoint(jd);
                     }
                     this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
-                    const particleType = testbed.Main.GetParticleParameterValue();
+                    const particleType = testbed.Test.GetParticleParameterValue();
                     this.m_particleSystem.SetDamping(0.2);
                     {
                         const pd = new box2d.b2ParticleGroupDef();

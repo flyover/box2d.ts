@@ -212,13 +212,13 @@ export class Faucet extends testbed.Test {
       this.m_emitter.SetSize(new box2d.b2Vec2(0.0, faucetLength));
       this.m_emitter.SetColor(new box2d.b2Color(1, 1, 1, 1));
       this.m_emitter.SetEmitRate(120.0);
-      this.m_emitter.SetParticleFlags(testbed.Main.GetParticleParameterValue());
+      this.m_emitter.SetParticleFlags(testbed.Test.GetParticleParameterValue());
     }
 
     // Don't restart the test when changing particle types.
-    testbed.Main.SetRestartOnParticleParameterChange(false);
+    testbed.Test.SetRestartOnParticleParameterChange(false);
     // Limit the set of particle types.
-    testbed.Main.SetParticleParameters(Faucet.k_paramDef, Faucet.k_paramDefCount);
+    testbed.Test.SetParticleParameters(Faucet.k_paramDef, Faucet.k_paramDefCount);
   }
 
   public Step(settings: testbed.Settings): void {
@@ -236,7 +236,7 @@ export class Faucet extends testbed.Test {
     }
 
     // Propagate the currently selected particle flags.
-    this.m_emitter.SetParticleFlags(testbed.Main.GetParticleParameterValue());
+    this.m_emitter.SetParticleFlags(testbed.Test.GetParticleParameterValue());
 
     // If this is a color mixing particle, add some color.
     ///  b2Color color(1, 1, 1, 1);
@@ -305,7 +305,7 @@ export class Faucet extends testbed.Test {
         // Nothing.
         return;
     }
-    testbed.Main.SetParticleParameterValue(parameter);
+    testbed.Test.SetParticleParameterValue(parameter);
   }
 
   public GetDefaultViewZoom(): number {

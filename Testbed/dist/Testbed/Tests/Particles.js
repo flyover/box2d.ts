@@ -70,7 +70,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         }
                     }
                     this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-                    const particleType = testbed.Main.GetParticleParameterValue();
+                    const particleType = testbed.Test.GetParticleParameterValue();
                     this.m_particleSystem.SetDamping(0.2);
                     {
                         const shape = new box2d.b2CircleShape();

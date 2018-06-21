@@ -87,7 +87,7 @@ export class CornerCase extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(1.0);
-    const particleType = testbed.Main.GetParticleParameterValue();
+    const particleType = testbed.Test.GetParticleParameterValue();
 
     {
       const shape = new box2d.b2CircleShape();

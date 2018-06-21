@@ -265,9 +265,9 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                     const loc = new box2d.b2Vec2(-20, 1);
                     this.m_killFieldTransform.SetPositionAngle(loc, 0);
                     // Setup particle parameters.
-                    testbed.Main.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
-                    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
-                    testbed.Main.SetRestartOnParticleParameterChange(false);
+                    testbed.Test.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
+                    this.m_particleFlags = testbed.Test.GetParticleParameterValue();
+                    testbed.Test.SetRestartOnParticleParameterChange(false);
                 }
                 __dtor__() {
                     // deallocate our emitters
@@ -465,7 +465,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                             this.m_particleFlags = this.m_particleFlags | toggle;
                         }
                     }
-                    testbed.Main.SetParticleParameterValue(this.m_particleFlags);
+                    testbed.Test.SetParticleParameterValue(this.m_particleFlags);
                 }
                 KeyboardUp(key) {
                     super.KeyboardUp(key);
@@ -488,7 +488,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         dt = 0.0;
                     }
                     super.Step(settings);
-                    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
+                    this.m_particleFlags = testbed.Test.GetParticleParameterValue();
                     // Step all the emitters
                     for (let i = 0; i < this.m_faucetEmitterIndex; i++) {
                         const particleIndices = [];

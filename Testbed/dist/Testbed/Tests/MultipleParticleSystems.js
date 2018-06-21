@@ -47,7 +47,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                     this.m_particleSystem2 = this.m_world.CreateParticleSystem(particleSystemDef);
                     this.m_particleSystem2.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
                     // Don't restart the test when changing particle types.
-                    testbed.Main.SetRestartOnParticleParameterChange(false);
+                    testbed.Test.SetRestartOnParticleParameterChange(false);
                     // Create the ground.
                     {
                         const bd = new box2d.b2BodyDef();

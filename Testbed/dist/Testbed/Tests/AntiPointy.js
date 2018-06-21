@@ -75,7 +75,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                     // Cap the number of generated particles or we'll fill forever
                     this.m_particlesToCreate = 300;
                     this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-                    const particleType = testbed.Main.GetParticleParameterValue();
+                    const particleType = testbed.Test.GetParticleParameterValue();
                     if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
                         this.m_particleSystem.SetDamping(0.2);
                     }
@@ -86,7 +86,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         return;
                     }
                     --this.m_particlesToCreate;
-                    const flags = testbed.Main.GetParticleParameterValue();
+                    const flags = testbed.Test.GetParticleParameterValue();
                     const pd = new box2d.b2ParticleDef();
                     pd.position.Set(0.0, 40.0);
                     pd.velocity.Set(0.0, -1.0);

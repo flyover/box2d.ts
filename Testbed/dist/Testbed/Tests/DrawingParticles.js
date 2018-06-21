@@ -89,9 +89,9 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                     this.m_lastGroup = null;
                     this.m_drawing = true;
                     // DEBUG: box2d.b2Assert((DrawingParticles.k_paramDef[0].CalculateValueMask() & DrawingParticles.Parameters.e_parameterBegin) === 0);
-                    testbed.Main.SetParticleParameters(DrawingParticles.k_paramDef, DrawingParticles.k_paramDefCount);
-                    testbed.Main.SetRestartOnParticleParameterChange(false);
-                    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
+                    testbed.Test.SetParticleParameters(DrawingParticles.k_paramDef, DrawingParticles.k_paramDefCount);
+                    testbed.Test.SetRestartOnParticleParameterChange(false);
+                    this.m_particleFlags = testbed.Test.GetParticleParameterValue();
                     this.m_groupFlags = 0;
                 }
                 // Determine the current particle parameter from the drawing state and
@@ -173,7 +173,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         default:
                             break;
                     }
-                    testbed.Main.SetParticleParameterValue(this.DetermineParticleParameter());
+                    testbed.Test.SetParticleParameterValue(this.DetermineParticleParameter());
                 }
                 MouseMove(p) {
                     super.MouseMove(p);
@@ -225,7 +225,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                     }
                 }
                 Step(settings) {
-                    const parameterValue = testbed.Main.GetParticleParameterValue();
+                    const parameterValue = testbed.Test.GetParticleParameterValue();
                     this.m_drawing = (parameterValue & DrawingParticles.Parameters.e_parameterMove) !== DrawingParticles.Parameters.e_parameterMove;
                     if (this.m_drawing) {
                         switch (parameterValue) {

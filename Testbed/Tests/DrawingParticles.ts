@@ -119,10 +119,10 @@ export class DrawingParticles extends testbed.Test {
     this.m_drawing = true;
 
     // DEBUG: box2d.b2Assert((DrawingParticles.k_paramDef[0].CalculateValueMask() & DrawingParticles.Parameters.e_parameterBegin) === 0);
-    testbed.Main.SetParticleParameters(DrawingParticles.k_paramDef, DrawingParticles.k_paramDefCount);
-    testbed.Main.SetRestartOnParticleParameterChange(false);
+    testbed.Test.SetParticleParameters(DrawingParticles.k_paramDef, DrawingParticles.k_paramDefCount);
+    testbed.Test.SetRestartOnParticleParameterChange(false);
 
-    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
+    this.m_particleFlags = testbed.Test.GetParticleParameterValue();
     this.m_groupFlags = 0;
   }
 
@@ -206,7 +206,7 @@ export class DrawingParticles extends testbed.Test {
       default:
         break;
     }
-    testbed.Main.SetParticleParameterValue(this.DetermineParticleParameter());
+    testbed.Test.SetParticleParameterValue(this.DetermineParticleParameter());
   }
 
   public MouseMove(p: box2d.b2Vec2) {
@@ -265,7 +265,7 @@ export class DrawingParticles extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings) {
-    const parameterValue = testbed.Main.GetParticleParameterValue();
+    const parameterValue = testbed.Test.GetParticleParameterValue();
     this.m_drawing = (parameterValue & DrawingParticles.Parameters.e_parameterMove) !== DrawingParticles.Parameters.e_parameterMove;
     if (this.m_drawing) {
       switch (parameterValue) {

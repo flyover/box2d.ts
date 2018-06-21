@@ -64,7 +64,7 @@ export class WaveMachine extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
-    const particleType = testbed.Main.GetParticleParameterValue();
+    const particleType = testbed.Test.GetParticleParameterValue();
     this.m_particleSystem.SetDamping(0.2);
 
     {

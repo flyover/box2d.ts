@@ -83,7 +83,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         }
                     }
                     this.m_particleSystem.SetRadius(1.0);
-                    const particleType = testbed.Main.GetParticleParameterValue();
+                    const particleType = testbed.Test.GetParticleParameterValue();
                     {
                         const shape = new box2d.b2CircleShape();
                         shape.m_p.Set(0, 35);

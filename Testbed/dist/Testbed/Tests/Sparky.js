@@ -157,8 +157,8 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                             spark: true,
                         });
                     }
-                    testbed.Main.SetRestartOnParticleParameterChange(false);
-                    testbed.Main.SetParticleParameterValue(box2d.b2ParticleFlag.b2_powderParticle);
+                    testbed.Test.SetRestartOnParticleParameterChange(false);
+                    testbed.Test.SetParticleParameterValue(box2d.b2ParticleFlag.b2_powderParticle);
                 }
                 BeginContact(contact) {
                     super.BeginContact(contact);
@@ -178,7 +178,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                     }
                 }
                 Step(settings) {
-                    const particleFlags = testbed.Main.GetParticleParameterValue();
+                    const particleFlags = testbed.Test.GetParticleParameterValue();
                     let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
                     if (settings.pause && !settings.singleStep) {
                         dt = 0.0;

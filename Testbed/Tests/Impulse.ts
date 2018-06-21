@@ -56,7 +56,7 @@ export class Impulse extends testbed.Test {
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(0.8, 1.0, new box2d.b2Vec2(0.0, 1.01), 0);
       const pd = new box2d.b2ParticleGroupDef();
-      pd.flags = testbed.Main.GetParticleParameterValue();
+      pd.flags = testbed.Test.GetParticleParameterValue();
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
       if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {

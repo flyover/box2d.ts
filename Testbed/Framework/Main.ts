@@ -2,16 +2,8 @@ import * as box2d from "Box2D";
 import { Settings, Test } from "./Test";
 import { g_debugDraw, g_camera } from "./DebugDraw";
 import { g_testEntries } from "../Tests/TestEntries";
-// #if B2_ENABLE_PARTICLE
-import { FullScreenUI } from "./FullscreenUI";
-import { ParticleParameter } from "./ParticleParameter";
-// #endif
 
 export class Main {
-  // #if B2_ENABLE_PARTICLE
-  public static readonly fullscreenUI = new FullScreenUI();
-  public static readonly particleParameter = new ParticleParameter();
-  // #endif
   public m_time_last: number = 0;
   public m_fps_time: number = 0;
   public m_fps_frames: number = 0;
@@ -433,13 +425,13 @@ export class Main {
     case ",":
       if (this.m_shift) {
         // Press < to select the previous particle parameter setting.
-        Main.particleParameter.Decrement();
+        Test.particleParameter.Decrement();
       }
       break;
     case ".":
       if (this.m_shift) {
         // Press > to select the next particle parameter setting.
-        Main.particleParameter.Increment();
+        Test.particleParameter.Increment();
       }
       break;
     // #endif
@@ -506,8 +498,8 @@ export class Main {
 
   public LoadTest(restartTest: boolean = false): void {
     // #if B2_ENABLE_PARTICLE
-    Main.fullscreenUI.Reset();
-    if (!restartTest) { Main.particleParameter.Reset(); }
+    Test.fullscreenUI.Reset();
+    if (!restartTest) { Test.particleParameter.Reset(); }
     // #endif
     this.m_demo_time = 0;
     // #if B2_ENABLE_PARTICLE
@@ -589,14 +581,14 @@ export class Main {
 
         // #if B2_ENABLE_PARTICLE
         // Update the state of the particle parameter.
-        Main.particleParameter.Changed(restartTest);
+        Test.particleParameter.Changed(restartTest);
         // #endif
 
         // #if B2_ENABLE_PARTICLE
         let msg = g_testEntries[this.m_test_index].name;
-        if (Main.fullscreenUI.GetParticleParameterSelectionEnabled()) {
+        if (Test.fullscreenUI.GetParticleParameterSelectionEnabled()) {
           msg += " : ";
-          msg += Main.particleParameter.GetName();
+          msg += Test.particleParameter.GetName();
         }
         if (this.m_test) { this.m_test.DrawTitle(msg); }
         // #else
@@ -618,47 +610,4 @@ export class Main {
       this.UpdateTest(time_elapsed);
     }
   }
-
-  // #if B2_ENABLE_PARTICLE
-
-  /**
-   * Set whether to restart the test on particle parameter
-   * changes. This parameter is re-enabled when the test changes.
-   */
-  public static SetRestartOnParticleParameterChange(enable: boolean): void {
-    Main.particleParameter.SetRestartOnChange(enable);
-  }
-
-  /**
-   * Set the currently selected particle parameter value.  This
-   * value must match one of the values in
-   * Main::k_particleTypes or one of the values referenced by
-   * particleParameterDef passed to SetParticleParameters().
-   */
-  public static SetParticleParameterValue(value: number): number {
-    const index = Main.particleParameter.FindIndexByValue(value);
-    // If the particle type isn't found, so fallback to the first entry in the
-    // parameter.
-    Main.particleParameter.Set(index >= 0 ? index : 0);
-    return Main.particleParameter.GetValue();
-  }
-
-  /**
-   * Get the currently selected particle parameter value and
-   * enable particle parameter selection arrows on Android.
-   */
-  public static GetParticleParameterValue(): number {
-    // Enable display of particle type selection arrows.
-    Main.fullscreenUI.SetParticleParameterSelectionEnabled(true);
-    return Main.particleParameter.GetValue();
-  }
-
-  /**
-   * Override the default particle parameters for the test.
-   */
-  public static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount: number = particleParameterDef.length) {
-    Main.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
-  }
-
-  // #endif
 }

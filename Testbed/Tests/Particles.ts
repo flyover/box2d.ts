@@ -66,7 +66,7 @@ export class Particles extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-    const particleType = testbed.Main.GetParticleParameterValue();
+    const particleType = testbed.Test.GetParticleParameterValue();
     this.m_particleSystem.SetDamping(0.2);
 
     {

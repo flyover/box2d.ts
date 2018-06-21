@@ -54,7 +54,7 @@ export class Pointy extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-    const particleType = testbed.Main.GetParticleParameterValue();
+    const particleType = testbed.Test.GetParticleParameterValue();
     if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
       this.m_particleSystem.SetDamping(0.2);
     }
@@ -72,7 +72,7 @@ export class Pointy extends testbed.Test {
   public Step(settings: testbed.Settings) {
     super.Step(settings);
 
-    const flags = testbed.Main.GetParticleParameterValue();
+    const flags = testbed.Test.GetParticleParameterValue();
     const pd = new box2d.b2ParticleDef();
 
     pd.position.Set(0.0, 33.0);

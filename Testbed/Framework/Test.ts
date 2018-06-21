@@ -1,8 +1,8 @@
 import * as box2d from "Box2D";
 import { g_debugDraw } from "./DebugDraw";
 // #if B2_ENABLE_PARTICLE
+import { FullScreenUI } from "./FullscreenUI";
 import { ParticleParameter } from "./ParticleParameter";
-import { Main } from "./Main";
 // #endif
 
 export const DRAW_STRING_NEW_LINE: number = 16;
@@ -127,6 +127,10 @@ class QueryCallback2 extends box2d.b2QueryCallback {
 // #endif
 
 export class Test extends box2d.b2ContactListener {
+  // #if B2_ENABLE_PARTICLE
+  public static readonly fullscreenUI = new FullScreenUI();
+  public static readonly particleParameter = new ParticleParameter();
+  // #endif
   public static readonly k_maxContactPoints: number = 2048;
 
   public m_world: box2d.b2World;
@@ -637,7 +641,7 @@ export class Test extends box2d.b2ContactListener {
     this.m_particleParameterDef = new ParticleParameter.Definition(this.m_particleParameters, numValues);
     ///m_particleParameterDef.values = m_particleParameters;
     ///m_particleParameterDef.numValues = numValues;
-    Main.SetParticleParameters([this.m_particleParameterDef], 1);
+    Test.SetParticleParameters([this.m_particleParameterDef], 1);
   }
 
   /**
@@ -645,10 +649,49 @@ export class Test extends box2d.b2ContactListener {
    */
   public RestoreParticleParameters() {
     if (this.m_particleParameters) {
-      Main.SetParticleParameters(ParticleParameter.k_defaultDefinition, 1);
+      Test.SetParticleParameters(ParticleParameter.k_defaultDefinition, 1);
       ///  delete [] m_particleParameters;
       this.m_particleParameters = null;
     }
+  }
+
+  /**
+   * Set whether to restart the test on particle parameter
+   * changes. This parameter is re-enabled when the test changes.
+   */
+  public static SetRestartOnParticleParameterChange(enable: boolean): void {
+    Test.particleParameter.SetRestartOnChange(enable);
+  }
+
+  /**
+   * Set the currently selected particle parameter value.  This
+   * value must match one of the values in
+   * Main::k_particleTypes or one of the values referenced by
+   * particleParameterDef passed to SetParticleParameters().
+   */
+  public static SetParticleParameterValue(value: number): number {
+    const index = Test.particleParameter.FindIndexByValue(value);
+    // If the particle type isn't found, so fallback to the first entry in the
+    // parameter.
+    Test.particleParameter.Set(index >= 0 ? index : 0);
+    return Test.particleParameter.GetValue();
+  }
+
+  /**
+   * Get the currently selected particle parameter value and
+   * enable particle parameter selection arrows on Android.
+   */
+  public static GetParticleParameterValue(): number {
+    // Enable display of particle type selection arrows.
+    Test.fullscreenUI.SetParticleParameterSelectionEnabled(true);
+    return Test.particleParameter.GetValue();
+  }
+
+  /**
+   * Override the default particle parameters for the test.
+   */
+  public static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount: number = particleParameterDef.length) {
+    Test.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
   }
 
   // #endif

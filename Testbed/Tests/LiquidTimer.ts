@@ -35,7 +35,7 @@ export class LiquidTimer extends testbed.Test {
     super();
 
     // Setup particle parameters.
-    testbed.Main.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
+    testbed.Test.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
 
     {
       const bd = new box2d.b2BodyDef();
@@ -57,7 +57,7 @@ export class LiquidTimer extends testbed.Test {
       const shape = new box2d.b2PolygonShape();
       shape.SetAsBox(2, 0.4, new box2d.b2Vec2(0, 3.6), 0);
       const pd = new box2d.b2ParticleGroupDef();
-      pd.flags = testbed.Main.GetParticleParameterValue();
+      pd.flags = testbed.Test.GetParticleParameterValue();
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
       if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {

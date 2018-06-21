@@ -60,7 +60,7 @@ System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
                         }
                     }
                     this.m_particleSystem.SetRadius(0.25);
-                    const particleType = testbed.Main.GetParticleParameterValue();
+                    const particleType = testbed.Test.GetParticleParameterValue();
                     if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
                         this.m_particleSystem.SetDamping(0.2);
                     }

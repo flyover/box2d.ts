@@ -77,7 +77,7 @@ export class Soup extends testbed.Test {
       shape.SetAsBox(2, 1, new box2d.b2Vec2(0, 1), 0);
       const pd = new box2d.b2ParticleGroupDef();
       pd.shape = shape;
-      pd.flags = testbed.Main.GetParticleParameterValue();
+      pd.flags = testbed.Test.GetParticleParameterValue();
       const group = this.m_particleSystem.CreateParticleGroup(pd);
       if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
         this.ColorParticleGroup(group, 0);

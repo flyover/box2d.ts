@@ -58,7 +58,7 @@ export class Ramp extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(0.25);
-    const particleType = testbed.Main.GetParticleParameterValue();
+    const particleType = testbed.Test.GetParticleParameterValue();
     if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
       this.m_particleSystem.SetDamping(0.2);
     }

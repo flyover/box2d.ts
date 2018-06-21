@@ -336,9 +336,9 @@ export class Sandbox extends testbed.Test {
     this.m_killFieldTransform.SetPositionAngle(loc, 0);
 
     // Setup particle parameters.
-    testbed.Main.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
-    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
-    testbed.Main.SetRestartOnParticleParameterChange(false);
+    testbed.Test.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
+    this.m_particleFlags = testbed.Test.GetParticleParameterValue();
+    testbed.Test.SetRestartOnParticleParameterChange(false);
   }
 
   public __dtor__() {
@@ -568,7 +568,7 @@ export class Sandbox extends testbed.Test {
         this.m_particleFlags = this.m_particleFlags | toggle;
       }
     }
-    testbed.Main.SetParticleParameterValue(this.m_particleFlags);
+    testbed.Test.SetParticleParameterValue(this.m_particleFlags);
   }
 
   public KeyboardUp(key: string): void {
@@ -597,7 +597,7 @@ export class Sandbox extends testbed.Test {
     }
     super.Step(settings);
 
-    this.m_particleFlags = testbed.Main.GetParticleParameterValue();
+    this.m_particleFlags = testbed.Test.GetParticleParameterValue();
 
     // Step all the emitters
     for (let i = 0; i < this.m_faucetEmitterIndex; i++) {

@@ -21730,6 +21730,321 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_PARTICLE
+  /**
+   * Handles drawing and selection of full screen UI.
+   */
+  class FullScreenUI {
+      constructor() {
+          /**
+           * Whether particle parameters are enabled.
+           */
+          this.m_particleParameterSelectionEnabled = false;
+          this.Reset();
+      }
+      /**
+       * Reset the UI to it's initial state.
+       */
+      Reset() {
+          this.m_particleParameterSelectionEnabled = false;
+      }
+      /**
+       * Enable / disable particle parameter selection.
+       */
+      SetParticleParameterSelectionEnabled(enable) {
+          this.m_particleParameterSelectionEnabled = enable;
+      }
+      /**
+       * Get whether particle parameter selection is enabled.
+       */
+      GetParticleParameterSelectionEnabled() {
+          return this.m_particleParameterSelectionEnabled;
+      }
+  }
+  // #endif
+
+  /*
+   * Copyright (c) 2014 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class EmittedParticleCallback {
+      /**
+       * Called for each created particle.
+       */
+      ParticleCreated(system, particleIndex) { }
+  }
+  /**
+   * Emit particles from a circular region.
+   */
+  class RadialEmitter {
+      constructor() {
+          /**
+           * Pointer to global world
+           */
+          this.m_particleSystem = null;
+          /**
+           * Called for each created particle.
+           */
+          this.m_callback = null;
+          /**
+           * Center of particle emitter
+           */
+          this.m_origin = new b2Vec2();
+          /**
+           * Launch direction.
+           */
+          this.m_startingVelocity = new b2Vec2();
+          /**
+           * Speed particles are emitted
+           */
+          this.m_speed = 0.0;
+          /**
+           * Half width / height of particle emitter
+           */
+          this.m_halfSize = new b2Vec2();
+          /**
+           * Particles per second
+           */
+          this.m_emitRate = 1.0;
+          /**
+           * Initial color of particle emitted.
+           */
+          this.m_color = new b2Color();
+          /**
+           * Number particles to emit on the next frame
+           */
+          this.m_emitRemainder = 0.0;
+          /**
+           * Flags for created particles, see b2ParticleFlag.
+           */
+          this.m_flags = b2ParticleFlag.b2_waterParticle;
+          /**
+           * Group to put newly created particles in.
+           */
+          this.m_group = null;
+      }
+      /**
+       * Calculate a random number 0.0..1.0.
+       */
+      static Random() {
+          return Math.random();
+      }
+      __dtor__() {
+          this.SetGroup(null);
+      }
+      /**
+       * Set the center of the emitter.
+       */
+      SetPosition(origin) {
+          this.m_origin.Copy(origin);
+      }
+      /**
+       * Get the center of the emitter.
+       */
+      GetPosition(out) {
+          return out.Copy(this.m_origin);
+      }
+      /**
+       * Set the size of the circle which emits particles.
+       */
+      SetSize(size) {
+          this.m_halfSize.Copy(size).SelfMul(0.5);
+      }
+      /**
+       * Get the size of the circle which emits particles.
+       */
+      GetSize(out) {
+          return out.Copy(this.m_halfSize).SelfMul(2.0);
+      }
+      /**
+       * Set the starting velocity of emitted particles.
+       */
+      SetVelocity(velocity) {
+          this.m_startingVelocity.Copy(velocity);
+      }
+      /**
+       * Get the starting velocity.
+       */
+      GetVelocity(out) {
+          return out.Copy(this.m_startingVelocity);
+      }
+      /**
+       * Set the speed of particles along the direction from the
+       * center of the emitter.
+       */
+      SetSpeed(speed) {
+          this.m_speed = speed;
+      }
+      /**
+       * Get the speed of particles along the direction from the
+       * center of the emitter.
+       */
+      GetSpeed() {
+          return this.m_speed;
+      }
+      /**
+       * Set the flags for created particles.
+       */
+      SetParticleFlags(flags) {
+          this.m_flags = flags;
+      }
+      /**
+       * Get the flags for created particles.
+       */
+      GetParticleFlags() {
+          return this.m_flags;
+      }
+      /**
+       * Set the color of particles.
+       */
+      SetColor(color) {
+          this.m_color.Copy(color);
+      }
+      /**
+       * Get the color of particles emitter.
+       */
+      GetColor(out) {
+          return out.Copy(this.m_color);
+      }
+      /**
+       * Set the emit rate in particles per second.
+       */
+      SetEmitRate(emitRate) {
+          this.m_emitRate = emitRate;
+      }
+      /**
+       * Get the current emit rate.
+       */
+      GetEmitRate() {
+          return this.m_emitRate;
+      }
+      /**
+       * Set the particle system this emitter is adding particles to.
+       */
+      SetParticleSystem(particleSystem) {
+          this.m_particleSystem = particleSystem;
+      }
+      /**
+       * Get the particle system this emitter is adding particle to.
+       */
+      GetParticleSystem() {
+          return this.m_particleSystem;
+      }
+      /**
+       * Set the callback that is called on the creation of each
+       * particle.
+       */
+      SetCallback(callback) {
+          this.m_callback = callback;
+      }
+      /**
+       * Get the callback that is called on the creation of each
+       * particle.
+       */
+      GetCallback() {
+          return this.m_callback;
+      }
+      /**
+       * This class sets the group flags to b2_particleGroupCanBeEmpty
+       * so that it isn't destroyed and clears the
+       * b2_particleGroupCanBeEmpty on the group when the emitter no
+       * longer references it so that the group can potentially be
+       * cleaned up.
+       */
+      SetGroup(group) {
+          if (this.m_group) {
+              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() & ~b2ParticleGroupFlag.b2_particleGroupCanBeEmpty);
+          }
+          this.m_group = group;
+          if (this.m_group) {
+              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() | b2ParticleGroupFlag.b2_particleGroupCanBeEmpty);
+          }
+      }
+      /**
+       * Get the group particles should be created within.
+       */
+      GetGroup() {
+          return this.m_group;
+      }
+      /**
+       * dt is seconds that have passed, particleIndices is an
+       * optional pointer to an array which tracks which particles
+       * have been created and particleIndicesCount is the size of the
+       * particleIndices array. This function returns the number of
+       * particles created during this simulation step.
+       */
+      Step(dt, particleIndices, particleIndicesCount = particleIndices ? particleIndices.length : 0) {
+          if (this.m_particleSystem === null) {
+              throw new Error();
+          }
+          let numberOfParticlesCreated = 0;
+          // How many (fractional) particles should we have emitted this frame?
+          this.m_emitRemainder += this.m_emitRate * dt;
+          const pd = new b2ParticleDef();
+          pd.color.Copy(this.m_color);
+          pd.flags = this.m_flags;
+          pd.group = this.m_group;
+          // Keep emitting particles on this frame until we only have a
+          // fractional particle left.
+          while (this.m_emitRemainder > 1.0) {
+              this.m_emitRemainder -= 1.0;
+              // Randomly pick a position within the emitter's radius.
+              const angle = RadialEmitter.Random() * 2.0 * b2_pi;
+              // Distance from the center of the circle.
+              const distance = RadialEmitter.Random();
+              const positionOnUnitCircle = new b2Vec2(Math.sin(angle), Math.cos(angle));
+              // Initial position.
+              pd.position.Set(this.m_origin.x + positionOnUnitCircle.x * distance * this.m_halfSize.x, this.m_origin.y + positionOnUnitCircle.y * distance * this.m_halfSize.y);
+              // Send it flying
+              pd.velocity.Copy(this.m_startingVelocity);
+              if (this.m_speed !== 0.0) {
+                  ///  pd.velocity += positionOnUnitCircle * m_speed;
+                  pd.velocity.SelfMulAdd(this.m_speed, positionOnUnitCircle);
+              }
+              const particleIndex = this.m_particleSystem.CreateParticle(pd);
+              if (this.m_callback) {
+                  this.m_callback.ParticleCreated(this.m_particleSystem, particleIndex);
+              }
+              if (particleIndices && (numberOfParticlesCreated < particleIndicesCount)) {
+                  particleIndices[numberOfParticlesCreated] = particleIndex;
+              }
+              ++numberOfParticlesCreated;
+          }
+          return numberOfParticlesCreated;
+      }
+  }
+  // #endif
+
+  /*
+   * Copyright (c) 2014 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
   var ParticleParameterOptions;
   (function (ParticleParameterOptions) {
       ParticleParameterOptions[ParticleParameterOptions["OptionStrictContacts"] = 1] = "OptionStrictContacts";
@@ -22451,19 +22766,58 @@
           this.m_particleParameterDef = new ParticleParameter.Definition(this.m_particleParameters, numValues);
           ///m_particleParameterDef.values = m_particleParameters;
           ///m_particleParameterDef.numValues = numValues;
-          Main.SetParticleParameters([this.m_particleParameterDef], 1);
+          Test.SetParticleParameters([this.m_particleParameterDef], 1);
       }
       /**
        * Restore default particle parameters.
        */
       RestoreParticleParameters() {
           if (this.m_particleParameters) {
-              Main.SetParticleParameters(ParticleParameter.k_defaultDefinition, 1);
+              Test.SetParticleParameters(ParticleParameter.k_defaultDefinition, 1);
               ///  delete [] m_particleParameters;
               this.m_particleParameters = null;
           }
       }
+      /**
+       * Set whether to restart the test on particle parameter
+       * changes. This parameter is re-enabled when the test changes.
+       */
+      static SetRestartOnParticleParameterChange(enable) {
+          Test.particleParameter.SetRestartOnChange(enable);
+      }
+      /**
+       * Set the currently selected particle parameter value.  This
+       * value must match one of the values in
+       * Main::k_particleTypes or one of the values referenced by
+       * particleParameterDef passed to SetParticleParameters().
+       */
+      static SetParticleParameterValue(value) {
+          const index = Test.particleParameter.FindIndexByValue(value);
+          // If the particle type isn't found, so fallback to the first entry in the
+          // parameter.
+          Test.particleParameter.Set(index >= 0 ? index : 0);
+          return Test.particleParameter.GetValue();
+      }
+      /**
+       * Get the currently selected particle parameter value and
+       * enable particle parameter selection arrows on Android.
+       */
+      static GetParticleParameterValue() {
+          // Enable display of particle type selection arrows.
+          Test.fullscreenUI.SetParticleParameterSelectionEnabled(true);
+          return Test.particleParameter.GetValue();
+      }
+      /**
+       * Override the default particle parameters for the test.
+       */
+      static SetParticleParameters(particleParameterDef, particleParameterDefCount = particleParameterDef.length) {
+          Test.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
+      }
   }
+  // #if B2_ENABLE_PARTICLE
+  Test.fullscreenUI = new FullScreenUI();
+  Test.particleParameter = new ParticleParameter();
+  // #endif
   Test.k_maxContactPoints = 2048;
   Test.PreSolve_s_state1 = [ /*box2d.b2_maxManifoldPoints*/];
   Test.PreSolve_s_state2 = [ /*box2d.b2_maxManifoldPoints*/];
@@ -30731,9 +31085,9 @@
           const loc = new b2Vec2(-20, 1);
           this.m_killFieldTransform.SetPositionAngle(loc, 0);
           // Setup particle parameters.
-          Main.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
-          this.m_particleFlags = Main.GetParticleParameterValue();
-          Main.SetRestartOnParticleParameterChange(false);
+          Test.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
+          this.m_particleFlags = Test.GetParticleParameterValue();
+          Test.SetRestartOnParticleParameterChange(false);
       }
       __dtor__() {
           // deallocate our emitters
@@ -30931,7 +31285,7 @@
                   this.m_particleFlags = this.m_particleFlags | toggle;
               }
           }
-          Main.SetParticleParameterValue(this.m_particleFlags);
+          Test.SetParticleParameterValue(this.m_particleFlags);
       }
       KeyboardUp(key) {
           super.KeyboardUp(key);
@@ -30954,7 +31308,7 @@
               dt = 0.0;
           }
           super.Step(settings);
-          this.m_particleFlags = Main.GetParticleParameterValue();
+          this.m_particleFlags = Test.GetParticleParameterValue();
           // Step all the emitters
           for (let i = 0; i < this.m_faucetEmitterIndex; i++) {
               const particleIndices = [];
@@ -31159,8 +31513,8 @@
                   spark: true,
               });
           }
-          Main.SetRestartOnParticleParameterChange(false);
-          Main.SetParticleParameterValue(b2ParticleFlag.b2_powderParticle);
+          Test.SetRestartOnParticleParameterChange(false);
+          Test.SetParticleParameterValue(b2ParticleFlag.b2_powderParticle);
       }
       BeginContact(contact) {
           super.BeginContact(contact);
@@ -31180,7 +31534,7 @@
           }
       }
       Step(settings) {
-          const particleFlags = Main.GetParticleParameterValue();
+          const particleFlags = Test.GetParticleParameterValue();
           let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
           if (settings.pause && !settings.singleStep) {
               dt = 0.0;
@@ -31318,7 +31672,7 @@
               const shape = new b2PolygonShape();
               shape.SetAsBox(0.8, 1.0, new b2Vec2(-1.2, 1.01), 0);
               const pd = new b2ParticleGroupDef();
-              pd.flags = Main.GetParticleParameterValue();
+              pd.flags = Test.GetParticleParameterValue();
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
               if (pd.flags & b2ParticleFlag.b2_colorMixingParticle) {
@@ -31356,7 +31710,7 @@
       constructor() {
           super();
           // Setup particle parameters.
-          Main.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
+          Test.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
           {
               const bd = new b2BodyDef();
               const ground = this.m_world.CreateBody(bd);
@@ -31375,7 +31729,7 @@
               const shape = new b2PolygonShape();
               shape.SetAsBox(2, 0.4, new b2Vec2(0, 3.6), 0);
               const pd = new b2ParticleGroupDef();
-              pd.flags = Main.GetParticleParameterValue();
+              pd.flags = Test.GetParticleParameterValue();
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
               if (pd.flags & b2ParticleFlag.b2_colorMixingParticle) {
@@ -31523,7 +31877,7 @@
               this.m_joint = this.m_world.CreateJoint(jd);
           }
           this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
-          const particleType = Main.GetParticleParameterValue();
+          const particleType = Test.GetParticleParameterValue();
           this.m_particleSystem.SetDamping(0.2);
           {
               const pd = new b2ParticleGroupDef();
@@ -31612,7 +31966,7 @@
               }
           }
           this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-          const particleType = Main.GetParticleParameterValue();
+          const particleType = Test.GetParticleParameterValue();
           this.m_particleSystem.SetDamping(0.2);
           {
               const shape = new b2CircleShape();
@@ -31747,12 +32101,12 @@
               this.m_emitter.SetSize(new b2Vec2(0.0, faucetLength));
               this.m_emitter.SetColor(new b2Color(1, 1, 1, 1));
               this.m_emitter.SetEmitRate(120.0);
-              this.m_emitter.SetParticleFlags(Main.GetParticleParameterValue());
+              this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
           }
           // Don't restart the test when changing particle types.
-          Main.SetRestartOnParticleParameterChange(false);
+          Test.SetRestartOnParticleParameterChange(false);
           // Limit the set of particle types.
-          Main.SetParticleParameters(Faucet.k_paramDef, Faucet.k_paramDefCount);
+          Test.SetParticleParameters(Faucet.k_paramDef, Faucet.k_paramDefCount);
       }
       Step(settings) {
           let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
@@ -31766,7 +32120,7 @@
               this.m_particleColorOffset -= Test.k_ParticleColorsCount;
           }
           // Propagate the currently selected particle flags.
-          this.m_emitter.SetParticleFlags(Main.GetParticleParameterValue());
+          this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
           // If this is a color mixing particle, add some color.
           ///  b2Color color(1, 1, 1, 1);
           if (this.m_emitter.GetParticleFlags() & b2ParticleFlag.b2_colorMixingParticle) {
@@ -31832,7 +32186,7 @@
                   // Nothing.
                   return;
           }
-          Main.SetParticleParameterValue(parameter);
+          Test.SetParticleParameterValue(parameter);
       }
       GetDefaultViewZoom() {
           return 0.1;
@@ -31999,9 +32353,9 @@
           this.m_lastGroup = null;
           this.m_drawing = true;
           // DEBUG: box2d.b2Assert((DrawingParticles.k_paramDef[0].CalculateValueMask() & DrawingParticles.Parameters.e_parameterBegin) === 0);
-          Main.SetParticleParameters(DrawingParticles.k_paramDef, DrawingParticles.k_paramDefCount);
-          Main.SetRestartOnParticleParameterChange(false);
-          this.m_particleFlags = Main.GetParticleParameterValue();
+          Test.SetParticleParameters(DrawingParticles.k_paramDef, DrawingParticles.k_paramDefCount);
+          Test.SetRestartOnParticleParameterChange(false);
+          this.m_particleFlags = Test.GetParticleParameterValue();
           this.m_groupFlags = 0;
       }
       // Determine the current particle parameter from the drawing state and
@@ -32083,7 +32437,7 @@
               default:
                   break;
           }
-          Main.SetParticleParameterValue(this.DetermineParticleParameter());
+          Test.SetParticleParameterValue(this.DetermineParticleParameter());
       }
       MouseMove(p) {
           super.MouseMove(p);
@@ -32135,7 +32489,7 @@
           }
       }
       Step(settings) {
-          const parameterValue = Main.GetParticleParameterValue();
+          const parameterValue = Test.GetParticleParameterValue();
           this.m_drawing = (parameterValue & DrawingParticles.Parameters.e_parameterMove) !== DrawingParticles.Parameters.e_parameterMove;
           if (this.m_drawing) {
               switch (parameterValue) {
@@ -32288,7 +32642,7 @@
               shape.SetAsBox(2, 1, new b2Vec2(0, 1), 0);
               const pd = new b2ParticleGroupDef();
               pd.shape = shape;
-              pd.flags = Main.GetParticleParameterValue();
+              pd.flags = Test.GetParticleParameterValue();
               const group = this.m_particleSystem.CreateParticleGroup(pd);
               if (pd.flags & b2ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
@@ -32752,7 +33106,7 @@
           this.m_particleSystem2 = this.m_world.CreateParticleSystem(particleSystemDef);
           this.m_particleSystem2.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
           // Don't restart the test when changing particle types.
-          Main.SetRestartOnParticleParameterChange(false);
+          Test.SetRestartOnParticleParameterChange(false);
           // Create the ground.
           {
               const bd = new b2BodyDef();
@@ -32889,7 +33243,7 @@
               const shape = new b2PolygonShape();
               shape.SetAsBox(0.8, 1.0, new b2Vec2(0.0, 1.01), 0);
               const pd = new b2ParticleGroupDef();
-              pd.flags = Main.GetParticleParameterValue();
+              pd.flags = Test.GetParticleParameterValue();
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
               if (pd.flags & b2ParticleFlag.b2_colorMixingParticle) {
@@ -34256,7 +34610,7 @@
               }
           }
           this.m_particleSystem.SetRadius(0.25);
-          const particleType = Main.GetParticleParameterValue();
+          const particleType = Test.GetParticleParameterValue();
           if (particleType === b2ParticleFlag.b2_waterParticle) {
               this.m_particleSystem.SetDamping(0.2);
           }
@@ -34323,7 +34677,7 @@
               }
           }
           this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-          const particleType = Main.GetParticleParameterValue();
+          const particleType = Test.GetParticleParameterValue();
           if (particleType === b2ParticleFlag.b2_waterParticle) {
               this.m_particleSystem.SetDamping(0.2);
           }
@@ -34337,7 +34691,7 @@
       }
       Step(settings) {
           super.Step(settings);
-          const flags = Main.GetParticleParameterValue();
+          const flags = Test.GetParticleParameterValue();
           const pd = new b2ParticleDef();
           pd.position.Set(0.0, 33.0);
           pd.velocity.Set(0.0, -1.0);
@@ -34420,7 +34774,7 @@
           // Cap the number of generated particles or we'll fill forever
           this.m_particlesToCreate = 300;
           this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-          const particleType = Main.GetParticleParameterValue();
+          const particleType = Test.GetParticleParameterValue();
           if (particleType === b2ParticleFlag.b2_waterParticle) {
               this.m_particleSystem.SetDamping(0.2);
           }
@@ -34431,7 +34785,7 @@
               return;
           }
           --this.m_particlesToCreate;
-          const flags = Main.GetParticleParameterValue();
+          const flags = Test.GetParticleParameterValue();
           const pd = new b2ParticleDef();
           pd.position.Set(0.0, 40.0);
           pd.velocity.Set(0.0, -1.0);
@@ -34520,7 +34874,7 @@
               }
           }
           this.m_particleSystem.SetRadius(1.0);
-          const particleType = Main.GetParticleParameterValue();
+          const particleType = Test.GetParticleParameterValue();
           {
               const shape = new b2CircleShape();
               shape.m_p.Set(0, 35);
@@ -34870,60 +35224,8 @@
       new TestEntry("Eye Candy", EyeCandy.Create),
   ];
 
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  // #if B2_ENABLE_PARTICLE
-  /**
-   * Handles drawing and selection of full screen UI.
-   */
-  class FullScreenUI {
-      constructor() {
-          /**
-           * Whether particle parameters are enabled.
-           */
-          this.m_particleParameterSelectionEnabled = false;
-          this.Reset();
-      }
-      /**
-       * Reset the UI to it's initial state.
-       */
-      Reset() {
-          this.m_particleParameterSelectionEnabled = false;
-      }
-      /**
-       * Enable / disable particle parameter selection.
-       */
-      SetParticleParameterSelectionEnabled(enable) {
-          this.m_particleParameterSelectionEnabled = enable;
-      }
-      /**
-       * Get whether particle parameter selection is enabled.
-       */
-      GetParticleParameterSelectionEnabled() {
-          return this.m_particleParameterSelectionEnabled;
-      }
-  }
-  // #endif
-
-  // #endif
   class Main {
       constructor(time) {
-          // #endif
           this.m_time_last = 0;
           this.m_fps_time = 0;
           this.m_fps_frames = 0;
@@ -35312,13 +35614,13 @@
               case ",":
                   if (this.m_shift) {
                       // Press < to select the previous particle parameter setting.
-                      Main.particleParameter.Decrement();
+                      Test.particleParameter.Decrement();
                   }
                   break;
               case ".":
                   if (this.m_shift) {
                       // Press > to select the next particle parameter setting.
-                      Main.particleParameter.Increment();
+                      Test.particleParameter.Increment();
                   }
                   break;
               // #endif
@@ -35377,9 +35679,9 @@
       }
       LoadTest(restartTest = false) {
           // #if B2_ENABLE_PARTICLE
-          Main.fullscreenUI.Reset();
+          Test.fullscreenUI.Reset();
           if (!restartTest) {
-              Main.particleParameter.Reset();
+              Test.particleParameter.Reset();
           }
           // #endif
           this.m_demo_time = 0;
@@ -35447,13 +35749,13 @@
                   }
                   // #if B2_ENABLE_PARTICLE
                   // Update the state of the particle parameter.
-                  Main.particleParameter.Changed(restartTest);
+                  Test.particleParameter.Changed(restartTest);
                   // #endif
                   // #if B2_ENABLE_PARTICLE
                   let msg = g_testEntries[this.m_test_index].name;
-                  if (Main.fullscreenUI.GetParticleParameterSelectionEnabled()) {
+                  if (Test.fullscreenUI.GetParticleParameterSelectionEnabled()) {
                       msg += " : ";
-                      msg += Main.particleParameter.GetName();
+                      msg += Test.particleParameter.GetName();
                   }
                   if (this.m_test) {
                       this.m_test.DrawTitle(msg);
@@ -35473,311 +35775,7 @@
               this.UpdateTest(time_elapsed);
           }
       }
-      // #if B2_ENABLE_PARTICLE
-      /**
-       * Set whether to restart the test on particle parameter
-       * changes. This parameter is re-enabled when the test changes.
-       */
-      static SetRestartOnParticleParameterChange(enable) {
-          Main.particleParameter.SetRestartOnChange(enable);
-      }
-      /**
-       * Set the currently selected particle parameter value.  This
-       * value must match one of the values in
-       * Main::k_particleTypes or one of the values referenced by
-       * particleParameterDef passed to SetParticleParameters().
-       */
-      static SetParticleParameterValue(value) {
-          const index = Main.particleParameter.FindIndexByValue(value);
-          // If the particle type isn't found, so fallback to the first entry in the
-          // parameter.
-          Main.particleParameter.Set(index >= 0 ? index : 0);
-          return Main.particleParameter.GetValue();
-      }
-      /**
-       * Get the currently selected particle parameter value and
-       * enable particle parameter selection arrows on Android.
-       */
-      static GetParticleParameterValue() {
-          // Enable display of particle type selection arrows.
-          Main.fullscreenUI.SetParticleParameterSelectionEnabled(true);
-          return Main.particleParameter.GetValue();
-      }
-      /**
-       * Override the default particle parameters for the test.
-       */
-      static SetParticleParameters(particleParameterDef, particleParameterDefCount = particleParameterDef.length) {
-          Main.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
-      }
   }
-  // #if B2_ENABLE_PARTICLE
-  Main.fullscreenUI = new FullScreenUI();
-  Main.particleParameter = new ParticleParameter();
-
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class EmittedParticleCallback {
-      /**
-       * Called for each created particle.
-       */
-      ParticleCreated(system, particleIndex) { }
-  }
-  /**
-   * Emit particles from a circular region.
-   */
-  class RadialEmitter {
-      constructor() {
-          /**
-           * Pointer to global world
-           */
-          this.m_particleSystem = null;
-          /**
-           * Called for each created particle.
-           */
-          this.m_callback = null;
-          /**
-           * Center of particle emitter
-           */
-          this.m_origin = new b2Vec2();
-          /**
-           * Launch direction.
-           */
-          this.m_startingVelocity = new b2Vec2();
-          /**
-           * Speed particles are emitted
-           */
-          this.m_speed = 0.0;
-          /**
-           * Half width / height of particle emitter
-           */
-          this.m_halfSize = new b2Vec2();
-          /**
-           * Particles per second
-           */
-          this.m_emitRate = 1.0;
-          /**
-           * Initial color of particle emitted.
-           */
-          this.m_color = new b2Color();
-          /**
-           * Number particles to emit on the next frame
-           */
-          this.m_emitRemainder = 0.0;
-          /**
-           * Flags for created particles, see b2ParticleFlag.
-           */
-          this.m_flags = b2ParticleFlag.b2_waterParticle;
-          /**
-           * Group to put newly created particles in.
-           */
-          this.m_group = null;
-      }
-      /**
-       * Calculate a random number 0.0..1.0.
-       */
-      static Random() {
-          return Math.random();
-      }
-      __dtor__() {
-          this.SetGroup(null);
-      }
-      /**
-       * Set the center of the emitter.
-       */
-      SetPosition(origin) {
-          this.m_origin.Copy(origin);
-      }
-      /**
-       * Get the center of the emitter.
-       */
-      GetPosition(out) {
-          return out.Copy(this.m_origin);
-      }
-      /**
-       * Set the size of the circle which emits particles.
-       */
-      SetSize(size) {
-          this.m_halfSize.Copy(size).SelfMul(0.5);
-      }
-      /**
-       * Get the size of the circle which emits particles.
-       */
-      GetSize(out) {
-          return out.Copy(this.m_halfSize).SelfMul(2.0);
-      }
-      /**
-       * Set the starting velocity of emitted particles.
-       */
-      SetVelocity(velocity) {
-          this.m_startingVelocity.Copy(velocity);
-      }
-      /**
-       * Get the starting velocity.
-       */
-      GetVelocity(out) {
-          return out.Copy(this.m_startingVelocity);
-      }
-      /**
-       * Set the speed of particles along the direction from the
-       * center of the emitter.
-       */
-      SetSpeed(speed) {
-          this.m_speed = speed;
-      }
-      /**
-       * Get the speed of particles along the direction from the
-       * center of the emitter.
-       */
-      GetSpeed() {
-          return this.m_speed;
-      }
-      /**
-       * Set the flags for created particles.
-       */
-      SetParticleFlags(flags) {
-          this.m_flags = flags;
-      }
-      /**
-       * Get the flags for created particles.
-       */
-      GetParticleFlags() {
-          return this.m_flags;
-      }
-      /**
-       * Set the color of particles.
-       */
-      SetColor(color) {
-          this.m_color.Copy(color);
-      }
-      /**
-       * Get the color of particles emitter.
-       */
-      GetColor(out) {
-          return out.Copy(this.m_color);
-      }
-      /**
-       * Set the emit rate in particles per second.
-       */
-      SetEmitRate(emitRate) {
-          this.m_emitRate = emitRate;
-      }
-      /**
-       * Get the current emit rate.
-       */
-      GetEmitRate() {
-          return this.m_emitRate;
-      }
-      /**
-       * Set the particle system this emitter is adding particles to.
-       */
-      SetParticleSystem(particleSystem) {
-          this.m_particleSystem = particleSystem;
-      }
-      /**
-       * Get the particle system this emitter is adding particle to.
-       */
-      GetParticleSystem() {
-          return this.m_particleSystem;
-      }
-      /**
-       * Set the callback that is called on the creation of each
-       * particle.
-       */
-      SetCallback(callback) {
-          this.m_callback = callback;
-      }
-      /**
-       * Get the callback that is called on the creation of each
-       * particle.
-       */
-      GetCallback() {
-          return this.m_callback;
-      }
-      /**
-       * This class sets the group flags to b2_particleGroupCanBeEmpty
-       * so that it isn't destroyed and clears the
-       * b2_particleGroupCanBeEmpty on the group when the emitter no
-       * longer references it so that the group can potentially be
-       * cleaned up.
-       */
-      SetGroup(group) {
-          if (this.m_group) {
-              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() & ~b2ParticleGroupFlag.b2_particleGroupCanBeEmpty);
-          }
-          this.m_group = group;
-          if (this.m_group) {
-              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() | b2ParticleGroupFlag.b2_particleGroupCanBeEmpty);
-          }
-      }
-      /**
-       * Get the group particles should be created within.
-       */
-      GetGroup() {
-          return this.m_group;
-      }
-      /**
-       * dt is seconds that have passed, particleIndices is an
-       * optional pointer to an array which tracks which particles
-       * have been created and particleIndicesCount is the size of the
-       * particleIndices array. This function returns the number of
-       * particles created during this simulation step.
-       */
-      Step(dt, particleIndices, particleIndicesCount = particleIndices ? particleIndices.length : 0) {
-          if (this.m_particleSystem === null) {
-              throw new Error();
-          }
-          let numberOfParticlesCreated = 0;
-          // How many (fractional) particles should we have emitted this frame?
-          this.m_emitRemainder += this.m_emitRate * dt;
-          const pd = new b2ParticleDef();
-          pd.color.Copy(this.m_color);
-          pd.flags = this.m_flags;
-          pd.group = this.m_group;
-          // Keep emitting particles on this frame until we only have a
-          // fractional particle left.
-          while (this.m_emitRemainder > 1.0) {
-              this.m_emitRemainder -= 1.0;
-              // Randomly pick a position within the emitter's radius.
-              const angle = RadialEmitter.Random() * 2.0 * b2_pi;
-              // Distance from the center of the circle.
-              const distance = RadialEmitter.Random();
-              const positionOnUnitCircle = new b2Vec2(Math.sin(angle), Math.cos(angle));
-              // Initial position.
-              pd.position.Set(this.m_origin.x + positionOnUnitCircle.x * distance * this.m_halfSize.x, this.m_origin.y + positionOnUnitCircle.y * distance * this.m_halfSize.y);
-              // Send it flying
-              pd.velocity.Copy(this.m_startingVelocity);
-              if (this.m_speed !== 0.0) {
-                  ///  pd.velocity += positionOnUnitCircle * m_speed;
-                  pd.velocity.SelfMulAdd(this.m_speed, positionOnUnitCircle);
-              }
-              const particleIndex = this.m_particleSystem.CreateParticle(pd);
-              if (this.m_callback) {
-                  this.m_callback.ParticleCreated(this.m_particleSystem, particleIndex);
-              }
-              if (particleIndices && (numberOfParticlesCreated < particleIndicesCount)) {
-                  particleIndices[numberOfParticlesCreated] = particleIndex;
-              }
-              ++numberOfParticlesCreated;
-          }
-          return numberOfParticlesCreated;
-      }
-  }
-  // #endif
 
   /*
   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
