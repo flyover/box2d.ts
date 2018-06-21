@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { TestEntry } from "Testbed/Framework/Test";
+import { TestEntry } from "../Framework/Test";
 
 import { AddPair } from "./AddPair";
 import { ApplyForce } from "./ApplyForce";

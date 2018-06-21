@@ -988,40 +988,6 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  /// Timer for profiling. This has platform specific code and may
-  /// not work on every platform.
-  class b2Timer {
-      constructor() {
-          this.m_start = Date.now();
-      }
-      /// Reset the timer.
-      Reset() {
-          this.m_start = Date.now();
-          return this;
-      }
-      /// Get the time since construction or the last reset.
-      GetMilliseconds() {
-          return Date.now() - this.m_start;
-      }
-  }
-
-  /*
-  * Copyright (c) 2011 Erin Catto http://box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
   /// Color for debug drawing. Each value has the range [0,1].
   class b2Color {
       constructor(rr = 0.5, gg = 0.5, bb = 0.5, aa = 1.0) {
@@ -1169,6 +1135,126 @@
       b2DrawFlags[b2DrawFlags["e_controllerBit"] = 64] = "e_controllerBit";
       b2DrawFlags[b2DrawFlags["e_all"] = 63] = "e_all";
   })(b2DrawFlags || (b2DrawFlags = {}));
+
+  /*
+  * Copyright (c) 2011 Erin Catto http://box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// Timer for profiling. This has platform specific code and may
+  /// not work on every platform.
+  class b2Timer {
+      constructor() {
+          this.m_start = Date.now();
+      }
+      /// Reset the timer.
+      Reset() {
+          this.m_start = Date.now();
+          return this;
+      }
+      /// Get the time since construction or the last reset.
+      GetMilliseconds() {
+          return Date.now() - this.m_start;
+      }
+  }
+
+  /*
+  * Copyright (c) 2010 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// This is a growable LIFO stack with an initial capacity of N.
+  /// If the stack size exceeds the initial capacity, the heap is used
+  /// to increase the size of the stack.
+  class b2GrowableStack {
+      constructor(N) {
+          this.m_stack = [];
+          this.m_count = 0;
+          this.m_stack = b2MakeArray(N, (index) => null);
+          this.m_count = 0;
+      }
+      Reset() {
+          this.m_count = 0;
+          return this;
+      }
+      Push(element) {
+          this.m_stack[this.m_count] = element;
+          this.m_count++;
+      }
+      Pop() {
+          // DEBUG: b2Assert(this.m_count > 0);
+          this.m_count--;
+          const element = this.m_stack[this.m_count];
+          this.m_stack[this.m_count] = null;
+          if (element === null) {
+              throw new Error();
+          }
+          return element;
+      }
+      GetCount() {
+          return this.m_count;
+      }
+  }
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -2214,6 +2300,923 @@
   }
 
   /*
+  * Copyright (c) 2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  function verify(value) {
+      if (value === null) {
+          throw new Error();
+      }
+      return value;
+  }
+  /// A node in the dynamic tree. The client does not interact with this directly.
+  class b2TreeNode {
+      constructor(id = 0) {
+          this.m_id = 0;
+          this.aabb = new b2AABB();
+          this.parent = null; // or next
+          this.child1 = null;
+          this.child2 = null;
+          this.height = 0; // leaf = 0, free node = -1
+          this.m_id = id;
+      }
+      IsLeaf() {
+          return this.child1 === null;
+      }
+  }
+  class b2DynamicTree {
+      constructor() {
+          this.m_root = null;
+          // b2TreeNode* public m_nodes;
+          // int32 public m_nodeCount;
+          // int32 public m_nodeCapacity;
+          this.m_freeList = null;
+          this.m_path = 0;
+          this.m_insertionCount = 0;
+          this.m_stack = new b2GrowableStack(256);
+      }
+      // public GetUserData(proxy: b2TreeNode<T>): any {
+      //   // DEBUG: b2Assert(proxy !== null);
+      //   return proxy.userData;
+      // }
+      // public GetFatAABB(proxy: b2TreeNode<T>): b2AABB {
+      //   // DEBUG: b2Assert(proxy !== null);
+      //   return proxy.aabb;
+      // }
+      Query(aabb, callback) {
+          if (this.m_root === null) {
+              return;
+          }
+          const stack = this.m_stack.Reset();
+          stack.Push(this.m_root);
+          while (stack.GetCount() > 0) {
+              const node = stack.Pop();
+              // if (node === null) {
+              //   continue;
+              // }
+              if (node.aabb.TestOverlap(aabb)) {
+                  if (node.IsLeaf()) {
+                      const proceed = callback(node);
+                      if (!proceed) {
+                          return;
+                      }
+                  }
+                  else {
+                      stack.Push(verify(node.child1));
+                      stack.Push(verify(node.child2));
+                  }
+              }
+          }
+      }
+      QueryPoint(point, callback) {
+          if (this.m_root === null) {
+              return;
+          }
+          const stack = this.m_stack.Reset();
+          stack.Push(this.m_root);
+          while (stack.GetCount() > 0) {
+              const node = stack.Pop();
+              // if (node === null) {
+              //   continue;
+              // }
+              if (node.aabb.TestContain(point)) {
+                  if (node.IsLeaf()) {
+                      const proceed = callback(node);
+                      if (!proceed) {
+                          return;
+                      }
+                  }
+                  else {
+                      stack.Push(verify(node.child1));
+                      stack.Push(verify(node.child2));
+                  }
+              }
+          }
+      }
+      RayCast(input, callback) {
+          if (this.m_root === null) {
+              return;
+          }
+          const p1 = input.p1;
+          const p2 = input.p2;
+          const r = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
+          // DEBUG: b2Assert(r.LengthSquared() > 0);
+          r.Normalize();
+          // v is perpendicular to the segment.
+          const v = b2Vec2.CrossOneV(r, b2DynamicTree.s_v);
+          const abs_v = b2Vec2.AbsV(v, b2DynamicTree.s_abs_v);
+          // Separating axis for segment (Gino, p80).
+          // |dot(v, p1 - c)| > dot(|v|, h)
+          let maxFraction = input.maxFraction;
+          // Build a bounding box for the segment.
+          const segmentAABB = b2DynamicTree.s_segmentAABB;
+          let t_x = p1.x + maxFraction * (p2.x - p1.x);
+          let t_y = p1.y + maxFraction * (p2.y - p1.y);
+          segmentAABB.lowerBound.x = b2Min(p1.x, t_x);
+          segmentAABB.lowerBound.y = b2Min(p1.y, t_y);
+          segmentAABB.upperBound.x = b2Max(p1.x, t_x);
+          segmentAABB.upperBound.y = b2Max(p1.y, t_y);
+          const stack = this.m_stack.Reset();
+          stack.Push(this.m_root);
+          while (stack.GetCount() > 0) {
+              const node = stack.Pop();
+              // if (node === null) {
+              //   continue;
+              // }
+              if (!b2TestOverlapAABB(node.aabb, segmentAABB)) {
+                  continue;
+              }
+              // Separating axis for segment (Gino, p80).
+              // |dot(v, p1 - c)| > dot(|v|, h)
+              const c = node.aabb.GetCenter();
+              const h = node.aabb.GetExtents();
+              const separation = b2Abs(b2Vec2.DotVV(v, b2Vec2.SubVV(p1, c, b2Vec2.s_t0))) - b2Vec2.DotVV(abs_v, h);
+              if (separation > 0) {
+                  continue;
+              }
+              if (node.IsLeaf()) {
+                  const subInput = b2DynamicTree.s_subInput;
+                  subInput.p1.Copy(input.p1);
+                  subInput.p2.Copy(input.p2);
+                  subInput.maxFraction = maxFraction;
+                  const value = callback(subInput, node);
+                  if (value === 0) {
+                      // The client has terminated the ray cast.
+                      return;
+                  }
+                  if (value > 0) {
+                      // Update segment bounding box.
+                      maxFraction = value;
+                      t_x = p1.x + maxFraction * (p2.x - p1.x);
+                      t_y = p1.y + maxFraction * (p2.y - p1.y);
+                      segmentAABB.lowerBound.x = b2Min(p1.x, t_x);
+                      segmentAABB.lowerBound.y = b2Min(p1.y, t_y);
+                      segmentAABB.upperBound.x = b2Max(p1.x, t_x);
+                      segmentAABB.upperBound.y = b2Max(p1.y, t_y);
+                  }
+              }
+              else {
+                  stack.Push(verify(node.child1));
+                  stack.Push(verify(node.child2));
+              }
+          }
+      }
+      AllocateNode() {
+          // Expand the node pool as needed.
+          if (this.m_freeList) {
+              const node = this.m_freeList;
+              this.m_freeList = node.parent; // this.m_freeList = node.next;
+              node.parent = null;
+              node.child1 = null;
+              node.child2 = null;
+              node.height = 0;
+              delete node.userData; // = null;
+              return node;
+          }
+          return new b2TreeNode(b2DynamicTree.s_node_id++);
+      }
+      FreeNode(node) {
+          node.parent = this.m_freeList; // node.next = this.m_freeList;
+          node.child1 = null;
+          node.child2 = null;
+          node.height = -1;
+          delete node.userData; // = null;
+          this.m_freeList = node;
+      }
+      CreateProxy(aabb, userData) {
+          const node = this.AllocateNode();
+          // Fatten the aabb.
+          const r_x = b2_aabbExtension;
+          const r_y = b2_aabbExtension;
+          node.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
+          node.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
+          node.aabb.upperBound.x = aabb.upperBound.x + r_x;
+          node.aabb.upperBound.y = aabb.upperBound.y + r_y;
+          node.userData = userData;
+          node.height = 0;
+          this.InsertLeaf(node);
+          return node;
+      }
+      DestroyProxy(proxy) {
+          // DEBUG: b2Assert(proxy.IsLeaf());
+          this.RemoveLeaf(proxy);
+          this.FreeNode(proxy);
+      }
+      MoveProxy(proxy, aabb, displacement) {
+          // DEBUG: b2Assert(proxy.IsLeaf());
+          if (proxy.aabb.Contains(aabb)) {
+              return false;
+          }
+          this.RemoveLeaf(proxy);
+          // Extend AABB.
+          // Predict AABB displacement.
+          const r_x = b2_aabbExtension + b2_aabbMultiplier * (displacement.x > 0 ? displacement.x : (-displacement.x));
+          const r_y = b2_aabbExtension + b2_aabbMultiplier * (displacement.y > 0 ? displacement.y : (-displacement.y));
+          proxy.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
+          proxy.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
+          proxy.aabb.upperBound.x = aabb.upperBound.x + r_x;
+          proxy.aabb.upperBound.y = aabb.upperBound.y + r_y;
+          this.InsertLeaf(proxy);
+          return true;
+      }
+      InsertLeaf(leaf) {
+          ++this.m_insertionCount;
+          if (this.m_root === null) {
+              this.m_root = leaf;
+              this.m_root.parent = null;
+              return;
+          }
+          // Find the best sibling for this node
+          const leafAABB = leaf.aabb;
+          ///const center: b2Vec2 = leafAABB.GetCenter();
+          let index = this.m_root;
+          while (!index.IsLeaf()) {
+              const child1 = verify(index.child1);
+              const child2 = verify(index.child2);
+              const area = index.aabb.GetPerimeter();
+              const combinedAABB = b2DynamicTree.s_combinedAABB;
+              combinedAABB.Combine2(index.aabb, leafAABB);
+              const combinedArea = combinedAABB.GetPerimeter();
+              // Cost of creating a new parent for this node and the new leaf
+              const cost = 2 * combinedArea;
+              // Minimum cost of pushing the leaf further down the tree
+              const inheritanceCost = 2 * (combinedArea - area);
+              // Cost of descending into child1
+              let cost1;
+              const aabb = b2DynamicTree.s_aabb;
+              let oldArea;
+              let newArea;
+              if (child1.IsLeaf()) {
+                  aabb.Combine2(leafAABB, child1.aabb);
+                  cost1 = aabb.GetPerimeter() + inheritanceCost;
+              }
+              else {
+                  aabb.Combine2(leafAABB, child1.aabb);
+                  oldArea = child1.aabb.GetPerimeter();
+                  newArea = aabb.GetPerimeter();
+                  cost1 = (newArea - oldArea) + inheritanceCost;
+              }
+              // Cost of descending into child2
+              let cost2;
+              if (child2.IsLeaf()) {
+                  aabb.Combine2(leafAABB, child2.aabb);
+                  cost2 = aabb.GetPerimeter() + inheritanceCost;
+              }
+              else {
+                  aabb.Combine2(leafAABB, child2.aabb);
+                  oldArea = child2.aabb.GetPerimeter();
+                  newArea = aabb.GetPerimeter();
+                  cost2 = newArea - oldArea + inheritanceCost;
+              }
+              // Descend according to the minimum cost.
+              if (cost < cost1 && cost < cost2) {
+                  break;
+              }
+              // Descend
+              if (cost1 < cost2) {
+                  index = child1;
+              }
+              else {
+                  index = child2;
+              }
+          }
+          const sibling = index;
+          // Create a parent for the siblings.
+          const oldParent = sibling.parent;
+          const newParent = this.AllocateNode();
+          newParent.parent = oldParent;
+          delete newParent.userData; // = null;
+          newParent.aabb.Combine2(leafAABB, sibling.aabb);
+          newParent.height = sibling.height + 1;
+          if (oldParent) {
+              // The sibling was not the root.
+              if (oldParent.child1 === sibling) {
+                  oldParent.child1 = newParent;
+              }
+              else {
+                  oldParent.child2 = newParent;
+              }
+              newParent.child1 = sibling;
+              newParent.child2 = leaf;
+              sibling.parent = newParent;
+              leaf.parent = newParent;
+          }
+          else {
+              // The sibling was the root.
+              newParent.child1 = sibling;
+              newParent.child2 = leaf;
+              sibling.parent = newParent;
+              leaf.parent = newParent;
+              this.m_root = newParent;
+          }
+          // Walk back up the tree fixing heights and AABBs
+          let index2 = leaf.parent;
+          while (index2 !== null) {
+              index2 = this.Balance(index2);
+              const child1 = verify(index2.child1);
+              const child2 = verify(index2.child2);
+              index2.height = 1 + b2Max(child1.height, child2.height);
+              index2.aabb.Combine2(child1.aabb, child2.aabb);
+              index2 = index2.parent;
+          }
+          // this.Validate();
+      }
+      RemoveLeaf(leaf) {
+          if (leaf === this.m_root) {
+              this.m_root = null;
+              return;
+          }
+          const parent = verify(leaf.parent);
+          const grandParent = parent && parent.parent;
+          let sibling;
+          if (parent.child1 === leaf) {
+              sibling = verify(parent.child2);
+          }
+          else {
+              sibling = verify(parent.child1);
+          }
+          if (grandParent) {
+              // Destroy parent and connect sibling to grandParent.
+              if (grandParent.child1 === parent) {
+                  grandParent.child1 = sibling;
+              }
+              else {
+                  grandParent.child2 = sibling;
+              }
+              sibling.parent = grandParent;
+              this.FreeNode(parent);
+              // Adjust ancestor bounds.
+              let index = grandParent;
+              while (index) {
+                  index = this.Balance(index);
+                  const child1 = verify(index.child1);
+                  const child2 = verify(index.child2);
+                  index.aabb.Combine2(child1.aabb, child2.aabb);
+                  index.height = 1 + b2Max(child1.height, child2.height);
+                  index = index.parent;
+              }
+          }
+          else {
+              this.m_root = sibling;
+              sibling.parent = null;
+              this.FreeNode(parent);
+          }
+          // this.Validate();
+      }
+      Balance(A) {
+          // DEBUG: b2Assert(A !== null);
+          if (A.IsLeaf() || A.height < 2) {
+              return A;
+          }
+          const B = verify(A.child1);
+          const C = verify(A.child2);
+          const balance = C.height - B.height;
+          // Rotate C up
+          if (balance > 1) {
+              const F = verify(C.child1);
+              const G = verify(C.child2);
+              // Swap A and C
+              C.child1 = A;
+              C.parent = A.parent;
+              A.parent = C;
+              // A's old parent should point to C
+              if (C.parent !== null) {
+                  if (C.parent.child1 === A) {
+                      C.parent.child1 = C;
+                  }
+                  else {
+                      // DEBUG: b2Assert(C.parent.child2 === A);
+                      C.parent.child2 = C;
+                  }
+              }
+              else {
+                  this.m_root = C;
+              }
+              // Rotate
+              if (F.height > G.height) {
+                  C.child2 = F;
+                  A.child2 = G;
+                  G.parent = A;
+                  A.aabb.Combine2(B.aabb, G.aabb);
+                  C.aabb.Combine2(A.aabb, F.aabb);
+                  A.height = 1 + b2Max(B.height, G.height);
+                  C.height = 1 + b2Max(A.height, F.height);
+              }
+              else {
+                  C.child2 = G;
+                  A.child2 = F;
+                  F.parent = A;
+                  A.aabb.Combine2(B.aabb, F.aabb);
+                  C.aabb.Combine2(A.aabb, G.aabb);
+                  A.height = 1 + b2Max(B.height, F.height);
+                  C.height = 1 + b2Max(A.height, G.height);
+              }
+              return C;
+          }
+          // Rotate B up
+          if (balance < -1) {
+              const D = verify(B.child1);
+              const E = verify(B.child2);
+              // Swap A and B
+              B.child1 = A;
+              B.parent = A.parent;
+              A.parent = B;
+              // A's old parent should point to B
+              if (B.parent !== null) {
+                  if (B.parent.child1 === A) {
+                      B.parent.child1 = B;
+                  }
+                  else {
+                      // DEBUG: b2Assert(B.parent.child2 === A);
+                      B.parent.child2 = B;
+                  }
+              }
+              else {
+                  this.m_root = B;
+              }
+              // Rotate
+              if (D.height > E.height) {
+                  B.child2 = D;
+                  A.child1 = E;
+                  E.parent = A;
+                  A.aabb.Combine2(C.aabb, E.aabb);
+                  B.aabb.Combine2(A.aabb, D.aabb);
+                  A.height = 1 + b2Max(C.height, E.height);
+                  B.height = 1 + b2Max(A.height, D.height);
+              }
+              else {
+                  B.child2 = E;
+                  A.child1 = D;
+                  D.parent = A;
+                  A.aabb.Combine2(C.aabb, D.aabb);
+                  B.aabb.Combine2(A.aabb, E.aabb);
+                  A.height = 1 + b2Max(C.height, D.height);
+                  B.height = 1 + b2Max(A.height, E.height);
+              }
+              return B;
+          }
+          return A;
+      }
+      GetHeight() {
+          if (this.m_root === null) {
+              return 0;
+          }
+          return this.m_root.height;
+      }
+      static GetAreaNode(node) {
+          if (node === null) {
+              return 0;
+          }
+          if (node.IsLeaf()) {
+              return 0;
+          }
+          let area = node.aabb.GetPerimeter();
+          area += b2DynamicTree.GetAreaNode(node.child1);
+          area += b2DynamicTree.GetAreaNode(node.child2);
+          return area;
+      }
+      GetAreaRatio() {
+          if (this.m_root === null) {
+              return 0;
+          }
+          const root = this.m_root;
+          const rootArea = root.aabb.GetPerimeter();
+          const totalArea = b2DynamicTree.GetAreaNode(this.m_root);
+          /*
+          float32 totalArea = 0.0;
+          for (int32 i = 0; i < m_nodeCapacity; ++i) {
+            const b2TreeNode<T>* node = m_nodes + i;
+            if (node.height < 0) {
+              // Free node in pool
+              continue;
+            }
+      
+            totalArea += node.aabb.GetPerimeter();
+          }
+          */
+          return totalArea / rootArea;
+      }
+      ComputeHeightNode(node) {
+          if (!node || node.IsLeaf()) {
+              return 0;
+          }
+          const height1 = this.ComputeHeightNode(node.child1);
+          const height2 = this.ComputeHeightNode(node.child2);
+          return 1 + b2Max(height1, height2);
+      }
+      ComputeHeight() {
+          const height = this.ComputeHeightNode(this.m_root);
+          return height;
+      }
+      ValidateStructure(index) {
+          if (index === null) {
+              return;
+          }
+          if (index === this.m_root) ;
+          const node = index;
+          if (node.IsLeaf()) {
+              // DEBUG: b2Assert(node.child1 === null);
+              // DEBUG: b2Assert(node.child2 === null);
+              // DEBUG: b2Assert(node.height === 0);
+              return;
+          }
+          const child1 = verify(node.child1);
+          const child2 = verify(node.child2);
+          // DEBUG: b2Assert(child1.parent === index);
+          // DEBUG: b2Assert(child2.parent === index);
+          this.ValidateStructure(child1);
+          this.ValidateStructure(child2);
+      }
+      ValidateMetrics(index) {
+          if (index === null) {
+              return;
+          }
+          const node = index;
+          if (node.IsLeaf()) {
+              // DEBUG: b2Assert(node.child1 === null);
+              // DEBUG: b2Assert(node.child2 === null);
+              // DEBUG: b2Assert(node.height === 0);
+              return;
+          }
+          const child1 = verify(node.child1);
+          const child2 = verify(node.child2);
+          // DEBUG: const height1: number = child1.height;
+          // DEBUG: const height2: number = child2.height;
+          // DEBUG: const height: number = 1 + b2Max(height1, height2);
+          // DEBUG: b2Assert(node.height === height);
+          const aabb = b2DynamicTree.s_aabb;
+          aabb.Combine2(child1.aabb, child2.aabb);
+          // DEBUG: b2Assert(aabb.lowerBound === node.aabb.lowerBound);
+          // DEBUG: b2Assert(aabb.upperBound === node.aabb.upperBound);
+          this.ValidateMetrics(child1);
+          this.ValidateMetrics(child2);
+      }
+      Validate() {
+          // DEBUG: this.ValidateStructure(this.m_root);
+          // DEBUG: this.ValidateMetrics(this.m_root);
+          // let freeCount: number = 0;
+          // let freeIndex: b2TreeNode<T> | null = this.m_freeList;
+          // while (freeIndex !== null) {
+          //   freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
+          //   ++freeCount;
+          // }
+          // DEBUG: b2Assert(this.GetHeight() === this.ComputeHeight());
+          // b2Assert(this.m_nodeCount + freeCount === this.m_nodeCapacity);
+      }
+      static GetMaxBalanceNode(node, maxBalance) {
+          if (node === null) {
+              return maxBalance;
+          }
+          if (node.height <= 1) {
+              return maxBalance;
+          }
+          // DEBUG: b2Assert(!node.IsLeaf());
+          const child1 = verify(node.child1);
+          const child2 = verify(node.child2);
+          const balance = b2Abs(child2.height - child1.height);
+          return b2Max(maxBalance, balance);
+      }
+      GetMaxBalance() {
+          const maxBalance = b2DynamicTree.GetMaxBalanceNode(this.m_root, 0);
+          /*
+          int32 maxBalance = 0;
+          for (int32 i = 0; i < m_nodeCapacity; ++i) {
+            const b2TreeNode<T>* node = m_nodes + i;
+            if (node.height <= 1) {
+              continue;
+            }
+      
+            b2Assert(!node.IsLeaf());
+      
+            int32 child1 = node.child1;
+            int32 child2 = node.child2;
+            int32 balance = b2Abs(m_nodes[child2].height - m_nodes[child1].height);
+            maxBalance = b2Max(maxBalance, balance);
+          }
+          */
+          return maxBalance;
+      }
+      RebuildBottomUp() {
+          /*
+          int32* nodes = (int32*)b2Alloc(m_nodeCount * sizeof(int32));
+          int32 count = 0;
+      
+          // Build array of leaves. Free the rest.
+          for (int32 i = 0; i < m_nodeCapacity; ++i) {
+            if (m_nodes[i].height < 0) {
+              // free node in pool
+              continue;
+            }
+      
+            if (m_nodes[i].IsLeaf()) {
+              m_nodes[i].parent = b2_nullNode;
+              nodes[count] = i;
+              ++count;
+            } else {
+              FreeNode(i);
+            }
+          }
+      
+          while (count > 1) {
+            float32 minCost = b2_maxFloat;
+            int32 iMin = -1, jMin = -1;
+            for (int32 i = 0; i < count; ++i) {
+              b2AABB aabbi = m_nodes[nodes[i]].aabb;
+      
+              for (int32 j = i + 1; j < count; ++j) {
+                b2AABB aabbj = m_nodes[nodes[j]].aabb;
+                b2AABB b;
+                b.Combine(aabbi, aabbj);
+                float32 cost = b.GetPerimeter();
+                if (cost < minCost) {
+                  iMin = i;
+                  jMin = j;
+                  minCost = cost;
+                }
+              }
+            }
+      
+            int32 index1 = nodes[iMin];
+            int32 index2 = nodes[jMin];
+            b2TreeNode<T>* child1 = m_nodes + index1;
+            b2TreeNode<T>* child2 = m_nodes + index2;
+      
+            int32 parentIndex = AllocateNode();
+            b2TreeNode<T>* parent = m_nodes + parentIndex;
+            parent.child1 = index1;
+            parent.child2 = index2;
+            parent.height = 1 + b2Max(child1.height, child2.height);
+            parent.aabb.Combine(child1.aabb, child2.aabb);
+            parent.parent = b2_nullNode;
+      
+            child1.parent = parentIndex;
+            child2.parent = parentIndex;
+      
+            nodes[jMin] = nodes[count-1];
+            nodes[iMin] = parentIndex;
+            --count;
+          }
+      
+          m_root = nodes[0];
+          b2Free(nodes);
+          */
+          this.Validate();
+      }
+      static ShiftOriginNode(node, newOrigin) {
+          if (node === null) {
+              return;
+          }
+          if (node.height <= 1) {
+              return;
+          }
+          // DEBUG: b2Assert(!node.IsLeaf());
+          const child1 = node.child1;
+          const child2 = node.child2;
+          b2DynamicTree.ShiftOriginNode(child1, newOrigin);
+          b2DynamicTree.ShiftOriginNode(child2, newOrigin);
+          node.aabb.lowerBound.SelfSub(newOrigin);
+          node.aabb.upperBound.SelfSub(newOrigin);
+      }
+      ShiftOrigin(newOrigin) {
+          b2DynamicTree.ShiftOriginNode(this.m_root, newOrigin);
+          /*
+          // Build array of leaves. Free the rest.
+          for (int32 i = 0; i < m_nodeCapacity; ++i) {
+            m_nodes[i].aabb.lowerBound -= newOrigin;
+            m_nodes[i].aabb.upperBound -= newOrigin;
+          }
+          */
+      }
+  }
+  b2DynamicTree.s_r = new b2Vec2();
+  b2DynamicTree.s_v = new b2Vec2();
+  b2DynamicTree.s_abs_v = new b2Vec2();
+  b2DynamicTree.s_segmentAABB = new b2AABB();
+  b2DynamicTree.s_subInput = new b2RayCastInput();
+  b2DynamicTree.s_combinedAABB = new b2AABB();
+  b2DynamicTree.s_aabb = new b2AABB();
+  b2DynamicTree.s_node_id = 0;
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class b2Pair {
+      constructor(proxyA, proxyB) {
+          this.proxyA = proxyA;
+          this.proxyB = proxyB;
+      }
+  }
+  /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
+  /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
+  /// It is up to the client to consume the new pairs and to track subsequent overlap.
+  class b2BroadPhase {
+      constructor() {
+          this.m_tree = new b2DynamicTree();
+          this.m_proxyCount = 0;
+          // public m_moveCapacity: number = 16;
+          this.m_moveCount = 0;
+          this.m_moveBuffer = [];
+          // public m_pairCapacity: number = 16;
+          this.m_pairCount = 0;
+          this.m_pairBuffer = [];
+      }
+      // public m_queryProxyId: number = 0;
+      /// Create a proxy with an initial AABB. Pairs are not reported until
+      /// UpdatePairs is called.
+      CreateProxy(aabb, userData) {
+          const proxy = this.m_tree.CreateProxy(aabb, userData);
+          ++this.m_proxyCount;
+          this.BufferMove(proxy);
+          return proxy;
+      }
+      /// Destroy a proxy. It is up to the client to remove any pairs.
+      DestroyProxy(proxy) {
+          this.UnBufferMove(proxy);
+          --this.m_proxyCount;
+          this.m_tree.DestroyProxy(proxy);
+      }
+      /// Call MoveProxy as many times as you like, then when you are done
+      /// call UpdatePairs to finalized the proxy pairs (for your time step).
+      MoveProxy(proxy, aabb, displacement) {
+          const buffer = this.m_tree.MoveProxy(proxy, aabb, displacement);
+          if (buffer) {
+              this.BufferMove(proxy);
+          }
+      }
+      /// Call to trigger a re-processing of it's pairs on the next call to UpdatePairs.
+      TouchProxy(proxy) {
+          this.BufferMove(proxy);
+      }
+      /// Get the fat AABB for a proxy.
+      // public GetFatAABB(proxy: b2TreeNode<T>): b2AABB {
+      //   return this.m_tree.GetFatAABB(proxy);
+      // }
+      /// Get user data from a proxy. Returns NULL if the id is invalid.
+      // public GetUserData(proxy: b2TreeNode<T>): T {
+      //   return this.m_tree.GetUserData(proxy);
+      // }
+      /// Test overlap of fat AABBs.
+      // public TestOverlap(proxyA: b2TreeNode<T>, proxyB: b2TreeNode<T>): boolean {
+      //   const aabbA: b2AABB = this.m_tree.GetFatAABB(proxyA);
+      //   const aabbB: b2AABB = this.m_tree.GetFatAABB(proxyB);
+      //   return b2TestOverlapAABB(aabbA, aabbB);
+      // }
+      /// Get the number of proxies.
+      GetProxyCount() {
+          return this.m_proxyCount;
+      }
+      /// Update the pairs. This results in pair callbacks. This can only add pairs.
+      UpdatePairs(callback) {
+          // Reset pair buffer
+          this.m_pairCount = 0;
+          // Perform tree queries for all moving proxies.
+          for (let i = 0; i < this.m_moveCount; ++i) {
+              const queryProxy = this.m_moveBuffer[i];
+              if (queryProxy === null) {
+                  continue;
+              }
+              // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
+              // boolean b2BroadPhase::QueryCallback(int32 proxyId);
+              // We have to query the tree with the fat AABB so that
+              // we don't fail to create a pair that may touch later.
+              const fatAABB = queryProxy.aabb; // this.m_tree.GetFatAABB(queryProxy);
+              // Query tree, create pairs and add them pair buffer.
+              this.m_tree.Query(fatAABB, (proxy) => {
+                  // A proxy cannot form a pair with itself.
+                  if (proxy.m_id === queryProxy.m_id) {
+                      return true;
+                  }
+                  // const proxyA = proxy < queryProxy ? proxy : queryProxy;
+                  // const proxyB = proxy >= queryProxy ? proxy : queryProxy;
+                  let proxyA;
+                  let proxyB;
+                  if (proxy.m_id < queryProxy.m_id) {
+                      proxyA = proxy;
+                      proxyB = queryProxy;
+                  }
+                  else {
+                      proxyA = queryProxy;
+                      proxyB = proxy;
+                  }
+                  // Grow the pair buffer as needed.
+                  if (this.m_pairCount === this.m_pairBuffer.length) {
+                      this.m_pairBuffer[this.m_pairCount] = new b2Pair(proxyA, proxyB);
+                  }
+                  else {
+                      const pair = this.m_pairBuffer[this.m_pairCount];
+                      pair.proxyA = proxyA;
+                      pair.proxyB = proxyB;
+                  }
+                  ++this.m_pairCount;
+                  return true;
+              });
+          }
+          // Reset move buffer
+          this.m_moveCount = 0;
+          // Sort the pair buffer to expose duplicates.
+          this.m_pairBuffer.length = this.m_pairCount;
+          this.m_pairBuffer.sort(b2PairLessThan);
+          // Send the pairs back to the client.
+          let i = 0;
+          while (i < this.m_pairCount) {
+              const primaryPair = this.m_pairBuffer[i];
+              const userDataA = primaryPair.proxyA.userData; // this.m_tree.GetUserData(primaryPair.proxyA);
+              const userDataB = primaryPair.proxyB.userData; // this.m_tree.GetUserData(primaryPair.proxyB);
+              callback(userDataA, userDataB);
+              ++i;
+              // Skip any duplicate pairs.
+              while (i < this.m_pairCount) {
+                  const pair = this.m_pairBuffer[i];
+                  if (pair.proxyA.m_id !== primaryPair.proxyA.m_id || pair.proxyB.m_id !== primaryPair.proxyB.m_id) {
+                      break;
+                  }
+                  ++i;
+              }
+          }
+          // Try to keep the tree balanced.
+          // this.m_tree.Rebalance(4);
+      }
+      /// Query an AABB for overlapping proxies. The callback class
+      /// is called for each proxy that overlaps the supplied AABB.
+      Query(aabb, callback) {
+          this.m_tree.Query(aabb, callback);
+      }
+      QueryPoint(point, callback) {
+          this.m_tree.QueryPoint(point, callback);
+      }
+      /// Ray-cast against the proxies in the tree. This relies on the callback
+      /// to perform a exact ray-cast in the case were the proxy contains a shape.
+      /// The callback also performs the any collision filtering. This has performance
+      /// roughly equal to k * log(n), where k is the number of collisions and n is the
+      /// number of proxies in the tree.
+      /// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
+      /// @param callback a callback class that is called for each proxy that is hit by the ray.
+      RayCast(input, callback) {
+          this.m_tree.RayCast(input, callback);
+      }
+      /// Get the height of the embedded tree.
+      GetTreeHeight() {
+          return this.m_tree.GetHeight();
+      }
+      /// Get the balance of the embedded tree.
+      GetTreeBalance() {
+          return this.m_tree.GetMaxBalance();
+      }
+      /// Get the quality metric of the embedded tree.
+      GetTreeQuality() {
+          return this.m_tree.GetAreaRatio();
+      }
+      /// Shift the world origin. Useful for large worlds.
+      /// The shift formula is: position -= newOrigin
+      /// @param newOrigin the new origin with respect to the old origin
+      ShiftOrigin(newOrigin) {
+          this.m_tree.ShiftOrigin(newOrigin);
+      }
+      BufferMove(proxy) {
+          this.m_moveBuffer[this.m_moveCount] = proxy;
+          ++this.m_moveCount;
+      }
+      UnBufferMove(proxy) {
+          const i = this.m_moveBuffer.indexOf(proxy);
+          this.m_moveBuffer[i] = null;
+      }
+  }
+  /// This is used to sort pairs.
+  function b2PairLessThan(pair1, pair2) {
+      if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
+          return pair1.proxyB.m_id - pair2.proxyB.m_id;
+      }
+      return pair1.proxyA.m_id - pair2.proxyA.m_id;
+  }
+
+  /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
   *
   * This software is provided 'as-is', without any express or implied
@@ -2607,6 +3610,881 @@
       const time = timer.GetMilliseconds();
   }
 
+  const b2CollideCircles_s_pA = new b2Vec2();
+  const b2CollideCircles_s_pB = new b2Vec2();
+  function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
+      manifold.pointCount = 0;
+      const pA = b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
+      const pB = b2Transform.MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
+      const distSqr = b2Vec2.DistanceSquaredVV(pA, pB);
+      const radius = circleA.m_radius + circleB.m_radius;
+      if (distSqr > radius * radius) {
+          return;
+      }
+      manifold.type = b2ManifoldType.e_circles;
+      manifold.localPoint.Copy(circleA.m_p);
+      manifold.localNormal.SetZero();
+      manifold.pointCount = 1;
+      manifold.points[0].localPoint.Copy(circleB.m_p);
+      manifold.points[0].id.key = 0;
+  }
+  const b2CollidePolygonAndCircle_s_c = new b2Vec2();
+  const b2CollidePolygonAndCircle_s_cLocal = new b2Vec2();
+  const b2CollidePolygonAndCircle_s_faceCenter = new b2Vec2();
+  function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB) {
+      manifold.pointCount = 0;
+      // Compute circle position in the frame of the polygon.
+      const c = b2Transform.MulXV(xfB, circleB.m_p, b2CollidePolygonAndCircle_s_c);
+      const cLocal = b2Transform.MulTXV(xfA, c, b2CollidePolygonAndCircle_s_cLocal);
+      // Find the min separating edge.
+      let normalIndex = 0;
+      let separation = (-b2_maxFloat);
+      const radius = polygonA.m_radius + circleB.m_radius;
+      const vertexCount = polygonA.m_count;
+      const vertices = polygonA.m_vertices;
+      const normals = polygonA.m_normals;
+      for (let i = 0; i < vertexCount; ++i) {
+          const s = b2Vec2.DotVV(normals[i], b2Vec2.SubVV(cLocal, vertices[i], b2Vec2.s_t0));
+          if (s > radius) {
+              // Early out.
+              return;
+          }
+          if (s > separation) {
+              separation = s;
+              normalIndex = i;
+          }
+      }
+      // Vertices that subtend the incident face.
+      const vertIndex1 = normalIndex;
+      const vertIndex2 = (vertIndex1 + 1) % vertexCount;
+      const v1 = vertices[vertIndex1];
+      const v2 = vertices[vertIndex2];
+      // If the center is inside the polygon ...
+      if (separation < b2_epsilon) {
+          manifold.pointCount = 1;
+          manifold.type = b2ManifoldType.e_faceA;
+          manifold.localNormal.Copy(normals[normalIndex]);
+          b2Vec2.MidVV(v1, v2, manifold.localPoint);
+          manifold.points[0].localPoint.Copy(circleB.m_p);
+          manifold.points[0].id.key = 0;
+          return;
+      }
+      // Compute barycentric coordinates
+      const u1 = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, v1, b2Vec2.s_t0), b2Vec2.SubVV(v2, v1, b2Vec2.s_t1));
+      const u2 = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, v2, b2Vec2.s_t0), b2Vec2.SubVV(v1, v2, b2Vec2.s_t1));
+      if (u1 <= 0) {
+          if (b2Vec2.DistanceSquaredVV(cLocal, v1) > radius * radius) {
+              return;
+          }
+          manifold.pointCount = 1;
+          manifold.type = b2ManifoldType.e_faceA;
+          b2Vec2.SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
+          manifold.localPoint.Copy(v1);
+          manifold.points[0].localPoint.Copy(circleB.m_p);
+          manifold.points[0].id.key = 0;
+      }
+      else if (u2 <= 0) {
+          if (b2Vec2.DistanceSquaredVV(cLocal, v2) > radius * radius) {
+              return;
+          }
+          manifold.pointCount = 1;
+          manifold.type = b2ManifoldType.e_faceA;
+          b2Vec2.SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
+          manifold.localPoint.Copy(v2);
+          manifold.points[0].localPoint.Copy(circleB.m_p);
+          manifold.points[0].id.key = 0;
+      }
+      else {
+          const faceCenter = b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
+          const separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
+          if (separation > radius) {
+              return;
+          }
+          manifold.pointCount = 1;
+          manifold.type = b2ManifoldType.e_faceA;
+          manifold.localNormal.Copy(normals[vertIndex1]).SelfNormalize();
+          manifold.localPoint.Copy(faceCenter);
+          manifold.points[0].localPoint.Copy(circleB.m_p);
+          manifold.points[0].id.key = 0;
+      }
+  }
+
+  // DEBUG: import { b2Assert } from "../Common/b2Settings";
+  const b2EdgeSeparation_s_normal1World = new b2Vec2();
+  const b2EdgeSeparation_s_normal1 = new b2Vec2();
+  const b2EdgeSeparation_s_v1 = new b2Vec2();
+  const b2EdgeSeparation_s_v2 = new b2Vec2();
+  function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
+      // DEBUG: const count1: number = poly1.m_count;
+      const vertices1 = poly1.m_vertices;
+      const normals1 = poly1.m_normals;
+      const count2 = poly2.m_count;
+      const vertices2 = poly2.m_vertices;
+      // DEBUG: b2Assert(0 <= edge1 && edge1 < count1);
+      // Convert normal from poly1's frame into poly2's frame.
+      const normal1World = b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
+      const normal1 = b2Rot.MulTRV(xf2.q, normal1World, b2EdgeSeparation_s_normal1);
+      // Find support vertex on poly2 for -normal.
+      let index = 0;
+      let minDot = b2_maxFloat;
+      for (let i = 0; i < count2; ++i) {
+          const dot = b2Vec2.DotVV(vertices2[i], normal1);
+          if (dot < minDot) {
+              minDot = dot;
+              index = i;
+          }
+      }
+      const v1 = b2Transform.MulXV(xf1, vertices1[edge1], b2EdgeSeparation_s_v1);
+      const v2 = b2Transform.MulXV(xf2, vertices2[index], b2EdgeSeparation_s_v2);
+      const separation = b2Vec2.DotVV(b2Vec2.SubVV(v2, v1, b2Vec2.s_t0), normal1World);
+      return separation;
+  }
+  const b2FindMaxSeparation_s_d = new b2Vec2();
+  const b2FindMaxSeparation_s_dLocal1 = new b2Vec2();
+  function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
+      const count1 = poly1.m_count;
+      const normals1 = poly1.m_normals;
+      // Vector pointing from the centroid of poly1 to the centroid of poly2.
+      const d = b2Vec2.SubVV(b2Transform.MulXV(xf2, poly2.m_centroid, b2Vec2.s_t0), b2Transform.MulXV(xf1, poly1.m_centroid, b2Vec2.s_t1), b2FindMaxSeparation_s_d);
+      const dLocal1 = b2Rot.MulTRV(xf1.q, d, b2FindMaxSeparation_s_dLocal1);
+      // Find edge normal on poly1 that has the largest projection onto d.
+      let edge = 0;
+      let maxDot = (-b2_maxFloat);
+      for (let i = 0; i < count1; ++i) {
+          const dot = b2Vec2.DotVV(normals1[i], dLocal1);
+          if (dot > maxDot) {
+              maxDot = dot;
+              edge = i;
+          }
+      }
+      // Get the separation for the edge normal.
+      let s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
+      // Check the separation for the previous edge normal.
+      const prevEdge = (edge + count1 - 1) % count1;
+      const sPrev = b2EdgeSeparation(poly1, xf1, prevEdge, poly2, xf2);
+      // Check the separation for the next edge normal.
+      const nextEdge = (edge + 1) % count1;
+      const sNext = b2EdgeSeparation(poly1, xf1, nextEdge, poly2, xf2);
+      // Find the best edge and the search direction.
+      let bestEdge = 0;
+      let bestSeparation = 0;
+      let increment = 0;
+      if (sPrev > s && sPrev > sNext) {
+          increment = -1;
+          bestEdge = prevEdge;
+          bestSeparation = sPrev;
+      }
+      else if (sNext > s) {
+          increment = 1;
+          bestEdge = nextEdge;
+          bestSeparation = sNext;
+      }
+      else {
+          edgeIndex[0] = edge;
+          return s;
+      }
+      // Perform a local search for the best edge normal.
+      while (true) {
+          if (increment === -1) {
+              edge = (bestEdge + count1 - 1) % count1;
+          }
+          else {
+              edge = (bestEdge + 1) % count1;
+          }
+          s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
+          if (s > bestSeparation) {
+              bestEdge = edge;
+              bestSeparation = s;
+          }
+          else {
+              break;
+          }
+      }
+      edgeIndex[0] = bestEdge;
+      return bestSeparation;
+  }
+  const b2FindIncidentEdge_s_normal1 = new b2Vec2();
+  function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
+      // DEBUG: const count1: number = poly1.m_count;
+      const normals1 = poly1.m_normals;
+      const count2 = poly2.m_count;
+      const vertices2 = poly2.m_vertices;
+      const normals2 = poly2.m_normals;
+      // DEBUG: b2Assert(0 <= edge1 && edge1 < count1);
+      // Get the normal of the reference edge in poly2's frame.
+      const normal1 = b2Rot.MulTRV(xf2.q, b2Rot.MulRV(xf1.q, normals1[edge1], b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
+      // Find the incident edge on poly2.
+      let index = 0;
+      let minDot = b2_maxFloat;
+      for (let i = 0; i < count2; ++i) {
+          const dot = b2Vec2.DotVV(normal1, normals2[i]);
+          if (dot < minDot) {
+              minDot = dot;
+              index = i;
+          }
+      }
+      // Build the clip vertices for the incident edge.
+      const i1 = index;
+      const i2 = (i1 + 1) % count2;
+      const c0 = c[0];
+      b2Transform.MulXV(xf2, vertices2[i1], c0.v);
+      const cf0 = c0.id.cf;
+      cf0.indexA = edge1;
+      cf0.indexB = i1;
+      cf0.typeA = b2ContactFeatureType.e_face;
+      cf0.typeB = b2ContactFeatureType.e_vertex;
+      const c1 = c[1];
+      b2Transform.MulXV(xf2, vertices2[i2], c1.v);
+      const cf1 = c1.id.cf;
+      cf1.indexA = edge1;
+      cf1.indexB = i2;
+      cf1.typeA = b2ContactFeatureType.e_face;
+      cf1.typeB = b2ContactFeatureType.e_vertex;
+  }
+  const b2CollidePolygons_s_incidentEdge = b2ClipVertex.MakeArray(2);
+  const b2CollidePolygons_s_clipPoints1 = b2ClipVertex.MakeArray(2);
+  const b2CollidePolygons_s_clipPoints2 = b2ClipVertex.MakeArray(2);
+  const b2CollidePolygons_s_edgeA = [0];
+  const b2CollidePolygons_s_edgeB = [0];
+  const b2CollidePolygons_s_localTangent = new b2Vec2();
+  const b2CollidePolygons_s_localNormal = new b2Vec2();
+  const b2CollidePolygons_s_planePoint = new b2Vec2();
+  const b2CollidePolygons_s_normal = new b2Vec2();
+  const b2CollidePolygons_s_tangent = new b2Vec2();
+  const b2CollidePolygons_s_ntangent = new b2Vec2();
+  const b2CollidePolygons_s_v11 = new b2Vec2();
+  const b2CollidePolygons_s_v12 = new b2Vec2();
+  function b2CollidePolygons(manifold, polyA, xfA, polyB, xfB) {
+      manifold.pointCount = 0;
+      const totalRadius = polyA.m_radius + polyB.m_radius;
+      const edgeA = b2CollidePolygons_s_edgeA;
+      edgeA[0] = 0;
+      const separationA = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
+      if (separationA > totalRadius) {
+          return;
+      }
+      const edgeB = b2CollidePolygons_s_edgeB;
+      edgeB[0] = 0;
+      const separationB = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
+      if (separationB > totalRadius) {
+          return;
+      }
+      let poly1; // reference polygon
+      let poly2; // incident polygon
+      let xf1, xf2;
+      let edge1 = 0; // reference edge
+      let flip = 0;
+      const k_relativeTol = 0.98;
+      const k_absoluteTol = 0.001;
+      if (separationB > k_relativeTol * separationA + k_absoluteTol) {
+          poly1 = polyB;
+          poly2 = polyA;
+          xf1 = xfB;
+          xf2 = xfA;
+          edge1 = edgeB[0];
+          manifold.type = b2ManifoldType.e_faceB;
+          flip = 1;
+      }
+      else {
+          poly1 = polyA;
+          poly2 = polyB;
+          xf1 = xfA;
+          xf2 = xfB;
+          edge1 = edgeA[0];
+          manifold.type = b2ManifoldType.e_faceA;
+          flip = 0;
+      }
+      const incidentEdge = b2CollidePolygons_s_incidentEdge;
+      b2FindIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
+      const count1 = poly1.m_count;
+      const vertices1 = poly1.m_vertices;
+      const iv1 = edge1;
+      const iv2 = (edge1 + 1) % count1;
+      const local_v11 = vertices1[iv1];
+      const local_v12 = vertices1[iv2];
+      const localTangent = b2Vec2.SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
+      localTangent.Normalize();
+      const localNormal = b2Vec2.CrossVOne(localTangent, b2CollidePolygons_s_localNormal);
+      const planePoint = b2Vec2.MidVV(local_v11, local_v12, b2CollidePolygons_s_planePoint);
+      const tangent = b2Rot.MulRV(xf1.q, localTangent, b2CollidePolygons_s_tangent);
+      const normal = b2Vec2.CrossVOne(tangent, b2CollidePolygons_s_normal);
+      const v11 = b2Transform.MulXV(xf1, local_v11, b2CollidePolygons_s_v11);
+      const v12 = b2Transform.MulXV(xf1, local_v12, b2CollidePolygons_s_v12);
+      // Face offset.
+      const frontOffset = b2Vec2.DotVV(normal, v11);
+      // Side offsets, extended by polytope skin thickness.
+      const sideOffset1 = -b2Vec2.DotVV(tangent, v11) + totalRadius;
+      const sideOffset2 = b2Vec2.DotVV(tangent, v12) + totalRadius;
+      // Clip incident edge against extruded edge1 side edges.
+      const clipPoints1 = b2CollidePolygons_s_clipPoints1;
+      const clipPoints2 = b2CollidePolygons_s_clipPoints2;
+      let np;
+      // Clip to box side 1
+      const ntangent = b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
+      np = b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
+      if (np < 2) {
+          return;
+      }
+      // Clip to negative box side 1
+      np = b2ClipSegmentToLine(clipPoints2, clipPoints1, tangent, sideOffset2, iv2);
+      if (np < 2) {
+          return;
+      }
+      // Now clipPoints2 contains the clipped points.
+      manifold.localNormal.Copy(localNormal);
+      manifold.localPoint.Copy(planePoint);
+      let pointCount = 0;
+      for (let i = 0; i < b2_maxManifoldPoints; ++i) {
+          const cv = clipPoints2[i];
+          const separation = b2Vec2.DotVV(normal, cv.v) - frontOffset;
+          if (separation <= totalRadius) {
+              const cp = manifold.points[pointCount];
+              b2Transform.MulTXV(xf2, cv.v, cp.localPoint);
+              cp.id.Copy(cv.id);
+              if (flip) {
+                  // Swap features
+                  const cf = cp.id.cf;
+                  cp.id.cf.indexA = cf.indexB;
+                  cp.id.cf.indexB = cf.indexA;
+                  cp.id.cf.typeA = cf.typeB;
+                  cp.id.cf.typeB = cf.typeA;
+              }
+              ++pointCount;
+          }
+      }
+      manifold.pointCount = pointCount;
+  }
+
+  // DEBUG: import { b2Assert } from "../Common/b2Settings";
+  const b2CollideEdgeAndCircle_s_Q = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_e = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_d = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_e1 = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_e2 = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_P = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_n = new b2Vec2();
+  const b2CollideEdgeAndCircle_s_id = new b2ContactID();
+  function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
+      manifold.pointCount = 0;
+      // Compute circle in frame of edge
+      const Q = b2Transform.MulTXV(xfA, b2Transform.MulXV(xfB, circleB.m_p, b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
+      const A = edgeA.m_vertex1;
+      const B = edgeA.m_vertex2;
+      const e = b2Vec2.SubVV(B, A, b2CollideEdgeAndCircle_s_e);
+      // Barycentric coordinates
+      const u = b2Vec2.DotVV(e, b2Vec2.SubVV(B, Q, b2Vec2.s_t0));
+      const v = b2Vec2.DotVV(e, b2Vec2.SubVV(Q, A, b2Vec2.s_t0));
+      const radius = edgeA.m_radius + circleB.m_radius;
+      // const cf: b2ContactFeature = new b2ContactFeature();
+      const id = b2CollideEdgeAndCircle_s_id;
+      id.cf.indexB = 0;
+      id.cf.typeB = b2ContactFeatureType.e_vertex;
+      // Region A
+      if (v <= 0) {
+          const P = A;
+          const d = b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+          const dd = b2Vec2.DotVV(d, d);
+          if (dd > radius * radius) {
+              return;
+          }
+          // Is there an edge connected to A?
+          if (edgeA.m_hasVertex0) {
+              const A1 = edgeA.m_vertex0;
+              const B1 = A;
+              const e1 = b2Vec2.SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
+              const u1 = b2Vec2.DotVV(e1, b2Vec2.SubVV(B1, Q, b2Vec2.s_t0));
+              // Is the circle in Region AB of the previous edge?
+              if (u1 > 0) {
+                  return;
+              }
+          }
+          id.cf.indexA = 0;
+          id.cf.typeA = b2ContactFeatureType.e_vertex;
+          manifold.pointCount = 1;
+          manifold.type = b2ManifoldType.e_circles;
+          manifold.localNormal.SetZero();
+          manifold.localPoint.Copy(P);
+          manifold.points[0].id.Copy(id);
+          // manifold.points[0].id.key = 0;
+          // manifold.points[0].id.cf = cf;
+          manifold.points[0].localPoint.Copy(circleB.m_p);
+          return;
+      }
+      // Region B
+      if (u <= 0) {
+          const P = B;
+          const d = b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+          const dd = b2Vec2.DotVV(d, d);
+          if (dd > radius * radius) {
+              return;
+          }
+          // Is there an edge connected to B?
+          if (edgeA.m_hasVertex3) {
+              const B2 = edgeA.m_vertex3;
+              const A2 = B;
+              const e2 = b2Vec2.SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
+              const v2 = b2Vec2.DotVV(e2, b2Vec2.SubVV(Q, A2, b2Vec2.s_t0));
+              // Is the circle in Region AB of the next edge?
+              if (v2 > 0) {
+                  return;
+              }
+          }
+          id.cf.indexA = 1;
+          id.cf.typeA = b2ContactFeatureType.e_vertex;
+          manifold.pointCount = 1;
+          manifold.type = b2ManifoldType.e_circles;
+          manifold.localNormal.SetZero();
+          manifold.localPoint.Copy(P);
+          manifold.points[0].id.Copy(id);
+          // manifold.points[0].id.key = 0;
+          // manifold.points[0].id.cf = cf;
+          manifold.points[0].localPoint.Copy(circleB.m_p);
+          return;
+      }
+      // Region AB
+      const den = b2Vec2.DotVV(e, e);
+      // DEBUG: b2Assert(den > 0);
+      const P = b2CollideEdgeAndCircle_s_P;
+      P.x = (1 / den) * (u * A.x + v * B.x);
+      P.y = (1 / den) * (u * A.y + v * B.y);
+      const d = b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
+      const dd = b2Vec2.DotVV(d, d);
+      if (dd > radius * radius) {
+          return;
+      }
+      const n = b2CollideEdgeAndCircle_s_n.Set(-e.y, e.x);
+      if (b2Vec2.DotVV(n, b2Vec2.SubVV(Q, A, b2Vec2.s_t0)) < 0) {
+          n.Set(-n.x, -n.y);
+      }
+      n.Normalize();
+      id.cf.indexA = 0;
+      id.cf.typeA = b2ContactFeatureType.e_face;
+      manifold.pointCount = 1;
+      manifold.type = b2ManifoldType.e_faceA;
+      manifold.localNormal.Copy(n);
+      manifold.localPoint.Copy(A);
+      manifold.points[0].id.Copy(id);
+      // manifold.points[0].id.key = 0;
+      // manifold.points[0].id.cf = cf;
+      manifold.points[0].localPoint.Copy(circleB.m_p);
+  }
+  class b2EPAxis {
+      constructor() {
+          this.type = 0 /* e_unknown */;
+          this.index = 0;
+          this.separation = 0;
+      }
+  }
+  class b2TempPolygon {
+      constructor() {
+          this.vertices = b2Vec2.MakeArray(b2_maxPolygonVertices);
+          this.normals = b2Vec2.MakeArray(b2_maxPolygonVertices);
+          this.count = 0;
+      }
+  }
+  class b2ReferenceFace {
+      constructor() {
+          this.i1 = 0;
+          this.i2 = 0;
+          this.v1 = new b2Vec2();
+          this.v2 = new b2Vec2();
+          this.normal = new b2Vec2();
+          this.sideNormal1 = new b2Vec2();
+          this.sideOffset1 = 0;
+          this.sideNormal2 = new b2Vec2();
+          this.sideOffset2 = 0;
+      }
+  }
+  class b2EPCollider {
+      constructor() {
+          this.m_polygonB = new b2TempPolygon();
+          this.m_xf = new b2Transform();
+          this.m_centroidB = new b2Vec2();
+          this.m_v0 = new b2Vec2();
+          this.m_v1 = new b2Vec2();
+          this.m_v2 = new b2Vec2();
+          this.m_v3 = new b2Vec2();
+          this.m_normal0 = new b2Vec2();
+          this.m_normal1 = new b2Vec2();
+          this.m_normal2 = new b2Vec2();
+          this.m_normal = new b2Vec2();
+          this.m_type1 = 0 /* e_isolated */;
+          this.m_type2 = 0 /* e_isolated */;
+          this.m_lowerLimit = new b2Vec2();
+          this.m_upperLimit = new b2Vec2();
+          this.m_radius = 0;
+          this.m_front = false;
+      }
+      Collide(manifold, edgeA, xfA, polygonB, xfB) {
+          b2Transform.MulTXX(xfA, xfB, this.m_xf);
+          b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
+          this.m_v0.Copy(edgeA.m_vertex0);
+          this.m_v1.Copy(edgeA.m_vertex1);
+          this.m_v2.Copy(edgeA.m_vertex2);
+          this.m_v3.Copy(edgeA.m_vertex3);
+          const hasVertex0 = edgeA.m_hasVertex0;
+          const hasVertex3 = edgeA.m_hasVertex3;
+          const edge1 = b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
+          edge1.Normalize();
+          this.m_normal1.Set(edge1.y, -edge1.x);
+          const offset1 = b2Vec2.DotVV(this.m_normal1, b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Vec2.s_t0));
+          let offset0 = 0;
+          let offset2 = 0;
+          let convex1 = false;
+          let convex2 = false;
+          // Is there a preceding edge?
+          if (hasVertex0) {
+              const edge0 = b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
+              edge0.Normalize();
+              this.m_normal0.Set(edge0.y, -edge0.x);
+              convex1 = b2Vec2.CrossVV(edge0, edge1) >= 0;
+              offset0 = b2Vec2.DotVV(this.m_normal0, b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Vec2.s_t0));
+          }
+          // Is there a following edge?
+          if (hasVertex3) {
+              const edge2 = b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
+              edge2.Normalize();
+              this.m_normal2.Set(edge2.y, -edge2.x);
+              convex2 = b2Vec2.CrossVV(edge1, edge2) > 0;
+              offset2 = b2Vec2.DotVV(this.m_normal2, b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Vec2.s_t0));
+          }
+          // Determine front or back collision. Determine collision normal limits.
+          if (hasVertex0 && hasVertex3) {
+              if (convex1 && convex2) {
+                  this.m_front = offset0 >= 0 || offset1 >= 0 || offset2 >= 0;
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal0);
+                      this.m_upperLimit.Copy(this.m_normal2);
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
+                  }
+              }
+              else if (convex1) {
+                  this.m_front = offset0 >= 0 || (offset1 >= 0 && offset2 >= 0);
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal0);
+                      this.m_upperLimit.Copy(this.m_normal1);
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal2).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
+                  }
+              }
+              else if (convex2) {
+                  this.m_front = offset2 >= 0 || (offset0 >= 0 && offset1 >= 0);
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal1);
+                      this.m_upperLimit.Copy(this.m_normal2);
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal0).SelfNeg();
+                  }
+              }
+              else {
+                  this.m_front = offset0 >= 0 && offset1 >= 0 && offset2 >= 0;
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal1);
+                      this.m_upperLimit.Copy(this.m_normal1);
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal2).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal0).SelfNeg();
+                  }
+              }
+          }
+          else if (hasVertex0) {
+              if (convex1) {
+                  this.m_front = offset0 >= 0 || offset1 >= 0;
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal0);
+                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal1);
+                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
+                  }
+              }
+              else {
+                  this.m_front = offset0 >= 0 && offset1 >= 0;
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal1);
+                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal1);
+                      this.m_upperLimit.Copy(this.m_normal0).SelfNeg();
+                  }
+              }
+          }
+          else if (hasVertex3) {
+              if (convex2) {
+                  this.m_front = offset1 >= 0 || offset2 >= 0;
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal2);
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal1);
+                  }
+              }
+              else {
+                  this.m_front = offset1 >= 0 && offset2 >= 0;
+                  if (this.m_front) {
+                      this.m_normal.Copy(this.m_normal1);
+                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal1);
+                  }
+                  else {
+                      this.m_normal.Copy(this.m_normal1).SelfNeg();
+                      this.m_lowerLimit.Copy(this.m_normal2).SelfNeg();
+                      this.m_upperLimit.Copy(this.m_normal1);
+                  }
+              }
+          }
+          else {
+              this.m_front = offset1 >= 0;
+              if (this.m_front) {
+                  this.m_normal.Copy(this.m_normal1);
+                  this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
+                  this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
+              }
+              else {
+                  this.m_normal.Copy(this.m_normal1).SelfNeg();
+                  this.m_lowerLimit.Copy(this.m_normal1);
+                  this.m_upperLimit.Copy(this.m_normal1);
+              }
+          }
+          // Get polygonB in frameA
+          this.m_polygonB.count = polygonB.m_count;
+          for (let i = 0; i < polygonB.m_count; ++i) {
+              b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
+              b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
+          }
+          this.m_radius = polygonB.m_radius + edgeA.m_radius;
+          manifold.pointCount = 0;
+          const edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
+          // If no valid normal can be found than this edge should not collide.
+          if (edgeAxis.type === 0 /* e_unknown */) {
+              return;
+          }
+          if (edgeAxis.separation > this.m_radius) {
+              return;
+          }
+          const polygonAxis = this.ComputePolygonSeparation(b2EPCollider.s_polygonAxis);
+          if (polygonAxis.type !== 0 /* e_unknown */ && polygonAxis.separation > this.m_radius) {
+              return;
+          }
+          // Use hysteresis for jitter reduction.
+          const k_relativeTol = 0.98;
+          const k_absoluteTol = 0.001;
+          let primaryAxis;
+          if (polygonAxis.type === 0 /* e_unknown */) {
+              primaryAxis = edgeAxis;
+          }
+          else if (polygonAxis.separation > k_relativeTol * edgeAxis.separation + k_absoluteTol) {
+              primaryAxis = polygonAxis;
+          }
+          else {
+              primaryAxis = edgeAxis;
+          }
+          const ie = b2EPCollider.s_ie;
+          const rf = b2EPCollider.s_rf;
+          if (primaryAxis.type === 1 /* e_edgeA */) {
+              manifold.type = b2ManifoldType.e_faceA;
+              // Search for the polygon normal that is most anti-parallel to the edge normal.
+              let bestIndex = 0;
+              let bestValue = b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
+              for (let i = 1; i < this.m_polygonB.count; ++i) {
+                  const value = b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
+                  if (value < bestValue) {
+                      bestValue = value;
+                      bestIndex = i;
+                  }
+              }
+              const i1 = bestIndex;
+              const i2 = (i1 + 1) % this.m_polygonB.count;
+              const ie0 = ie[0];
+              ie0.v.Copy(this.m_polygonB.vertices[i1]);
+              ie0.id.cf.indexA = 0;
+              ie0.id.cf.indexB = i1;
+              ie0.id.cf.typeA = b2ContactFeatureType.e_face;
+              ie0.id.cf.typeB = b2ContactFeatureType.e_vertex;
+              const ie1 = ie[1];
+              ie1.v.Copy(this.m_polygonB.vertices[i2]);
+              ie1.id.cf.indexA = 0;
+              ie1.id.cf.indexB = i2;
+              ie1.id.cf.typeA = b2ContactFeatureType.e_face;
+              ie1.id.cf.typeB = b2ContactFeatureType.e_vertex;
+              if (this.m_front) {
+                  rf.i1 = 0;
+                  rf.i2 = 1;
+                  rf.v1.Copy(this.m_v1);
+                  rf.v2.Copy(this.m_v2);
+                  rf.normal.Copy(this.m_normal1);
+              }
+              else {
+                  rf.i1 = 1;
+                  rf.i2 = 0;
+                  rf.v1.Copy(this.m_v2);
+                  rf.v2.Copy(this.m_v1);
+                  rf.normal.Copy(this.m_normal1).SelfNeg();
+              }
+          }
+          else {
+              manifold.type = b2ManifoldType.e_faceB;
+              const ie0 = ie[0];
+              ie0.v.Copy(this.m_v1);
+              ie0.id.cf.indexA = 0;
+              ie0.id.cf.indexB = primaryAxis.index;
+              ie0.id.cf.typeA = b2ContactFeatureType.e_vertex;
+              ie0.id.cf.typeB = b2ContactFeatureType.e_face;
+              const ie1 = ie[1];
+              ie1.v.Copy(this.m_v2);
+              ie1.id.cf.indexA = 0;
+              ie1.id.cf.indexB = primaryAxis.index;
+              ie1.id.cf.typeA = b2ContactFeatureType.e_vertex;
+              ie1.id.cf.typeB = b2ContactFeatureType.e_face;
+              rf.i1 = primaryAxis.index;
+              rf.i2 = (rf.i1 + 1) % this.m_polygonB.count;
+              rf.v1.Copy(this.m_polygonB.vertices[rf.i1]);
+              rf.v2.Copy(this.m_polygonB.vertices[rf.i2]);
+              rf.normal.Copy(this.m_polygonB.normals[rf.i1]);
+          }
+          rf.sideNormal1.Set(rf.normal.y, -rf.normal.x);
+          rf.sideNormal2.Copy(rf.sideNormal1).SelfNeg();
+          rf.sideOffset1 = b2Vec2.DotVV(rf.sideNormal1, rf.v1);
+          rf.sideOffset2 = b2Vec2.DotVV(rf.sideNormal2, rf.v2);
+          // Clip incident edge against extruded edge1 side edges.
+          const clipPoints1 = b2EPCollider.s_clipPoints1;
+          const clipPoints2 = b2EPCollider.s_clipPoints2;
+          let np = 0;
+          // Clip to box side 1
+          np = b2ClipSegmentToLine(clipPoints1, ie, rf.sideNormal1, rf.sideOffset1, rf.i1);
+          if (np < b2_maxManifoldPoints) {
+              return;
+          }
+          // Clip to negative box side 1
+          np = b2ClipSegmentToLine(clipPoints2, clipPoints1, rf.sideNormal2, rf.sideOffset2, rf.i2);
+          if (np < b2_maxManifoldPoints) {
+              return;
+          }
+          // Now clipPoints2 contains the clipped points.
+          if (primaryAxis.type === 1 /* e_edgeA */) {
+              manifold.localNormal.Copy(rf.normal);
+              manifold.localPoint.Copy(rf.v1);
+          }
+          else {
+              manifold.localNormal.Copy(polygonB.m_normals[rf.i1]);
+              manifold.localPoint.Copy(polygonB.m_vertices[rf.i1]);
+          }
+          let pointCount = 0;
+          for (let i = 0; i < b2_maxManifoldPoints; ++i) {
+              let separation;
+              separation = b2Vec2.DotVV(rf.normal, b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Vec2.s_t0));
+              if (separation <= this.m_radius) {
+                  const cp = manifold.points[pointCount];
+                  if (primaryAxis.type === 1 /* e_edgeA */) {
+                      b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
+                      cp.id = clipPoints2[i].id;
+                  }
+                  else {
+                      cp.localPoint.Copy(clipPoints2[i].v);
+                      cp.id.cf.typeA = clipPoints2[i].id.cf.typeB;
+                      cp.id.cf.typeB = clipPoints2[i].id.cf.typeA;
+                      cp.id.cf.indexA = clipPoints2[i].id.cf.indexB;
+                      cp.id.cf.indexB = clipPoints2[i].id.cf.indexA;
+                  }
+                  ++pointCount;
+              }
+          }
+          manifold.pointCount = pointCount;
+      }
+      ComputeEdgeSeparation(out) {
+          const axis = out;
+          axis.type = 1 /* e_edgeA */;
+          axis.index = this.m_front ? 0 : 1;
+          axis.separation = b2_maxFloat;
+          for (let i = 0; i < this.m_polygonB.count; ++i) {
+              const s = b2Vec2.DotVV(this.m_normal, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
+              if (s < axis.separation) {
+                  axis.separation = s;
+              }
+          }
+          return axis;
+      }
+      ComputePolygonSeparation(out) {
+          const axis = out;
+          axis.type = 0 /* e_unknown */;
+          axis.index = -1;
+          axis.separation = -b2_maxFloat;
+          const perp = b2EPCollider.s_perp.Set(-this.m_normal.y, this.m_normal.x);
+          for (let i = 0; i < this.m_polygonB.count; ++i) {
+              const n = b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
+              const s1 = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
+              const s2 = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Vec2.s_t0));
+              const s = b2Min(s1, s2);
+              if (s > this.m_radius) {
+                  // No collision
+                  axis.type = 2 /* e_edgeB */;
+                  axis.index = i;
+                  axis.separation = s;
+                  return axis;
+              }
+              // Adjacency
+              if (b2Vec2.DotVV(n, perp) >= 0) {
+                  if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_upperLimit, b2Vec2.s_t0), this.m_normal) < -b2_angularSlop) {
+                      continue;
+                  }
+              }
+              else {
+                  if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_lowerLimit, b2Vec2.s_t0), this.m_normal) < -b2_angularSlop) {
+                      continue;
+                  }
+              }
+              if (s > axis.separation) {
+                  axis.type = 2 /* e_edgeB */;
+                  axis.index = i;
+                  axis.separation = s;
+              }
+          }
+          return axis;
+      }
+  }
+  b2EPCollider.s_edge1 = new b2Vec2();
+  b2EPCollider.s_edge0 = new b2Vec2();
+  b2EPCollider.s_edge2 = new b2Vec2();
+  b2EPCollider.s_ie = b2ClipVertex.MakeArray(2);
+  b2EPCollider.s_rf = new b2ReferenceFace();
+  b2EPCollider.s_clipPoints1 = b2ClipVertex.MakeArray(2);
+  b2EPCollider.s_clipPoints2 = b2ClipVertex.MakeArray(2);
+  b2EPCollider.s_edgeAxis = new b2EPAxis();
+  b2EPCollider.s_polygonAxis = new b2EPAxis();
+  b2EPCollider.s_n = new b2Vec2();
+  b2EPCollider.s_perp = new b2Vec2();
+  const b2CollideEdgeAndPolygon_s_collider = new b2EPCollider();
+  function b2CollideEdgeAndPolygon(manifold, edgeA, xfA, polygonB, xfB) {
+      const collider = b2CollideEdgeAndPolygon_s_collider;
+      collider.Collide(manifold, edgeA, xfA, polygonB, xfB);
+  }
+
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
   *
@@ -2667,6 +4545,2195 @@
           return this.m_type;
       }
   }
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// A convex polygon. It is assumed that the interior of the polygon is to
+  /// the left of each edge.
+  /// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
+  /// In most cases you should not need many vertices for a convex polygon.
+  class b2PolygonShape extends b2Shape {
+      constructor() {
+          super(b2ShapeType.e_polygonShape, b2_polygonRadius);
+          this.m_centroid = new b2Vec2(0, 0);
+          this.m_vertices = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
+          this.m_normals = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
+          this.m_count = 0;
+      }
+      /// Implement b2Shape.
+      Clone() {
+          return new b2PolygonShape().Copy(this);
+      }
+      Copy(other) {
+          super.Copy(other);
+          // DEBUG: b2Assert(other instanceof b2PolygonShape);
+          this.m_centroid.Copy(other.m_centroid);
+          this.m_count = other.m_count;
+          this.m_vertices = b2Vec2.MakeArray(this.m_count);
+          this.m_normals = b2Vec2.MakeArray(this.m_count);
+          for (let i = 0; i < this.m_count; ++i) {
+              this.m_vertices[i].Copy(other.m_vertices[i]);
+              this.m_normals[i].Copy(other.m_normals[i]);
+          }
+          return this;
+      }
+      /// @see b2Shape::GetChildCount
+      GetChildCount() {
+          return 1;
+      }
+      Set(vertices, count = vertices.length, start = 0) {
+          // DEBUG: b2Assert(3 <= count && count <= b2_maxPolygonVertices);
+          if (count < 3) {
+              return this.SetAsBox(1, 1);
+          }
+          let n = b2Min(count, b2_maxPolygonVertices);
+          // Perform welding and copy vertices into local buffer.
+          const ps = b2PolygonShape.Set_s_ps;
+          let tempCount = 0;
+          for (let i = 0; i < n; ++i) {
+              const /*b2Vec2*/ v = vertices[start + i];
+              let /*bool*/ unique = true;
+              for (let /*int32*/ j = 0; j < tempCount; ++j) {
+                  if (b2Vec2.DistanceSquaredVV(v, ps[j]) < ((0.5 * b2_linearSlop) * (0.5 * b2_linearSlop))) {
+                      unique = false;
+                      break;
+                  }
+              }
+              if (unique) {
+                  ps[tempCount++].Copy(v); // ps[tempCount++] = v;
+              }
+          }
+          n = tempCount;
+          if (n < 3) {
+              // Polygon is degenerate.
+              // DEBUG: b2Assert(false);
+              return this.SetAsBox(1.0, 1.0);
+          }
+          // Create the convex hull using the Gift wrapping algorithm
+          // http://en.wikipedia.org/wiki/Gift_wrapping_algorithm
+          // Find the right most point on the hull
+          let i0 = 0;
+          let x0 = ps[0].x;
+          for (let i = 1; i < n; ++i) {
+              const x = ps[i].x;
+              if (x > x0 || (x === x0 && ps[i].y < ps[i0].y)) {
+                  i0 = i;
+                  x0 = x;
+              }
+          }
+          const hull = b2PolygonShape.Set_s_hull;
+          let m = 0;
+          let ih = i0;
+          for (;;) {
+              // DEBUG: b2Assert(m < b2_maxPolygonVertices);
+              hull[m] = ih;
+              let ie = 0;
+              for (let j = 1; j < n; ++j) {
+                  if (ie === ih) {
+                      ie = j;
+                      continue;
+                  }
+                  const r = b2Vec2.SubVV(ps[ie], ps[hull[m]], b2PolygonShape.Set_s_r);
+                  const v = b2Vec2.SubVV(ps[j], ps[hull[m]], b2PolygonShape.Set_s_v);
+                  const c = b2Vec2.CrossVV(r, v);
+                  if (c < 0) {
+                      ie = j;
+                  }
+                  // Collinearity check
+                  if (c === 0 && v.LengthSquared() > r.LengthSquared()) {
+                      ie = j;
+                  }
+              }
+              ++m;
+              ih = ie;
+              if (ie === i0) {
+                  break;
+              }
+          }
+          this.m_count = m;
+          this.m_vertices = b2Vec2.MakeArray(this.m_count);
+          this.m_normals = b2Vec2.MakeArray(this.m_count);
+          // Copy vertices.
+          for (let i = 0; i < m; ++i) {
+              this.m_vertices[i].Copy(ps[hull[i]]);
+          }
+          // Compute normals. Ensure the edges have non-zero length.
+          for (let i = 0; i < m; ++i) {
+              const vertexi1 = this.m_vertices[i];
+              const vertexi2 = this.m_vertices[(i + 1) % m];
+              const edge = b2Vec2.SubVV(vertexi2, vertexi1, b2Vec2.s_t0); // edge uses s_t0
+              // DEBUG: b2Assert(edge.LengthSquared() > b2_epsilon_sq);
+              b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
+          }
+          // Compute the polygon centroid.
+          b2PolygonShape.ComputeCentroid(this.m_vertices, m, this.m_centroid);
+          return this;
+      }
+      SetAsArray(vertices, count = vertices.length) {
+          return this.Set(vertices, count);
+      }
+      /// Build vertices to represent an axis-aligned box or an oriented box.
+      /// @param hx the half-width.
+      /// @param hy the half-height.
+      /// @param center the center of the box in local coordinates.
+      /// @param angle the rotation of the box in local coordinates.
+      SetAsBox(hx, hy, center, angle = 0) {
+          this.m_count = 4;
+          this.m_vertices = b2Vec2.MakeArray(this.m_count);
+          this.m_normals = b2Vec2.MakeArray(this.m_count);
+          this.m_vertices[0].Set((-hx), (-hy));
+          this.m_vertices[1].Set(hx, (-hy));
+          this.m_vertices[2].Set(hx, hy);
+          this.m_vertices[3].Set((-hx), hy);
+          this.m_normals[0].Set(0, (-1));
+          this.m_normals[1].Set(1, 0);
+          this.m_normals[2].Set(0, 1);
+          this.m_normals[3].Set((-1), 0);
+          this.m_centroid.SetZero();
+          if (center) {
+              this.m_centroid.Copy(center);
+              const xf = new b2Transform();
+              xf.SetPosition(center);
+              xf.SetRotationAngle(angle);
+              // Transform vertices and normals.
+              for (let i = 0; i < this.m_count; ++i) {
+                  b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
+                  b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
+              }
+          }
+          return this;
+      }
+      TestPoint(xf, p) {
+          const pLocal = b2Transform.MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
+          for (let i = 0; i < this.m_count; ++i) {
+              const dot = b2Vec2.DotVV(this.m_normals[i], b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Vec2.s_t0));
+              if (dot > 0) {
+                  return false;
+              }
+          }
+          return true;
+      }
+      ComputeDistance(xf, p, normal, childIndex) {
+          const pLocal = b2Transform.MulTXV(xf, p, b2PolygonShape.ComputeDistance_s_pLocal);
+          let maxDistance = -b2_maxFloat;
+          const normalForMaxDistance = b2PolygonShape.ComputeDistance_s_normalForMaxDistance.Copy(pLocal);
+          for (let i = 0; i < this.m_count; ++i) {
+              const dot = b2Vec2.DotVV(this.m_normals[i], b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Vec2.s_t0));
+              if (dot > maxDistance) {
+                  maxDistance = dot;
+                  normalForMaxDistance.Copy(this.m_normals[i]);
+              }
+          }
+          if (maxDistance > 0) {
+              const minDistance = b2PolygonShape.ComputeDistance_s_minDistance.Copy(normalForMaxDistance);
+              let minDistance2 = maxDistance * maxDistance;
+              for (let i = 0; i < this.m_count; ++i) {
+                  const distance = b2Vec2.SubVV(pLocal, this.m_vertices[i], b2PolygonShape.ComputeDistance_s_distance);
+                  const distance2 = distance.LengthSquared();
+                  if (minDistance2 > distance2) {
+                      minDistance.Copy(distance);
+                      minDistance2 = distance2;
+                  }
+              }
+              b2Rot.MulRV(xf.q, minDistance, normal);
+              normal.Normalize();
+              return Math.sqrt(minDistance2);
+          }
+          else {
+              b2Rot.MulRV(xf.q, normalForMaxDistance, normal);
+              return maxDistance;
+          }
+      }
+      RayCast(output, input, xf, childIndex) {
+          // Put the ray into the polygon's frame of reference.
+          const p1 = b2Transform.MulTXV(xf, input.p1, b2PolygonShape.RayCast_s_p1);
+          const p2 = b2Transform.MulTXV(xf, input.p2, b2PolygonShape.RayCast_s_p2);
+          const d = b2Vec2.SubVV(p2, p1, b2PolygonShape.RayCast_s_d);
+          let lower = 0, upper = input.maxFraction;
+          let index = -1;
+          for (let i = 0; i < this.m_count; ++i) {
+              // p = p1 + a * d
+              // dot(normal, p - v) = 0
+              // dot(normal, p1 - v) + a * dot(normal, d) = 0
+              const numerator = b2Vec2.DotVV(this.m_normals[i], b2Vec2.SubVV(this.m_vertices[i], p1, b2Vec2.s_t0));
+              const denominator = b2Vec2.DotVV(this.m_normals[i], d);
+              if (denominator === 0) {
+                  if (numerator < 0) {
+                      return false;
+                  }
+              }
+              else {
+                  // Note: we want this predicate without division:
+                  // lower < numerator / denominator, where denominator < 0
+                  // Since denominator < 0, we have to flip the inequality:
+                  // lower < numerator / denominator <==> denominator * lower > numerator.
+                  if (denominator < 0 && numerator < lower * denominator) {
+                      // Increase lower.
+                      // The segment enters this half-space.
+                      lower = numerator / denominator;
+                      index = i;
+                  }
+                  else if (denominator > 0 && numerator < upper * denominator) {
+                      // Decrease upper.
+                      // The segment exits this half-space.
+                      upper = numerator / denominator;
+                  }
+              }
+              // The use of epsilon here causes the assert on lower to trip
+              // in some cases. Apparently the use of epsilon was to make edge
+              // shapes work, but now those are handled separately.
+              // if (upper < lower - b2_epsilon)
+              if (upper < lower) {
+                  return false;
+              }
+          }
+          // DEBUG: b2Assert(0 <= lower && lower <= input.maxFraction);
+          if (index >= 0) {
+              output.fraction = lower;
+              b2Rot.MulRV(xf.q, this.m_normals[index], output.normal);
+              return true;
+          }
+          return false;
+      }
+      ComputeAABB(aabb, xf, childIndex) {
+          const lower = b2Transform.MulXV(xf, this.m_vertices[0], aabb.lowerBound);
+          const upper = aabb.upperBound.Copy(lower);
+          for (let i = 0; i < this.m_count; ++i) {
+              const v = b2Transform.MulXV(xf, this.m_vertices[i], b2PolygonShape.ComputeAABB_s_v);
+              b2Vec2.MinV(v, lower, lower);
+              b2Vec2.MaxV(v, upper, upper);
+          }
+          const r = this.m_radius;
+          lower.SelfSubXY(r, r);
+          upper.SelfAddXY(r, r);
+      }
+      ComputeMass(massData, density) {
+          // Polygon mass, centroid, and inertia.
+          // Let rho be the polygon density in mass per unit area.
+          // Then:
+          // mass = rho * int(dA)
+          // centroid.x = (1/mass) * rho * int(x * dA)
+          // centroid.y = (1/mass) * rho * int(y * dA)
+          // I = rho * int((x*x + y*y) * dA)
+          //
+          // We can compute these integrals by summing all the integrals
+          // for each triangle of the polygon. To evaluate the integral
+          // for a single triangle, we make a change of variables to
+          // the (u,v) coordinates of the triangle:
+          // x = x0 + e1x * u + e2x * v
+          // y = y0 + e1y * u + e2y * v
+          // where 0 <= u && 0 <= v && u + v <= 1.
+          //
+          // We integrate u from [0,1-v] and then v from [0,1].
+          // We also need to use the Jacobian of the transformation:
+          // D = cross(e1, e2)
+          //
+          // Simplification: triangle centroid = (1/3) * (p1 + p2 + p3)
+          //
+          // The rest of the derivation is handled by computer algebra.
+          // DEBUG: b2Assert(this.m_count >= 3);
+          const center = b2PolygonShape.ComputeMass_s_center.SetZero();
+          let area = 0;
+          let I = 0;
+          // s is the reference point for forming triangles.
+          // It's location doesn't change the result (except for rounding error).
+          const s = b2PolygonShape.ComputeMass_s_s.SetZero();
+          // This code would put the reference point inside the polygon.
+          for (let i = 0; i < this.m_count; ++i) {
+              s.SelfAdd(this.m_vertices[i]);
+          }
+          s.SelfMul(1 / this.m_count);
+          const k_inv3 = 1 / 3;
+          for (let i = 0; i < this.m_count; ++i) {
+              // Triangle vertices.
+              const e1 = b2Vec2.SubVV(this.m_vertices[i], s, b2PolygonShape.ComputeMass_s_e1);
+              const e2 = b2Vec2.SubVV(this.m_vertices[(i + 1) % this.m_count], s, b2PolygonShape.ComputeMass_s_e2);
+              const D = b2Vec2.CrossVV(e1, e2);
+              const triangleArea = 0.5 * D;
+              area += triangleArea;
+              // Area weighted centroid
+              center.SelfAdd(b2Vec2.MulSV(triangleArea * k_inv3, b2Vec2.AddVV(e1, e2, b2Vec2.s_t0), b2Vec2.s_t1));
+              const ex1 = e1.x;
+              const ey1 = e1.y;
+              const ex2 = e2.x;
+              const ey2 = e2.y;
+              const intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
+              const inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
+              I += (0.25 * k_inv3 * D) * (intx2 + inty2);
+          }
+          // Total mass
+          massData.mass = density * area;
+          // Center of mass
+          // DEBUG: b2Assert(area > b2_epsilon);
+          center.SelfMul(1 / area);
+          b2Vec2.AddVV(center, s, massData.center);
+          // Inertia tensor relative to the local origin (point s).
+          massData.I = density * I;
+          // Shift to center of mass then to original body origin.
+          massData.I += massData.mass * (b2Vec2.DotVV(massData.center, massData.center) - b2Vec2.DotVV(center, center));
+      }
+      Validate() {
+          for (let i = 0; i < this.m_count; ++i) {
+              const i1 = i;
+              const i2 = (i + 1) % this.m_count;
+              const p = this.m_vertices[i1];
+              const e = b2Vec2.SubVV(this.m_vertices[i2], p, b2PolygonShape.Validate_s_e);
+              for (let j = 0; j < this.m_count; ++j) {
+                  if (j === i1 || j === i2) {
+                      continue;
+                  }
+                  const v = b2Vec2.SubVV(this.m_vertices[j], p, b2PolygonShape.Validate_s_v);
+                  const c = b2Vec2.CrossVV(e, v);
+                  if (c < 0) {
+                      return false;
+                  }
+              }
+          }
+          return true;
+      }
+      SetupDistanceProxy(proxy, index) {
+          proxy.m_vertices = this.m_vertices;
+          proxy.m_count = this.m_count;
+          proxy.m_radius = this.m_radius;
+      }
+      ComputeSubmergedArea(normal, offset, xf, c) {
+          // Transform plane into shape co-ordinates
+          const normalL = b2Rot.MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
+          const offsetL = offset - b2Vec2.DotVV(normal, xf.p);
+          const depths = b2PolygonShape.ComputeSubmergedArea_s_depths;
+          let diveCount = 0;
+          let intoIndex = -1;
+          let outoIndex = -1;
+          let lastSubmerged = false;
+          for (let i = 0; i < this.m_count; ++i) {
+              depths[i] = b2Vec2.DotVV(normalL, this.m_vertices[i]) - offsetL;
+              const isSubmerged = depths[i] < (-b2_epsilon);
+              if (i > 0) {
+                  if (isSubmerged) {
+                      if (!lastSubmerged) {
+                          intoIndex = i - 1;
+                          diveCount++;
+                      }
+                  }
+                  else {
+                      if (lastSubmerged) {
+                          outoIndex = i - 1;
+                          diveCount++;
+                      }
+                  }
+              }
+              lastSubmerged = isSubmerged;
+          }
+          switch (diveCount) {
+              case 0:
+                  if (lastSubmerged) {
+                      // Completely submerged
+                      const md = b2PolygonShape.ComputeSubmergedArea_s_md;
+                      this.ComputeMass(md, 1);
+                      b2Transform.MulXV(xf, md.center, c);
+                      return md.mass;
+                  }
+                  else {
+                      // Completely dry
+                      return 0;
+                  }
+              case 1:
+                  if (intoIndex === (-1)) {
+                      intoIndex = this.m_count - 1;
+                  }
+                  else {
+                      outoIndex = this.m_count - 1;
+                  }
+                  break;
+          }
+          const intoIndex2 = ((intoIndex + 1) % this.m_count);
+          const outoIndex2 = ((outoIndex + 1) % this.m_count);
+          const intoLamdda = (0 - depths[intoIndex]) / (depths[intoIndex2] - depths[intoIndex]);
+          const outoLamdda = (0 - depths[outoIndex]) / (depths[outoIndex2] - depths[outoIndex]);
+          const intoVec = b2PolygonShape.ComputeSubmergedArea_s_intoVec.Set(this.m_vertices[intoIndex].x * (1 - intoLamdda) + this.m_vertices[intoIndex2].x * intoLamdda, this.m_vertices[intoIndex].y * (1 - intoLamdda) + this.m_vertices[intoIndex2].y * intoLamdda);
+          const outoVec = b2PolygonShape.ComputeSubmergedArea_s_outoVec.Set(this.m_vertices[outoIndex].x * (1 - outoLamdda) + this.m_vertices[outoIndex2].x * outoLamdda, this.m_vertices[outoIndex].y * (1 - outoLamdda) + this.m_vertices[outoIndex2].y * outoLamdda);
+          // Initialize accumulator
+          let area = 0;
+          const center = b2PolygonShape.ComputeSubmergedArea_s_center.SetZero();
+          let p2 = this.m_vertices[intoIndex2];
+          let p3;
+          // An awkward loop from intoIndex2+1 to outIndex2
+          let i = intoIndex2;
+          while (i !== outoIndex2) {
+              i = (i + 1) % this.m_count;
+              if (i === outoIndex2) {
+                  p3 = outoVec;
+              }
+              else {
+                  p3 = this.m_vertices[i];
+              }
+              const triangleArea = 0.5 * ((p2.x - intoVec.x) * (p3.y - intoVec.y) - (p2.y - intoVec.y) * (p3.x - intoVec.x));
+              area += triangleArea;
+              // Area weighted centroid
+              center.x += triangleArea * (intoVec.x + p2.x + p3.x) / 3;
+              center.y += triangleArea * (intoVec.y + p2.y + p3.y) / 3;
+              p2 = p3;
+          }
+          // Normalize and transform centroid
+          center.SelfMul(1 / area);
+          b2Transform.MulXV(xf, center, c);
+          return area;
+      }
+      Dump(log) {
+          log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
+          log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+          for (let i = 0; i < this.m_count; ++i) {
+              log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+          }
+          log("    shape.Set(vs, %d);\n", this.m_count);
+      }
+      static ComputeCentroid(vs, count, out) {
+          // DEBUG: b2Assert(count >= 3);
+          const c = out;
+          c.SetZero();
+          let area = 0;
+          // s is the reference point for forming triangles.
+          // It's location doesn't change the result (except for rounding error).
+          const pRef = b2PolygonShape.ComputeCentroid_s_pRef.SetZero();
+          /*
+      #if 0
+          // This code would put the reference point inside the polygon.
+          for (let i: number = 0; i < count; ++i) {
+            pRef.SelfAdd(vs[i]);
+          }
+          pRef.SelfMul(1 / count);
+      #endif
+          */
+          const inv3 = 1 / 3;
+          for (let i = 0; i < count; ++i) {
+              // Triangle vertices.
+              const p1 = pRef;
+              const p2 = vs[i];
+              const p3 = vs[(i + 1) % count];
+              const e1 = b2Vec2.SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
+              const e2 = b2Vec2.SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
+              const D = b2Vec2.CrossVV(e1, e2);
+              const triangleArea = 0.5 * D;
+              area += triangleArea;
+              // Area weighted centroid
+              c.x += triangleArea * inv3 * (p1.x + p2.x + p3.x);
+              c.y += triangleArea * inv3 * (p1.y + p2.y + p3.y);
+          }
+          // Centroid
+          // DEBUG: b2Assert(area > b2_epsilon);
+          c.SelfMul(1 / area);
+          return c;
+      }
+  }
+  /// Create a convex hull from the given array of points.
+  /// The count must be in the range [3, b2_maxPolygonVertices].
+  /// @warning the points may be re-ordered, even if they form a convex polygon
+  /// @warning collinear points are handled but not removed. Collinear points
+  /// may lead to poor stacking behavior.
+  b2PolygonShape.Set_s_ps = b2Vec2.MakeArray(b2_maxPolygonVertices);
+  b2PolygonShape.Set_s_hull = b2MakeNumberArray(b2_maxPolygonVertices);
+  b2PolygonShape.Set_s_r = new b2Vec2();
+  b2PolygonShape.Set_s_v = new b2Vec2();
+  /// @see b2Shape::TestPoint
+  b2PolygonShape.TestPoint_s_pLocal = new b2Vec2();
+  // #if B2_ENABLE_PARTICLE
+  /// @see b2Shape::ComputeDistance
+  b2PolygonShape.ComputeDistance_s_pLocal = new b2Vec2();
+  b2PolygonShape.ComputeDistance_s_normalForMaxDistance = new b2Vec2();
+  b2PolygonShape.ComputeDistance_s_minDistance = new b2Vec2();
+  b2PolygonShape.ComputeDistance_s_distance = new b2Vec2();
+  // #endif
+  /// Implement b2Shape.
+  b2PolygonShape.RayCast_s_p1 = new b2Vec2();
+  b2PolygonShape.RayCast_s_p2 = new b2Vec2();
+  b2PolygonShape.RayCast_s_d = new b2Vec2();
+  /// @see b2Shape::ComputeAABB
+  b2PolygonShape.ComputeAABB_s_v = new b2Vec2();
+  /// @see b2Shape::ComputeMass
+  b2PolygonShape.ComputeMass_s_center = new b2Vec2();
+  b2PolygonShape.ComputeMass_s_s = new b2Vec2();
+  b2PolygonShape.ComputeMass_s_e1 = new b2Vec2();
+  b2PolygonShape.ComputeMass_s_e2 = new b2Vec2();
+  b2PolygonShape.Validate_s_e = new b2Vec2();
+  b2PolygonShape.Validate_s_v = new b2Vec2();
+  b2PolygonShape.ComputeSubmergedArea_s_normalL = new b2Vec2();
+  b2PolygonShape.ComputeSubmergedArea_s_depths = b2MakeNumberArray(b2_maxPolygonVertices);
+  b2PolygonShape.ComputeSubmergedArea_s_md = new b2MassData();
+  b2PolygonShape.ComputeSubmergedArea_s_intoVec = new b2Vec2();
+  b2PolygonShape.ComputeSubmergedArea_s_outoVec = new b2Vec2();
+  b2PolygonShape.ComputeSubmergedArea_s_center = new b2Vec2();
+  b2PolygonShape.ComputeCentroid_s_pRef = new b2Vec2();
+  b2PolygonShape.ComputeCentroid_s_e1 = new b2Vec2();
+  b2PolygonShape.ComputeCentroid_s_e2 = new b2Vec2();
+
+  /*
+  * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// A line segment (edge) shape. These can be connected in chains or loops
+  /// to other edge shapes. The connectivity information is used to ensure
+  /// correct contact normals.
+  class b2EdgeShape extends b2Shape {
+      constructor() {
+          super(b2ShapeType.e_edgeShape, b2_polygonRadius);
+          this.m_vertex1 = new b2Vec2();
+          this.m_vertex2 = new b2Vec2();
+          this.m_vertex0 = new b2Vec2();
+          this.m_vertex3 = new b2Vec2();
+          this.m_hasVertex0 = false;
+          this.m_hasVertex3 = false;
+      }
+      /// Set this as an isolated edge.
+      Set(v1, v2) {
+          this.m_vertex1.Copy(v1);
+          this.m_vertex2.Copy(v2);
+          this.m_hasVertex0 = false;
+          this.m_hasVertex3 = false;
+          return this;
+      }
+      /// Implement b2Shape.
+      Clone() {
+          return new b2EdgeShape().Copy(this);
+      }
+      Copy(other) {
+          super.Copy(other);
+          // DEBUG: b2Assert(other instanceof b2EdgeShape);
+          this.m_vertex1.Copy(other.m_vertex1);
+          this.m_vertex2.Copy(other.m_vertex2);
+          this.m_vertex0.Copy(other.m_vertex0);
+          this.m_vertex3.Copy(other.m_vertex3);
+          this.m_hasVertex0 = other.m_hasVertex0;
+          this.m_hasVertex3 = other.m_hasVertex3;
+          return this;
+      }
+      /// @see b2Shape::GetChildCount
+      GetChildCount() {
+          return 1;
+      }
+      /// @see b2Shape::TestPoint
+      TestPoint(xf, p) {
+          return false;
+      }
+      ComputeDistance(xf, p, normal, childIndex) {
+          const v1 = b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeDistance_s_v1);
+          const v2 = b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeDistance_s_v2);
+          const d = b2Vec2.SubVV(p, v1, b2EdgeShape.ComputeDistance_s_d);
+          const s = b2Vec2.SubVV(v2, v1, b2EdgeShape.ComputeDistance_s_s);
+          const ds = b2Vec2.DotVV(d, s);
+          if (ds > 0) {
+              const s2 = b2Vec2.DotVV(s, s);
+              if (ds > s2) {
+                  b2Vec2.SubVV(p, v2, d);
+              }
+              else {
+                  d.SelfMulSub(ds / s2, s);
+              }
+          }
+          normal.Copy(d);
+          return normal.Normalize();
+      }
+      RayCast(output, input, xf, childIndex) {
+          // Put the ray into the edge's frame of reference.
+          const p1 = b2Transform.MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
+          const p2 = b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
+          const d = b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
+          const v1 = this.m_vertex1;
+          const v2 = this.m_vertex2;
+          const e = b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
+          const normal = output.normal.Set(e.y, -e.x).SelfNormalize();
+          // q = p1 + t * d
+          // dot(normal, q - v1) = 0
+          // dot(normal, p1 - v1) + t * dot(normal, d) = 0
+          const numerator = b2Vec2.DotVV(normal, b2Vec2.SubVV(v1, p1, b2Vec2.s_t0));
+          const denominator = b2Vec2.DotVV(normal, d);
+          if (denominator === 0) {
+              return false;
+          }
+          const t = numerator / denominator;
+          if (t < 0 || input.maxFraction < t) {
+              return false;
+          }
+          const q = b2Vec2.AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
+          // q = v1 + s * r
+          // s = dot(q - v1, r) / dot(r, r)
+          const r = b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
+          const rr = b2Vec2.DotVV(r, r);
+          if (rr === 0) {
+              return false;
+          }
+          const s = b2Vec2.DotVV(b2Vec2.SubVV(q, v1, b2Vec2.s_t0), r) / rr;
+          if (s < 0 || 1 < s) {
+              return false;
+          }
+          output.fraction = t;
+          b2Rot.MulRV(xf.q, output.normal, output.normal);
+          if (numerator > 0) {
+              output.normal.SelfNeg();
+          }
+          return true;
+      }
+      ComputeAABB(aabb, xf, childIndex) {
+          const v1 = b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
+          const v2 = b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
+          b2Vec2.MinV(v1, v2, aabb.lowerBound);
+          b2Vec2.MaxV(v1, v2, aabb.upperBound);
+          const r = this.m_radius;
+          aabb.lowerBound.SelfSubXY(r, r);
+          aabb.upperBound.SelfAddXY(r, r);
+      }
+      /// @see b2Shape::ComputeMass
+      ComputeMass(massData, density) {
+          massData.mass = 0;
+          b2Vec2.MidVV(this.m_vertex1, this.m_vertex2, massData.center);
+          massData.I = 0;
+      }
+      SetupDistanceProxy(proxy, index) {
+          proxy.m_vertices = proxy.m_buffer;
+          proxy.m_vertices[0].Copy(this.m_vertex1);
+          proxy.m_vertices[1].Copy(this.m_vertex2);
+          proxy.m_count = 2;
+          proxy.m_radius = this.m_radius;
+      }
+      ComputeSubmergedArea(normal, offset, xf, c) {
+          c.SetZero();
+          return 0;
+      }
+      Dump(log) {
+          log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
+          log("    shape.m_radius = %.15f;\n", this.m_radius);
+          log("    shape.m_vertex0.Set(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
+          log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
+          log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
+          log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
+          log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
+          log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
+      }
+  }
+  // #if B2_ENABLE_PARTICLE
+  /// @see b2Shape::ComputeDistance
+  b2EdgeShape.ComputeDistance_s_v1 = new b2Vec2();
+  b2EdgeShape.ComputeDistance_s_v2 = new b2Vec2();
+  b2EdgeShape.ComputeDistance_s_d = new b2Vec2();
+  b2EdgeShape.ComputeDistance_s_s = new b2Vec2();
+  // #endif
+  /// Implement b2Shape.
+  // p = p1 + t * d
+  // v = v1 + s * e
+  // p1 + t * d = v1 + s * e
+  // s * e - t * d = p1 - v1
+  b2EdgeShape.RayCast_s_p1 = new b2Vec2();
+  b2EdgeShape.RayCast_s_p2 = new b2Vec2();
+  b2EdgeShape.RayCast_s_d = new b2Vec2();
+  b2EdgeShape.RayCast_s_e = new b2Vec2();
+  b2EdgeShape.RayCast_s_q = new b2Vec2();
+  b2EdgeShape.RayCast_s_r = new b2Vec2();
+  /// @see b2Shape::ComputeAABB
+  b2EdgeShape.ComputeAABB_s_v1 = new b2Vec2();
+  b2EdgeShape.ComputeAABB_s_v2 = new b2Vec2();
+
+  /*
+  * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// A chain shape is a free form sequence of line segments.
+  /// The chain has two-sided collision, so you can use inside and outside collision.
+  /// Therefore, you may use any winding order.
+  /// Since there may be many vertices, they are allocated using b2Alloc.
+  /// Connectivity information is used to create smooth collisions.
+  /// WARNING: The chain will not collide properly if there are self-intersections.
+  class b2ChainShape extends b2Shape {
+      constructor() {
+          super(b2ShapeType.e_chainShape, b2_polygonRadius);
+          this.m_vertices = [];
+          this.m_count = 0;
+          this.m_prevVertex = new b2Vec2();
+          this.m_nextVertex = new b2Vec2();
+          this.m_hasPrevVertex = false;
+          this.m_hasNextVertex = false;
+      }
+      /// Create a loop. This automatically adjusts connectivity.
+      /// @param vertices an array of vertices, these are copied
+      /// @param count the vertex count
+      CreateLoop(vertices, count = vertices.length, start = 0) {
+          // DEBUG: b2Assert(count >= 3);
+          if (count < 3) {
+              return this;
+          }
+          // DEBUG: for (let i: number = 1; i < count; ++i) {
+          // DEBUG:   const v1 = vertices[start + i - 1];
+          // DEBUG:   const v2 = vertices[start + i];
+          // DEBUG:   // If the code crashes here, it means your vertices are too close together.
+          // DEBUG:   b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
+          // DEBUG: }
+          this.m_count = count + 1;
+          this.m_vertices = b2Vec2.MakeArray(this.m_count);
+          for (let i = 0; i < count; ++i) {
+              this.m_vertices[i].Copy(vertices[start + i]);
+          }
+          this.m_vertices[count].Copy(this.m_vertices[0]);
+          this.m_prevVertex.Copy(this.m_vertices[this.m_count - 2]);
+          this.m_nextVertex.Copy(this.m_vertices[1]);
+          this.m_hasPrevVertex = true;
+          this.m_hasNextVertex = true;
+          return this;
+      }
+      /// Create a chain with isolated end vertices.
+      /// @param vertices an array of vertices, these are copied
+      /// @param count the vertex count
+      CreateChain(vertices, count = vertices.length, start = 0) {
+          // DEBUG: b2Assert(count >= 2);
+          // DEBUG: for (let i: number = 1; i < count; ++i) {
+          // DEBUG:   const v1 = vertices[start + i - 1];
+          // DEBUG:   const v2 = vertices[start + i];
+          // DEBUG:   // If the code crashes here, it means your vertices are too close together.
+          // DEBUG:   b2Assert(b2Vec2.DistanceSquaredVV(v1, v2) > b2_linearSlop * b2_linearSlop);
+          // DEBUG: }
+          this.m_count = count;
+          this.m_vertices = b2Vec2.MakeArray(count);
+          for (let i = 0; i < count; ++i) {
+              this.m_vertices[i].Copy(vertices[start + i]);
+          }
+          this.m_hasPrevVertex = false;
+          this.m_hasNextVertex = false;
+          this.m_prevVertex.SetZero();
+          this.m_nextVertex.SetZero();
+          return this;
+      }
+      /// Establish connectivity to a vertex that precedes the first vertex.
+      /// Don't call this for loops.
+      SetPrevVertex(prevVertex) {
+          this.m_prevVertex.Copy(prevVertex);
+          this.m_hasPrevVertex = true;
+          return this;
+      }
+      /// Establish connectivity to a vertex that follows the last vertex.
+      /// Don't call this for loops.
+      SetNextVertex(nextVertex) {
+          this.m_nextVertex.Copy(nextVertex);
+          this.m_hasNextVertex = true;
+          return this;
+      }
+      /// Implement b2Shape. Vertices are cloned using b2Alloc.
+      Clone() {
+          return new b2ChainShape().Copy(this);
+      }
+      Copy(other) {
+          super.Copy(other);
+          // DEBUG: b2Assert(other instanceof b2ChainShape);
+          this.CreateChain(other.m_vertices, other.m_count);
+          this.m_prevVertex.Copy(other.m_prevVertex);
+          this.m_nextVertex.Copy(other.m_nextVertex);
+          this.m_hasPrevVertex = other.m_hasPrevVertex;
+          this.m_hasNextVertex = other.m_hasNextVertex;
+          return this;
+      }
+      /// @see b2Shape::GetChildCount
+      GetChildCount() {
+          // edge count = vertex count - 1
+          return this.m_count - 1;
+      }
+      /// Get a child edge.
+      GetChildEdge(edge, index) {
+          // DEBUG: b2Assert(0 <= index && index < this.m_count - 1);
+          edge.m_type = b2ShapeType.e_edgeShape;
+          edge.m_radius = this.m_radius;
+          edge.m_vertex1.Copy(this.m_vertices[index]);
+          edge.m_vertex2.Copy(this.m_vertices[index + 1]);
+          if (index > 0) {
+              edge.m_vertex0.Copy(this.m_vertices[index - 1]);
+              edge.m_hasVertex0 = true;
+          }
+          else {
+              edge.m_vertex0.Copy(this.m_prevVertex);
+              edge.m_hasVertex0 = this.m_hasPrevVertex;
+          }
+          if (index < this.m_count - 2) {
+              edge.m_vertex3.Copy(this.m_vertices[index + 2]);
+              edge.m_hasVertex3 = true;
+          }
+          else {
+              edge.m_vertex3.Copy(this.m_nextVertex);
+              edge.m_hasVertex3 = this.m_hasNextVertex;
+          }
+      }
+      /// This always return false.
+      /// @see b2Shape::TestPoint
+      TestPoint(xf, p) {
+          return false;
+      }
+      ComputeDistance(xf, p, normal, childIndex) {
+          const edge = b2ChainShape.ComputeDistance_s_edgeShape;
+          this.GetChildEdge(edge, childIndex);
+          return edge.ComputeDistance(xf, p, normal, 0);
+      }
+      RayCast(output, input, xf, childIndex) {
+          // DEBUG: b2Assert(childIndex < this.m_count);
+          const edgeShape = b2ChainShape.RayCast_s_edgeShape;
+          edgeShape.m_vertex1.Copy(this.m_vertices[childIndex]);
+          edgeShape.m_vertex2.Copy(this.m_vertices[(childIndex + 1) % this.m_count]);
+          return edgeShape.RayCast(output, input, xf, 0);
+      }
+      ComputeAABB(aabb, xf, childIndex) {
+          // DEBUG: b2Assert(childIndex < this.m_count);
+          const vertexi1 = this.m_vertices[childIndex];
+          const vertexi2 = this.m_vertices[(childIndex + 1) % this.m_count];
+          const v1 = b2Transform.MulXV(xf, vertexi1, b2ChainShape.ComputeAABB_s_v1);
+          const v2 = b2Transform.MulXV(xf, vertexi2, b2ChainShape.ComputeAABB_s_v2);
+          b2Vec2.MinV(v1, v2, aabb.lowerBound);
+          b2Vec2.MaxV(v1, v2, aabb.upperBound);
+      }
+      /// Chains have zero mass.
+      /// @see b2Shape::ComputeMass
+      ComputeMass(massData, density) {
+          massData.mass = 0;
+          massData.center.SetZero();
+          massData.I = 0;
+      }
+      SetupDistanceProxy(proxy, index) {
+          // DEBUG: b2Assert(0 <= index && index < this.m_count);
+          proxy.m_vertices = proxy.m_buffer;
+          proxy.m_vertices[0].Copy(this.m_vertices[index]);
+          if (index + 1 < this.m_count) {
+              proxy.m_vertices[1].Copy(this.m_vertices[index + 1]);
+          }
+          else {
+              proxy.m_vertices[1].Copy(this.m_vertices[0]);
+          }
+          proxy.m_count = 2;
+          proxy.m_radius = this.m_radius;
+      }
+      ComputeSubmergedArea(normal, offset, xf, c) {
+          c.SetZero();
+          return 0;
+      }
+      Dump(log) {
+          log("    const shape: b2ChainShape = new b2ChainShape();\n");
+          log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+          for (let i = 0; i < this.m_count; ++i) {
+              log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+          }
+          log("    shape.CreateChain(vs, %d);\n", this.m_count);
+          log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);
+          log("    shape.m_nextVertex.Set(%.15f, %.15f);\n", this.m_nextVertex.x, this.m_nextVertex.y);
+          log("    shape.m_hasPrevVertex = %s;\n", (this.m_hasPrevVertex) ? ("true") : ("false"));
+          log("    shape.m_hasNextVertex = %s;\n", (this.m_hasNextVertex) ? ("true") : ("false"));
+      }
+  }
+  // #if B2_ENABLE_PARTICLE
+  /// @see b2Shape::ComputeDistance
+  b2ChainShape.ComputeDistance_s_edgeShape = new b2EdgeShape();
+  // #endif
+  /// Implement b2Shape.
+  b2ChainShape.RayCast_s_edgeShape = new b2EdgeShape();
+  /// @see b2Shape::ComputeAABB
+  b2ChainShape.ComputeAABB_s_v1 = new b2Vec2();
+  b2ChainShape.ComputeAABB_s_v2 = new b2Vec2();
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// This holds contact filtering data.
+  class b2Filter {
+      constructor() {
+          /// The collision category bits. Normally you would just set one bit.
+          this.categoryBits = 0x0001;
+          /// The collision mask bits. This states the categories that this
+          /// shape would accept for collision.
+          this.maskBits = 0xFFFF;
+          /// Collision groups allow a certain group of objects to never collide (negative)
+          /// or always collide (positive). Zero means no collision group. Non-zero group
+          /// filtering always wins against the mask bits.
+          this.groupIndex = 0;
+      }
+      Clone() {
+          return new b2Filter().Copy(this);
+      }
+      Copy(other) {
+          // DEBUG: b2Assert(this !== other);
+          this.categoryBits = other.categoryBits;
+          this.maskBits = other.maskBits;
+          this.groupIndex = other.groupIndex || 0;
+          return this;
+      }
+  }
+  b2Filter.DEFAULT = new b2Filter();
+  /// A fixture definition is used to create a fixture. This class defines an
+  /// abstract fixture definition. You can reuse fixture definitions safely.
+  class b2FixtureDef {
+      constructor() {
+          /// Use this to store application specific fixture data.
+          this.userData = null;
+          /// The friction coefficient, usually in the range [0,1].
+          this.friction = 0.2;
+          /// The restitution (elasticity) usually in the range [0,1].
+          this.restitution = 0;
+          /// The density, usually in kg/m^2.
+          this.density = 0;
+          /// A sensor shape collects contact information but never generates a collision
+          /// response.
+          this.isSensor = false;
+          /// Contact filtering data.
+          this.filter = new b2Filter();
+      }
+  }
+  /// This proxy is used internally to connect fixtures to the broad-phase.
+  class b2FixtureProxy {
+      constructor(fixture) {
+          this.aabb = new b2AABB();
+          this.childIndex = 0;
+          this.fixture = fixture;
+      }
+  }
+  /// A fixture is used to attach a shape to a body for collision detection. A fixture
+  /// inherits its transform from its parent. Fixtures hold additional non-geometric data
+  /// such as friction, collision filters, etc.
+  /// Fixtures are created via b2Body::CreateFixture.
+  /// @warning you cannot reuse fixtures.
+  class b2Fixture {
+      constructor(def, body) {
+          this.m_density = 0;
+          this.m_next = null;
+          this.m_friction = 0;
+          this.m_restitution = 0;
+          this.m_proxies = [];
+          this.m_proxyCount = 0;
+          this.m_filter = new b2Filter();
+          this.m_isSensor = false;
+          this.m_userData = null;
+          this.m_body = body;
+          this.m_shape = def.shape.Clone();
+      }
+      /// Get the type of the child shape. You can use this to down cast to the concrete shape.
+      /// @return the shape type.
+      GetType() {
+          return this.m_shape.GetType();
+      }
+      /// Get the child shape. You can modify the child shape, however you should not change the
+      /// number of vertices because this will crash some collision caching mechanisms.
+      /// Manipulating the shape may lead to non-physical behavior.
+      GetShape() {
+          return this.m_shape;
+      }
+      /// Set if this fixture is a sensor.
+      SetSensor(sensor) {
+          if (sensor !== this.m_isSensor) {
+              this.m_body.SetAwake(true);
+              this.m_isSensor = sensor;
+          }
+      }
+      /// Is this fixture a sensor (non-solid)?
+      /// @return the true if the shape is a sensor.
+      IsSensor() {
+          return this.m_isSensor;
+      }
+      /// Set the contact filtering data. This will not update contacts until the next time
+      /// step when either parent body is active and awake.
+      /// This automatically calls Refilter.
+      SetFilterData(filter) {
+          this.m_filter.Copy(filter);
+          this.Refilter();
+      }
+      /// Get the contact filtering data.
+      GetFilterData() {
+          return this.m_filter;
+      }
+      /// Call this if you want to establish collision that was previously disabled by b2ContactFilter::ShouldCollide.
+      Refilter() {
+          // Flag associated contacts for filtering.
+          let edge = this.m_body.GetContactList();
+          while (edge) {
+              const contact = edge.contact;
+              const fixtureA = contact.GetFixtureA();
+              const fixtureB = contact.GetFixtureB();
+              if (fixtureA === this || fixtureB === this) {
+                  contact.FlagForFiltering();
+              }
+              edge = edge.next;
+          }
+          const world = this.m_body.GetWorld();
+          if (world === null) {
+              return;
+          }
+          // Touch each proxy so that new pairs may be created
+          const broadPhase = world.m_contactManager.m_broadPhase;
+          for (let i = 0; i < this.m_proxyCount; ++i) {
+              broadPhase.TouchProxy(this.m_proxies[i].treeNode);
+          }
+      }
+      /// Get the parent body of this fixture. This is NULL if the fixture is not attached.
+      /// @return the parent body.
+      GetBody() {
+          return this.m_body;
+      }
+      /// Get the next fixture in the parent body's fixture list.
+      /// @return the next shape.
+      GetNext() {
+          return this.m_next;
+      }
+      /// Get the user data that was assigned in the fixture definition. Use this to
+      /// store your application specific data.
+      GetUserData() {
+          return this.m_userData;
+      }
+      /// Set the user data. Use this to store your application specific data.
+      SetUserData(data) {
+          this.m_userData = data;
+      }
+      /// Test a point for containment in this fixture.
+      /// @param p a point in world coordinates.
+      TestPoint(p) {
+          return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
+      }
+      // #if B2_ENABLE_PARTICLE
+      ComputeDistance(p, normal, childIndex) {
+          return this.m_shape.ComputeDistance(this.m_body.GetTransform(), p, normal, childIndex);
+      }
+      // #endif
+      /// Cast a ray against this shape.
+      /// @param output the ray-cast results.
+      /// @param input the ray-cast input parameters.
+      RayCast(output, input, childIndex) {
+          return this.m_shape.RayCast(output, input, this.m_body.GetTransform(), childIndex);
+      }
+      /// Get the mass data for this fixture. The mass data is based on the density and
+      /// the shape. The rotational inertia is about the shape's origin. This operation
+      /// may be expensive.
+      GetMassData(massData = new b2MassData()) {
+          this.m_shape.ComputeMass(massData, this.m_density);
+          return massData;
+      }
+      /// Set the density of this fixture. This will _not_ automatically adjust the mass
+      /// of the body. You must call b2Body::ResetMassData to update the body's mass.
+      SetDensity(density) {
+          this.m_density = density;
+      }
+      /// Get the density of this fixture.
+      GetDensity() {
+          return this.m_density;
+      }
+      /// Get the coefficient of friction.
+      GetFriction() {
+          return this.m_friction;
+      }
+      /// Set the coefficient of friction. This will _not_ change the friction of
+      /// existing contacts.
+      SetFriction(friction) {
+          this.m_friction = friction;
+      }
+      /// Get the coefficient of restitution.
+      GetRestitution() {
+          return this.m_restitution;
+      }
+      /// Set the coefficient of restitution. This will _not_ change the restitution of
+      /// existing contacts.
+      SetRestitution(restitution) {
+          this.m_restitution = restitution;
+      }
+      /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
+      /// If you need a more accurate AABB, compute it using the shape and
+      /// the body transform.
+      GetAABB(childIndex) {
+          // DEBUG: b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
+          return this.m_proxies[childIndex].aabb;
+      }
+      /// Dump this fixture to the log file.
+      Dump(log, bodyIndex) {
+          log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
+          log("    fd.friction = %.15f;\n", this.m_friction);
+          log("    fd.restitution = %.15f;\n", this.m_restitution);
+          log("    fd.density = %.15f;\n", this.m_density);
+          log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
+          log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
+          log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
+          log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
+          this.m_shape.Dump(log);
+          log("\n");
+          log("    fd.shape = shape;\n");
+          log("\n");
+          log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
+      }
+      // We need separation create/destroy functions from the constructor/destructor because
+      // the destructor cannot access the allocator (no destructor arguments allowed by C++).
+      Create(def) {
+          this.m_userData = def.userData;
+          this.m_friction = b2Maybe(def.friction, 0.2);
+          this.m_restitution = b2Maybe(def.restitution, 0);
+          // this.m_body = body;
+          this.m_next = null;
+          this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
+          this.m_isSensor = b2Maybe(def.isSensor, false);
+          // Reserve proxy space
+          // const childCount = m_shape->GetChildCount();
+          // m_proxies = (b2FixtureProxy*)allocator->Allocate(childCount * sizeof(b2FixtureProxy));
+          // for (int32 i = 0; i < childCount; ++i)
+          // {
+          //   m_proxies[i].fixture = NULL;
+          //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
+          // }
+          // this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
+          this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
+          this.m_proxyCount = 0;
+          this.m_density = b2Maybe(def.density, 0);
+      }
+      Destroy() {
+          // The proxies must be destroyed before calling this.
+          // DEBUG: b2Assert(this.m_proxyCount === 0);
+          // Free the proxy array.
+          // int32 childCount = m_shape->GetChildCount();
+          // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
+          // m_proxies = NULL;
+          // this.m_shape = null;
+      }
+      // These support body activation/deactivation.
+      CreateProxies(xf) {
+          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
+          // DEBUG: b2Assert(this.m_proxyCount === 0);
+          // Create proxies in the broad-phase.
+          this.m_proxyCount = this.m_shape.GetChildCount();
+          for (let i = 0; i < this.m_proxyCount; ++i) {
+              const proxy = this.m_proxies[i] = new b2FixtureProxy(this);
+              this.m_shape.ComputeAABB(proxy.aabb, xf, i);
+              proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
+              proxy.childIndex = i;
+          }
+      }
+      DestroyProxies() {
+          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
+          // Destroy proxies in the broad-phase.
+          for (let i = 0; i < this.m_proxyCount; ++i) {
+              const proxy = this.m_proxies[i];
+              delete proxy.treeNode.userData;
+              broadPhase.DestroyProxy(proxy.treeNode);
+              delete proxy.treeNode;
+          }
+          this.m_proxyCount = 0;
+      }
+      TouchProxies() {
+          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
+          const proxyCount = this.m_proxyCount;
+          for (let i = 0; i < proxyCount; ++i) {
+              broadPhase.TouchProxy(this.m_proxies[i].treeNode);
+          }
+      }
+      Synchronize(transform1, transform2) {
+          if (this.m_proxyCount === 0) {
+              return;
+          }
+          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
+          for (let i = 0; i < this.m_proxyCount; ++i) {
+              const proxy = this.m_proxies[i];
+              // Compute an AABB that covers the swept shape (may miss some rotation effect).
+              const aabb1 = b2Fixture.Synchronize_s_aabb1;
+              const aabb2 = b2Fixture.Synchronize_s_aabb2;
+              this.m_shape.ComputeAABB(aabb1, transform1, i);
+              this.m_shape.ComputeAABB(aabb2, transform2, i);
+              proxy.aabb.Combine2(aabb1, aabb2);
+              const displacement = b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
+              broadPhase.MoveProxy(proxy.treeNode, proxy.aabb, displacement);
+          }
+      }
+  }
+  b2Fixture.Synchronize_s_aabb1 = new b2AABB();
+  b2Fixture.Synchronize_s_aabb2 = new b2AABB();
+  b2Fixture.Synchronize_s_displacement = new b2Vec2();
+
+  /*
+  * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  // #endif
+  /// The body type.
+  /// static: zero mass, zero velocity, may be manually moved
+  /// kinematic: zero mass, non-zero velocity set by user, moved by solver
+  /// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
+  var b2BodyType;
+  (function (b2BodyType) {
+      b2BodyType[b2BodyType["b2_unknown"] = -1] = "b2_unknown";
+      b2BodyType[b2BodyType["b2_staticBody"] = 0] = "b2_staticBody";
+      b2BodyType[b2BodyType["b2_kinematicBody"] = 1] = "b2_kinematicBody";
+      b2BodyType[b2BodyType["b2_dynamicBody"] = 2] = "b2_dynamicBody";
+      // TODO_ERIN
+      // b2_bulletBody = 3
+  })(b2BodyType || (b2BodyType = {}));
+  /// A body definition holds all the data needed to construct a rigid body.
+  /// You can safely re-use body definitions. Shapes are added to a body after construction.
+  class b2BodyDef {
+      constructor() {
+          /// The body type: static, kinematic, or dynamic.
+          /// Note: if a dynamic body would have zero mass, the mass is set to one.
+          this.type = b2BodyType.b2_staticBody;
+          /// The world position of the body. Avoid creating bodies at the origin
+          /// since this can lead to many overlapping shapes.
+          this.position = new b2Vec2(0, 0);
+          /// The world angle of the body in radians.
+          this.angle = 0;
+          /// The linear velocity of the body's origin in world co-ordinates.
+          this.linearVelocity = new b2Vec2(0, 0);
+          /// The angular velocity of the body.
+          this.angularVelocity = 0;
+          /// Linear damping is use to reduce the linear velocity. The damping parameter
+          /// can be larger than 1.0f but the damping effect becomes sensitive to the
+          /// time step when the damping parameter is large.
+          this.linearDamping = 0;
+          /// Angular damping is use to reduce the angular velocity. The damping parameter
+          /// can be larger than 1.0f but the damping effect becomes sensitive to the
+          /// time step when the damping parameter is large.
+          this.angularDamping = 0;
+          /// Set this flag to false if this body should never fall asleep. Note that
+          /// this increases CPU usage.
+          this.allowSleep = true;
+          /// Is this body initially awake or sleeping?
+          this.awake = true;
+          /// Should this body be prevented from rotating? Useful for characters.
+          this.fixedRotation = false;
+          /// Is this a fast moving body that should be prevented from tunneling through
+          /// other moving bodies? Note that all bodies are prevented from tunneling through
+          /// kinematic and static bodies. This setting is only considered on dynamic bodies.
+          /// @warning You should use this flag sparingly since it increases processing time.
+          this.bullet = false;
+          /// Does this body start out active?
+          this.active = true;
+          /// Use this to store application specific body data.
+          this.userData = null;
+          /// Scale the gravity applied to this body.
+          this.gravityScale = 1;
+      }
+  }
+  /// A rigid body. These are created via b2World::CreateBody.
+  class b2Body {
+      // #endif
+      constructor(bd, world) {
+          this.m_type = b2BodyType.b2_staticBody;
+          this.m_islandFlag = false;
+          this.m_awakeFlag = false;
+          this.m_autoSleepFlag = false;
+          this.m_bulletFlag = false;
+          this.m_fixedRotationFlag = false;
+          this.m_activeFlag = false;
+          this.m_toiFlag = false;
+          this.m_islandIndex = 0;
+          this.m_xf = new b2Transform(); // the body origin transform
+          // #if B2_ENABLE_PARTICLE
+          this.m_xf0 = new b2Transform();
+          // #endif
+          this.m_sweep = new b2Sweep(); // the swept motion for CCD
+          this.m_linearVelocity = new b2Vec2();
+          this.m_angularVelocity = 0;
+          this.m_force = new b2Vec2();
+          this.m_torque = 0;
+          this.m_prev = null;
+          this.m_next = null;
+          this.m_fixtureList = null;
+          this.m_fixtureCount = 0;
+          this.m_jointList = null;
+          this.m_contactList = null;
+          this.m_mass = 1;
+          this.m_invMass = 1;
+          // Rotational inertia about the center of mass.
+          this.m_I = 0;
+          this.m_invI = 0;
+          this.m_linearDamping = 0;
+          this.m_angularDamping = 0;
+          this.m_gravityScale = 1;
+          this.m_sleepTime = 0;
+          this.m_userData = null;
+          // #if B2_ENABLE_CONTROLLER
+          this.m_controllerList = null;
+          this.m_controllerCount = 0;
+          this.m_bulletFlag = b2Maybe(bd.bullet, false);
+          this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
+          this.m_autoSleepFlag = b2Maybe(bd.allowSleep, true);
+          this.m_awakeFlag = b2Maybe(bd.awake, true);
+          this.m_activeFlag = b2Maybe(bd.active, true);
+          this.m_world = world;
+          this.m_xf.p.Copy(b2Maybe(bd.position, b2Vec2.ZERO));
+          // DEBUG: b2Assert(this.m_xf.p.IsValid());
+          this.m_xf.q.SetAngle(b2Maybe(bd.angle, 0));
+          // DEBUG: b2Assert(b2IsValid(this.m_xf.q.GetAngle()));
+          // #if B2_ENABLE_PARTICLE
+          this.m_xf0.Copy(this.m_xf);
+          // #endif
+          this.m_sweep.localCenter.SetZero();
+          this.m_sweep.c0.Copy(this.m_xf.p);
+          this.m_sweep.c.Copy(this.m_xf.p);
+          this.m_sweep.a0 = this.m_sweep.a = this.m_xf.q.GetAngle();
+          this.m_sweep.alpha0 = 0;
+          this.m_linearVelocity.Copy(b2Maybe(bd.linearVelocity, b2Vec2.ZERO));
+          // DEBUG: b2Assert(this.m_linearVelocity.IsValid());
+          this.m_angularVelocity = b2Maybe(bd.angularVelocity, 0);
+          // DEBUG: b2Assert(b2IsValid(this.m_angularVelocity));
+          this.m_linearDamping = b2Maybe(bd.linearDamping, 0);
+          this.m_angularDamping = b2Maybe(bd.angularDamping, 0);
+          this.m_gravityScale = b2Maybe(bd.gravityScale, 1);
+          // DEBUG: b2Assert(b2IsValid(this.m_gravityScale) && this.m_gravityScale >= 0);
+          // DEBUG: b2Assert(b2IsValid(this.m_angularDamping) && this.m_angularDamping >= 0);
+          // DEBUG: b2Assert(b2IsValid(this.m_linearDamping) && this.m_linearDamping >= 0);
+          this.m_force.SetZero();
+          this.m_torque = 0;
+          this.m_sleepTime = 0;
+          this.m_type = b2Maybe(bd.type, b2BodyType.b2_staticBody);
+          if (bd.type === b2BodyType.b2_dynamicBody) {
+              this.m_mass = 1;
+              this.m_invMass = 1;
+          }
+          else {
+              this.m_mass = 0;
+              this.m_invMass = 0;
+          }
+          this.m_I = 0;
+          this.m_invI = 0;
+          this.m_userData = bd.userData;
+          this.m_fixtureList = null;
+          this.m_fixtureCount = 0;
+          // #if B2_ENABLE_CONTROLLER
+          this.m_controllerList = null;
+          this.m_controllerCount = 0;
+          // #endif
+      }
+      CreateFixture(a, b = 0) {
+          if (a instanceof b2Shape) {
+              return this.CreateFixtureShapeDensity(a, b);
+          }
+          else {
+              return this.CreateFixtureDef(a);
+          }
+      }
+      /// Creates a fixture and attach it to this body. Use this function if you need
+      /// to set some fixture parameters, like friction. Otherwise you can create the
+      /// fixture directly from a shape.
+      /// If the density is non-zero, this function automatically updates the mass of the body.
+      /// Contacts are not created until the next time step.
+      /// @param def the fixture definition.
+      /// @warning This function is locked during callbacks.
+      CreateFixtureDef(def) {
+          if (this.m_world.IsLocked()) {
+              throw new Error();
+          }
+          const fixture = new b2Fixture(def, this);
+          fixture.Create(def);
+          if (this.m_activeFlag) {
+              fixture.CreateProxies(this.m_xf);
+          }
+          fixture.m_next = this.m_fixtureList;
+          this.m_fixtureList = fixture;
+          ++this.m_fixtureCount;
+          // fixture.m_body = this;
+          // Adjust mass properties if needed.
+          if (fixture.m_density > 0) {
+              this.ResetMassData();
+          }
+          // Let the world know we have a new fixture. This will cause new contacts
+          // to be created at the beginning of the next time step.
+          this.m_world.m_newFixture = true;
+          return fixture;
+      }
+      CreateFixtureShapeDensity(shape, density = 0) {
+          const def = b2Body.CreateFixtureShapeDensity_s_def;
+          def.shape = shape;
+          def.density = density;
+          return this.CreateFixtureDef(def);
+      }
+      /// Destroy a fixture. This removes the fixture from the broad-phase and
+      /// destroys all contacts associated with this fixture. This will
+      /// automatically adjust the mass of the body if the body is dynamic and the
+      /// fixture has positive density.
+      /// All fixtures attached to a body are implicitly destroyed when the body is destroyed.
+      /// @param fixture the fixture to be removed.
+      /// @warning This function is locked during callbacks.
+      DestroyFixture(fixture) {
+          if (this.m_world.IsLocked()) {
+              throw new Error();
+          }
+          // DEBUG: b2Assert(fixture.m_body === this);
+          // Remove the fixture from this body's singly linked list.
+          // DEBUG: b2Assert(this.m_fixtureCount > 0);
+          let node = this.m_fixtureList;
+          let ppF = null;
+          // DEBUG: let found: boolean = false;
+          while (node !== null) {
+              if (node === fixture) {
+                  if (ppF) {
+                      ppF.m_next = fixture.m_next;
+                  }
+                  else {
+                      this.m_fixtureList = fixture.m_next;
+                  }
+                  // DEBUG: found = true;
+                  break;
+              }
+              ppF = node;
+              node = node.m_next;
+          }
+          // You tried to remove a shape that is not attached to this body.
+          // DEBUG: b2Assert(found);
+          // Destroy any contacts associated with the fixture.
+          let edge = this.m_contactList;
+          while (edge) {
+              const c = edge.contact;
+              edge = edge.next;
+              const fixtureA = c.GetFixtureA();
+              const fixtureB = c.GetFixtureB();
+              if (fixture === fixtureA || fixture === fixtureB) {
+                  // This destroys the contact and removes it from
+                  // this body's contact list.
+                  this.m_world.m_contactManager.Destroy(c);
+              }
+          }
+          if (this.m_activeFlag) {
+              fixture.DestroyProxies();
+          }
+          // fixture.m_body = null;
+          fixture.m_next = null;
+          fixture.Destroy();
+          --this.m_fixtureCount;
+          // Reset the mass data.
+          this.ResetMassData();
+      }
+      /// Set the position of the body's origin and rotation.
+      /// This breaks any contacts and wakes the other bodies.
+      /// Manipulating a body's transform may cause non-physical behavior.
+      /// @param position the world position of the body's local origin.
+      /// @param angle the world rotation in radians.
+      SetTransformVec(position, angle) {
+          this.SetTransformXY(position.x, position.y, angle);
+      }
+      SetTransformXY(x, y, angle) {
+          if (this.m_world.IsLocked()) {
+              throw new Error();
+          }
+          this.m_xf.q.SetAngle(angle);
+          this.m_xf.p.Set(x, y);
+          // #if B2_ENABLE_PARTICLE
+          this.m_xf0.Copy(this.m_xf);
+          // #endif
+          b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+          this.m_sweep.a = angle;
+          this.m_sweep.c0.Copy(this.m_sweep.c);
+          this.m_sweep.a0 = angle;
+          for (let f = this.m_fixtureList; f; f = f.m_next) {
+              f.Synchronize(this.m_xf, this.m_xf);
+          }
+          this.m_world.m_contactManager.FindNewContacts();
+      }
+      SetTransform(xf) {
+          this.SetTransformVec(xf.p, xf.GetAngle());
+      }
+      /// Get the body transform for the body's origin.
+      /// @return the world transform of the body's origin.
+      GetTransform() {
+          return this.m_xf;
+      }
+      /// Get the world body origin position.
+      /// @return the world position of the body's origin.
+      GetPosition() {
+          return this.m_xf.p;
+      }
+      SetPosition(position) {
+          this.SetTransformVec(position, this.GetAngle());
+      }
+      SetPositionXY(x, y) {
+          this.SetTransformXY(x, y, this.GetAngle());
+      }
+      /// Get the angle in radians.
+      /// @return the current world rotation angle in radians.
+      GetAngle() {
+          return this.m_sweep.a;
+      }
+      SetAngle(angle) {
+          this.SetTransformVec(this.GetPosition(), angle);
+      }
+      /// Get the world position of the center of mass.
+      GetWorldCenter() {
+          return this.m_sweep.c;
+      }
+      /// Get the local position of the center of mass.
+      GetLocalCenter() {
+          return this.m_sweep.localCenter;
+      }
+      /// Set the linear velocity of the center of mass.
+      /// @param v the new linear velocity of the center of mass.
+      SetLinearVelocity(v) {
+          if (this.m_type === b2BodyType.b2_staticBody) {
+              return;
+          }
+          if (b2Vec2.DotVV(v, v) > 0) {
+              this.SetAwake(true);
+          }
+          this.m_linearVelocity.Copy(v);
+      }
+      /// Get the linear velocity of the center of mass.
+      /// @return the linear velocity of the center of mass.
+      GetLinearVelocity() {
+          return this.m_linearVelocity;
+      }
+      /// Set the angular velocity.
+      /// @param omega the new angular velocity in radians/second.
+      SetAngularVelocity(w) {
+          if (this.m_type === b2BodyType.b2_staticBody) {
+              return;
+          }
+          if (w * w > 0) {
+              this.SetAwake(true);
+          }
+          this.m_angularVelocity = w;
+      }
+      /// Get the angular velocity.
+      /// @return the angular velocity in radians/second.
+      GetAngularVelocity() {
+          return this.m_angularVelocity;
+      }
+      GetDefinition(bd) {
+          bd.type = this.GetType();
+          bd.allowSleep = this.m_autoSleepFlag;
+          bd.angle = this.GetAngle();
+          bd.angularDamping = this.m_angularDamping;
+          bd.gravityScale = this.m_gravityScale;
+          bd.angularVelocity = this.m_angularVelocity;
+          bd.fixedRotation = this.m_fixedRotationFlag;
+          bd.bullet = this.m_bulletFlag;
+          bd.awake = this.m_awakeFlag;
+          bd.linearDamping = this.m_linearDamping;
+          bd.linearVelocity.Copy(this.GetLinearVelocity());
+          bd.position.Copy(this.GetPosition());
+          bd.userData = this.GetUserData();
+          return bd;
+      }
+      /// Apply a force at a world point. If the force is not
+      /// applied at the center of mass, it will generate a torque and
+      /// affect the angular velocity. This wakes up the body.
+      /// @param force the world force vector, usually in Newtons (N).
+      /// @param point the world position of the point of application.
+      /// @param wake also wake up the body
+      ApplyForce(force, point, wake = true) {
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          if (wake && !this.m_awakeFlag) {
+              this.SetAwake(true);
+          }
+          // Don't accumulate a force if the body is sleeping.
+          if (this.m_awakeFlag) {
+              this.m_force.x += force.x;
+              this.m_force.y += force.y;
+              this.m_torque += ((point.x - this.m_sweep.c.x) * force.y - (point.y - this.m_sweep.c.y) * force.x);
+          }
+      }
+      /// Apply a force to the center of mass. This wakes up the body.
+      /// @param force the world force vector, usually in Newtons (N).
+      /// @param wake also wake up the body
+      ApplyForceToCenter(force, wake = true) {
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          if (wake && !this.m_awakeFlag) {
+              this.SetAwake(true);
+          }
+          // Don't accumulate a force if the body is sleeping.
+          if (this.m_awakeFlag) {
+              this.m_force.x += force.x;
+              this.m_force.y += force.y;
+          }
+      }
+      /// Apply a torque. This affects the angular velocity
+      /// without affecting the linear velocity of the center of mass.
+      /// @param torque about the z-axis (out of the screen), usually in N-m.
+      /// @param wake also wake up the body
+      ApplyTorque(torque, wake = true) {
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          if (wake && !this.m_awakeFlag) {
+              this.SetAwake(true);
+          }
+          // Don't accumulate a force if the body is sleeping.
+          if (this.m_awakeFlag) {
+              this.m_torque += torque;
+          }
+      }
+      /// Apply an impulse at a point. This immediately modifies the velocity.
+      /// It also modifies the angular velocity if the point of application
+      /// is not at the center of mass. This wakes up the body.
+      /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
+      /// @param point the world position of the point of application.
+      /// @param wake also wake up the body
+      ApplyLinearImpulse(impulse, point, wake = true) {
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          if (wake && !this.m_awakeFlag) {
+              this.SetAwake(true);
+          }
+          // Don't accumulate a force if the body is sleeping.
+          if (this.m_awakeFlag) {
+              this.m_linearVelocity.x += this.m_invMass * impulse.x;
+              this.m_linearVelocity.y += this.m_invMass * impulse.y;
+              this.m_angularVelocity += this.m_invI * ((point.x - this.m_sweep.c.x) * impulse.y - (point.y - this.m_sweep.c.y) * impulse.x);
+          }
+      }
+      /// Apply an impulse at the center of gravity. This immediately modifies the velocity.
+      /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
+      /// @param wake also wake up the body
+      ApplyLinearImpulseToCenter(impulse, wake = true) {
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          if (wake && !this.m_awakeFlag) {
+              this.SetAwake(true);
+          }
+          // Don't accumulate a force if the body is sleeping.
+          if (this.m_awakeFlag) {
+              this.m_linearVelocity.x += this.m_invMass * impulse.x;
+              this.m_linearVelocity.y += this.m_invMass * impulse.y;
+          }
+      }
+      /// Apply an angular impulse.
+      /// @param impulse the angular impulse in units of kg*m*m/s
+      /// @param wake also wake up the body
+      ApplyAngularImpulse(impulse, wake = true) {
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          if (wake && !this.m_awakeFlag) {
+              this.SetAwake(true);
+          }
+          // Don't accumulate a force if the body is sleeping.
+          if (this.m_awakeFlag) {
+              this.m_angularVelocity += this.m_invI * impulse;
+          }
+      }
+      /// Get the total mass of the body.
+      /// @return the mass, usually in kilograms (kg).
+      GetMass() {
+          return this.m_mass;
+      }
+      /// Get the rotational inertia of the body about the local origin.
+      /// @return the rotational inertia, usually in kg-m^2.
+      GetInertia() {
+          return this.m_I + this.m_mass * b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+      }
+      /// Get the mass data of the body.
+      /// @return a struct containing the mass, inertia and center of the body.
+      GetMassData(data) {
+          data.mass = this.m_mass;
+          data.I = this.m_I + this.m_mass * b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
+          data.center.Copy(this.m_sweep.localCenter);
+          return data;
+      }
+      SetMassData(massData) {
+          if (this.m_world.IsLocked()) {
+              throw new Error();
+          }
+          if (this.m_type !== b2BodyType.b2_dynamicBody) {
+              return;
+          }
+          this.m_invMass = 0;
+          this.m_I = 0;
+          this.m_invI = 0;
+          this.m_mass = massData.mass;
+          if (this.m_mass <= 0) {
+              this.m_mass = 1;
+          }
+          this.m_invMass = 1 / this.m_mass;
+          if (massData.I > 0 && !this.m_fixedRotationFlag) {
+              this.m_I = massData.I - this.m_mass * b2Vec2.DotVV(massData.center, massData.center);
+              // DEBUG: b2Assert(this.m_I > 0);
+              this.m_invI = 1 / this.m_I;
+          }
+          // Move center of mass.
+          const oldCenter = b2Body.SetMassData_s_oldCenter.Copy(this.m_sweep.c);
+          this.m_sweep.localCenter.Copy(massData.center);
+          b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+          this.m_sweep.c0.Copy(this.m_sweep.c);
+          // Update center of mass velocity.
+          b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Vec2.s_t0), this.m_linearVelocity);
+      }
+      ResetMassData() {
+          // Compute mass data from shapes. Each shape has its own density.
+          this.m_mass = 0;
+          this.m_invMass = 0;
+          this.m_I = 0;
+          this.m_invI = 0;
+          this.m_sweep.localCenter.SetZero();
+          // Static and kinematic bodies have zero mass.
+          if (this.m_type === b2BodyType.b2_staticBody || this.m_type === b2BodyType.b2_kinematicBody) {
+              this.m_sweep.c0.Copy(this.m_xf.p);
+              this.m_sweep.c.Copy(this.m_xf.p);
+              this.m_sweep.a0 = this.m_sweep.a;
+              return;
+          }
+          // DEBUG: b2Assert(this.m_type === b2BodyType.b2_dynamicBody);
+          // Accumulate mass over all fixtures.
+          const localCenter = b2Body.ResetMassData_s_localCenter.SetZero();
+          for (let f = this.m_fixtureList; f; f = f.m_next) {
+              if (f.m_density === 0) {
+                  continue;
+              }
+              const massData = f.GetMassData(b2Body.ResetMassData_s_massData);
+              this.m_mass += massData.mass;
+              localCenter.x += massData.center.x * massData.mass;
+              localCenter.y += massData.center.y * massData.mass;
+              this.m_I += massData.I;
+          }
+          // Compute center of mass.
+          if (this.m_mass > 0) {
+              this.m_invMass = 1 / this.m_mass;
+              localCenter.x *= this.m_invMass;
+              localCenter.y *= this.m_invMass;
+          }
+          else {
+              // Force all dynamic bodies to have a positive mass.
+              this.m_mass = 1;
+              this.m_invMass = 1;
+          }
+          if (this.m_I > 0 && !this.m_fixedRotationFlag) {
+              // Center the inertia about the center of mass.
+              this.m_I -= this.m_mass * b2Vec2.DotVV(localCenter, localCenter);
+              // DEBUG: b2Assert(this.m_I > 0);
+              this.m_invI = 1 / this.m_I;
+          }
+          else {
+              this.m_I = 0;
+              this.m_invI = 0;
+          }
+          // Move center of mass.
+          const oldCenter = b2Body.ResetMassData_s_oldCenter.Copy(this.m_sweep.c);
+          this.m_sweep.localCenter.Copy(localCenter);
+          b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
+          this.m_sweep.c0.Copy(this.m_sweep.c);
+          // Update center of mass velocity.
+          b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Vec2.s_t0), this.m_linearVelocity);
+      }
+      /// Get the world coordinates of a point given the local coordinates.
+      /// @param localPoint a point on the body measured relative the the body's origin.
+      /// @return the same point expressed in world coordinates.
+      GetWorldPoint(localPoint, out) {
+          return b2Transform.MulXV(this.m_xf, localPoint, out);
+      }
+      /// Get the world coordinates of a vector given the local coordinates.
+      /// @param localVector a vector fixed in the body.
+      /// @return the same vector expressed in world coordinates.
+      GetWorldVector(localVector, out) {
+          return b2Rot.MulRV(this.m_xf.q, localVector, out);
+      }
+      /// Gets a local point relative to the body's origin given a world point.
+      /// @param a point in world coordinates.
+      /// @return the corresponding local point relative to the body's origin.
+      GetLocalPoint(worldPoint, out) {
+          return b2Transform.MulTXV(this.m_xf, worldPoint, out);
+      }
+      /// Gets a local vector given a world vector.
+      /// @param a vector in world coordinates.
+      /// @return the corresponding local vector.
+      GetLocalVector(worldVector, out) {
+          return b2Rot.MulTRV(this.m_xf.q, worldVector, out);
+      }
+      /// Get the world linear velocity of a world point attached to this body.
+      /// @param a point in world coordinates.
+      /// @return the world velocity of a point.
+      GetLinearVelocityFromWorldPoint(worldPoint, out) {
+          return b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(worldPoint, this.m_sweep.c, b2Vec2.s_t0), out);
+      }
+      /// Get the world velocity of a local point.
+      /// @param a point in local coordinates.
+      /// @return the world velocity of a point.
+      GetLinearVelocityFromLocalPoint(localPoint, out) {
+          return this.GetLinearVelocityFromWorldPoint(this.GetWorldPoint(localPoint, out), out);
+      }
+      /// Get the linear damping of the body.
+      GetLinearDamping() {
+          return this.m_linearDamping;
+      }
+      /// Set the linear damping of the body.
+      SetLinearDamping(linearDamping) {
+          this.m_linearDamping = linearDamping;
+      }
+      /// Get the angular damping of the body.
+      GetAngularDamping() {
+          return this.m_angularDamping;
+      }
+      /// Set the angular damping of the body.
+      SetAngularDamping(angularDamping) {
+          this.m_angularDamping = angularDamping;
+      }
+      /// Get the gravity scale of the body.
+      GetGravityScale() {
+          return this.m_gravityScale;
+      }
+      /// Set the gravity scale of the body.
+      SetGravityScale(scale) {
+          this.m_gravityScale = scale;
+      }
+      /// Set the type of this body. This may alter the mass and velocity.
+      SetType(type) {
+          if (this.m_world.IsLocked()) {
+              throw new Error();
+          }
+          if (this.m_type === type) {
+              return;
+          }
+          this.m_type = type;
+          this.ResetMassData();
+          if (this.m_type === b2BodyType.b2_staticBody) {
+              this.m_linearVelocity.SetZero();
+              this.m_angularVelocity = 0;
+              this.m_sweep.a0 = this.m_sweep.a;
+              this.m_sweep.c0.Copy(this.m_sweep.c);
+              this.SynchronizeFixtures();
+          }
+          this.SetAwake(true);
+          this.m_force.SetZero();
+          this.m_torque = 0;
+          // Delete the attached contacts.
+          let ce = this.m_contactList;
+          while (ce) {
+              const ce0 = ce;
+              ce = ce.next;
+              this.m_world.m_contactManager.Destroy(ce0.contact);
+          }
+          this.m_contactList = null;
+          // Touch the proxies so that new contacts will be created (when appropriate)
+          for (let f = this.m_fixtureList; f; f = f.m_next) {
+              f.TouchProxies();
+          }
+      }
+      /// Get the type of this body.
+      GetType() {
+          return this.m_type;
+      }
+      /// Should this body be treated like a bullet for continuous collision detection?
+      SetBullet(flag) {
+          this.m_bulletFlag = flag;
+      }
+      /// Is this body treated like a bullet for continuous collision detection?
+      IsBullet() {
+          return this.m_bulletFlag;
+      }
+      /// You can disable sleeping on this body. If you disable sleeping, the
+      /// body will be woken.
+      SetSleepingAllowed(flag) {
+          this.m_autoSleepFlag = flag;
+          if (!flag) {
+              this.SetAwake(true);
+          }
+      }
+      /// Is this body allowed to sleep
+      IsSleepingAllowed() {
+          return this.m_autoSleepFlag;
+      }
+      /// Set the sleep state of the body. A sleeping body has very
+      /// low CPU cost.
+      /// @param flag set to true to wake the body, false to put it to sleep.
+      SetAwake(flag) {
+          if (flag) {
+              this.m_awakeFlag = true;
+              this.m_sleepTime = 0;
+          }
+          else {
+              this.m_awakeFlag = false;
+              this.m_sleepTime = 0;
+              this.m_linearVelocity.SetZero();
+              this.m_angularVelocity = 0;
+              this.m_force.SetZero();
+              this.m_torque = 0;
+          }
+      }
+      /// Get the sleeping state of this body.
+      /// @return true if the body is sleeping.
+      IsAwake() {
+          return this.m_awakeFlag;
+      }
+      /// Set the active state of the body. An inactive body is not
+      /// simulated and cannot be collided with or woken up.
+      /// If you pass a flag of true, all fixtures will be added to the
+      /// broad-phase.
+      /// If you pass a flag of false, all fixtures will be removed from
+      /// the broad-phase and all contacts will be destroyed.
+      /// Fixtures and joints are otherwise unaffected. You may continue
+      /// to create/destroy fixtures and joints on inactive bodies.
+      /// Fixtures on an inactive body are implicitly inactive and will
+      /// not participate in collisions, ray-casts, or queries.
+      /// Joints connected to an inactive body are implicitly inactive.
+      /// An inactive body is still owned by a b2World object and remains
+      /// in the body list.
+      SetActive(flag) {
+          if (this.m_world.IsLocked()) {
+              throw new Error();
+          }
+          if (flag === this.IsActive()) {
+              return;
+          }
+          this.m_activeFlag = flag;
+          if (flag) {
+              // Create all proxies.
+              for (let f = this.m_fixtureList; f; f = f.m_next) {
+                  f.CreateProxies(this.m_xf);
+              }
+              // Contacts are created the next time step.
+          }
+          else {
+              // Destroy all proxies.
+              for (let f = this.m_fixtureList; f; f = f.m_next) {
+                  f.DestroyProxies();
+              }
+              // Destroy the attached contacts.
+              let ce = this.m_contactList;
+              while (ce) {
+                  const ce0 = ce;
+                  ce = ce.next;
+                  this.m_world.m_contactManager.Destroy(ce0.contact);
+              }
+              this.m_contactList = null;
+          }
+      }
+      /// Get the active state of the body.
+      IsActive() {
+          return this.m_activeFlag;
+      }
+      /// Set this body to have fixed rotation. This causes the mass
+      /// to be reset.
+      SetFixedRotation(flag) {
+          if (this.m_fixedRotationFlag === flag) {
+              return;
+          }
+          this.m_fixedRotationFlag = flag;
+          this.m_angularVelocity = 0;
+          this.ResetMassData();
+      }
+      /// Does this body have fixed rotation?
+      IsFixedRotation() {
+          return this.m_fixedRotationFlag;
+      }
+      /// Get the list of all fixtures attached to this body.
+      GetFixtureList() {
+          return this.m_fixtureList;
+      }
+      /// Get the list of all joints attached to this body.
+      GetJointList() {
+          return this.m_jointList;
+      }
+      /// Get the list of all contacts attached to this body.
+      /// @warning this list changes during the time step and you may
+      /// miss some collisions if you don't use b2ContactListener.
+      GetContactList() {
+          return this.m_contactList;
+      }
+      /// Get the next body in the world's body list.
+      GetNext() {
+          return this.m_next;
+      }
+      /// Get the user data pointer that was provided in the body definition.
+      GetUserData() {
+          return this.m_userData;
+      }
+      /// Set the user data. Use this to store your application specific data.
+      SetUserData(data) {
+          this.m_userData = data;
+      }
+      /// Get the parent world of this body.
+      GetWorld() {
+          return this.m_world;
+      }
+      /// Dump this body to a log file
+      Dump(log) {
+          const bodyIndex = this.m_islandIndex;
+          log("{\n");
+          log("  const bd: b2BodyDef = new b2BodyDef();\n");
+          let type_str = "";
+          switch (this.m_type) {
+              case b2BodyType.b2_staticBody:
+                  type_str = "b2BodyType.b2_staticBody";
+                  break;
+              case b2BodyType.b2_kinematicBody:
+                  type_str = "b2BodyType.b2_kinematicBody";
+                  break;
+              case b2BodyType.b2_dynamicBody:
+                  type_str = "b2BodyType.b2_dynamicBody";
+                  break;
+              default:
+                  // DEBUG: b2Assert(false);
+                  break;
+          }
+          log("  bd.type = %s;\n", type_str);
+          log("  bd.position.Set(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
+          log("  bd.angle = %.15f;\n", this.m_sweep.a);
+          log("  bd.linearVelocity.Set(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
+          log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
+          log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
+          log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
+          log("  bd.allowSleep = %s;\n", (this.m_autoSleepFlag) ? ("true") : ("false"));
+          log("  bd.awake = %s;\n", (this.m_awakeFlag) ? ("true") : ("false"));
+          log("  bd.fixedRotation = %s;\n", (this.m_fixedRotationFlag) ? ("true") : ("false"));
+          log("  bd.bullet = %s;\n", (this.m_bulletFlag) ? ("true") : ("false"));
+          log("  bd.active = %s;\n", (this.m_activeFlag) ? ("true") : ("false"));
+          log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
+          log("\n");
+          log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
+          log("\n");
+          for (let f = this.m_fixtureList; f; f = f.m_next) {
+              log("  {\n");
+              f.Dump(log, bodyIndex);
+              log("  }\n");
+          }
+          log("}\n");
+      }
+      SynchronizeFixtures() {
+          const xf1 = b2Body.SynchronizeFixtures_s_xf1;
+          xf1.q.SetAngle(this.m_sweep.a0);
+          b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
+          b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
+          for (let f = this.m_fixtureList; f; f = f.m_next) {
+              f.Synchronize(xf1, this.m_xf);
+          }
+      }
+      SynchronizeTransform() {
+          this.m_xf.q.SetAngle(this.m_sweep.a);
+          b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+          b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+      }
+      // This is used to prevent connected bodies from colliding.
+      // It may lie, depending on the collideConnected flag.
+      ShouldCollide(other) {
+          // At least one body should be dynamic or kinematic.
+          if (this.m_type === b2BodyType.b2_staticBody && other.m_type === b2BodyType.b2_staticBody) {
+              return false;
+          }
+          return this.ShouldCollideConnected(other);
+      }
+      ShouldCollideConnected(other) {
+          // Does a joint prevent collision?
+          for (let jn = this.m_jointList; jn; jn = jn.next) {
+              if (jn.other === other) {
+                  if (!jn.joint.m_collideConnected) {
+                      return false;
+                  }
+              }
+          }
+          return true;
+      }
+      Advance(alpha) {
+          // Advance to the new safe time. This doesn't sync the broad-phase.
+          this.m_sweep.Advance(alpha);
+          this.m_sweep.c.Copy(this.m_sweep.c0);
+          this.m_sweep.a = this.m_sweep.a0;
+          this.m_xf.q.SetAngle(this.m_sweep.a);
+          b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
+          b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
+      }
+      // #if B2_ENABLE_CONTROLLER
+      GetControllerList() {
+          return this.m_controllerList;
+      }
+      GetControllerCount() {
+          return this.m_controllerCount;
+      }
+  }
+  /// Creates a fixture from a shape and attach it to this body.
+  /// This is a convenience function. Use b2FixtureDef if you need to set parameters
+  /// like friction, restitution, user data, or filtering.
+  /// If the density is non-zero, this function automatically updates the mass of the body.
+  /// @param shape the shape to be cloned.
+  /// @param density the shape density (set to zero for static bodies).
+  /// @warning This function is locked during callbacks.
+  b2Body.CreateFixtureShapeDensity_s_def = new b2FixtureDef();
+  /// Set the mass properties to override the mass properties of the fixtures.
+  /// Note that this changes the center of mass position.
+  /// Note that creating or destroying fixtures can also alter the mass.
+  /// This function has no effect if the body isn't dynamic.
+  /// @param massData the mass properties.
+  b2Body.SetMassData_s_oldCenter = new b2Vec2();
+  /// This resets the mass properties to the sum of the mass properties of the fixtures.
+  /// This normally does not need to be called unless you called SetMassData to override
+  /// the mass and you later want to reset the mass.
+  b2Body.ResetMassData_s_localCenter = new b2Vec2();
+  b2Body.ResetMassData_s_oldCenter = new b2Vec2();
+  b2Body.ResetMassData_s_massData = new b2MassData();
+  b2Body.SynchronizeFixtures_s_xf1 = new b2Transform();
 
   /*
   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -6672,2319 +10739,6 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  /// This holds contact filtering data.
-  class b2Filter {
-      constructor() {
-          /// The collision category bits. Normally you would just set one bit.
-          this.categoryBits = 0x0001;
-          /// The collision mask bits. This states the categories that this
-          /// shape would accept for collision.
-          this.maskBits = 0xFFFF;
-          /// Collision groups allow a certain group of objects to never collide (negative)
-          /// or always collide (positive). Zero means no collision group. Non-zero group
-          /// filtering always wins against the mask bits.
-          this.groupIndex = 0;
-      }
-      Clone() {
-          return new b2Filter().Copy(this);
-      }
-      Copy(other) {
-          // DEBUG: b2Assert(this !== other);
-          this.categoryBits = other.categoryBits;
-          this.maskBits = other.maskBits;
-          this.groupIndex = other.groupIndex || 0;
-          return this;
-      }
-  }
-  b2Filter.DEFAULT = new b2Filter();
-  /// A fixture definition is used to create a fixture. This class defines an
-  /// abstract fixture definition. You can reuse fixture definitions safely.
-  class b2FixtureDef {
-      constructor() {
-          /// Use this to store application specific fixture data.
-          this.userData = null;
-          /// The friction coefficient, usually in the range [0,1].
-          this.friction = 0.2;
-          /// The restitution (elasticity) usually in the range [0,1].
-          this.restitution = 0;
-          /// The density, usually in kg/m^2.
-          this.density = 0;
-          /// A sensor shape collects contact information but never generates a collision
-          /// response.
-          this.isSensor = false;
-          /// Contact filtering data.
-          this.filter = new b2Filter();
-      }
-  }
-  /// This proxy is used internally to connect fixtures to the broad-phase.
-  class b2FixtureProxy {
-      constructor(fixture) {
-          this.aabb = new b2AABB();
-          this.childIndex = 0;
-          this.fixture = fixture;
-      }
-  }
-  /// A fixture is used to attach a shape to a body for collision detection. A fixture
-  /// inherits its transform from its parent. Fixtures hold additional non-geometric data
-  /// such as friction, collision filters, etc.
-  /// Fixtures are created via b2Body::CreateFixture.
-  /// @warning you cannot reuse fixtures.
-  class b2Fixture {
-      constructor(def, body) {
-          this.m_density = 0;
-          this.m_next = null;
-          this.m_friction = 0;
-          this.m_restitution = 0;
-          this.m_proxies = [];
-          this.m_proxyCount = 0;
-          this.m_filter = new b2Filter();
-          this.m_isSensor = false;
-          this.m_userData = null;
-          this.m_body = body;
-          this.m_shape = def.shape.Clone();
-      }
-      /// Get the type of the child shape. You can use this to down cast to the concrete shape.
-      /// @return the shape type.
-      GetType() {
-          return this.m_shape.GetType();
-      }
-      /// Get the child shape. You can modify the child shape, however you should not change the
-      /// number of vertices because this will crash some collision caching mechanisms.
-      /// Manipulating the shape may lead to non-physical behavior.
-      GetShape() {
-          return this.m_shape;
-      }
-      /// Set if this fixture is a sensor.
-      SetSensor(sensor) {
-          if (sensor !== this.m_isSensor) {
-              this.m_body.SetAwake(true);
-              this.m_isSensor = sensor;
-          }
-      }
-      /// Is this fixture a sensor (non-solid)?
-      /// @return the true if the shape is a sensor.
-      IsSensor() {
-          return this.m_isSensor;
-      }
-      /// Set the contact filtering data. This will not update contacts until the next time
-      /// step when either parent body is active and awake.
-      /// This automatically calls Refilter.
-      SetFilterData(filter) {
-          this.m_filter.Copy(filter);
-          this.Refilter();
-      }
-      /// Get the contact filtering data.
-      GetFilterData() {
-          return this.m_filter;
-      }
-      /// Call this if you want to establish collision that was previously disabled by b2ContactFilter::ShouldCollide.
-      Refilter() {
-          // Flag associated contacts for filtering.
-          let edge = this.m_body.GetContactList();
-          while (edge) {
-              const contact = edge.contact;
-              const fixtureA = contact.GetFixtureA();
-              const fixtureB = contact.GetFixtureB();
-              if (fixtureA === this || fixtureB === this) {
-                  contact.FlagForFiltering();
-              }
-              edge = edge.next;
-          }
-          const world = this.m_body.GetWorld();
-          if (world === null) {
-              return;
-          }
-          // Touch each proxy so that new pairs may be created
-          const broadPhase = world.m_contactManager.m_broadPhase;
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              broadPhase.TouchProxy(this.m_proxies[i].treeNode);
-          }
-      }
-      /// Get the parent body of this fixture. This is NULL if the fixture is not attached.
-      /// @return the parent body.
-      GetBody() {
-          return this.m_body;
-      }
-      /// Get the next fixture in the parent body's fixture list.
-      /// @return the next shape.
-      GetNext() {
-          return this.m_next;
-      }
-      /// Get the user data that was assigned in the fixture definition. Use this to
-      /// store your application specific data.
-      GetUserData() {
-          return this.m_userData;
-      }
-      /// Set the user data. Use this to store your application specific data.
-      SetUserData(data) {
-          this.m_userData = data;
-      }
-      /// Test a point for containment in this fixture.
-      /// @param p a point in world coordinates.
-      TestPoint(p) {
-          return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
-      }
-      // #if B2_ENABLE_PARTICLE
-      ComputeDistance(p, normal, childIndex) {
-          return this.m_shape.ComputeDistance(this.m_body.GetTransform(), p, normal, childIndex);
-      }
-      // #endif
-      /// Cast a ray against this shape.
-      /// @param output the ray-cast results.
-      /// @param input the ray-cast input parameters.
-      RayCast(output, input, childIndex) {
-          return this.m_shape.RayCast(output, input, this.m_body.GetTransform(), childIndex);
-      }
-      /// Get the mass data for this fixture. The mass data is based on the density and
-      /// the shape. The rotational inertia is about the shape's origin. This operation
-      /// may be expensive.
-      GetMassData(massData = new b2MassData()) {
-          this.m_shape.ComputeMass(massData, this.m_density);
-          return massData;
-      }
-      /// Set the density of this fixture. This will _not_ automatically adjust the mass
-      /// of the body. You must call b2Body::ResetMassData to update the body's mass.
-      SetDensity(density) {
-          this.m_density = density;
-      }
-      /// Get the density of this fixture.
-      GetDensity() {
-          return this.m_density;
-      }
-      /// Get the coefficient of friction.
-      GetFriction() {
-          return this.m_friction;
-      }
-      /// Set the coefficient of friction. This will _not_ change the friction of
-      /// existing contacts.
-      SetFriction(friction) {
-          this.m_friction = friction;
-      }
-      /// Get the coefficient of restitution.
-      GetRestitution() {
-          return this.m_restitution;
-      }
-      /// Set the coefficient of restitution. This will _not_ change the restitution of
-      /// existing contacts.
-      SetRestitution(restitution) {
-          this.m_restitution = restitution;
-      }
-      /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
-      /// If you need a more accurate AABB, compute it using the shape and
-      /// the body transform.
-      GetAABB(childIndex) {
-          // DEBUG: b2Assert(0 <= childIndex && childIndex < this.m_proxyCount);
-          return this.m_proxies[childIndex].aabb;
-      }
-      /// Dump this fixture to the log file.
-      Dump(log, bodyIndex) {
-          log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
-          log("    fd.friction = %.15f;\n", this.m_friction);
-          log("    fd.restitution = %.15f;\n", this.m_restitution);
-          log("    fd.density = %.15f;\n", this.m_density);
-          log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
-          log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
-          log("    fd.filter.maskBits = %d;\n", this.m_filter.maskBits);
-          log("    fd.filter.groupIndex = %d;\n", this.m_filter.groupIndex);
-          this.m_shape.Dump(log);
-          log("\n");
-          log("    fd.shape = shape;\n");
-          log("\n");
-          log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
-      }
-      // We need separation create/destroy functions from the constructor/destructor because
-      // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-      Create(def) {
-          this.m_userData = def.userData;
-          this.m_friction = b2Maybe(def.friction, 0.2);
-          this.m_restitution = b2Maybe(def.restitution, 0);
-          // this.m_body = body;
-          this.m_next = null;
-          this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
-          this.m_isSensor = b2Maybe(def.isSensor, false);
-          // Reserve proxy space
-          // const childCount = m_shape->GetChildCount();
-          // m_proxies = (b2FixtureProxy*)allocator->Allocate(childCount * sizeof(b2FixtureProxy));
-          // for (int32 i = 0; i < childCount; ++i)
-          // {
-          //   m_proxies[i].fixture = NULL;
-          //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
-          // }
-          // this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
-          this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
-          this.m_proxyCount = 0;
-          this.m_density = b2Maybe(def.density, 0);
-      }
-      Destroy() {
-          // The proxies must be destroyed before calling this.
-          // DEBUG: b2Assert(this.m_proxyCount === 0);
-          // Free the proxy array.
-          // int32 childCount = m_shape->GetChildCount();
-          // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
-          // m_proxies = NULL;
-          // this.m_shape = null;
-      }
-      // These support body activation/deactivation.
-      CreateProxies(xf) {
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          // DEBUG: b2Assert(this.m_proxyCount === 0);
-          // Create proxies in the broad-phase.
-          this.m_proxyCount = this.m_shape.GetChildCount();
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i] = new b2FixtureProxy(this);
-              this.m_shape.ComputeAABB(proxy.aabb, xf, i);
-              proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
-              proxy.childIndex = i;
-          }
-      }
-      DestroyProxies() {
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          // Destroy proxies in the broad-phase.
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i];
-              delete proxy.treeNode.userData;
-              broadPhase.DestroyProxy(proxy.treeNode);
-              delete proxy.treeNode;
-          }
-          this.m_proxyCount = 0;
-      }
-      TouchProxies() {
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          const proxyCount = this.m_proxyCount;
-          for (let i = 0; i < proxyCount; ++i) {
-              broadPhase.TouchProxy(this.m_proxies[i].treeNode);
-          }
-      }
-      Synchronize(transform1, transform2) {
-          if (this.m_proxyCount === 0) {
-              return;
-          }
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i];
-              // Compute an AABB that covers the swept shape (may miss some rotation effect).
-              const aabb1 = b2Fixture.Synchronize_s_aabb1;
-              const aabb2 = b2Fixture.Synchronize_s_aabb2;
-              this.m_shape.ComputeAABB(aabb1, transform1, i);
-              this.m_shape.ComputeAABB(aabb2, transform2, i);
-              proxy.aabb.Combine2(aabb1, aabb2);
-              const displacement = b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
-              broadPhase.MoveProxy(proxy.treeNode, proxy.aabb, displacement);
-          }
-      }
-  }
-  b2Fixture.Synchronize_s_aabb1 = new b2AABB();
-  b2Fixture.Synchronize_s_aabb2 = new b2AABB();
-  b2Fixture.Synchronize_s_displacement = new b2Vec2();
-
-  /*
-  * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  // #endif
-  /// The body type.
-  /// static: zero mass, zero velocity, may be manually moved
-  /// kinematic: zero mass, non-zero velocity set by user, moved by solver
-  /// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
-  var b2BodyType;
-  (function (b2BodyType) {
-      b2BodyType[b2BodyType["b2_unknown"] = -1] = "b2_unknown";
-      b2BodyType[b2BodyType["b2_staticBody"] = 0] = "b2_staticBody";
-      b2BodyType[b2BodyType["b2_kinematicBody"] = 1] = "b2_kinematicBody";
-      b2BodyType[b2BodyType["b2_dynamicBody"] = 2] = "b2_dynamicBody";
-      // TODO_ERIN
-      // b2_bulletBody = 3
-  })(b2BodyType || (b2BodyType = {}));
-  /// A body definition holds all the data needed to construct a rigid body.
-  /// You can safely re-use body definitions. Shapes are added to a body after construction.
-  class b2BodyDef {
-      constructor() {
-          /// The body type: static, kinematic, or dynamic.
-          /// Note: if a dynamic body would have zero mass, the mass is set to one.
-          this.type = b2BodyType.b2_staticBody;
-          /// The world position of the body. Avoid creating bodies at the origin
-          /// since this can lead to many overlapping shapes.
-          this.position = new b2Vec2(0, 0);
-          /// The world angle of the body in radians.
-          this.angle = 0;
-          /// The linear velocity of the body's origin in world co-ordinates.
-          this.linearVelocity = new b2Vec2(0, 0);
-          /// The angular velocity of the body.
-          this.angularVelocity = 0;
-          /// Linear damping is use to reduce the linear velocity. The damping parameter
-          /// can be larger than 1.0f but the damping effect becomes sensitive to the
-          /// time step when the damping parameter is large.
-          this.linearDamping = 0;
-          /// Angular damping is use to reduce the angular velocity. The damping parameter
-          /// can be larger than 1.0f but the damping effect becomes sensitive to the
-          /// time step when the damping parameter is large.
-          this.angularDamping = 0;
-          /// Set this flag to false if this body should never fall asleep. Note that
-          /// this increases CPU usage.
-          this.allowSleep = true;
-          /// Is this body initially awake or sleeping?
-          this.awake = true;
-          /// Should this body be prevented from rotating? Useful for characters.
-          this.fixedRotation = false;
-          /// Is this a fast moving body that should be prevented from tunneling through
-          /// other moving bodies? Note that all bodies are prevented from tunneling through
-          /// kinematic and static bodies. This setting is only considered on dynamic bodies.
-          /// @warning You should use this flag sparingly since it increases processing time.
-          this.bullet = false;
-          /// Does this body start out active?
-          this.active = true;
-          /// Use this to store application specific body data.
-          this.userData = null;
-          /// Scale the gravity applied to this body.
-          this.gravityScale = 1;
-      }
-  }
-  /// A rigid body. These are created via b2World::CreateBody.
-  class b2Body {
-      // #endif
-      constructor(bd, world) {
-          this.m_type = b2BodyType.b2_staticBody;
-          this.m_islandFlag = false;
-          this.m_awakeFlag = false;
-          this.m_autoSleepFlag = false;
-          this.m_bulletFlag = false;
-          this.m_fixedRotationFlag = false;
-          this.m_activeFlag = false;
-          this.m_toiFlag = false;
-          this.m_islandIndex = 0;
-          this.m_xf = new b2Transform(); // the body origin transform
-          // #if B2_ENABLE_PARTICLE
-          this.m_xf0 = new b2Transform();
-          // #endif
-          this.m_sweep = new b2Sweep(); // the swept motion for CCD
-          this.m_linearVelocity = new b2Vec2();
-          this.m_angularVelocity = 0;
-          this.m_force = new b2Vec2();
-          this.m_torque = 0;
-          this.m_prev = null;
-          this.m_next = null;
-          this.m_fixtureList = null;
-          this.m_fixtureCount = 0;
-          this.m_jointList = null;
-          this.m_contactList = null;
-          this.m_mass = 1;
-          this.m_invMass = 1;
-          // Rotational inertia about the center of mass.
-          this.m_I = 0;
-          this.m_invI = 0;
-          this.m_linearDamping = 0;
-          this.m_angularDamping = 0;
-          this.m_gravityScale = 1;
-          this.m_sleepTime = 0;
-          this.m_userData = null;
-          // #if B2_ENABLE_CONTROLLER
-          this.m_controllerList = null;
-          this.m_controllerCount = 0;
-          this.m_bulletFlag = b2Maybe(bd.bullet, false);
-          this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
-          this.m_autoSleepFlag = b2Maybe(bd.allowSleep, true);
-          this.m_awakeFlag = b2Maybe(bd.awake, true);
-          this.m_activeFlag = b2Maybe(bd.active, true);
-          this.m_world = world;
-          this.m_xf.p.Copy(b2Maybe(bd.position, b2Vec2.ZERO));
-          // DEBUG: b2Assert(this.m_xf.p.IsValid());
-          this.m_xf.q.SetAngle(b2Maybe(bd.angle, 0));
-          // DEBUG: b2Assert(b2IsValid(this.m_xf.q.GetAngle()));
-          // #if B2_ENABLE_PARTICLE
-          this.m_xf0.Copy(this.m_xf);
-          // #endif
-          this.m_sweep.localCenter.SetZero();
-          this.m_sweep.c0.Copy(this.m_xf.p);
-          this.m_sweep.c.Copy(this.m_xf.p);
-          this.m_sweep.a0 = this.m_sweep.a = this.m_xf.q.GetAngle();
-          this.m_sweep.alpha0 = 0;
-          this.m_linearVelocity.Copy(b2Maybe(bd.linearVelocity, b2Vec2.ZERO));
-          // DEBUG: b2Assert(this.m_linearVelocity.IsValid());
-          this.m_angularVelocity = b2Maybe(bd.angularVelocity, 0);
-          // DEBUG: b2Assert(b2IsValid(this.m_angularVelocity));
-          this.m_linearDamping = b2Maybe(bd.linearDamping, 0);
-          this.m_angularDamping = b2Maybe(bd.angularDamping, 0);
-          this.m_gravityScale = b2Maybe(bd.gravityScale, 1);
-          // DEBUG: b2Assert(b2IsValid(this.m_gravityScale) && this.m_gravityScale >= 0);
-          // DEBUG: b2Assert(b2IsValid(this.m_angularDamping) && this.m_angularDamping >= 0);
-          // DEBUG: b2Assert(b2IsValid(this.m_linearDamping) && this.m_linearDamping >= 0);
-          this.m_force.SetZero();
-          this.m_torque = 0;
-          this.m_sleepTime = 0;
-          this.m_type = b2Maybe(bd.type, b2BodyType.b2_staticBody);
-          if (bd.type === b2BodyType.b2_dynamicBody) {
-              this.m_mass = 1;
-              this.m_invMass = 1;
-          }
-          else {
-              this.m_mass = 0;
-              this.m_invMass = 0;
-          }
-          this.m_I = 0;
-          this.m_invI = 0;
-          this.m_userData = bd.userData;
-          this.m_fixtureList = null;
-          this.m_fixtureCount = 0;
-          // #if B2_ENABLE_CONTROLLER
-          this.m_controllerList = null;
-          this.m_controllerCount = 0;
-          // #endif
-      }
-      CreateFixture(a, b = 0) {
-          if (a instanceof b2Shape) {
-              return this.CreateFixtureShapeDensity(a, b);
-          }
-          else {
-              return this.CreateFixtureDef(a);
-          }
-      }
-      /// Creates a fixture and attach it to this body. Use this function if you need
-      /// to set some fixture parameters, like friction. Otherwise you can create the
-      /// fixture directly from a shape.
-      /// If the density is non-zero, this function automatically updates the mass of the body.
-      /// Contacts are not created until the next time step.
-      /// @param def the fixture definition.
-      /// @warning This function is locked during callbacks.
-      CreateFixtureDef(def) {
-          if (this.m_world.IsLocked()) {
-              throw new Error();
-          }
-          const fixture = new b2Fixture(def, this);
-          fixture.Create(def);
-          if (this.m_activeFlag) {
-              fixture.CreateProxies(this.m_xf);
-          }
-          fixture.m_next = this.m_fixtureList;
-          this.m_fixtureList = fixture;
-          ++this.m_fixtureCount;
-          // fixture.m_body = this;
-          // Adjust mass properties if needed.
-          if (fixture.m_density > 0) {
-              this.ResetMassData();
-          }
-          // Let the world know we have a new fixture. This will cause new contacts
-          // to be created at the beginning of the next time step.
-          this.m_world.m_newFixture = true;
-          return fixture;
-      }
-      CreateFixtureShapeDensity(shape, density = 0) {
-          const def = b2Body.CreateFixtureShapeDensity_s_def;
-          def.shape = shape;
-          def.density = density;
-          return this.CreateFixtureDef(def);
-      }
-      /// Destroy a fixture. This removes the fixture from the broad-phase and
-      /// destroys all contacts associated with this fixture. This will
-      /// automatically adjust the mass of the body if the body is dynamic and the
-      /// fixture has positive density.
-      /// All fixtures attached to a body are implicitly destroyed when the body is destroyed.
-      /// @param fixture the fixture to be removed.
-      /// @warning This function is locked during callbacks.
-      DestroyFixture(fixture) {
-          if (this.m_world.IsLocked()) {
-              throw new Error();
-          }
-          // DEBUG: b2Assert(fixture.m_body === this);
-          // Remove the fixture from this body's singly linked list.
-          // DEBUG: b2Assert(this.m_fixtureCount > 0);
-          let node = this.m_fixtureList;
-          let ppF = null;
-          // DEBUG: let found: boolean = false;
-          while (node !== null) {
-              if (node === fixture) {
-                  if (ppF) {
-                      ppF.m_next = fixture.m_next;
-                  }
-                  else {
-                      this.m_fixtureList = fixture.m_next;
-                  }
-                  // DEBUG: found = true;
-                  break;
-              }
-              ppF = node;
-              node = node.m_next;
-          }
-          // You tried to remove a shape that is not attached to this body.
-          // DEBUG: b2Assert(found);
-          // Destroy any contacts associated with the fixture.
-          let edge = this.m_contactList;
-          while (edge) {
-              const c = edge.contact;
-              edge = edge.next;
-              const fixtureA = c.GetFixtureA();
-              const fixtureB = c.GetFixtureB();
-              if (fixture === fixtureA || fixture === fixtureB) {
-                  // This destroys the contact and removes it from
-                  // this body's contact list.
-                  this.m_world.m_contactManager.Destroy(c);
-              }
-          }
-          if (this.m_activeFlag) {
-              fixture.DestroyProxies();
-          }
-          // fixture.m_body = null;
-          fixture.m_next = null;
-          fixture.Destroy();
-          --this.m_fixtureCount;
-          // Reset the mass data.
-          this.ResetMassData();
-      }
-      /// Set the position of the body's origin and rotation.
-      /// This breaks any contacts and wakes the other bodies.
-      /// Manipulating a body's transform may cause non-physical behavior.
-      /// @param position the world position of the body's local origin.
-      /// @param angle the world rotation in radians.
-      SetTransformVec(position, angle) {
-          this.SetTransformXY(position.x, position.y, angle);
-      }
-      SetTransformXY(x, y, angle) {
-          if (this.m_world.IsLocked()) {
-              throw new Error();
-          }
-          this.m_xf.q.SetAngle(angle);
-          this.m_xf.p.Set(x, y);
-          // #if B2_ENABLE_PARTICLE
-          this.m_xf0.Copy(this.m_xf);
-          // #endif
-          b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
-          this.m_sweep.a = angle;
-          this.m_sweep.c0.Copy(this.m_sweep.c);
-          this.m_sweep.a0 = angle;
-          for (let f = this.m_fixtureList; f; f = f.m_next) {
-              f.Synchronize(this.m_xf, this.m_xf);
-          }
-          this.m_world.m_contactManager.FindNewContacts();
-      }
-      SetTransform(xf) {
-          this.SetTransformVec(xf.p, xf.GetAngle());
-      }
-      /// Get the body transform for the body's origin.
-      /// @return the world transform of the body's origin.
-      GetTransform() {
-          return this.m_xf;
-      }
-      /// Get the world body origin position.
-      /// @return the world position of the body's origin.
-      GetPosition() {
-          return this.m_xf.p;
-      }
-      SetPosition(position) {
-          this.SetTransformVec(position, this.GetAngle());
-      }
-      SetPositionXY(x, y) {
-          this.SetTransformXY(x, y, this.GetAngle());
-      }
-      /// Get the angle in radians.
-      /// @return the current world rotation angle in radians.
-      GetAngle() {
-          return this.m_sweep.a;
-      }
-      SetAngle(angle) {
-          this.SetTransformVec(this.GetPosition(), angle);
-      }
-      /// Get the world position of the center of mass.
-      GetWorldCenter() {
-          return this.m_sweep.c;
-      }
-      /// Get the local position of the center of mass.
-      GetLocalCenter() {
-          return this.m_sweep.localCenter;
-      }
-      /// Set the linear velocity of the center of mass.
-      /// @param v the new linear velocity of the center of mass.
-      SetLinearVelocity(v) {
-          if (this.m_type === b2BodyType.b2_staticBody) {
-              return;
-          }
-          if (b2Vec2.DotVV(v, v) > 0) {
-              this.SetAwake(true);
-          }
-          this.m_linearVelocity.Copy(v);
-      }
-      /// Get the linear velocity of the center of mass.
-      /// @return the linear velocity of the center of mass.
-      GetLinearVelocity() {
-          return this.m_linearVelocity;
-      }
-      /// Set the angular velocity.
-      /// @param omega the new angular velocity in radians/second.
-      SetAngularVelocity(w) {
-          if (this.m_type === b2BodyType.b2_staticBody) {
-              return;
-          }
-          if (w * w > 0) {
-              this.SetAwake(true);
-          }
-          this.m_angularVelocity = w;
-      }
-      /// Get the angular velocity.
-      /// @return the angular velocity in radians/second.
-      GetAngularVelocity() {
-          return this.m_angularVelocity;
-      }
-      GetDefinition(bd) {
-          bd.type = this.GetType();
-          bd.allowSleep = this.m_autoSleepFlag;
-          bd.angle = this.GetAngle();
-          bd.angularDamping = this.m_angularDamping;
-          bd.gravityScale = this.m_gravityScale;
-          bd.angularVelocity = this.m_angularVelocity;
-          bd.fixedRotation = this.m_fixedRotationFlag;
-          bd.bullet = this.m_bulletFlag;
-          bd.awake = this.m_awakeFlag;
-          bd.linearDamping = this.m_linearDamping;
-          bd.linearVelocity.Copy(this.GetLinearVelocity());
-          bd.position.Copy(this.GetPosition());
-          bd.userData = this.GetUserData();
-          return bd;
-      }
-      /// Apply a force at a world point. If the force is not
-      /// applied at the center of mass, it will generate a torque and
-      /// affect the angular velocity. This wakes up the body.
-      /// @param force the world force vector, usually in Newtons (N).
-      /// @param point the world position of the point of application.
-      /// @param wake also wake up the body
-      ApplyForce(force, point, wake = true) {
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          if (wake && !this.m_awakeFlag) {
-              this.SetAwake(true);
-          }
-          // Don't accumulate a force if the body is sleeping.
-          if (this.m_awakeFlag) {
-              this.m_force.x += force.x;
-              this.m_force.y += force.y;
-              this.m_torque += ((point.x - this.m_sweep.c.x) * force.y - (point.y - this.m_sweep.c.y) * force.x);
-          }
-      }
-      /// Apply a force to the center of mass. This wakes up the body.
-      /// @param force the world force vector, usually in Newtons (N).
-      /// @param wake also wake up the body
-      ApplyForceToCenter(force, wake = true) {
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          if (wake && !this.m_awakeFlag) {
-              this.SetAwake(true);
-          }
-          // Don't accumulate a force if the body is sleeping.
-          if (this.m_awakeFlag) {
-              this.m_force.x += force.x;
-              this.m_force.y += force.y;
-          }
-      }
-      /// Apply a torque. This affects the angular velocity
-      /// without affecting the linear velocity of the center of mass.
-      /// @param torque about the z-axis (out of the screen), usually in N-m.
-      /// @param wake also wake up the body
-      ApplyTorque(torque, wake = true) {
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          if (wake && !this.m_awakeFlag) {
-              this.SetAwake(true);
-          }
-          // Don't accumulate a force if the body is sleeping.
-          if (this.m_awakeFlag) {
-              this.m_torque += torque;
-          }
-      }
-      /// Apply an impulse at a point. This immediately modifies the velocity.
-      /// It also modifies the angular velocity if the point of application
-      /// is not at the center of mass. This wakes up the body.
-      /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
-      /// @param point the world position of the point of application.
-      /// @param wake also wake up the body
-      ApplyLinearImpulse(impulse, point, wake = true) {
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          if (wake && !this.m_awakeFlag) {
-              this.SetAwake(true);
-          }
-          // Don't accumulate a force if the body is sleeping.
-          if (this.m_awakeFlag) {
-              this.m_linearVelocity.x += this.m_invMass * impulse.x;
-              this.m_linearVelocity.y += this.m_invMass * impulse.y;
-              this.m_angularVelocity += this.m_invI * ((point.x - this.m_sweep.c.x) * impulse.y - (point.y - this.m_sweep.c.y) * impulse.x);
-          }
-      }
-      /// Apply an impulse at the center of gravity. This immediately modifies the velocity.
-      /// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
-      /// @param wake also wake up the body
-      ApplyLinearImpulseToCenter(impulse, wake = true) {
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          if (wake && !this.m_awakeFlag) {
-              this.SetAwake(true);
-          }
-          // Don't accumulate a force if the body is sleeping.
-          if (this.m_awakeFlag) {
-              this.m_linearVelocity.x += this.m_invMass * impulse.x;
-              this.m_linearVelocity.y += this.m_invMass * impulse.y;
-          }
-      }
-      /// Apply an angular impulse.
-      /// @param impulse the angular impulse in units of kg*m*m/s
-      /// @param wake also wake up the body
-      ApplyAngularImpulse(impulse, wake = true) {
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          if (wake && !this.m_awakeFlag) {
-              this.SetAwake(true);
-          }
-          // Don't accumulate a force if the body is sleeping.
-          if (this.m_awakeFlag) {
-              this.m_angularVelocity += this.m_invI * impulse;
-          }
-      }
-      /// Get the total mass of the body.
-      /// @return the mass, usually in kilograms (kg).
-      GetMass() {
-          return this.m_mass;
-      }
-      /// Get the rotational inertia of the body about the local origin.
-      /// @return the rotational inertia, usually in kg-m^2.
-      GetInertia() {
-          return this.m_I + this.m_mass * b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
-      }
-      /// Get the mass data of the body.
-      /// @return a struct containing the mass, inertia and center of the body.
-      GetMassData(data) {
-          data.mass = this.m_mass;
-          data.I = this.m_I + this.m_mass * b2Vec2.DotVV(this.m_sweep.localCenter, this.m_sweep.localCenter);
-          data.center.Copy(this.m_sweep.localCenter);
-          return data;
-      }
-      SetMassData(massData) {
-          if (this.m_world.IsLocked()) {
-              throw new Error();
-          }
-          if (this.m_type !== b2BodyType.b2_dynamicBody) {
-              return;
-          }
-          this.m_invMass = 0;
-          this.m_I = 0;
-          this.m_invI = 0;
-          this.m_mass = massData.mass;
-          if (this.m_mass <= 0) {
-              this.m_mass = 1;
-          }
-          this.m_invMass = 1 / this.m_mass;
-          if (massData.I > 0 && !this.m_fixedRotationFlag) {
-              this.m_I = massData.I - this.m_mass * b2Vec2.DotVV(massData.center, massData.center);
-              // DEBUG: b2Assert(this.m_I > 0);
-              this.m_invI = 1 / this.m_I;
-          }
-          // Move center of mass.
-          const oldCenter = b2Body.SetMassData_s_oldCenter.Copy(this.m_sweep.c);
-          this.m_sweep.localCenter.Copy(massData.center);
-          b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
-          this.m_sweep.c0.Copy(this.m_sweep.c);
-          // Update center of mass velocity.
-          b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Vec2.s_t0), this.m_linearVelocity);
-      }
-      ResetMassData() {
-          // Compute mass data from shapes. Each shape has its own density.
-          this.m_mass = 0;
-          this.m_invMass = 0;
-          this.m_I = 0;
-          this.m_invI = 0;
-          this.m_sweep.localCenter.SetZero();
-          // Static and kinematic bodies have zero mass.
-          if (this.m_type === b2BodyType.b2_staticBody || this.m_type === b2BodyType.b2_kinematicBody) {
-              this.m_sweep.c0.Copy(this.m_xf.p);
-              this.m_sweep.c.Copy(this.m_xf.p);
-              this.m_sweep.a0 = this.m_sweep.a;
-              return;
-          }
-          // DEBUG: b2Assert(this.m_type === b2BodyType.b2_dynamicBody);
-          // Accumulate mass over all fixtures.
-          const localCenter = b2Body.ResetMassData_s_localCenter.SetZero();
-          for (let f = this.m_fixtureList; f; f = f.m_next) {
-              if (f.m_density === 0) {
-                  continue;
-              }
-              const massData = f.GetMassData(b2Body.ResetMassData_s_massData);
-              this.m_mass += massData.mass;
-              localCenter.x += massData.center.x * massData.mass;
-              localCenter.y += massData.center.y * massData.mass;
-              this.m_I += massData.I;
-          }
-          // Compute center of mass.
-          if (this.m_mass > 0) {
-              this.m_invMass = 1 / this.m_mass;
-              localCenter.x *= this.m_invMass;
-              localCenter.y *= this.m_invMass;
-          }
-          else {
-              // Force all dynamic bodies to have a positive mass.
-              this.m_mass = 1;
-              this.m_invMass = 1;
-          }
-          if (this.m_I > 0 && !this.m_fixedRotationFlag) {
-              // Center the inertia about the center of mass.
-              this.m_I -= this.m_mass * b2Vec2.DotVV(localCenter, localCenter);
-              // DEBUG: b2Assert(this.m_I > 0);
-              this.m_invI = 1 / this.m_I;
-          }
-          else {
-              this.m_I = 0;
-              this.m_invI = 0;
-          }
-          // Move center of mass.
-          const oldCenter = b2Body.ResetMassData_s_oldCenter.Copy(this.m_sweep.c);
-          this.m_sweep.localCenter.Copy(localCenter);
-          b2Transform.MulXV(this.m_xf, this.m_sweep.localCenter, this.m_sweep.c);
-          this.m_sweep.c0.Copy(this.m_sweep.c);
-          // Update center of mass velocity.
-          b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(this.m_sweep.c, oldCenter, b2Vec2.s_t0), this.m_linearVelocity);
-      }
-      /// Get the world coordinates of a point given the local coordinates.
-      /// @param localPoint a point on the body measured relative the the body's origin.
-      /// @return the same point expressed in world coordinates.
-      GetWorldPoint(localPoint, out) {
-          return b2Transform.MulXV(this.m_xf, localPoint, out);
-      }
-      /// Get the world coordinates of a vector given the local coordinates.
-      /// @param localVector a vector fixed in the body.
-      /// @return the same vector expressed in world coordinates.
-      GetWorldVector(localVector, out) {
-          return b2Rot.MulRV(this.m_xf.q, localVector, out);
-      }
-      /// Gets a local point relative to the body's origin given a world point.
-      /// @param a point in world coordinates.
-      /// @return the corresponding local point relative to the body's origin.
-      GetLocalPoint(worldPoint, out) {
-          return b2Transform.MulTXV(this.m_xf, worldPoint, out);
-      }
-      /// Gets a local vector given a world vector.
-      /// @param a vector in world coordinates.
-      /// @return the corresponding local vector.
-      GetLocalVector(worldVector, out) {
-          return b2Rot.MulTRV(this.m_xf.q, worldVector, out);
-      }
-      /// Get the world linear velocity of a world point attached to this body.
-      /// @param a point in world coordinates.
-      /// @return the world velocity of a point.
-      GetLinearVelocityFromWorldPoint(worldPoint, out) {
-          return b2Vec2.AddVCrossSV(this.m_linearVelocity, this.m_angularVelocity, b2Vec2.SubVV(worldPoint, this.m_sweep.c, b2Vec2.s_t0), out);
-      }
-      /// Get the world velocity of a local point.
-      /// @param a point in local coordinates.
-      /// @return the world velocity of a point.
-      GetLinearVelocityFromLocalPoint(localPoint, out) {
-          return this.GetLinearVelocityFromWorldPoint(this.GetWorldPoint(localPoint, out), out);
-      }
-      /// Get the linear damping of the body.
-      GetLinearDamping() {
-          return this.m_linearDamping;
-      }
-      /// Set the linear damping of the body.
-      SetLinearDamping(linearDamping) {
-          this.m_linearDamping = linearDamping;
-      }
-      /// Get the angular damping of the body.
-      GetAngularDamping() {
-          return this.m_angularDamping;
-      }
-      /// Set the angular damping of the body.
-      SetAngularDamping(angularDamping) {
-          this.m_angularDamping = angularDamping;
-      }
-      /// Get the gravity scale of the body.
-      GetGravityScale() {
-          return this.m_gravityScale;
-      }
-      /// Set the gravity scale of the body.
-      SetGravityScale(scale) {
-          this.m_gravityScale = scale;
-      }
-      /// Set the type of this body. This may alter the mass and velocity.
-      SetType(type) {
-          if (this.m_world.IsLocked()) {
-              throw new Error();
-          }
-          if (this.m_type === type) {
-              return;
-          }
-          this.m_type = type;
-          this.ResetMassData();
-          if (this.m_type === b2BodyType.b2_staticBody) {
-              this.m_linearVelocity.SetZero();
-              this.m_angularVelocity = 0;
-              this.m_sweep.a0 = this.m_sweep.a;
-              this.m_sweep.c0.Copy(this.m_sweep.c);
-              this.SynchronizeFixtures();
-          }
-          this.SetAwake(true);
-          this.m_force.SetZero();
-          this.m_torque = 0;
-          // Delete the attached contacts.
-          let ce = this.m_contactList;
-          while (ce) {
-              const ce0 = ce;
-              ce = ce.next;
-              this.m_world.m_contactManager.Destroy(ce0.contact);
-          }
-          this.m_contactList = null;
-          // Touch the proxies so that new contacts will be created (when appropriate)
-          for (let f = this.m_fixtureList; f; f = f.m_next) {
-              f.TouchProxies();
-          }
-      }
-      /// Get the type of this body.
-      GetType() {
-          return this.m_type;
-      }
-      /// Should this body be treated like a bullet for continuous collision detection?
-      SetBullet(flag) {
-          this.m_bulletFlag = flag;
-      }
-      /// Is this body treated like a bullet for continuous collision detection?
-      IsBullet() {
-          return this.m_bulletFlag;
-      }
-      /// You can disable sleeping on this body. If you disable sleeping, the
-      /// body will be woken.
-      SetSleepingAllowed(flag) {
-          this.m_autoSleepFlag = flag;
-          if (!flag) {
-              this.SetAwake(true);
-          }
-      }
-      /// Is this body allowed to sleep
-      IsSleepingAllowed() {
-          return this.m_autoSleepFlag;
-      }
-      /// Set the sleep state of the body. A sleeping body has very
-      /// low CPU cost.
-      /// @param flag set to true to wake the body, false to put it to sleep.
-      SetAwake(flag) {
-          if (flag) {
-              this.m_awakeFlag = true;
-              this.m_sleepTime = 0;
-          }
-          else {
-              this.m_awakeFlag = false;
-              this.m_sleepTime = 0;
-              this.m_linearVelocity.SetZero();
-              this.m_angularVelocity = 0;
-              this.m_force.SetZero();
-              this.m_torque = 0;
-          }
-      }
-      /// Get the sleeping state of this body.
-      /// @return true if the body is sleeping.
-      IsAwake() {
-          return this.m_awakeFlag;
-      }
-      /// Set the active state of the body. An inactive body is not
-      /// simulated and cannot be collided with or woken up.
-      /// If you pass a flag of true, all fixtures will be added to the
-      /// broad-phase.
-      /// If you pass a flag of false, all fixtures will be removed from
-      /// the broad-phase and all contacts will be destroyed.
-      /// Fixtures and joints are otherwise unaffected. You may continue
-      /// to create/destroy fixtures and joints on inactive bodies.
-      /// Fixtures on an inactive body are implicitly inactive and will
-      /// not participate in collisions, ray-casts, or queries.
-      /// Joints connected to an inactive body are implicitly inactive.
-      /// An inactive body is still owned by a b2World object and remains
-      /// in the body list.
-      SetActive(flag) {
-          if (this.m_world.IsLocked()) {
-              throw new Error();
-          }
-          if (flag === this.IsActive()) {
-              return;
-          }
-          this.m_activeFlag = flag;
-          if (flag) {
-              // Create all proxies.
-              for (let f = this.m_fixtureList; f; f = f.m_next) {
-                  f.CreateProxies(this.m_xf);
-              }
-              // Contacts are created the next time step.
-          }
-          else {
-              // Destroy all proxies.
-              for (let f = this.m_fixtureList; f; f = f.m_next) {
-                  f.DestroyProxies();
-              }
-              // Destroy the attached contacts.
-              let ce = this.m_contactList;
-              while (ce) {
-                  const ce0 = ce;
-                  ce = ce.next;
-                  this.m_world.m_contactManager.Destroy(ce0.contact);
-              }
-              this.m_contactList = null;
-          }
-      }
-      /// Get the active state of the body.
-      IsActive() {
-          return this.m_activeFlag;
-      }
-      /// Set this body to have fixed rotation. This causes the mass
-      /// to be reset.
-      SetFixedRotation(flag) {
-          if (this.m_fixedRotationFlag === flag) {
-              return;
-          }
-          this.m_fixedRotationFlag = flag;
-          this.m_angularVelocity = 0;
-          this.ResetMassData();
-      }
-      /// Does this body have fixed rotation?
-      IsFixedRotation() {
-          return this.m_fixedRotationFlag;
-      }
-      /// Get the list of all fixtures attached to this body.
-      GetFixtureList() {
-          return this.m_fixtureList;
-      }
-      /// Get the list of all joints attached to this body.
-      GetJointList() {
-          return this.m_jointList;
-      }
-      /// Get the list of all contacts attached to this body.
-      /// @warning this list changes during the time step and you may
-      /// miss some collisions if you don't use b2ContactListener.
-      GetContactList() {
-          return this.m_contactList;
-      }
-      /// Get the next body in the world's body list.
-      GetNext() {
-          return this.m_next;
-      }
-      /// Get the user data pointer that was provided in the body definition.
-      GetUserData() {
-          return this.m_userData;
-      }
-      /// Set the user data. Use this to store your application specific data.
-      SetUserData(data) {
-          this.m_userData = data;
-      }
-      /// Get the parent world of this body.
-      GetWorld() {
-          return this.m_world;
-      }
-      /// Dump this body to a log file
-      Dump(log) {
-          const bodyIndex = this.m_islandIndex;
-          log("{\n");
-          log("  const bd: b2BodyDef = new b2BodyDef();\n");
-          let type_str = "";
-          switch (this.m_type) {
-              case b2BodyType.b2_staticBody:
-                  type_str = "b2BodyType.b2_staticBody";
-                  break;
-              case b2BodyType.b2_kinematicBody:
-                  type_str = "b2BodyType.b2_kinematicBody";
-                  break;
-              case b2BodyType.b2_dynamicBody:
-                  type_str = "b2BodyType.b2_dynamicBody";
-                  break;
-              default:
-                  // DEBUG: b2Assert(false);
-                  break;
-          }
-          log("  bd.type = %s;\n", type_str);
-          log("  bd.position.Set(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
-          log("  bd.angle = %.15f;\n", this.m_sweep.a);
-          log("  bd.linearVelocity.Set(%.15f, %.15f);\n", this.m_linearVelocity.x, this.m_linearVelocity.y);
-          log("  bd.angularVelocity = %.15f;\n", this.m_angularVelocity);
-          log("  bd.linearDamping = %.15f;\n", this.m_linearDamping);
-          log("  bd.angularDamping = %.15f;\n", this.m_angularDamping);
-          log("  bd.allowSleep = %s;\n", (this.m_autoSleepFlag) ? ("true") : ("false"));
-          log("  bd.awake = %s;\n", (this.m_awakeFlag) ? ("true") : ("false"));
-          log("  bd.fixedRotation = %s;\n", (this.m_fixedRotationFlag) ? ("true") : ("false"));
-          log("  bd.bullet = %s;\n", (this.m_bulletFlag) ? ("true") : ("false"));
-          log("  bd.active = %s;\n", (this.m_activeFlag) ? ("true") : ("false"));
-          log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
-          log("\n");
-          log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
-          log("\n");
-          for (let f = this.m_fixtureList; f; f = f.m_next) {
-              log("  {\n");
-              f.Dump(log, bodyIndex);
-              log("  }\n");
-          }
-          log("}\n");
-      }
-      SynchronizeFixtures() {
-          const xf1 = b2Body.SynchronizeFixtures_s_xf1;
-          xf1.q.SetAngle(this.m_sweep.a0);
-          b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
-          b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
-          for (let f = this.m_fixtureList; f; f = f.m_next) {
-              f.Synchronize(xf1, this.m_xf);
-          }
-      }
-      SynchronizeTransform() {
-          this.m_xf.q.SetAngle(this.m_sweep.a);
-          b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-          b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
-      }
-      // This is used to prevent connected bodies from colliding.
-      // It may lie, depending on the collideConnected flag.
-      ShouldCollide(other) {
-          // At least one body should be dynamic or kinematic.
-          if (this.m_type === b2BodyType.b2_staticBody && other.m_type === b2BodyType.b2_staticBody) {
-              return false;
-          }
-          return this.ShouldCollideConnected(other);
-      }
-      ShouldCollideConnected(other) {
-          // Does a joint prevent collision?
-          for (let jn = this.m_jointList; jn; jn = jn.next) {
-              if (jn.other === other) {
-                  if (!jn.joint.m_collideConnected) {
-                      return false;
-                  }
-              }
-          }
-          return true;
-      }
-      Advance(alpha) {
-          // Advance to the new safe time. This doesn't sync the broad-phase.
-          this.m_sweep.Advance(alpha);
-          this.m_sweep.c.Copy(this.m_sweep.c0);
-          this.m_sweep.a = this.m_sweep.a0;
-          this.m_xf.q.SetAngle(this.m_sweep.a);
-          b2Rot.MulRV(this.m_xf.q, this.m_sweep.localCenter, this.m_xf.p);
-          b2Vec2.SubVV(this.m_sweep.c, this.m_xf.p, this.m_xf.p);
-      }
-      // #if B2_ENABLE_CONTROLLER
-      GetControllerList() {
-          return this.m_controllerList;
-      }
-      GetControllerCount() {
-          return this.m_controllerCount;
-      }
-  }
-  /// Creates a fixture from a shape and attach it to this body.
-  /// This is a convenience function. Use b2FixtureDef if you need to set parameters
-  /// like friction, restitution, user data, or filtering.
-  /// If the density is non-zero, this function automatically updates the mass of the body.
-  /// @param shape the shape to be cloned.
-  /// @param density the shape density (set to zero for static bodies).
-  /// @warning This function is locked during callbacks.
-  b2Body.CreateFixtureShapeDensity_s_def = new b2FixtureDef();
-  /// Set the mass properties to override the mass properties of the fixtures.
-  /// Note that this changes the center of mass position.
-  /// Note that creating or destroying fixtures can also alter the mass.
-  /// This function has no effect if the body isn't dynamic.
-  /// @param massData the mass properties.
-  b2Body.SetMassData_s_oldCenter = new b2Vec2();
-  /// This resets the mass properties to the sum of the mass properties of the fixtures.
-  /// This normally does not need to be called unless you called SetMassData to override
-  /// the mass and you later want to reset the mass.
-  b2Body.ResetMassData_s_localCenter = new b2Vec2();
-  b2Body.ResetMassData_s_oldCenter = new b2Vec2();
-  b2Body.ResetMassData_s_massData = new b2MassData();
-  b2Body.SynchronizeFixtures_s_xf1 = new b2Transform();
-
-  /*
-  * Copyright (c) 2010 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  /// This is a growable LIFO stack with an initial capacity of N.
-  /// If the stack size exceeds the initial capacity, the heap is used
-  /// to increase the size of the stack.
-  class b2GrowableStack {
-      constructor(N) {
-          this.m_stack = [];
-          this.m_count = 0;
-          this.m_stack = b2MakeArray(N, (index) => null);
-          this.m_count = 0;
-      }
-      Reset() {
-          this.m_count = 0;
-          return this;
-      }
-      Push(element) {
-          this.m_stack[this.m_count] = element;
-          this.m_count++;
-      }
-      Pop() {
-          // DEBUG: b2Assert(this.m_count > 0);
-          this.m_count--;
-          const element = this.m_stack[this.m_count];
-          this.m_stack[this.m_count] = null;
-          if (element === null) {
-              throw new Error();
-          }
-          return element;
-      }
-      GetCount() {
-          return this.m_count;
-      }
-  }
-
-  /*
-  * Copyright (c) 2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  function verify(value) {
-      if (value === null) {
-          throw new Error();
-      }
-      return value;
-  }
-  /// A node in the dynamic tree. The client does not interact with this directly.
-  class b2TreeNode {
-      constructor(id = 0) {
-          this.m_id = 0;
-          this.aabb = new b2AABB();
-          this.parent = null; // or next
-          this.child1 = null;
-          this.child2 = null;
-          this.height = 0; // leaf = 0, free node = -1
-          this.m_id = id;
-      }
-      IsLeaf() {
-          return this.child1 === null;
-      }
-  }
-  class b2DynamicTree {
-      constructor() {
-          this.m_root = null;
-          // b2TreeNode* public m_nodes;
-          // int32 public m_nodeCount;
-          // int32 public m_nodeCapacity;
-          this.m_freeList = null;
-          this.m_path = 0;
-          this.m_insertionCount = 0;
-          this.m_stack = new b2GrowableStack(256);
-      }
-      // public GetUserData(proxy: b2TreeNode<T>): any {
-      //   // DEBUG: b2Assert(proxy !== null);
-      //   return proxy.userData;
-      // }
-      // public GetFatAABB(proxy: b2TreeNode<T>): b2AABB {
-      //   // DEBUG: b2Assert(proxy !== null);
-      //   return proxy.aabb;
-      // }
-      Query(aabb, callback) {
-          if (this.m_root === null) {
-              return;
-          }
-          const stack = this.m_stack.Reset();
-          stack.Push(this.m_root);
-          while (stack.GetCount() > 0) {
-              const node = stack.Pop();
-              // if (node === null) {
-              //   continue;
-              // }
-              if (node.aabb.TestOverlap(aabb)) {
-                  if (node.IsLeaf()) {
-                      const proceed = callback(node);
-                      if (!proceed) {
-                          return;
-                      }
-                  }
-                  else {
-                      stack.Push(verify(node.child1));
-                      stack.Push(verify(node.child2));
-                  }
-              }
-          }
-      }
-      QueryPoint(point, callback) {
-          if (this.m_root === null) {
-              return;
-          }
-          const stack = this.m_stack.Reset();
-          stack.Push(this.m_root);
-          while (stack.GetCount() > 0) {
-              const node = stack.Pop();
-              // if (node === null) {
-              //   continue;
-              // }
-              if (node.aabb.TestContain(point)) {
-                  if (node.IsLeaf()) {
-                      const proceed = callback(node);
-                      if (!proceed) {
-                          return;
-                      }
-                  }
-                  else {
-                      stack.Push(verify(node.child1));
-                      stack.Push(verify(node.child2));
-                  }
-              }
-          }
-      }
-      RayCast(input, callback) {
-          if (this.m_root === null) {
-              return;
-          }
-          const p1 = input.p1;
-          const p2 = input.p2;
-          const r = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
-          // DEBUG: b2Assert(r.LengthSquared() > 0);
-          r.Normalize();
-          // v is perpendicular to the segment.
-          const v = b2Vec2.CrossOneV(r, b2DynamicTree.s_v);
-          const abs_v = b2Vec2.AbsV(v, b2DynamicTree.s_abs_v);
-          // Separating axis for segment (Gino, p80).
-          // |dot(v, p1 - c)| > dot(|v|, h)
-          let maxFraction = input.maxFraction;
-          // Build a bounding box for the segment.
-          const segmentAABB = b2DynamicTree.s_segmentAABB;
-          let t_x = p1.x + maxFraction * (p2.x - p1.x);
-          let t_y = p1.y + maxFraction * (p2.y - p1.y);
-          segmentAABB.lowerBound.x = b2Min(p1.x, t_x);
-          segmentAABB.lowerBound.y = b2Min(p1.y, t_y);
-          segmentAABB.upperBound.x = b2Max(p1.x, t_x);
-          segmentAABB.upperBound.y = b2Max(p1.y, t_y);
-          const stack = this.m_stack.Reset();
-          stack.Push(this.m_root);
-          while (stack.GetCount() > 0) {
-              const node = stack.Pop();
-              // if (node === null) {
-              //   continue;
-              // }
-              if (!b2TestOverlapAABB(node.aabb, segmentAABB)) {
-                  continue;
-              }
-              // Separating axis for segment (Gino, p80).
-              // |dot(v, p1 - c)| > dot(|v|, h)
-              const c = node.aabb.GetCenter();
-              const h = node.aabb.GetExtents();
-              const separation = b2Abs(b2Vec2.DotVV(v, b2Vec2.SubVV(p1, c, b2Vec2.s_t0))) - b2Vec2.DotVV(abs_v, h);
-              if (separation > 0) {
-                  continue;
-              }
-              if (node.IsLeaf()) {
-                  const subInput = b2DynamicTree.s_subInput;
-                  subInput.p1.Copy(input.p1);
-                  subInput.p2.Copy(input.p2);
-                  subInput.maxFraction = maxFraction;
-                  const value = callback(subInput, node);
-                  if (value === 0) {
-                      // The client has terminated the ray cast.
-                      return;
-                  }
-                  if (value > 0) {
-                      // Update segment bounding box.
-                      maxFraction = value;
-                      t_x = p1.x + maxFraction * (p2.x - p1.x);
-                      t_y = p1.y + maxFraction * (p2.y - p1.y);
-                      segmentAABB.lowerBound.x = b2Min(p1.x, t_x);
-                      segmentAABB.lowerBound.y = b2Min(p1.y, t_y);
-                      segmentAABB.upperBound.x = b2Max(p1.x, t_x);
-                      segmentAABB.upperBound.y = b2Max(p1.y, t_y);
-                  }
-              }
-              else {
-                  stack.Push(verify(node.child1));
-                  stack.Push(verify(node.child2));
-              }
-          }
-      }
-      AllocateNode() {
-          // Expand the node pool as needed.
-          if (this.m_freeList) {
-              const node = this.m_freeList;
-              this.m_freeList = node.parent; // this.m_freeList = node.next;
-              node.parent = null;
-              node.child1 = null;
-              node.child2 = null;
-              node.height = 0;
-              delete node.userData; // = null;
-              return node;
-          }
-          return new b2TreeNode(b2DynamicTree.s_node_id++);
-      }
-      FreeNode(node) {
-          node.parent = this.m_freeList; // node.next = this.m_freeList;
-          node.child1 = null;
-          node.child2 = null;
-          node.height = -1;
-          delete node.userData; // = null;
-          this.m_freeList = node;
-      }
-      CreateProxy(aabb, userData) {
-          const node = this.AllocateNode();
-          // Fatten the aabb.
-          const r_x = b2_aabbExtension;
-          const r_y = b2_aabbExtension;
-          node.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
-          node.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
-          node.aabb.upperBound.x = aabb.upperBound.x + r_x;
-          node.aabb.upperBound.y = aabb.upperBound.y + r_y;
-          node.userData = userData;
-          node.height = 0;
-          this.InsertLeaf(node);
-          return node;
-      }
-      DestroyProxy(proxy) {
-          // DEBUG: b2Assert(proxy.IsLeaf());
-          this.RemoveLeaf(proxy);
-          this.FreeNode(proxy);
-      }
-      MoveProxy(proxy, aabb, displacement) {
-          // DEBUG: b2Assert(proxy.IsLeaf());
-          if (proxy.aabb.Contains(aabb)) {
-              return false;
-          }
-          this.RemoveLeaf(proxy);
-          // Extend AABB.
-          // Predict AABB displacement.
-          const r_x = b2_aabbExtension + b2_aabbMultiplier * (displacement.x > 0 ? displacement.x : (-displacement.x));
-          const r_y = b2_aabbExtension + b2_aabbMultiplier * (displacement.y > 0 ? displacement.y : (-displacement.y));
-          proxy.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
-          proxy.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
-          proxy.aabb.upperBound.x = aabb.upperBound.x + r_x;
-          proxy.aabb.upperBound.y = aabb.upperBound.y + r_y;
-          this.InsertLeaf(proxy);
-          return true;
-      }
-      InsertLeaf(leaf) {
-          ++this.m_insertionCount;
-          if (this.m_root === null) {
-              this.m_root = leaf;
-              this.m_root.parent = null;
-              return;
-          }
-          // Find the best sibling for this node
-          const leafAABB = leaf.aabb;
-          ///const center: b2Vec2 = leafAABB.GetCenter();
-          let index = this.m_root;
-          while (!index.IsLeaf()) {
-              const child1 = verify(index.child1);
-              const child2 = verify(index.child2);
-              const area = index.aabb.GetPerimeter();
-              const combinedAABB = b2DynamicTree.s_combinedAABB;
-              combinedAABB.Combine2(index.aabb, leafAABB);
-              const combinedArea = combinedAABB.GetPerimeter();
-              // Cost of creating a new parent for this node and the new leaf
-              const cost = 2 * combinedArea;
-              // Minimum cost of pushing the leaf further down the tree
-              const inheritanceCost = 2 * (combinedArea - area);
-              // Cost of descending into child1
-              let cost1;
-              const aabb = b2DynamicTree.s_aabb;
-              let oldArea;
-              let newArea;
-              if (child1.IsLeaf()) {
-                  aabb.Combine2(leafAABB, child1.aabb);
-                  cost1 = aabb.GetPerimeter() + inheritanceCost;
-              }
-              else {
-                  aabb.Combine2(leafAABB, child1.aabb);
-                  oldArea = child1.aabb.GetPerimeter();
-                  newArea = aabb.GetPerimeter();
-                  cost1 = (newArea - oldArea) + inheritanceCost;
-              }
-              // Cost of descending into child2
-              let cost2;
-              if (child2.IsLeaf()) {
-                  aabb.Combine2(leafAABB, child2.aabb);
-                  cost2 = aabb.GetPerimeter() + inheritanceCost;
-              }
-              else {
-                  aabb.Combine2(leafAABB, child2.aabb);
-                  oldArea = child2.aabb.GetPerimeter();
-                  newArea = aabb.GetPerimeter();
-                  cost2 = newArea - oldArea + inheritanceCost;
-              }
-              // Descend according to the minimum cost.
-              if (cost < cost1 && cost < cost2) {
-                  break;
-              }
-              // Descend
-              if (cost1 < cost2) {
-                  index = child1;
-              }
-              else {
-                  index = child2;
-              }
-          }
-          const sibling = index;
-          // Create a parent for the siblings.
-          const oldParent = sibling.parent;
-          const newParent = this.AllocateNode();
-          newParent.parent = oldParent;
-          delete newParent.userData; // = null;
-          newParent.aabb.Combine2(leafAABB, sibling.aabb);
-          newParent.height = sibling.height + 1;
-          if (oldParent) {
-              // The sibling was not the root.
-              if (oldParent.child1 === sibling) {
-                  oldParent.child1 = newParent;
-              }
-              else {
-                  oldParent.child2 = newParent;
-              }
-              newParent.child1 = sibling;
-              newParent.child2 = leaf;
-              sibling.parent = newParent;
-              leaf.parent = newParent;
-          }
-          else {
-              // The sibling was the root.
-              newParent.child1 = sibling;
-              newParent.child2 = leaf;
-              sibling.parent = newParent;
-              leaf.parent = newParent;
-              this.m_root = newParent;
-          }
-          // Walk back up the tree fixing heights and AABBs
-          let index2 = leaf.parent;
-          while (index2 !== null) {
-              index2 = this.Balance(index2);
-              const child1 = verify(index2.child1);
-              const child2 = verify(index2.child2);
-              index2.height = 1 + b2Max(child1.height, child2.height);
-              index2.aabb.Combine2(child1.aabb, child2.aabb);
-              index2 = index2.parent;
-          }
-          // this.Validate();
-      }
-      RemoveLeaf(leaf) {
-          if (leaf === this.m_root) {
-              this.m_root = null;
-              return;
-          }
-          const parent = verify(leaf.parent);
-          const grandParent = parent && parent.parent;
-          let sibling;
-          if (parent.child1 === leaf) {
-              sibling = verify(parent.child2);
-          }
-          else {
-              sibling = verify(parent.child1);
-          }
-          if (grandParent) {
-              // Destroy parent and connect sibling to grandParent.
-              if (grandParent.child1 === parent) {
-                  grandParent.child1 = sibling;
-              }
-              else {
-                  grandParent.child2 = sibling;
-              }
-              sibling.parent = grandParent;
-              this.FreeNode(parent);
-              // Adjust ancestor bounds.
-              let index = grandParent;
-              while (index) {
-                  index = this.Balance(index);
-                  const child1 = verify(index.child1);
-                  const child2 = verify(index.child2);
-                  index.aabb.Combine2(child1.aabb, child2.aabb);
-                  index.height = 1 + b2Max(child1.height, child2.height);
-                  index = index.parent;
-              }
-          }
-          else {
-              this.m_root = sibling;
-              sibling.parent = null;
-              this.FreeNode(parent);
-          }
-          // this.Validate();
-      }
-      Balance(A) {
-          // DEBUG: b2Assert(A !== null);
-          if (A.IsLeaf() || A.height < 2) {
-              return A;
-          }
-          const B = verify(A.child1);
-          const C = verify(A.child2);
-          const balance = C.height - B.height;
-          // Rotate C up
-          if (balance > 1) {
-              const F = verify(C.child1);
-              const G = verify(C.child2);
-              // Swap A and C
-              C.child1 = A;
-              C.parent = A.parent;
-              A.parent = C;
-              // A's old parent should point to C
-              if (C.parent !== null) {
-                  if (C.parent.child1 === A) {
-                      C.parent.child1 = C;
-                  }
-                  else {
-                      // DEBUG: b2Assert(C.parent.child2 === A);
-                      C.parent.child2 = C;
-                  }
-              }
-              else {
-                  this.m_root = C;
-              }
-              // Rotate
-              if (F.height > G.height) {
-                  C.child2 = F;
-                  A.child2 = G;
-                  G.parent = A;
-                  A.aabb.Combine2(B.aabb, G.aabb);
-                  C.aabb.Combine2(A.aabb, F.aabb);
-                  A.height = 1 + b2Max(B.height, G.height);
-                  C.height = 1 + b2Max(A.height, F.height);
-              }
-              else {
-                  C.child2 = G;
-                  A.child2 = F;
-                  F.parent = A;
-                  A.aabb.Combine2(B.aabb, F.aabb);
-                  C.aabb.Combine2(A.aabb, G.aabb);
-                  A.height = 1 + b2Max(B.height, F.height);
-                  C.height = 1 + b2Max(A.height, G.height);
-              }
-              return C;
-          }
-          // Rotate B up
-          if (balance < -1) {
-              const D = verify(B.child1);
-              const E = verify(B.child2);
-              // Swap A and B
-              B.child1 = A;
-              B.parent = A.parent;
-              A.parent = B;
-              // A's old parent should point to B
-              if (B.parent !== null) {
-                  if (B.parent.child1 === A) {
-                      B.parent.child1 = B;
-                  }
-                  else {
-                      // DEBUG: b2Assert(B.parent.child2 === A);
-                      B.parent.child2 = B;
-                  }
-              }
-              else {
-                  this.m_root = B;
-              }
-              // Rotate
-              if (D.height > E.height) {
-                  B.child2 = D;
-                  A.child1 = E;
-                  E.parent = A;
-                  A.aabb.Combine2(C.aabb, E.aabb);
-                  B.aabb.Combine2(A.aabb, D.aabb);
-                  A.height = 1 + b2Max(C.height, E.height);
-                  B.height = 1 + b2Max(A.height, D.height);
-              }
-              else {
-                  B.child2 = E;
-                  A.child1 = D;
-                  D.parent = A;
-                  A.aabb.Combine2(C.aabb, D.aabb);
-                  B.aabb.Combine2(A.aabb, E.aabb);
-                  A.height = 1 + b2Max(C.height, D.height);
-                  B.height = 1 + b2Max(A.height, E.height);
-              }
-              return B;
-          }
-          return A;
-      }
-      GetHeight() {
-          if (this.m_root === null) {
-              return 0;
-          }
-          return this.m_root.height;
-      }
-      static GetAreaNode(node) {
-          if (node === null) {
-              return 0;
-          }
-          if (node.IsLeaf()) {
-              return 0;
-          }
-          let area = node.aabb.GetPerimeter();
-          area += b2DynamicTree.GetAreaNode(node.child1);
-          area += b2DynamicTree.GetAreaNode(node.child2);
-          return area;
-      }
-      GetAreaRatio() {
-          if (this.m_root === null) {
-              return 0;
-          }
-          const root = this.m_root;
-          const rootArea = root.aabb.GetPerimeter();
-          const totalArea = b2DynamicTree.GetAreaNode(this.m_root);
-          /*
-          float32 totalArea = 0.0;
-          for (int32 i = 0; i < m_nodeCapacity; ++i) {
-            const b2TreeNode<T>* node = m_nodes + i;
-            if (node.height < 0) {
-              // Free node in pool
-              continue;
-            }
-      
-            totalArea += node.aabb.GetPerimeter();
-          }
-          */
-          return totalArea / rootArea;
-      }
-      ComputeHeightNode(node) {
-          if (!node || node.IsLeaf()) {
-              return 0;
-          }
-          const height1 = this.ComputeHeightNode(node.child1);
-          const height2 = this.ComputeHeightNode(node.child2);
-          return 1 + b2Max(height1, height2);
-      }
-      ComputeHeight() {
-          const height = this.ComputeHeightNode(this.m_root);
-          return height;
-      }
-      ValidateStructure(index) {
-          if (index === null) {
-              return;
-          }
-          if (index === this.m_root) ;
-          const node = index;
-          if (node.IsLeaf()) {
-              // DEBUG: b2Assert(node.child1 === null);
-              // DEBUG: b2Assert(node.child2 === null);
-              // DEBUG: b2Assert(node.height === 0);
-              return;
-          }
-          const child1 = verify(node.child1);
-          const child2 = verify(node.child2);
-          // DEBUG: b2Assert(child1.parent === index);
-          // DEBUG: b2Assert(child2.parent === index);
-          this.ValidateStructure(child1);
-          this.ValidateStructure(child2);
-      }
-      ValidateMetrics(index) {
-          if (index === null) {
-              return;
-          }
-          const node = index;
-          if (node.IsLeaf()) {
-              // DEBUG: b2Assert(node.child1 === null);
-              // DEBUG: b2Assert(node.child2 === null);
-              // DEBUG: b2Assert(node.height === 0);
-              return;
-          }
-          const child1 = verify(node.child1);
-          const child2 = verify(node.child2);
-          // DEBUG: const height1: number = child1.height;
-          // DEBUG: const height2: number = child2.height;
-          // DEBUG: const height: number = 1 + b2Max(height1, height2);
-          // DEBUG: b2Assert(node.height === height);
-          const aabb = b2DynamicTree.s_aabb;
-          aabb.Combine2(child1.aabb, child2.aabb);
-          // DEBUG: b2Assert(aabb.lowerBound === node.aabb.lowerBound);
-          // DEBUG: b2Assert(aabb.upperBound === node.aabb.upperBound);
-          this.ValidateMetrics(child1);
-          this.ValidateMetrics(child2);
-      }
-      Validate() {
-          // DEBUG: this.ValidateStructure(this.m_root);
-          // DEBUG: this.ValidateMetrics(this.m_root);
-          // let freeCount: number = 0;
-          // let freeIndex: b2TreeNode<T> | null = this.m_freeList;
-          // while (freeIndex !== null) {
-          //   freeIndex = freeIndex.parent; // freeIndex = freeIndex.next;
-          //   ++freeCount;
-          // }
-          // DEBUG: b2Assert(this.GetHeight() === this.ComputeHeight());
-          // b2Assert(this.m_nodeCount + freeCount === this.m_nodeCapacity);
-      }
-      static GetMaxBalanceNode(node, maxBalance) {
-          if (node === null) {
-              return maxBalance;
-          }
-          if (node.height <= 1) {
-              return maxBalance;
-          }
-          // DEBUG: b2Assert(!node.IsLeaf());
-          const child1 = verify(node.child1);
-          const child2 = verify(node.child2);
-          const balance = b2Abs(child2.height - child1.height);
-          return b2Max(maxBalance, balance);
-      }
-      GetMaxBalance() {
-          const maxBalance = b2DynamicTree.GetMaxBalanceNode(this.m_root, 0);
-          /*
-          int32 maxBalance = 0;
-          for (int32 i = 0; i < m_nodeCapacity; ++i) {
-            const b2TreeNode<T>* node = m_nodes + i;
-            if (node.height <= 1) {
-              continue;
-            }
-      
-            b2Assert(!node.IsLeaf());
-      
-            int32 child1 = node.child1;
-            int32 child2 = node.child2;
-            int32 balance = b2Abs(m_nodes[child2].height - m_nodes[child1].height);
-            maxBalance = b2Max(maxBalance, balance);
-          }
-          */
-          return maxBalance;
-      }
-      RebuildBottomUp() {
-          /*
-          int32* nodes = (int32*)b2Alloc(m_nodeCount * sizeof(int32));
-          int32 count = 0;
-      
-          // Build array of leaves. Free the rest.
-          for (int32 i = 0; i < m_nodeCapacity; ++i) {
-            if (m_nodes[i].height < 0) {
-              // free node in pool
-              continue;
-            }
-      
-            if (m_nodes[i].IsLeaf()) {
-              m_nodes[i].parent = b2_nullNode;
-              nodes[count] = i;
-              ++count;
-            } else {
-              FreeNode(i);
-            }
-          }
-      
-          while (count > 1) {
-            float32 minCost = b2_maxFloat;
-            int32 iMin = -1, jMin = -1;
-            for (int32 i = 0; i < count; ++i) {
-              b2AABB aabbi = m_nodes[nodes[i]].aabb;
-      
-              for (int32 j = i + 1; j < count; ++j) {
-                b2AABB aabbj = m_nodes[nodes[j]].aabb;
-                b2AABB b;
-                b.Combine(aabbi, aabbj);
-                float32 cost = b.GetPerimeter();
-                if (cost < minCost) {
-                  iMin = i;
-                  jMin = j;
-                  minCost = cost;
-                }
-              }
-            }
-      
-            int32 index1 = nodes[iMin];
-            int32 index2 = nodes[jMin];
-            b2TreeNode<T>* child1 = m_nodes + index1;
-            b2TreeNode<T>* child2 = m_nodes + index2;
-      
-            int32 parentIndex = AllocateNode();
-            b2TreeNode<T>* parent = m_nodes + parentIndex;
-            parent.child1 = index1;
-            parent.child2 = index2;
-            parent.height = 1 + b2Max(child1.height, child2.height);
-            parent.aabb.Combine(child1.aabb, child2.aabb);
-            parent.parent = b2_nullNode;
-      
-            child1.parent = parentIndex;
-            child2.parent = parentIndex;
-      
-            nodes[jMin] = nodes[count-1];
-            nodes[iMin] = parentIndex;
-            --count;
-          }
-      
-          m_root = nodes[0];
-          b2Free(nodes);
-          */
-          this.Validate();
-      }
-      static ShiftOriginNode(node, newOrigin) {
-          if (node === null) {
-              return;
-          }
-          if (node.height <= 1) {
-              return;
-          }
-          // DEBUG: b2Assert(!node.IsLeaf());
-          const child1 = node.child1;
-          const child2 = node.child2;
-          b2DynamicTree.ShiftOriginNode(child1, newOrigin);
-          b2DynamicTree.ShiftOriginNode(child2, newOrigin);
-          node.aabb.lowerBound.SelfSub(newOrigin);
-          node.aabb.upperBound.SelfSub(newOrigin);
-      }
-      ShiftOrigin(newOrigin) {
-          b2DynamicTree.ShiftOriginNode(this.m_root, newOrigin);
-          /*
-          // Build array of leaves. Free the rest.
-          for (int32 i = 0; i < m_nodeCapacity; ++i) {
-            m_nodes[i].aabb.lowerBound -= newOrigin;
-            m_nodes[i].aabb.upperBound -= newOrigin;
-          }
-          */
-      }
-  }
-  b2DynamicTree.s_r = new b2Vec2();
-  b2DynamicTree.s_v = new b2Vec2();
-  b2DynamicTree.s_abs_v = new b2Vec2();
-  b2DynamicTree.s_segmentAABB = new b2AABB();
-  b2DynamicTree.s_subInput = new b2RayCastInput();
-  b2DynamicTree.s_combinedAABB = new b2AABB();
-  b2DynamicTree.s_aabb = new b2AABB();
-  b2DynamicTree.s_node_id = 0;
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class b2Pair {
-      constructor(proxyA, proxyB) {
-          this.proxyA = proxyA;
-          this.proxyB = proxyB;
-      }
-  }
-  /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
-  /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
-  /// It is up to the client to consume the new pairs and to track subsequent overlap.
-  class b2BroadPhase {
-      constructor() {
-          this.m_tree = new b2DynamicTree();
-          this.m_proxyCount = 0;
-          // public m_moveCapacity: number = 16;
-          this.m_moveCount = 0;
-          this.m_moveBuffer = [];
-          // public m_pairCapacity: number = 16;
-          this.m_pairCount = 0;
-          this.m_pairBuffer = [];
-      }
-      // public m_queryProxyId: number = 0;
-      /// Create a proxy with an initial AABB. Pairs are not reported until
-      /// UpdatePairs is called.
-      CreateProxy(aabb, userData) {
-          const proxy = this.m_tree.CreateProxy(aabb, userData);
-          ++this.m_proxyCount;
-          this.BufferMove(proxy);
-          return proxy;
-      }
-      /// Destroy a proxy. It is up to the client to remove any pairs.
-      DestroyProxy(proxy) {
-          this.UnBufferMove(proxy);
-          --this.m_proxyCount;
-          this.m_tree.DestroyProxy(proxy);
-      }
-      /// Call MoveProxy as many times as you like, then when you are done
-      /// call UpdatePairs to finalized the proxy pairs (for your time step).
-      MoveProxy(proxy, aabb, displacement) {
-          const buffer = this.m_tree.MoveProxy(proxy, aabb, displacement);
-          if (buffer) {
-              this.BufferMove(proxy);
-          }
-      }
-      /// Call to trigger a re-processing of it's pairs on the next call to UpdatePairs.
-      TouchProxy(proxy) {
-          this.BufferMove(proxy);
-      }
-      /// Get the fat AABB for a proxy.
-      // public GetFatAABB(proxy: b2TreeNode<T>): b2AABB {
-      //   return this.m_tree.GetFatAABB(proxy);
-      // }
-      /// Get user data from a proxy. Returns NULL if the id is invalid.
-      // public GetUserData(proxy: b2TreeNode<T>): T {
-      //   return this.m_tree.GetUserData(proxy);
-      // }
-      /// Test overlap of fat AABBs.
-      // public TestOverlap(proxyA: b2TreeNode<T>, proxyB: b2TreeNode<T>): boolean {
-      //   const aabbA: b2AABB = this.m_tree.GetFatAABB(proxyA);
-      //   const aabbB: b2AABB = this.m_tree.GetFatAABB(proxyB);
-      //   return b2TestOverlapAABB(aabbA, aabbB);
-      // }
-      /// Get the number of proxies.
-      GetProxyCount() {
-          return this.m_proxyCount;
-      }
-      /// Update the pairs. This results in pair callbacks. This can only add pairs.
-      UpdatePairs(callback) {
-          // Reset pair buffer
-          this.m_pairCount = 0;
-          // Perform tree queries for all moving proxies.
-          for (let i = 0; i < this.m_moveCount; ++i) {
-              const queryProxy = this.m_moveBuffer[i];
-              if (queryProxy === null) {
-                  continue;
-              }
-              // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
-              // boolean b2BroadPhase::QueryCallback(int32 proxyId);
-              // We have to query the tree with the fat AABB so that
-              // we don't fail to create a pair that may touch later.
-              const fatAABB = queryProxy.aabb; // this.m_tree.GetFatAABB(queryProxy);
-              // Query tree, create pairs and add them pair buffer.
-              this.m_tree.Query(fatAABB, (proxy) => {
-                  // A proxy cannot form a pair with itself.
-                  if (proxy.m_id === queryProxy.m_id) {
-                      return true;
-                  }
-                  // const proxyA = proxy < queryProxy ? proxy : queryProxy;
-                  // const proxyB = proxy >= queryProxy ? proxy : queryProxy;
-                  let proxyA;
-                  let proxyB;
-                  if (proxy.m_id < queryProxy.m_id) {
-                      proxyA = proxy;
-                      proxyB = queryProxy;
-                  }
-                  else {
-                      proxyA = queryProxy;
-                      proxyB = proxy;
-                  }
-                  // Grow the pair buffer as needed.
-                  if (this.m_pairCount === this.m_pairBuffer.length) {
-                      this.m_pairBuffer[this.m_pairCount] = new b2Pair(proxyA, proxyB);
-                  }
-                  else {
-                      const pair = this.m_pairBuffer[this.m_pairCount];
-                      pair.proxyA = proxyA;
-                      pair.proxyB = proxyB;
-                  }
-                  ++this.m_pairCount;
-                  return true;
-              });
-          }
-          // Reset move buffer
-          this.m_moveCount = 0;
-          // Sort the pair buffer to expose duplicates.
-          this.m_pairBuffer.length = this.m_pairCount;
-          this.m_pairBuffer.sort(b2PairLessThan);
-          // Send the pairs back to the client.
-          let i = 0;
-          while (i < this.m_pairCount) {
-              const primaryPair = this.m_pairBuffer[i];
-              const userDataA = primaryPair.proxyA.userData; // this.m_tree.GetUserData(primaryPair.proxyA);
-              const userDataB = primaryPair.proxyB.userData; // this.m_tree.GetUserData(primaryPair.proxyB);
-              callback(userDataA, userDataB);
-              ++i;
-              // Skip any duplicate pairs.
-              while (i < this.m_pairCount) {
-                  const pair = this.m_pairBuffer[i];
-                  if (pair.proxyA.m_id !== primaryPair.proxyA.m_id || pair.proxyB.m_id !== primaryPair.proxyB.m_id) {
-                      break;
-                  }
-                  ++i;
-              }
-          }
-          // Try to keep the tree balanced.
-          // this.m_tree.Rebalance(4);
-      }
-      /// Query an AABB for overlapping proxies. The callback class
-      /// is called for each proxy that overlaps the supplied AABB.
-      Query(aabb, callback) {
-          this.m_tree.Query(aabb, callback);
-      }
-      QueryPoint(point, callback) {
-          this.m_tree.QueryPoint(point, callback);
-      }
-      /// Ray-cast against the proxies in the tree. This relies on the callback
-      /// to perform a exact ray-cast in the case were the proxy contains a shape.
-      /// The callback also performs the any collision filtering. This has performance
-      /// roughly equal to k * log(n), where k is the number of collisions and n is the
-      /// number of proxies in the tree.
-      /// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
-      /// @param callback a callback class that is called for each proxy that is hit by the ray.
-      RayCast(input, callback) {
-          this.m_tree.RayCast(input, callback);
-      }
-      /// Get the height of the embedded tree.
-      GetTreeHeight() {
-          return this.m_tree.GetHeight();
-      }
-      /// Get the balance of the embedded tree.
-      GetTreeBalance() {
-          return this.m_tree.GetMaxBalance();
-      }
-      /// Get the quality metric of the embedded tree.
-      GetTreeQuality() {
-          return this.m_tree.GetAreaRatio();
-      }
-      /// Shift the world origin. Useful for large worlds.
-      /// The shift formula is: position -= newOrigin
-      /// @param newOrigin the new origin with respect to the old origin
-      ShiftOrigin(newOrigin) {
-          this.m_tree.ShiftOrigin(newOrigin);
-      }
-      BufferMove(proxy) {
-          this.m_moveBuffer[this.m_moveCount] = proxy;
-          ++this.m_moveCount;
-      }
-      UnBufferMove(proxy) {
-          const i = this.m_moveBuffer.indexOf(proxy);
-          this.m_moveBuffer[i] = null;
-      }
-  }
-  /// This is used to sort pairs.
-  function b2PairLessThan(pair1, pair2) {
-      if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
-          return pair1.proxyB.m_id - pair2.proxyB.m_id;
-      }
-      return pair1.proxyA.m_id - pair2.proxyA.m_id;
-  }
-
-  const b2CollideCircles_s_pA = new b2Vec2();
-  const b2CollideCircles_s_pB = new b2Vec2();
-  function b2CollideCircles(manifold, circleA, xfA, circleB, xfB) {
-      manifold.pointCount = 0;
-      const pA = b2Transform.MulXV(xfA, circleA.m_p, b2CollideCircles_s_pA);
-      const pB = b2Transform.MulXV(xfB, circleB.m_p, b2CollideCircles_s_pB);
-      const distSqr = b2Vec2.DistanceSquaredVV(pA, pB);
-      const radius = circleA.m_radius + circleB.m_radius;
-      if (distSqr > radius * radius) {
-          return;
-      }
-      manifold.type = b2ManifoldType.e_circles;
-      manifold.localPoint.Copy(circleA.m_p);
-      manifold.localNormal.SetZero();
-      manifold.pointCount = 1;
-      manifold.points[0].localPoint.Copy(circleB.m_p);
-      manifold.points[0].id.key = 0;
-  }
-  const b2CollidePolygonAndCircle_s_c = new b2Vec2();
-  const b2CollidePolygonAndCircle_s_cLocal = new b2Vec2();
-  const b2CollidePolygonAndCircle_s_faceCenter = new b2Vec2();
-  function b2CollidePolygonAndCircle(manifold, polygonA, xfA, circleB, xfB) {
-      manifold.pointCount = 0;
-      // Compute circle position in the frame of the polygon.
-      const c = b2Transform.MulXV(xfB, circleB.m_p, b2CollidePolygonAndCircle_s_c);
-      const cLocal = b2Transform.MulTXV(xfA, c, b2CollidePolygonAndCircle_s_cLocal);
-      // Find the min separating edge.
-      let normalIndex = 0;
-      let separation = (-b2_maxFloat);
-      const radius = polygonA.m_radius + circleB.m_radius;
-      const vertexCount = polygonA.m_count;
-      const vertices = polygonA.m_vertices;
-      const normals = polygonA.m_normals;
-      for (let i = 0; i < vertexCount; ++i) {
-          const s = b2Vec2.DotVV(normals[i], b2Vec2.SubVV(cLocal, vertices[i], b2Vec2.s_t0));
-          if (s > radius) {
-              // Early out.
-              return;
-          }
-          if (s > separation) {
-              separation = s;
-              normalIndex = i;
-          }
-      }
-      // Vertices that subtend the incident face.
-      const vertIndex1 = normalIndex;
-      const vertIndex2 = (vertIndex1 + 1) % vertexCount;
-      const v1 = vertices[vertIndex1];
-      const v2 = vertices[vertIndex2];
-      // If the center is inside the polygon ...
-      if (separation < b2_epsilon) {
-          manifold.pointCount = 1;
-          manifold.type = b2ManifoldType.e_faceA;
-          manifold.localNormal.Copy(normals[normalIndex]);
-          b2Vec2.MidVV(v1, v2, manifold.localPoint);
-          manifold.points[0].localPoint.Copy(circleB.m_p);
-          manifold.points[0].id.key = 0;
-          return;
-      }
-      // Compute barycentric coordinates
-      const u1 = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, v1, b2Vec2.s_t0), b2Vec2.SubVV(v2, v1, b2Vec2.s_t1));
-      const u2 = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, v2, b2Vec2.s_t0), b2Vec2.SubVV(v1, v2, b2Vec2.s_t1));
-      if (u1 <= 0) {
-          if (b2Vec2.DistanceSquaredVV(cLocal, v1) > radius * radius) {
-              return;
-          }
-          manifold.pointCount = 1;
-          manifold.type = b2ManifoldType.e_faceA;
-          b2Vec2.SubVV(cLocal, v1, manifold.localNormal).SelfNormalize();
-          manifold.localPoint.Copy(v1);
-          manifold.points[0].localPoint.Copy(circleB.m_p);
-          manifold.points[0].id.key = 0;
-      }
-      else if (u2 <= 0) {
-          if (b2Vec2.DistanceSquaredVV(cLocal, v2) > radius * radius) {
-              return;
-          }
-          manifold.pointCount = 1;
-          manifold.type = b2ManifoldType.e_faceA;
-          b2Vec2.SubVV(cLocal, v2, manifold.localNormal).SelfNormalize();
-          manifold.localPoint.Copy(v2);
-          manifold.points[0].localPoint.Copy(circleB.m_p);
-          manifold.points[0].id.key = 0;
-      }
-      else {
-          const faceCenter = b2Vec2.MidVV(v1, v2, b2CollidePolygonAndCircle_s_faceCenter);
-          const separation = b2Vec2.DotVV(b2Vec2.SubVV(cLocal, faceCenter, b2Vec2.s_t1), normals[vertIndex1]);
-          if (separation > radius) {
-              return;
-          }
-          manifold.pointCount = 1;
-          manifold.type = b2ManifoldType.e_faceA;
-          manifold.localNormal.Copy(normals[vertIndex1]).SelfNormalize();
-          manifold.localPoint.Copy(faceCenter);
-          manifold.points[0].localPoint.Copy(circleB.m_p);
-          manifold.points[0].id.key = 0;
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
   /// Friction mixing law. The idea is to allow either fixture to drive the friction to zero.
   /// For example, anything slides on ice.
   function b2MixFriction(friction1, friction2) {
@@ -9233,252 +10987,6 @@
       }
   }
 
-  // DEBUG: import { b2Assert } from "../Common/b2Settings";
-  const b2EdgeSeparation_s_normal1World = new b2Vec2();
-  const b2EdgeSeparation_s_normal1 = new b2Vec2();
-  const b2EdgeSeparation_s_v1 = new b2Vec2();
-  const b2EdgeSeparation_s_v2 = new b2Vec2();
-  function b2EdgeSeparation(poly1, xf1, edge1, poly2, xf2) {
-      // DEBUG: const count1: number = poly1.m_count;
-      const vertices1 = poly1.m_vertices;
-      const normals1 = poly1.m_normals;
-      const count2 = poly2.m_count;
-      const vertices2 = poly2.m_vertices;
-      // DEBUG: b2Assert(0 <= edge1 && edge1 < count1);
-      // Convert normal from poly1's frame into poly2's frame.
-      const normal1World = b2Rot.MulRV(xf1.q, normals1[edge1], b2EdgeSeparation_s_normal1World);
-      const normal1 = b2Rot.MulTRV(xf2.q, normal1World, b2EdgeSeparation_s_normal1);
-      // Find support vertex on poly2 for -normal.
-      let index = 0;
-      let minDot = b2_maxFloat;
-      for (let i = 0; i < count2; ++i) {
-          const dot = b2Vec2.DotVV(vertices2[i], normal1);
-          if (dot < minDot) {
-              minDot = dot;
-              index = i;
-          }
-      }
-      const v1 = b2Transform.MulXV(xf1, vertices1[edge1], b2EdgeSeparation_s_v1);
-      const v2 = b2Transform.MulXV(xf2, vertices2[index], b2EdgeSeparation_s_v2);
-      const separation = b2Vec2.DotVV(b2Vec2.SubVV(v2, v1, b2Vec2.s_t0), normal1World);
-      return separation;
-  }
-  const b2FindMaxSeparation_s_d = new b2Vec2();
-  const b2FindMaxSeparation_s_dLocal1 = new b2Vec2();
-  function b2FindMaxSeparation(edgeIndex, poly1, xf1, poly2, xf2) {
-      const count1 = poly1.m_count;
-      const normals1 = poly1.m_normals;
-      // Vector pointing from the centroid of poly1 to the centroid of poly2.
-      const d = b2Vec2.SubVV(b2Transform.MulXV(xf2, poly2.m_centroid, b2Vec2.s_t0), b2Transform.MulXV(xf1, poly1.m_centroid, b2Vec2.s_t1), b2FindMaxSeparation_s_d);
-      const dLocal1 = b2Rot.MulTRV(xf1.q, d, b2FindMaxSeparation_s_dLocal1);
-      // Find edge normal on poly1 that has the largest projection onto d.
-      let edge = 0;
-      let maxDot = (-b2_maxFloat);
-      for (let i = 0; i < count1; ++i) {
-          const dot = b2Vec2.DotVV(normals1[i], dLocal1);
-          if (dot > maxDot) {
-              maxDot = dot;
-              edge = i;
-          }
-      }
-      // Get the separation for the edge normal.
-      let s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
-      // Check the separation for the previous edge normal.
-      const prevEdge = (edge + count1 - 1) % count1;
-      const sPrev = b2EdgeSeparation(poly1, xf1, prevEdge, poly2, xf2);
-      // Check the separation for the next edge normal.
-      const nextEdge = (edge + 1) % count1;
-      const sNext = b2EdgeSeparation(poly1, xf1, nextEdge, poly2, xf2);
-      // Find the best edge and the search direction.
-      let bestEdge = 0;
-      let bestSeparation = 0;
-      let increment = 0;
-      if (sPrev > s && sPrev > sNext) {
-          increment = -1;
-          bestEdge = prevEdge;
-          bestSeparation = sPrev;
-      }
-      else if (sNext > s) {
-          increment = 1;
-          bestEdge = nextEdge;
-          bestSeparation = sNext;
-      }
-      else {
-          edgeIndex[0] = edge;
-          return s;
-      }
-      // Perform a local search for the best edge normal.
-      while (true) {
-          if (increment === -1) {
-              edge = (bestEdge + count1 - 1) % count1;
-          }
-          else {
-              edge = (bestEdge + 1) % count1;
-          }
-          s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
-          if (s > bestSeparation) {
-              bestEdge = edge;
-              bestSeparation = s;
-          }
-          else {
-              break;
-          }
-      }
-      edgeIndex[0] = bestEdge;
-      return bestSeparation;
-  }
-  const b2FindIncidentEdge_s_normal1 = new b2Vec2();
-  function b2FindIncidentEdge(c, poly1, xf1, edge1, poly2, xf2) {
-      // DEBUG: const count1: number = poly1.m_count;
-      const normals1 = poly1.m_normals;
-      const count2 = poly2.m_count;
-      const vertices2 = poly2.m_vertices;
-      const normals2 = poly2.m_normals;
-      // DEBUG: b2Assert(0 <= edge1 && edge1 < count1);
-      // Get the normal of the reference edge in poly2's frame.
-      const normal1 = b2Rot.MulTRV(xf2.q, b2Rot.MulRV(xf1.q, normals1[edge1], b2Vec2.s_t0), b2FindIncidentEdge_s_normal1);
-      // Find the incident edge on poly2.
-      let index = 0;
-      let minDot = b2_maxFloat;
-      for (let i = 0; i < count2; ++i) {
-          const dot = b2Vec2.DotVV(normal1, normals2[i]);
-          if (dot < minDot) {
-              minDot = dot;
-              index = i;
-          }
-      }
-      // Build the clip vertices for the incident edge.
-      const i1 = index;
-      const i2 = (i1 + 1) % count2;
-      const c0 = c[0];
-      b2Transform.MulXV(xf2, vertices2[i1], c0.v);
-      const cf0 = c0.id.cf;
-      cf0.indexA = edge1;
-      cf0.indexB = i1;
-      cf0.typeA = b2ContactFeatureType.e_face;
-      cf0.typeB = b2ContactFeatureType.e_vertex;
-      const c1 = c[1];
-      b2Transform.MulXV(xf2, vertices2[i2], c1.v);
-      const cf1 = c1.id.cf;
-      cf1.indexA = edge1;
-      cf1.indexB = i2;
-      cf1.typeA = b2ContactFeatureType.e_face;
-      cf1.typeB = b2ContactFeatureType.e_vertex;
-  }
-  const b2CollidePolygons_s_incidentEdge = b2ClipVertex.MakeArray(2);
-  const b2CollidePolygons_s_clipPoints1 = b2ClipVertex.MakeArray(2);
-  const b2CollidePolygons_s_clipPoints2 = b2ClipVertex.MakeArray(2);
-  const b2CollidePolygons_s_edgeA = [0];
-  const b2CollidePolygons_s_edgeB = [0];
-  const b2CollidePolygons_s_localTangent = new b2Vec2();
-  const b2CollidePolygons_s_localNormal = new b2Vec2();
-  const b2CollidePolygons_s_planePoint = new b2Vec2();
-  const b2CollidePolygons_s_normal = new b2Vec2();
-  const b2CollidePolygons_s_tangent = new b2Vec2();
-  const b2CollidePolygons_s_ntangent = new b2Vec2();
-  const b2CollidePolygons_s_v11 = new b2Vec2();
-  const b2CollidePolygons_s_v12 = new b2Vec2();
-  function b2CollidePolygons(manifold, polyA, xfA, polyB, xfB) {
-      manifold.pointCount = 0;
-      const totalRadius = polyA.m_radius + polyB.m_radius;
-      const edgeA = b2CollidePolygons_s_edgeA;
-      edgeA[0] = 0;
-      const separationA = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
-      if (separationA > totalRadius) {
-          return;
-      }
-      const edgeB = b2CollidePolygons_s_edgeB;
-      edgeB[0] = 0;
-      const separationB = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
-      if (separationB > totalRadius) {
-          return;
-      }
-      let poly1; // reference polygon
-      let poly2; // incident polygon
-      let xf1, xf2;
-      let edge1 = 0; // reference edge
-      let flip = 0;
-      const k_relativeTol = 0.98;
-      const k_absoluteTol = 0.001;
-      if (separationB > k_relativeTol * separationA + k_absoluteTol) {
-          poly1 = polyB;
-          poly2 = polyA;
-          xf1 = xfB;
-          xf2 = xfA;
-          edge1 = edgeB[0];
-          manifold.type = b2ManifoldType.e_faceB;
-          flip = 1;
-      }
-      else {
-          poly1 = polyA;
-          poly2 = polyB;
-          xf1 = xfA;
-          xf2 = xfB;
-          edge1 = edgeA[0];
-          manifold.type = b2ManifoldType.e_faceA;
-          flip = 0;
-      }
-      const incidentEdge = b2CollidePolygons_s_incidentEdge;
-      b2FindIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
-      const count1 = poly1.m_count;
-      const vertices1 = poly1.m_vertices;
-      const iv1 = edge1;
-      const iv2 = (edge1 + 1) % count1;
-      const local_v11 = vertices1[iv1];
-      const local_v12 = vertices1[iv2];
-      const localTangent = b2Vec2.SubVV(local_v12, local_v11, b2CollidePolygons_s_localTangent);
-      localTangent.Normalize();
-      const localNormal = b2Vec2.CrossVOne(localTangent, b2CollidePolygons_s_localNormal);
-      const planePoint = b2Vec2.MidVV(local_v11, local_v12, b2CollidePolygons_s_planePoint);
-      const tangent = b2Rot.MulRV(xf1.q, localTangent, b2CollidePolygons_s_tangent);
-      const normal = b2Vec2.CrossVOne(tangent, b2CollidePolygons_s_normal);
-      const v11 = b2Transform.MulXV(xf1, local_v11, b2CollidePolygons_s_v11);
-      const v12 = b2Transform.MulXV(xf1, local_v12, b2CollidePolygons_s_v12);
-      // Face offset.
-      const frontOffset = b2Vec2.DotVV(normal, v11);
-      // Side offsets, extended by polytope skin thickness.
-      const sideOffset1 = -b2Vec2.DotVV(tangent, v11) + totalRadius;
-      const sideOffset2 = b2Vec2.DotVV(tangent, v12) + totalRadius;
-      // Clip incident edge against extruded edge1 side edges.
-      const clipPoints1 = b2CollidePolygons_s_clipPoints1;
-      const clipPoints2 = b2CollidePolygons_s_clipPoints2;
-      let np;
-      // Clip to box side 1
-      const ntangent = b2Vec2.NegV(tangent, b2CollidePolygons_s_ntangent);
-      np = b2ClipSegmentToLine(clipPoints1, incidentEdge, ntangent, sideOffset1, iv1);
-      if (np < 2) {
-          return;
-      }
-      // Clip to negative box side 1
-      np = b2ClipSegmentToLine(clipPoints2, clipPoints1, tangent, sideOffset2, iv2);
-      if (np < 2) {
-          return;
-      }
-      // Now clipPoints2 contains the clipped points.
-      manifold.localNormal.Copy(localNormal);
-      manifold.localPoint.Copy(planePoint);
-      let pointCount = 0;
-      for (let i = 0; i < b2_maxManifoldPoints; ++i) {
-          const cv = clipPoints2[i];
-          const separation = b2Vec2.DotVV(normal, cv.v) - frontOffset;
-          if (separation <= totalRadius) {
-              const cp = manifold.points[pointCount];
-              b2Transform.MulTXV(xf2, cv.v, cp.localPoint);
-              cp.id.Copy(cv.id);
-              if (flip) {
-                  // Swap features
-                  const cf = cp.id.cf;
-                  cp.id.cf.indexA = cf.indexB;
-                  cp.id.cf.indexB = cf.indexA;
-                  cp.id.cf.typeA = cf.typeB;
-                  cp.id.cf.typeB = cf.typeA;
-              }
-              ++pointCount;
-          }
-      }
-      manifold.pointCount = pointCount;
-  }
-
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
   *
@@ -9555,536 +11063,6 @@
           // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
           b2CollidePolygonAndCircle(manifold, shapeA, xfA, shapeB, xfB);
       }
-  }
-
-  // DEBUG: import { b2Assert } from "../Common/b2Settings";
-  const b2CollideEdgeAndCircle_s_Q = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_e = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_d = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_e1 = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_e2 = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_P = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_n = new b2Vec2();
-  const b2CollideEdgeAndCircle_s_id = new b2ContactID();
-  function b2CollideEdgeAndCircle(manifold, edgeA, xfA, circleB, xfB) {
-      manifold.pointCount = 0;
-      // Compute circle in frame of edge
-      const Q = b2Transform.MulTXV(xfA, b2Transform.MulXV(xfB, circleB.m_p, b2Vec2.s_t0), b2CollideEdgeAndCircle_s_Q);
-      const A = edgeA.m_vertex1;
-      const B = edgeA.m_vertex2;
-      const e = b2Vec2.SubVV(B, A, b2CollideEdgeAndCircle_s_e);
-      // Barycentric coordinates
-      const u = b2Vec2.DotVV(e, b2Vec2.SubVV(B, Q, b2Vec2.s_t0));
-      const v = b2Vec2.DotVV(e, b2Vec2.SubVV(Q, A, b2Vec2.s_t0));
-      const radius = edgeA.m_radius + circleB.m_radius;
-      // const cf: b2ContactFeature = new b2ContactFeature();
-      const id = b2CollideEdgeAndCircle_s_id;
-      id.cf.indexB = 0;
-      id.cf.typeB = b2ContactFeatureType.e_vertex;
-      // Region A
-      if (v <= 0) {
-          const P = A;
-          const d = b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-          const dd = b2Vec2.DotVV(d, d);
-          if (dd > radius * radius) {
-              return;
-          }
-          // Is there an edge connected to A?
-          if (edgeA.m_hasVertex0) {
-              const A1 = edgeA.m_vertex0;
-              const B1 = A;
-              const e1 = b2Vec2.SubVV(B1, A1, b2CollideEdgeAndCircle_s_e1);
-              const u1 = b2Vec2.DotVV(e1, b2Vec2.SubVV(B1, Q, b2Vec2.s_t0));
-              // Is the circle in Region AB of the previous edge?
-              if (u1 > 0) {
-                  return;
-              }
-          }
-          id.cf.indexA = 0;
-          id.cf.typeA = b2ContactFeatureType.e_vertex;
-          manifold.pointCount = 1;
-          manifold.type = b2ManifoldType.e_circles;
-          manifold.localNormal.SetZero();
-          manifold.localPoint.Copy(P);
-          manifold.points[0].id.Copy(id);
-          // manifold.points[0].id.key = 0;
-          // manifold.points[0].id.cf = cf;
-          manifold.points[0].localPoint.Copy(circleB.m_p);
-          return;
-      }
-      // Region B
-      if (u <= 0) {
-          const P = B;
-          const d = b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-          const dd = b2Vec2.DotVV(d, d);
-          if (dd > radius * radius) {
-              return;
-          }
-          // Is there an edge connected to B?
-          if (edgeA.m_hasVertex3) {
-              const B2 = edgeA.m_vertex3;
-              const A2 = B;
-              const e2 = b2Vec2.SubVV(B2, A2, b2CollideEdgeAndCircle_s_e2);
-              const v2 = b2Vec2.DotVV(e2, b2Vec2.SubVV(Q, A2, b2Vec2.s_t0));
-              // Is the circle in Region AB of the next edge?
-              if (v2 > 0) {
-                  return;
-              }
-          }
-          id.cf.indexA = 1;
-          id.cf.typeA = b2ContactFeatureType.e_vertex;
-          manifold.pointCount = 1;
-          manifold.type = b2ManifoldType.e_circles;
-          manifold.localNormal.SetZero();
-          manifold.localPoint.Copy(P);
-          manifold.points[0].id.Copy(id);
-          // manifold.points[0].id.key = 0;
-          // manifold.points[0].id.cf = cf;
-          manifold.points[0].localPoint.Copy(circleB.m_p);
-          return;
-      }
-      // Region AB
-      const den = b2Vec2.DotVV(e, e);
-      // DEBUG: b2Assert(den > 0);
-      const P = b2CollideEdgeAndCircle_s_P;
-      P.x = (1 / den) * (u * A.x + v * B.x);
-      P.y = (1 / den) * (u * A.y + v * B.y);
-      const d = b2Vec2.SubVV(Q, P, b2CollideEdgeAndCircle_s_d);
-      const dd = b2Vec2.DotVV(d, d);
-      if (dd > radius * radius) {
-          return;
-      }
-      const n = b2CollideEdgeAndCircle_s_n.Set(-e.y, e.x);
-      if (b2Vec2.DotVV(n, b2Vec2.SubVV(Q, A, b2Vec2.s_t0)) < 0) {
-          n.Set(-n.x, -n.y);
-      }
-      n.Normalize();
-      id.cf.indexA = 0;
-      id.cf.typeA = b2ContactFeatureType.e_face;
-      manifold.pointCount = 1;
-      manifold.type = b2ManifoldType.e_faceA;
-      manifold.localNormal.Copy(n);
-      manifold.localPoint.Copy(A);
-      manifold.points[0].id.Copy(id);
-      // manifold.points[0].id.key = 0;
-      // manifold.points[0].id.cf = cf;
-      manifold.points[0].localPoint.Copy(circleB.m_p);
-  }
-  class b2EPAxis {
-      constructor() {
-          this.type = 0 /* e_unknown */;
-          this.index = 0;
-          this.separation = 0;
-      }
-  }
-  class b2TempPolygon {
-      constructor() {
-          this.vertices = b2Vec2.MakeArray(b2_maxPolygonVertices);
-          this.normals = b2Vec2.MakeArray(b2_maxPolygonVertices);
-          this.count = 0;
-      }
-  }
-  class b2ReferenceFace {
-      constructor() {
-          this.i1 = 0;
-          this.i2 = 0;
-          this.v1 = new b2Vec2();
-          this.v2 = new b2Vec2();
-          this.normal = new b2Vec2();
-          this.sideNormal1 = new b2Vec2();
-          this.sideOffset1 = 0;
-          this.sideNormal2 = new b2Vec2();
-          this.sideOffset2 = 0;
-      }
-  }
-  class b2EPCollider {
-      constructor() {
-          this.m_polygonB = new b2TempPolygon();
-          this.m_xf = new b2Transform();
-          this.m_centroidB = new b2Vec2();
-          this.m_v0 = new b2Vec2();
-          this.m_v1 = new b2Vec2();
-          this.m_v2 = new b2Vec2();
-          this.m_v3 = new b2Vec2();
-          this.m_normal0 = new b2Vec2();
-          this.m_normal1 = new b2Vec2();
-          this.m_normal2 = new b2Vec2();
-          this.m_normal = new b2Vec2();
-          this.m_type1 = 0 /* e_isolated */;
-          this.m_type2 = 0 /* e_isolated */;
-          this.m_lowerLimit = new b2Vec2();
-          this.m_upperLimit = new b2Vec2();
-          this.m_radius = 0;
-          this.m_front = false;
-      }
-      Collide(manifold, edgeA, xfA, polygonB, xfB) {
-          b2Transform.MulTXX(xfA, xfB, this.m_xf);
-          b2Transform.MulXV(this.m_xf, polygonB.m_centroid, this.m_centroidB);
-          this.m_v0.Copy(edgeA.m_vertex0);
-          this.m_v1.Copy(edgeA.m_vertex1);
-          this.m_v2.Copy(edgeA.m_vertex2);
-          this.m_v3.Copy(edgeA.m_vertex3);
-          const hasVertex0 = edgeA.m_hasVertex0;
-          const hasVertex3 = edgeA.m_hasVertex3;
-          const edge1 = b2Vec2.SubVV(this.m_v2, this.m_v1, b2EPCollider.s_edge1);
-          edge1.Normalize();
-          this.m_normal1.Set(edge1.y, -edge1.x);
-          const offset1 = b2Vec2.DotVV(this.m_normal1, b2Vec2.SubVV(this.m_centroidB, this.m_v1, b2Vec2.s_t0));
-          let offset0 = 0;
-          let offset2 = 0;
-          let convex1 = false;
-          let convex2 = false;
-          // Is there a preceding edge?
-          if (hasVertex0) {
-              const edge0 = b2Vec2.SubVV(this.m_v1, this.m_v0, b2EPCollider.s_edge0);
-              edge0.Normalize();
-              this.m_normal0.Set(edge0.y, -edge0.x);
-              convex1 = b2Vec2.CrossVV(edge0, edge1) >= 0;
-              offset0 = b2Vec2.DotVV(this.m_normal0, b2Vec2.SubVV(this.m_centroidB, this.m_v0, b2Vec2.s_t0));
-          }
-          // Is there a following edge?
-          if (hasVertex3) {
-              const edge2 = b2Vec2.SubVV(this.m_v3, this.m_v2, b2EPCollider.s_edge2);
-              edge2.Normalize();
-              this.m_normal2.Set(edge2.y, -edge2.x);
-              convex2 = b2Vec2.CrossVV(edge1, edge2) > 0;
-              offset2 = b2Vec2.DotVV(this.m_normal2, b2Vec2.SubVV(this.m_centroidB, this.m_v2, b2Vec2.s_t0));
-          }
-          // Determine front or back collision. Determine collision normal limits.
-          if (hasVertex0 && hasVertex3) {
-              if (convex1 && convex2) {
-                  this.m_front = offset0 >= 0 || offset1 >= 0 || offset2 >= 0;
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal0);
-                      this.m_upperLimit.Copy(this.m_normal2);
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
-                  }
-              }
-              else if (convex1) {
-                  this.m_front = offset0 >= 0 || (offset1 >= 0 && offset2 >= 0);
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal0);
-                      this.m_upperLimit.Copy(this.m_normal1);
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal2).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
-                  }
-              }
-              else if (convex2) {
-                  this.m_front = offset2 >= 0 || (offset0 >= 0 && offset1 >= 0);
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal1);
-                      this.m_upperLimit.Copy(this.m_normal2);
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal0).SelfNeg();
-                  }
-              }
-              else {
-                  this.m_front = offset0 >= 0 && offset1 >= 0 && offset2 >= 0;
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal1);
-                      this.m_upperLimit.Copy(this.m_normal1);
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal2).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal0).SelfNeg();
-                  }
-              }
-          }
-          else if (hasVertex0) {
-              if (convex1) {
-                  this.m_front = offset0 >= 0 || offset1 >= 0;
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal0);
-                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal1);
-                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
-                  }
-              }
-              else {
-                  this.m_front = offset0 >= 0 && offset1 >= 0;
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal1);
-                      this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal1);
-                      this.m_upperLimit.Copy(this.m_normal0).SelfNeg();
-                  }
-              }
-          }
-          else if (hasVertex3) {
-              if (convex2) {
-                  this.m_front = offset1 >= 0 || offset2 >= 0;
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal2);
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal1);
-                  }
-              }
-              else {
-                  this.m_front = offset1 >= 0 && offset2 >= 0;
-                  if (this.m_front) {
-                      this.m_normal.Copy(this.m_normal1);
-                      this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal1);
-                  }
-                  else {
-                      this.m_normal.Copy(this.m_normal1).SelfNeg();
-                      this.m_lowerLimit.Copy(this.m_normal2).SelfNeg();
-                      this.m_upperLimit.Copy(this.m_normal1);
-                  }
-              }
-          }
-          else {
-              this.m_front = offset1 >= 0;
-              if (this.m_front) {
-                  this.m_normal.Copy(this.m_normal1);
-                  this.m_lowerLimit.Copy(this.m_normal1).SelfNeg();
-                  this.m_upperLimit.Copy(this.m_normal1).SelfNeg();
-              }
-              else {
-                  this.m_normal.Copy(this.m_normal1).SelfNeg();
-                  this.m_lowerLimit.Copy(this.m_normal1);
-                  this.m_upperLimit.Copy(this.m_normal1);
-              }
-          }
-          // Get polygonB in frameA
-          this.m_polygonB.count = polygonB.m_count;
-          for (let i = 0; i < polygonB.m_count; ++i) {
-              b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
-              b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
-          }
-          this.m_radius = polygonB.m_radius + edgeA.m_radius;
-          manifold.pointCount = 0;
-          const edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
-          // If no valid normal can be found than this edge should not collide.
-          if (edgeAxis.type === 0 /* e_unknown */) {
-              return;
-          }
-          if (edgeAxis.separation > this.m_radius) {
-              return;
-          }
-          const polygonAxis = this.ComputePolygonSeparation(b2EPCollider.s_polygonAxis);
-          if (polygonAxis.type !== 0 /* e_unknown */ && polygonAxis.separation > this.m_radius) {
-              return;
-          }
-          // Use hysteresis for jitter reduction.
-          const k_relativeTol = 0.98;
-          const k_absoluteTol = 0.001;
-          let primaryAxis;
-          if (polygonAxis.type === 0 /* e_unknown */) {
-              primaryAxis = edgeAxis;
-          }
-          else if (polygonAxis.separation > k_relativeTol * edgeAxis.separation + k_absoluteTol) {
-              primaryAxis = polygonAxis;
-          }
-          else {
-              primaryAxis = edgeAxis;
-          }
-          const ie = b2EPCollider.s_ie;
-          const rf = b2EPCollider.s_rf;
-          if (primaryAxis.type === 1 /* e_edgeA */) {
-              manifold.type = b2ManifoldType.e_faceA;
-              // Search for the polygon normal that is most anti-parallel to the edge normal.
-              let bestIndex = 0;
-              let bestValue = b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[0]);
-              for (let i = 1; i < this.m_polygonB.count; ++i) {
-                  const value = b2Vec2.DotVV(this.m_normal, this.m_polygonB.normals[i]);
-                  if (value < bestValue) {
-                      bestValue = value;
-                      bestIndex = i;
-                  }
-              }
-              const i1 = bestIndex;
-              const i2 = (i1 + 1) % this.m_polygonB.count;
-              const ie0 = ie[0];
-              ie0.v.Copy(this.m_polygonB.vertices[i1]);
-              ie0.id.cf.indexA = 0;
-              ie0.id.cf.indexB = i1;
-              ie0.id.cf.typeA = b2ContactFeatureType.e_face;
-              ie0.id.cf.typeB = b2ContactFeatureType.e_vertex;
-              const ie1 = ie[1];
-              ie1.v.Copy(this.m_polygonB.vertices[i2]);
-              ie1.id.cf.indexA = 0;
-              ie1.id.cf.indexB = i2;
-              ie1.id.cf.typeA = b2ContactFeatureType.e_face;
-              ie1.id.cf.typeB = b2ContactFeatureType.e_vertex;
-              if (this.m_front) {
-                  rf.i1 = 0;
-                  rf.i2 = 1;
-                  rf.v1.Copy(this.m_v1);
-                  rf.v2.Copy(this.m_v2);
-                  rf.normal.Copy(this.m_normal1);
-              }
-              else {
-                  rf.i1 = 1;
-                  rf.i2 = 0;
-                  rf.v1.Copy(this.m_v2);
-                  rf.v2.Copy(this.m_v1);
-                  rf.normal.Copy(this.m_normal1).SelfNeg();
-              }
-          }
-          else {
-              manifold.type = b2ManifoldType.e_faceB;
-              const ie0 = ie[0];
-              ie0.v.Copy(this.m_v1);
-              ie0.id.cf.indexA = 0;
-              ie0.id.cf.indexB = primaryAxis.index;
-              ie0.id.cf.typeA = b2ContactFeatureType.e_vertex;
-              ie0.id.cf.typeB = b2ContactFeatureType.e_face;
-              const ie1 = ie[1];
-              ie1.v.Copy(this.m_v2);
-              ie1.id.cf.indexA = 0;
-              ie1.id.cf.indexB = primaryAxis.index;
-              ie1.id.cf.typeA = b2ContactFeatureType.e_vertex;
-              ie1.id.cf.typeB = b2ContactFeatureType.e_face;
-              rf.i1 = primaryAxis.index;
-              rf.i2 = (rf.i1 + 1) % this.m_polygonB.count;
-              rf.v1.Copy(this.m_polygonB.vertices[rf.i1]);
-              rf.v2.Copy(this.m_polygonB.vertices[rf.i2]);
-              rf.normal.Copy(this.m_polygonB.normals[rf.i1]);
-          }
-          rf.sideNormal1.Set(rf.normal.y, -rf.normal.x);
-          rf.sideNormal2.Copy(rf.sideNormal1).SelfNeg();
-          rf.sideOffset1 = b2Vec2.DotVV(rf.sideNormal1, rf.v1);
-          rf.sideOffset2 = b2Vec2.DotVV(rf.sideNormal2, rf.v2);
-          // Clip incident edge against extruded edge1 side edges.
-          const clipPoints1 = b2EPCollider.s_clipPoints1;
-          const clipPoints2 = b2EPCollider.s_clipPoints2;
-          let np = 0;
-          // Clip to box side 1
-          np = b2ClipSegmentToLine(clipPoints1, ie, rf.sideNormal1, rf.sideOffset1, rf.i1);
-          if (np < b2_maxManifoldPoints) {
-              return;
-          }
-          // Clip to negative box side 1
-          np = b2ClipSegmentToLine(clipPoints2, clipPoints1, rf.sideNormal2, rf.sideOffset2, rf.i2);
-          if (np < b2_maxManifoldPoints) {
-              return;
-          }
-          // Now clipPoints2 contains the clipped points.
-          if (primaryAxis.type === 1 /* e_edgeA */) {
-              manifold.localNormal.Copy(rf.normal);
-              manifold.localPoint.Copy(rf.v1);
-          }
-          else {
-              manifold.localNormal.Copy(polygonB.m_normals[rf.i1]);
-              manifold.localPoint.Copy(polygonB.m_vertices[rf.i1]);
-          }
-          let pointCount = 0;
-          for (let i = 0; i < b2_maxManifoldPoints; ++i) {
-              let separation;
-              separation = b2Vec2.DotVV(rf.normal, b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Vec2.s_t0));
-              if (separation <= this.m_radius) {
-                  const cp = manifold.points[pointCount];
-                  if (primaryAxis.type === 1 /* e_edgeA */) {
-                      b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
-                      cp.id = clipPoints2[i].id;
-                  }
-                  else {
-                      cp.localPoint.Copy(clipPoints2[i].v);
-                      cp.id.cf.typeA = clipPoints2[i].id.cf.typeB;
-                      cp.id.cf.typeB = clipPoints2[i].id.cf.typeA;
-                      cp.id.cf.indexA = clipPoints2[i].id.cf.indexB;
-                      cp.id.cf.indexB = clipPoints2[i].id.cf.indexA;
-                  }
-                  ++pointCount;
-              }
-          }
-          manifold.pointCount = pointCount;
-      }
-      ComputeEdgeSeparation(out) {
-          const axis = out;
-          axis.type = 1 /* e_edgeA */;
-          axis.index = this.m_front ? 0 : 1;
-          axis.separation = b2_maxFloat;
-          for (let i = 0; i < this.m_polygonB.count; ++i) {
-              const s = b2Vec2.DotVV(this.m_normal, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
-              if (s < axis.separation) {
-                  axis.separation = s;
-              }
-          }
-          return axis;
-      }
-      ComputePolygonSeparation(out) {
-          const axis = out;
-          axis.type = 0 /* e_unknown */;
-          axis.index = -1;
-          axis.separation = -b2_maxFloat;
-          const perp = b2EPCollider.s_perp.Set(-this.m_normal.y, this.m_normal.x);
-          for (let i = 0; i < this.m_polygonB.count; ++i) {
-              const n = b2Vec2.NegV(this.m_polygonB.normals[i], b2EPCollider.s_n);
-              const s1 = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v1, b2Vec2.s_t0));
-              const s2 = b2Vec2.DotVV(n, b2Vec2.SubVV(this.m_polygonB.vertices[i], this.m_v2, b2Vec2.s_t0));
-              const s = b2Min(s1, s2);
-              if (s > this.m_radius) {
-                  // No collision
-                  axis.type = 2 /* e_edgeB */;
-                  axis.index = i;
-                  axis.separation = s;
-                  return axis;
-              }
-              // Adjacency
-              if (b2Vec2.DotVV(n, perp) >= 0) {
-                  if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_upperLimit, b2Vec2.s_t0), this.m_normal) < -b2_angularSlop) {
-                      continue;
-                  }
-              }
-              else {
-                  if (b2Vec2.DotVV(b2Vec2.SubVV(n, this.m_lowerLimit, b2Vec2.s_t0), this.m_normal) < -b2_angularSlop) {
-                      continue;
-                  }
-              }
-              if (s > axis.separation) {
-                  axis.type = 2 /* e_edgeB */;
-                  axis.index = i;
-                  axis.separation = s;
-              }
-          }
-          return axis;
-      }
-  }
-  b2EPCollider.s_edge1 = new b2Vec2();
-  b2EPCollider.s_edge0 = new b2Vec2();
-  b2EPCollider.s_edge2 = new b2Vec2();
-  b2EPCollider.s_ie = b2ClipVertex.MakeArray(2);
-  b2EPCollider.s_rf = new b2ReferenceFace();
-  b2EPCollider.s_clipPoints1 = b2ClipVertex.MakeArray(2);
-  b2EPCollider.s_clipPoints2 = b2ClipVertex.MakeArray(2);
-  b2EPCollider.s_edgeAxis = new b2EPAxis();
-  b2EPCollider.s_polygonAxis = new b2EPAxis();
-  b2EPCollider.s_n = new b2Vec2();
-  b2EPCollider.s_perp = new b2Vec2();
-  const b2CollideEdgeAndPolygon_s_collider = new b2EPCollider();
-  function b2CollideEdgeAndPolygon(manifold, edgeA, xfA, polygonB, xfB) {
-      const collider = b2CollideEdgeAndPolygon_s_collider;
-      collider.Collide(manifold, edgeA, xfA, polygonB, xfB);
   }
 
   /*
@@ -10166,184 +11144,6 @@
           b2CollideEdgeAndPolygon(manifold, shapeA, xfA, shapeB, xfB);
       }
   }
-
-  /*
-  * Copyright (c) 2006-2010 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  /// A line segment (edge) shape. These can be connected in chains or loops
-  /// to other edge shapes. The connectivity information is used to ensure
-  /// correct contact normals.
-  class b2EdgeShape extends b2Shape {
-      constructor() {
-          super(b2ShapeType.e_edgeShape, b2_polygonRadius);
-          this.m_vertex1 = new b2Vec2();
-          this.m_vertex2 = new b2Vec2();
-          this.m_vertex0 = new b2Vec2();
-          this.m_vertex3 = new b2Vec2();
-          this.m_hasVertex0 = false;
-          this.m_hasVertex3 = false;
-      }
-      /// Set this as an isolated edge.
-      Set(v1, v2) {
-          this.m_vertex1.Copy(v1);
-          this.m_vertex2.Copy(v2);
-          this.m_hasVertex0 = false;
-          this.m_hasVertex3 = false;
-          return this;
-      }
-      /// Implement b2Shape.
-      Clone() {
-          return new b2EdgeShape().Copy(this);
-      }
-      Copy(other) {
-          super.Copy(other);
-          // DEBUG: b2Assert(other instanceof b2EdgeShape);
-          this.m_vertex1.Copy(other.m_vertex1);
-          this.m_vertex2.Copy(other.m_vertex2);
-          this.m_vertex0.Copy(other.m_vertex0);
-          this.m_vertex3.Copy(other.m_vertex3);
-          this.m_hasVertex0 = other.m_hasVertex0;
-          this.m_hasVertex3 = other.m_hasVertex3;
-          return this;
-      }
-      /// @see b2Shape::GetChildCount
-      GetChildCount() {
-          return 1;
-      }
-      /// @see b2Shape::TestPoint
-      TestPoint(xf, p) {
-          return false;
-      }
-      ComputeDistance(xf, p, normal, childIndex) {
-          const v1 = b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeDistance_s_v1);
-          const v2 = b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeDistance_s_v2);
-          const d = b2Vec2.SubVV(p, v1, b2EdgeShape.ComputeDistance_s_d);
-          const s = b2Vec2.SubVV(v2, v1, b2EdgeShape.ComputeDistance_s_s);
-          const ds = b2Vec2.DotVV(d, s);
-          if (ds > 0) {
-              const s2 = b2Vec2.DotVV(s, s);
-              if (ds > s2) {
-                  b2Vec2.SubVV(p, v2, d);
-              }
-              else {
-                  d.SelfMulSub(ds / s2, s);
-              }
-          }
-          normal.Copy(d);
-          return normal.Normalize();
-      }
-      RayCast(output, input, xf, childIndex) {
-          // Put the ray into the edge's frame of reference.
-          const p1 = b2Transform.MulTXV(xf, input.p1, b2EdgeShape.RayCast_s_p1);
-          const p2 = b2Transform.MulTXV(xf, input.p2, b2EdgeShape.RayCast_s_p2);
-          const d = b2Vec2.SubVV(p2, p1, b2EdgeShape.RayCast_s_d);
-          const v1 = this.m_vertex1;
-          const v2 = this.m_vertex2;
-          const e = b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
-          const normal = output.normal.Set(e.y, -e.x).SelfNormalize();
-          // q = p1 + t * d
-          // dot(normal, q - v1) = 0
-          // dot(normal, p1 - v1) + t * dot(normal, d) = 0
-          const numerator = b2Vec2.DotVV(normal, b2Vec2.SubVV(v1, p1, b2Vec2.s_t0));
-          const denominator = b2Vec2.DotVV(normal, d);
-          if (denominator === 0) {
-              return false;
-          }
-          const t = numerator / denominator;
-          if (t < 0 || input.maxFraction < t) {
-              return false;
-          }
-          const q = b2Vec2.AddVMulSV(p1, t, d, b2EdgeShape.RayCast_s_q);
-          // q = v1 + s * r
-          // s = dot(q - v1, r) / dot(r, r)
-          const r = b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_r);
-          const rr = b2Vec2.DotVV(r, r);
-          if (rr === 0) {
-              return false;
-          }
-          const s = b2Vec2.DotVV(b2Vec2.SubVV(q, v1, b2Vec2.s_t0), r) / rr;
-          if (s < 0 || 1 < s) {
-              return false;
-          }
-          output.fraction = t;
-          b2Rot.MulRV(xf.q, output.normal, output.normal);
-          if (numerator > 0) {
-              output.normal.SelfNeg();
-          }
-          return true;
-      }
-      ComputeAABB(aabb, xf, childIndex) {
-          const v1 = b2Transform.MulXV(xf, this.m_vertex1, b2EdgeShape.ComputeAABB_s_v1);
-          const v2 = b2Transform.MulXV(xf, this.m_vertex2, b2EdgeShape.ComputeAABB_s_v2);
-          b2Vec2.MinV(v1, v2, aabb.lowerBound);
-          b2Vec2.MaxV(v1, v2, aabb.upperBound);
-          const r = this.m_radius;
-          aabb.lowerBound.SelfSubXY(r, r);
-          aabb.upperBound.SelfAddXY(r, r);
-      }
-      /// @see b2Shape::ComputeMass
-      ComputeMass(massData, density) {
-          massData.mass = 0;
-          b2Vec2.MidVV(this.m_vertex1, this.m_vertex2, massData.center);
-          massData.I = 0;
-      }
-      SetupDistanceProxy(proxy, index) {
-          proxy.m_vertices = proxy.m_buffer;
-          proxy.m_vertices[0].Copy(this.m_vertex1);
-          proxy.m_vertices[1].Copy(this.m_vertex2);
-          proxy.m_count = 2;
-          proxy.m_radius = this.m_radius;
-      }
-      ComputeSubmergedArea(normal, offset, xf, c) {
-          c.SetZero();
-          return 0;
-      }
-      Dump(log) {
-          log("    const shape: b2EdgeShape = new b2EdgeShape();\n");
-          log("    shape.m_radius = %.15f;\n", this.m_radius);
-          log("    shape.m_vertex0.Set(%.15f, %.15f);\n", this.m_vertex0.x, this.m_vertex0.y);
-          log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
-          log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
-          log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
-          log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
-          log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
-      }
-  }
-  // #if B2_ENABLE_PARTICLE
-  /// @see b2Shape::ComputeDistance
-  b2EdgeShape.ComputeDistance_s_v1 = new b2Vec2();
-  b2EdgeShape.ComputeDistance_s_v2 = new b2Vec2();
-  b2EdgeShape.ComputeDistance_s_d = new b2Vec2();
-  b2EdgeShape.ComputeDistance_s_s = new b2Vec2();
-  // #endif
-  /// Implement b2Shape.
-  // p = p1 + t * d
-  // v = v1 + s * e
-  // p1 + t * d = v1 + s * e
-  // s * e - t * d = p1 - v1
-  b2EdgeShape.RayCast_s_p1 = new b2Vec2();
-  b2EdgeShape.RayCast_s_p2 = new b2Vec2();
-  b2EdgeShape.RayCast_s_d = new b2Vec2();
-  b2EdgeShape.RayCast_s_e = new b2Vec2();
-  b2EdgeShape.RayCast_s_q = new b2Vec2();
-  b2EdgeShape.RayCast_s_r = new b2Vec2();
-  /// @see b2Shape::ComputeAABB
-  b2EdgeShape.ComputeAABB_s_v1 = new b2Vec2();
-  b2EdgeShape.ComputeAABB_s_v2 = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -19364,6 +20164,138 @@
   b2World.SolveTOI_s_toi_output = new b2TOIOutput();
 
   /*
+   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // #endif
+
+  /*
+   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // #endif
+
+  /*
+   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // #endif
+
+  /*
+   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // #endif
+
+  /*
+   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // #endif
+
+  /*
+   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // #endif
+
+  /*
+  * Copyright (c) 2011 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+
+  /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
   *
   * This software is provided 'as-is', without any express or implied
@@ -19380,523 +20312,6 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  /// A convex polygon. It is assumed that the interior of the polygon is to
-  /// the left of each edge.
-  /// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
-  /// In most cases you should not need many vertices for a convex polygon.
-  class b2PolygonShape extends b2Shape {
-      constructor() {
-          super(b2ShapeType.e_polygonShape, b2_polygonRadius);
-          this.m_centroid = new b2Vec2(0, 0);
-          this.m_vertices = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
-          this.m_normals = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
-          this.m_count = 0;
-      }
-      /// Implement b2Shape.
-      Clone() {
-          return new b2PolygonShape().Copy(this);
-      }
-      Copy(other) {
-          super.Copy(other);
-          // DEBUG: b2Assert(other instanceof b2PolygonShape);
-          this.m_centroid.Copy(other.m_centroid);
-          this.m_count = other.m_count;
-          this.m_vertices = b2Vec2.MakeArray(this.m_count);
-          this.m_normals = b2Vec2.MakeArray(this.m_count);
-          for (let i = 0; i < this.m_count; ++i) {
-              this.m_vertices[i].Copy(other.m_vertices[i]);
-              this.m_normals[i].Copy(other.m_normals[i]);
-          }
-          return this;
-      }
-      /// @see b2Shape::GetChildCount
-      GetChildCount() {
-          return 1;
-      }
-      Set(vertices, count = vertices.length, start = 0) {
-          // DEBUG: b2Assert(3 <= count && count <= b2_maxPolygonVertices);
-          if (count < 3) {
-              return this.SetAsBox(1, 1);
-          }
-          let n = b2Min(count, b2_maxPolygonVertices);
-          // Perform welding and copy vertices into local buffer.
-          const ps = b2PolygonShape.Set_s_ps;
-          let tempCount = 0;
-          for (let i = 0; i < n; ++i) {
-              const /*b2Vec2*/ v = vertices[start + i];
-              let /*bool*/ unique = true;
-              for (let /*int32*/ j = 0; j < tempCount; ++j) {
-                  if (b2Vec2.DistanceSquaredVV(v, ps[j]) < ((0.5 * b2_linearSlop) * (0.5 * b2_linearSlop))) {
-                      unique = false;
-                      break;
-                  }
-              }
-              if (unique) {
-                  ps[tempCount++].Copy(v); // ps[tempCount++] = v;
-              }
-          }
-          n = tempCount;
-          if (n < 3) {
-              // Polygon is degenerate.
-              // DEBUG: b2Assert(false);
-              return this.SetAsBox(1.0, 1.0);
-          }
-          // Create the convex hull using the Gift wrapping algorithm
-          // http://en.wikipedia.org/wiki/Gift_wrapping_algorithm
-          // Find the right most point on the hull
-          let i0 = 0;
-          let x0 = ps[0].x;
-          for (let i = 1; i < n; ++i) {
-              const x = ps[i].x;
-              if (x > x0 || (x === x0 && ps[i].y < ps[i0].y)) {
-                  i0 = i;
-                  x0 = x;
-              }
-          }
-          const hull = b2PolygonShape.Set_s_hull;
-          let m = 0;
-          let ih = i0;
-          for (;;) {
-              // DEBUG: b2Assert(m < b2_maxPolygonVertices);
-              hull[m] = ih;
-              let ie = 0;
-              for (let j = 1; j < n; ++j) {
-                  if (ie === ih) {
-                      ie = j;
-                      continue;
-                  }
-                  const r = b2Vec2.SubVV(ps[ie], ps[hull[m]], b2PolygonShape.Set_s_r);
-                  const v = b2Vec2.SubVV(ps[j], ps[hull[m]], b2PolygonShape.Set_s_v);
-                  const c = b2Vec2.CrossVV(r, v);
-                  if (c < 0) {
-                      ie = j;
-                  }
-                  // Collinearity check
-                  if (c === 0 && v.LengthSquared() > r.LengthSquared()) {
-                      ie = j;
-                  }
-              }
-              ++m;
-              ih = ie;
-              if (ie === i0) {
-                  break;
-              }
-          }
-          this.m_count = m;
-          this.m_vertices = b2Vec2.MakeArray(this.m_count);
-          this.m_normals = b2Vec2.MakeArray(this.m_count);
-          // Copy vertices.
-          for (let i = 0; i < m; ++i) {
-              this.m_vertices[i].Copy(ps[hull[i]]);
-          }
-          // Compute normals. Ensure the edges have non-zero length.
-          for (let i = 0; i < m; ++i) {
-              const vertexi1 = this.m_vertices[i];
-              const vertexi2 = this.m_vertices[(i + 1) % m];
-              const edge = b2Vec2.SubVV(vertexi2, vertexi1, b2Vec2.s_t0); // edge uses s_t0
-              // DEBUG: b2Assert(edge.LengthSquared() > b2_epsilon_sq);
-              b2Vec2.CrossVOne(edge, this.m_normals[i]).SelfNormalize();
-          }
-          // Compute the polygon centroid.
-          b2PolygonShape.ComputeCentroid(this.m_vertices, m, this.m_centroid);
-          return this;
-      }
-      SetAsArray(vertices, count = vertices.length) {
-          return this.Set(vertices, count);
-      }
-      /// Build vertices to represent an axis-aligned box or an oriented box.
-      /// @param hx the half-width.
-      /// @param hy the half-height.
-      /// @param center the center of the box in local coordinates.
-      /// @param angle the rotation of the box in local coordinates.
-      SetAsBox(hx, hy, center, angle = 0) {
-          this.m_count = 4;
-          this.m_vertices = b2Vec2.MakeArray(this.m_count);
-          this.m_normals = b2Vec2.MakeArray(this.m_count);
-          this.m_vertices[0].Set((-hx), (-hy));
-          this.m_vertices[1].Set(hx, (-hy));
-          this.m_vertices[2].Set(hx, hy);
-          this.m_vertices[3].Set((-hx), hy);
-          this.m_normals[0].Set(0, (-1));
-          this.m_normals[1].Set(1, 0);
-          this.m_normals[2].Set(0, 1);
-          this.m_normals[3].Set((-1), 0);
-          this.m_centroid.SetZero();
-          if (center) {
-              this.m_centroid.Copy(center);
-              const xf = new b2Transform();
-              xf.SetPosition(center);
-              xf.SetRotationAngle(angle);
-              // Transform vertices and normals.
-              for (let i = 0; i < this.m_count; ++i) {
-                  b2Transform.MulXV(xf, this.m_vertices[i], this.m_vertices[i]);
-                  b2Rot.MulRV(xf.q, this.m_normals[i], this.m_normals[i]);
-              }
-          }
-          return this;
-      }
-      TestPoint(xf, p) {
-          const pLocal = b2Transform.MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
-          for (let i = 0; i < this.m_count; ++i) {
-              const dot = b2Vec2.DotVV(this.m_normals[i], b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Vec2.s_t0));
-              if (dot > 0) {
-                  return false;
-              }
-          }
-          return true;
-      }
-      ComputeDistance(xf, p, normal, childIndex) {
-          const pLocal = b2Transform.MulTXV(xf, p, b2PolygonShape.ComputeDistance_s_pLocal);
-          let maxDistance = -b2_maxFloat;
-          const normalForMaxDistance = b2PolygonShape.ComputeDistance_s_normalForMaxDistance.Copy(pLocal);
-          for (let i = 0; i < this.m_count; ++i) {
-              const dot = b2Vec2.DotVV(this.m_normals[i], b2Vec2.SubVV(pLocal, this.m_vertices[i], b2Vec2.s_t0));
-              if (dot > maxDistance) {
-                  maxDistance = dot;
-                  normalForMaxDistance.Copy(this.m_normals[i]);
-              }
-          }
-          if (maxDistance > 0) {
-              const minDistance = b2PolygonShape.ComputeDistance_s_minDistance.Copy(normalForMaxDistance);
-              let minDistance2 = maxDistance * maxDistance;
-              for (let i = 0; i < this.m_count; ++i) {
-                  const distance = b2Vec2.SubVV(pLocal, this.m_vertices[i], b2PolygonShape.ComputeDistance_s_distance);
-                  const distance2 = distance.LengthSquared();
-                  if (minDistance2 > distance2) {
-                      minDistance.Copy(distance);
-                      minDistance2 = distance2;
-                  }
-              }
-              b2Rot.MulRV(xf.q, minDistance, normal);
-              normal.Normalize();
-              return Math.sqrt(minDistance2);
-          }
-          else {
-              b2Rot.MulRV(xf.q, normalForMaxDistance, normal);
-              return maxDistance;
-          }
-      }
-      RayCast(output, input, xf, childIndex) {
-          // Put the ray into the polygon's frame of reference.
-          const p1 = b2Transform.MulTXV(xf, input.p1, b2PolygonShape.RayCast_s_p1);
-          const p2 = b2Transform.MulTXV(xf, input.p2, b2PolygonShape.RayCast_s_p2);
-          const d = b2Vec2.SubVV(p2, p1, b2PolygonShape.RayCast_s_d);
-          let lower = 0, upper = input.maxFraction;
-          let index = -1;
-          for (let i = 0; i < this.m_count; ++i) {
-              // p = p1 + a * d
-              // dot(normal, p - v) = 0
-              // dot(normal, p1 - v) + a * dot(normal, d) = 0
-              const numerator = b2Vec2.DotVV(this.m_normals[i], b2Vec2.SubVV(this.m_vertices[i], p1, b2Vec2.s_t0));
-              const denominator = b2Vec2.DotVV(this.m_normals[i], d);
-              if (denominator === 0) {
-                  if (numerator < 0) {
-                      return false;
-                  }
-              }
-              else {
-                  // Note: we want this predicate without division:
-                  // lower < numerator / denominator, where denominator < 0
-                  // Since denominator < 0, we have to flip the inequality:
-                  // lower < numerator / denominator <==> denominator * lower > numerator.
-                  if (denominator < 0 && numerator < lower * denominator) {
-                      // Increase lower.
-                      // The segment enters this half-space.
-                      lower = numerator / denominator;
-                      index = i;
-                  }
-                  else if (denominator > 0 && numerator < upper * denominator) {
-                      // Decrease upper.
-                      // The segment exits this half-space.
-                      upper = numerator / denominator;
-                  }
-              }
-              // The use of epsilon here causes the assert on lower to trip
-              // in some cases. Apparently the use of epsilon was to make edge
-              // shapes work, but now those are handled separately.
-              // if (upper < lower - b2_epsilon)
-              if (upper < lower) {
-                  return false;
-              }
-          }
-          // DEBUG: b2Assert(0 <= lower && lower <= input.maxFraction);
-          if (index >= 0) {
-              output.fraction = lower;
-              b2Rot.MulRV(xf.q, this.m_normals[index], output.normal);
-              return true;
-          }
-          return false;
-      }
-      ComputeAABB(aabb, xf, childIndex) {
-          const lower = b2Transform.MulXV(xf, this.m_vertices[0], aabb.lowerBound);
-          const upper = aabb.upperBound.Copy(lower);
-          for (let i = 0; i < this.m_count; ++i) {
-              const v = b2Transform.MulXV(xf, this.m_vertices[i], b2PolygonShape.ComputeAABB_s_v);
-              b2Vec2.MinV(v, lower, lower);
-              b2Vec2.MaxV(v, upper, upper);
-          }
-          const r = this.m_radius;
-          lower.SelfSubXY(r, r);
-          upper.SelfAddXY(r, r);
-      }
-      ComputeMass(massData, density) {
-          // Polygon mass, centroid, and inertia.
-          // Let rho be the polygon density in mass per unit area.
-          // Then:
-          // mass = rho * int(dA)
-          // centroid.x = (1/mass) * rho * int(x * dA)
-          // centroid.y = (1/mass) * rho * int(y * dA)
-          // I = rho * int((x*x + y*y) * dA)
-          //
-          // We can compute these integrals by summing all the integrals
-          // for each triangle of the polygon. To evaluate the integral
-          // for a single triangle, we make a change of variables to
-          // the (u,v) coordinates of the triangle:
-          // x = x0 + e1x * u + e2x * v
-          // y = y0 + e1y * u + e2y * v
-          // where 0 <= u && 0 <= v && u + v <= 1.
-          //
-          // We integrate u from [0,1-v] and then v from [0,1].
-          // We also need to use the Jacobian of the transformation:
-          // D = cross(e1, e2)
-          //
-          // Simplification: triangle centroid = (1/3) * (p1 + p2 + p3)
-          //
-          // The rest of the derivation is handled by computer algebra.
-          // DEBUG: b2Assert(this.m_count >= 3);
-          const center = b2PolygonShape.ComputeMass_s_center.SetZero();
-          let area = 0;
-          let I = 0;
-          // s is the reference point for forming triangles.
-          // It's location doesn't change the result (except for rounding error).
-          const s = b2PolygonShape.ComputeMass_s_s.SetZero();
-          // This code would put the reference point inside the polygon.
-          for (let i = 0; i < this.m_count; ++i) {
-              s.SelfAdd(this.m_vertices[i]);
-          }
-          s.SelfMul(1 / this.m_count);
-          const k_inv3 = 1 / 3;
-          for (let i = 0; i < this.m_count; ++i) {
-              // Triangle vertices.
-              const e1 = b2Vec2.SubVV(this.m_vertices[i], s, b2PolygonShape.ComputeMass_s_e1);
-              const e2 = b2Vec2.SubVV(this.m_vertices[(i + 1) % this.m_count], s, b2PolygonShape.ComputeMass_s_e2);
-              const D = b2Vec2.CrossVV(e1, e2);
-              const triangleArea = 0.5 * D;
-              area += triangleArea;
-              // Area weighted centroid
-              center.SelfAdd(b2Vec2.MulSV(triangleArea * k_inv3, b2Vec2.AddVV(e1, e2, b2Vec2.s_t0), b2Vec2.s_t1));
-              const ex1 = e1.x;
-              const ey1 = e1.y;
-              const ex2 = e2.x;
-              const ey2 = e2.y;
-              const intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
-              const inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;
-              I += (0.25 * k_inv3 * D) * (intx2 + inty2);
-          }
-          // Total mass
-          massData.mass = density * area;
-          // Center of mass
-          // DEBUG: b2Assert(area > b2_epsilon);
-          center.SelfMul(1 / area);
-          b2Vec2.AddVV(center, s, massData.center);
-          // Inertia tensor relative to the local origin (point s).
-          massData.I = density * I;
-          // Shift to center of mass then to original body origin.
-          massData.I += massData.mass * (b2Vec2.DotVV(massData.center, massData.center) - b2Vec2.DotVV(center, center));
-      }
-      Validate() {
-          for (let i = 0; i < this.m_count; ++i) {
-              const i1 = i;
-              const i2 = (i + 1) % this.m_count;
-              const p = this.m_vertices[i1];
-              const e = b2Vec2.SubVV(this.m_vertices[i2], p, b2PolygonShape.Validate_s_e);
-              for (let j = 0; j < this.m_count; ++j) {
-                  if (j === i1 || j === i2) {
-                      continue;
-                  }
-                  const v = b2Vec2.SubVV(this.m_vertices[j], p, b2PolygonShape.Validate_s_v);
-                  const c = b2Vec2.CrossVV(e, v);
-                  if (c < 0) {
-                      return false;
-                  }
-              }
-          }
-          return true;
-      }
-      SetupDistanceProxy(proxy, index) {
-          proxy.m_vertices = this.m_vertices;
-          proxy.m_count = this.m_count;
-          proxy.m_radius = this.m_radius;
-      }
-      ComputeSubmergedArea(normal, offset, xf, c) {
-          // Transform plane into shape co-ordinates
-          const normalL = b2Rot.MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
-          const offsetL = offset - b2Vec2.DotVV(normal, xf.p);
-          const depths = b2PolygonShape.ComputeSubmergedArea_s_depths;
-          let diveCount = 0;
-          let intoIndex = -1;
-          let outoIndex = -1;
-          let lastSubmerged = false;
-          for (let i = 0; i < this.m_count; ++i) {
-              depths[i] = b2Vec2.DotVV(normalL, this.m_vertices[i]) - offsetL;
-              const isSubmerged = depths[i] < (-b2_epsilon);
-              if (i > 0) {
-                  if (isSubmerged) {
-                      if (!lastSubmerged) {
-                          intoIndex = i - 1;
-                          diveCount++;
-                      }
-                  }
-                  else {
-                      if (lastSubmerged) {
-                          outoIndex = i - 1;
-                          diveCount++;
-                      }
-                  }
-              }
-              lastSubmerged = isSubmerged;
-          }
-          switch (diveCount) {
-              case 0:
-                  if (lastSubmerged) {
-                      // Completely submerged
-                      const md = b2PolygonShape.ComputeSubmergedArea_s_md;
-                      this.ComputeMass(md, 1);
-                      b2Transform.MulXV(xf, md.center, c);
-                      return md.mass;
-                  }
-                  else {
-                      // Completely dry
-                      return 0;
-                  }
-              case 1:
-                  if (intoIndex === (-1)) {
-                      intoIndex = this.m_count - 1;
-                  }
-                  else {
-                      outoIndex = this.m_count - 1;
-                  }
-                  break;
-          }
-          const intoIndex2 = ((intoIndex + 1) % this.m_count);
-          const outoIndex2 = ((outoIndex + 1) % this.m_count);
-          const intoLamdda = (0 - depths[intoIndex]) / (depths[intoIndex2] - depths[intoIndex]);
-          const outoLamdda = (0 - depths[outoIndex]) / (depths[outoIndex2] - depths[outoIndex]);
-          const intoVec = b2PolygonShape.ComputeSubmergedArea_s_intoVec.Set(this.m_vertices[intoIndex].x * (1 - intoLamdda) + this.m_vertices[intoIndex2].x * intoLamdda, this.m_vertices[intoIndex].y * (1 - intoLamdda) + this.m_vertices[intoIndex2].y * intoLamdda);
-          const outoVec = b2PolygonShape.ComputeSubmergedArea_s_outoVec.Set(this.m_vertices[outoIndex].x * (1 - outoLamdda) + this.m_vertices[outoIndex2].x * outoLamdda, this.m_vertices[outoIndex].y * (1 - outoLamdda) + this.m_vertices[outoIndex2].y * outoLamdda);
-          // Initialize accumulator
-          let area = 0;
-          const center = b2PolygonShape.ComputeSubmergedArea_s_center.SetZero();
-          let p2 = this.m_vertices[intoIndex2];
-          let p3;
-          // An awkward loop from intoIndex2+1 to outIndex2
-          let i = intoIndex2;
-          while (i !== outoIndex2) {
-              i = (i + 1) % this.m_count;
-              if (i === outoIndex2) {
-                  p3 = outoVec;
-              }
-              else {
-                  p3 = this.m_vertices[i];
-              }
-              const triangleArea = 0.5 * ((p2.x - intoVec.x) * (p3.y - intoVec.y) - (p2.y - intoVec.y) * (p3.x - intoVec.x));
-              area += triangleArea;
-              // Area weighted centroid
-              center.x += triangleArea * (intoVec.x + p2.x + p3.x) / 3;
-              center.y += triangleArea * (intoVec.y + p2.y + p3.y) / 3;
-              p2 = p3;
-          }
-          // Normalize and transform centroid
-          center.SelfMul(1 / area);
-          b2Transform.MulXV(xf, center, c);
-          return area;
-      }
-      Dump(log) {
-          log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
-          log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
-          for (let i = 0; i < this.m_count; ++i) {
-              log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
-          }
-          log("    shape.Set(vs, %d);\n", this.m_count);
-      }
-      static ComputeCentroid(vs, count, out) {
-          // DEBUG: b2Assert(count >= 3);
-          const c = out;
-          c.SetZero();
-          let area = 0;
-          // s is the reference point for forming triangles.
-          // It's location doesn't change the result (except for rounding error).
-          const pRef = b2PolygonShape.ComputeCentroid_s_pRef.SetZero();
-          /*
-      #if 0
-          // This code would put the reference point inside the polygon.
-          for (let i: number = 0; i < count; ++i) {
-            pRef.SelfAdd(vs[i]);
-          }
-          pRef.SelfMul(1 / count);
-      #endif
-          */
-          const inv3 = 1 / 3;
-          for (let i = 0; i < count; ++i) {
-              // Triangle vertices.
-              const p1 = pRef;
-              const p2 = vs[i];
-              const p3 = vs[(i + 1) % count];
-              const e1 = b2Vec2.SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
-              const e2 = b2Vec2.SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
-              const D = b2Vec2.CrossVV(e1, e2);
-              const triangleArea = 0.5 * D;
-              area += triangleArea;
-              // Area weighted centroid
-              c.x += triangleArea * inv3 * (p1.x + p2.x + p3.x);
-              c.y += triangleArea * inv3 * (p1.y + p2.y + p3.y);
-          }
-          // Centroid
-          // DEBUG: b2Assert(area > b2_epsilon);
-          c.SelfMul(1 / area);
-          return c;
-      }
-  }
-  /// Create a convex hull from the given array of points.
-  /// The count must be in the range [3, b2_maxPolygonVertices].
-  /// @warning the points may be re-ordered, even if they form a convex polygon
-  /// @warning collinear points are handled but not removed. Collinear points
-  /// may lead to poor stacking behavior.
-  b2PolygonShape.Set_s_ps = b2Vec2.MakeArray(b2_maxPolygonVertices);
-  b2PolygonShape.Set_s_hull = b2MakeNumberArray(b2_maxPolygonVertices);
-  b2PolygonShape.Set_s_r = new b2Vec2();
-  b2PolygonShape.Set_s_v = new b2Vec2();
-  /// @see b2Shape::TestPoint
-  b2PolygonShape.TestPoint_s_pLocal = new b2Vec2();
-  // #if B2_ENABLE_PARTICLE
-  /// @see b2Shape::ComputeDistance
-  b2PolygonShape.ComputeDistance_s_pLocal = new b2Vec2();
-  b2PolygonShape.ComputeDistance_s_normalForMaxDistance = new b2Vec2();
-  b2PolygonShape.ComputeDistance_s_minDistance = new b2Vec2();
-  b2PolygonShape.ComputeDistance_s_distance = new b2Vec2();
-  // #endif
-  /// Implement b2Shape.
-  b2PolygonShape.RayCast_s_p1 = new b2Vec2();
-  b2PolygonShape.RayCast_s_p2 = new b2Vec2();
-  b2PolygonShape.RayCast_s_d = new b2Vec2();
-  /// @see b2Shape::ComputeAABB
-  b2PolygonShape.ComputeAABB_s_v = new b2Vec2();
-  /// @see b2Shape::ComputeMass
-  b2PolygonShape.ComputeMass_s_center = new b2Vec2();
-  b2PolygonShape.ComputeMass_s_s = new b2Vec2();
-  b2PolygonShape.ComputeMass_s_e1 = new b2Vec2();
-  b2PolygonShape.ComputeMass_s_e2 = new b2Vec2();
-  b2PolygonShape.Validate_s_e = new b2Vec2();
-  b2PolygonShape.Validate_s_v = new b2Vec2();
-  b2PolygonShape.ComputeSubmergedArea_s_normalL = new b2Vec2();
-  b2PolygonShape.ComputeSubmergedArea_s_depths = b2MakeNumberArray(b2_maxPolygonVertices);
-  b2PolygonShape.ComputeSubmergedArea_s_md = new b2MassData();
-  b2PolygonShape.ComputeSubmergedArea_s_intoVec = new b2Vec2();
-  b2PolygonShape.ComputeSubmergedArea_s_outoVec = new b2Vec2();
-  b2PolygonShape.ComputeSubmergedArea_s_center = new b2Vec2();
-  b2PolygonShape.ComputeCentroid_s_pRef = new b2Vec2();
-  b2PolygonShape.ComputeCentroid_s_e1 = new b2Vec2();
-  b2PolygonShape.ComputeCentroid_s_e2 = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org

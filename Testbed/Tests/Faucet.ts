@@ -20,10 +20,8 @@
 
 import * as box2d from "Box2D";
 import * as testbed from "Testbed";
-import { ParticleParameter } from "Testbed/Framework/ParticleParameter";
-import { EmittedParticleCallback, RadialEmitter } from "Testbed/Framework/ParticleEmitter";
 
-export class ParticleLifetimeRandomizer extends EmittedParticleCallback {
+export class ParticleLifetimeRandomizer extends testbed.EmittedParticleCallback {
   public m_minLifetime = 0.0;
   public m_maxLifetime = 0.0;
   constructor(minLifetime: number, maxLifetime: number) {
@@ -52,7 +50,7 @@ export class Faucet extends testbed.Test {
   /**
    * Particle emitter.
    */
-  public m_emitter: RadialEmitter;
+  public m_emitter: testbed.RadialEmitter;
   /**
    * Callback which sets the lifetime of emitted particles.
    */
@@ -122,24 +120,24 @@ export class Faucet extends testbed.Test {
   /**
    * Selection of particle types for this test.
    */
-  public static readonly k_paramValues: ParticleParameter.Value[] = [
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameter.Options.OptionStrictContacts, "water (strict)"),
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
-    new ParticleParameter.Value(box2d.b2ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
+  public static readonly k_paramValues: testbed.ParticleParameter.Value[] = [
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_waterParticle, testbed.ParticleParameter.k_DefaultOptions, "water"),
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_waterParticle, testbed.ParticleParameter.k_DefaultOptions | testbed.ParticleParameter.Options.OptionStrictContacts, "water (strict)"),
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "viscous"),
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_powderParticle, testbed.ParticleParameter.k_DefaultOptions, "powder"),
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_tensileParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile"),
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_colorMixingParticle, testbed.ParticleParameter.k_DefaultOptions, "color mixing"),
+    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_staticPressureParticle, testbed.ParticleParameter.k_DefaultOptions, "static pressure"),
   ];
-  public static readonly k_paramDef: ParticleParameter.Definition[] = [
-    new ParticleParameter.Definition(Faucet.k_paramValues),
+  public static readonly k_paramDef: testbed.ParticleParameter.Definition[] = [
+    new testbed.ParticleParameter.Definition(Faucet.k_paramValues),
   ];
   public static readonly k_paramDefCount = Faucet.k_paramDef.length;
 
   constructor() {
     super(); // base class constructor
 
-    this.m_emitter = new RadialEmitter();
+    this.m_emitter = new testbed.RadialEmitter();
     this.m_lifetimeRandomizer = new ParticleLifetimeRandomizer(Faucet.k_particleLifetimeMin, Faucet.k_particleLifetimeMax);
 
     // Configure particle system parameters.

@@ -13,9 +13,7 @@
     "baseUrl": ".",
     "paths": {
       "Box2D": [ "../../Box2D/Box2D" ],
-      "Box2D/*": [ "../../Box2D/*" ],
       "HelloWorld": [ "../../HelloWorld/HelloWorld" ],
-      "HelloWorld/*": [ "../../HelloWorld/*" ]
     }
   },
   "include": [

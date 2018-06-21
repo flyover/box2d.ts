@@ -12,8 +12,7 @@
     "rootDirs": [ "../.." ],
     "baseUrl": ".",
     "paths": {
-      "Box2D": [ "../../Box2D/Box2D" ],
-      "Box2D/*": [ "../../Box2D/*" ]
+      "Box2D": [ "../../Box2D/Box2D" ]
     }
   },
   "include": [
