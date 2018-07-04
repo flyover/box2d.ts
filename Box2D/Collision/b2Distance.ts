@@ -24,10 +24,23 @@ import { b2Shape } from "./Shapes/b2Shape";
 /// A distance proxy is used by the GJK algorithm.
 /// It encapsulates any shape.
 export class b2DistanceProxy {
-  public m_buffer: b2Vec2[] = b2Vec2.MakeArray(2);
+  public readonly m_buffer: b2Vec2[] = b2Vec2.MakeArray(2);
   public m_vertices: b2Vec2[] = this.m_buffer;
   public m_count: number = 0;
   public m_radius: number = 0;
+
+  public Copy(other: Readonly<b2DistanceProxy>): this {
+    if (other.m_vertices === other.m_buffer) {
+      this.m_vertices = this.m_buffer;
+      this.m_buffer[0].Copy(other.m_buffer[0]);
+      this.m_buffer[1].Copy(other.m_buffer[1]);
+    } else {
+      this.m_vertices = other.m_vertices;
+    }
+    this.m_count = other.m_count;
+    this.m_radius = other.m_radius;
+    return this;
+  }
 
   public Reset(): b2DistanceProxy {
     this.m_vertices = this.m_buffer;
@@ -87,8 +100,8 @@ export class b2DistanceProxy {
 export class b2SimplexCache {
   public metric: number = 0;
   public count: number = 0;
-  public indexA: number[] = [ 0, 0, 0 ];
-  public indexB: number[] = [ 0, 0, 0 ];
+  public readonly indexA: number[] = [ 0, 0, 0 ];
+  public readonly indexB: number[] = [ 0, 0, 0 ];
 
   public Reset(): b2SimplexCache {
     this.metric = 0;
@@ -98,8 +111,8 @@ export class b2SimplexCache {
 }
 
 export class b2DistanceInput {
-  public proxyA: b2DistanceProxy = new b2DistanceProxy(); // TODO: readonly
-  public proxyB: b2DistanceProxy = new b2DistanceProxy(); // TODO: readonly
+  public readonly proxyA: b2DistanceProxy = new b2DistanceProxy();
+  public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
   public readonly transformA: b2Transform = new b2Transform();
   public readonly transformB: b2Transform = new b2Transform();
   public useRadii: boolean = false;
@@ -178,7 +191,7 @@ export class b2Simplex {
   public readonly m_v1: b2SimplexVertex = new b2SimplexVertex();
   public readonly m_v2: b2SimplexVertex = new b2SimplexVertex();
   public readonly m_v3: b2SimplexVertex = new b2SimplexVertex();
-  public m_vertices: b2SimplexVertex[] = [/*3*/];
+  public readonly m_vertices: b2SimplexVertex[] = [/*3*/];
   public m_count: number = 0;
 
   constructor() {

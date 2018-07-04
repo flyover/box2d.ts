@@ -311,8 +311,8 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
   const cache: b2SimplexCache = b2TimeOfImpact_s_cache;
   cache.count = 0;
   const distanceInput: b2DistanceInput = b2TimeOfImpact_s_distanceInput;
-  distanceInput.proxyA = input.proxyA;
-  distanceInput.proxyB = input.proxyB;
+  distanceInput.proxyA.Copy(input.proxyA);
+  distanceInput.proxyB.Copy(input.proxyB);
   distanceInput.useRadii = false;
 
   // The outer loop progressively attempts to compute new separating axes.

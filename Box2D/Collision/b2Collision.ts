@@ -34,15 +34,12 @@ export enum b2ContactFeatureType {
 /// The features that intersect to form the contact point
 /// This must be 4 bytes or less.
 export class b2ContactFeature {
-  public _key: number = 0;
-  public _key_invalid = false;
-  public _indexA: number = 0;
-  public _indexB: number = 0;
-  public _typeA: number = 0;
-  public _typeB: number = 0;
-
-  constructor() {
-  }
+  private _key: number = 0;
+  private _key_invalid = false;
+  private _indexA: number = 0;
+  private _indexB: number = 0;
+  private _typeA: b2ContactFeatureType = 0;
+  private _typeB: b2ContactFeatureType = 0;
 
   public get key(): number {
     if (this._key_invalid) {
@@ -180,10 +177,10 @@ export enum b2ManifoldType {
 /// All contact scenarios must be expressed in one of these types.
 /// This structure is stored across time steps, so we keep it small.
 export class b2Manifold {
-  public points: b2ManifoldPoint[] = b2ManifoldPoint.MakeArray(b2_maxManifoldPoints);
+  public readonly points: b2ManifoldPoint[] = b2ManifoldPoint.MakeArray(b2_maxManifoldPoints);
   public readonly localNormal: b2Vec2 = new b2Vec2();
   public readonly localPoint: b2Vec2 = new b2Vec2();
-  public type: number = b2ManifoldType.e_unknown;
+  public type: b2ManifoldType = b2ManifoldType.e_unknown;
   public pointCount: number = 0;
 
   public Reset(): void {
@@ -216,8 +213,8 @@ export class b2Manifold {
 
 export class b2WorldManifold {
   public readonly normal: b2Vec2 = new b2Vec2();
-  public points: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
-  public separations: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
+  public readonly points: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
+  public readonly separations: number[] = b2MakeNumberArray(b2_maxManifoldPoints);
 
   private static Initialize_s_pointA = new b2Vec2();
   private static Initialize_s_pointB = new b2Vec2();
@@ -243,8 +240,8 @@ export class b2WorldManifold {
         const cB: b2Vec2 = b2Vec2.SubVMulSV(pointB, radiusB, this.normal, b2WorldManifold.Initialize_s_cB);
         b2Vec2.MidVV(cA, cB, this.points[0]);
         this.separations[0] = b2Vec2.DotVV(b2Vec2.SubVV(cB, cA, b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
+        break;
       }
-                                   break;
 
     case b2ManifoldType.e_faceA: {
         b2Rot.MulRV(xfA.q, manifold.localNormal, this.normal);
@@ -258,8 +255,8 @@ export class b2WorldManifold {
           b2Vec2.MidVV(cA, cB, this.points[i]);
           this.separations[i] = b2Vec2.DotVV(b2Vec2.SubVV(cB, cA, b2Vec2.s_t0), this.normal); // b2Dot(cB - cA, normal);
         }
+        break;
       }
-                                 break;
 
     case b2ManifoldType.e_faceB: {
         b2Rot.MulRV(xfB.q, manifold.localNormal, this.normal);
@@ -276,8 +273,8 @@ export class b2WorldManifold {
 
         // Ensure normal points from A to B.
         this.normal.SelfNeg();
+        break;
       }
-                                 break;
     }
   }
 }
@@ -379,8 +376,8 @@ export class b2AABB {
   public readonly lowerBound: b2Vec2 = new b2Vec2(); ///< the lower vertex
   public readonly upperBound: b2Vec2 = new b2Vec2(); ///< the upper vertex
 
-  private m_cache_center: b2Vec2 = new b2Vec2(); // access using GetCenter()
-  private m_cache_extent: b2Vec2 = new b2Vec2(); // access using GetExtents()
+  private readonly m_cache_center: b2Vec2 = new b2Vec2(); // access using GetCenter()
+  private readonly m_cache_extent: b2Vec2 = new b2Vec2(); // access using GetExtents()
 
   public Copy(o: b2AABB): b2AABB {
     this.lowerBound.Copy(o.lowerBound);
