@@ -635,7 +635,7 @@ export class Test extends box2d.b2ContactListener {
         continue;
       }
       ///memcpy(&m_particleParameters[numValues], &defaultValues[i], sizeof(defaultValues[0]));
-      this.m_particleParameters[numValues] = defaultValues[i]; // TODO: clone?
+      this.m_particleParameters[numValues] = new ParticleParameter.Value(defaultValues[i]);
       numValues++;
     }
     this.m_particleParameterDef = new ParticleParameter.Definition(this.m_particleParameters, numValues);

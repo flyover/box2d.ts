@@ -14131,7 +14131,6 @@
           this.m_back = 0;
           this.m_capacity = 0;
           this.m_buffer = b2MakeArray(capacity, (index) => null);
-          ///this.m_end = capacity; // TODO: this was wrong!
           this.m_capacity = capacity;
       }
       Push(item) {
@@ -22070,10 +22069,7 @@
       ParticleParameterOptions[ParticleParameterOptions["OptionDrawProfile"] = 2048] = "OptionDrawProfile";
   })(exports.ParticleParameterOptions || (exports.ParticleParameterOptions = {}));
   class ParticleParameterValue {
-      /**
-       * ParticleParameterValue of a particle parameter.
-       */
-      constructor(value, options, name) {
+      constructor(...args) {
           /**
            * ParticleParameterValue associated with the parameter.
            */
@@ -22087,9 +22083,20 @@
            * Name to display when this parameter is selected.
            */
           this.name = "";
-          this.value = value;
-          this.options = options;
-          this.name = name;
+          if (args[0] instanceof ParticleParameterValue) {
+              this.Copy(args[0]);
+          }
+          else {
+              this.value = args[0];
+              this.options = args[1];
+              this.name = args[2];
+          }
+      }
+      Copy(other) {
+          this.value = other.value;
+          this.options = other.options;
+          this.name = other.name;
+          return this;
       }
   }
   class ParticleParameterDefinition {
@@ -22769,7 +22776,7 @@
                   continue;
               }
               ///memcpy(&m_particleParameters[numValues], &defaultValues[i], sizeof(defaultValues[0]));
-              this.m_particleParameters[numValues] = defaultValues[i]; // TODO: clone?
+              this.m_particleParameters[numValues] = new ParticleParameter.Value(defaultValues[i]);
               numValues++;
           }
           this.m_particleParameterDef = new ParticleParameter.Definition(this.m_particleParameters, numValues);

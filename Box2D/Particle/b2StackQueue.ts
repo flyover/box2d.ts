@@ -28,7 +28,6 @@ export class b2StackQueue<T> {
   public m_capacity: number = 0;
   constructor(capacity: number) {
     this.m_buffer = b2MakeArray(capacity, (index) => null);
-    ///this.m_end = capacity; // TODO: this was wrong!
     this.m_capacity = capacity;
   }
   public Push(item: T): void {

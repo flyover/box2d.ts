@@ -14226,7 +14226,6 @@
           this.m_back = 0;
           this.m_capacity = 0;
           this.m_buffer = b2MakeArray(capacity, (index) => null);
-          ///this.m_end = capacity; // TODO: this was wrong!
           this.m_capacity = capacity;
       }
       Push(item) {

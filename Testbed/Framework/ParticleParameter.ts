@@ -39,10 +39,16 @@ export class ParticleParameterValue {
   /**
    * ParticleParameterValue of a particle parameter.
    */
-  constructor(value: number, options: ParticleParameterOptions, name: string) {
-    this.value = value;
-    this.options = options;
-    this.name = name;
+  constructor(value: ParticleParameterValue);
+  constructor(value: number, options: ParticleParameterOptions, name: string);
+  constructor(...args: any[]) {
+    if (args[0] instanceof ParticleParameterValue) {
+      this.Copy(args[0]);
+    } else {
+      this.value = args[0];
+      this.options = args[1];
+      this.name = args[2];
+    }
   }
 
   /**
@@ -60,6 +66,13 @@ export class ParticleParameterValue {
    * Name to display when this parameter is selected.
    */
   public name = "";
+
+  public Copy(other: ParticleParameterValue): this {
+    this.value = other.value;
+    this.options = other.options;
+    this.name = other.name;
+    return this;
+  }
 }
 
 export class ParticleParameterDefinition {
