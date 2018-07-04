@@ -27,9 +27,9 @@ import { b2SolverData } from "../b2TimeStep";
 import { b2Body } from "../b2Body";
 
 export interface b2IGearJointDef extends b2IJointDef {
-  joint1: b2Joint;
+  joint1: b2RevoluteJoint | b2PrismaticJoint;
 
-  joint2: b2Joint;
+  joint2: b2RevoluteJoint | b2PrismaticJoint;
 
   ratio?: number;
 }
@@ -37,9 +37,9 @@ export interface b2IGearJointDef extends b2IJointDef {
 /// Gear joint definition. This definition requires two existing
 /// revolute or prismatic joints (any combination will work).
 export class b2GearJointDef extends b2JointDef implements b2IGearJointDef {
-  public joint1!: b2Joint;
+  public joint1!: b2RevoluteJoint | b2PrismaticJoint;
 
-  public joint2!: b2Joint;
+  public joint2!: b2RevoluteJoint | b2PrismaticJoint;
 
   public ratio: number = 1;
 
@@ -49,8 +49,8 @@ export class b2GearJointDef extends b2JointDef implements b2IGearJointDef {
 }
 
 export class b2GearJoint extends b2Joint {
-  public m_joint1: b2Joint;
-  public m_joint2: b2Joint;
+  public m_joint1: b2RevoluteJoint | b2PrismaticJoint;
+  public m_joint2: b2RevoluteJoint | b2PrismaticJoint;
 
   public m_typeA: b2JointType = b2JointType.e_unknownJoint;
   public m_typeB: b2JointType = b2JointType.e_unknownJoint;

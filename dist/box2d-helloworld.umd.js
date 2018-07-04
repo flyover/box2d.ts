@@ -10710,28 +10710,6 @@
   b2WheelJoint.SolvePositionConstraints_s_d = new b2Vec2();
   b2WheelJoint.SolvePositionConstraints_s_P = new b2Vec2();
 
-  class b2JointFactory {
-      static Create(def, allocator) {
-          switch (def.type) {
-              case b2JointType.e_distanceJoint: return new b2DistanceJoint(def);
-              case b2JointType.e_mouseJoint: return new b2MouseJoint(def);
-              case b2JointType.e_prismaticJoint: return new b2PrismaticJoint(def);
-              case b2JointType.e_revoluteJoint: return new b2RevoluteJoint(def);
-              case b2JointType.e_pulleyJoint: return new b2PulleyJoint(def);
-              case b2JointType.e_gearJoint: return new b2GearJoint(def);
-              case b2JointType.e_wheelJoint: return new b2WheelJoint(def);
-              case b2JointType.e_weldJoint: return new b2WeldJoint(def);
-              case b2JointType.e_frictionJoint: return new b2FrictionJoint(def);
-              case b2JointType.e_ropeJoint: return new b2RopeJoint(def);
-              case b2JointType.e_motorJoint: return new b2MotorJoint(def);
-              case b2JointType.e_areaJoint: return new b2AreaJoint(def);
-          }
-          throw new Error();
-      }
-      static Destroy(joint, allocator) {
-      }
-  }
-
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
   *
@@ -18919,14 +18897,30 @@
           }
           --this.m_bodyCount;
       }
-      /// Create a joint to constrain bodies together. No reference to the definition
-      /// is retained. This may cause the connected bodies to cease colliding.
-      /// @warning This function is locked during callbacks.
+      static _Joint_Create(def, allocator) {
+          switch (def.type) {
+              case b2JointType.e_distanceJoint: return new b2DistanceJoint(def);
+              case b2JointType.e_mouseJoint: return new b2MouseJoint(def);
+              case b2JointType.e_prismaticJoint: return new b2PrismaticJoint(def);
+              case b2JointType.e_revoluteJoint: return new b2RevoluteJoint(def);
+              case b2JointType.e_pulleyJoint: return new b2PulleyJoint(def);
+              case b2JointType.e_gearJoint: return new b2GearJoint(def);
+              case b2JointType.e_wheelJoint: return new b2WheelJoint(def);
+              case b2JointType.e_weldJoint: return new b2WeldJoint(def);
+              case b2JointType.e_frictionJoint: return new b2FrictionJoint(def);
+              case b2JointType.e_ropeJoint: return new b2RopeJoint(def);
+              case b2JointType.e_motorJoint: return new b2MotorJoint(def);
+              case b2JointType.e_areaJoint: return new b2AreaJoint(def);
+          }
+          throw new Error();
+      }
+      static _Joint_Destroy(joint, allocator) {
+      }
       CreateJoint(def) {
           if (this.IsLocked()) {
               throw new Error();
           }
-          const j = b2JointFactory.Create(def, null);
+          const j = b2World._Joint_Create(def, null);
           // Connect to the world list.
           j.m_prev = null;
           j.m_next = this.m_jointList;
@@ -19016,7 +19010,7 @@
           }
           j.m_edgeB.prev = null;
           j.m_edgeB.next = null;
-          b2JointFactory.Destroy(j, null);
+          b2World._Joint_Destroy(j, null);
           // DEBUG: b2Assert(this.m_jointCount > 0);
           --this.m_jointCount;
           // If the joint prevents collisions, then flag any contacts for filtering.

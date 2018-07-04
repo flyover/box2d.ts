@@ -102,7 +102,7 @@ export interface b2IJointDef {
 /// Joint definitions are used to construct joints.
 export class b2JointDef {
   /// The joint type is set automatically for concrete joint types.
-  public type: b2JointType = b2JointType.e_unknownJoint;
+  public readonly type: b2JointType = b2JointType.e_unknownJoint;
 
   /// Use this to attach application specific data to your joints.
   public userData: any = null;
@@ -124,11 +124,11 @@ export class b2JointDef {
 /// The base joint class. Joints are used to constraint two bodies together in
 /// various fashions. Some joints also feature limits and motors.
 export abstract class b2Joint {
-  public m_type: b2JointType = b2JointType.e_unknownJoint;
+  public readonly m_type: b2JointType = b2JointType.e_unknownJoint;
   public m_prev: b2Joint | null = null;
   public m_next: b2Joint | null = null;
-  public m_edgeA: b2JointEdge;
-  public m_edgeB: b2JointEdge;
+  public readonly m_edgeA: b2JointEdge;
+  public readonly m_edgeB: b2JointEdge;
   public m_bodyA: b2Body;
   public m_bodyB: b2Body;
 

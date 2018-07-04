@@ -31,8 +31,18 @@ import { b2EdgeShape } from "../Collision/Shapes/b2EdgeShape";
 import { b2PolygonShape } from "../Collision/Shapes/b2PolygonShape";
 import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact";
 import { b2Joint, b2IJointDef, b2JointType, b2JointEdge } from "./Joints/b2Joint";
-import { b2JointFactory } from "./Joints/b2JointFactory";
-import { b2PulleyJoint } from "./Joints/b2PulleyJoint";
+import { b2AreaJoint, b2IAreaJointDef } from "./Joints/b2AreaJoint";
+import { b2DistanceJoint, b2IDistanceJointDef } from "./Joints/b2DistanceJoint";
+import { b2FrictionJoint, b2IFrictionJointDef } from "./Joints/b2FrictionJoint";
+import { b2GearJoint, b2IGearJointDef } from "./Joints/b2GearJoint";
+import { b2MotorJoint, b2IMotorJointDef } from "./Joints/b2MotorJoint";
+import { b2MouseJoint, b2IMouseJointDef } from "./Joints/b2MouseJoint";
+import { b2PrismaticJoint, b2IPrismaticJointDef } from "./Joints/b2PrismaticJoint";
+import { b2PulleyJoint, b2IPulleyJointDef } from "./Joints/b2PulleyJoint";
+import { b2RevoluteJoint, b2IRevoluteJointDef } from "./Joints/b2RevoluteJoint";
+import { b2RopeJoint, b2IRopeJointDef } from "./Joints/b2RopeJoint";
+import { b2WeldJoint, b2IWeldJointDef } from "./Joints/b2WeldJoint";
+import { b2WheelJoint, b2IWheelJointDef } from "./Joints/b2WheelJoint";
 import { b2Body, b2IBodyDef, b2BodyType } from "./b2Body";
 import { b2ContactManager } from "./b2ContactManager";
 import { b2Fixture, b2FixtureProxy } from "./b2Fixture";
@@ -233,13 +243,46 @@ export class b2World {
     --this.m_bodyCount;
   }
 
+  private static _Joint_Create(def: b2IJointDef, allocator: any): b2Joint {
+    switch (def.type) {
+      case b2JointType.e_distanceJoint: return new b2DistanceJoint(def as b2IDistanceJointDef);
+      case b2JointType.e_mouseJoint: return new b2MouseJoint(def as b2IMouseJointDef);
+      case b2JointType.e_prismaticJoint: return new b2PrismaticJoint(def as b2IPrismaticJointDef);
+      case b2JointType.e_revoluteJoint: return new b2RevoluteJoint(def as b2IRevoluteJointDef);
+      case b2JointType.e_pulleyJoint: return new b2PulleyJoint(def as b2IPulleyJointDef);
+      case b2JointType.e_gearJoint: return new b2GearJoint(def as b2IGearJointDef);
+      case b2JointType.e_wheelJoint: return new b2WheelJoint(def as b2IWheelJointDef);
+      case b2JointType.e_weldJoint: return new b2WeldJoint(def as b2IWeldJointDef);
+      case b2JointType.e_frictionJoint: return new b2FrictionJoint(def as b2IFrictionJointDef);
+      case b2JointType.e_ropeJoint: return new b2RopeJoint(def as b2IRopeJointDef);
+      case b2JointType.e_motorJoint: return new b2MotorJoint(def as b2IMotorJointDef);
+      case b2JointType.e_areaJoint: return new b2AreaJoint(def as b2IAreaJointDef);
+    }
+    throw new Error();
+  }
+
+  private static _Joint_Destroy(joint: b2Joint, allocator: any): void {
+  }
+
   /// Create a joint to constrain bodies together. No reference to the definition
   /// is retained. This may cause the connected bodies to cease colliding.
   /// @warning This function is locked during callbacks.
-  public CreateJoint<T extends b2Joint>(def: b2IJointDef): T {
+  public CreateJoint(def: b2IAreaJointDef): b2AreaJoint;
+  public CreateJoint(def: b2IDistanceJointDef): b2DistanceJoint;
+  public CreateJoint(def: b2IFrictionJointDef): b2FrictionJoint;
+  public CreateJoint(def: b2IGearJointDef): b2GearJoint;
+  public CreateJoint(def: b2IMotorJointDef): b2MotorJoint;
+  public CreateJoint(def: b2IMouseJointDef): b2MouseJoint;
+  public CreateJoint(def: b2IPrismaticJointDef): b2PrismaticJoint;
+  public CreateJoint(def: b2IPulleyJointDef): b2PulleyJoint;
+  public CreateJoint(def: b2IRevoluteJointDef): b2RevoluteJoint;
+  public CreateJoint(def: b2IRopeJointDef): b2RopeJoint;
+  public CreateJoint(def: b2IWeldJointDef): b2WeldJoint;
+  public CreateJoint(def: b2IWheelJointDef): b2WheelJoint;
+  public CreateJoint(def: b2IJointDef): b2Joint {
     if (this.IsLocked()) { throw new Error(); }
 
-    const j: b2Joint = b2JointFactory.Create(def, null);
+    const j: b2Joint = b2World._Joint_Create(def, null);
 
     // Connect to the world list.
     j.m_prev = null;
@@ -284,7 +327,7 @@ export class b2World {
 
     // Note: creating a joint doesn't wake the bodies.
 
-    return j as T;
+    return j;
   }
 
   /// Destroy a joint. This may cause the connected bodies to begin colliding.
@@ -347,7 +390,7 @@ export class b2World {
     j.m_edgeB.prev = null;
     j.m_edgeB.next = null;
 
-    b2JointFactory.Destroy(j, null);
+    b2World._Joint_Destroy(j, null);
 
     // DEBUG: b2Assert(this.m_jointCount > 0);
     --this.m_jointCount;

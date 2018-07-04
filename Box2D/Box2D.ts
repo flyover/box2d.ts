@@ -68,7 +68,6 @@ export * from "./Dynamics/Contacts/b2ChainAndCircleContact";
 export * from "./Dynamics/Contacts/b2ChainAndPolygonContact";
 
 export * from "./Dynamics/Joints/b2Joint";
-export * from "./Dynamics/Joints/b2JointFactory";
 export * from "./Dynamics/Joints/b2AreaJoint";
 export * from "./Dynamics/Joints/b2DistanceJoint";
 export * from "./Dynamics/Joints/b2FrictionJoint";
