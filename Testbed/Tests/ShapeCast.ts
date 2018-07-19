@@ -22,11 +22,11 @@ import * as testbed from "Testbed";
 export class ShapeCast extends testbed.Test {
   public static e_vertexCount = 8;
 
-  public m_vAs = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
+  public m_vAs: box2d.b2Vec2[] = [];
   public m_countA = 0;
   public m_radiusA = 0;
 
-  public m_vBs = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
+  public m_vBs: box2d.b2Vec2[] = [];
   public m_countB = 0;
   public m_radiusB = 0;
 
@@ -34,24 +34,24 @@ export class ShapeCast extends testbed.Test {
     super();
 
     // #if 1
-    this.m_vAs[0].Set(-0.5, 1.0);
-    this.m_vAs[1].Set(0.5, 1.0);
-    this.m_vAs[2].Set(0.0, 0.0);
+    this.m_vAs[0] = new box2d.b2Vec2(-0.5, 1.0);
+    this.m_vAs[1] = new box2d.b2Vec2(0.5, 1.0);
+    this.m_vAs[2] = new box2d.b2Vec2(0.0, 0.0);
     this.m_countA = 3;
     this.m_radiusA = box2d.b2_polygonRadius;
 
-    this.m_vBs[0].Set(-0.5, -0.5);
-    this.m_vBs[1].Set(0.5, -0.5);
-    this.m_vBs[2].Set(0.5, 0.5);
-    this.m_vBs[3].Set(-0.5, 0.5);
+    this.m_vBs[0] = new box2d.b2Vec2(-0.5, -0.5);
+    this.m_vBs[1] = new box2d.b2Vec2(0.5, -0.5);
+    this.m_vBs[2] = new box2d.b2Vec2(0.5, 0.5);
+    this.m_vBs[3] = new box2d.b2Vec2(-0.5, 0.5);
     this.m_countB = 4;
     this.m_radiusB = box2d.b2_polygonRadius;
     // #else
-    // this.m_vAs[0].Set(0.0, 0.0);
+    // this.m_vAs[0] = new box2d.b2Vec2(0.0, 0.0);
     // this.m_countA = 1;
     // this.m_radiusA = 0.5;
 
-    // this.m_vBs[0].Set(0.0, 0.0);
+    // this.m_vBs[0] = new box2d.b2Vec2(0.0, 0.0);
     // this.m_countB = 1;
     // this.m_radiusB = 0.5;
     // #endif

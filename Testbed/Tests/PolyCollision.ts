@@ -86,7 +86,7 @@ export class PolyCollision extends testbed.Test {
 
     {
       const color = new box2d.b2Color(0.9, 0.9, 0.9);
-      const v = new Array(box2d.b2_maxPolygonVertices);
+      const v = [];
       for (let i = 0; i < this.m_polygonA.m_count; ++i) {
         v[i] = box2d.b2Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new box2d.b2Vec2());
       }

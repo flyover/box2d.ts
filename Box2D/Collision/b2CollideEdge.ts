@@ -1,5 +1,5 @@
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_angularSlop, b2_maxPolygonVertices, b2_maxManifoldPoints } from "../Common/b2Settings";
+import { b2_maxFloat, b2_angularSlop, b2_maxManifoldPoints } from "../Common/b2Settings";
 import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
 import { b2ContactFeatureType, b2ContactID } from "./b2Collision";
 import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
@@ -149,8 +149,8 @@ class b2EPAxis {
 }
 
 class b2TempPolygon {
-  public vertices: b2Vec2[] = b2Vec2.MakeArray(b2_maxPolygonVertices);
-  public normals: b2Vec2[] = b2Vec2.MakeArray(b2_maxPolygonVertices);
+  public vertices: b2Vec2[] = [];
+  public normals: b2Vec2[] = [];
   public count: number = 0;
 }
 
@@ -351,6 +351,8 @@ class b2EPCollider {
     // Get polygonB in frameA
     this.m_polygonB.count = polygonB.m_count;
     for (let i: number = 0; i < polygonB.m_count; ++i) {
+      if (this.m_polygonB.vertices.length <= i) { this.m_polygonB.vertices.push(new b2Vec2()); }
+      if (this.m_polygonB.normals.length <= i) { this.m_polygonB.normals.push(new b2Vec2()); }
       b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
       b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
     }

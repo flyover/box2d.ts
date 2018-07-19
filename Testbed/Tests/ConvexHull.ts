@@ -20,9 +20,9 @@ import * as box2d from "Box2D";
 import * as testbed from "Testbed";
 
 export class ConvexHull extends testbed.Test {
-  public static readonly e_count = box2d.b2_maxPolygonVertices;
+  public static readonly e_count = 10;
 
-  public m_test_points: box2d.b2Vec2[] = box2d.b2Vec2.MakeArray(box2d.b2_maxPolygonVertices);
+  public m_test_points: box2d.b2Vec2[] = [];
   public m_count = 0;
   public m_auto = false;
 
@@ -41,7 +41,7 @@ export class ConvexHull extends testbed.Test {
       // This will stress the convex hull algorithm.
       x = box2d.b2Clamp(x, -8.0, 8.0);
       y = box2d.b2Clamp(y, -8.0, 8.0);
-      this.m_test_points[i].Set(x, y);
+      this.m_test_points[i] = new box2d.b2Vec2(x, y);
     }
 
     this.m_count = ConvexHull.e_count;

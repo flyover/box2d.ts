@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings";
+import { b2_linearSlop } from "../Common/b2Settings";
 import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
@@ -378,7 +378,6 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
     // resolving the deepest point. This loop is bounded by the number of vertices.
     let done: boolean = false;
     let t2: number = tMax;
-    let pushBackIter: number = 0;
     for (; ; ) {
       // Find the deepest point at t2. Store the witness point indices.
       const indexA: number[] = b2TimeOfImpact_s_indexA;
@@ -463,12 +462,6 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
       }
 
       b2_toiMaxRootIters = b2Max(b2_toiMaxRootIters, rootIterCount);
-
-      ++pushBackIter;
-
-      if (pushBackIter === b2_maxPolygonVertices) {
-        break;
-      }
     }
 
     ++iter;

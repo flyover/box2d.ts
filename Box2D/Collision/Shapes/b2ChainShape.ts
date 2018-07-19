@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert, b2_linearSlop } from "../../Common/b2Settings";
-import { b2_polygonRadius, b2_maxPolygonVertices } from "../../Common/b2Settings";
+import { b2_polygonRadius } from "../../Common/b2Settings";
 import { b2Vec2, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
@@ -238,9 +238,9 @@ export class b2ChainShape extends b2Shape {
 
   public Dump(log: (format: string, ...args: any[]) => void): void {
     log("    const shape: b2ChainShape = new b2ChainShape();\n");
-    log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+    log("    const vs: b2Vec2[] = [];\n");
     for (let i: number = 0; i < this.m_count; ++i) {
-      log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+      log("    vs[%d] = new bVec2(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
     }
     log("    shape.CreateChain(vs, %d);\n", this.m_count);
     log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);

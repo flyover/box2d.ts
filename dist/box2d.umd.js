@@ -3903,7 +3903,6 @@
           // resolving the deepest point. This loop is bounded by the number of vertices.
           let done = false;
           let t2 = tMax;
-          let pushBackIter = 0;
           for (;;) {
               // Find the deepest point at t2. Store the witness point indices.
               const indexA = b2TimeOfImpact_s_indexA;
@@ -3978,10 +3977,6 @@
                   }
               }
               exports.b2_toiMaxRootIters = b2Max(exports.b2_toiMaxRootIters, rootIterCount);
-              ++pushBackIter;
-              if (pushBackIter === b2_maxPolygonVertices) {
-                  break;
-              }
           }
           ++iter;
           ++exports.b2_toiIters;
@@ -4468,8 +4463,8 @@
   }
   class b2TempPolygon {
       constructor() {
-          this.vertices = b2Vec2.MakeArray(b2_maxPolygonVertices);
-          this.normals = b2Vec2.MakeArray(b2_maxPolygonVertices);
+          this.vertices = [];
+          this.normals = [];
           this.count = 0;
       }
   }
@@ -4666,6 +4661,12 @@
           // Get polygonB in frameA
           this.m_polygonB.count = polygonB.m_count;
           for (let i = 0; i < polygonB.m_count; ++i) {
+              if (this.m_polygonB.vertices.length <= i) {
+                  this.m_polygonB.vertices.push(new b2Vec2());
+              }
+              if (this.m_polygonB.normals.length <= i) {
+                  this.m_polygonB.normals.push(new b2Vec2());
+              }
               b2Transform.MulXV(this.m_xf, polygonB.m_vertices[i], this.m_polygonB.vertices[i]);
               b2Rot.MulRV(this.m_xf.q, polygonB.m_normals[i], this.m_polygonB.normals[i]);
           }
@@ -5095,14 +5096,13 @@
   */
   /// A convex polygon. It is assumed that the interior of the polygon is to
   /// the left of each edge.
-  /// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
   /// In most cases you should not need many vertices for a convex polygon.
   class b2PolygonShape extends b2Shape {
       constructor() {
           super(exports.b2ShapeType.e_polygonShape, b2_polygonRadius);
           this.m_centroid = new b2Vec2(0, 0);
-          this.m_vertices = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
-          this.m_normals = []; // b2Vec2.MakeArray(b2_maxPolygonVertices);
+          this.m_vertices = [];
+          this.m_normals = [];
           this.m_count = 0;
       }
       /// Implement b2Shape.
@@ -5127,28 +5127,27 @@
           return 1;
       }
       Set(vertices, count = vertices.length, start = 0) {
-          // DEBUG: b2Assert(3 <= count && count <= b2_maxPolygonVertices);
+          // DEBUG: b2Assert(3 <= count);
           if (count < 3) {
               return this.SetAsBox(1, 1);
           }
-          let n = b2Min(count, b2_maxPolygonVertices);
+          let n = count;
           // Perform welding and copy vertices into local buffer.
-          const ps = b2PolygonShape.Set_s_ps;
-          let tempCount = 0;
+          const ps = [];
           for (let i = 0; i < n; ++i) {
               const /*b2Vec2*/ v = vertices[start + i];
               let /*bool*/ unique = true;
-              for (let /*int32*/ j = 0; j < tempCount; ++j) {
+              for (let /*int32*/ j = 0; j < ps.length; ++j) {
                   if (b2Vec2.DistanceSquaredVV(v, ps[j]) < ((0.5 * b2_linearSlop) * (0.5 * b2_linearSlop))) {
                       unique = false;
                       break;
                   }
               }
               if (unique) {
-                  ps[tempCount++].Copy(v); // ps[tempCount++] = v;
+                  ps.push(v);
               }
           }
-          n = tempCount;
+          n = ps.length;
           if (n < 3) {
               // Polygon is degenerate.
               // DEBUG: b2Assert(false);
@@ -5166,11 +5165,10 @@
                   x0 = x;
               }
           }
-          const hull = b2PolygonShape.Set_s_hull;
+          const hull = [];
           let m = 0;
           let ih = i0;
           for (;;) {
-              // DEBUG: b2Assert(m < b2_maxPolygonVertices);
               hull[m] = ih;
               let ie = 0;
               for (let j = 1; j < n; ++j) {
@@ -5445,7 +5443,7 @@
           // Transform plane into shape co-ordinates
           const normalL = b2Rot.MulTRV(xf.q, normal, b2PolygonShape.ComputeSubmergedArea_s_normalL);
           const offsetL = offset - b2Vec2.DotVV(normal, xf.p);
-          const depths = b2PolygonShape.ComputeSubmergedArea_s_depths;
+          const depths = [];
           let diveCount = 0;
           let intoIndex = -1;
           let outoIndex = -1;
@@ -5526,9 +5524,9 @@
       }
       Dump(log) {
           log("    const shape: b2PolygonShape = new b2PolygonShape();\n");
-          log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+          log("    const vs: b2Vec2[] = [];\n");
           for (let i = 0; i < this.m_count; ++i) {
-              log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+              log("    vs[%d] = new b2Vec2(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
           }
           log("    shape.Set(vs, %d);\n", this.m_count);
       }
@@ -5571,12 +5569,9 @@
       }
   }
   /// Create a convex hull from the given array of points.
-  /// The count must be in the range [3, b2_maxPolygonVertices].
   /// @warning the points may be re-ordered, even if they form a convex polygon
   /// @warning collinear points are handled but not removed. Collinear points
   /// may lead to poor stacking behavior.
-  b2PolygonShape.Set_s_ps = b2Vec2.MakeArray(b2_maxPolygonVertices);
-  b2PolygonShape.Set_s_hull = b2MakeNumberArray(b2_maxPolygonVertices);
   b2PolygonShape.Set_s_r = new b2Vec2();
   b2PolygonShape.Set_s_v = new b2Vec2();
   /// @see b2Shape::TestPoint
@@ -5602,7 +5597,6 @@
   b2PolygonShape.Validate_s_e = new b2Vec2();
   b2PolygonShape.Validate_s_v = new b2Vec2();
   b2PolygonShape.ComputeSubmergedArea_s_normalL = new b2Vec2();
-  b2PolygonShape.ComputeSubmergedArea_s_depths = b2MakeNumberArray(b2_maxPolygonVertices);
   b2PolygonShape.ComputeSubmergedArea_s_md = new b2MassData();
   b2PolygonShape.ComputeSubmergedArea_s_intoVec = new b2Vec2();
   b2PolygonShape.ComputeSubmergedArea_s_outoVec = new b2Vec2();
@@ -5979,9 +5973,9 @@
       }
       Dump(log) {
           log("    const shape: b2ChainShape = new b2ChainShape();\n");
-          log("    const vs: b2Vec2[] = b2Vec2.MakeArray(%d);\n", b2_maxPolygonVertices);
+          log("    const vs: b2Vec2[] = [];\n");
           for (let i = 0; i < this.m_count; ++i) {
-              log("    vs[%d].Set(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
+              log("    vs[%d] = new bVec2(%.15f, %.15f);\n", i, this.m_vertices[i].x, this.m_vertices[i].y);
           }
           log("    shape.CreateChain(vs, %d);\n", this.m_count);
           log("    shape.m_prevVertex.Set(%.15f, %.15f);\n", this.m_prevVertex.x, this.m_prevVertex.y);

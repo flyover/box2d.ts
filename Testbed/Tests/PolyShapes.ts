@@ -73,8 +73,7 @@ export class PolyShapesCallback extends box2d.b2QueryCallback {
           //const poly = ((shape instanceof box2d.b2PolygonShape ? shape : null));
           const poly: box2d.b2PolygonShape = fixture.GetShape() as box2d.b2PolygonShape;
           const vertexCount = poly.m_count;
-          // DEBUG: box2d.b2Assert(vertexCount <= box2d.b2_maxPolygonVertices);
-          const vertices = new Array(box2d.b2_maxPolygonVertices);
+          const vertices = [];
 
           for (let i = 0; i < vertexCount; ++i) {
             vertices[i] = box2d.b2Transform.MulXV(xf, poly.m_vertices[i], new box2d.b2Vec2());

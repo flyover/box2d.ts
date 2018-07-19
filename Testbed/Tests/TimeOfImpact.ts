@@ -67,7 +67,7 @@ export class TimeOfImpact extends testbed.Test {
     testbed.g_debugDraw.DrawString(5, this.m_textLine, `max toi iters = ${box2d.b2_toiMaxIters}, max root iters = ${box2d.b2_toiMaxRootIters}`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
-    const vertices = new Array(box2d.b2_maxPolygonVertices);
+    const vertices = [];
 
     const transformA = new box2d.b2Transform();
     sweepA.GetTransform(transformA, 0.0);
