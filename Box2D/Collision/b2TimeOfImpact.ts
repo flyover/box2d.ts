@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_linearSlop } from "../Common/b2Settings";
+import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings";
 import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
 import { b2Timer } from "../Common/b2Timer";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
@@ -157,7 +157,7 @@ export class b2SeparationFunction {
     }
   }
 
-  public FindMinSeparation(indexA: number[], indexB: number[], t: number): number {
+  public FindMinSeparation(indexA: [number], indexB: [number], t: number): number {
     const xfA: b2Transform = b2TimeOfImpact_s_xfA;
     const xfB: b2Transform = b2TimeOfImpact_s_xfB;
     this.m_sweepA.GetTransform(xfA, t);
@@ -273,8 +273,8 @@ const b2TimeOfImpact_s_cache: b2SimplexCache = new b2SimplexCache();
 const b2TimeOfImpact_s_distanceInput: b2DistanceInput = new b2DistanceInput();
 const b2TimeOfImpact_s_distanceOutput: b2DistanceOutput = new b2DistanceOutput();
 const b2TimeOfImpact_s_fcn: b2SeparationFunction = new b2SeparationFunction();
-const b2TimeOfImpact_s_indexA = [ 0 ];
-const b2TimeOfImpact_s_indexB = [ 0 ];
+const b2TimeOfImpact_s_indexA: [number] = [ 0 ];
+const b2TimeOfImpact_s_indexB: [number] = [ 0 ];
 const b2TimeOfImpact_s_sweepA: b2Sweep = new b2Sweep();
 const b2TimeOfImpact_s_sweepB: b2Sweep = new b2Sweep();
 export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
@@ -287,6 +287,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
 
   const proxyA: b2DistanceProxy = input.proxyA;
   const proxyB: b2DistanceProxy = input.proxyB;
+  const maxVertices: number = b2Max(b2_maxPolygonVertices, proxyA.m_count, proxyB.m_count);
 
   const sweepA: b2Sweep = b2TimeOfImpact_s_sweepA.Copy(input.sweepA);
   const sweepB: b2Sweep = b2TimeOfImpact_s_sweepB.Copy(input.sweepB);
@@ -378,10 +379,11 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
     // resolving the deepest point. This loop is bounded by the number of vertices.
     let done: boolean = false;
     let t2: number = tMax;
+    let pushBackIter: number = 0;
     for (; ; ) {
       // Find the deepest point at t2. Store the witness point indices.
-      const indexA: number[] = b2TimeOfImpact_s_indexA;
-      const indexB: number[] = b2TimeOfImpact_s_indexB;
+      const indexA: [number] = b2TimeOfImpact_s_indexA;
+      const indexB: [number] = b2TimeOfImpact_s_indexB;
       let s2: number = fcn.FindMinSeparation(indexA, indexB, t2);
 
       // Is the final configuration separated?
@@ -462,6 +464,12 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
       }
 
       b2_toiMaxRootIters = b2Max(b2_toiMaxRootIters, rootIterCount);
+
+      ++pushBackIter;
+
+      if (pushBackIter === maxVertices) {
+        break;
+      }
     }
 
     ++iter;

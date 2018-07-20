@@ -3824,6 +3824,7 @@
       output.t = input.tMax;
       const proxyA = input.proxyA;
       const proxyB = input.proxyB;
+      const maxVertices = b2Max(b2_maxPolygonVertices, proxyA.m_count, proxyB.m_count);
       const sweepA = b2TimeOfImpact_s_sweepA.Copy(input.sweepA);
       const sweepB = b2TimeOfImpact_s_sweepB.Copy(input.sweepB);
       // Large rotations can make the root finder fail, so we normalize the
@@ -3903,6 +3904,7 @@
           // resolving the deepest point. This loop is bounded by the number of vertices.
           let done = false;
           let t2 = tMax;
+          let pushBackIter = 0;
           for (;;) {
               // Find the deepest point at t2. Store the witness point indices.
               const indexA = b2TimeOfImpact_s_indexA;
@@ -3977,6 +3979,10 @@
                   }
               }
               exports.b2_toiMaxRootIters = b2Max(exports.b2_toiMaxRootIters, rootIterCount);
+              ++pushBackIter;
+              if (pushBackIter === maxVertices) {
+                  break;
+              }
           }
           ++iter;
           ++exports.b2_toiIters;

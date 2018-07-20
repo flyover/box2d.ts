@@ -35,6 +35,9 @@
   /// The maximum number of contact points between two convex shapes. Do
   /// not change this value.
   const b2_maxManifoldPoints = 2;
+  /// The maximum number of vertices on a convex polygon. You cannot increase
+  /// this too much because b2BlockAllocator has a maximum object size.
+  const b2_maxPolygonVertices = 8;
   /// This is used to fatten AABBs in the dynamic tree. This allows proxies
   /// to move by a small amount without triggering a tree adjustment.
   /// This is in meters.
@@ -3446,6 +3449,7 @@
       output.t = input.tMax;
       const proxyA = input.proxyA;
       const proxyB = input.proxyB;
+      const maxVertices = b2Max(b2_maxPolygonVertices, proxyA.m_count, proxyB.m_count);
       const sweepA = b2TimeOfImpact_s_sweepA.Copy(input.sweepA);
       const sweepB = b2TimeOfImpact_s_sweepB.Copy(input.sweepB);
       // Large rotations can make the root finder fail, so we normalize the
@@ -3525,6 +3529,7 @@
           // resolving the deepest point. This loop is bounded by the number of vertices.
           let done = false;
           let t2 = tMax;
+          let pushBackIter = 0;
           for (;;) {
               // Find the deepest point at t2. Store the witness point indices.
               const indexA = b2TimeOfImpact_s_indexA;
@@ -3596,6 +3601,10 @@
                   if (rootIterCount === 50) {
                       break;
                   }
+              }
+              ++pushBackIter;
+              if (pushBackIter === maxVertices) {
+                  break;
               }
           }
           ++iter;
