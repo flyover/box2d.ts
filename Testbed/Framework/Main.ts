@@ -219,7 +219,7 @@ export class Main {
     canvas_div.addEventListener("mousemove", (e: MouseEvent): void => { this.HandleMouseMove(e); });
     canvas_div.addEventListener("mousedown", (e: MouseEvent): void => { this.HandleMouseDown(e); });
     canvas_div.addEventListener("mouseup", (e: MouseEvent): void => { this.HandleMouseUp(e); });
-    canvas_div.addEventListener("mousewheel", (e: WheelEvent): void => { this.HandleMouseWheel(e); });
+    canvas_div.addEventListener("mousewheel", (e: Event): void => { this.HandleMouseWheel(e as MouseWheelEvent); });
 
     canvas_div.addEventListener("touchmove", (e: TouchEvent): void => { this.HandleTouchMove(e); });
     canvas_div.addEventListener("touchstart", (e: TouchEvent): void => { this.HandleTouchStart(e); });

@@ -99,7 +99,7 @@ function std_remove_if<T>(array: T[], predicate: (value: T) => boolean, length: 
   return l;
 }
 
-function std_lower_bound<A, B>(array: A[], first: number, last: number, val: B, cmp: (a: A, b: B) => boolean = default_compare): number {
+function std_lower_bound<A, B>(array: A[], first: number, last: number, val: B, cmp: (a: A, b: B) => boolean): number {
   let count = last - first;
   while (count > 0) {
     const step = Math.floor(count / 2);
@@ -115,7 +115,7 @@ function std_lower_bound<A, B>(array: A[], first: number, last: number, val: B, 
   return first;
 }
 
-function std_upper_bound<A, B>(array: B[], first: number, last: number, val: A, cmp: (a: A, b: B) => boolean = default_compare): number {
+function std_upper_bound<A, B>(array: B[], first: number, last: number, val: A, cmp: (a: A, b: B) => boolean): number {
   let count = last - first;
   while (count > 0) {
     const step = Math.floor(count / 2);
