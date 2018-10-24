@@ -290,6 +290,12 @@
           this.y = s * x + c * this.y;
           return this;
       }
+      SelfRotateCosSin(c, s) {
+          const x = this.x;
+          this.x = c * x - s * this.y;
+          this.y = s * x + c * this.y;
+          return this;
+      }
       IsValid() {
           return isFinite(this.x) && isFinite(this.y);
       }
@@ -14441,7 +14447,7 @@
       }
       return l;
   }
-  function std_lower_bound(array, first, last, val, cmp = default_compare) {
+  function std_lower_bound(array, first, last, val, cmp) {
       let count = last - first;
       while (count > 0) {
           const step = Math.floor(count / 2);
@@ -14456,7 +14462,7 @@
       }
       return first;
   }
-  function std_upper_bound(array, first, last, val, cmp = default_compare) {
+  function std_upper_bound(array, first, last, val, cmp) {
       let count = last - first;
       while (count > 0) {
           const step = Math.floor(count / 2);

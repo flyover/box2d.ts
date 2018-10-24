@@ -226,6 +226,13 @@ export class b2Vec2 implements XY {
     return this;
   }
 
+  public SelfRotateCosSin(c: number, s: number): this {
+    const x: number = this.x;
+    this.x = c * x - s * this.y;
+    this.y = s * x + c * this.y;
+    return this;
+  }
+
   public IsValid(): boolean {
     return isFinite(this.x) && isFinite(this.y);
   }

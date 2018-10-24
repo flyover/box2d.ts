@@ -76,7 +76,7 @@ export class b2RevoluteJointDef extends b2JointDef implements b2IRevoluteJointDe
     super(b2JointType.e_revoluteJoint);
   }
 
-  public Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void {
+  public Initialize(bA: b2Body, bB: b2Body, anchor: XY): void {
     this.bodyA = bA;
     this.bodyB = bB;
     this.bodyA.GetLocalPoint(anchor, this.localAnchorA);

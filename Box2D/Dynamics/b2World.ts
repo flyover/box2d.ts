@@ -141,7 +141,7 @@ export class b2World {
   /// Register a routine for debug drawing. The debug draw functions are called
   /// inside with b2World::DrawDebugData method. The debug draw object is owned
   /// by you and must remain in scope.
-  public SetDebugDraw(debugDraw: b2Draw): void {
+  public SetDebugDraw(debugDraw: b2Draw | null): void {
     this.m_debugDraw = debugDraw;
   }
 
