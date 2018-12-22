@@ -334,9 +334,9 @@ export class Main {
   }
 
   public HandleMouseWheel(e: MouseWheelEvent): void {
-    if (e.wheelDelta > 0) {
+    if (e.deltaY > 0) {
       this.ZoomCamera(1 / 1.1);
-    } else if (e.wheelDelta < 0) {
+    } else if (e.deltaY < 0) {
       this.ZoomCamera(1.1);
     }
     e.preventDefault();
