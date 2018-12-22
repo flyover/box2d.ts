@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.box2d = {})));
-}(this, (function (exports) { 'use strict';
+  (global = global || self, factory(global.box2d = {}));
+}(this, function (exports) { 'use strict';
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -21942,4 +21942,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

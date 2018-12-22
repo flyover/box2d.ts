@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.testbed = {})));
-}(this, (function (exports) { 'use strict';
+  (global = global || self, factory(global.testbed = {}));
+}(this, function (exports) { 'use strict';
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -35534,10 +35534,10 @@
           e.preventDefault();
       }
       HandleMouseWheel(e) {
-          if (e.wheelDelta > 0) {
+          if (e.deltaY > 0) {
               this.ZoomCamera(1 / 1.1);
           }
-          else if (e.wheelDelta < 0) {
+          else if (e.deltaY < 0) {
               this.ZoomCamera(1.1);
           }
           e.preventDefault();
@@ -35831,4 +35831,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
