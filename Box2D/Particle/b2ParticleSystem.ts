@@ -43,7 +43,7 @@ function std_iter_swap<T>(array: T[], a: number, b: number): void {
   array[b] = tmp;
 }
 
-function default_compare<T>(a: T, b: T): boolean { return a < b; }
+function default_compare<T1, T2>(a: T1, b: T2): boolean { return <any>a < <any>b; }
 
 function std_sort<T>(array: T[], first: number = 0, len: number = array.length - first, cmp: (a: T, b: T) => boolean = default_compare): T[] {
   let left = first;
