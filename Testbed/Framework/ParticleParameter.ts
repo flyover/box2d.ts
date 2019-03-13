@@ -226,7 +226,7 @@ export class ParticleParameter {
   }
 }
 
-export namespace ParticleParameter {
+export module ParticleParameter {
   export const Options = ParticleParameterOptions;
   export class Value extends ParticleParameterValue {}
   export class Definition extends ParticleParameterDefinition {}

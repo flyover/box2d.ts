@@ -120,7 +120,7 @@ class RayCastMultipleCallback extends box2d.b2RayCastCallback {
   }
 }
 
-const enum RayCastMode {
+enum RayCastMode {
   e_closest,
   e_any,
   e_multiple,

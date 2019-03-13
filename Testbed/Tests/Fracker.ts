@@ -866,7 +866,7 @@ export class Fracker extends testbed.Test {
   }
 }
 
-export namespace Fracker {
+export module Fracker {
   /**
    * Type of material in a tile.
    */

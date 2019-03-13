@@ -4377,9 +4377,15 @@
       // manifold.points[0].id.cf = cf;
       manifold.points[0].localPoint.Copy(circleB.m_p);
   }
+  var b2EPAxisType;
+  (function (b2EPAxisType) {
+      b2EPAxisType[b2EPAxisType["e_unknown"] = 0] = "e_unknown";
+      b2EPAxisType[b2EPAxisType["e_edgeA"] = 1] = "e_edgeA";
+      b2EPAxisType[b2EPAxisType["e_edgeB"] = 2] = "e_edgeB";
+  })(b2EPAxisType || (b2EPAxisType = {}));
   class b2EPAxis {
       constructor() {
-          this.type = 0 /* e_unknown */;
+          this.type = b2EPAxisType.e_unknown;
           this.index = 0;
           this.separation = 0;
       }
@@ -4404,6 +4410,12 @@
           this.sideOffset2 = 0;
       }
   }
+  var b2EPColliderVertexType;
+  (function (b2EPColliderVertexType) {
+      b2EPColliderVertexType[b2EPColliderVertexType["e_isolated"] = 0] = "e_isolated";
+      b2EPColliderVertexType[b2EPColliderVertexType["e_concave"] = 1] = "e_concave";
+      b2EPColliderVertexType[b2EPColliderVertexType["e_convex"] = 2] = "e_convex";
+  })(b2EPColliderVertexType || (b2EPColliderVertexType = {}));
   class b2EPCollider {
       constructor() {
           this.m_polygonB = new b2TempPolygon();
@@ -4417,8 +4429,8 @@
           this.m_normal1 = new b2Vec2();
           this.m_normal2 = new b2Vec2();
           this.m_normal = new b2Vec2();
-          this.m_type1 = 0 /* e_isolated */;
-          this.m_type2 = 0 /* e_isolated */;
+          this.m_type1 = b2EPColliderVertexType.e_isolated;
+          this.m_type2 = b2EPColliderVertexType.e_isolated;
           this.m_lowerLimit = new b2Vec2();
           this.m_upperLimit = new b2Vec2();
           this.m_radius = 0;
@@ -4597,21 +4609,21 @@
           manifold.pointCount = 0;
           const edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
           // If no valid normal can be found than this edge should not collide.
-          if (edgeAxis.type === 0 /* e_unknown */) {
+          if (edgeAxis.type === b2EPAxisType.e_unknown) {
               return;
           }
           if (edgeAxis.separation > this.m_radius) {
               return;
           }
           const polygonAxis = this.ComputePolygonSeparation(b2EPCollider.s_polygonAxis);
-          if (polygonAxis.type !== 0 /* e_unknown */ && polygonAxis.separation > this.m_radius) {
+          if (polygonAxis.type !== b2EPAxisType.e_unknown && polygonAxis.separation > this.m_radius) {
               return;
           }
           // Use hysteresis for jitter reduction.
           const k_relativeTol = 0.98;
           const k_absoluteTol = 0.001;
           let primaryAxis;
-          if (polygonAxis.type === 0 /* e_unknown */) {
+          if (polygonAxis.type === b2EPAxisType.e_unknown) {
               primaryAxis = edgeAxis;
           }
           else if (polygonAxis.separation > k_relativeTol * edgeAxis.separation + k_absoluteTol) {
@@ -4622,7 +4634,7 @@
           }
           const ie = b2EPCollider.s_ie;
           const rf = b2EPCollider.s_rf;
-          if (primaryAxis.type === 1 /* e_edgeA */) {
+          if (primaryAxis.type === b2EPAxisType.e_edgeA) {
               manifold.type = b2ManifoldType.e_faceA;
               // Search for the polygon normal that is most anti-parallel to the edge normal.
               let bestIndex = 0;
@@ -4702,7 +4714,7 @@
               return;
           }
           // Now clipPoints2 contains the clipped points.
-          if (primaryAxis.type === 1 /* e_edgeA */) {
+          if (primaryAxis.type === b2EPAxisType.e_edgeA) {
               manifold.localNormal.Copy(rf.normal);
               manifold.localPoint.Copy(rf.v1);
           }
@@ -4716,7 +4728,7 @@
               separation = b2Vec2.DotVV(rf.normal, b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Vec2.s_t0));
               if (separation <= this.m_radius) {
                   const cp = manifold.points[pointCount];
-                  if (primaryAxis.type === 1 /* e_edgeA */) {
+                  if (primaryAxis.type === b2EPAxisType.e_edgeA) {
                       b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
                       cp.id = clipPoints2[i].id;
                   }
@@ -4734,7 +4746,7 @@
       }
       ComputeEdgeSeparation(out) {
           const axis = out;
-          axis.type = 1 /* e_edgeA */;
+          axis.type = b2EPAxisType.e_edgeA;
           axis.index = this.m_front ? 0 : 1;
           axis.separation = b2_maxFloat;
           for (let i = 0; i < this.m_polygonB.count; ++i) {
@@ -4747,7 +4759,7 @@
       }
       ComputePolygonSeparation(out) {
           const axis = out;
-          axis.type = 0 /* e_unknown */;
+          axis.type = b2EPAxisType.e_unknown;
           axis.index = -1;
           axis.separation = -b2_maxFloat;
           const perp = b2EPCollider.s_perp.Set(-this.m_normal.y, this.m_normal.x);
@@ -4758,7 +4770,7 @@
               const s = b2Min(s1, s2);
               if (s > this.m_radius) {
                   // No collision
-                  axis.type = 2 /* e_edgeB */;
+                  axis.type = b2EPAxisType.e_edgeB;
                   axis.index = i;
                   axis.separation = s;
                   return axis;
@@ -4775,7 +4787,7 @@
                   }
               }
               if (s > axis.separation) {
-                  axis.type = 2 /* e_edgeB */;
+                  axis.type = b2EPAxisType.e_edgeB;
                   axis.index = i;
                   axis.separation = s;
               }
@@ -14376,7 +14388,7 @@
           }
       }
       b2VoronoiDiagram.Task = Task;
-  })(b2VoronoiDiagram || (b2VoronoiDiagram = {})); // namespace b2VoronoiDiagram
+  })(b2VoronoiDiagram || (b2VoronoiDiagram = {})); // module b2VoronoiDiagram
   // #endif
 
   /*
@@ -27449,6 +27461,12 @@
       }
   }
   RayCastMultipleCallback.e_maxCount = 3;
+  var RayCastMode;
+  (function (RayCastMode) {
+      RayCastMode[RayCastMode["e_closest"] = 0] = "e_closest";
+      RayCastMode[RayCastMode["e_any"] = 1] = "e_any";
+      RayCastMode[RayCastMode["e_multiple"] = 2] = "e_multiple";
+  })(RayCastMode || (RayCastMode = {}));
   class RayCast extends Test {
       constructor() {
           super();
@@ -27458,7 +27476,7 @@
           this.m_circle = new b2CircleShape();
           this.m_edge = new b2EdgeShape();
           this.m_angle = 0;
-          this.m_mode = 0 /* e_closest */;
+          this.m_mode = RayCastMode.e_closest;
           for (let i = 0; i < 4; ++i) {
               this.m_polygons[i] = new b2PolygonShape();
           }
@@ -27513,7 +27531,7 @@
               this.m_bodies[i] = null;
           }
           this.m_angle = 0;
-          this.m_mode = 0 /* e_closest */;
+          this.m_mode = RayCastMode.e_closest;
       }
       CreateBody(index) {
           const old_body = this.m_bodies[this.m_bodyIndex];
@@ -27576,14 +27594,14 @@
                   this.DestroyBody();
                   break;
               case "m":
-                  if (this.m_mode === 0 /* e_closest */) {
-                      this.m_mode = 1 /* e_any */;
+                  if (this.m_mode === RayCastMode.e_closest) {
+                      this.m_mode = RayCastMode.e_any;
                   }
-                  else if (this.m_mode === 1 /* e_any */) {
-                      this.m_mode = 2 /* e_multiple */;
+                  else if (this.m_mode === RayCastMode.e_any) {
+                      this.m_mode = RayCastMode.e_multiple;
                   }
-                  else if (this.m_mode === 2 /* e_multiple */) {
-                      this.m_mode = 0 /* e_closest */;
+                  else if (this.m_mode === RayCastMode.e_multiple) {
+                      this.m_mode = RayCastMode.e_closest;
                   }
           }
       }
@@ -27593,13 +27611,13 @@
           g_debugDraw.DrawString(5, this.m_textLine, "Press 1-6 to drop stuff, m to change the mode");
           this.m_textLine += DRAW_STRING_NEW_LINE;
           switch (this.m_mode) {
-              case 0 /* e_closest */:
+              case RayCastMode.e_closest:
                   g_debugDraw.DrawString(5, this.m_textLine, "Ray-cast mode: closest - find closest fixture along the ray");
                   break;
-              case 1 /* e_any */:
+              case RayCastMode.e_any:
                   g_debugDraw.DrawString(5, this.m_textLine, "Ray-cast mode: any - check for obstruction");
                   break;
-              case 2 /* e_multiple */:
+              case RayCastMode.e_multiple:
                   g_debugDraw.DrawString(5, this.m_textLine, "Ray-cast mode: multiple - gather multiple fixtures");
                   break;
           }
@@ -27608,7 +27626,7 @@
           const point1 = new b2Vec2(0.0, 10.0);
           const d = new b2Vec2(L * b2Cos(this.m_angle), L * b2Sin(this.m_angle));
           const point2 = b2Vec2.AddVV(point1, d, new b2Vec2());
-          if (this.m_mode === 0 /* e_closest */) {
+          if (this.m_mode === RayCastMode.e_closest) {
               const callback = new RayCastClosestCallback();
               this.m_world.RayCast(callback, point1, point2);
               if (callback.m_hit) {
@@ -27621,7 +27639,7 @@
                   g_debugDraw.DrawSegment(point1, point2, new b2Color(0.8, 0.8, 0.8));
               }
           }
-          else if (this.m_mode === 1 /* e_any */) {
+          else if (this.m_mode === RayCastMode.e_any) {
               const callback = new RayCastAnyCallback();
               this.m_world.RayCast(callback, point1, point2);
               if (callback.m_hit) {
@@ -27634,7 +27652,7 @@
                   g_debugDraw.DrawSegment(point1, point2, new b2Color(0.8, 0.8, 0.8));
               }
           }
-          else if (this.m_mode === 2 /* e_multiple */) {
+          else if (this.m_mode === RayCastMode.e_multiple) {
               const callback = new RayCastMultipleCallback();
               this.m_world.RayCast(callback, point1, point2);
               g_debugDraw.DrawSegment(point1, point2, new b2Color(0.8, 0.8, 0.8));

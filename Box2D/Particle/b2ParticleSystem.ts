@@ -4773,7 +4773,7 @@ export class b2ParticleSystem {
   }
 }
 
-export namespace b2ParticleSystem {
+export module b2ParticleSystem {
 
 export class UserOverridableBuffer<T> {
   public data: T[] | null = null;

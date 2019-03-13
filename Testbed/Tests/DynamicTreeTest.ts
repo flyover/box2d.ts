@@ -306,7 +306,7 @@ export class DynamicTreeTest extends testbed.Test {
   }
 }
 
-export namespace DynamicTreeTest {
+export module DynamicTreeTest {
   export class Actor {
     public aabb = new box2d.b2AABB();
     public fraction = 0.0;

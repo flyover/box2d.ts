@@ -4466,9 +4466,15 @@
       // manifold.points[0].id.cf = cf;
       manifold.points[0].localPoint.Copy(circleB.m_p);
   }
+  var b2EPAxisType;
+  (function (b2EPAxisType) {
+      b2EPAxisType[b2EPAxisType["e_unknown"] = 0] = "e_unknown";
+      b2EPAxisType[b2EPAxisType["e_edgeA"] = 1] = "e_edgeA";
+      b2EPAxisType[b2EPAxisType["e_edgeB"] = 2] = "e_edgeB";
+  })(b2EPAxisType || (b2EPAxisType = {}));
   class b2EPAxis {
       constructor() {
-          this.type = 0 /* e_unknown */;
+          this.type = b2EPAxisType.e_unknown;
           this.index = 0;
           this.separation = 0;
       }
@@ -4493,6 +4499,12 @@
           this.sideOffset2 = 0;
       }
   }
+  var b2EPColliderVertexType;
+  (function (b2EPColliderVertexType) {
+      b2EPColliderVertexType[b2EPColliderVertexType["e_isolated"] = 0] = "e_isolated";
+      b2EPColliderVertexType[b2EPColliderVertexType["e_concave"] = 1] = "e_concave";
+      b2EPColliderVertexType[b2EPColliderVertexType["e_convex"] = 2] = "e_convex";
+  })(b2EPColliderVertexType || (b2EPColliderVertexType = {}));
   class b2EPCollider {
       constructor() {
           this.m_polygonB = new b2TempPolygon();
@@ -4506,8 +4518,8 @@
           this.m_normal1 = new b2Vec2();
           this.m_normal2 = new b2Vec2();
           this.m_normal = new b2Vec2();
-          this.m_type1 = 0 /* e_isolated */;
-          this.m_type2 = 0 /* e_isolated */;
+          this.m_type1 = b2EPColliderVertexType.e_isolated;
+          this.m_type2 = b2EPColliderVertexType.e_isolated;
           this.m_lowerLimit = new b2Vec2();
           this.m_upperLimit = new b2Vec2();
           this.m_radius = 0;
@@ -4686,21 +4698,21 @@
           manifold.pointCount = 0;
           const edgeAxis = this.ComputeEdgeSeparation(b2EPCollider.s_edgeAxis);
           // If no valid normal can be found than this edge should not collide.
-          if (edgeAxis.type === 0 /* e_unknown */) {
+          if (edgeAxis.type === b2EPAxisType.e_unknown) {
               return;
           }
           if (edgeAxis.separation > this.m_radius) {
               return;
           }
           const polygonAxis = this.ComputePolygonSeparation(b2EPCollider.s_polygonAxis);
-          if (polygonAxis.type !== 0 /* e_unknown */ && polygonAxis.separation > this.m_radius) {
+          if (polygonAxis.type !== b2EPAxisType.e_unknown && polygonAxis.separation > this.m_radius) {
               return;
           }
           // Use hysteresis for jitter reduction.
           const k_relativeTol = 0.98;
           const k_absoluteTol = 0.001;
           let primaryAxis;
-          if (polygonAxis.type === 0 /* e_unknown */) {
+          if (polygonAxis.type === b2EPAxisType.e_unknown) {
               primaryAxis = edgeAxis;
           }
           else if (polygonAxis.separation > k_relativeTol * edgeAxis.separation + k_absoluteTol) {
@@ -4711,7 +4723,7 @@
           }
           const ie = b2EPCollider.s_ie;
           const rf = b2EPCollider.s_rf;
-          if (primaryAxis.type === 1 /* e_edgeA */) {
+          if (primaryAxis.type === b2EPAxisType.e_edgeA) {
               manifold.type = exports.b2ManifoldType.e_faceA;
               // Search for the polygon normal that is most anti-parallel to the edge normal.
               let bestIndex = 0;
@@ -4791,7 +4803,7 @@
               return;
           }
           // Now clipPoints2 contains the clipped points.
-          if (primaryAxis.type === 1 /* e_edgeA */) {
+          if (primaryAxis.type === b2EPAxisType.e_edgeA) {
               manifold.localNormal.Copy(rf.normal);
               manifold.localPoint.Copy(rf.v1);
           }
@@ -4805,7 +4817,7 @@
               separation = b2Vec2.DotVV(rf.normal, b2Vec2.SubVV(clipPoints2[i].v, rf.v1, b2Vec2.s_t0));
               if (separation <= this.m_radius) {
                   const cp = manifold.points[pointCount];
-                  if (primaryAxis.type === 1 /* e_edgeA */) {
+                  if (primaryAxis.type === b2EPAxisType.e_edgeA) {
                       b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
                       cp.id = clipPoints2[i].id;
                   }
@@ -4823,7 +4835,7 @@
       }
       ComputeEdgeSeparation(out) {
           const axis = out;
-          axis.type = 1 /* e_edgeA */;
+          axis.type = b2EPAxisType.e_edgeA;
           axis.index = this.m_front ? 0 : 1;
           axis.separation = b2_maxFloat;
           for (let i = 0; i < this.m_polygonB.count; ++i) {
@@ -4836,7 +4848,7 @@
       }
       ComputePolygonSeparation(out) {
           const axis = out;
-          axis.type = 0 /* e_unknown */;
+          axis.type = b2EPAxisType.e_unknown;
           axis.index = -1;
           axis.separation = -b2_maxFloat;
           const perp = b2EPCollider.s_perp.Set(-this.m_normal.y, this.m_normal.x);
@@ -4847,7 +4859,7 @@
               const s = b2Min(s1, s2);
               if (s > this.m_radius) {
                   // No collision
-                  axis.type = 2 /* e_edgeB */;
+                  axis.type = b2EPAxisType.e_edgeB;
                   axis.index = i;
                   axis.separation = s;
                   return axis;
@@ -4864,7 +4876,7 @@
                   }
               }
               if (s > axis.separation) {
-                  axis.type = 2 /* e_edgeB */;
+                  axis.type = b2EPAxisType.e_edgeB;
                   axis.index = i;
                   axis.separation = s;
               }
@@ -14471,7 +14483,7 @@
           }
       }
       b2VoronoiDiagram.Task = Task;
-  })(b2VoronoiDiagram || (b2VoronoiDiagram = {})); // namespace b2VoronoiDiagram
+  })(b2VoronoiDiagram || (b2VoronoiDiagram = {})); // module b2VoronoiDiagram
   // #endif
 
   /*

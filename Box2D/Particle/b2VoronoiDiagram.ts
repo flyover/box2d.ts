@@ -213,7 +213,7 @@ export class b2VoronoiDiagram {
   }
 }
 
-export namespace b2VoronoiDiagram {
+export module b2VoronoiDiagram {
 
 /**
  * Callback used by GetNodes().
@@ -241,6 +241,6 @@ export class Task {
   }
 }
 
-} // namespace b2VoronoiDiagram
+} // module b2VoronoiDiagram
 
 // #endif

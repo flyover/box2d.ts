@@ -102,7 +102,7 @@ export class OneSidedPlatform extends testbed.Test {
   }
 }
 
-export namespace OneSidedPlatform {
+export module OneSidedPlatform {
   export enum State {
     e_unknown = 0,
     e_above = 1,
