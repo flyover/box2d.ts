@@ -221,12 +221,12 @@ export class Fracker extends testbed.Test {
   public m_tracker: EmitterTracker = new EmitterTracker();
   public m_allowInput = false;
   public m_frackingFluidChargeTime = -1.0;
-  public m_material: Fracker.Material[] = [];
+  public m_material: Fracker_Material[] = [];
   public m_bodies: Array<box2d.b2Body | null> = [];
   /**
    * Set of particle groups the well has influence over.
    */
-  public m_listener: Fracker.DestructionListener = new Fracker.DestructionListener(this.m_world);
+  public m_listener: Fracker_DestructionListener = new Fracker_DestructionListener(this.m_world);
 
   constructor() {
     super();
@@ -253,7 +253,7 @@ export class Fracker extends testbed.Test {
    */
   public InitializeLayout(): void {
     for (let i = 0; i < FrackerSettings.k_worldTiles; ++i) {
-      this.m_material[i] = Fracker.Material.EMPTY;
+      this.m_material[i] = Fracker_Material.EMPTY;
       this.m_bodies[i] = null;
     }
   }
@@ -261,7 +261,7 @@ export class Fracker extends testbed.Test {
   /**
    * Get the material of the tile at the specified tile position.
    */
-  public GetMaterial(x: number, y: number): Fracker.Material {
+  public GetMaterial(x: number, y: number): Fracker_Material {
     ///  return *const_cast<Fracker*>(this).GetMaterialStorage(x, y);
     return this.m_material[Fracker.TileToArrayOffset(x, y)];
   }
@@ -269,7 +269,7 @@ export class Fracker extends testbed.Test {
   /**
    * Set the material of the tile at the specified tile position.
    */
-  public SetMaterial(x: number, y: number, material: Fracker.Material): void {
+  public SetMaterial(x: number, y: number, material: Fracker_Material): void {
     ///  *GetMaterialStorage(x, y) = material;
     this.m_material[Fracker.TileToArrayOffset(x, y)] = material;
   }
@@ -324,7 +324,7 @@ export class Fracker extends testbed.Test {
     // DEBUG:   FrackerSettings.k_waterProbability === 100);
     for (let x = 0; x < FrackerSettings.k_worldWidthTiles; x++) {
       for (let y = 0; y < FrackerSettings.k_worldHeightTiles; y++) {
-        if (this.GetMaterial(x, y) !== Fracker.Material.EMPTY) {
+        if (this.GetMaterial(x, y) !== Fracker_Material.EMPTY) {
           continue;
         }
         // Choose a tile at random.
@@ -334,13 +334,13 @@ export class Fracker extends testbed.Test {
           this.CreateDirtBlock(x, y);
         } else if (chance < FrackerSettings.k_dirtProbability +
           FrackerSettings.k_emptyProbability) {
-          this.SetMaterial(x, y, Fracker.Material.EMPTY);
+          this.SetMaterial(x, y, Fracker_Material.EMPTY);
         } else if (chance < FrackerSettings.k_dirtProbability +
           FrackerSettings.k_emptyProbability +
           FrackerSettings.k_oilProbability) {
-          this.CreateReservoirBlock(x, y, Fracker.Material.OIL);
+          this.CreateReservoirBlock(x, y, Fracker_Material.OIL);
         } else {
-          this.CreateReservoirBlock(x, y, Fracker.Material.WATER);
+          this.CreateReservoirBlock(x, y, Fracker_Material.WATER);
         }
       }
     }
@@ -379,13 +379,13 @@ export class Fracker extends testbed.Test {
       Fracker.CenteredPosition(position), 0);
     body.CreateFixture(shape, FrackerSettings.k_density);
     this.SetBody(x, y, body);
-    this.SetMaterial(x, y, Fracker.Material.DIRT);
+    this.SetMaterial(x, y, Fracker_Material.DIRT);
   }
 
   /**
    * Create particles in a tile with resources.
    */
-  public CreateReservoirBlock(x: number, y: number, material: Fracker.Material): void {
+  public CreateReservoirBlock(x: number, y: number, material: Fracker_Material): void {
     const position = Fracker.TileToWorld(x, y);
     const shape = new box2d.b2PolygonShape();
     this.SetMaterial(x, y, material);
@@ -395,7 +395,7 @@ export class Fracker extends testbed.Test {
     const pd = new box2d.b2ParticleGroupDef();
     pd.flags = box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle | box2d.b2ParticleFlag.b2_destructionListenerParticle;
     pd.shape = shape;
-    pd.color.Copy(material === Fracker.Material.OIL ?
+    pd.color.Copy(material === Fracker_Material.OIL ?
       FrackerSettings.k_oilColor : FrackerSettings.k_waterColor);
     const group = this.m_particleSystem.CreateParticleGroup(pd);
     this.m_listener.AddParticleGroup(group);
@@ -410,7 +410,7 @@ export class Fracker extends testbed.Test {
       userDataBuffer[index + i] = this.m_material[Fracker.TileToArrayOffset(x, y)];
     }
     // Keep track of the total available oil.
-    if (material === Fracker.Material.OIL) {
+    if (material === Fracker_Material.OIL) {
       this.m_listener.AddOil(particleCount);
     }
   }
@@ -421,7 +421,7 @@ export class Fracker extends testbed.Test {
    */
   public CreateWell(): void {
     for (let y = this.m_wellBottom; y <= this.m_wellTop; y++) {
-      this.SetMaterial(this.m_wellX, y, Fracker.Material.WELL);
+      this.SetMaterial(this.m_wellX, y, Fracker_Material.WELL);
     }
   }
 
@@ -461,7 +461,7 @@ export class Fracker extends testbed.Test {
 
     // Only update if the player has moved and isn't attempting to
     // move through the well.
-    if (this.GetMaterial(playerX, playerY) !== Fracker.Material.WELL &&
+    if (this.GetMaterial(playerX, playerY) !== Fracker_Material.WELL &&
       (currentPlayerX[0] !== playerX ||
         currentPlayerY[0] !== playerY)) {
       // Try to deploy any fracking fluid that was charging.
@@ -641,8 +641,8 @@ export class Fracker extends testbed.Test {
       playerY = [0];
     Fracker.WorldToTile(playerPosition, playerX, playerY);
     // If the player is moved to a square with dirt, remove it.
-    if (this.GetMaterial(playerX[0], playerY[0]) === Fracker.Material.DIRT) {
-      this.SetMaterial(playerX[0], playerY[0], Fracker.Material.EMPTY);
+    if (this.GetMaterial(playerX[0], playerY[0]) === Fracker_Material.DIRT) {
+      this.SetMaterial(playerX[0], playerY[0], Fracker_Material.EMPTY);
       this.SetBody(playerX[0], playerY[0], null);
     }
 
@@ -866,102 +866,100 @@ export class Fracker extends testbed.Test {
   }
 }
 
-export module Fracker {
+/**
+ * Type of material in a tile.
+ */
+export enum Fracker_Material {
+  EMPTY = 0,
+  DIRT = 1,
+  ROCK = 2,
+  OIL = 3,
+  WATER = 4,
+  WELL = 5,
+  PUMP = 6,
+}
+
+/**
+ * Keep track of particle groups which are drawn up the well and
+ * tracks the score of the game.
+ */
+export class Fracker_DestructionListener extends ParticleGroupTracker {
+  public m_score = 0;
+  public m_oil = 0;
+  public m_world: box2d.b2World;
+  public m_previousListener: box2d.b2DestructionListener | null = null;
+
   /**
-   * Type of material in a tile.
+   * Initialize the score.
    */
-  export enum Material {
-    EMPTY = 0,
-    DIRT = 1,
-    ROCK = 2,
-    OIL = 3,
-    WATER = 4,
-    WELL = 5,
-    PUMP = 6,
+  public __ctor__() {}
+
+  /**
+   * Initialize the particle system and world, setting this class
+   * as a destruction listener for the world.
+   */
+  constructor(world: box2d.b2World) {
+    super();
+    // DEBUG: box2d.b2Assert(world !== null);
+    this.m_world = world;
+    this.m_previousListener = world.m_destructionListener;
+    this.m_world.SetDestructionListener(this);
+  }
+
+  public __dtor__() {
+    if (this.m_world) {
+      this.m_world.SetDestructionListener(this.m_previousListener);
+    }
   }
 
   /**
-   * Keep track of particle groups which are drawn up the well and
-   * tracks the score of the game.
+   * Add to the current score.
    */
-  export class DestructionListener extends ParticleGroupTracker {
-    public m_score = 0;
-    public m_oil = 0;
-    public m_world: box2d.b2World;
-    public m_previousListener: box2d.b2DestructionListener | null = null;
+  public AddScore(score: number): void {
+    this.m_score += score;
+  }
 
-    /**
-     * Initialize the score.
-     */
-    public __ctor__() {}
+  /**
+   * Get the current score.
+   */
+  public GetScore(): number {
+    return this.m_score;
+  }
 
-    /**
-     * Initialize the particle system and world, setting this class
-     * as a destruction listener for the world.
-     */
-    constructor(world: box2d.b2World) {
-      super();
-      // DEBUG: box2d.b2Assert(world !== null);
-      this.m_world = world;
-      this.m_previousListener = world.m_destructionListener;
-      this.m_world.SetDestructionListener(this);
-    }
+  /**
+   * Add to the remaining oil.
+   */
+  public AddOil(oil: number): void {
+    this.m_oil += oil;
+  }
 
-    public __dtor__() {
-      if (this.m_world) {
-        this.m_world.SetDestructionListener(this.m_previousListener);
-      }
-    }
+  /**
+   * Get the total oil.
+   */
+  public GetOil(): number {
+    return this.m_oil;
+  }
 
-    /**
-     * Add to the current score.
-     */
-    public AddScore(score: number): void {
-      this.m_score += score;
-    }
-
-    /**
-     * Get the current score.
-     */
-    public GetScore(): number {
-      return this.m_score;
-    }
-
-    /**
-     * Add to the remaining oil.
-     */
-    public AddOil(oil: number): void {
-      this.m_oil += oil;
-    }
-
-    /**
-     * Get the total oil.
-     */
-    public GetOil(): number {
-      return this.m_oil;
-    }
-
-    /**
-     * Update the score when certain particles are destroyed.
-     */
-    public SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void {
-      // DEBUG: box2d.b2Assert(particleSystem !== null);
-      ///  const void * const userData = particleSystem.GetUserDataBuffer()[index];
-      const userData = particleSystem.GetUserDataBuffer()[index];
-      if (userData) {
-        ///  const Material material = *((Material*)userData);
-        const material = userData;
-        switch (material) {
-          case Fracker.Material.OIL:
-            this.AddScore(FrackerSettings.k_scorePerOilParticle);
-            this.AddOil(-1);
-            break;
-          case Fracker.Material.WATER:
-            this.AddScore(FrackerSettings.k_scorePerWaterParticle);
-            break;
-          default:
-            break;
-        }
+  /**
+   * Update the score when certain particles are destroyed.
+   */
+  public SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void {
+    // DEBUG: box2d.b2Assert(particleSystem !== null);
+    ///  const void * const userData = particleSystem.GetUserDataBuffer()[index];
+    const userData = particleSystem.GetUserDataBuffer()[index];
+    if (userData) {
+      ///  const Material material = *((Material*)userData);
+      const material = userData;
+      switch (material) {
+        case Fracker_Material.OIL:
+          this.AddScore(FrackerSettings.k_scorePerOilParticle);
+          this.AddOil(-1);
+          break;
+        case Fracker_Material.WATER:
+          this.AddScore(FrackerSettings.k_scorePerWaterParticle);
+          break;
+        default:
+          break;
       }
     }
   }

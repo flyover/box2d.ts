@@ -120,17 +120,17 @@ export class Faucet extends testbed.Test {
   /**
    * Selection of particle types for this test.
    */
-  public static readonly k_paramValues: testbed.ParticleParameter.Value[] = [
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_waterParticle, testbed.ParticleParameter.k_DefaultOptions, "water"),
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_waterParticle, testbed.ParticleParameter.k_DefaultOptions | testbed.ParticleParameter.Options.OptionStrictContacts, "water (strict)"),
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "viscous"),
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_powderParticle, testbed.ParticleParameter.k_DefaultOptions, "powder"),
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_tensileParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile"),
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_colorMixingParticle, testbed.ParticleParameter.k_DefaultOptions, "color mixing"),
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_staticPressureParticle, testbed.ParticleParameter.k_DefaultOptions, "static pressure"),
+  public static readonly k_paramValues: testbed.ParticleParameterValue[] = [
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, testbed.ParticleParameter.k_DefaultOptions, "water"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, testbed.ParticleParameter.k_DefaultOptions | testbed.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "viscous"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_powderParticle, testbed.ParticleParameter.k_DefaultOptions, "powder"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_tensileParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_colorMixingParticle, testbed.ParticleParameter.k_DefaultOptions, "color mixing"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_staticPressureParticle, testbed.ParticleParameter.k_DefaultOptions, "static pressure"),
   ];
-  public static readonly k_paramDef: testbed.ParticleParameter.Definition[] = [
-    new testbed.ParticleParameter.Definition(Faucet.k_paramValues),
+  public static readonly k_paramDef: testbed.ParticleParameterDefinition[] = [
+    new testbed.ParticleParameterDefinition(Faucet.k_paramValues),
   ];
   public static readonly k_paramDefCount = Faucet.k_paramDef.length;
 

@@ -23,7 +23,7 @@ export class OneSidedPlatform extends testbed.Test {
   public m_radius = 0.0;
   public m_top = 0.0;
   public m_bottom = 0.0;
-  public m_state = OneSidedPlatform.State.e_unknown;
+  public m_state = OneSidedPlatform_State.e_unknown;
   public m_platform: box2d.b2Fixture;
   public m_character: box2d.b2Fixture;
 
@@ -68,7 +68,7 @@ export class OneSidedPlatform extends testbed.Test {
 
       body.SetLinearVelocity(new box2d.b2Vec2(0.0, -50.0));
 
-      this.m_state = OneSidedPlatform.State.e_unknown;
+      this.m_state = OneSidedPlatform_State.e_unknown;
     }
   }
 
@@ -102,10 +102,8 @@ export class OneSidedPlatform extends testbed.Test {
   }
 }
 
-export module OneSidedPlatform {
-  export enum State {
-    e_unknown = 0,
-    e_above = 1,
-    e_below = 2,
-  }
+export enum OneSidedPlatform_State {
+  e_unknown = 0,
+  e_above = 1,
+  e_below = 2,
 }

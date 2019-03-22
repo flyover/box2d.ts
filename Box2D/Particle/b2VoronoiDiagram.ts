@@ -27,15 +27,15 @@ import { b2StackQueue } from "./b2StackQueue";
  * A field representing the nearest generator from each point.
  */
 export class b2VoronoiDiagram {
-  public m_generatorBuffer: b2VoronoiDiagram.Generator[];
+  public m_generatorBuffer: b2VoronoiDiagram_Generator[];
   public m_generatorCapacity = 0;
   public m_generatorCount = 0;
   public m_countX = 0;
   public m_countY = 0;
-  public m_diagram: b2VoronoiDiagram.Generator[] = [];
+  public m_diagram: b2VoronoiDiagram_Generator[] = [];
 
   constructor(generatorCapacity: number) {
-    this.m_generatorBuffer = b2MakeArray(generatorCapacity, (index) => new b2VoronoiDiagram.Generator());
+    this.m_generatorBuffer = b2MakeArray(generatorCapacity, (index) => new b2VoronoiDiagram_Generator());
     this.m_generatorCapacity = generatorCapacity;
   }
 
@@ -95,7 +95,7 @@ export class b2VoronoiDiagram {
 
     // (4 * m_countX * m_countY) is the queue capacity that is experimentally
     // known to be necessary and sufficient for general particle distributions.
-    const queue = new b2StackQueue<b2VoronoiDiagram.Task>(4 * this.m_countX * this.m_countY);
+    const queue = new b2StackQueue<b2VoronoiDiagram_Task>(4 * this.m_countX * this.m_countY);
     for (let k = 0; k < this.m_generatorCount; k++) {
       const g = this.m_generatorBuffer[k];
       ///  g.center = inverseRadius * (g.center - lower);
@@ -103,7 +103,7 @@ export class b2VoronoiDiagram {
       const x = Math.floor(g.center.x);
       const y = Math.floor(g.center.y);
       if (x >= 0 && y >= 0 && x < this.m_countX && y < this.m_countY) {
-        queue.Push(new b2VoronoiDiagram.Task(x, y, x + y * this.m_countX, g));
+        queue.Push(new b2VoronoiDiagram_Task(x, y, x + y * this.m_countX, g));
       }
     }
     while (!queue.Empty()) {
@@ -116,16 +116,16 @@ export class b2VoronoiDiagram {
       if (!this.m_diagram[i]) {
         this.m_diagram[i] = g;
         if (x > 0) {
-          queue.Push(new b2VoronoiDiagram.Task(x - 1, y, i - 1, g));
+          queue.Push(new b2VoronoiDiagram_Task(x - 1, y, i - 1, g));
         }
         if (y > 0) {
-          queue.Push(new b2VoronoiDiagram.Task(x, y - 1, i - this.m_countX, g));
+          queue.Push(new b2VoronoiDiagram_Task(x, y - 1, i - this.m_countX, g));
         }
         if (x < this.m_countX - 1) {
-          queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, g));
+          queue.Push(new b2VoronoiDiagram_Task(x + 1, y, i + 1, g));
         }
         if (y < this.m_countY - 1) {
-          queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, g));
+          queue.Push(new b2VoronoiDiagram_Task(x, y + 1, i + this.m_countX, g));
         }
       }
     }
@@ -135,8 +135,8 @@ export class b2VoronoiDiagram {
         const a = this.m_diagram[i];
         const b = this.m_diagram[i + 1];
         if (a !== b) {
-          queue.Push(new b2VoronoiDiagram.Task(x, y, i, b));
-          queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, a));
+          queue.Push(new b2VoronoiDiagram_Task(x, y, i, b));
+          queue.Push(new b2VoronoiDiagram_Task(x + 1, y, i + 1, a));
         }
       }
     }
@@ -146,8 +146,8 @@ export class b2VoronoiDiagram {
         const a = this.m_diagram[i];
         const b = this.m_diagram[i + this.m_countX];
         if (a !== b) {
-          queue.Push(new b2VoronoiDiagram.Task(x, y, i, b));
-          queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, a));
+          queue.Push(new b2VoronoiDiagram_Task(x, y, i, b));
+          queue.Push(new b2VoronoiDiagram_Task(x, y + 1, i + this.m_countX, a));
         }
       }
     }
@@ -170,16 +170,16 @@ export class b2VoronoiDiagram {
         if (a2 > b2) {
           this.m_diagram[i] = b;
           if (x > 0) {
-            queue.Push(new b2VoronoiDiagram.Task(x - 1, y, i - 1, b));
+            queue.Push(new b2VoronoiDiagram_Task(x - 1, y, i - 1, b));
           }
           if (y > 0) {
-            queue.Push(new b2VoronoiDiagram.Task(x, y - 1, i - this.m_countX, b));
+            queue.Push(new b2VoronoiDiagram_Task(x, y - 1, i - this.m_countX, b));
           }
           if (x < this.m_countX - 1) {
-            queue.Push(new b2VoronoiDiagram.Task(x + 1, y, i + 1, b));
+            queue.Push(new b2VoronoiDiagram_Task(x + 1, y, i + 1, b));
           }
           if (y < this.m_countY - 1) {
-            queue.Push(new b2VoronoiDiagram.Task(x, y + 1, i + this.m_countX, b));
+            queue.Push(new b2VoronoiDiagram_Task(x, y + 1, i + this.m_countX, b));
           }
         }
       }
@@ -190,7 +190,7 @@ export class b2VoronoiDiagram {
    * Enumerate all nodes that contain at least one necessary
    * generator.
    */
-  public GetNodes(callback: b2VoronoiDiagram.NodeCallback): void {
+  public GetNodes(callback: b2VoronoiDiagram_NodeCallback): void {
     for (let y = 0; y < this.m_countY - 1; y++) {
       for (let x = 0; x < this.m_countX - 1; x++) {
         const i = x + y * this.m_countX;
@@ -213,34 +213,30 @@ export class b2VoronoiDiagram {
   }
 }
 
-export module b2VoronoiDiagram {
-
 /**
  * Callback used by GetNodes().
  *
  * Receive tags for generators associated with a node.
  */
-export type NodeCallback = (a: number, b: number, c: number) => void;
+export type b2VoronoiDiagram_NodeCallback = (a: number, b: number, c: number) => void;
 
-export class Generator {
+export class b2VoronoiDiagram_Generator {
   public center: b2Vec2 = new b2Vec2();
   public tag: number = 0;
   public necessary: boolean = false;
 }
 
-export class Task {
+export class b2VoronoiDiagram_Task {
   public m_x: number;
   public m_y: number;
   public m_i: number;
-  public m_generator: b2VoronoiDiagram.Generator;
-  constructor(x: number, y: number, i: number, g: b2VoronoiDiagram.Generator) {
+  public m_generator: b2VoronoiDiagram_Generator;
+  constructor(x: number, y: number, i: number, g: b2VoronoiDiagram_Generator) {
     this.m_x = x;
     this.m_y = y;
     this.m_i = i;
     this.m_generator = g;
   }
 }
-
-} // module b2VoronoiDiagram
 
 // #endif

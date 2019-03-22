@@ -42,18 +42,18 @@ export class DrawingParticles extends testbed.Test {
   public m_colorIndex = 0;
 
   public static readonly k_paramValues = [
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_zombieParticle, testbed.ParticleParameter.k_DefaultOptions, "erase"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterMove, testbed.ParticleParameter.k_DefaultOptions, "move"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRigid, testbed.ParticleParameter.k_DefaultOptions, "rigid"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRigidBarrier, testbed.ParticleParameter.k_DefaultOptions, "rigid barrier"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterElasticBarrier, testbed.ParticleParameter.k_DefaultOptions, "elastic barrier"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterSpringBarrier, testbed.ParticleParameter.k_DefaultOptions, "spring barrier"),
-    new testbed.ParticleParameter.Value(DrawingParticles.Parameters.e_parameterRepulsive, testbed.ParticleParameter.k_DefaultOptions, "repulsive wall"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_zombieParticle, testbed.ParticleParameter.k_DefaultOptions, "erase"),
+    new testbed.ParticleParameterValue(DrawingParticles.Parameters.e_parameterMove, testbed.ParticleParameter.k_DefaultOptions, "move"),
+    new testbed.ParticleParameterValue(DrawingParticles.Parameters.e_parameterRigid, testbed.ParticleParameter.k_DefaultOptions, "rigid"),
+    new testbed.ParticleParameterValue(DrawingParticles.Parameters.e_parameterRigidBarrier, testbed.ParticleParameter.k_DefaultOptions, "rigid barrier"),
+    new testbed.ParticleParameterValue(DrawingParticles.Parameters.e_parameterElasticBarrier, testbed.ParticleParameter.k_DefaultOptions, "elastic barrier"),
+    new testbed.ParticleParameterValue(DrawingParticles.Parameters.e_parameterSpringBarrier, testbed.ParticleParameter.k_DefaultOptions, "spring barrier"),
+    new testbed.ParticleParameterValue(DrawingParticles.Parameters.e_parameterRepulsive, testbed.ParticleParameter.k_DefaultOptions, "repulsive wall"),
   ];
 
   public static readonly k_paramDef = [
-    new testbed.ParticleParameter.Definition(testbed.ParticleParameter.k_particleTypes),
-    new testbed.ParticleParameter.Definition(DrawingParticles.k_paramValues),
+    new testbed.ParticleParameterDefinition(testbed.ParticleParameter.k_particleTypes),
+    new testbed.ParticleParameterDefinition(DrawingParticles.k_paramValues),
   ];
   public static readonly k_paramDefCount = DrawingParticles.k_paramDef.length;
 

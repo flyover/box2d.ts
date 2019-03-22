@@ -2,7 +2,7 @@ import * as box2d from "Box2D";
 import { g_debugDraw } from "./DebugDraw";
 // #if B2_ENABLE_PARTICLE
 import { FullScreenUI } from "./FullscreenUI";
-import { ParticleParameter } from "./ParticleParameter";
+import { ParticleParameter, ParticleParameterValue, ParticleParameterDefinition } from "./ParticleParameter";
 // #endif
 
 export const DRAW_STRING_NEW_LINE: number = 16;
@@ -156,8 +156,8 @@ export class Test extends box2d.b2ContactListener {
   public readonly m_totalProfile: box2d.b2Profile = new box2d.b2Profile();
   public m_groundBody: box2d.b2Body;
   // #if B2_ENABLE_PARTICLE
-  public m_particleParameters: ParticleParameter.Value[] | null = null;
-  public m_particleParameterDef: ParticleParameter.Definition | null = null;
+  public m_particleParameters: ParticleParameterValue[] | null = null;
+  public m_particleParameterDef: ParticleParameterDefinition | null = null;
   // #endif
 
   constructor() {
@@ -635,10 +635,10 @@ export class Test extends box2d.b2ContactListener {
         continue;
       }
       ///memcpy(&m_particleParameters[numValues], &defaultValues[i], sizeof(defaultValues[0]));
-      this.m_particleParameters[numValues] = new ParticleParameter.Value(defaultValues[i]);
+      this.m_particleParameters[numValues] = new ParticleParameterValue(defaultValues[i]);
       numValues++;
     }
-    this.m_particleParameterDef = new ParticleParameter.Definition(this.m_particleParameters, numValues);
+    this.m_particleParameterDef = new ParticleParameterDefinition(this.m_particleParameters, numValues);
     ///m_particleParameterDef.values = m_particleParameters;
     ///m_particleParameterDef.numValues = numValues;
     Test.SetParticleParameters([this.m_particleParameterDef], 1);
@@ -690,7 +690,7 @@ export class Test extends box2d.b2ContactListener {
   /**
    * Override the default particle parameters for the test.
    */
-  public static SetParticleParameters(particleParameterDef: ParticleParameter.Definition[], particleParameterDefCount: number = particleParameterDef.length) {
+  public static SetParticleParameters(particleParameterDef: ParticleParameterDefinition[], particleParameterDefCount: number = particleParameterDef.length) {
     Test.particleParameter.SetDefinition(particleParameterDef, particleParameterDefCount);
   }
 

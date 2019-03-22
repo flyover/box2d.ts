@@ -23,11 +23,11 @@ import * as testbed from "Testbed";
 
 export class LiquidTimer extends testbed.Test {
   public static readonly k_paramValues = [
-    new testbed.ParticleParameter.Value(box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile + viscous"),
+    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile + viscous"),
   ];
   public static readonly k_paramDef = [
-    new testbed.ParticleParameter.Definition(LiquidTimer.k_paramValues),
-    new testbed.ParticleParameter.Definition(testbed.ParticleParameter.k_particleTypes),
+    new testbed.ParticleParameterDefinition(LiquidTimer.k_paramValues),
+    new testbed.ParticleParameterDefinition(testbed.ParticleParameter.k_particleTypes),
   ];
   public static readonly k_paramDefCount = LiquidTimer.k_paramDef.length;
 
