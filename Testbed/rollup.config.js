@@ -3,7 +3,7 @@ import typescript from "rollup-plugin-typescript2";
 export default {
   input: "Testbed.ts",
   output: {
-    file: "../dist/box2d-testbed.umd.js",
+    file: "../Build/Testbed/testbed.umd.js",
     name: "testbed",
     format: "umd"
   },

@@ -3,7 +3,7 @@ import typescript from "rollup-plugin-typescript2";
 export default {
   input: "HelloWorld.ts",
   output: {
-    file: "../dist/box2d-helloworld.umd.js",
+    file: "../Build/HelloWorld/helloworld.umd.js",
     name: "helloworld",
     format: "umd"
   },

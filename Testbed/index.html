@@ -7,7 +7,7 @@
     body { font-family: DroidSans; font-size: 15px; }
     </style>
     <!-- <script type="text/javascript" src="../node_modules/systemjs/dist/system.js"></script> -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/systemjs@0.21.4/dist/system.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/systemjs@0.21.6/dist/system.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
@@ -15,7 +15,7 @@
       if (transpile) {
         SystemJS.config({
           // map: { "typescript": "../node_modules/typescript", }
-          map: { "typescript": "https://cdn.jsdelivr.net/npm/typescript@2.9.2", },
+          map: { "typescript": "https://cdn.jsdelivr.net/npm/typescript@3.4.5", },
           packages: { "typescript": { main: "lib/typescript.js", meta: { "lib/typescript.js": { exports: "ts" } } } },
         });
         SystemJS.config({
@@ -35,11 +35,11 @@
         });
       } else {
         SystemJS.config({
-          map: { "Box2D": "../dist/Box2D/" },
+          map: { "Box2D": "../Box2D/" },
           packages: { "Box2D": { main: "Box2D.js", defaultExtension: "js" } }
         });
         SystemJS.config({
-          map: { "Testbed": "../dist/Testbed/" },
+          map: { "Testbed": "./" },
           packages: { "Testbed": { main: "Testbed.js", defaultExtension: "js" } }
         });
       }
