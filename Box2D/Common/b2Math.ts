@@ -107,12 +107,22 @@ export class b2Vec2 implements XY {
   public static readonly s_t2: b2Vec2 = new b2Vec2();
   public static readonly s_t3: b2Vec2 = new b2Vec2();
 
-  public x: number;
-  public y: number;
+  public readonly data: Float32Array;
+  public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
+  public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
 
-  constructor(x: number = 0, y: number = 0) {
-    this.x = x;
-    this.y = y;
+  constructor();
+  constructor(data: Float32Array);
+  constructor(x: number, y: number);
+  constructor(...args: any[]) {
+    if (args[0] instanceof Float32Array) {
+      if (args[0].length !== 2) { throw new Error(); }
+      this.data = args[0];
+    } else {
+      const x: number = typeof args[0] === "number" ? args[0] : 0;
+      const y: number = typeof args[1] === "number" ? args[1] : 0;
+      this.data = new Float32Array([ x, y ]);
+    }
   }
 
   public Clone(): b2Vec2 {
@@ -408,14 +418,24 @@ export class b2Vec3 implements XYZ {
 
   public static readonly s_t0: b2Vec3 = new b2Vec3();
 
-  public x: number;
-  public y: number;
-  public z: number;
+  public readonly data: Float32Array;
+  public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
+  public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
+  public get z(): number { return this.data[2]; } public set z(value: number) { this.data[2] = value; }
 
-  constructor(x: number = 0, y: number = 0, z: number = 0) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  constructor();
+  constructor(data: Float32Array);
+  constructor(x: number, y: number, z: number);
+  constructor(...args: any[]) {
+    if (args[0] instanceof Float32Array) {
+      if (args[0].length !== 3) { throw new Error(); }
+      this.data = args[0];
+    } else {
+      const x: number = typeof args[0] === "number" ? args[0] : 0;
+      const y: number = typeof args[1] === "number" ? args[1] : 0;
+      const z: number = typeof args[2] === "number" ? args[2] : 0;
+      this.data = new Float32Array([ x, y, z ]);
+    }
   }
 
   public Clone(): b2Vec3 {
@@ -503,8 +523,9 @@ export class b2Vec3 implements XYZ {
 export class b2Mat22 {
   public static readonly IDENTITY: Readonly<b2Mat22> = new b2Mat22();
 
-  public readonly ex: b2Vec2 = new b2Vec2(1, 0);
-  public readonly ey: b2Vec2 = new b2Vec2(0, 1);
+  public readonly data: Float32Array = new Float32Array([ 1, 0, 0, 1 ]);
+  public readonly ex: b2Vec2 = new b2Vec2(this.data.subarray(0, 2));
+  public readonly ey: b2Vec2 = new b2Vec2(this.data.subarray(2, 4));
 
   public Clone(): b2Mat22 {
     return new b2Mat22().Copy(this);
@@ -679,9 +700,10 @@ export class b2Mat22 {
 export class b2Mat33 {
   public static readonly IDENTITY: Readonly<b2Mat33> = new b2Mat33();
 
-  public readonly ex: b2Vec3 = new b2Vec3(1, 0, 0);
-  public readonly ey: b2Vec3 = new b2Vec3(0, 1, 0);
-  public readonly ez: b2Vec3 = new b2Vec3(0, 0, 1);
+  public readonly data: Float32Array = new Float32Array([ 1, 0, 0, 0, 1, 0, 0, 0, 1 ]);
+  public readonly ex: b2Vec3 = new b2Vec3(this.data.subarray(0, 3));
+  public readonly ey: b2Vec3 = new b2Vec3(this.data.subarray(3, 6));
+  public readonly ez: b2Vec3 = new b2Vec3(this.data.subarray(6, 9));
 
   public Clone(): b2Mat33 {
     return new b2Mat33().Copy(this);

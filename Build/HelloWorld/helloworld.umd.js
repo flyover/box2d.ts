@@ -157,12 +157,28 @@
       return 1 / Math.sqrt(n);
   }
   const b2Sqrt = Math.sqrt;
+  const b2Pow = Math.pow;
+  const b2Asin = Math.asin;
+  const b2Atan2 = Math.atan2;
   /// A 2D column vector.
   class b2Vec2 {
-      constructor(x = 0, y = 0) {
-          this.x = x;
-          this.y = y;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 2) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              this.data = new Float32Array([x, y]);
+          }
       }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
       Clone() {
           return new b2Vec2(this.x, this.y);
       }
@@ -400,13 +416,29 @@
   b2Vec2.s_t1 = new b2Vec2();
   b2Vec2.s_t2 = new b2Vec2();
   b2Vec2.s_t3 = new b2Vec2();
+  const b2Vec2_zero = new b2Vec2(0, 0);
   /// A 2D column vector with 3 elements.
   class b2Vec3 {
-      constructor(x = 0, y = 0, z = 0) {
-          this.x = x;
-          this.y = y;
-          this.z = z;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 3) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              const z = typeof args[2] === "number" ? args[2] : 0;
+              this.data = new Float32Array([x, y, z]);
+          }
       }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
+      get z() { return this.data[2]; }
+      set z(value) { this.data[2] = value; }
       Clone() {
           return new b2Vec3(this.x, this.y, this.z);
       }
@@ -481,8 +513,9 @@
   /// A 2-by-2 matrix. Stored in column-major order.
   class b2Mat22 {
       constructor() {
-          this.ex = new b2Vec2(1, 0);
-          this.ey = new b2Vec2(0, 1);
+          this.data = new Float32Array([1, 0, 0, 1]);
+          this.ex = new b2Vec2(this.data.subarray(0, 2));
+          this.ey = new b2Vec2(this.data.subarray(2, 4));
       }
       Clone() {
           return new b2Mat22().Copy(this);
@@ -634,9 +667,10 @@
   /// A 3-by-3 matrix. Stored in column-major order.
   class b2Mat33 {
       constructor() {
-          this.ex = new b2Vec3(1, 0, 0);
-          this.ey = new b2Vec3(0, 1, 0);
-          this.ez = new b2Vec3(0, 0, 1);
+          this.data = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+          this.ex = new b2Vec3(this.data.subarray(0, 3));
+          this.ey = new b2Vec3(this.data.subarray(3, 6));
+          this.ez = new b2Vec3(this.data.subarray(6, 9));
       }
       Clone() {
           return new b2Mat33().Copy(this);
@@ -996,12 +1030,29 @@
   */
   /// Color for debug drawing. Each value has the range [0,1].
   class b2Color {
-      constructor(rr = 0.5, gg = 0.5, bb = 0.5, aa = 1.0) {
-          this.r = rr;
-          this.g = gg;
-          this.b = bb;
-          this.a = aa;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 4) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const rr = typeof args[0] === "number" ? args[0] : 0.5;
+              const gg = typeof args[1] === "number" ? args[1] : 0.5;
+              const bb = typeof args[2] === "number" ? args[2] : 0.5;
+              const aa = typeof args[3] === "number" ? args[3] : 1.0;
+              this.data = new Float32Array([rr, gg, bb, aa]);
+          }
       }
+      get r() { return this.data[0]; }
+      set r(value) { this.data[0] = value; }
+      get g() { return this.data[1]; }
+      set g(value) { this.data[1] = value; }
+      get b() { return this.data[2]; }
+      set b(value) { this.data[2] = value; }
+      get a() { return this.data[3]; }
+      set a(value) { this.data[3] = value; }
       Clone() {
           return new b2Color().Copy(this);
       }
@@ -1782,7 +1833,19 @@
           }
       }
   }
+  /// Perform a linear shape cast of shape B moving and shape A fixed. Determines the hit point, normal, and translation fraction.
+  // GJK-raycast
+  // Algorithm by Gino van den Bergen.
+  // "Smooth Mesh Contacts with GJK" in Game Physics Pearls. 2010
+  // bool b2ShapeCast(b2ShapeCastOutput* output, const b2ShapeCastInput* input);
+  const b2ShapeCast_s_n = new b2Vec2();
   const b2ShapeCast_s_simplex = new b2Simplex();
+  const b2ShapeCast_s_wA = new b2Vec2();
+  const b2ShapeCast_s_wB = new b2Vec2();
+  const b2ShapeCast_s_v = new b2Vec2();
+  const b2ShapeCast_s_p = new b2Vec2();
+  const b2ShapeCast_s_pointA = new b2Vec2();
+  const b2ShapeCast_s_pointB = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -4598,6 +4661,128 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  /// A circle shape.
+  class b2CircleShape extends b2Shape {
+      constructor(radius = 0) {
+          super(b2ShapeType.e_circleShape, radius);
+          this.m_p = new b2Vec2();
+      }
+      Set(position, radius = this.m_radius) {
+          this.m_p.Copy(position);
+          this.m_radius = radius;
+          return this;
+      }
+      /// Implement b2Shape.
+      Clone() {
+          return new b2CircleShape().Copy(this);
+      }
+      Copy(other) {
+          super.Copy(other);
+          // DEBUG: b2Assert(other instanceof b2CircleShape);
+          this.m_p.Copy(other.m_p);
+          return this;
+      }
+      /// @see b2Shape::GetChildCount
+      GetChildCount() {
+          return 1;
+      }
+      TestPoint(transform, p) {
+          const center = b2Transform.MulXV(transform, this.m_p, b2CircleShape.TestPoint_s_center);
+          const d = b2Vec2.SubVV(p, center, b2CircleShape.TestPoint_s_d);
+          return b2Vec2.DotVV(d, d) <= b2Sq(this.m_radius);
+      }
+      ComputeDistance(xf, p, normal, childIndex) {
+          const center = b2Transform.MulXV(xf, this.m_p, b2CircleShape.ComputeDistance_s_center);
+          b2Vec2.SubVV(p, center, normal);
+          return normal.Normalize() - this.m_radius;
+      }
+      RayCast(output, input, transform, childIndex) {
+          const position = b2Transform.MulXV(transform, this.m_p, b2CircleShape.RayCast_s_position);
+          const s = b2Vec2.SubVV(input.p1, position, b2CircleShape.RayCast_s_s);
+          const b = b2Vec2.DotVV(s, s) - b2Sq(this.m_radius);
+          // Solve quadratic equation.
+          const r = b2Vec2.SubVV(input.p2, input.p1, b2CircleShape.RayCast_s_r);
+          const c = b2Vec2.DotVV(s, r);
+          const rr = b2Vec2.DotVV(r, r);
+          const sigma = c * c - rr * b;
+          // Check for negative discriminant and short segment.
+          if (sigma < 0 || rr < b2_epsilon) {
+              return false;
+          }
+          // Find the point of intersection of the line with the circle.
+          let a = (-(c + b2Sqrt(sigma)));
+          // Is the intersection point on the segment?
+          if (0 <= a && a <= input.maxFraction * rr) {
+              a /= rr;
+              output.fraction = a;
+              b2Vec2.AddVMulSV(s, a, r, output.normal).SelfNormalize();
+              return true;
+          }
+          return false;
+      }
+      ComputeAABB(aabb, transform, childIndex) {
+          const p = b2Transform.MulXV(transform, this.m_p, b2CircleShape.ComputeAABB_s_p);
+          aabb.lowerBound.Set(p.x - this.m_radius, p.y - this.m_radius);
+          aabb.upperBound.Set(p.x + this.m_radius, p.y + this.m_radius);
+      }
+      /// @see b2Shape::ComputeMass
+      ComputeMass(massData, density) {
+          const radius_sq = b2Sq(this.m_radius);
+          massData.mass = density * b2_pi * radius_sq;
+          massData.center.Copy(this.m_p);
+          // inertia about the local origin
+          massData.I = massData.mass * (0.5 * radius_sq + b2Vec2.DotVV(this.m_p, this.m_p));
+      }
+      SetupDistanceProxy(proxy, index) {
+          proxy.m_vertices = proxy.m_buffer;
+          proxy.m_vertices[0].Copy(this.m_p);
+          proxy.m_count = 1;
+          proxy.m_radius = this.m_radius;
+      }
+      ComputeSubmergedArea(normal, offset, xf, c) {
+          const p = b2Transform.MulXV(xf, this.m_p, new b2Vec2());
+          const l = (-(b2Vec2.DotVV(normal, p) - offset));
+          if (l < (-this.m_radius) + b2_epsilon) {
+              // Completely dry
+              return 0;
+          }
+          if (l > this.m_radius) {
+              // Completely wet
+              c.Copy(p);
+              return b2_pi * this.m_radius * this.m_radius;
+          }
+          // Magic
+          const r2 = this.m_radius * this.m_radius;
+          const l2 = l * l;
+          const area = r2 * (b2Asin(l / this.m_radius) + b2_pi / 2) + l * b2Sqrt(r2 - l2);
+          const com = (-2 / 3 * b2Pow(r2 - l2, 1.5) / area);
+          c.x = p.x + normal.x * com;
+          c.y = p.y + normal.y * com;
+          return area;
+      }
+      Dump(log) {
+          log("    const shape: b2CircleShape = new b2CircleShape();\n");
+          log("    shape.m_radius = %.15f;\n", this.m_radius);
+          log("    shape.m_p.Set(%.15f, %.15f);\n", this.m_p.x, this.m_p.y);
+      }
+  }
+  /// Implement b2Shape.
+  b2CircleShape.TestPoint_s_center = new b2Vec2();
+  b2CircleShape.TestPoint_s_d = new b2Vec2();
+  // #if B2_ENABLE_PARTICLE
+  /// @see b2Shape::ComputeDistance
+  b2CircleShape.ComputeDistance_s_center = new b2Vec2();
+  // #endif
+  /// Implement b2Shape.
+  // Collision Detection in Interactive 3D Environments by Gino van den Bergen
+  // From Section 3.1.2
+  // x = s + a * r
+  // norm(x) = radius
+  b2CircleShape.RayCast_s_position = new b2Vec2();
+  b2CircleShape.RayCast_s_s = new b2Vec2();
+  b2CircleShape.RayCast_s_r = new b2Vec2();
+  /// @see b2Shape::ComputeAABB
+  b2CircleShape.ComputeAABB_s_p = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -14924,37 +15109,34 @@
           this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer, capacity);
       }
       SetPositionBuffer(buffer, capacity) {
-          ///if (buffer instanceof Float32Array) {
-          ///let array = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_positionBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_positionBuffer, buffer, capacity);
-          ///}
       }
       SetVelocityBuffer(buffer, capacity) {
-          ///if (buffer instanceof Float32Array) {
-          ///let array = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_velocityBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer, capacity);
-          ///}
       }
       SetColorBuffer(buffer, capacity) {
-          ///if (buffer instanceof Uint8Array) {
-          ///let array: b2Color[] = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_colorBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_colorBuffer, buffer, capacity);
-          ///}
       }
       SetUserDataBuffer(buffer, capacity) {
           this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer, capacity);
@@ -20164,6 +20346,129 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * A controller edge is used to connect bodies and controllers
+   * together in a bipartite graph.
+   */
+  class b2ControllerEdge {
+      constructor(controller, body) {
+          this.prevBody = null; ///< the previous controller edge in the controllers's joint list
+          this.nextBody = null; ///< the next controller edge in the controllers's joint list
+          this.prevController = null; ///< the previous controller edge in the body's joint list
+          this.nextController = null; ///< the next controller edge in the body's joint list
+          this.controller = controller;
+          this.body = body;
+      }
+  }
+  /**
+   * Base class for controllers. Controllers are a convience for
+   * encapsulating common per-step functionality.
+   */
+  class b2Controller {
+      constructor() {
+          // m_world: b2World;
+          this.m_bodyList = null;
+          this.m_bodyCount = 0;
+          this.m_prev = null;
+          this.m_next = null;
+      }
+      /**
+       * Get the next controller in the world's body list.
+       */
+      GetNext() {
+          return this.m_next;
+      }
+      /**
+       * Get the previous controller in the world's body list.
+       */
+      GetPrev() {
+          return this.m_prev;
+      }
+      /**
+       * Get the parent world of this body.
+       */
+      // GetWorld() {
+      //   return this.m_world;
+      // }
+      /**
+       * Get the attached body list
+       */
+      GetBodyList() {
+          return this.m_bodyList;
+      }
+      /**
+       * Adds a body to the controller list.
+       */
+      AddBody(body) {
+          const edge = new b2ControllerEdge(this, body);
+          //Add edge to controller list
+          edge.nextBody = this.m_bodyList;
+          edge.prevBody = null;
+          if (this.m_bodyList) {
+              this.m_bodyList.prevBody = edge;
+          }
+          this.m_bodyList = edge;
+          ++this.m_bodyCount;
+          //Add edge to body list
+          edge.nextController = body.m_controllerList;
+          edge.prevController = null;
+          if (body.m_controllerList) {
+              body.m_controllerList.prevController = edge;
+          }
+          body.m_controllerList = edge;
+          ++body.m_controllerCount;
+      }
+      /**
+       * Removes a body from the controller list.
+       */
+      RemoveBody(body) {
+          //Assert that the controller is not empty
+          if (this.m_bodyCount <= 0) {
+              throw new Error();
+          }
+          //Find the corresponding edge
+          /*b2ControllerEdge*/
+          let edge = this.m_bodyList;
+          while (edge && edge.body !== body) {
+              edge = edge.nextBody;
+          }
+          //Assert that we are removing a body that is currently attached to the controller
+          if (edge === null) {
+              throw new Error();
+          }
+          //Remove edge from controller list
+          if (edge.prevBody) {
+              edge.prevBody.nextBody = edge.nextBody;
+          }
+          if (edge.nextBody) {
+              edge.nextBody.prevBody = edge.prevBody;
+          }
+          if (this.m_bodyList === edge) {
+              this.m_bodyList = edge.nextBody;
+          }
+          --this.m_bodyCount;
+          //Remove edge from body list
+          if (edge.nextController) {
+              edge.nextController.prevController = edge.prevController;
+          }
+          if (edge.prevController) {
+              edge.prevController.nextController = edge.nextController;
+          }
+          if (body.m_controllerList === edge) {
+              body.m_controllerList = edge.nextController;
+          }
+          --body.m_controllerCount;
+      }
+      /**
+       * Removes all bodies from the controller list.
+       */
+      Clear() {
+          while (this.m_bodyList) {
+              this.RemoveBody(this.m_bodyList.body);
+          }
+          this.m_bodyCount = 0;
+      }
+  }
   // #endif
 
   /*
@@ -20202,6 +20507,30 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * Applies a force every frame
+   */
+  class b2ConstantAccelController extends b2Controller {
+      constructor() {
+          super(...arguments);
+          /**
+           * The acceleration to apply
+           */
+          this.A = new b2Vec2(0, 0);
+      }
+      Step(step) {
+          const dtA = b2Vec2.MulSV(step.dt, this.A, b2ConstantAccelController.Step_s_dtA);
+          for (let i = this.m_bodyList; i; i = i.nextBody) {
+              const body = i.body;
+              if (!body.IsAwake()) {
+                  continue;
+              }
+              body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), dtA, b2Vec2.s_t0));
+          }
+      }
+      Draw(draw) { }
+  }
+  b2ConstantAccelController.Step_s_dtA = new b2Vec2();
   // #endif
 
   /*
@@ -20240,6 +20569,81 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * Applies simplified gravity between every pair of bodies
+   */
+  class b2GravityController extends b2Controller {
+      constructor() {
+          super(...arguments);
+          /**
+           * Specifies the strength of the gravitiation force
+           */
+          this.G = 1;
+          /**
+           * If true, gravity is proportional to r^-2, otherwise r^-1
+           */
+          this.invSqr = true;
+      }
+      /**
+       * @see b2Controller::Step
+       */
+      Step(step) {
+          if (this.invSqr) {
+              for (let i = this.m_bodyList; i; i = i.nextBody) {
+                  const body1 = i.body;
+                  const p1 = body1.GetWorldCenter();
+                  const mass1 = body1.GetMass();
+                  for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
+                      const body2 = j.body;
+                      const p2 = body2.GetWorldCenter();
+                      const mass2 = body2.GetMass();
+                      const dx = p2.x - p1.x;
+                      const dy = p2.y - p1.y;
+                      const r2 = dx * dx + dy * dy;
+                      if (r2 < b2_epsilon) {
+                          continue;
+                      }
+                      const f = b2GravityController.Step_s_f.Set(dx, dy);
+                      f.SelfMul(this.G / r2 / b2Sqrt(r2) * mass1 * mass2);
+                      if (body1.IsAwake()) {
+                          body1.ApplyForce(f, p1);
+                      }
+                      if (body2.IsAwake()) {
+                          body2.ApplyForce(f.SelfMul(-1), p2);
+                      }
+                  }
+              }
+          }
+          else {
+              for (let i = this.m_bodyList; i; i = i.nextBody) {
+                  const body1 = i.body;
+                  const p1 = body1.GetWorldCenter();
+                  const mass1 = body1.GetMass();
+                  for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
+                      const body2 = j.body;
+                      const p2 = body2.GetWorldCenter();
+                      const mass2 = body2.GetMass();
+                      const dx = p2.x - p1.x;
+                      const dy = p2.y - p1.y;
+                      const r2 = dx * dx + dy * dy;
+                      if (r2 < b2_epsilon) {
+                          continue;
+                      }
+                      const f = b2GravityController.Step_s_f.Set(dx, dy);
+                      f.SelfMul(this.G / r2 * mass1 * mass2);
+                      if (body1.IsAwake()) {
+                          body1.ApplyForce(f, p1);
+                      }
+                      if (body2.IsAwake()) {
+                          body2.ApplyForce(f.SelfMul(-1), p2);
+                      }
+                  }
+              }
+          }
+      }
+      Draw(draw) { }
+  }
+  b2GravityController.Step_s_f = new b2Vec2();
   // #endif
 
   /*
@@ -20259,6 +20663,65 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * Applies top down linear damping to the controlled bodies
+   * The damping is calculated by multiplying velocity by a matrix
+   * in local co-ordinates.
+   */
+  class b2TensorDampingController extends b2Controller {
+      constructor() {
+          super(...arguments);
+          /// Tensor to use in damping model
+          this.T = new b2Mat22();
+          /*Some examples (matrixes in format (row1; row2))
+          (-a 0; 0 -a)    Standard isotropic damping with strength a
+          ( 0 a; -a 0)    Electron in fixed field - a force at right angles to velocity with proportional magnitude
+          (-a 0; 0 -b)    Differing x and y damping. Useful e.g. for top-down wheels.
+          */
+          //By the way, tensor in this case just means matrix, don't let the terminology get you down.
+          /// Set this to a positive number to clamp the maximum amount of damping done.
+          this.maxTimestep = 0;
+      }
+      // Typically one wants maxTimestep to be 1/(max eigenvalue of T), so that damping will never cause something to reverse direction
+      /**
+       * @see b2Controller::Step
+       */
+      Step(step) {
+          let timestep = step.dt;
+          if (timestep <= b2_epsilon) {
+              return;
+          }
+          if (timestep > this.maxTimestep && this.maxTimestep > 0) {
+              timestep = this.maxTimestep;
+          }
+          for (let i = this.m_bodyList; i; i = i.nextBody) {
+              const body = i.body;
+              if (!body.IsAwake()) {
+                  continue;
+              }
+              const damping = body.GetWorldVector(b2Mat22.MulMV(this.T, body.GetLocalVector(body.GetLinearVelocity(), b2Vec2.s_t0), b2Vec2.s_t1), b2TensorDampingController.Step_s_damping);
+              //    body->SetLinearVelocity(body->GetLinearVelocity() + timestep * damping);
+              body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), b2Vec2.MulSV(timestep, damping, b2Vec2.s_t0), b2Vec2.s_t1));
+          }
+      }
+      Draw(draw) { }
+      /**
+       * Sets damping independantly along the x and y axes
+       */
+      SetAxisAligned(xDamping, yDamping) {
+          this.T.ex.x = (-xDamping);
+          this.T.ex.y = 0;
+          this.T.ey.x = 0;
+          this.T.ey.y = (-yDamping);
+          if (xDamping > 0 || yDamping > 0) {
+              this.maxTimestep = 1 / b2Max(xDamping, yDamping);
+          }
+          else {
+              this.maxTimestep = 0;
+          }
+      }
+  }
+  b2TensorDampingController.Step_s_damping = new b2Vec2();
   // #endif
 
   /*
@@ -20278,6 +20741,189 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  ///
+  class b2Rope {
+      constructor() {
+          this.m_count = 0;
+          this.m_ps = [];
+          this.m_p0s = [];
+          this.m_vs = [];
+          this.m_ims = [];
+          this.m_Ls = [];
+          this.m_as = [];
+          this.m_gravity = new b2Vec2();
+          this.m_damping = 0;
+          this.m_k2 = 1;
+          this.m_k3 = 0.1;
+      }
+      GetVertexCount() {
+          return this.m_count;
+      }
+      GetVertices() {
+          return this.m_ps;
+      }
+      ///
+      Initialize(def) {
+          // DEBUG: b2Assert(def.count >= 3);
+          this.m_count = def.count;
+          // this.m_ps = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
+          this.m_ps = b2Vec2.MakeArray(this.m_count);
+          // this.m_p0s = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
+          this.m_p0s = b2Vec2.MakeArray(this.m_count);
+          // this.m_vs = (b2Vec2*)b2Alloc(this.m_count * sizeof(b2Vec2));
+          this.m_vs = b2Vec2.MakeArray(this.m_count);
+          // this.m_ims = (float32*)b2Alloc(this.m_count * sizeof(float32));
+          this.m_ims = b2MakeNumberArray(this.m_count);
+          for (let i = 0; i < this.m_count; ++i) {
+              this.m_ps[i].Copy(def.vertices[i]);
+              this.m_p0s[i].Copy(def.vertices[i]);
+              this.m_vs[i].SetZero();
+              const m = def.masses[i];
+              if (m > 0) {
+                  this.m_ims[i] = 1 / m;
+              }
+              else {
+                  this.m_ims[i] = 0;
+              }
+          }
+          const count2 = this.m_count - 1;
+          const count3 = this.m_count - 2;
+          // this.m_Ls = (float32*)be2Alloc(count2 * sizeof(float32));
+          this.m_Ls = b2MakeNumberArray(count2);
+          // this.m_as = (float32*)b2Alloc(count3 * sizeof(float32));
+          this.m_as = b2MakeNumberArray(count3);
+          for (let i = 0; i < count2; ++i) {
+              const p1 = this.m_ps[i];
+              const p2 = this.m_ps[i + 1];
+              this.m_Ls[i] = b2Vec2.DistanceVV(p1, p2);
+          }
+          for (let i = 0; i < count3; ++i) {
+              const p1 = this.m_ps[i];
+              const p2 = this.m_ps[i + 1];
+              const p3 = this.m_ps[i + 2];
+              const d1 = b2Vec2.SubVV(p2, p1, b2Vec2.s_t0);
+              const d2 = b2Vec2.SubVV(p3, p2, b2Vec2.s_t1);
+              const a = b2Vec2.CrossVV(d1, d2);
+              const b = b2Vec2.DotVV(d1, d2);
+              this.m_as[i] = b2Atan2(a, b);
+          }
+          this.m_gravity.Copy(def.gravity);
+          this.m_damping = def.damping;
+          this.m_k2 = def.k2;
+          this.m_k3 = def.k3;
+      }
+      ///
+      Step(h, iterations) {
+          if (h === 0) {
+              return;
+          }
+          const d = Math.exp(-h * this.m_damping);
+          for (let i = 0; i < this.m_count; ++i) {
+              this.m_p0s[i].Copy(this.m_ps[i]);
+              if (this.m_ims[i] > 0) {
+                  this.m_vs[i].SelfMulAdd(h, this.m_gravity);
+              }
+              this.m_vs[i].SelfMul(d);
+              this.m_ps[i].SelfMulAdd(h, this.m_vs[i]);
+          }
+          for (let i = 0; i < iterations; ++i) {
+              this.SolveC2();
+              this.SolveC3();
+              this.SolveC2();
+          }
+          const inv_h = 1 / h;
+          for (let i = 0; i < this.m_count; ++i) {
+              b2Vec2.MulSV(inv_h, b2Vec2.SubVV(this.m_ps[i], this.m_p0s[i], b2Vec2.s_t0), this.m_vs[i]);
+          }
+      }
+      SolveC2() {
+          const count2 = this.m_count - 1;
+          for (let i = 0; i < count2; ++i) {
+              const p1 = this.m_ps[i];
+              const p2 = this.m_ps[i + 1];
+              const d = b2Vec2.SubVV(p2, p1, b2Rope.s_d);
+              const L = d.Normalize();
+              const im1 = this.m_ims[i];
+              const im2 = this.m_ims[i + 1];
+              if (im1 + im2 === 0) {
+                  continue;
+              }
+              const s1 = im1 / (im1 + im2);
+              const s2 = im2 / (im1 + im2);
+              p1.SelfMulSub(this.m_k2 * s1 * (this.m_Ls[i] - L), d);
+              p2.SelfMulAdd(this.m_k2 * s2 * (this.m_Ls[i] - L), d);
+              // this.m_ps[i] = p1;
+              // this.m_ps[i + 1] = p2;
+          }
+      }
+      SetAngle(angle) {
+          const count3 = this.m_count - 2;
+          for (let i = 0; i < count3; ++i) {
+              this.m_as[i] = angle;
+          }
+      }
+      SolveC3() {
+          const count3 = this.m_count - 2;
+          for (let i = 0; i < count3; ++i) {
+              const p1 = this.m_ps[i];
+              const p2 = this.m_ps[i + 1];
+              const p3 = this.m_ps[i + 2];
+              const m1 = this.m_ims[i];
+              const m2 = this.m_ims[i + 1];
+              const m3 = this.m_ims[i + 2];
+              const d1 = b2Vec2.SubVV(p2, p1, b2Rope.s_d1);
+              const d2 = b2Vec2.SubVV(p3, p2, b2Rope.s_d2);
+              const L1sqr = d1.LengthSquared();
+              const L2sqr = d2.LengthSquared();
+              if (L1sqr * L2sqr === 0) {
+                  continue;
+              }
+              const a = b2Vec2.CrossVV(d1, d2);
+              const b = b2Vec2.DotVV(d1, d2);
+              let angle = b2Atan2(a, b);
+              const Jd1 = b2Vec2.MulSV((-1 / L1sqr), d1.SelfSkew(), b2Rope.s_Jd1);
+              const Jd2 = b2Vec2.MulSV((1 / L2sqr), d2.SelfSkew(), b2Rope.s_Jd2);
+              const J1 = b2Vec2.NegV(Jd1, b2Rope.s_J1);
+              const J2 = b2Vec2.SubVV(Jd1, Jd2, b2Rope.s_J2);
+              const J3 = Jd2;
+              let mass = m1 * b2Vec2.DotVV(J1, J1) + m2 * b2Vec2.DotVV(J2, J2) + m3 * b2Vec2.DotVV(J3, J3);
+              if (mass === 0) {
+                  continue;
+              }
+              mass = 1 / mass;
+              let C = angle - this.m_as[i];
+              while (C > b2_pi) {
+                  angle -= 2 * b2_pi;
+                  C = angle - this.m_as[i];
+              }
+              while (C < -b2_pi) {
+                  angle += 2 * b2_pi;
+                  C = angle - this.m_as[i];
+              }
+              const impulse = -this.m_k3 * mass * C;
+              p1.SelfMulAdd((m1 * impulse), J1);
+              p2.SelfMulAdd((m2 * impulse), J2);
+              p3.SelfMulAdd((m3 * impulse), J3);
+              // this.m_ps[i] = p1;
+              // this.m_ps[i + 1] = p2;
+              // this.m_ps[i + 2] = p3;
+          }
+      }
+      Draw(draw) {
+          const c = new b2Color(0.4, 0.5, 0.7);
+          for (let i = 0; i < this.m_count - 1; ++i) {
+              draw.DrawSegment(this.m_ps[i], this.m_ps[i + 1], c);
+          }
+      }
+  }
+  ///
+  b2Rope.s_d = new b2Vec2();
+  b2Rope.s_d1 = new b2Vec2();
+  b2Rope.s_d2 = new b2Vec2();
+  b2Rope.s_Jd1 = new b2Vec2();
+  b2Rope.s_Jd2 = new b2Vec2();
+  b2Rope.s_J1 = new b2Vec2();
+  b2Rope.s_J2 = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org

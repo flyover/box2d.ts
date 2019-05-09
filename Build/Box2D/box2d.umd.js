@@ -250,10 +250,23 @@
   }
   /// A 2D column vector.
   class b2Vec2 {
-      constructor(x = 0, y = 0) {
-          this.x = x;
-          this.y = y;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 2) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              this.data = new Float32Array([x, y]);
+          }
       }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
       Clone() {
           return new b2Vec2(this.x, this.y);
       }
@@ -494,11 +507,26 @@
   const b2Vec2_zero = new b2Vec2(0, 0);
   /// A 2D column vector with 3 elements.
   class b2Vec3 {
-      constructor(x = 0, y = 0, z = 0) {
-          this.x = x;
-          this.y = y;
-          this.z = z;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 3) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              const z = typeof args[2] === "number" ? args[2] : 0;
+              this.data = new Float32Array([x, y, z]);
+          }
       }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
+      get z() { return this.data[2]; }
+      set z(value) { this.data[2] = value; }
       Clone() {
           return new b2Vec3(this.x, this.y, this.z);
       }
@@ -573,8 +601,9 @@
   /// A 2-by-2 matrix. Stored in column-major order.
   class b2Mat22 {
       constructor() {
-          this.ex = new b2Vec2(1, 0);
-          this.ey = new b2Vec2(0, 1);
+          this.data = new Float32Array([1, 0, 0, 1]);
+          this.ex = new b2Vec2(this.data.subarray(0, 2));
+          this.ey = new b2Vec2(this.data.subarray(2, 4));
       }
       Clone() {
           return new b2Mat22().Copy(this);
@@ -726,9 +755,10 @@
   /// A 3-by-3 matrix. Stored in column-major order.
   class b2Mat33 {
       constructor() {
-          this.ex = new b2Vec3(1, 0, 0);
-          this.ey = new b2Vec3(0, 1, 0);
-          this.ez = new b2Vec3(0, 0, 1);
+          this.data = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+          this.ex = new b2Vec3(this.data.subarray(0, 3));
+          this.ey = new b2Vec3(this.data.subarray(3, 6));
+          this.ez = new b2Vec3(this.data.subarray(6, 9));
       }
       Clone() {
           return new b2Mat33().Copy(this);
@@ -1088,12 +1118,29 @@
   */
   /// Color for debug drawing. Each value has the range [0,1].
   class b2Color {
-      constructor(rr = 0.5, gg = 0.5, bb = 0.5, aa = 1.0) {
-          this.r = rr;
-          this.g = gg;
-          this.b = bb;
-          this.a = aa;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 4) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const rr = typeof args[0] === "number" ? args[0] : 0.5;
+              const gg = typeof args[1] === "number" ? args[1] : 0.5;
+              const bb = typeof args[2] === "number" ? args[2] : 0.5;
+              const aa = typeof args[3] === "number" ? args[3] : 1.0;
+              this.data = new Float32Array([rr, gg, bb, aa]);
+          }
       }
+      get r() { return this.data[0]; }
+      set r(value) { this.data[0] = value; }
+      get g() { return this.data[1]; }
+      set g(value) { this.data[1] = value; }
+      get b() { return this.data[2]; }
+      set b(value) { this.data[2] = value; }
+      get a() { return this.data[3]; }
+      set a(value) { this.data[3] = value; }
       Clone() {
           return new b2Color().Copy(this);
       }
@@ -15697,37 +15744,34 @@
           this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer, capacity);
       }
       SetPositionBuffer(buffer, capacity) {
-          ///if (buffer instanceof Float32Array) {
-          ///let array = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_positionBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_positionBuffer, buffer, capacity);
-          ///}
       }
       SetVelocityBuffer(buffer, capacity) {
-          ///if (buffer instanceof Float32Array) {
-          ///let array = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_velocityBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer, capacity);
-          ///}
       }
       SetColorBuffer(buffer, capacity) {
-          ///if (buffer instanceof Uint8Array) {
-          ///let array: b2Color[] = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_colorBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_colorBuffer, buffer, capacity);
-          ///}
       }
       SetUserDataBuffer(buffer, capacity) {
           this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer, capacity);
@@ -21705,246 +21749,246 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
 
-  exports.b2Assert = b2Assert;
-  exports.b2Maybe = b2Maybe;
-  exports.b2_maxFloat = b2_maxFloat;
-  exports.b2_epsilon = b2_epsilon;
-  exports.b2_epsilon_sq = b2_epsilon_sq;
-  exports.b2_pi = b2_pi;
-  exports.b2_maxManifoldPoints = b2_maxManifoldPoints;
-  exports.b2_maxPolygonVertices = b2_maxPolygonVertices;
-  exports.b2_aabbExtension = b2_aabbExtension;
-  exports.b2_aabbMultiplier = b2_aabbMultiplier;
-  exports.b2_linearSlop = b2_linearSlop;
-  exports.b2_angularSlop = b2_angularSlop;
-  exports.b2_polygonRadius = b2_polygonRadius;
-  exports.b2_maxSubSteps = b2_maxSubSteps;
-  exports.b2_maxTOIContacts = b2_maxTOIContacts;
-  exports.b2_velocityThreshold = b2_velocityThreshold;
-  exports.b2_maxLinearCorrection = b2_maxLinearCorrection;
-  exports.b2_maxAngularCorrection = b2_maxAngularCorrection;
-  exports.b2_maxTranslation = b2_maxTranslation;
-  exports.b2_maxTranslationSquared = b2_maxTranslationSquared;
-  exports.b2_maxRotation = b2_maxRotation;
-  exports.b2_maxRotationSquared = b2_maxRotationSquared;
-  exports.b2_baumgarte = b2_baumgarte;
-  exports.b2_toiBaumgarte = b2_toiBaumgarte;
-  exports.b2_invalidParticleIndex = b2_invalidParticleIndex;
-  exports.b2_maxParticleIndex = b2_maxParticleIndex;
-  exports.b2_particleStride = b2_particleStride;
-  exports.b2_minParticleWeight = b2_minParticleWeight;
-  exports.b2_maxParticlePressure = b2_maxParticlePressure;
-  exports.b2_maxParticleForce = b2_maxParticleForce;
-  exports.b2_maxTriadDistance = b2_maxTriadDistance;
-  exports.b2_maxTriadDistanceSquared = b2_maxTriadDistanceSquared;
-  exports.b2_minParticleSystemBufferCapacity = b2_minParticleSystemBufferCapacity;
-  exports.b2_barrierCollisionTime = b2_barrierCollisionTime;
-  exports.b2_timeToSleep = b2_timeToSleep;
-  exports.b2_linearSleepTolerance = b2_linearSleepTolerance;
-  exports.b2_angularSleepTolerance = b2_angularSleepTolerance;
+  exports.b2AABB = b2AABB;
+  exports.b2Abs = b2Abs;
+  exports.b2Acos = b2Acos;
   exports.b2Alloc = b2Alloc;
+  exports.b2AreaJoint = b2AreaJoint;
+  exports.b2AreaJointDef = b2AreaJointDef;
+  exports.b2Asin = b2Asin;
+  exports.b2Assert = b2Assert;
+  exports.b2Atan2 = b2Atan2;
+  exports.b2BlockAllocator = b2BlockAllocator;
+  exports.b2Body = b2Body;
+  exports.b2BodyDef = b2BodyDef;
+  exports.b2BroadPhase = b2BroadPhase;
+  exports.b2BuoyancyController = b2BuoyancyController;
+  exports.b2CalculateParticleIterations = b2CalculateParticleIterations;
+  exports.b2ChainAndCircleContact = b2ChainAndCircleContact;
+  exports.b2ChainAndPolygonContact = b2ChainAndPolygonContact;
+  exports.b2ChainShape = b2ChainShape;
+  exports.b2CircleContact = b2CircleContact;
+  exports.b2CircleShape = b2CircleShape;
+  exports.b2Clamp = b2Clamp;
+  exports.b2ClipSegmentToLine = b2ClipSegmentToLine;
+  exports.b2ClipVertex = b2ClipVertex;
+  exports.b2CollideCircles = b2CollideCircles;
+  exports.b2CollideEdgeAndCircle = b2CollideEdgeAndCircle;
+  exports.b2CollideEdgeAndPolygon = b2CollideEdgeAndPolygon;
+  exports.b2CollidePolygonAndCircle = b2CollidePolygonAndCircle;
+  exports.b2CollidePolygons = b2CollidePolygons;
+  exports.b2Color = b2Color;
+  exports.b2ConstantAccelController = b2ConstantAccelController;
+  exports.b2ConstantForceController = b2ConstantForceController;
+  exports.b2Contact = b2Contact;
+  exports.b2ContactEdge = b2ContactEdge;
+  exports.b2ContactFactory = b2ContactFactory;
+  exports.b2ContactFeature = b2ContactFeature;
+  exports.b2ContactFilter = b2ContactFilter;
+  exports.b2ContactID = b2ContactID;
+  exports.b2ContactImpulse = b2ContactImpulse;
+  exports.b2ContactListener = b2ContactListener;
+  exports.b2ContactManager = b2ContactManager;
+  exports.b2ContactPositionConstraint = b2ContactPositionConstraint;
+  exports.b2ContactRegister = b2ContactRegister;
+  exports.b2ContactSolver = b2ContactSolver;
+  exports.b2ContactSolverDef = b2ContactSolverDef;
+  exports.b2ContactVelocityConstraint = b2ContactVelocityConstraint;
+  exports.b2Controller = b2Controller;
+  exports.b2ControllerEdge = b2ControllerEdge;
+  exports.b2Cos = b2Cos;
+  exports.b2Counter = b2Counter;
+  exports.b2DegToRad = b2DegToRad;
+  exports.b2DestructionListener = b2DestructionListener;
+  exports.b2Distance = b2Distance;
+  exports.b2DistanceInput = b2DistanceInput;
+  exports.b2DistanceJoint = b2DistanceJoint;
+  exports.b2DistanceJointDef = b2DistanceJointDef;
+  exports.b2DistanceOutput = b2DistanceOutput;
+  exports.b2DistanceProxy = b2DistanceProxy;
+  exports.b2Draw = b2Draw;
+  exports.b2DynamicTree = b2DynamicTree;
+  exports.b2EdgeAndCircleContact = b2EdgeAndCircleContact;
+  exports.b2EdgeAndPolygonContact = b2EdgeAndPolygonContact;
+  exports.b2EdgeShape = b2EdgeShape;
+  exports.b2Filter = b2Filter;
+  exports.b2Fixture = b2Fixture;
+  exports.b2FixtureDef = b2FixtureDef;
+  exports.b2FixtureParticleQueryCallback = b2FixtureParticleQueryCallback;
+  exports.b2FixtureProxy = b2FixtureProxy;
   exports.b2Free = b2Free;
+  exports.b2FrictionJoint = b2FrictionJoint;
+  exports.b2FrictionJointDef = b2FrictionJointDef;
+  exports.b2GearJoint = b2GearJoint;
+  exports.b2GearJointDef = b2GearJointDef;
+  exports.b2GetPointStates = b2GetPointStates;
+  exports.b2GravityController = b2GravityController;
+  exports.b2GrowableBuffer = b2GrowableBuffer;
+  exports.b2GrowableStack = b2GrowableStack;
+  exports.b2InvSqrt = b2InvSqrt;
+  exports.b2IsPowerOfTwo = b2IsPowerOfTwo;
+  exports.b2IsValid = b2IsValid;
+  exports.b2Island = b2Island;
+  exports.b2Jacobian = b2Jacobian;
+  exports.b2Joint = b2Joint;
+  exports.b2JointDef = b2JointDef;
+  exports.b2JointEdge = b2JointEdge;
   exports.b2Log = b2Log;
-  exports.b2Version = b2Version;
-  exports.b2_version = b2_version;
-  exports.b2_branch = b2_branch;
-  exports.b2_commit = b2_commit;
-  exports.b2ParseInt = b2ParseInt;
-  exports.b2ParseUInt = b2ParseUInt;
   exports.b2MakeArray = b2MakeArray;
   exports.b2MakeNullArray = b2MakeNullArray;
   exports.b2MakeNumberArray = b2MakeNumberArray;
-  exports.b2_pi_over_180 = b2_pi_over_180;
-  exports.b2_180_over_pi = b2_180_over_pi;
-  exports.b2_two_pi = b2_two_pi;
-  exports.b2Abs = b2Abs;
-  exports.b2Min = b2Min;
-  exports.b2Max = b2Max;
-  exports.b2Clamp = b2Clamp;
-  exports.b2Swap = b2Swap;
-  exports.b2IsValid = b2IsValid;
-  exports.b2Sq = b2Sq;
-  exports.b2InvSqrt = b2InvSqrt;
-  exports.b2Sqrt = b2Sqrt;
-  exports.b2Pow = b2Pow;
-  exports.b2DegToRad = b2DegToRad;
-  exports.b2RadToDeg = b2RadToDeg;
-  exports.b2Cos = b2Cos;
-  exports.b2Sin = b2Sin;
-  exports.b2Acos = b2Acos;
-  exports.b2Asin = b2Asin;
-  exports.b2Atan2 = b2Atan2;
-  exports.b2NextPowerOfTwo = b2NextPowerOfTwo;
-  exports.b2IsPowerOfTwo = b2IsPowerOfTwo;
-  exports.b2Random = b2Random;
-  exports.b2RandomRange = b2RandomRange;
-  exports.b2Vec2 = b2Vec2;
-  exports.b2Vec2_zero = b2Vec2_zero;
-  exports.b2Vec3 = b2Vec3;
+  exports.b2Manifold = b2Manifold;
+  exports.b2ManifoldPoint = b2ManifoldPoint;
+  exports.b2MassData = b2MassData;
   exports.b2Mat22 = b2Mat22;
   exports.b2Mat33 = b2Mat33;
-  exports.b2Rot = b2Rot;
-  exports.b2Transform = b2Transform;
-  exports.b2Sweep = b2Sweep;
-  exports.b2Color = b2Color;
-  exports.b2Draw = b2Draw;
-  exports.b2Timer = b2Timer;
-  exports.b2Counter = b2Counter;
-  exports.b2GrowableStack = b2GrowableStack;
-  exports.b2BlockAllocator = b2BlockAllocator;
-  exports.b2StackAllocator = b2StackAllocator;
-  exports.b2ContactFeature = b2ContactFeature;
-  exports.b2ContactID = b2ContactID;
-  exports.b2ManifoldPoint = b2ManifoldPoint;
-  exports.b2Manifold = b2Manifold;
-  exports.b2WorldManifold = b2WorldManifold;
-  exports.b2GetPointStates = b2GetPointStates;
-  exports.b2ClipVertex = b2ClipVertex;
-  exports.b2RayCastInput = b2RayCastInput;
-  exports.b2RayCastOutput = b2RayCastOutput;
-  exports.b2AABB = b2AABB;
-  exports.b2TestOverlapAABB = b2TestOverlapAABB;
-  exports.b2ClipSegmentToLine = b2ClipSegmentToLine;
-  exports.b2TestOverlapShape = b2TestOverlapShape;
-  exports.b2DistanceProxy = b2DistanceProxy;
-  exports.b2SimplexCache = b2SimplexCache;
-  exports.b2DistanceInput = b2DistanceInput;
-  exports.b2DistanceOutput = b2DistanceOutput;
-  exports.b2ShapeCastInput = b2ShapeCastInput;
-  exports.b2ShapeCastOutput = b2ShapeCastOutput;
-  exports.b2_gjk_reset = b2_gjk_reset;
-  exports.b2SimplexVertex = b2SimplexVertex;
-  exports.b2Simplex = b2Simplex;
-  exports.b2Distance = b2Distance;
-  exports.b2ShapeCast = b2ShapeCast;
-  exports.b2Pair = b2Pair;
-  exports.b2BroadPhase = b2BroadPhase;
-  exports.b2PairLessThan = b2PairLessThan;
-  exports.b2TreeNode = b2TreeNode;
-  exports.b2DynamicTree = b2DynamicTree;
-  exports.b2_toi_reset = b2_toi_reset;
-  exports.b2TOIInput = b2TOIInput;
-  exports.b2TOIOutput = b2TOIOutput;
-  exports.b2SeparationFunction = b2SeparationFunction;
-  exports.b2TimeOfImpact = b2TimeOfImpact;
-  exports.b2CollideCircles = b2CollideCircles;
-  exports.b2CollidePolygonAndCircle = b2CollidePolygonAndCircle;
-  exports.b2CollidePolygons = b2CollidePolygons;
-  exports.b2CollideEdgeAndCircle = b2CollideEdgeAndCircle;
-  exports.b2CollideEdgeAndPolygon = b2CollideEdgeAndPolygon;
-  exports.b2MassData = b2MassData;
-  exports.b2Shape = b2Shape;
-  exports.b2CircleShape = b2CircleShape;
-  exports.b2PolygonShape = b2PolygonShape;
-  exports.b2EdgeShape = b2EdgeShape;
-  exports.b2ChainShape = b2ChainShape;
-  exports.b2Filter = b2Filter;
-  exports.b2FixtureDef = b2FixtureDef;
-  exports.b2FixtureProxy = b2FixtureProxy;
-  exports.b2Fixture = b2Fixture;
-  exports.b2BodyDef = b2BodyDef;
-  exports.b2Body = b2Body;
-  exports.b2World = b2World;
-  exports.b2DestructionListener = b2DestructionListener;
-  exports.b2ContactFilter = b2ContactFilter;
-  exports.b2ContactImpulse = b2ContactImpulse;
-  exports.b2ContactListener = b2ContactListener;
-  exports.b2QueryCallback = b2QueryCallback;
-  exports.b2RayCastCallback = b2RayCastCallback;
-  exports.b2Island = b2Island;
-  exports.b2Profile = b2Profile;
-  exports.b2TimeStep = b2TimeStep;
-  exports.b2Position = b2Position;
-  exports.b2Velocity = b2Velocity;
-  exports.b2SolverData = b2SolverData;
-  exports.b2ContactManager = b2ContactManager;
+  exports.b2Max = b2Max;
+  exports.b2Maybe = b2Maybe;
+  exports.b2Min = b2Min;
   exports.b2MixFriction = b2MixFriction;
   exports.b2MixRestitution = b2MixRestitution;
-  exports.b2ContactEdge = b2ContactEdge;
-  exports.b2Contact = b2Contact;
-  exports.b2ContactRegister = b2ContactRegister;
-  exports.b2ContactFactory = b2ContactFactory;
-  exports.g_blockSolve = g_blockSolve;
-  exports.b2VelocityConstraintPoint = b2VelocityConstraintPoint;
-  exports.b2ContactVelocityConstraint = b2ContactVelocityConstraint;
-  exports.b2ContactPositionConstraint = b2ContactPositionConstraint;
-  exports.b2ContactSolverDef = b2ContactSolverDef;
-  exports.b2PositionSolverManifold = b2PositionSolverManifold;
-  exports.b2ContactSolver = b2ContactSolver;
-  exports.b2CircleContact = b2CircleContact;
-  exports.b2PolygonContact = b2PolygonContact;
-  exports.b2PolygonAndCircleContact = b2PolygonAndCircleContact;
-  exports.b2EdgeAndCircleContact = b2EdgeAndCircleContact;
-  exports.b2EdgeAndPolygonContact = b2EdgeAndPolygonContact;
-  exports.b2ChainAndCircleContact = b2ChainAndCircleContact;
-  exports.b2ChainAndPolygonContact = b2ChainAndPolygonContact;
-  exports.b2Jacobian = b2Jacobian;
-  exports.b2JointEdge = b2JointEdge;
-  exports.b2JointDef = b2JointDef;
-  exports.b2Joint = b2Joint;
-  exports.b2AreaJointDef = b2AreaJointDef;
-  exports.b2AreaJoint = b2AreaJoint;
-  exports.b2DistanceJointDef = b2DistanceJointDef;
-  exports.b2DistanceJoint = b2DistanceJoint;
-  exports.b2FrictionJointDef = b2FrictionJointDef;
-  exports.b2FrictionJoint = b2FrictionJoint;
-  exports.b2GearJointDef = b2GearJointDef;
-  exports.b2GearJoint = b2GearJoint;
-  exports.b2MotorJointDef = b2MotorJointDef;
   exports.b2MotorJoint = b2MotorJoint;
-  exports.b2MouseJointDef = b2MouseJointDef;
+  exports.b2MotorJointDef = b2MotorJointDef;
   exports.b2MouseJoint = b2MouseJoint;
-  exports.b2PrismaticJointDef = b2PrismaticJointDef;
-  exports.b2PrismaticJoint = b2PrismaticJoint;
-  exports.b2_minPulleyLength = b2_minPulleyLength;
-  exports.b2PulleyJointDef = b2PulleyJointDef;
-  exports.b2PulleyJoint = b2PulleyJoint;
-  exports.b2RevoluteJointDef = b2RevoluteJointDef;
-  exports.b2RevoluteJoint = b2RevoluteJoint;
-  exports.b2RopeJointDef = b2RopeJointDef;
-  exports.b2RopeJoint = b2RopeJoint;
-  exports.b2WeldJointDef = b2WeldJointDef;
-  exports.b2WeldJoint = b2WeldJoint;
-  exports.b2WheelJointDef = b2WheelJointDef;
-  exports.b2WheelJoint = b2WheelJoint;
-  exports.b2ControllerEdge = b2ControllerEdge;
-  exports.b2Controller = b2Controller;
-  exports.b2BuoyancyController = b2BuoyancyController;
-  exports.b2ConstantAccelController = b2ConstantAccelController;
-  exports.b2ConstantForceController = b2ConstantForceController;
-  exports.b2GravityController = b2GravityController;
-  exports.b2TensorDampingController = b2TensorDampingController;
-  exports.b2ParticleDef = b2ParticleDef;
-  exports.b2CalculateParticleIterations = b2CalculateParticleIterations;
-  exports.b2ParticleHandle = b2ParticleHandle;
-  exports.b2ParticleGroupDef = b2ParticleGroupDef;
-  exports.b2ParticleGroup = b2ParticleGroup;
-  exports.b2GrowableBuffer = b2GrowableBuffer;
-  exports.b2FixtureParticleQueryCallback = b2FixtureParticleQueryCallback;
-  exports.b2ParticleContact = b2ParticleContact;
+  exports.b2MouseJointDef = b2MouseJointDef;
+  exports.b2NextPowerOfTwo = b2NextPowerOfTwo;
+  exports.b2Pair = b2Pair;
+  exports.b2PairLessThan = b2PairLessThan;
+  exports.b2ParseInt = b2ParseInt;
+  exports.b2ParseUInt = b2ParseUInt;
   exports.b2ParticleBodyContact = b2ParticleBodyContact;
+  exports.b2ParticleContact = b2ParticleContact;
+  exports.b2ParticleDef = b2ParticleDef;
+  exports.b2ParticleGroup = b2ParticleGroup;
+  exports.b2ParticleGroupDef = b2ParticleGroupDef;
+  exports.b2ParticleHandle = b2ParticleHandle;
   exports.b2ParticlePair = b2ParticlePair;
-  exports.b2ParticleTriad = b2ParticleTriad;
-  exports.b2ParticleSystemDef = b2ParticleSystemDef;
+  exports.b2ParticlePairSet = b2ParticlePairSet;
   exports.b2ParticleSystem = b2ParticleSystem;
-  exports.b2ParticleSystem_UserOverridableBuffer = b2ParticleSystem_UserOverridableBuffer;
-  exports.b2ParticleSystem_Proxy = b2ParticleSystem_Proxy;
-  exports.b2ParticleSystem_InsideBoundsEnumerator = b2ParticleSystem_InsideBoundsEnumerator;
-  exports.b2ParticleSystem_ParticleListNode = b2ParticleSystem_ParticleListNode;
+  exports.b2ParticleSystemDef = b2ParticleSystemDef;
+  exports.b2ParticleSystem_CompositeShape = b2ParticleSystem_CompositeShape;
+  exports.b2ParticleSystem_ConnectionFilter = b2ParticleSystem_ConnectionFilter;
+  exports.b2ParticleSystem_DestroyParticlesInShapeCallback = b2ParticleSystem_DestroyParticlesInShapeCallback;
   exports.b2ParticleSystem_FixedSetAllocator = b2ParticleSystem_FixedSetAllocator;
   exports.b2ParticleSystem_FixtureParticle = b2ParticleSystem_FixtureParticle;
   exports.b2ParticleSystem_FixtureParticleSet = b2ParticleSystem_FixtureParticleSet;
-  exports.b2ParticleSystem_ParticlePair = b2ParticleSystem_ParticlePair;
-  exports.b2ParticlePairSet = b2ParticlePairSet;
-  exports.b2ParticleSystem_ConnectionFilter = b2ParticleSystem_ConnectionFilter;
-  exports.b2ParticleSystem_DestroyParticlesInShapeCallback = b2ParticleSystem_DestroyParticlesInShapeCallback;
+  exports.b2ParticleSystem_InsideBoundsEnumerator = b2ParticleSystem_InsideBoundsEnumerator;
   exports.b2ParticleSystem_JoinParticleGroupsFilter = b2ParticleSystem_JoinParticleGroupsFilter;
-  exports.b2ParticleSystem_CompositeShape = b2ParticleSystem_CompositeShape;
+  exports.b2ParticleSystem_ParticleListNode = b2ParticleSystem_ParticleListNode;
+  exports.b2ParticleSystem_ParticlePair = b2ParticleSystem_ParticlePair;
+  exports.b2ParticleSystem_Proxy = b2ParticleSystem_Proxy;
   exports.b2ParticleSystem_ReactiveFilter = b2ParticleSystem_ReactiveFilter;
-  exports.b2ParticleSystem_UpdateBodyContactsCallback = b2ParticleSystem_UpdateBodyContactsCallback;
   exports.b2ParticleSystem_SolveCollisionCallback = b2ParticleSystem_SolveCollisionCallback;
-  exports.b2RopeDef = b2RopeDef;
+  exports.b2ParticleSystem_UpdateBodyContactsCallback = b2ParticleSystem_UpdateBodyContactsCallback;
+  exports.b2ParticleSystem_UserOverridableBuffer = b2ParticleSystem_UserOverridableBuffer;
+  exports.b2ParticleTriad = b2ParticleTriad;
+  exports.b2PolygonAndCircleContact = b2PolygonAndCircleContact;
+  exports.b2PolygonContact = b2PolygonContact;
+  exports.b2PolygonShape = b2PolygonShape;
+  exports.b2Position = b2Position;
+  exports.b2PositionSolverManifold = b2PositionSolverManifold;
+  exports.b2Pow = b2Pow;
+  exports.b2PrismaticJoint = b2PrismaticJoint;
+  exports.b2PrismaticJointDef = b2PrismaticJointDef;
+  exports.b2Profile = b2Profile;
+  exports.b2PulleyJoint = b2PulleyJoint;
+  exports.b2PulleyJointDef = b2PulleyJointDef;
+  exports.b2QueryCallback = b2QueryCallback;
+  exports.b2RadToDeg = b2RadToDeg;
+  exports.b2Random = b2Random;
+  exports.b2RandomRange = b2RandomRange;
+  exports.b2RayCastCallback = b2RayCastCallback;
+  exports.b2RayCastInput = b2RayCastInput;
+  exports.b2RayCastOutput = b2RayCastOutput;
+  exports.b2RevoluteJoint = b2RevoluteJoint;
+  exports.b2RevoluteJointDef = b2RevoluteJointDef;
   exports.b2Rope = b2Rope;
+  exports.b2RopeDef = b2RopeDef;
+  exports.b2RopeJoint = b2RopeJoint;
+  exports.b2RopeJointDef = b2RopeJointDef;
+  exports.b2Rot = b2Rot;
+  exports.b2SeparationFunction = b2SeparationFunction;
+  exports.b2Shape = b2Shape;
+  exports.b2ShapeCast = b2ShapeCast;
+  exports.b2ShapeCastInput = b2ShapeCastInput;
+  exports.b2ShapeCastOutput = b2ShapeCastOutput;
+  exports.b2Simplex = b2Simplex;
+  exports.b2SimplexCache = b2SimplexCache;
+  exports.b2SimplexVertex = b2SimplexVertex;
+  exports.b2Sin = b2Sin;
+  exports.b2SolverData = b2SolverData;
+  exports.b2Sq = b2Sq;
+  exports.b2Sqrt = b2Sqrt;
+  exports.b2StackAllocator = b2StackAllocator;
+  exports.b2Swap = b2Swap;
+  exports.b2Sweep = b2Sweep;
+  exports.b2TOIInput = b2TOIInput;
+  exports.b2TOIOutput = b2TOIOutput;
+  exports.b2TensorDampingController = b2TensorDampingController;
+  exports.b2TestOverlapAABB = b2TestOverlapAABB;
+  exports.b2TestOverlapShape = b2TestOverlapShape;
+  exports.b2TimeOfImpact = b2TimeOfImpact;
+  exports.b2TimeStep = b2TimeStep;
+  exports.b2Timer = b2Timer;
+  exports.b2Transform = b2Transform;
+  exports.b2TreeNode = b2TreeNode;
+  exports.b2Vec2 = b2Vec2;
+  exports.b2Vec2_zero = b2Vec2_zero;
+  exports.b2Vec3 = b2Vec3;
+  exports.b2Velocity = b2Velocity;
+  exports.b2VelocityConstraintPoint = b2VelocityConstraintPoint;
+  exports.b2Version = b2Version;
+  exports.b2WeldJoint = b2WeldJoint;
+  exports.b2WeldJointDef = b2WeldJointDef;
+  exports.b2WheelJoint = b2WheelJoint;
+  exports.b2WheelJointDef = b2WheelJointDef;
+  exports.b2World = b2World;
+  exports.b2WorldManifold = b2WorldManifold;
+  exports.b2_180_over_pi = b2_180_over_pi;
+  exports.b2_aabbExtension = b2_aabbExtension;
+  exports.b2_aabbMultiplier = b2_aabbMultiplier;
+  exports.b2_angularSleepTolerance = b2_angularSleepTolerance;
+  exports.b2_angularSlop = b2_angularSlop;
+  exports.b2_barrierCollisionTime = b2_barrierCollisionTime;
+  exports.b2_baumgarte = b2_baumgarte;
+  exports.b2_branch = b2_branch;
+  exports.b2_commit = b2_commit;
+  exports.b2_epsilon = b2_epsilon;
+  exports.b2_epsilon_sq = b2_epsilon_sq;
+  exports.b2_gjk_reset = b2_gjk_reset;
+  exports.b2_invalidParticleIndex = b2_invalidParticleIndex;
+  exports.b2_linearSleepTolerance = b2_linearSleepTolerance;
+  exports.b2_linearSlop = b2_linearSlop;
+  exports.b2_maxAngularCorrection = b2_maxAngularCorrection;
+  exports.b2_maxFloat = b2_maxFloat;
+  exports.b2_maxLinearCorrection = b2_maxLinearCorrection;
+  exports.b2_maxManifoldPoints = b2_maxManifoldPoints;
+  exports.b2_maxParticleForce = b2_maxParticleForce;
+  exports.b2_maxParticleIndex = b2_maxParticleIndex;
+  exports.b2_maxParticlePressure = b2_maxParticlePressure;
+  exports.b2_maxPolygonVertices = b2_maxPolygonVertices;
+  exports.b2_maxRotation = b2_maxRotation;
+  exports.b2_maxRotationSquared = b2_maxRotationSquared;
+  exports.b2_maxSubSteps = b2_maxSubSteps;
+  exports.b2_maxTOIContacts = b2_maxTOIContacts;
+  exports.b2_maxTranslation = b2_maxTranslation;
+  exports.b2_maxTranslationSquared = b2_maxTranslationSquared;
+  exports.b2_maxTriadDistance = b2_maxTriadDistance;
+  exports.b2_maxTriadDistanceSquared = b2_maxTriadDistanceSquared;
+  exports.b2_minParticleSystemBufferCapacity = b2_minParticleSystemBufferCapacity;
+  exports.b2_minParticleWeight = b2_minParticleWeight;
+  exports.b2_minPulleyLength = b2_minPulleyLength;
+  exports.b2_particleStride = b2_particleStride;
+  exports.b2_pi = b2_pi;
+  exports.b2_pi_over_180 = b2_pi_over_180;
+  exports.b2_polygonRadius = b2_polygonRadius;
+  exports.b2_timeToSleep = b2_timeToSleep;
+  exports.b2_toiBaumgarte = b2_toiBaumgarte;
+  exports.b2_toi_reset = b2_toi_reset;
+  exports.b2_two_pi = b2_two_pi;
+  exports.b2_velocityThreshold = b2_velocityThreshold;
+  exports.b2_version = b2_version;
+  exports.g_blockSolve = g_blockSolve;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

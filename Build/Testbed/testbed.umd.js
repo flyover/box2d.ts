@@ -193,10 +193,23 @@
   }
   /// A 2D column vector.
   class b2Vec2 {
-      constructor(x = 0, y = 0) {
-          this.x = x;
-          this.y = y;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 2) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              this.data = new Float32Array([x, y]);
+          }
       }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
       Clone() {
           return new b2Vec2(this.x, this.y);
       }
@@ -437,11 +450,26 @@
   const b2Vec2_zero = new b2Vec2(0, 0);
   /// A 2D column vector with 3 elements.
   class b2Vec3 {
-      constructor(x = 0, y = 0, z = 0) {
-          this.x = x;
-          this.y = y;
-          this.z = z;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 3) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              const z = typeof args[2] === "number" ? args[2] : 0;
+              this.data = new Float32Array([x, y, z]);
+          }
       }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
+      get z() { return this.data[2]; }
+      set z(value) { this.data[2] = value; }
       Clone() {
           return new b2Vec3(this.x, this.y, this.z);
       }
@@ -516,8 +544,9 @@
   /// A 2-by-2 matrix. Stored in column-major order.
   class b2Mat22 {
       constructor() {
-          this.ex = new b2Vec2(1, 0);
-          this.ey = new b2Vec2(0, 1);
+          this.data = new Float32Array([1, 0, 0, 1]);
+          this.ex = new b2Vec2(this.data.subarray(0, 2));
+          this.ey = new b2Vec2(this.data.subarray(2, 4));
       }
       Clone() {
           return new b2Mat22().Copy(this);
@@ -669,9 +698,10 @@
   /// A 3-by-3 matrix. Stored in column-major order.
   class b2Mat33 {
       constructor() {
-          this.ex = new b2Vec3(1, 0, 0);
-          this.ey = new b2Vec3(0, 1, 0);
-          this.ez = new b2Vec3(0, 0, 1);
+          this.data = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+          this.ex = new b2Vec3(this.data.subarray(0, 3));
+          this.ey = new b2Vec3(this.data.subarray(3, 6));
+          this.ez = new b2Vec3(this.data.subarray(6, 9));
       }
       Clone() {
           return new b2Mat33().Copy(this);
@@ -1031,12 +1061,29 @@
   */
   /// Color for debug drawing. Each value has the range [0,1].
   class b2Color {
-      constructor(rr = 0.5, gg = 0.5, bb = 0.5, aa = 1.0) {
-          this.r = rr;
-          this.g = gg;
-          this.b = bb;
-          this.a = aa;
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 4) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const rr = typeof args[0] === "number" ? args[0] : 0.5;
+              const gg = typeof args[1] === "number" ? args[1] : 0.5;
+              const bb = typeof args[2] === "number" ? args[2] : 0.5;
+              const aa = typeof args[3] === "number" ? args[3] : 1.0;
+              this.data = new Float32Array([rr, gg, bb, aa]);
+          }
       }
+      get r() { return this.data[0]; }
+      set r(value) { this.data[0] = value; }
+      get g() { return this.data[1]; }
+      set g(value) { this.data[1] = value; }
+      get b() { return this.data[2]; }
+      set b(value) { this.data[2] = value; }
+      get a() { return this.data[3]; }
+      set a(value) { this.data[3] = value; }
       Clone() {
           return new b2Color().Copy(this);
       }
@@ -15602,37 +15649,34 @@
           this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer, capacity);
       }
       SetPositionBuffer(buffer, capacity) {
-          ///if (buffer instanceof Float32Array) {
-          ///let array = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_positionBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_positionBuffer, buffer, capacity);
-          ///}
       }
       SetVelocityBuffer(buffer, capacity) {
-          ///if (buffer instanceof Float32Array) {
-          ///let array = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_velocityBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer, capacity);
-          ///}
       }
       SetColorBuffer(buffer, capacity) {
-          ///if (buffer instanceof Uint8Array) {
-          ///let array: b2Color[] = [];
-          ///for (let i = 0; i < capacity; ++i) {
-          ///  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-          ///}
-          ///this.SetUserOverridableBuffer(this.m_colorBuffer, array, capacity);
-          ///} else {
+          if (buffer instanceof Float32Array) {
+              const array = [];
+              for (let i = 0; i < capacity; ++i) {
+                  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_colorBuffer, buffer, capacity);
-          ///}
       }
       SetUserDataBuffer(buffer, capacity) {
           this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer, capacity);
@@ -21118,6 +21162,30 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * Applies a force every frame
+   */
+  class b2ConstantAccelController extends b2Controller {
+      constructor() {
+          super(...arguments);
+          /**
+           * The acceleration to apply
+           */
+          this.A = new b2Vec2(0, 0);
+      }
+      Step(step) {
+          const dtA = b2Vec2.MulSV(step.dt, this.A, b2ConstantAccelController.Step_s_dtA);
+          for (let i = this.m_bodyList; i; i = i.nextBody) {
+              const body = i.body;
+              if (!body.IsAwake()) {
+                  continue;
+              }
+              body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), dtA, b2Vec2.s_t0));
+          }
+      }
+      Draw(draw) { }
+  }
+  b2ConstantAccelController.Step_s_dtA = new b2Vec2();
   // #endif
 
   /*
@@ -21156,6 +21224,81 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * Applies simplified gravity between every pair of bodies
+   */
+  class b2GravityController extends b2Controller {
+      constructor() {
+          super(...arguments);
+          /**
+           * Specifies the strength of the gravitiation force
+           */
+          this.G = 1;
+          /**
+           * If true, gravity is proportional to r^-2, otherwise r^-1
+           */
+          this.invSqr = true;
+      }
+      /**
+       * @see b2Controller::Step
+       */
+      Step(step) {
+          if (this.invSqr) {
+              for (let i = this.m_bodyList; i; i = i.nextBody) {
+                  const body1 = i.body;
+                  const p1 = body1.GetWorldCenter();
+                  const mass1 = body1.GetMass();
+                  for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
+                      const body2 = j.body;
+                      const p2 = body2.GetWorldCenter();
+                      const mass2 = body2.GetMass();
+                      const dx = p2.x - p1.x;
+                      const dy = p2.y - p1.y;
+                      const r2 = dx * dx + dy * dy;
+                      if (r2 < b2_epsilon) {
+                          continue;
+                      }
+                      const f = b2GravityController.Step_s_f.Set(dx, dy);
+                      f.SelfMul(this.G / r2 / b2Sqrt(r2) * mass1 * mass2);
+                      if (body1.IsAwake()) {
+                          body1.ApplyForce(f, p1);
+                      }
+                      if (body2.IsAwake()) {
+                          body2.ApplyForce(f.SelfMul(-1), p2);
+                      }
+                  }
+              }
+          }
+          else {
+              for (let i = this.m_bodyList; i; i = i.nextBody) {
+                  const body1 = i.body;
+                  const p1 = body1.GetWorldCenter();
+                  const mass1 = body1.GetMass();
+                  for (let j = this.m_bodyList; j && j !== i; j = j.nextBody) {
+                      const body2 = j.body;
+                      const p2 = body2.GetWorldCenter();
+                      const mass2 = body2.GetMass();
+                      const dx = p2.x - p1.x;
+                      const dy = p2.y - p1.y;
+                      const r2 = dx * dx + dy * dy;
+                      if (r2 < b2_epsilon) {
+                          continue;
+                      }
+                      const f = b2GravityController.Step_s_f.Set(dx, dy);
+                      f.SelfMul(this.G / r2 * mass1 * mass2);
+                      if (body1.IsAwake()) {
+                          body1.ApplyForce(f, p1);
+                      }
+                      if (body2.IsAwake()) {
+                          body2.ApplyForce(f.SelfMul(-1), p2);
+                      }
+                  }
+              }
+          }
+      }
+      Draw(draw) { }
+  }
+  b2GravityController.Step_s_f = new b2Vec2();
   // #endif
 
   /*
@@ -21175,6 +21318,65 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * Applies top down linear damping to the controlled bodies
+   * The damping is calculated by multiplying velocity by a matrix
+   * in local co-ordinates.
+   */
+  class b2TensorDampingController extends b2Controller {
+      constructor() {
+          super(...arguments);
+          /// Tensor to use in damping model
+          this.T = new b2Mat22();
+          /*Some examples (matrixes in format (row1; row2))
+          (-a 0; 0 -a)    Standard isotropic damping with strength a
+          ( 0 a; -a 0)    Electron in fixed field - a force at right angles to velocity with proportional magnitude
+          (-a 0; 0 -b)    Differing x and y damping. Useful e.g. for top-down wheels.
+          */
+          //By the way, tensor in this case just means matrix, don't let the terminology get you down.
+          /// Set this to a positive number to clamp the maximum amount of damping done.
+          this.maxTimestep = 0;
+      }
+      // Typically one wants maxTimestep to be 1/(max eigenvalue of T), so that damping will never cause something to reverse direction
+      /**
+       * @see b2Controller::Step
+       */
+      Step(step) {
+          let timestep = step.dt;
+          if (timestep <= b2_epsilon) {
+              return;
+          }
+          if (timestep > this.maxTimestep && this.maxTimestep > 0) {
+              timestep = this.maxTimestep;
+          }
+          for (let i = this.m_bodyList; i; i = i.nextBody) {
+              const body = i.body;
+              if (!body.IsAwake()) {
+                  continue;
+              }
+              const damping = body.GetWorldVector(b2Mat22.MulMV(this.T, body.GetLocalVector(body.GetLinearVelocity(), b2Vec2.s_t0), b2Vec2.s_t1), b2TensorDampingController.Step_s_damping);
+              //    body->SetLinearVelocity(body->GetLinearVelocity() + timestep * damping);
+              body.SetLinearVelocity(b2Vec2.AddVV(body.GetLinearVelocity(), b2Vec2.MulSV(timestep, damping, b2Vec2.s_t0), b2Vec2.s_t1));
+          }
+      }
+      Draw(draw) { }
+      /**
+       * Sets damping independantly along the x and y axes
+       */
+      SetAxisAligned(xDamping, yDamping) {
+          this.T.ex.x = (-xDamping);
+          this.T.ex.y = 0;
+          this.T.ey.x = 0;
+          this.T.ey.y = (-yDamping);
+          if (xDamping > 0 || yDamping > 0) {
+              this.maxTimestep = 1 / b2Max(xDamping, yDamping);
+          }
+          else {
+              this.maxTimestep = 0;
+          }
+      }
+  }
+  b2TensorDampingController.Step_s_damping = new b2Vec2();
   // #endif
 
   /*
@@ -35775,23 +35977,23 @@
   */
 
   exports.Camera = Camera;
-  exports.DebugDraw = DebugDraw;
-  exports.g_debugDraw = g_debugDraw;
-  exports.g_camera = g_camera;
-  exports.FullScreenUI = FullScreenUI;
-  exports.EmittedParticleCallback = EmittedParticleCallback;
-  exports.RadialEmitter = RadialEmitter;
-  exports.ParticleParameterValue = ParticleParameterValue;
-  exports.ParticleParameterDefinition = ParticleParameterDefinition;
-  exports.ParticleParameter = ParticleParameter;
+  exports.ContactPoint = ContactPoint;
   exports.DRAW_STRING_NEW_LINE = DRAW_STRING_NEW_LINE;
+  exports.DebugDraw = DebugDraw;
+  exports.DestructionListener = DestructionListener;
+  exports.EmittedParticleCallback = EmittedParticleCallback;
+  exports.FullScreenUI = FullScreenUI;
+  exports.Main = Main;
+  exports.ParticleParameter = ParticleParameter;
+  exports.ParticleParameterDefinition = ParticleParameterDefinition;
+  exports.ParticleParameterValue = ParticleParameterValue;
+  exports.RadialEmitter = RadialEmitter;
   exports.RandomFloat = RandomFloat;
   exports.Settings = Settings;
-  exports.TestEntry = TestEntry;
-  exports.DestructionListener = DestructionListener;
-  exports.ContactPoint = ContactPoint;
   exports.Test = Test;
-  exports.Main = Main;
+  exports.TestEntry = TestEntry;
+  exports.g_camera = g_camera;
+  exports.g_debugDraw = g_debugDraw;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
