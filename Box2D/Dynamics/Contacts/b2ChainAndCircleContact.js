@@ -33,28 +33,15 @@ System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2Edge
         ],
         execute: function () {
             b2ChainAndCircleContact = class b2ChainAndCircleContact extends b2Contact_1.b2Contact {
-                constructor() {
-                    super();
-                }
-                static Create(allocator) {
+                static Create() {
                     return new b2ChainAndCircleContact();
                 }
-                static Destroy(contact, allocator) {
-                }
-                Reset(fixtureA, indexA, fixtureB, indexB) {
-                    super.Reset(fixtureA, indexA, fixtureB, indexB);
-                    // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
-                    // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
+                static Destroy(contact) {
                 }
                 Evaluate(manifold, xfA, xfB) {
-                    const shapeA = this.m_fixtureA.GetShape();
-                    const shapeB = this.m_fixtureB.GetShape();
-                    // DEBUG: b2Assert(shapeA instanceof b2ChainShape);
-                    // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
-                    const chain = shapeA;
                     const edge = b2ChainAndCircleContact.Evaluate_s_edge;
-                    chain.GetChildEdge(edge, this.m_indexA);
-                    b2CollideEdge_1.b2CollideEdgeAndCircle(manifold, edge, xfA, shapeB, xfB);
+                    this.GetShapeA().GetChildEdge(edge, this.m_indexA);
+                    b2CollideEdge_1.b2CollideEdgeAndCircle(manifold, edge, xfA, this.GetShapeB(), xfB);
                 }
             };
             b2ChainAndCircleContact.Evaluate_s_edge = new b2EdgeShape_1.b2EdgeShape();
@@ -62,4 +49,4 @@ System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2Edge
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDaGFpbkFuZENpcmNsZUNvbnRhY3QuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJiMkNoYWluQW5kQ2lyY2xlQ29udGFjdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRTs7Ozs7Ozs7Ozs7Ozs7Ozs7O1lBY0YsMEJBQUEsTUFBYSx1QkFBd0IsU0FBUSxxQkFBUztnQkFDcEQ7b0JBQ0UsS0FBSyxFQUFFLENBQUM7Z0JBQ1YsQ0FBQztnQkFFTSxNQUFNLENBQUMsTUFBTSxDQUFDLFNBQWM7b0JBQ2pDLE9BQU8sSUFBSSx1QkFBdUIsRUFBRSxDQUFDO2dCQUN2QyxDQUFDO2dCQUVNLE1BQU0sQ0FBQyxPQUFPLENBQUMsT0FBa0IsRUFBRSxTQUFjO2dCQUN4RCxDQUFDO2dCQUVNLEtBQUssQ0FBQyxRQUFtQixFQUFFLE1BQWMsRUFBRSxRQUFtQixFQUFFLE1BQWM7b0JBQ25GLEtBQUssQ0FBQyxLQUFLLENBQUMsUUFBUSxFQUFFLE1BQU0sRUFBRSxRQUFRLEVBQUUsTUFBTSxDQUFDLENBQUM7b0JBQ2hELG9FQUFvRTtvQkFDcEUscUVBQXFFO2dCQUN2RSxDQUFDO2dCQUdNLFFBQVEsQ0FBQyxRQUFvQixFQUFFLEdBQWdCLEVBQUUsR0FBZ0I7b0JBQ3RFLE1BQU0sTUFBTSxHQUFZLElBQUksQ0FBQyxVQUFVLENBQUMsUUFBUSxFQUFFLENBQUM7b0JBQ25ELE1BQU0sTUFBTSxHQUFZLElBQUksQ0FBQyxVQUFVLENBQUMsUUFBUSxFQUFFLENBQUM7b0JBQ25ELG1EQUFtRDtvQkFDbkQsb0RBQW9EO29CQUNwRCxNQUFNLEtBQUssR0FBaUIsTUFBc0IsQ0FBQztvQkFDbkQsTUFBTSxJQUFJLEdBQWdCLHVCQUF1QixDQUFDLGVBQWUsQ0FBQztvQkFDbEUsS0FBSyxDQUFDLFlBQVksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO29CQUN4QyxzQ0FBc0IsQ0FDcEIsUUFBUSxFQUNSLElBQUksRUFBRSxHQUFHLEVBQ1QsTUFBdUIsRUFBRSxHQUFHLENBQUMsQ0FBQztnQkFDbEMsQ0FBQzthQUNGLENBQUE7WUFkZ0IsdUNBQWUsR0FBRyxJQUFJLHlCQUFXLEVBQUUsQ0FBQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDaGFpbkFuZENpcmNsZUNvbnRhY3QuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJiMkNoYWluQW5kQ2lyY2xlQ29udGFjdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7OztFQWdCRTs7Ozs7Ozs7Ozs7Ozs7Ozs7O1lBVUYsMEJBQUEsTUFBYSx1QkFBd0IsU0FBUSxxQkFBc0M7Z0JBQzFFLE1BQU0sQ0FBQyxNQUFNO29CQUNsQixPQUFPLElBQUksdUJBQXVCLEVBQUUsQ0FBQztnQkFDdkMsQ0FBQztnQkFFTSxNQUFNLENBQUMsT0FBTyxDQUFDLE9BQWtCO2dCQUN4QyxDQUFDO2dCQUdNLFFBQVEsQ0FBQyxRQUFvQixFQUFFLEdBQWdCLEVBQUUsR0FBZ0I7b0JBQ3RFLE1BQU0sSUFBSSxHQUFnQix1QkFBdUIsQ0FBQyxlQUFlLENBQUM7b0JBQ2xFLElBQUksQ0FBQyxTQUFTLEVBQUUsQ0FBQyxZQUFZLENBQUMsSUFBSSxFQUFFLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztvQkFDbkQsc0NBQXNCLENBQUMsUUFBUSxFQUFFLElBQUksRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLFNBQVMsRUFBRSxFQUFFLEdBQUcsQ0FBQyxDQUFDO2dCQUNyRSxDQUFDO2FBQ0YsQ0FBQTtZQU5nQix1Q0FBZSxHQUFHLElBQUkseUJBQVcsRUFBRSxDQUFDIn0=

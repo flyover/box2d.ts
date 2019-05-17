@@ -43,7 +43,7 @@ function b2EdgeSeparation(poly1: b2PolygonShape, xf1: b2Transform, edge1: number
 
 const b2FindMaxSeparation_s_d: b2Vec2 = new b2Vec2();
 const b2FindMaxSeparation_s_dLocal1: b2Vec2 = new b2Vec2();
-function b2FindMaxSeparation(edgeIndex: number[], poly1: b2PolygonShape, xf1: b2Transform, poly2: b2PolygonShape, xf2: b2Transform): number {
+function b2FindMaxSeparation(edgeIndex: [number], poly1: b2PolygonShape, xf1: b2Transform, poly2: b2PolygonShape, xf2: b2Transform): number {
   const count1: number = poly1.m_count;
   const normals1: b2Vec2[] = poly1.m_normals;
 
@@ -161,8 +161,8 @@ function b2FindIncidentEdge(c: b2ClipVertex[], poly1: b2PolygonShape, xf1: b2Tra
 const b2CollidePolygons_s_incidentEdge = b2ClipVertex.MakeArray(2);
 const b2CollidePolygons_s_clipPoints1 = b2ClipVertex.MakeArray(2);
 const b2CollidePolygons_s_clipPoints2 = b2ClipVertex.MakeArray(2);
-const b2CollidePolygons_s_edgeA = [ 0 ];
-const b2CollidePolygons_s_edgeB = [ 0 ];
+const b2CollidePolygons_s_edgeA: [number] = [ 0 ];
+const b2CollidePolygons_s_edgeB: [number] = [ 0 ];
 const b2CollidePolygons_s_localTangent: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_localNormal: b2Vec2 = new b2Vec2();
 const b2CollidePolygons_s_planePoint: b2Vec2 = new b2Vec2();
@@ -175,13 +175,13 @@ export function b2CollidePolygons(manifold: b2Manifold, polyA: b2PolygonShape, x
   manifold.pointCount = 0;
   const totalRadius: number = polyA.m_radius + polyB.m_radius;
 
-  const edgeA: number[] = b2CollidePolygons_s_edgeA; edgeA[0] = 0;
+  const edgeA: [number] = b2CollidePolygons_s_edgeA; edgeA[0] = 0;
   const separationA: number = b2FindMaxSeparation(edgeA, polyA, xfA, polyB, xfB);
   if (separationA > totalRadius) {
     return;
   }
 
-  const edgeB: number[] = b2CollidePolygons_s_edgeB; edgeB[0] = 0;
+  const edgeB: [number] = b2CollidePolygons_s_edgeB; edgeB[0] = 0;
   const separationB: number = b2FindMaxSeparation(edgeB, polyB, xfB, polyA, xfA);
   if (separationB > totalRadius) {
     return;

@@ -27,8 +27,8 @@ import { b2Draw } from "../Common/b2Draw";
  * together in a bipartite graph.
  */
 export class b2ControllerEdge {
-  public controller: b2Controller; ///< provides quick access to other end of this edge.
-  public body: b2Body; ///< the body
+  public readonly controller: b2Controller; ///< provides quick access to other end of this edge.
+  public readonly body: b2Body; ///< the body
   public prevBody: b2ControllerEdge | null = null; ///< the previous controller edge in the controllers's joint list
   public nextBody: b2ControllerEdge | null = null; ///< the next controller edge in the controllers's joint list
   public prevController: b2ControllerEdge | null = null; ///< the previous controller edge in the body's joint list

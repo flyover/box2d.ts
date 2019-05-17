@@ -141,7 +141,6 @@ export class b2ChainShape extends b2Shape {
   /// Get a child edge.
   public GetChildEdge(edge: b2EdgeShape, index: number): void {
     // DEBUG: b2Assert(0 <= index && index < this.m_count - 1);
-    edge.m_type = b2ShapeType.e_edgeShape;
     edge.m_radius = this.m_radius;
 
     edge.m_vertex1.Copy(this.m_vertices[index]);

@@ -47,12 +47,12 @@ export class b2AreaJoint extends b2Joint {
   public m_impulse: number = 0;
 
   // Solver temp
-  public m_targetLengths: number[];
+  public readonly m_targetLengths: number[];
   public m_targetArea: number = 0;
-  public m_normals: b2Vec2[];
-  public m_joints: b2DistanceJoint[];
-  public m_deltas: b2Vec2[];
-  public m_delta: b2Vec2;
+  public readonly m_normals: b2Vec2[];
+  public readonly m_joints: b2DistanceJoint[];
+  public readonly m_deltas: b2Vec2[];
+  public readonly m_delta: b2Vec2 = new b2Vec2();
 
   constructor(def: b2IAreaJointDef) {
     super(def);
@@ -67,7 +67,6 @@ export class b2AreaJoint extends b2Joint {
     this.m_normals = b2Vec2.MakeArray(def.bodies.length);
     this.m_joints = []; // b2MakeNullArray(def.bodies.length);
     this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
-    this.m_delta = new b2Vec2();
 
     const djd: b2DistanceJointDef = new b2DistanceJointDef();
     djd.frequencyHz = this.m_frequencyHz;

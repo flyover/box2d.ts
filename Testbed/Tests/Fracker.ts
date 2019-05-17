@@ -452,8 +452,8 @@ export class Fracker extends testbed.Test {
    */
   public SetPlayerPosition(playerX: number, playerY: number): void {
     const playerPosition = this.m_player.GetTransform().p;
-    const currentPlayerX = [0],
-      currentPlayerY = [0];
+    const currentPlayerX: [number] = [0];
+    const currentPlayerY: [number] = [0];
     Fracker.WorldToTile(playerPosition, currentPlayerX, currentPlayerY);
 
     playerX = box2d.b2Clamp(playerX, 0, FrackerSettings.k_worldWidthTiles - 1);
@@ -539,8 +539,8 @@ export class Fracker extends testbed.Test {
     }
 
     const playerPosition = this.m_player.GetTransform().p;
-    const playerX = [0],
-      playerY = [0];
+    const playerX: [number] = [0];
+    const playerY: [number] = [0];
     Fracker.WorldToTile(playerPosition, playerX, playerY);
     switch (key) {
       case "a":
@@ -597,8 +597,8 @@ export class Fracker extends testbed.Test {
     // If fracking fluid isn't being released, move the player.
     if (!this.DeployFrackingFluid()) {
       const playerPosition = this.m_player.GetTransform().p;
-      const playerX = [0],
-        playerY = [0];
+      const playerX: [number] = [0];
+      const playerY: [number] = [0];
       Fracker.WorldToTile(playerPosition, playerX, playerY);
       // Move the player towards the mouse position, preferring to move
       // along the axis with the maximal distance from the cursor.
@@ -637,8 +637,8 @@ export class Fracker extends testbed.Test {
     }
 
     const playerPosition = this.m_player.GetTransform().p;
-    const playerX = [0],
-      playerY = [0];
+    const playerX: [number] = [0];
+    const playerY: [number] = [0];
     Fracker.WorldToTile(playerPosition, playerX, playerY);
     // If the player is moved to a square with dirt, remove it.
     if (this.GetMaterial(playerX[0], playerY[0]) === Fracker_Material.DIRT) {
@@ -804,7 +804,7 @@ export class Fracker extends testbed.Test {
   }
 
   // Convert a point in world coordintes to a tile location
-  public static WorldToTile(position: box2d.b2Vec2, x: number[], y: number[]): void {
+  public static WorldToTile(position: box2d.b2Vec2, x: [number], y: [number]): void {
     // Translate relative to the world center and scale based upon the
     // tile size.
     const bottomLeft = new box2d.b2Vec2();

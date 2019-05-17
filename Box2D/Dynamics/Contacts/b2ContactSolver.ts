@@ -49,7 +49,7 @@ export class b2VelocityConstraintPoint {
 }
 
 export class b2ContactVelocityConstraint {
-  public points: b2VelocityConstraintPoint[] = b2VelocityConstraintPoint.MakeArray(b2_maxManifoldPoints);
+  public readonly points: b2VelocityConstraintPoint[] = b2VelocityConstraintPoint.MakeArray(b2_maxManifoldPoints);
   public readonly normal: b2Vec2 = new b2Vec2();
   public readonly tangent: b2Vec2 = new b2Vec2();
   public readonly normalMass: b2Mat22 = new b2Mat22();
@@ -72,7 +72,7 @@ export class b2ContactVelocityConstraint {
 }
 
 export class b2ContactPositionConstraint {
-  public localPoints: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
+  public readonly localPoints: b2Vec2[] = b2Vec2.MakeArray(b2_maxManifoldPoints);
   public readonly localNormal: b2Vec2 = new b2Vec2();
   public readonly localPoint: b2Vec2 = new b2Vec2();
   public indexA: number = 0;
@@ -99,7 +99,6 @@ export class b2ContactSolverDef {
   public count: number = 0;
   public positions!: b2Position[];
   public velocities!: b2Velocity[];
-  public allocator: any = null;
 }
 
 export class b2PositionSolverManifold {
@@ -176,15 +175,13 @@ export class b2ContactSolver {
   public readonly m_step: b2TimeStep = new b2TimeStep();
   public m_positions!: b2Position[];
   public m_velocities!: b2Velocity[];
-  public m_allocator: any = null;
-  public m_positionConstraints: b2ContactPositionConstraint[] = b2ContactPositionConstraint.MakeArray(1024); // TODO: b2Settings
-  public m_velocityConstraints: b2ContactVelocityConstraint[] = b2ContactVelocityConstraint.MakeArray(1024); // TODO: b2Settings
+  public readonly m_positionConstraints: b2ContactPositionConstraint[] = b2ContactPositionConstraint.MakeArray(1024); // TODO: b2Settings
+  public readonly m_velocityConstraints: b2ContactVelocityConstraint[] = b2ContactVelocityConstraint.MakeArray(1024); // TODO: b2Settings
   public m_contacts!: b2Contact[];
   public m_count: number = 0;
 
   public Initialize(def: b2ContactSolverDef): b2ContactSolver {
     this.m_step.Copy(def.step);
-    this.m_allocator = def.allocator;
     this.m_count = def.count;
     // TODO:
     if (this.m_positionConstraints.length < this.m_count) {

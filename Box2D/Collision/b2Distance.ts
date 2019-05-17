@@ -100,8 +100,8 @@ export class b2DistanceProxy {
 export class b2SimplexCache {
   public metric: number = 0;
   public count: number = 0;
-  public readonly indexA: number[] = [ 0, 0, 0 ];
-  public readonly indexB: number[] = [ 0, 0, 0 ];
+  public readonly indexA: [number, number, number] = [ 0, 0, 0 ];
+  public readonly indexB: [number, number, number] = [ 0, 0, 0 ];
 
   public Reset(): b2SimplexCache {
     this.metric = 0;
@@ -488,8 +488,8 @@ export class b2Simplex {
 }
 
 const b2Distance_s_simplex: b2Simplex = new b2Simplex();
-const b2Distance_s_saveA = [ 0, 0, 0 ];
-const b2Distance_s_saveB = [ 0, 0, 0 ];
+const b2Distance_s_saveA: [number, number, number] = [ 0, 0, 0 ];
+const b2Distance_s_saveB: [number, number, number] = [ 0, 0, 0 ];
 const b2Distance_s_p: b2Vec2 = new b2Vec2();
 const b2Distance_s_d: b2Vec2 = new b2Vec2();
 const b2Distance_s_normal: b2Vec2 = new b2Vec2();
@@ -514,8 +514,8 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
 
   // These store the vertices of the last simplex so that we
   // can check for duplicates and prevent cycling.
-  const saveA: number[] = b2Distance_s_saveA;
-  const saveB: number[] = b2Distance_s_saveB;
+  const saveA: [number, number, number] = b2Distance_s_saveA;
+  const saveB: [number, number, number] = b2Distance_s_saveB;
   let saveCount: number = 0;
 
   // Main iteration loop.

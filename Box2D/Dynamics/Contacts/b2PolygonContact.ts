@@ -16,40 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../../Common/b2Settings";
-// DEBUG: import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Transform } from "../../Common/b2Math";
 import { b2CollidePolygons } from "../../Collision/b2CollidePolygon";
 import { b2Manifold } from "../../Collision/b2Collision";
-import { b2Shape } from "../../Collision/Shapes/b2Shape";
 import { b2PolygonShape } from "../../Collision/Shapes/b2PolygonShape";
 import { b2Contact } from "./b2Contact";
-import { b2Fixture } from "../b2Fixture";
 
-export class b2PolygonContact extends b2Contact {
-  constructor() {
-    super();
-  }
-
-  public static Create(allocator: any): b2Contact {
+export class b2PolygonContact extends b2Contact<b2PolygonShape, b2PolygonShape> {
+  public static Create(): b2Contact {
     return new b2PolygonContact();
   }
 
-  public static Destroy(contact: b2Contact, allocator: any): void {
-  }
-
-  public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
-    super.Reset(fixtureA, indexA, fixtureB, indexB);
+  public static Destroy(contact: b2Contact): void {
   }
 
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
-    const shapeA: b2Shape = this.m_fixtureA.GetShape();
-    const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    // DEBUG: b2Assert(shapeA.GetType() === b2ShapeType.e_polygonShape);
-    // DEBUG: b2Assert(shapeB.GetType() === b2ShapeType.e_polygonShape);
     b2CollidePolygons(
       manifold,
-      shapeA as b2PolygonShape, xfA,
-      shapeB as b2PolygonShape, xfB);
+      this.GetShapeA(), xfA,
+      this.GetShapeB(), xfB);
   }
 }

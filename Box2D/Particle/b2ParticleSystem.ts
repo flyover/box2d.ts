@@ -1017,7 +1017,6 @@ export class b2ParticleSystem {
     this.UpdateContacts(true);
     const particleCount = group.GetParticleCount();
     // We create several linked lists. Each list represents a set of connected particles.
-    ///ParticleListNode* nodeBuffer = (ParticleListNode*) m_world.m_stackAllocator.Allocate(sizeof(ParticleListNode) * particleCount);
     const nodeBuffer: b2ParticleSystem_ParticleListNode[] = b2MakeArray(particleCount, (index: number) => new b2ParticleSystem_ParticleListNode());
     b2ParticleSystem.InitializeParticleLists(group, nodeBuffer);
     this.MergeParticleListsInContact(group, nodeBuffer);
@@ -1025,7 +1024,6 @@ export class b2ParticleSystem {
     this.MergeZombieParticleListNodes(group, nodeBuffer, survivingList);
     this.CreateParticleGroupsFromParticleList(group, nodeBuffer, survivingList);
     this.UpdatePairsAndTriadsWithParticleList(group, nodeBuffer);
-    ///this.m_world.m_stackAllocator.Free(nodeBuffer);
   }
 
   /**
@@ -2579,7 +2577,6 @@ export class b2ParticleSystem {
   }
 
   public ComputeDepth(): void {
-    ///b2ParticleContact* contactGroups = (b2ParticleContact*) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleContact) * this.m_contactBuffer.GetCount());
     const contactGroups: b2ParticleContact[] = []; // TODO: static
     let contactGroupsCount = 0;
     for (let k = 0; k < this.m_contactBuffer.count; k++) {
@@ -2593,7 +2590,6 @@ export class b2ParticleSystem {
         contactGroups[contactGroupsCount++] = contact;
       }
     }
-    ///b2ParticleGroup** groupsToUpdate = (b2ParticleGroup**) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleGroup*) * this.m_groupCount);
     const groupsToUpdate: b2ParticleGroup[] = []; // TODO: static
     let groupsToUpdateCount = 0;
     for (let group = this.m_groupList; group; group = group.GetNext()) {
@@ -2668,8 +2664,6 @@ export class b2ParticleSystem {
         }
       }
     }
-    ///this.m_world.m_stackAllocator.Free(groupsToUpdate);
-    ///this.m_world.m_stackAllocator.Free(contactGroups);
   }
 
   public GetInsideBoundsEnumerator(aabb: Readonly<b2AABB>): b2ParticleSystem_InsideBoundsEnumerator {
@@ -2878,7 +2872,6 @@ export class b2ParticleSystem {
     this.UpdateProxies(this.m_proxyBuffer);
     this.SortProxies(this.m_proxyBuffer);
 
-    ///b2ParticlePairSet particlePairs(&this.m_world.m_stackAllocator);
     const particlePairs = new b2ParticlePairSet(); // TODO: static
     this.NotifyContactListenerPreContact(particlePairs);
 
@@ -2952,7 +2945,6 @@ export class b2ParticleSystem {
 
     // If the particle contact listener is enabled, generate a set of
     // fixture / particle contacts.
-    ///FixtureParticleSet fixtureSet(&m_world.m_stackAllocator);
     const fixtureSet = new b2ParticleSystem_FixtureParticleSet(); // TODO: static
     this.NotifyBodyContactListenerPreContact(fixtureSet);
 
@@ -4052,7 +4044,6 @@ export class b2ParticleSystem {
     if (!this.m_velocityBuffer.data) { throw new Error(); }
     // removes particles with zombie flag
     let newCount = 0;
-    ///int32* newIndices = (int32*) this.m_world.m_stackAllocator.Allocate(sizeof(int32) * this.m_count);
     const newIndices: number[] = []; // TODO: static
     for (let i = 0; i < this.m_count; i++) {
       newIndices[i] = b2_invalidParticleIndex;
@@ -4229,7 +4220,6 @@ export class b2ParticleSystem {
 
     // update particle count
     this.m_count = newCount;
-    ///m_world.m_stackAllocator.Free(newIndices);
     this.m_allParticleFlags = allParticleFlags;
     this.m_needsUpdateAllParticleFlags = false;
 

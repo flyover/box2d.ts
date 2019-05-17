@@ -131,7 +131,7 @@ export class b2ManifoldPoint {
   public readonly localPoint: b2Vec2 = new b2Vec2();  ///< usage depends on manifold type
   public normalImpulse: number = 0;      ///< the non-penetration impulse
   public tangentImpulse: number = 0;      ///< the friction impulse
-  public id: b2ContactID = new b2ContactID(); // TODO: readonly  ///< uniquely identifies a contact point between two shapes
+  public readonly id: b2ContactID = new b2ContactID(); ///< uniquely identifies a contact point between two shapes
 
   public static MakeArray(length: number): b2ManifoldPoint[] {
     return b2MakeArray(length, (i: number): b2ManifoldPoint => new b2ManifoldPoint());
@@ -387,11 +387,11 @@ export class b2AABB {
 
   /// Verify that the bounds are sorted.
   public IsValid(): boolean {
-    const d_x: number = this.upperBound.x - this.lowerBound.x;
-    const d_y: number = this.upperBound.y - this.lowerBound.y;
-    let valid: boolean = d_x >= 0 && d_y >= 0;
-    valid = valid && this.lowerBound.IsValid() && this.upperBound.IsValid();
-    return valid;
+    if (!this.lowerBound.IsValid()) { return false; }
+    if (!this.upperBound.IsValid()) { return false; }
+    if (this.upperBound.x < this.lowerBound.x) { return false; }
+    if (this.upperBound.y < this.lowerBound.y) { return false; }
+    return true;
   }
 
   /// Get the center of the AABB.
@@ -436,12 +436,11 @@ export class b2AABB {
 
   /// Does this aabb contain the provided AABB.
   public Contains(aabb: b2AABB): boolean {
-    let result: boolean = true;
-    result = result && this.lowerBound.x <= aabb.lowerBound.x;
-    result = result && this.lowerBound.y <= aabb.lowerBound.y;
-    result = result && aabb.upperBound.x <= this.upperBound.x;
-    result = result && aabb.upperBound.y <= this.upperBound.y;
-    return result;
+    if (this.lowerBound.x <= aabb.lowerBound.x) { return false; }
+    if (this.lowerBound.y <= aabb.lowerBound.y) { return false; }
+    if (aabb.upperBound.x <= this.upperBound.x) { return false; }
+    if (aabb.upperBound.y <= this.upperBound.y) { return false; }
+    return true;
   }
 
   // From Real-time Collision Detection, p179.
@@ -547,37 +546,19 @@ export class b2AABB {
   }
 
   public TestOverlap(other: b2AABB): boolean {
-    const d1_x: number = other.lowerBound.x - this.upperBound.x;
-    const d1_y: number = other.lowerBound.y - this.upperBound.y;
-    const d2_x: number = this.lowerBound.x - other.upperBound.x;
-    const d2_y: number = this.lowerBound.y - other.upperBound.y;
-
-    if (d1_x > 0 || d1_y > 0) {
-      return false;
-    }
-
-    if (d2_x > 0 || d2_y > 0) {
-      return false;
-    }
-
+    if (this.upperBound.x < other.lowerBound.x) { return false; }
+    if (this.upperBound.y < other.lowerBound.y) { return false; }
+    if (other.upperBound.x < this.lowerBound.x) { return false; }
+    if (other.upperBound.y < this.lowerBound.y) { return false; }
     return true;
   }
 }
 
 export function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean {
-  const d1_x: number = b.lowerBound.x - a.upperBound.x;
-  const d1_y: number = b.lowerBound.y - a.upperBound.y;
-  const d2_x: number = a.lowerBound.x - b.upperBound.x;
-  const d2_y: number = a.lowerBound.y - b.upperBound.y;
-
-  if (d1_x > 0 || d1_y > 0) {
-    return false;
-  }
-
-  if (d2_x > 0 || d2_y > 0) {
-    return false;
-  }
-
+  if (a.upperBound.x < b.lowerBound.x) { return false; }
+  if (a.upperBound.y < b.lowerBound.y) { return false; }
+  if (b.upperBound.x < a.lowerBound.x) { return false; }
+  if (b.upperBound.y < a.lowerBound.y) { return false; }
   return true;
 }
 

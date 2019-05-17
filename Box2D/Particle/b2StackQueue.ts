@@ -45,7 +45,6 @@ export class b2StackQueue<T> {
           this.m_buffer.concat(b2MakeArray(1, (index) => null));
           this.m_capacity = 1;
         }
-        ///m_buffer = (T*) m_allocator->Reallocate(m_buffer, sizeof(T) * m_capacity);
       }
     }
     this.m_buffer[this.m_back] = item;

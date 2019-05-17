@@ -86,11 +86,6 @@ export class b2VoronoiDiagram {
     upper.y += margin;
     this.m_countX = 1 + Math.floor(inverseRadius * (upper.x - lower.x));
     this.m_countY = 1 + Math.floor(inverseRadius * (upper.y - lower.y));
-    ///  m_diagram = (Generator**) m_allocator->Allocate(sizeof(Generator*) * m_countX * m_countY);
-    ///  for (int32 i = 0; i < m_countX * m_countY; i++)
-    ///  {
-    ///    m_diagram[i] = NULL;
-    ///  }
     this.m_diagram = []; // b2MakeArray(this.m_countX * this.m_countY, (index) => null);
 
     // (4 * m_countX * m_countY) is the queue capacity that is experimentally

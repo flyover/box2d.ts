@@ -16,48 +16,26 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../../Common/b2Settings";
-// DEBUG: import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
 import { b2Transform } from "../../Common/b2Math";
 import { b2CollideEdgeAndCircle } from "../../Collision/b2CollideEdge";
 import { b2Manifold } from "../../Collision/b2Collision";
-import { b2Shape } from "../../Collision/Shapes/b2Shape";
 import { b2ChainShape } from "../../Collision/Shapes/b2ChainShape";
 import { b2CircleShape } from "../../Collision/Shapes/b2CircleShape";
 import { b2EdgeShape } from "../../Collision/Shapes/b2EdgeShape";
 import { b2Contact } from "./b2Contact";
-import { b2Fixture } from "../b2Fixture";
 
-export class b2ChainAndCircleContact extends b2Contact {
-  constructor() {
-    super();
-  }
-
-  public static Create(allocator: any): b2Contact {
+export class b2ChainAndCircleContact extends b2Contact<b2ChainShape, b2CircleShape> {
+  public static Create(): b2Contact {
     return new b2ChainAndCircleContact();
   }
 
-  public static Destroy(contact: b2Contact, allocator: any): void {
-  }
-
-  public Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void {
-    super.Reset(fixtureA, indexA, fixtureB, indexB);
-    // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
-    // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
+  public static Destroy(contact: b2Contact): void {
   }
 
   private static Evaluate_s_edge = new b2EdgeShape();
   public Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void {
-    const shapeA: b2Shape = this.m_fixtureA.GetShape();
-    const shapeB: b2Shape = this.m_fixtureB.GetShape();
-    // DEBUG: b2Assert(shapeA instanceof b2ChainShape);
-    // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
-    const chain: b2ChainShape = shapeA as b2ChainShape;
     const edge: b2EdgeShape = b2ChainAndCircleContact.Evaluate_s_edge;
-    chain.GetChildEdge(edge, this.m_indexA);
-    b2CollideEdgeAndCircle(
-      manifold,
-      edge, xfA,
-      shapeB as b2CircleShape, xfB);
+    this.GetShapeA().GetChildEdge(edge, this.m_indexA);
+    b2CollideEdgeAndCircle(manifold, edge, xfA, this.GetShapeB(), xfB);
   }
 }

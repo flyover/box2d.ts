@@ -46,7 +46,7 @@ export enum b2ShapeType {
 /// Shapes used for simulation in b2World are created automatically when a b2Fixture
 /// is created. Shapes may encapsulate a one or more child shapes.
 export abstract class b2Shape {
-  public m_type: b2ShapeType = b2ShapeType.e_unknown;
+  public readonly m_type: b2ShapeType = b2ShapeType.e_unknown;
 
 	/// Radius of a shape. For polygonal shapes this must be b2_polygonRadius. There is no support for
 	/// making rounded polygons.
@@ -57,7 +57,7 @@ export abstract class b2Shape {
     this.m_radius = radius;
   }
 
-  /// Clone the concrete shape using the provided allocator.
+  /// Clone the concrete shape.
   public abstract Clone(): b2Shape;
 
   public Copy(other: b2Shape): b2Shape {

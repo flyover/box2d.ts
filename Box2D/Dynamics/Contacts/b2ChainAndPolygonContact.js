@@ -33,28 +33,15 @@ System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2Edge
         ],
         execute: function () {
             b2ChainAndPolygonContact = class b2ChainAndPolygonContact extends b2Contact_1.b2Contact {
-                constructor() {
-                    super();
-                }
-                static Create(allocator) {
+                static Create() {
                     return new b2ChainAndPolygonContact();
                 }
-                static Destroy(contact, allocator) {
-                }
-                Reset(fixtureA, indexA, fixtureB, indexB) {
-                    super.Reset(fixtureA, indexA, fixtureB, indexB);
-                    // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
-                    // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
+                static Destroy(contact) {
                 }
                 Evaluate(manifold, xfA, xfB) {
-                    const shapeA = this.m_fixtureA.GetShape();
-                    const shapeB = this.m_fixtureB.GetShape();
-                    // DEBUG: b2Assert(shapeA instanceof b2ChainShape);
-                    // DEBUG: b2Assert(shapeB instanceof b2PolygonShape);
-                    const chain = shapeA;
                     const edge = b2ChainAndPolygonContact.Evaluate_s_edge;
-                    chain.GetChildEdge(edge, this.m_indexA);
-                    b2CollideEdge_1.b2CollideEdgeAndPolygon(manifold, edge, xfA, shapeB, xfB);
+                    this.GetShapeA().GetChildEdge(edge, this.m_indexA);
+                    b2CollideEdge_1.b2CollideEdgeAndPolygon(manifold, edge, xfA, this.GetShapeB(), xfB);
                 }
             };
             b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape_1.b2EdgeShape();
@@ -62,4 +49,4 @@ System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2Edge
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0VBZ0JFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFjRiwyQkFBQSxNQUFhLHdCQUF5QixTQUFRLHFCQUFTO2dCQUNyRDtvQkFDRSxLQUFLLEVBQUUsQ0FBQztnQkFDVixDQUFDO2dCQUVNLE1BQU0sQ0FBQyxNQUFNLENBQUMsU0FBYztvQkFDakMsT0FBTyxJQUFJLHdCQUF3QixFQUFFLENBQUM7Z0JBQ3hDLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE9BQU8sQ0FBQyxPQUFrQixFQUFFLFNBQWM7Z0JBQ3hELENBQUM7Z0JBRU0sS0FBSyxDQUFDLFFBQW1CLEVBQUUsTUFBYyxFQUFFLFFBQW1CLEVBQUUsTUFBYztvQkFDbkYsS0FBSyxDQUFDLEtBQUssQ0FBQyxRQUFRLEVBQUUsTUFBTSxFQUFFLFFBQVEsRUFBRSxNQUFNLENBQUMsQ0FBQztvQkFDaEQsb0VBQW9FO29CQUNwRSxzRUFBc0U7Z0JBQ3hFLENBQUM7Z0JBR00sUUFBUSxDQUFDLFFBQW9CLEVBQUUsR0FBZ0IsRUFBRSxHQUFnQjtvQkFDdEUsTUFBTSxNQUFNLEdBQVksSUFBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLEVBQUUsQ0FBQztvQkFDbkQsTUFBTSxNQUFNLEdBQVksSUFBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLEVBQUUsQ0FBQztvQkFDbkQsbURBQW1EO29CQUNuRCxxREFBcUQ7b0JBQ3JELE1BQU0sS0FBSyxHQUFpQixNQUFzQixDQUFDO29CQUNuRCxNQUFNLElBQUksR0FBZ0Isd0JBQXdCLENBQUMsZUFBZSxDQUFDO29CQUNuRSxLQUFLLENBQUMsWUFBWSxDQUFDLElBQUksRUFBRSxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7b0JBQ3hDLHVDQUF1QixDQUNyQixRQUFRLEVBQ1IsSUFBSSxFQUFFLEdBQUcsRUFDVCxNQUF3QixFQUFFLEdBQUcsQ0FBQyxDQUFDO2dCQUNuQyxDQUFDO2FBQ0YsQ0FBQTtZQWRnQix3Q0FBZSxHQUFHLElBQUkseUJBQVcsRUFBRSxDQUFDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0VBZ0JFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFVRiwyQkFBQSxNQUFhLHdCQUF5QixTQUFRLHFCQUF1QztnQkFDNUUsTUFBTSxDQUFDLE1BQU07b0JBQ2xCLE9BQU8sSUFBSSx3QkFBd0IsRUFBRSxDQUFDO2dCQUN4QyxDQUFDO2dCQUVNLE1BQU0sQ0FBQyxPQUFPLENBQUMsT0FBa0I7Z0JBQ3hDLENBQUM7Z0JBR00sUUFBUSxDQUFDLFFBQW9CLEVBQUUsR0FBZ0IsRUFBRSxHQUFnQjtvQkFDdEUsTUFBTSxJQUFJLEdBQWdCLHdCQUF3QixDQUFDLGVBQWUsQ0FBQztvQkFDbkUsSUFBSSxDQUFDLFNBQVMsRUFBRSxDQUFDLFlBQVksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO29CQUNuRCx1Q0FBdUIsQ0FBQyxRQUFRLEVBQUUsSUFBSSxFQUFFLEdBQUcsRUFBRSxJQUFJLENBQUMsU0FBUyxFQUFFLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ3RFLENBQUM7YUFDRixDQUFBO1lBTmdCLHdDQUFlLEdBQUcsSUFBSSx5QkFBVyxFQUFFLENBQUMifQ==

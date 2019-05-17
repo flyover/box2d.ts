@@ -29,9 +29,17 @@ function verify<T>(value: T | null): T {
 
 /// A node in the dynamic tree. The client does not interact with this directly.
 export class b2TreeNode<T> {
-  public m_id: number = 0;
+  public readonly m_id: number = 0;
   public readonly aabb: b2AABB = new b2AABB();
-  public userData!: T;
+  private _userData: T | null = null;
+  public get userData(): T {
+    if (this._userData === null) { throw new Error(); }
+    return this._userData;
+  }
+  public set userData(value: T) {
+    if (this._userData !== null) { throw new Error(); }
+    this._userData = value;
+  }
   public parent: b2TreeNode<T> | null = null; // or next
   public child1: b2TreeNode<T> | null = null;
   public child2: b2TreeNode<T> | null = null;
@@ -39,6 +47,10 @@ export class b2TreeNode<T> {
 
   constructor(id: number = 0) {
     this.m_id = id;
+  }
+
+  public Reset(): void {
+    this._userData = null;
   }
 
   public IsLeaf(): boolean {
@@ -68,7 +80,7 @@ export class b2DynamicTree<T> {
   public static readonly s_combinedAABB = new b2AABB();
   public static readonly s_aabb = new b2AABB();
 
-  // public GetUserData(proxy: b2TreeNode<T>): any {
+  // public GetUserData(proxy: b2TreeNode<T>): T {
   //   // DEBUG: b2Assert(proxy !== null);
   //   return proxy.userData;
   // }
@@ -220,7 +232,7 @@ export class b2DynamicTree<T> {
       node.child1 = null;
       node.child2 = null;
       node.height = 0;
-      delete node.userData; // = null;
+      node.Reset();
       return node;
     }
 
@@ -232,7 +244,7 @@ export class b2DynamicTree<T> {
     node.child1 = null;
     node.child2 = null;
     node.height = -1;
-    delete node.userData; // = null;
+    node.Reset();
     this.m_freeList = node;
   }
 
@@ -358,7 +370,6 @@ export class b2DynamicTree<T> {
     const oldParent: b2TreeNode<T> | null = sibling.parent;
     const newParent: b2TreeNode<T> = this.AllocateNode();
     newParent.parent = oldParent;
-    delete newParent.userData; // = null;
     newParent.aabb.Combine2(leafAABB, sibling.aabb);
     newParent.height = sibling.height + 1;
 

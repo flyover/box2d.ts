@@ -30,27 +30,17 @@ System.register(["../../Collision/b2CollidePolygon", "./b2Contact"], function (e
         ],
         execute: function () {
             b2PolygonContact = class b2PolygonContact extends b2Contact_1.b2Contact {
-                constructor() {
-                    super();
-                }
-                static Create(allocator) {
+                static Create() {
                     return new b2PolygonContact();
                 }
-                static Destroy(contact, allocator) {
-                }
-                Reset(fixtureA, indexA, fixtureB, indexB) {
-                    super.Reset(fixtureA, indexA, fixtureB, indexB);
+                static Destroy(contact) {
                 }
                 Evaluate(manifold, xfA, xfB) {
-                    const shapeA = this.m_fixtureA.GetShape();
-                    const shapeB = this.m_fixtureB.GetShape();
-                    // DEBUG: b2Assert(shapeA.GetType() === b2ShapeType.e_polygonShape);
-                    // DEBUG: b2Assert(shapeB.GetType() === b2ShapeType.e_polygonShape);
-                    b2CollidePolygon_1.b2CollidePolygons(manifold, shapeA, xfA, shapeB, xfB);
+                    b2CollidePolygon_1.b2CollidePolygons(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
                 }
             };
             exports_1("b2PolygonContact", b2PolygonContact);
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJQb2x5Z29uQ29udGFjdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyUG9seWdvbkNvbnRhY3QudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7Ozs7OztZQVlGLG1CQUFBLE1BQWEsZ0JBQWlCLFNBQVEscUJBQVM7Z0JBQzdDO29CQUNFLEtBQUssRUFBRSxDQUFDO2dCQUNWLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE1BQU0sQ0FBQyxTQUFjO29CQUNqQyxPQUFPLElBQUksZ0JBQWdCLEVBQUUsQ0FBQztnQkFDaEMsQ0FBQztnQkFFTSxNQUFNLENBQUMsT0FBTyxDQUFDLE9BQWtCLEVBQUUsU0FBYztnQkFDeEQsQ0FBQztnQkFFTSxLQUFLLENBQUMsUUFBbUIsRUFBRSxNQUFjLEVBQUUsUUFBbUIsRUFBRSxNQUFjO29CQUNuRixLQUFLLENBQUMsS0FBSyxDQUFDLFFBQVEsRUFBRSxNQUFNLEVBQUUsUUFBUSxFQUFFLE1BQU0sQ0FBQyxDQUFDO2dCQUNsRCxDQUFDO2dCQUVNLFFBQVEsQ0FBQyxRQUFvQixFQUFFLEdBQWdCLEVBQUUsR0FBZ0I7b0JBQ3RFLE1BQU0sTUFBTSxHQUFZLElBQUksQ0FBQyxVQUFVLENBQUMsUUFBUSxFQUFFLENBQUM7b0JBQ25ELE1BQU0sTUFBTSxHQUFZLElBQUksQ0FBQyxVQUFVLENBQUMsUUFBUSxFQUFFLENBQUM7b0JBQ25ELG9FQUFvRTtvQkFDcEUsb0VBQW9FO29CQUNwRSxvQ0FBaUIsQ0FDZixRQUFRLEVBQ1IsTUFBd0IsRUFBRSxHQUFHLEVBQzdCLE1BQXdCLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ25DLENBQUM7YUFDRixDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJQb2x5Z29uQ29udGFjdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyUG9seWdvbkNvbnRhY3QudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7Ozs7OztZQVFGLG1CQUFBLE1BQWEsZ0JBQWlCLFNBQVEscUJBQXlDO2dCQUN0RSxNQUFNLENBQUMsTUFBTTtvQkFDbEIsT0FBTyxJQUFJLGdCQUFnQixFQUFFLENBQUM7Z0JBQ2hDLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE9BQU8sQ0FBQyxPQUFrQjtnQkFDeEMsQ0FBQztnQkFFTSxRQUFRLENBQUMsUUFBb0IsRUFBRSxHQUFnQixFQUFFLEdBQWdCO29CQUN0RSxvQ0FBaUIsQ0FDZixRQUFRLEVBQ1IsSUFBSSxDQUFDLFNBQVMsRUFBRSxFQUFFLEdBQUcsRUFDckIsSUFBSSxDQUFDLFNBQVMsRUFBRSxFQUFFLEdBQUcsQ0FBQyxDQUFDO2dCQUMzQixDQUFDO2FBQ0YsQ0FBQSJ9

@@ -2179,7 +2179,7 @@
           this.localPoint = new b2Vec2(); ///< usage depends on manifold type
           this.normalImpulse = 0; ///< the non-penetration impulse
           this.tangentImpulse = 0; ///< the friction impulse
-          this.id = new b2ContactID(); // TODO: readonly  ///< uniquely identifies a contact point between two shapes
+          this.id = new b2ContactID(); ///< uniquely identifies a contact point between two shapes
       }
       static MakeArray(length) {
           return b2MakeArray(length, (i) => new b2ManifoldPoint());
@@ -2415,11 +2415,19 @@
       }
       /// Verify that the bounds are sorted.
       IsValid() {
-          const d_x = this.upperBound.x - this.lowerBound.x;
-          const d_y = this.upperBound.y - this.lowerBound.y;
-          let valid = d_x >= 0 && d_y >= 0;
-          valid = valid && this.lowerBound.IsValid() && this.upperBound.IsValid();
-          return valid;
+          if (!this.lowerBound.IsValid()) {
+              return false;
+          }
+          if (!this.upperBound.IsValid()) {
+              return false;
+          }
+          if (this.upperBound.x < this.lowerBound.x) {
+              return false;
+          }
+          if (this.upperBound.y < this.lowerBound.y) {
+              return false;
+          }
+          return true;
       }
       /// Get the center of the AABB.
       GetCenter() {
@@ -2457,12 +2465,19 @@
       }
       /// Does this aabb contain the provided AABB.
       Contains(aabb) {
-          let result = true;
-          result = result && this.lowerBound.x <= aabb.lowerBound.x;
-          result = result && this.lowerBound.y <= aabb.lowerBound.y;
-          result = result && aabb.upperBound.x <= this.upperBound.x;
-          result = result && aabb.upperBound.y <= this.upperBound.y;
-          return result;
+          if (this.lowerBound.x <= aabb.lowerBound.x) {
+              return false;
+          }
+          if (this.lowerBound.y <= aabb.lowerBound.y) {
+              return false;
+          }
+          if (aabb.upperBound.x <= this.upperBound.x) {
+              return false;
+          }
+          if (aabb.upperBound.y <= this.upperBound.y) {
+              return false;
+          }
+          return true;
       }
       // From Real-time Collision Detection, p179.
       RayCast(output, input) {
@@ -2554,28 +2569,32 @@
           return true;
       }
       TestOverlap(other) {
-          const d1_x = other.lowerBound.x - this.upperBound.x;
-          const d1_y = other.lowerBound.y - this.upperBound.y;
-          const d2_x = this.lowerBound.x - other.upperBound.x;
-          const d2_y = this.lowerBound.y - other.upperBound.y;
-          if (d1_x > 0 || d1_y > 0) {
+          if (this.upperBound.x < other.lowerBound.x) {
               return false;
           }
-          if (d2_x > 0 || d2_y > 0) {
+          if (this.upperBound.y < other.lowerBound.y) {
+              return false;
+          }
+          if (other.upperBound.x < this.lowerBound.x) {
+              return false;
+          }
+          if (other.upperBound.y < this.lowerBound.y) {
               return false;
           }
           return true;
       }
   }
   function b2TestOverlapAABB(a, b) {
-      const d1_x = b.lowerBound.x - a.upperBound.x;
-      const d1_y = b.lowerBound.y - a.upperBound.y;
-      const d2_x = a.lowerBound.x - b.upperBound.x;
-      const d2_y = a.lowerBound.y - b.upperBound.y;
-      if (d1_x > 0 || d1_y > 0) {
+      if (a.upperBound.x < b.lowerBound.x) {
           return false;
       }
-      if (d2_x > 0 || d2_y > 0) {
+      if (a.upperBound.y < b.lowerBound.y) {
+          return false;
+      }
+      if (b.upperBound.x < a.lowerBound.x) {
+          return false;
+      }
+      if (b.upperBound.y < a.lowerBound.y) {
           return false;
       }
       return true;
@@ -2659,11 +2678,27 @@
       constructor(id = 0) {
           this.m_id = 0;
           this.aabb = new b2AABB();
+          this._userData = null;
           this.parent = null; // or next
           this.child1 = null;
           this.child2 = null;
           this.height = 0; // leaf = 0, free node = -1
           this.m_id = id;
+      }
+      get userData() {
+          if (this._userData === null) {
+              throw new Error();
+          }
+          return this._userData;
+      }
+      set userData(value) {
+          if (this._userData !== null) {
+              throw new Error();
+          }
+          this._userData = value;
+      }
+      Reset() {
+          this._userData = null;
       }
       IsLeaf() {
           return this.child1 === null;
@@ -2680,7 +2715,7 @@
           this.m_insertionCount = 0;
           this.m_stack = new b2GrowableStack(256);
       }
-      // public GetUserData(proxy: b2TreeNode<T>): any {
+      // public GetUserData(proxy: b2TreeNode<T>): T {
       //   // DEBUG: b2Assert(proxy !== null);
       //   return proxy.userData;
       // }
@@ -2815,7 +2850,7 @@
               node.child1 = null;
               node.child2 = null;
               node.height = 0;
-              delete node.userData; // = null;
+              node.Reset();
               return node;
           }
           return new b2TreeNode(b2DynamicTree.s_node_id++);
@@ -2825,7 +2860,7 @@
           node.child1 = null;
           node.child2 = null;
           node.height = -1;
-          delete node.userData; // = null;
+          node.Reset();
           this.m_freeList = node;
       }
       CreateProxy(aabb, userData) {
@@ -2930,7 +2965,6 @@
           const oldParent = sibling.parent;
           const newParent = this.AllocateNode();
           newParent.parent = oldParent;
-          delete newParent.userData; // = null;
           newParent.aabb.Combine2(leafAABB, sibling.aabb);
           newParent.height = sibling.height + 1;
           if (oldParent) {
@@ -4777,7 +4811,7 @@
                   const cp = manifold.points[pointCount];
                   if (primaryAxis.type === b2EPAxisType.e_edgeA) {
                       b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
-                      cp.id = clipPoints2[i].id;
+                      cp.id.Copy(clipPoints2[i].id);
                   }
                   else {
                       cp.localPoint.Copy(clipPoints2[i].v);
@@ -5883,7 +5917,6 @@
       /// Get a child edge.
       GetChildEdge(edge, index) {
           // DEBUG: b2Assert(0 <= index && index < this.m_count - 1);
-          edge.m_type = b2ShapeType.e_edgeShape;
           edge.m_radius = this.m_radius;
           edge.m_vertex1.Copy(this.m_vertices[index]);
           edge.m_vertex2.Copy(this.m_vertices[index + 1]);
@@ -6040,10 +6073,27 @@
   }
   /// This proxy is used internally to connect fixtures to the broad-phase.
   class b2FixtureProxy {
-      constructor(fixture) {
+      constructor(fixture, childIndex) {
           this.aabb = new b2AABB();
           this.childIndex = 0;
+          this._treeNode = null;
           this.fixture = fixture;
+          this.childIndex = childIndex;
+      }
+      get treeNode() {
+          if (this._treeNode === null) {
+              throw new Error();
+          }
+          return this._treeNode;
+      }
+      set treeNode(value) {
+          if (this._treeNode !== null) {
+              throw new Error();
+          }
+          this._treeNode = value;
+      }
+      Reset() {
+          this._treeNode = null;
       }
   }
   /// A fixture is used to attach a shape to a body for collision detection. A fixture
@@ -6052,7 +6102,7 @@
   /// Fixtures are created via b2Body::CreateFixture.
   /// @warning you cannot reuse fixtures.
   class b2Fixture {
-      constructor(def, body) {
+      constructor(body, def) {
           this.m_density = 0;
           this.m_next = null;
           this.m_friction = 0;
@@ -6064,6 +6114,16 @@
           this.m_userData = null;
           this.m_body = body;
           this.m_shape = def.shape.Clone();
+          this.m_userData = b2Maybe(def.userData, null);
+          this.m_friction = b2Maybe(def.friction, 0.2);
+          this.m_restitution = b2Maybe(def.restitution, 0);
+          this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
+          this.m_isSensor = b2Maybe(def.isSensor, false);
+          this.m_density = b2Maybe(def.density, 0);
+      }
+      Reset() {
+          // The proxies must be destroyed before calling this.
+          // DEBUG: b2Assert(this.m_proxyCount === 0);
       }
       /// Get the type of the child shape. You can use this to down cast to the concrete shape.
       /// @return the shape type.
@@ -6112,15 +6172,8 @@
               }
               edge = edge.next;
           }
-          const world = this.m_body.GetWorld();
-          if (world === null) {
-              return;
-          }
           // Touch each proxy so that new pairs may be created
-          const broadPhase = world.m_contactManager.m_broadPhase;
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              broadPhase.TouchProxy(this.m_proxies[i].treeNode);
-          }
+          this.TouchProxies();
       }
       /// Get the parent body of this fixture. This is NULL if the fixture is not attached.
       /// @return the parent body.
@@ -6214,38 +6267,6 @@
           log("\n");
           log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
       }
-      // We need separation create/destroy functions from the constructor/destructor because
-      // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-      Create(def) {
-          this.m_userData = def.userData;
-          this.m_friction = b2Maybe(def.friction, 0.2);
-          this.m_restitution = b2Maybe(def.restitution, 0);
-          // this.m_body = body;
-          this.m_next = null;
-          this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
-          this.m_isSensor = b2Maybe(def.isSensor, false);
-          // Reserve proxy space
-          // const childCount = m_shape->GetChildCount();
-          // m_proxies = (b2FixtureProxy*)allocator->Allocate(childCount * sizeof(b2FixtureProxy));
-          // for (int32 i = 0; i < childCount; ++i)
-          // {
-          //   m_proxies[i].fixture = NULL;
-          //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
-          // }
-          // this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
-          this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
-          this.m_proxyCount = 0;
-          this.m_density = b2Maybe(def.density, 0);
-      }
-      Destroy() {
-          // The proxies must be destroyed before calling this.
-          // DEBUG: b2Assert(this.m_proxyCount === 0);
-          // Free the proxy array.
-          // int32 childCount = m_shape->GetChildCount();
-          // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
-          // m_proxies = NULL;
-          // this.m_shape = null;
-      }
       // These support body activation/deactivation.
       CreateProxies(xf) {
           const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
@@ -6253,10 +6274,9 @@
           // Create proxies in the broad-phase.
           this.m_proxyCount = this.m_shape.GetChildCount();
           for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i] = new b2FixtureProxy(this);
+              const proxy = this.m_proxies[i] = new b2FixtureProxy(this, i);
               this.m_shape.ComputeAABB(proxy.aabb, xf, i);
               proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
-              proxy.childIndex = i;
           }
       }
       DestroyProxies() {
@@ -6264,9 +6284,9 @@
           // Destroy proxies in the broad-phase.
           for (let i = 0; i < this.m_proxyCount; ++i) {
               const proxy = this.m_proxies[i];
-              delete proxy.treeNode.userData;
+              proxy.treeNode.Reset();
               broadPhase.DestroyProxy(proxy.treeNode);
-              delete proxy.treeNode;
+              proxy.Reset();
           }
           this.m_proxyCount = 0;
       }
@@ -6484,8 +6504,7 @@
           if (this.m_world.IsLocked()) {
               throw new Error();
           }
-          const fixture = new b2Fixture(def, this);
-          fixture.Create(def);
+          const fixture = new b2Fixture(this, def);
           if (this.m_activeFlag) {
               fixture.CreateProxies(this.m_xf);
           }
@@ -6559,7 +6578,7 @@
           }
           // fixture.m_body = null;
           fixture.m_next = null;
-          fixture.Destroy();
+          fixture.Reset();
           --this.m_fixtureCount;
           // Reset the mass data.
           this.ResetMassData();
@@ -7326,7 +7345,7 @@
           this.m_bodyA = def.bodyA;
           this.m_bodyB = def.bodyB;
           this.m_collideConnected = b2Maybe(def.collideConnected, false);
-          this.m_userData = def.userData;
+          this.m_userData = b2Maybe(def.userData, null);
       }
       /// Get the type of the concrete joint.
       GetType() {
@@ -7684,6 +7703,7 @@
           // Solver shared
           this.m_impulse = 0;
           this.m_targetArea = 0;
+          this.m_delta = new b2Vec2();
           // DEBUG: b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
           this.m_bodies = def.bodies;
           this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
@@ -7692,7 +7712,6 @@
           this.m_normals = b2Vec2.MakeArray(def.bodies.length);
           this.m_joints = []; // b2MakeNullArray(def.bodies.length);
           this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
-          this.m_delta = new b2Vec2();
           const djd = new b2DistanceJointDef();
           djd.frequencyHz = this.m_frequencyHz;
           djd.dampingRatio = this.m_dampingRatio;
@@ -11506,8 +11525,8 @@
       GetWorldManifold(worldManifold) {
           const bodyA = this.m_fixtureA.GetBody();
           const bodyB = this.m_fixtureB.GetBody();
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
+          const shapeA = this.GetShapeA();
+          const shapeB = this.GetShapeB();
           worldManifold.Initialize(this.m_manifold, bodyA.GetTransform(), shapeA.m_radius, bodyB.GetTransform(), shapeB.m_radius);
       }
       IsTouching() {
@@ -11528,11 +11547,17 @@
       GetChildIndexA() {
           return this.m_indexA;
       }
+      GetShapeA() {
+          return this.m_fixtureA.GetShape();
+      }
       GetFixtureB() {
           return this.m_fixtureB;
       }
       GetChildIndexB() {
           return this.m_indexB;
+      }
+      GetShapeB() {
+          return this.m_fixtureB.GetShape();
       }
       FlagForFiltering() {
           this.m_filterFlag = true;
@@ -11596,21 +11621,15 @@
           const bodyB = this.m_fixtureB.GetBody();
           const xfA = bodyA.GetTransform();
           const xfB = bodyB.GetTransform();
-          ///const aabbOverlap = b2TestOverlapAABB(this.m_fixtureA.GetAABB(0), this.m_fixtureB.GetAABB(0));
           // Is this contact a sensor?
           if (sensor) {
-              ///if (aabbOverlap)
-              ///{
-              const shapeA = this.m_fixtureA.GetShape();
-              const shapeB = this.m_fixtureB.GetShape();
+              const shapeA = this.GetShapeA();
+              const shapeB = this.GetShapeB();
               touching = b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
-              ///}
               // Sensors don't generate manifolds.
               this.m_manifold.pointCount = 0;
           }
           else {
-              ///if (aabbOverlap)
-              ///{
               this.Evaluate(this.m_manifold, xfA, xfB);
               touching = this.m_manifold.pointCount > 0;
               // Match old contact ids to new contact ids and copy the
@@ -11629,11 +11648,6 @@
                       }
                   }
               }
-              ///}
-              ///else
-              ///{
-              ///  this.m_manifold.pointCount = 0;
-              ///}
               if (touching !== wasTouching) {
                   bodyA.SetAwake(true);
                   bodyB.SetAwake(true);
@@ -11652,8 +11666,8 @@
       }
       ComputeTOI(sweepA, sweepB) {
           const input = b2Contact.ComputeTOI_s_input;
-          input.proxyA.SetShape(this.m_fixtureA.GetShape(), this.m_indexA);
-          input.proxyB.SetShape(this.m_fixtureB.GetShape(), this.m_indexB);
+          input.proxyA.SetShape(this.GetShapeA(), this.m_indexA);
+          input.proxyB.SetShape(this.GetShapeB(), this.m_indexB);
           input.sweepA.Copy(sweepA);
           input.sweepB.Copy(sweepB);
           input.tMax = b2_linearSlop;
@@ -11683,23 +11697,13 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2CircleContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2CircleContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA.GetType() === b2ShapeType.e_circleShape);
-          // DEBUG: b2Assert(shapeB.GetType() === b2ShapeType.e_circleShape);
-          b2CollideCircles(manifold, shapeA, xfA, shapeB, xfB);
+          b2CollideCircles(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
       }
   }
 
@@ -11721,23 +11725,13 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2PolygonContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2PolygonContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA.GetType() === b2ShapeType.e_polygonShape);
-          // DEBUG: b2Assert(shapeB.GetType() === b2ShapeType.e_polygonShape);
-          b2CollidePolygons(manifold, shapeA, xfA, shapeB, xfB);
+          b2CollidePolygons(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
       }
   }
 
@@ -11759,25 +11753,13 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2PolygonAndCircleContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2PolygonAndCircleContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
-          // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_polygonShape);
-          // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA instanceof b2PolygonShape);
-          // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
-          b2CollidePolygonAndCircle(manifold, shapeA, xfA, shapeB, xfB);
+          b2CollidePolygonAndCircle(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
       }
   }
 
@@ -11799,25 +11781,13 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2EdgeAndCircleContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2EdgeAndCircleContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
-          // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_edgeShape);
-          // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA instanceof b2EdgeShape);
-          // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
-          b2CollideEdgeAndCircle(manifold, shapeA, xfA, shapeB, xfB);
+          b2CollideEdgeAndCircle(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
       }
   }
 
@@ -11839,25 +11809,13 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2EdgeAndPolygonContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2EdgeAndPolygonContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
-          // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_edgeShape);
-          // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA instanceof b2EdgeShape);
-          // DEBUG: b2Assert(shapeB instanceof b2PolygonShape);
-          b2CollideEdgeAndPolygon(manifold, shapeA, xfA, shapeB, xfB);
+          b2CollideEdgeAndPolygon(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
       }
   }
 
@@ -11879,28 +11837,15 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2ChainAndCircleContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2ChainAndCircleContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
-          // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
-          // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_circleShape);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA instanceof b2ChainShape);
-          // DEBUG: b2Assert(shapeB instanceof b2CircleShape);
-          const chain = shapeA;
           const edge = b2ChainAndCircleContact.Evaluate_s_edge;
-          chain.GetChildEdge(edge, this.m_indexA);
-          b2CollideEdgeAndCircle(manifold, edge, xfA, shapeB, xfB);
+          this.GetShapeA().GetChildEdge(edge, this.m_indexA);
+          b2CollideEdgeAndCircle(manifold, edge, xfA, this.GetShapeB(), xfB);
       }
   }
   b2ChainAndCircleContact.Evaluate_s_edge = new b2EdgeShape();
@@ -11923,28 +11868,15 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   class b2ChainAndPolygonContact extends b2Contact {
-      constructor() {
-          super();
-      }
-      static Create(allocator) {
+      static Create() {
           return new b2ChainAndPolygonContact();
       }
-      static Destroy(contact, allocator) {
-      }
-      Reset(fixtureA, indexA, fixtureB, indexB) {
-          super.Reset(fixtureA, indexA, fixtureB, indexB);
-          // DEBUG: b2Assert(fixtureA.GetType() === b2ShapeType.e_chainShape);
-          // DEBUG: b2Assert(fixtureB.GetType() === b2ShapeType.e_polygonShape);
+      static Destroy(contact) {
       }
       Evaluate(manifold, xfA, xfB) {
-          const shapeA = this.m_fixtureA.GetShape();
-          const shapeB = this.m_fixtureB.GetShape();
-          // DEBUG: b2Assert(shapeA instanceof b2ChainShape);
-          // DEBUG: b2Assert(shapeB instanceof b2PolygonShape);
-          const chain = shapeA;
           const edge = b2ChainAndPolygonContact.Evaluate_s_edge;
-          chain.GetChildEdge(edge, this.m_indexA);
-          b2CollideEdgeAndPolygon(manifold, edge, xfA, shapeB, xfB);
+          this.GetShapeA().GetChildEdge(edge, this.m_indexA);
+          b2CollideEdgeAndPolygon(manifold, edge, xfA, this.GetShapeB(), xfB);
       }
   }
   b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape();
@@ -11952,56 +11884,39 @@
   // DEBUG: import { b2Assert } from "../../Common/b2Settings";
   class b2ContactRegister {
       constructor() {
-          // public pool: b2Contact[];
+          this.pool = [];
           this.createFcn = null;
           this.destroyFcn = null;
           this.primary = false;
       }
   }
   class b2ContactFactory {
-      constructor(allocator) {
-          this.m_allocator = null;
-          this.m_allocator = allocator;
+      constructor() {
+          this.m_registers = [];
           this.InitializeRegisters();
       }
-      AddType(createFcn, destroyFcn, type1, type2) {
-          const pool = b2MakeArray(256, (i) => createFcn(this.m_allocator)); // TODO: b2Settings
-          function poolCreateFcn(allocator) {
-              // if (pool.length > 0) {
-              //   return pool.pop();
-              // }
-              // return createFcn(allocator);
-              return pool.pop() || createFcn(allocator);
+      AddType(createFcn, destroyFcn, typeA, typeB) {
+          const pool = [];
+          function poolCreateFcn() {
+              return pool.pop() || createFcn();
           }
-          function poolDestroyFcn(contact, allocator) {
+          function poolDestroyFcn(contact) {
               pool.push(contact);
           }
-          // this.m_registers[type1][type2].pool = pool;
-          this.m_registers[type1][type2].createFcn = poolCreateFcn;
-          this.m_registers[type1][type2].destroyFcn = poolDestroyFcn;
-          this.m_registers[type1][type2].primary = true;
-          if (type1 !== type2) {
-              // this.m_registers[type2][type1].pool = pool;
-              this.m_registers[type2][type1].createFcn = poolCreateFcn;
-              this.m_registers[type2][type1].destroyFcn = poolDestroyFcn;
-              this.m_registers[type2][type1].primary = false;
+          this.m_registers[typeA][typeB].pool = pool;
+          this.m_registers[typeA][typeB].createFcn = poolCreateFcn; // createFcn;
+          this.m_registers[typeA][typeB].destroyFcn = poolDestroyFcn; // destroyFcn;
+          this.m_registers[typeA][typeB].primary = true;
+          if (typeA !== typeB) {
+              this.m_registers[typeB][typeA].pool = pool;
+              this.m_registers[typeB][typeA].createFcn = poolCreateFcn; // createFcn;
+              this.m_registers[typeB][typeA].destroyFcn = poolDestroyFcn; // destroyFcn;
+              this.m_registers[typeB][typeA].primary = false;
           }
-          /*
-          this.m_registers[type1][type2].createFcn = createFcn;
-          this.m_registers[type1][type2].destroyFcn = destroyFcn;
-          this.m_registers[type1][type2].primary = true;
-      
-          if (type1 !== type2) {
-            this.m_registers[type2][type1].createFcn = createFcn;
-            this.m_registers[type2][type1].destroyFcn = destroyFcn;
-            this.m_registers[type2][type1].primary = false;
-          }
-          */
       }
       InitializeRegisters() {
-          this.m_registers = [ /*b2ShapeType.e_shapeTypeCount*/];
           for (let i = 0; i < b2ShapeType.e_shapeTypeCount; i++) {
-              this.m_registers[i] = [ /*b2ShapeType.e_shapeTypeCount*/];
+              this.m_registers[i] = [];
               for (let j = 0; j < b2ShapeType.e_shapeTypeCount; j++) {
                   this.m_registers[i][j] = new b2ContactRegister();
               }
@@ -12015,13 +11930,13 @@
           this.AddType(b2ChainAndPolygonContact.Create, b2ChainAndPolygonContact.Destroy, b2ShapeType.e_chainShape, b2ShapeType.e_polygonShape);
       }
       Create(fixtureA, indexA, fixtureB, indexB) {
-          const type1 = fixtureA.GetType();
-          const type2 = fixtureB.GetType();
-          // DEBUG: b2Assert(0 <= type1 && type1 < b2ShapeType.e_shapeTypeCount);
-          // DEBUG: b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount);
-          const reg = this.m_registers[type1][type2];
+          const typeA = fixtureA.GetType();
+          const typeB = fixtureB.GetType();
+          // DEBUG: b2Assert(0 <= typeA && typeA < b2ShapeType.e_shapeTypeCount);
+          // DEBUG: b2Assert(0 <= typeB && typeB < b2ShapeType.e_shapeTypeCount);
+          const reg = this.m_registers[typeA][typeB];
           if (reg.createFcn) {
-              const c = reg.createFcn(this.m_allocator);
+              const c = reg.createFcn();
               if (reg.primary) {
                   c.Reset(fixtureA, indexA, fixtureB, indexB);
               }
@@ -12035,21 +11950,13 @@
           }
       }
       Destroy(contact) {
-          const fixtureA = contact.m_fixtureA;
-          const fixtureB = contact.m_fixtureB;
-          if (contact.m_manifold.pointCount > 0 &&
-              !fixtureA.IsSensor() &&
-              !fixtureB.IsSensor()) {
-              fixtureA.GetBody().SetAwake(true);
-              fixtureB.GetBody().SetAwake(true);
-          }
-          const typeA = fixtureA.GetType();
-          const typeB = fixtureB.GetType();
+          const typeA = contact.m_fixtureA.GetType();
+          const typeB = contact.m_fixtureB.GetType();
           // DEBUG: b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
           // DEBUG: b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
           const reg = this.m_registers[typeA][typeB];
           if (reg.destroyFcn) {
-              reg.destroyFcn(contact, this.m_allocator);
+              reg.destroyFcn(contact);
           }
       }
   }
@@ -12243,8 +12150,7 @@
           this.m_contactCount = 0;
           this.m_contactFilter = b2ContactFilter.b2_defaultFilter;
           this.m_contactListener = b2ContactListener.b2_defaultListener;
-          this.m_allocator = null;
-          this.m_contactFactory = new b2ContactFactory(this.m_allocator);
+          this.m_contactFactory = new b2ContactFactory();
       }
       // Broad-phase callback.
       AddPair(proxyA, proxyB) {
@@ -12371,6 +12277,13 @@
           if (c.m_nodeB === bodyB.m_contactList) {
               bodyB.m_contactList = c.m_nodeB.next;
           }
+          // moved this from b2ContactFactory:Destroy
+          if (c.m_manifold.pointCount > 0 &&
+              !fixtureA.IsSensor() &&
+              !fixtureB.IsSensor()) {
+              fixtureA.GetBody().SetAwake(true);
+              fixtureB.GetBody().SetAwake(true);
+          }
           // Call the factory.
           this.m_contactFactory.Destroy(c);
           --this.m_contactCount;
@@ -12407,9 +12320,9 @@
                   c = c.m_next;
                   continue;
               }
-              const proxyA = fixtureA.m_proxies[indexA].treeNode;
-              const proxyB = fixtureB.m_proxies[indexB].treeNode;
-              const overlap = b2TestOverlapAABB(proxyA.aabb, proxyB.aabb);
+              const treeNodeA = fixtureA.m_proxies[indexA].treeNode;
+              const treeNodeB = fixtureB.m_proxies[indexB].treeNode;
+              const overlap = b2TestOverlapAABB(treeNodeA.aabb, treeNodeB.aabb);
               // Here we destroy contacts that cease to overlap in the broad-phase.
               if (!overlap) {
                   const cNuke = c;
@@ -12598,7 +12511,6 @@
       constructor() {
           this.step = new b2TimeStep();
           this.count = 0;
-          this.allocator = null;
       }
   }
   class b2PositionSolverManifold {
@@ -12667,14 +12579,12 @@
   class b2ContactSolver {
       constructor() {
           this.m_step = new b2TimeStep();
-          this.m_allocator = null;
           this.m_positionConstraints = b2ContactPositionConstraint.MakeArray(1024); // TODO: b2Settings
           this.m_velocityConstraints = b2ContactVelocityConstraint.MakeArray(1024); // TODO: b2Settings
           this.m_count = 0;
       }
       Initialize(def) {
           this.m_step.Copy(def.step);
-          this.m_allocator = def.allocator;
           this.m_count = def.count;
           // TODO:
           if (this.m_positionConstraints.length < this.m_count) {
@@ -13529,7 +13439,6 @@
   */
   class b2Island {
       constructor() {
-          this.m_allocator = null;
           this.m_bodies = [ /*1024*/]; // TODO: b2Settings
           this.m_contacts = [ /*1024*/]; // TODO: b2Settings
           this.m_joints = [ /*1024*/]; // TODO: b2Settings
@@ -13542,14 +13451,13 @@
           this.m_contactCapacity = 0;
           this.m_jointCapacity = 0;
       }
-      Initialize(bodyCapacity, contactCapacity, jointCapacity, allocator, listener) {
+      Initialize(bodyCapacity, contactCapacity, jointCapacity, listener) {
           this.m_bodyCapacity = bodyCapacity;
           this.m_contactCapacity = contactCapacity;
           this.m_jointCapacity = jointCapacity;
           this.m_bodyCount = 0;
           this.m_contactCount = 0;
           this.m_jointCount = 0;
-          this.m_allocator = allocator;
           this.m_listener = listener;
           // TODO:
           // while (this.m_bodies.length < bodyCapacity) {
@@ -13643,7 +13551,6 @@
           contactSolverDef.count = this.m_contactCount;
           contactSolverDef.positions = this.m_positions;
           contactSolverDef.velocities = this.m_velocities;
-          contactSolverDef.allocator = this.m_allocator;
           const contactSolver = b2Island.s_contactSolver.Initialize(contactSolverDef);
           contactSolver.InitializeVelocityConstraints();
           if (step.warmStarting) {
@@ -13759,7 +13666,6 @@
           const contactSolverDef = b2Island.s_contactSolverDef;
           contactSolverDef.contacts = this.m_contacts;
           contactSolverDef.count = this.m_contactCount;
-          contactSolverDef.allocator = this.m_allocator;
           contactSolverDef.step.Copy(subStep);
           contactSolverDef.positions = this.m_positions;
           contactSolverDef.velocities = this.m_velocities;
@@ -14221,7 +14127,6 @@
                       this.m_buffer.concat(b2MakeArray(1, (index) => null));
                       this.m_capacity = 1;
                   }
-                  ///m_buffer = (T*) m_allocator->Reallocate(m_buffer, sizeof(T) * m_capacity);
               }
           }
           this.m_buffer[this.m_back] = item;
@@ -14322,11 +14227,6 @@
           upper.y += margin;
           this.m_countX = 1 + Math.floor(inverseRadius * (upper.x - lower.x));
           this.m_countY = 1 + Math.floor(inverseRadius * (upper.y - lower.y));
-          ///  m_diagram = (Generator**) m_allocator->Allocate(sizeof(Generator*) * m_countX * m_countY);
-          ///  for (int32 i = 0; i < m_countX * m_countY; i++)
-          ///  {
-          ///    m_diagram[i] = NULL;
-          ///  }
           this.m_diagram = []; // b2MakeArray(this.m_countX * this.m_countY, (index) => null);
           // (4 * m_countX * m_countY) is the queue capacity that is experimentally
           // known to be necessary and sufficient for general particle distributions.
@@ -15371,7 +15271,6 @@
           this.UpdateContacts(true);
           const particleCount = group.GetParticleCount();
           // We create several linked lists. Each list represents a set of connected particles.
-          ///ParticleListNode* nodeBuffer = (ParticleListNode*) m_world.m_stackAllocator.Allocate(sizeof(ParticleListNode) * particleCount);
           const nodeBuffer = b2MakeArray(particleCount, (index) => new b2ParticleSystem_ParticleListNode());
           b2ParticleSystem.InitializeParticleLists(group, nodeBuffer);
           this.MergeParticleListsInContact(group, nodeBuffer);
@@ -15379,7 +15278,6 @@
           this.MergeZombieParticleListNodes(group, nodeBuffer, survivingList);
           this.CreateParticleGroupsFromParticleList(group, nodeBuffer, survivingList);
           this.UpdatePairsAndTriadsWithParticleList(group, nodeBuffer);
-          ///this.m_world.m_stackAllocator.Free(nodeBuffer);
       }
       /**
        * Get the world particle group list. With the returned group,
@@ -16819,7 +16717,6 @@
           }
       }
       ComputeDepth() {
-          ///b2ParticleContact* contactGroups = (b2ParticleContact*) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleContact) * this.m_contactBuffer.GetCount());
           const contactGroups = []; // TODO: static
           let contactGroupsCount = 0;
           for (let k = 0; k < this.m_contactBuffer.count; k++) {
@@ -16833,7 +16730,6 @@
                   contactGroups[contactGroupsCount++] = contact;
               }
           }
-          ///b2ParticleGroup** groupsToUpdate = (b2ParticleGroup**) this.m_world.m_stackAllocator.Allocate(sizeof(b2ParticleGroup*) * this.m_groupCount);
           const groupsToUpdate = []; // TODO: static
           let groupsToUpdateCount = 0;
           for (let group = this.m_groupList; group; group = group.GetNext()) {
@@ -16907,8 +16803,6 @@
                   }
               }
           }
-          ///this.m_world.m_stackAllocator.Free(groupsToUpdate);
-          ///this.m_world.m_stackAllocator.Free(contactGroups);
       }
       GetInsideBoundsEnumerator(aabb) {
           const lowerTag = b2ParticleSystem.computeTag(this.m_inverseDiameter * aabb.lowerBound.x - 1, this.m_inverseDiameter * aabb.lowerBound.y - 1);
@@ -17092,7 +16986,6 @@
       UpdateContacts(exceptZombie) {
           this.UpdateProxies(this.m_proxyBuffer);
           this.SortProxies(this.m_proxyBuffer);
-          ///b2ParticlePairSet particlePairs(&this.m_world.m_stackAllocator);
           const particlePairs = new b2ParticlePairSet(); // TODO: static
           this.NotifyContactListenerPreContact(particlePairs);
           this.FindContacts(this.m_contactBuffer);
@@ -17145,7 +17038,6 @@
           const s_aabb = b2ParticleSystem.UpdateBodyContacts_s_aabb;
           // If the particle contact listener is enabled, generate a set of
           // fixture / particle contacts.
-          ///FixtureParticleSet fixtureSet(&m_world.m_stackAllocator);
           const fixtureSet = new b2ParticleSystem_FixtureParticleSet(); // TODO: static
           this.NotifyBodyContactListenerPreContact(fixtureSet);
           if (this.m_stuckThreshold > 0) {
@@ -18259,7 +18151,6 @@
           }
           // removes particles with zombie flag
           let newCount = 0;
-          ///int32* newIndices = (int32*) this.m_world.m_stackAllocator.Allocate(sizeof(int32) * this.m_count);
           const newIndices = []; // TODO: static
           for (let i = 0; i < this.m_count; i++) {
               newIndices[i] = b2_invalidParticleIndex;
@@ -18432,7 +18323,6 @@
           }
           // update particle count
           this.m_count = newCount;
-          ///m_world.m_stackAllocator.Free(newIndices);
           this.m_allParticleFlags = allParticleFlags;
           this.m_needsUpdateAllParticleFlags = false;
           // destroy bodies with no particles
@@ -19491,8 +19381,6 @@
       /// Construct a world object.
       /// @param gravity the world gravity vector.
       constructor(gravity) {
-          // b2BlockAllocator m_blockAllocator;
-          // b2StackAllocator m_stackAllocator;
           this.m_newFixture = false;
           this.m_locked = false;
           this.m_clearForces = true;
@@ -19611,7 +19499,7 @@
                   this.m_destructionListener.SayGoodbyeFixture(f0);
               }
               f0.DestroyProxies();
-              f0.Destroy();
+              f0.Reset();
               b.m_fixtureList = f;
               b.m_fixtureCount -= 1;
           }
@@ -19629,7 +19517,7 @@
           }
           --this.m_bodyCount;
       }
-      static _Joint_Create(def, allocator) {
+      static _Joint_Create(def) {
           switch (def.type) {
               case b2JointType.e_distanceJoint: return new b2DistanceJoint(def);
               case b2JointType.e_mouseJoint: return new b2MouseJoint(def);
@@ -19646,13 +19534,13 @@
           }
           throw new Error();
       }
-      static _Joint_Destroy(joint, allocator) {
+      static _Joint_Destroy(joint) {
       }
       CreateJoint(def) {
           if (this.IsLocked()) {
               throw new Error();
           }
-          const j = b2World._Joint_Create(def, null);
+          const j = b2World._Joint_Create(def);
           // Connect to the world list.
           j.m_prev = null;
           j.m_next = this.m_jointList;
@@ -19662,26 +19550,25 @@
           this.m_jointList = j;
           ++this.m_jointCount;
           // Connect to the bodies' doubly linked lists.
-          // j.m_edgeA.joint = j;
-          // j.m_edgeA.other = j.m_bodyB;
+          // j.m_edgeA.other = j.m_bodyB; // done in b2Joint constructor
           j.m_edgeA.prev = null;
           j.m_edgeA.next = j.m_bodyA.m_jointList;
           if (j.m_bodyA.m_jointList) {
               j.m_bodyA.m_jointList.prev = j.m_edgeA;
           }
           j.m_bodyA.m_jointList = j.m_edgeA;
-          // j.m_edgeB.joint = j;
-          // j.m_edgeB.other = j.m_bodyA;
+          // j.m_edgeB.other = j.m_bodyA; // done in b2Joint constructor
           j.m_edgeB.prev = null;
           j.m_edgeB.next = j.m_bodyB.m_jointList;
           if (j.m_bodyB.m_jointList) {
               j.m_bodyB.m_jointList.prev = j.m_edgeB;
           }
           j.m_bodyB.m_jointList = j.m_edgeB;
-          const bodyA = def.bodyA;
-          const bodyB = def.bodyB;
+          const bodyA = j.m_bodyA;
+          const bodyB = j.m_bodyB;
+          const collideConnected = j.m_collideConnected;
           // If the joint prevents collisions, then flag any contacts for filtering.
-          if (!def.collideConnected) {
+          if (!collideConnected) {
               let edge = bodyB.GetContactList();
               while (edge) {
                   if (edge.other === bodyA) {
@@ -19701,7 +19588,6 @@
           if (this.IsLocked()) {
               throw new Error();
           }
-          const collideConnected = j.m_collideConnected;
           // Remove from the doubly linked list.
           if (j.m_prev) {
               j.m_prev.m_next = j.m_next;
@@ -19715,6 +19601,7 @@
           // Disconnect from island graph.
           const bodyA = j.m_bodyA;
           const bodyB = j.m_bodyB;
+          const collideConnected = j.m_collideConnected;
           // Wake up connected bodies.
           bodyA.SetAwake(true);
           bodyB.SetAwake(true);
@@ -19740,7 +19627,7 @@
               bodyB.m_jointList = j.m_edgeB.next;
           }
           j.m_edgeB.Reset();
-          b2World._Joint_Destroy(j, null);
+          b2World._Joint_Destroy(j);
           // DEBUG: b2Assert(this.m_jointCount > 0);
           --this.m_jointCount;
           // If the joint prevents collisions, then flag any contacts for filtering.
@@ -20458,8 +20345,7 @@
           this.m_profile.solvePosition = 0;
           // Size the island for the worst case.
           const island = this.m_island;
-          island.Initialize(this.m_bodyCount, this.m_contactManager.m_contactCount, this.m_jointCount, null, // this.m_stackAllocator,
-          this.m_contactManager.m_contactListener);
+          island.Initialize(this.m_bodyCount, this.m_contactManager.m_contactCount, this.m_jointCount, this.m_contactManager.m_contactListener);
           // Clear all the island flags.
           for (let b = this.m_bodyList; b; b = b.m_next) {
               b.m_islandFlag = false;
@@ -20591,9 +20477,8 @@
           this.m_profile.broadphase = timer.GetMilliseconds();
       }
       SolveTOI(step) {
-          // b2Island island(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, &m_stackAllocator, m_contactManager.m_contactListener);
           const island = this.m_island;
-          island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
+          island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, this.m_contactManager.m_contactListener);
           if (this.m_stepComplete) {
               for (let b = this.m_bodyList; b; b = b.m_next) {
                   b.m_islandFlag = false;
@@ -34052,7 +33937,8 @@
        */
       SetPlayerPosition(playerX, playerY) {
           const playerPosition = this.m_player.GetTransform().p;
-          const currentPlayerX = [0], currentPlayerY = [0];
+          const currentPlayerX = [0];
+          const currentPlayerY = [0];
           Fracker.WorldToTile(playerPosition, currentPlayerX, currentPlayerY);
           playerX = b2Clamp(playerX, 0, FrackerSettings.k_worldWidthTiles - 1);
           playerY = b2Clamp(playerY, 0, FrackerSettings.k_worldHeightTiles - 1);
@@ -34124,7 +34010,8 @@
               return;
           }
           const playerPosition = this.m_player.GetTransform().p;
-          const playerX = [0], playerY = [0];
+          const playerX = [0];
+          const playerY = [0];
           Fracker.WorldToTile(playerPosition, playerX, playerY);
           switch (key) {
               case "a":
@@ -34178,7 +34065,8 @@
           // If fracking fluid isn't being released, move the player.
           if (!this.DeployFrackingFluid()) {
               const playerPosition = this.m_player.GetTransform().p;
-              const playerX = [0], playerY = [0];
+              const playerX = [0];
+              const playerY = [0];
               Fracker.WorldToTile(playerPosition, playerX, playerY);
               // Move the player towards the mouse position, preferring to move
               // along the axis with the maximal distance from the cursor.
@@ -34213,7 +34101,8 @@
               this.m_frackingFluidChargeTime += dt;
           }
           const playerPosition = this.m_player.GetTransform().p;
-          const playerX = [0], playerY = [0];
+          const playerX = [0];
+          const playerY = [0];
           Fracker.WorldToTile(playerPosition, playerX, playerY);
           // If the player is moved to a square with dirt, remove it.
           if (this.GetMaterial(playerX[0], playerY[0]) === Fracker_Material.DIRT) {

@@ -150,15 +150,14 @@ However, we can compute sin+cos of the same angle fast.
 */
 
 export class b2Island {
-  public m_allocator: any = null;
   public m_listener!: b2ContactListener;
 
-  public m_bodies: b2Body[] = [/*1024*/]; // TODO: b2Settings
-  public m_contacts: b2Contact[] = [/*1024*/]; // TODO: b2Settings
-  public m_joints: b2Joint[] = [/*1024*/]; // TODO: b2Settings
+  public readonly m_bodies: b2Body[] = [/*1024*/]; // TODO: b2Settings
+  public readonly m_contacts: b2Contact[] = [/*1024*/]; // TODO: b2Settings
+  public readonly m_joints: b2Joint[] = [/*1024*/]; // TODO: b2Settings
 
-  public m_positions: b2Position[] = b2Position.MakeArray(1024); // TODO: b2Settings
-  public m_velocities: b2Velocity[] = b2Velocity.MakeArray(1024); // TODO: b2Settings
+  public readonly m_positions: b2Position[] = b2Position.MakeArray(1024); // TODO: b2Settings
+  public readonly m_velocities: b2Velocity[] = b2Velocity.MakeArray(1024); // TODO: b2Settings
 
   public m_bodyCount: number = 0;
   public m_jointCount: number = 0;
@@ -168,7 +167,7 @@ export class b2Island {
   public m_contactCapacity: number = 0;
   public m_jointCapacity: number = 0;
 
-  public Initialize(bodyCapacity: number, contactCapacity: number, jointCapacity: number, allocator: any, listener: b2ContactListener): void {
+  public Initialize(bodyCapacity: number, contactCapacity: number, jointCapacity: number, listener: b2ContactListener): void {
     this.m_bodyCapacity = bodyCapacity;
     this.m_contactCapacity = contactCapacity;
     this.m_jointCapacity = jointCapacity;
@@ -176,7 +175,6 @@ export class b2Island {
     this.m_contactCount = 0;
     this.m_jointCount = 0;
 
-    this.m_allocator = allocator;
     this.m_listener = listener;
 
     // TODO:
@@ -292,7 +290,6 @@ export class b2Island {
     contactSolverDef.count = this.m_contactCount;
     contactSolverDef.positions = this.m_positions;
     contactSolverDef.velocities = this.m_velocities;
-    contactSolverDef.allocator = this.m_allocator;
 
     const contactSolver: b2ContactSolver = b2Island.s_contactSolver.Initialize(contactSolverDef);
     contactSolver.InitializeVelocityConstraints();
@@ -433,7 +430,6 @@ export class b2Island {
     const contactSolverDef: b2ContactSolverDef = b2Island.s_contactSolverDef;
     contactSolverDef.contacts = this.m_contacts;
     contactSolverDef.count = this.m_contactCount;
-    contactSolverDef.allocator = this.m_allocator;
     contactSolverDef.step.Copy(subStep);
     contactSolverDef.positions = this.m_positions;
     contactSolverDef.velocities = this.m_velocities;

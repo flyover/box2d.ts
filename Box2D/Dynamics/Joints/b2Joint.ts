@@ -162,7 +162,7 @@ export abstract class b2Joint {
 
     this.m_collideConnected = b2Maybe(def.collideConnected, false);
 
-    this.m_userData = def.userData;
+    this.m_userData = b2Maybe(def.userData, null);
   }
 
   /// Get the type of the concrete joint.

@@ -33,13 +33,8 @@ export class b2ContactManager {
   public m_contactCount: number = 0;
   public m_contactFilter: b2ContactFilter = b2ContactFilter.b2_defaultFilter;
   public m_contactListener: b2ContactListener = b2ContactListener.b2_defaultListener;
-  public m_allocator: any = null;
 
-  public m_contactFactory: b2ContactFactory;
-
-  constructor() {
-    this.m_contactFactory = new b2ContactFactory(this.m_allocator);
-  }
+  public readonly m_contactFactory: b2ContactFactory = new b2ContactFactory();
 
   // Broad-phase callback.
   public AddPair(proxyA: b2FixtureProxy, proxyB: b2FixtureProxy): void {
@@ -198,6 +193,14 @@ export class b2ContactManager {
       bodyB.m_contactList = c.m_nodeB.next;
     }
 
+    // moved this from b2ContactFactory:Destroy
+    if (c.m_manifold.pointCount > 0 &&
+      !fixtureA.IsSensor() &&
+      !fixtureB.IsSensor()) {
+      fixtureA.GetBody().SetAwake(true);
+      fixtureB.GetBody().SetAwake(true);
+    }
+
     // Call the factory.
     this.m_contactFactory.Destroy(c);
     --this.m_contactCount;
@@ -240,9 +243,9 @@ export class b2ContactManager {
         continue;
       }
 
-      const proxyA: b2TreeNode<b2FixtureProxy> = fixtureA.m_proxies[indexA].treeNode;
-      const proxyB: b2TreeNode<b2FixtureProxy> = fixtureB.m_proxies[indexB].treeNode;
-      const overlap: boolean = b2TestOverlapAABB(proxyA.aabb, proxyB.aabb);
+      const treeNodeA: b2TreeNode<b2FixtureProxy> = fixtureA.m_proxies[indexA].treeNode;
+      const treeNodeB: b2TreeNode<b2FixtureProxy> = fixtureB.m_proxies[indexB].treeNode;
+      const overlap: boolean = b2TestOverlapAABB(treeNodeA.aabb, treeNodeB.aabb);
 
       // Here we destroy contacts that cease to overlap in the broad-phase.
       if (!overlap) {

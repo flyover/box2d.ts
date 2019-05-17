@@ -66,9 +66,6 @@ import { b2Controller, b2ControllerEdge } from "../Controllers/b2Controller";
 /// and asynchronous queries. The world also contains efficient memory
 /// management facilities.
 export class b2World {
-  // b2BlockAllocator m_blockAllocator;
-  // b2StackAllocator m_stackAllocator;
-
   public m_newFixture: boolean = false;
   public m_locked: boolean = false;
   public m_clearForces: boolean = true;
@@ -219,7 +216,7 @@ export class b2World {
       }
 
       f0.DestroyProxies();
-      f0.Destroy();
+      f0.Reset();
 
       b.m_fixtureList = f;
       b.m_fixtureCount -= 1;
@@ -243,7 +240,7 @@ export class b2World {
     --this.m_bodyCount;
   }
 
-  private static _Joint_Create(def: b2IJointDef, allocator: any): b2Joint {
+  private static _Joint_Create(def: b2IJointDef): b2Joint {
     switch (def.type) {
       case b2JointType.e_distanceJoint: return new b2DistanceJoint(def as b2IDistanceJointDef);
       case b2JointType.e_mouseJoint: return new b2MouseJoint(def as b2IMouseJointDef);
@@ -261,7 +258,7 @@ export class b2World {
     throw new Error();
   }
 
-  private static _Joint_Destroy(joint: b2Joint, allocator: any): void {
+  private static _Joint_Destroy(joint: b2Joint): void {
   }
 
   /// Create a joint to constrain bodies together. No reference to the definition
@@ -282,7 +279,7 @@ export class b2World {
   public CreateJoint(def: b2IJointDef): b2Joint {
     if (this.IsLocked()) { throw new Error(); }
 
-    const j: b2Joint = b2World._Joint_Create(def, null);
+    const j: b2Joint = b2World._Joint_Create(def);
 
     // Connect to the world list.
     j.m_prev = null;
@@ -294,25 +291,24 @@ export class b2World {
     ++this.m_jointCount;
 
     // Connect to the bodies' doubly linked lists.
-    // j.m_edgeA.joint = j;
-    // j.m_edgeA.other = j.m_bodyB;
+    // j.m_edgeA.other = j.m_bodyB; // done in b2Joint constructor
     j.m_edgeA.prev = null;
     j.m_edgeA.next = j.m_bodyA.m_jointList;
     if (j.m_bodyA.m_jointList) { j.m_bodyA.m_jointList.prev = j.m_edgeA; }
     j.m_bodyA.m_jointList = j.m_edgeA;
 
-    // j.m_edgeB.joint = j;
-    // j.m_edgeB.other = j.m_bodyA;
+    // j.m_edgeB.other = j.m_bodyA; // done in b2Joint constructor
     j.m_edgeB.prev = null;
     j.m_edgeB.next = j.m_bodyB.m_jointList;
     if (j.m_bodyB.m_jointList) { j.m_bodyB.m_jointList.prev = j.m_edgeB; }
     j.m_bodyB.m_jointList = j.m_edgeB;
 
-    const bodyA: b2Body = def.bodyA;
-    const bodyB: b2Body = def.bodyB;
+    const bodyA: b2Body = j.m_bodyA;
+    const bodyB: b2Body = j.m_bodyB;
+    const collideConnected: boolean = j.m_collideConnected;
 
     // If the joint prevents collisions, then flag any contacts for filtering.
-    if (!def.collideConnected) {
+    if (!collideConnected) {
       let edge: b2ContactEdge | null = bodyB.GetContactList();
       while (edge) {
         if (edge.other === bodyA) {
@@ -335,8 +331,6 @@ export class b2World {
   public DestroyJoint(j: b2Joint): void {
     if (this.IsLocked()) { throw new Error(); }
 
-    const collideConnected: boolean = j.m_collideConnected;
-
     // Remove from the doubly linked list.
     if (j.m_prev) {
       j.m_prev.m_next = j.m_next;
@@ -353,6 +347,7 @@ export class b2World {
     // Disconnect from island graph.
     const bodyA: b2Body = j.m_bodyA;
     const bodyB: b2Body = j.m_bodyB;
+    const collideConnected: boolean = j.m_collideConnected;
 
     // Wake up connected bodies.
     bodyA.SetAwake(true);
@@ -388,7 +383,7 @@ export class b2World {
 
     j.m_edgeB.Reset();
 
-    b2World._Joint_Destroy(j, null);
+    b2World._Joint_Destroy(j);
 
     // DEBUG: b2Assert(this.m_jointCount > 0);
     --this.m_jointCount;
@@ -1240,7 +1235,6 @@ export class b2World {
     island.Initialize(this.m_bodyCount,
       this.m_contactManager.m_contactCount,
       this.m_jointCount,
-      null, // this.m_stackAllocator,
       this.m_contactManager.m_contactListener);
 
     // Clear all the island flags.
@@ -1406,9 +1400,8 @@ export class b2World {
   private static SolveTOI_s_toi_input = new b2TOIInput();
   private static SolveTOI_s_toi_output = new b2TOIOutput();
   public SolveTOI(step: b2TimeStep): void {
-    // b2Island island(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, &m_stackAllocator, m_contactManager.m_contactListener);
     const island: b2Island = this.m_island;
-    island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, null, this.m_contactManager.m_contactListener);
+    island.Initialize(2 * b2_maxTOIContacts, b2_maxTOIContacts, 0, this.m_contactManager.m_contactListener);
 
     if (this.m_stepComplete) {
       for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {

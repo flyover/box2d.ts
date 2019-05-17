@@ -275,6 +275,9 @@ export class b2Body {
     // #endif
   }
 
+  public CreateFixture(def: b2IFixtureDef): b2Fixture;
+  public CreateFixture(shape: b2Shape): b2Fixture;
+  public CreateFixture(shape: b2Shape, density: number): b2Fixture;
   public CreateFixture(a: b2IFixtureDef | b2Shape, b: number = 0): b2Fixture {
     if (a instanceof b2Shape) {
       return this.CreateFixtureShapeDensity(a, b);
@@ -293,8 +296,7 @@ export class b2Body {
   public CreateFixtureDef(def: b2IFixtureDef): b2Fixture {
     if (this.m_world.IsLocked()) { throw new Error(); }
 
-    const fixture: b2Fixture = new b2Fixture(def, this);
-    fixture.Create(def);
+    const fixture: b2Fixture = new b2Fixture(this, def);
 
     if (this.m_activeFlag) {
       fixture.CreateProxies(this.m_xf);
@@ -390,7 +392,7 @@ export class b2Body {
 
     // fixture.m_body = null;
     fixture.m_next = null;
-    fixture.Destroy();
+    fixture.Reset();
 
     --this.m_fixtureCount;
 

@@ -504,7 +504,7 @@ class b2EPCollider {
 
         if (primaryAxis.type === b2EPAxisType.e_edgeA) {
           b2Transform.MulTXV(this.m_xf, clipPoints2[i].v, cp.localPoint);
-          cp.id = clipPoints2[i].id;
+          cp.id.Copy(clipPoints2[i].id);
         } else {
           cp.localPoint.Copy(clipPoints2[i].v);
           cp.id.cf.typeA = clipPoints2[i].id.cf.typeB;

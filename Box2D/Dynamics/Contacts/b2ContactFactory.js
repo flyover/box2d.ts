@@ -1,12 +1,9 @@
-System.register(["../../Common/b2Settings", "../../Collision/Shapes/b2Shape", "./b2CircleContact", "./b2PolygonContact", "./b2PolygonAndCircleContact", "./b2EdgeAndCircleContact", "./b2EdgeAndPolygonContact", "./b2ChainAndCircleContact", "./b2ChainAndPolygonContact"], function (exports_1, context_1) {
+System.register(["../../Collision/Shapes/b2Shape", "./b2CircleContact", "./b2PolygonContact", "./b2PolygonAndCircleContact", "./b2EdgeAndCircleContact", "./b2EdgeAndPolygonContact", "./b2ChainAndCircleContact", "./b2ChainAndPolygonContact"], function (exports_1, context_1) {
     "use strict";
-    var b2Settings_1, b2Shape_1, b2CircleContact_1, b2PolygonContact_1, b2PolygonAndCircleContact_1, b2EdgeAndCircleContact_1, b2EdgeAndPolygonContact_1, b2ChainAndCircleContact_1, b2ChainAndPolygonContact_1, b2ContactRegister, b2ContactFactory;
+    var b2Shape_1, b2CircleContact_1, b2PolygonContact_1, b2PolygonAndCircleContact_1, b2EdgeAndCircleContact_1, b2EdgeAndPolygonContact_1, b2ChainAndCircleContact_1, b2ChainAndPolygonContact_1, b2ContactRegister, b2ContactFactory;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
-            function (b2Settings_1_1) {
-                b2Settings_1 = b2Settings_1_1;
-            },
             function (b2Shape_1_1) {
                 b2Shape_1 = b2Shape_1_1;
             },
@@ -35,7 +32,7 @@ System.register(["../../Common/b2Settings", "../../Collision/Shapes/b2Shape", ".
         execute: function () {
             b2ContactRegister = class b2ContactRegister {
                 constructor() {
-                    // public pool: b2Contact[];
+                    this.pool = [];
                     this.createFcn = null;
                     this.destroyFcn = null;
                     this.primary = false;
@@ -43,49 +40,32 @@ System.register(["../../Common/b2Settings", "../../Collision/Shapes/b2Shape", ".
             };
             exports_1("b2ContactRegister", b2ContactRegister);
             b2ContactFactory = class b2ContactFactory {
-                constructor(allocator) {
-                    this.m_allocator = null;
-                    this.m_allocator = allocator;
+                constructor() {
+                    this.m_registers = [];
                     this.InitializeRegisters();
                 }
-                AddType(createFcn, destroyFcn, type1, type2) {
-                    const pool = b2Settings_1.b2MakeArray(256, (i) => createFcn(this.m_allocator)); // TODO: b2Settings
-                    function poolCreateFcn(allocator) {
-                        // if (pool.length > 0) {
-                        //   return pool.pop();
-                        // }
-                        // return createFcn(allocator);
-                        return pool.pop() || createFcn(allocator);
+                AddType(createFcn, destroyFcn, typeA, typeB) {
+                    const pool = [];
+                    function poolCreateFcn() {
+                        return pool.pop() || createFcn();
                     }
-                    function poolDestroyFcn(contact, allocator) {
+                    function poolDestroyFcn(contact) {
                         pool.push(contact);
                     }
-                    // this.m_registers[type1][type2].pool = pool;
-                    this.m_registers[type1][type2].createFcn = poolCreateFcn;
-                    this.m_registers[type1][type2].destroyFcn = poolDestroyFcn;
-                    this.m_registers[type1][type2].primary = true;
-                    if (type1 !== type2) {
-                        // this.m_registers[type2][type1].pool = pool;
-                        this.m_registers[type2][type1].createFcn = poolCreateFcn;
-                        this.m_registers[type2][type1].destroyFcn = poolDestroyFcn;
-                        this.m_registers[type2][type1].primary = false;
+                    this.m_registers[typeA][typeB].pool = pool;
+                    this.m_registers[typeA][typeB].createFcn = poolCreateFcn; // createFcn;
+                    this.m_registers[typeA][typeB].destroyFcn = poolDestroyFcn; // destroyFcn;
+                    this.m_registers[typeA][typeB].primary = true;
+                    if (typeA !== typeB) {
+                        this.m_registers[typeB][typeA].pool = pool;
+                        this.m_registers[typeB][typeA].createFcn = poolCreateFcn; // createFcn;
+                        this.m_registers[typeB][typeA].destroyFcn = poolDestroyFcn; // destroyFcn;
+                        this.m_registers[typeB][typeA].primary = false;
                     }
-                    /*
-                    this.m_registers[type1][type2].createFcn = createFcn;
-                    this.m_registers[type1][type2].destroyFcn = destroyFcn;
-                    this.m_registers[type1][type2].primary = true;
-                
-                    if (type1 !== type2) {
-                      this.m_registers[type2][type1].createFcn = createFcn;
-                      this.m_registers[type2][type1].destroyFcn = destroyFcn;
-                      this.m_registers[type2][type1].primary = false;
-                    }
-                    */
                 }
                 InitializeRegisters() {
-                    this.m_registers = [ /*b2ShapeType.e_shapeTypeCount*/];
                     for (let i = 0; i < b2Shape_1.b2ShapeType.e_shapeTypeCount; i++) {
-                        this.m_registers[i] = [ /*b2ShapeType.e_shapeTypeCount*/];
+                        this.m_registers[i] = [];
                         for (let j = 0; j < b2Shape_1.b2ShapeType.e_shapeTypeCount; j++) {
                             this.m_registers[i][j] = new b2ContactRegister();
                         }
@@ -99,13 +79,13 @@ System.register(["../../Common/b2Settings", "../../Collision/Shapes/b2Shape", ".
                     this.AddType(b2ChainAndPolygonContact_1.b2ChainAndPolygonContact.Create, b2ChainAndPolygonContact_1.b2ChainAndPolygonContact.Destroy, b2Shape_1.b2ShapeType.e_chainShape, b2Shape_1.b2ShapeType.e_polygonShape);
                 }
                 Create(fixtureA, indexA, fixtureB, indexB) {
-                    const type1 = fixtureA.GetType();
-                    const type2 = fixtureB.GetType();
-                    // DEBUG: b2Assert(0 <= type1 && type1 < b2ShapeType.e_shapeTypeCount);
-                    // DEBUG: b2Assert(0 <= type2 && type2 < b2ShapeType.e_shapeTypeCount);
-                    const reg = this.m_registers[type1][type2];
+                    const typeA = fixtureA.GetType();
+                    const typeB = fixtureB.GetType();
+                    // DEBUG: b2Assert(0 <= typeA && typeA < b2ShapeType.e_shapeTypeCount);
+                    // DEBUG: b2Assert(0 <= typeB && typeB < b2ShapeType.e_shapeTypeCount);
+                    const reg = this.m_registers[typeA][typeB];
                     if (reg.createFcn) {
-                        const c = reg.createFcn(this.m_allocator);
+                        const c = reg.createFcn();
                         if (reg.primary) {
                             c.Reset(fixtureA, indexA, fixtureB, indexB);
                         }
@@ -119,21 +99,13 @@ System.register(["../../Common/b2Settings", "../../Collision/Shapes/b2Shape", ".
                     }
                 }
                 Destroy(contact) {
-                    const fixtureA = contact.m_fixtureA;
-                    const fixtureB = contact.m_fixtureB;
-                    if (contact.m_manifold.pointCount > 0 &&
-                        !fixtureA.IsSensor() &&
-                        !fixtureB.IsSensor()) {
-                        fixtureA.GetBody().SetAwake(true);
-                        fixtureB.GetBody().SetAwake(true);
-                    }
-                    const typeA = fixtureA.GetType();
-                    const typeB = fixtureB.GetType();
+                    const typeA = contact.m_fixtureA.GetType();
+                    const typeB = contact.m_fixtureB.GetType();
                     // DEBUG: b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
                     // DEBUG: b2Assert(0 <= typeA && typeB < b2ShapeType.e_shapeTypeCount);
                     const reg = this.m_registers[typeA][typeB];
                     if (reg.destroyFcn) {
-                        reg.destroyFcn(contact, this.m_allocator);
+                        reg.destroyFcn(contact);
                     }
                 }
             };
@@ -141,4 +113,4 @@ System.register(["../../Common/b2Settings", "../../Collision/Shapes/b2Shape", ".
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb250YWN0RmFjdG9yeS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyQ29udGFjdEZhY3RvcnkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFhQSxvQkFBQSxNQUFhLGlCQUFpQjtnQkFBOUI7b0JBQ0UsNEJBQTRCO29CQUNyQixjQUFTLEdBQTJDLElBQUksQ0FBQztvQkFDekQsZUFBVSxHQUEwRCxJQUFJLENBQUM7b0JBQ3pFLFlBQU8sR0FBWSxLQUFLLENBQUM7Z0JBQ2xDLENBQUM7YUFBQSxDQUFBOztZQUVELG1CQUFBLE1BQWEsZ0JBQWdCO2dCQUkzQixZQUFZLFNBQWM7b0JBSG5CLGdCQUFXLEdBQVEsSUFBSSxDQUFDO29CQUk3QixJQUFJLENBQUMsV0FBVyxHQUFHLFNBQVMsQ0FBQztvQkFDN0IsSUFBSSxDQUFDLG1CQUFtQixFQUFFLENBQUM7Z0JBQzdCLENBQUM7Z0JBRU8sT0FBTyxDQUFDLFNBQXdDLEVBQUUsVUFBd0QsRUFBRSxLQUFrQixFQUFFLEtBQWtCO29CQUN4SixNQUFNLElBQUksR0FBZ0Isd0JBQVcsQ0FBQyxHQUFHLEVBQUUsQ0FBQyxDQUFTLEVBQUUsRUFBRSxDQUFDLFNBQVMsQ0FBQyxJQUFJLENBQUMsV0FBVyxDQUFDLENBQUMsQ0FBQyxDQUFDLG1CQUFtQjtvQkFFM0csU0FBUyxhQUFhLENBQUMsU0FBYzt3QkFDbkMseUJBQXlCO3dCQUN6Qix1QkFBdUI7d0JBQ3ZCLElBQUk7d0JBRUosK0JBQStCO3dCQUMvQixPQUFPLElBQUksQ0FBQyxHQUFHLEVBQUUsSUFBSSxTQUFTLENBQUMsU0FBUyxDQUFDLENBQUM7b0JBQzVDLENBQUM7b0JBRUQsU0FBUyxjQUFjLENBQUMsT0FBa0IsRUFBRSxTQUFjO3dCQUN4RCxJQUFJLENBQUMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxDQUFDO29CQUNyQixDQUFDO29CQUVELDhDQUE4QztvQkFDOUMsSUFBSSxDQUFD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
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb250YWN0RmFjdG9yeS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyQ29udGFjdEZhY3RvcnkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFZQSxvQkFBQSxNQUFhLGlCQUFpQjtnQkFBOUI7b0JBQ1MsU0FBSSxHQUFnQixFQUFFLENBQUM7b0JBQ3ZCLGNBQVMsR0FBNkIsSUFBSSxDQUFDO29CQUMzQyxlQUFVLEdBQTBDLElBQUksQ0FBQztvQkFDekQsWUFBTyxHQUFZLEtBQUssQ0FBQztnQkFDbEMsQ0FBQzthQUFBLENBQUE7O1lBRUQsbUJBQUEsTUFBYSxnQkFBZ0I7Z0JBRzNCO29CQUZnQixnQkFBVyxHQUEwQixFQUFFLENBQUM7b0JBR3RELElBQUksQ0FBQyxtQkFBbUIsRUFBRSxDQUFDO2dCQUM3QixDQUFDO2dCQUVPLE9BQU8sQ0FBQyxTQUEwQixFQUFFLFVBQXdDLEVBQUUsS0FBa0IsRUFBRSxLQUFrQjtvQkFDMUgsTUFBTSxJQUFJLEdBQWdCLEVBQUUsQ0FBQztvQkFFN0IsU0FBUyxhQUFhO3dCQUNwQixPQUFPLElBQUksQ0FBQyxHQUFHLEVBQUUsSUFBSSxTQUFTLEVBQUUsQ0FBQztvQkFDbkMsQ0FBQztvQkFFRCxTQUFTLGNBQWMsQ0FBQyxPQUFrQjt3QkFDeEMsSUFBSSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsQ0FBQztvQkFDckIsQ0FBQztvQkFFRCxJQUFJLENBQUMsV0FBVyxDQUFDLEtBQUssQ0FBQyxDQUFDLEtBQUssQ0FBQyxDQUFDLElBQUksR0FBRyxJQUFJLENBQUM7b0JBQzNDLElBQUksQ0FBQyxXQUFXLENBQUMsS0FBSyxDQUFDLENBQUMsS0FBSyxDQUFDLENBQUMsU0FBUyxHQUFHLGFBQWEsQ0FBQyxDQUFDLGFBQWE7b0JBQ3ZFLElBQUksQ0FBQyxXQUFXLENBQUMsS0FBSyxDQUFDLENBQUMsS0FBSyxDQUFDLENBQUMsVUFBVSxHQUFHLGNBQWMs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

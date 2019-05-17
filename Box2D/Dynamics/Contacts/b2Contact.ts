@@ -61,7 +61,7 @@ export class b2ContactEdge {
   }
 }
 
-export abstract class b2Contact {
+export abstract class b2Contact<A extends b2Shape = b2Shape, B extends b2Shape = b2Shape> {
   public m_islandFlag: boolean = false; /// Used when crawling contact graph when forming islands.
   public m_touchingFlag: boolean = false; /// Set when the shapes are touching.
   public m_enabledFlag: boolean = false; /// This contact can be disabled (by user)
@@ -100,8 +100,8 @@ export abstract class b2Contact {
   public GetWorldManifold(worldManifold: b2WorldManifold): void {
     const bodyA: b2Body = this.m_fixtureA.GetBody();
     const bodyB: b2Body = this.m_fixtureB.GetBody();
-    const shapeA: b2Shape = this.m_fixtureA.GetShape();
-    const shapeB: b2Shape = this.m_fixtureB.GetShape();
+    const shapeA: A = this.GetShapeA();
+    const shapeB: B = this.GetShapeB();
     worldManifold.Initialize(this.m_manifold, bodyA.GetTransform(), shapeA.m_radius, bodyB.GetTransform(), shapeB.m_radius);
   }
 
@@ -129,12 +129,20 @@ export abstract class b2Contact {
     return this.m_indexA;
   }
 
+  public GetShapeA(): A {
+    return this.m_fixtureA.GetShape() as A;
+  }
+
   public GetFixtureB(): b2Fixture {
     return this.m_fixtureB;
   }
 
   public GetChildIndexB(): number {
     return this.m_indexB;
+  }
+
+  public GetShapeB(): B {
+    return this.m_fixtureB.GetShape() as B;
   }
 
   public abstract Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
@@ -223,22 +231,15 @@ export abstract class b2Contact {
     const xfA: b2Transform = bodyA.GetTransform();
     const xfB: b2Transform = bodyB.GetTransform();
 
-    ///const aabbOverlap = b2TestOverlapAABB(this.m_fixtureA.GetAABB(0), this.m_fixtureB.GetAABB(0));
-
     // Is this contact a sensor?
     if (sensor) {
-      ///if (aabbOverlap)
-      ///{
-      const shapeA: b2Shape = this.m_fixtureA.GetShape();
-      const shapeB: b2Shape = this.m_fixtureB.GetShape();
+      const shapeA: A = this.GetShapeA();
+      const shapeB: B = this.GetShapeB();
       touching = b2TestOverlapShape(shapeA, this.m_indexA, shapeB, this.m_indexB, xfA, xfB);
-      ///}
 
       // Sensors don't generate manifolds.
       this.m_manifold.pointCount = 0;
     } else {
-      ///if (aabbOverlap)
-      ///{
       this.Evaluate(this.m_manifold, xfA, xfB);
       touching = this.m_manifold.pointCount > 0;
 
@@ -260,11 +261,6 @@ export abstract class b2Contact {
           }
         }
       }
-      ///}
-      ///else
-      ///{
-      ///  this.m_manifold.pointCount = 0;
-      ///}
 
       if (touching !== wasTouching) {
         bodyA.SetAwake(true);
@@ -291,8 +287,8 @@ export abstract class b2Contact {
   private static ComputeTOI_s_output = new b2TOIOutput();
   public ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number {
     const input: b2TOIInput = b2Contact.ComputeTOI_s_input;
-    input.proxyA.SetShape(this.m_fixtureA.GetShape(), this.m_indexA);
-    input.proxyB.SetShape(this.m_fixtureB.GetShape(), this.m_indexB);
+    input.proxyA.SetShape(this.GetShapeA(), this.m_indexA);
+    input.proxyB.SetShape(this.GetShapeB(), this.m_indexB);
     input.sweepA.Copy(sweepA);
     input.sweepB.Copy(sweepB);
     input.tMax = b2_linearSlop;

@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2MakeArray, b2Maybe } from "../Common/b2Settings";
+import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Transform } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
@@ -127,10 +127,22 @@ export class b2FixtureDef implements b2IFixtureDef {
 export class b2FixtureProxy {
   public readonly aabb: b2AABB = new b2AABB();
   public readonly fixture: b2Fixture;
-  public childIndex: number = 0;
-  public treeNode!: b2TreeNode<b2FixtureProxy>;
-  constructor(fixture: b2Fixture) {
+  public readonly childIndex: number = 0;
+  private _treeNode: b2TreeNode<b2FixtureProxy> | null = null;
+  public get treeNode(): b2TreeNode<b2FixtureProxy> {
+    if (this._treeNode === null) { throw new Error(); }
+    return this._treeNode;
+  }
+  public set treeNode(value: b2TreeNode<b2FixtureProxy>) {
+    if (this._treeNode !== null) { throw new Error(); }
+    this._treeNode = value;
+  }
+  constructor(fixture: b2Fixture, childIndex: number) {
     this.fixture = fixture;
+    this.childIndex = childIndex;
+  }
+  public Reset(): void {
+    this._treeNode = null;
   }
 }
 
@@ -150,7 +162,7 @@ export class b2Fixture {
   public m_friction: number = 0;
   public m_restitution: number = 0;
 
-  public m_proxies: b2FixtureProxy[] = [];
+  public readonly m_proxies: b2FixtureProxy[] = [];
   public m_proxyCount: number = 0;
 
   public readonly m_filter: b2Filter = new b2Filter();
@@ -159,9 +171,20 @@ export class b2Fixture {
 
   public m_userData: any = null;
 
-  constructor(def: b2IFixtureDef, body: b2Body) {
+  constructor(body: b2Body, def: b2IFixtureDef) {
     this.m_body = body;
     this.m_shape = def.shape.Clone();
+    this.m_userData = b2Maybe(def.userData, null);
+    this.m_friction = b2Maybe(def.friction,  0.2);
+    this.m_restitution = b2Maybe(def.restitution, 0);
+    this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
+    this.m_isSensor = b2Maybe(def.isSensor, false);
+    this.m_density = b2Maybe(def.density, 0);
+  }
+
+  public Reset(): void {
+    // The proxies must be destroyed before calling this.
+    // DEBUG: b2Assert(this.m_proxyCount === 0);
   }
 
   /// Get the type of the child shape. You can use this to down cast to the concrete shape.
@@ -221,17 +244,8 @@ export class b2Fixture {
       edge = edge.next;
     }
 
-    const world = this.m_body.GetWorld();
-
-    if (world === null) {
-      return;
-    }
-
     // Touch each proxy so that new pairs may be created
-    const broadPhase = world.m_contactManager.m_broadPhase;
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      broadPhase.TouchProxy(this.m_proxies[i].treeNode);
-    }
+    this.TouchProxies();
   }
 
   /// Get the parent body of this fixture. This is NULL if the fixture is not attached.
@@ -345,47 +359,6 @@ export class b2Fixture {
     log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
   }
 
-  // We need separation create/destroy functions from the constructor/destructor because
-  // the destructor cannot access the allocator (no destructor arguments allowed by C++).
-  public Create(def: b2IFixtureDef): void {
-    this.m_userData = def.userData;
-    this.m_friction = b2Maybe(def.friction,  0.2);
-    this.m_restitution = b2Maybe(def.restitution, 0);
-
-    // this.m_body = body;
-    this.m_next = null;
-
-    this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
-
-    this.m_isSensor = b2Maybe(def.isSensor, false);
-
-    // Reserve proxy space
-    // const childCount = m_shape->GetChildCount();
-    // m_proxies = (b2FixtureProxy*)allocator->Allocate(childCount * sizeof(b2FixtureProxy));
-    // for (int32 i = 0; i < childCount; ++i)
-    // {
-    //   m_proxies[i].fixture = NULL;
-    //   m_proxies[i].proxyId = b2BroadPhase::e_nullProxy;
-    // }
-    // this.m_proxies = b2FixtureProxy.MakeArray(this.m_shape.GetChildCount());
-    this.m_proxies = b2MakeArray(this.m_shape.GetChildCount(), (i) => new b2FixtureProxy(this));
-    this.m_proxyCount = 0;
-
-    this.m_density = b2Maybe(def.density, 0);
-  }
-
-  public Destroy(): void {
-    // The proxies must be destroyed before calling this.
-    // DEBUG: b2Assert(this.m_proxyCount === 0);
-
-    // Free the proxy array.
-    // int32 childCount = m_shape->GetChildCount();
-    // allocator->Free(m_proxies, childCount * sizeof(b2FixtureProxy));
-    // m_proxies = NULL;
-
-    // this.m_shape = null;
-  }
-
   // These support body activation/deactivation.
   public CreateProxies(xf: b2Transform): void {
     const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
@@ -395,10 +368,9 @@ export class b2Fixture {
     this.m_proxyCount = this.m_shape.GetChildCount();
 
     for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      const proxy = this.m_proxies[i] = new b2FixtureProxy(this);
+      const proxy: b2FixtureProxy = this.m_proxies[i] = new b2FixtureProxy(this, i);
       this.m_shape.ComputeAABB(proxy.aabb, xf, i);
       proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
-      proxy.childIndex = i;
     }
   }
 
@@ -406,10 +378,10 @@ export class b2Fixture {
     const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
     // Destroy proxies in the broad-phase.
     for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      const proxy = this.m_proxies[i];
-      delete proxy.treeNode.userData;
+      const proxy: b2FixtureProxy = this.m_proxies[i];
+      proxy.treeNode.Reset();
       broadPhase.DestroyProxy(proxy.treeNode);
-      delete proxy.treeNode;
+      proxy.Reset();
     }
 
     this.m_proxyCount = 0;
