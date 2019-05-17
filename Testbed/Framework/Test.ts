@@ -264,7 +264,7 @@ export class Test extends box2d.b2ContactListener {
     let hit_fixture: box2d.b2Fixture | null | any = null; // HACK: tsc doesn't detect calling callbacks
 
     // Query the world for overlapping shapes.
-    this.m_world.QueryPointAABB(null, p, (fixture: box2d.b2Fixture): boolean => {
+    this.m_world.QueryPointAABB(p, (fixture: box2d.b2Fixture): boolean => {
       const body = fixture.GetBody();
       if (body.GetType() === box2d.b2BodyType.b2_dynamicBody) {
         const inside = fixture.TestPoint(p);

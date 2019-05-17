@@ -687,7 +687,16 @@ export class b2World {
   /// provided AABB.
   /// @param callback a user implemented callback class.
   /// @param aabb the query box.
-  public QueryAABB(callback: b2QueryCallback | null, aabb: b2AABB, fn?: b2QueryCallbackFunction): void {
+  public QueryAABB(callback: b2QueryCallback, aabb: b2AABB): void;
+  public QueryAABB(aabb: b2AABB, fn: b2QueryCallbackFunction): void;
+  public QueryAABB(...args: any[]): void {
+    if (args[0] instanceof b2RayCastCallback) {
+      this._QueryAABB(args[0], args[1]);
+    } else {
+      this._QueryAABB(null, args[0], args[1]);
+    }
+  }
+  private _QueryAABB(callback: b2QueryCallback | null, aabb: b2AABB, fn?: b2QueryCallbackFunction): void {
     this.m_contactManager.m_broadPhase.Query(aabb, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
       const fixture_proxy: b2FixtureProxy = proxy.userData;
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -711,7 +720,7 @@ export class b2World {
   }
 
   public QueryAllAABB(aabb: b2AABB, out: b2Fixture[] = []): b2Fixture[] {
-    this.QueryAABB(null, aabb, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    this.QueryAABB(aabb, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
     return out;
   }
 
@@ -719,7 +728,16 @@ export class b2World {
   /// provided point.
   /// @param callback a user implemented callback class.
   /// @param point the query point.
-  public QueryPointAABB(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
+  public QueryPointAABB(callback: b2QueryCallback, point: b2Vec2): void;
+  public QueryPointAABB(point: b2Vec2, fn: b2QueryCallbackFunction): void;
+  public QueryPointAABB(...args: any[]): void {
+    if (args[0] instanceof b2RayCastCallback) {
+      this._QueryPointAABB(args[0], args[1]);
+    } else {
+      this._QueryPointAABB(null, args[0], args[1]);
+    }
+  }
+  private _QueryPointAABB(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
     this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
       const fixture_proxy: b2FixtureProxy = proxy.userData;
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -743,12 +761,21 @@ export class b2World {
   }
 
   public QueryAllPointAABB(point: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
-    this.QueryPointAABB(null, point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    this.QueryPointAABB(point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
     return out;
   }
 
+  public QueryFixtureShape(callback: b2QueryCallback, shape: b2Shape, index: number, transform: b2Transform): void;
+  public QueryFixtureShape(shape: b2Shape, index: number, transform: b2Transform, fn: b2QueryCallbackFunction): void;
+  public QueryFixtureShape(...args: any[]): void {
+    if (args[0] instanceof b2RayCastCallback) {
+      this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
+    } else {
+      this._QueryFixtureShape(null, args[0], args[1], args[2], args[3]);
+    }
+  }
   private static QueryFixtureShape_s_aabb = new b2AABB();
-  public QueryFixtureShape(callback: b2QueryCallback | null, shape: b2Shape, index: number, transform: b2Transform, fn?: b2QueryCallbackFunction): void {
+  private _QueryFixtureShape(callback: b2QueryCallback | null, shape: b2Shape, index: number, transform: b2Transform, fn?: b2QueryCallbackFunction): void {
     const aabb: b2AABB = b2World.QueryFixtureShape_s_aabb;
     shape.ComputeAABB(aabb, transform, index);
     this.m_contactManager.m_broadPhase.Query(aabb, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
@@ -776,11 +803,20 @@ export class b2World {
   }
 
   public QueryAllFixtureShape(shape: b2Shape, index: number, transform: b2Transform, out: b2Fixture[] = []): b2Fixture[] {
-    this.QueryFixtureShape(null, shape, index, transform, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    this.QueryFixtureShape(shape, index, transform, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
     return out;
   }
 
-  public QueryFixturePoint(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
+  public QueryFixturePoint(callback: b2QueryCallback, point: b2Vec2): void;
+  public QueryFixturePoint(point: b2Vec2, fn: b2QueryCallbackFunction): void;
+  public QueryFixturePoint(...args: any[]): void {
+    if (args[0] instanceof b2RayCastCallback) {
+      this._QueryFixturePoint(args[0], args[1]);
+    } else {
+      this._QueryFixturePoint(null, args[0], args[1]);
+    }
+  }
+  private _QueryFixturePoint(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
     this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
       const fixture_proxy: b2FixtureProxy = proxy.userData;
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -806,7 +842,7 @@ export class b2World {
   }
 
   public QueryAllFixturePoint(point: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
-    this.QueryFixturePoint(null, point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
+    this.QueryFixturePoint(point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
     return out;
   }
 
@@ -816,10 +852,19 @@ export class b2World {
   /// @param callback a user implemented callback class.
   /// @param point1 the ray starting point
   /// @param point2 the ray ending point
+  public RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void;
+  public RayCast(point1: b2Vec2, point2: b2Vec2, fn: b2RayCastCallbackFunction): void;
+  public RayCast(...args: any[]): void {
+    if (args[0] instanceof b2RayCastCallback) {
+      this._RayCast(args[0], args[1], args[1]);
+    } else {
+      this._RayCast(null, args[0], args[1], args[1]);
+    }
+  }
   private static RayCast_s_input = new b2RayCastInput();
   private static RayCast_s_output = new b2RayCastOutput();
   private static RayCast_s_point = new b2Vec2();
-  public RayCast(callback: b2RayCastCallback | null, point1: b2Vec2, point2: b2Vec2, fn?: b2RayCastCallbackFunction): void {
+  private _RayCast(callback: b2RayCastCallback | null, point1: b2Vec2, point2: b2Vec2, fn?: b2RayCastCallbackFunction): void {
     const input: b2RayCastInput = b2World.RayCast_s_input;
     input.maxFraction = 1;
     input.p1.Copy(point1);
@@ -857,7 +902,7 @@ export class b2World {
   public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture | null {
     let result: b2Fixture | null = null;
     let min_fraction: number = 1;
-    this.RayCast(null, point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
+    this.RayCast(point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
       if (fraction < min_fraction) {
         min_fraction = fraction;
         result = fixture;
@@ -868,7 +913,7 @@ export class b2World {
   }
 
   public RayCastAll(point1: b2Vec2, point2: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
-    this.RayCast(null, point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
+    this.RayCast(point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
       out.push(fixture);
       return 1;
     });

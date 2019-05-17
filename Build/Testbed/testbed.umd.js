@@ -19880,11 +19880,15 @@
           }
           // #endif
       }
-      /// Query the world for all fixtures that potentially overlap the
-      /// provided AABB.
-      /// @param callback a user implemented callback class.
-      /// @param aabb the query box.
-      QueryAABB(callback, aabb, fn) {
+      QueryAABB(...args) {
+          if (args[0] instanceof b2RayCastCallback) {
+              this._QueryAABB(args[0], args[1]);
+          }
+          else {
+              this._QueryAABB(null, args[0], args[1]);
+          }
+      }
+      _QueryAABB(callback, aabb, fn) {
           this.m_contactManager.m_broadPhase.Query(aabb, (proxy) => {
               const fixture_proxy = proxy.userData;
               // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -19908,14 +19912,18 @@
           // #endif
       }
       QueryAllAABB(aabb, out = []) {
-          this.QueryAABB(null, aabb, (fixture) => { out.push(fixture); return true; });
+          this.QueryAABB(aabb, (fixture) => { out.push(fixture); return true; });
           return out;
       }
-      /// Query the world for all fixtures that potentially overlap the
-      /// provided point.
-      /// @param callback a user implemented callback class.
-      /// @param point the query point.
-      QueryPointAABB(callback, point, fn) {
+      QueryPointAABB(...args) {
+          if (args[0] instanceof b2RayCastCallback) {
+              this._QueryPointAABB(args[0], args[1]);
+          }
+          else {
+              this._QueryPointAABB(null, args[0], args[1]);
+          }
+      }
+      _QueryPointAABB(callback, point, fn) {
           this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy) => {
               const fixture_proxy = proxy.userData;
               // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -19939,10 +19947,18 @@
           // #endif
       }
       QueryAllPointAABB(point, out = []) {
-          this.QueryPointAABB(null, point, (fixture) => { out.push(fixture); return true; });
+          this.QueryPointAABB(point, (fixture) => { out.push(fixture); return true; });
           return out;
       }
-      QueryFixtureShape(callback, shape, index, transform, fn) {
+      QueryFixtureShape(...args) {
+          if (args[0] instanceof b2RayCastCallback) {
+              this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
+          }
+          else {
+              this._QueryFixtureShape(null, args[0], args[1], args[2], args[3]);
+          }
+      }
+      _QueryFixtureShape(callback, shape, index, transform, fn) {
           const aabb = b2World.QueryFixtureShape_s_aabb;
           shape.ComputeAABB(aabb, transform, index);
           this.m_contactManager.m_broadPhase.Query(aabb, (proxy) => {
@@ -19970,10 +19986,18 @@
           // #endif
       }
       QueryAllFixtureShape(shape, index, transform, out = []) {
-          this.QueryFixtureShape(null, shape, index, transform, (fixture) => { out.push(fixture); return true; });
+          this.QueryFixtureShape(shape, index, transform, (fixture) => { out.push(fixture); return true; });
           return out;
       }
-      QueryFixturePoint(callback, point, fn) {
+      QueryFixturePoint(...args) {
+          if (args[0] instanceof b2RayCastCallback) {
+              this._QueryFixturePoint(args[0], args[1]);
+          }
+          else {
+              this._QueryFixturePoint(null, args[0], args[1]);
+          }
+      }
+      _QueryFixturePoint(callback, point, fn) {
           this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy) => {
               const fixture_proxy = proxy.userData;
               // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -19999,10 +20023,18 @@
           // #endif
       }
       QueryAllFixturePoint(point, out = []) {
-          this.QueryFixturePoint(null, point, (fixture) => { out.push(fixture); return true; });
+          this.QueryFixturePoint(point, (fixture) => { out.push(fixture); return true; });
           return out;
       }
-      RayCast(callback, point1, point2, fn) {
+      RayCast(...args) {
+          if (args[0] instanceof b2RayCastCallback) {
+              this._RayCast(args[0], args[1], args[1]);
+          }
+          else {
+              this._RayCast(null, args[0], args[1], args[1]);
+          }
+      }
+      _RayCast(callback, point1, point2, fn) {
           const input = b2World.RayCast_s_input;
           input.maxFraction = 1;
           input.p1.Copy(point1);
@@ -20040,7 +20072,7 @@
       RayCastOne(point1, point2) {
           let result = null;
           let min_fraction = 1;
-          this.RayCast(null, point1, point2, (fixture, point, normal, fraction) => {
+          this.RayCast(point1, point2, (fixture, point, normal, fraction) => {
               if (fraction < min_fraction) {
                   min_fraction = fraction;
                   result = fixture;
@@ -20050,7 +20082,7 @@
           return result;
       }
       RayCastAll(point1, point2, out = []) {
-          this.RayCast(null, point1, point2, (fixture, point, normal, fraction) => {
+          this.RayCast(point1, point2, (fixture, point, normal, fraction) => {
               out.push(fixture);
               return 1;
           });
@@ -20764,12 +20796,6 @@
   b2World.DrawDebugData_s_vs = b2Vec2.MakeArray(4);
   b2World.DrawDebugData_s_xf = new b2Transform();
   b2World.QueryFixtureShape_s_aabb = new b2AABB();
-  /// Ray-cast the world for all fixtures in the path of the ray. Your callback
-  /// controls whether you get the closest point, any point, or n-points.
-  /// The ray-cast ignores shapes that contain the starting point.
-  /// @param callback a user implemented callback class.
-  /// @param point1 the ray starting point
-  /// @param point2 the ray ending point
   b2World.RayCast_s_input = new b2RayCastInput();
   b2World.RayCast_s_output = new b2RayCastOutput();
   b2World.RayCast_s_point = new b2Vec2();
@@ -22536,7 +22562,7 @@
           }
           let hit_fixture = null; // HACK: tsc doesn't detect calling callbacks
           // Query the world for overlapping shapes.
-          this.m_world.QueryPointAABB(null, p, (fixture) => {
+          this.m_world.QueryPointAABB(p, (fixture) => {
               const body = fixture.GetBody();
               if (body.GetType() === b2BodyType.b2_dynamicBody) {
                   const inside = fixture.TestPoint(p);
