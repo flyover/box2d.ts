@@ -371,8 +371,7 @@ export class b2World {
       bodyA.m_jointList = j.m_edgeA.next;
     }
 
-    j.m_edgeA.prev = null;
-    j.m_edgeA.next = null;
+    j.m_edgeA.Reset();
 
     // Remove from body 2
     if (j.m_edgeB.prev) {
@@ -387,8 +386,7 @@ export class b2World {
       bodyB.m_jointList = j.m_edgeB.next;
     }
 
-    j.m_edgeB.prev = null;
-    j.m_edgeB.next = null;
+    j.m_edgeB.Reset();
 
     b2World._Joint_Destroy(j, null);
 
@@ -1320,8 +1318,7 @@ export class b2World {
           island.AddContact(contact);
           contact.m_islandFlag = true;
 
-          const other: b2Body | null = ce.other;
-          if (!other) { throw new Error(); }
+          const other: b2Body = ce.other;
 
           // Was the other body already added to this island?
           if (other.m_islandFlag) {

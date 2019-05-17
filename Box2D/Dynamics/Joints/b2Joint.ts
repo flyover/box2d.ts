@@ -71,13 +71,25 @@ export class b2Jacobian {
 /// maintained in each attached body. Each joint has two joint
 /// nodes, one for each attached body.
 export class b2JointEdge {
-  public readonly other: b2Body;    ///< provides quick access to the other body attached.
+  private _other: b2Body | null = null; ///< provides quick access to the other body attached.
+  public get other(): b2Body {
+    if (this._other === null) { throw new Error(); }
+    return this._other;
+  }
+  public set other(value: b2Body) {
+    if (this._other !== null) { throw new Error(); }
+    this._other = value;
+  }
   public readonly joint: b2Joint;    ///< the joint
   public prev: b2JointEdge | null = null;  ///< the previous joint edge in the body's joint list
   public next: b2JointEdge | null = null;  ///< the next joint edge in the body's joint list
-  constructor(joint: b2Joint, other: b2Body) {
+  constructor(joint: b2Joint) {
     this.joint = joint;
-    this.other = other;
+  }
+  public Reset(): void {
+    this._other = null;
+    this.prev = null;
+    this.next = null;
   }
 }
 
@@ -100,7 +112,7 @@ export interface b2IJointDef {
 }
 
 /// Joint definitions are used to construct joints.
-export class b2JointDef {
+export abstract class b2JointDef implements b2IJointDef {
   /// The joint type is set automatically for concrete joint types.
   public readonly type: b2JointType = b2JointType.e_unknownJoint;
 
@@ -127,8 +139,8 @@ export abstract class b2Joint {
   public readonly m_type: b2JointType = b2JointType.e_unknownJoint;
   public m_prev: b2Joint | null = null;
   public m_next: b2Joint | null = null;
-  public readonly m_edgeA: b2JointEdge;
-  public readonly m_edgeB: b2JointEdge;
+  public readonly m_edgeA: b2JointEdge = new b2JointEdge(this);
+  public readonly m_edgeB: b2JointEdge = new b2JointEdge(this);
   public m_bodyA: b2Body;
   public m_bodyB: b2Body;
 
@@ -143,8 +155,8 @@ export abstract class b2Joint {
     // DEBUG: b2Assert(def.bodyA !== def.bodyB);
 
     this.m_type = def.type;
-    this.m_edgeA = new b2JointEdge(this, def.bodyB);
-    this.m_edgeB = new b2JointEdge(this, def.bodyA);
+    this.m_edgeA.other = def.bodyB;
+    this.m_edgeB.other = def.bodyA;
     this.m_bodyA = def.bodyA;
     this.m_bodyB = def.bodyB;
 

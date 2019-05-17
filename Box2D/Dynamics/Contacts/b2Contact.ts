@@ -39,12 +39,25 @@ export function b2MixRestitution(restitution1: number, restitution2: number): nu
 }
 
 export class b2ContactEdge {
-  public other!: b2Body; ///< provides quick access to the other body attached.
-  public contact: b2Contact; ///< the contact
+  private _other: b2Body | null = null; ///< provides quick access to the other body attached.
+  public get other(): b2Body {
+    if (this._other === null) { throw new Error(); }
+    return this._other;
+  }
+  public set other(value: b2Body) {
+    if (this._other !== null) { throw new Error(); }
+    this._other = value;
+  }
+  public readonly contact: b2Contact; ///< the contact
   public prev: b2ContactEdge | null = null; ///< the previous contact edge in the body's contact list
   public next: b2ContactEdge | null = null; ///< the next contact edge in the body's contact list
   constructor(contact: b2Contact) {
     this.contact = contact;
+  }
+  public Reset(): void {
+    this._other = null;
+    this.prev = null;
+    this.next = null;
   }
 }
 
@@ -59,8 +72,8 @@ export abstract class b2Contact {
   public m_prev: b2Contact | null = null;
   public m_next: b2Contact | null = null;
 
-  public readonly m_nodeA: b2ContactEdge; // = new b2ContactEdge(this);
-  public readonly m_nodeB: b2ContactEdge; // = new b2ContactEdge(this);
+  public readonly m_nodeA: b2ContactEdge = new b2ContactEdge(this);
+  public readonly m_nodeB: b2ContactEdge = new b2ContactEdge(this);
 
   public m_fixtureA!: b2Fixture;
   public m_fixtureB!: b2Fixture;
@@ -79,11 +92,6 @@ export abstract class b2Contact {
   public m_tangentSpeed: number = 0;
 
   public m_oldManifold: b2Manifold = new b2Manifold(); // TODO: readonly
-
-  constructor() {
-    this.m_nodeA = new b2ContactEdge(this);
-    this.m_nodeB = new b2ContactEdge(this);
-  }
 
   public GetManifold() {
     return this.m_manifold;
@@ -186,15 +194,8 @@ export abstract class b2Contact {
     this.m_prev = null;
     this.m_next = null;
 
-    delete this.m_nodeA.contact; // = null;
-    this.m_nodeA.prev = null;
-    this.m_nodeA.next = null;
-    delete this.m_nodeA.other; // = null;
-
-    delete this.m_nodeB.contact; // = null;
-    this.m_nodeB.prev = null;
-    this.m_nodeB.next = null;
-    delete this.m_nodeB.other; // = null;
+    this.m_nodeA.Reset();
+    this.m_nodeB.Reset();
 
     this.m_toiCount = 0;
 

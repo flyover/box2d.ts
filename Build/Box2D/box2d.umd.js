@@ -7369,11 +7369,28 @@
   /// maintained in each attached body. Each joint has two joint
   /// nodes, one for each attached body.
   class b2JointEdge {
-      constructor(joint, other) {
+      constructor(joint) {
+          this._other = null; ///< provides quick access to the other body attached.
           this.prev = null; ///< the previous joint edge in the body's joint list
           this.next = null; ///< the next joint edge in the body's joint list
           this.joint = joint;
-          this.other = other;
+      }
+      get other() {
+          if (this._other === null) {
+              throw new Error();
+          }
+          return this._other;
+      }
+      set other(value) {
+          if (this._other !== null) {
+              throw new Error();
+          }
+          this._other = value;
+      }
+      Reset() {
+          this._other = null;
+          this.prev = null;
+          this.next = null;
       }
   }
   /// Joint definitions are used to construct joints.
@@ -7396,13 +7413,15 @@
           this.m_type = exports.b2JointType.e_unknownJoint;
           this.m_prev = null;
           this.m_next = null;
+          this.m_edgeA = new b2JointEdge(this);
+          this.m_edgeB = new b2JointEdge(this);
           this.m_index = 0;
           this.m_islandFlag = false;
           this.m_collideConnected = false;
           this.m_userData = null;
           this.m_type = def.type;
-          this.m_edgeA = new b2JointEdge(this, def.bodyB);
-          this.m_edgeB = new b2JointEdge(this, def.bodyA);
+          this.m_edgeA.other = def.bodyB;
+          this.m_edgeB.other = def.bodyA;
           this.m_bodyA = def.bodyA;
           this.m_bodyB = def.bodyB;
           this.m_collideConnected = b2Maybe(def.collideConnected, false);
@@ -11536,9 +11555,27 @@
   }
   class b2ContactEdge {
       constructor(contact) {
+          this._other = null; ///< provides quick access to the other body attached.
           this.prev = null; ///< the previous contact edge in the body's contact list
           this.next = null; ///< the next contact edge in the body's contact list
           this.contact = contact;
+      }
+      get other() {
+          if (this._other === null) {
+              throw new Error();
+          }
+          return this._other;
+      }
+      set other(value) {
+          if (this._other !== null) {
+              throw new Error();
+          }
+          this._other = value;
+      }
+      Reset() {
+          this._other = null;
+          this.prev = null;
+          this.next = null;
       }
   }
   class b2Contact {
@@ -11551,6 +11588,8 @@
           this.m_toiFlag = false; /// This contact has a valid TOI in m_toi
           this.m_prev = null;
           this.m_next = null;
+          this.m_nodeA = new b2ContactEdge(this);
+          this.m_nodeB = new b2ContactEdge(this);
           this.m_indexA = 0;
           this.m_indexB = 0;
           this.m_manifold = new b2Manifold(); // TODO: readonly
@@ -11560,8 +11599,6 @@
           this.m_restitution = 0;
           this.m_tangentSpeed = 0;
           this.m_oldManifold = new b2Manifold(); // TODO: readonly
-          this.m_nodeA = new b2ContactEdge(this);
-          this.m_nodeB = new b2ContactEdge(this);
       }
       GetManifold() {
           return this.m_manifold;
@@ -11638,14 +11675,8 @@
           this.m_manifold.pointCount = 0;
           this.m_prev = null;
           this.m_next = null;
-          delete this.m_nodeA.contact; // = null;
-          this.m_nodeA.prev = null;
-          this.m_nodeA.next = null;
-          delete this.m_nodeA.other; // = null;
-          delete this.m_nodeB.contact; // = null;
-          this.m_nodeB.prev = null;
-          this.m_nodeB.next = null;
-          delete this.m_nodeB.other; // = null;
+          this.m_nodeA.Reset();
+          this.m_nodeB.Reset();
           this.m_toiCount = 0;
           this.m_friction = b2MixFriction(this.m_fixtureA.m_friction, this.m_fixtureB.m_friction);
           this.m_restitution = b2MixRestitution(this.m_fixtureA.m_restitution, this.m_fixtureB.m_restitution);
@@ -12375,7 +12406,6 @@
           this.m_contactList = c;
           // Connect to island graph.
           // Connect to body A
-          c.m_nodeA.contact = c;
           c.m_nodeA.other = bodyB;
           c.m_nodeA.prev = null;
           c.m_nodeA.next = bodyA.m_contactList;
@@ -12384,7 +12414,6 @@
           }
           bodyA.m_contactList = c.m_nodeA;
           // Connect to body B
-          c.m_nodeB.contact = c;
           c.m_nodeB.other = bodyA;
           c.m_nodeB.prev = null;
           c.m_nodeB.next = bodyB.m_contactList;
@@ -19809,8 +19838,7 @@
           if (j.m_edgeA === bodyA.m_jointList) {
               bodyA.m_jointList = j.m_edgeA.next;
           }
-          j.m_edgeA.prev = null;
-          j.m_edgeA.next = null;
+          j.m_edgeA.Reset();
           // Remove from body 2
           if (j.m_edgeB.prev) {
               j.m_edgeB.prev.next = j.m_edgeB.next;
@@ -19821,8 +19849,7 @@
           if (j.m_edgeB === bodyB.m_jointList) {
               bodyB.m_jointList = j.m_edgeB.next;
           }
-          j.m_edgeB.prev = null;
-          j.m_edgeB.next = null;
+          j.m_edgeB.Reset();
           b2World._Joint_Destroy(j, null);
           // DEBUG: b2Assert(this.m_jointCount > 0);
           --this.m_jointCount;
@@ -20608,9 +20635,6 @@
                       island.AddContact(contact);
                       contact.m_islandFlag = true;
                       const other = ce.other;
-                      if (!other) {
-                          throw new Error();
-                      }
                       // Was the other body already added to this island?
                       if (other.m_islandFlag) {
                           continue;

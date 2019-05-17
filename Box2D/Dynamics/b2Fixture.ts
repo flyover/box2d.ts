@@ -126,7 +126,7 @@ export class b2FixtureDef implements b2IFixtureDef {
 /// This proxy is used internally to connect fixtures to the broad-phase.
 export class b2FixtureProxy {
   public readonly aabb: b2AABB = new b2AABB();
-  public fixture: b2Fixture;
+  public readonly fixture: b2Fixture;
   public childIndex: number = 0;
   public treeNode!: b2TreeNode<b2FixtureProxy>;
   constructor(fixture: b2Fixture) {

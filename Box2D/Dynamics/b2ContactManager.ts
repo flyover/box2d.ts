@@ -115,7 +115,6 @@ export class b2ContactManager {
     // Connect to island graph.
 
     // Connect to body A
-    c.m_nodeA.contact = c;
     c.m_nodeA.other = bodyB;
 
     c.m_nodeA.prev = null;
@@ -126,7 +125,6 @@ export class b2ContactManager {
     bodyA.m_contactList = c.m_nodeA;
 
     // Connect to body B
-    c.m_nodeB.contact = c;
     c.m_nodeB.other = bodyA;
 
     c.m_nodeB.prev = null;

@@ -7270,11 +7270,28 @@
   /// maintained in each attached body. Each joint has two joint
   /// nodes, one for each attached body.
   class b2JointEdge {
-      constructor(joint, other) {
+      constructor(joint) {
+          this._other = null; ///< provides quick access to the other body attached.
           this.prev = null; ///< the previous joint edge in the body's joint list
           this.next = null; ///< the next joint edge in the body's joint list
           this.joint = joint;
-          this.other = other;
+      }
+      get other() {
+          if (this._other === null) {
+              throw new Error();
+          }
+          return this._other;
+      }
+      set other(value) {
+          if (this._other !== null) {
+              throw new Error();
+          }
+          this._other = value;
+      }
+      Reset() {
+          this._other = null;
+          this.prev = null;
+          this.next = null;
       }
   }
   /// Joint definitions are used to construct joints.
@@ -7297,13 +7314,15 @@
           this.m_type = b2JointType.e_unknownJoint;
           this.m_prev = null;
           this.m_next = null;
+          this.m_edgeA = new b2JointEdge(this);
+          this.m_edgeB = new b2JointEdge(this);
           this.m_index = 0;
           this.m_islandFlag = false;
           this.m_collideConnected = false;
           this.m_userData = null;
           this.m_type = def.type;
-          this.m_edgeA = new b2JointEdge(this, def.bodyB);
-          this.m_edgeB = new b2JointEdge(this, def.bodyA);
+          this.m_edgeA.other = def.bodyB;
+          this.m_edgeB.other = def.bodyA;
           this.m_bodyA = def.bodyA;
           this.m_bodyB = def.bodyB;
           this.m_collideConnected = b2Maybe(def.collideConnected, false);
@@ -11436,9 +11455,27 @@
   }
   class b2ContactEdge {
       constructor(contact) {
+          this._other = null; ///< provides quick access to the other body attached.
           this.prev = null; ///< the previous contact edge in the body's contact list
           this.next = null; ///< the next contact edge in the body's contact list
           this.contact = contact;
+      }
+      get other() {
+          if (this._other === null) {
+              throw new Error();
+          }
+          return this._other;
+      }
+      set other(value) {
+          if (this._other !== null) {
+              throw new Error();
+          }
+          this._other = value;
+      }
+      Reset() {
+          this._other = null;
+          this.prev = null;
+          this.next = null;
       }
   }
   class b2Contact {
@@ -11451,6 +11488,8 @@
           this.m_toiFlag = false; /// This contact has a valid TOI in m_toi
           this.m_prev = null;
           this.m_next = null;
+          this.m_nodeA = new b2ContactEdge(this);
+          this.m_nodeB = new b2ContactEdge(this);
           this.m_indexA = 0;
           this.m_indexB = 0;
           this.m_manifold = new b2Manifold(); // TODO: readonly
@@ -11460,8 +11499,6 @@
           this.m_restitution = 0;
           this.m_tangentSpeed = 0;
           this.m_oldManifold = new b2Manifold(); // TODO: readonly
-          this.m_nodeA = new b2ContactEdge(this);
-          this.m_nodeB = new b2ContactEdge(this);
       }
       GetManifold() {
           return this.m_manifold;
@@ -11538,14 +11575,8 @@
           this.m_manifold.pointCount = 0;
           this.m_prev = null;
           this.m_next = null;
-          delete this.m_nodeA.contact; // = null;
-          this.m_nodeA.prev = null;
-          this.m_nodeA.next = null;
-          delete this.m_nodeA.other; // = null;
-          delete this.m_nodeB.contact; // = null;
-          this.m_nodeB.prev = null;
-          this.m_nodeB.next = null;
-          delete this.m_nodeB.other; // = null;
+          this.m_nodeA.Reset();
+          this.m_nodeB.Reset();
           this.m_toiCount = 0;
           this.m_friction = b2MixFriction(this.m_fixtureA.m_friction, this.m_fixtureB.m_friction);
           this.m_restitution = b2MixRestitution(this.m_fixtureA.m_restitution, this.m_fixtureB.m_restitution);
@@ -12275,7 +12306,6 @@
           this.m_contactList = c;
           // Connect to island graph.
           // Connect to body A
-          c.m_nodeA.contact = c;
           c.m_nodeA.other = bodyB;
           c.m_nodeA.prev = null;
           c.m_nodeA.next = bodyA.m_contactList;
@@ -12284,7 +12314,6 @@
           }
           bodyA.m_contactList = c.m_nodeA;
           // Connect to body B
-          c.m_nodeB.contact = c;
           c.m_nodeB.other = bodyA;
           c.m_nodeB.prev = null;
           c.m_nodeB.next = bodyB.m_contactList;
@@ -19699,8 +19728,7 @@
           if (j.m_edgeA === bodyA.m_jointList) {
               bodyA.m_jointList = j.m_edgeA.next;
           }
-          j.m_edgeA.prev = null;
-          j.m_edgeA.next = null;
+          j.m_edgeA.Reset();
           // Remove from body 2
           if (j.m_edgeB.prev) {
               j.m_edgeB.prev.next = j.m_edgeB.next;
@@ -19711,8 +19739,7 @@
           if (j.m_edgeB === bodyB.m_jointList) {
               bodyB.m_jointList = j.m_edgeB.next;
           }
-          j.m_edgeB.prev = null;
-          j.m_edgeB.next = null;
+          j.m_edgeB.Reset();
           b2World._Joint_Destroy(j, null);
           // DEBUG: b2Assert(this.m_jointCount > 0);
           --this.m_jointCount;
@@ -20498,9 +20525,6 @@
                       island.AddContact(contact);
                       contact.m_islandFlag = true;
                       const other = ce.other;
-                      if (!other) {
-                          throw new Error();
-                      }
                       // Was the other body already added to this island?
                       if (other.m_islandFlag) {
                           continue;
@@ -35292,6 +35316,290 @@
   // #endif
 
   /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class Segway extends Test {
+      constructor() {
+          super();
+          this.targetPosition = 10;
+          this.targetPositionInterval = 0;
+          this.posAvg = 0;
+          this.angleController = new PIDController();
+          this.positionController = new PIDController();
+          this.m_world.SetGravity({ x: 0, y: -30 });
+          this.angleController.gainP = 1000;
+          this.angleController.gainI = 0;
+          this.angleController.gainD = 250;
+          this.positionController.gainP = 0.5;
+          this.positionController.gainI = 0;
+          this.positionController.gainD = 1.5;
+          const bd = new b2BodyDef();
+          const fd = new b2FixtureDef();
+          // pendulumBody = new p2.Body({
+          //     mass: 1,
+          //     position: [0, 2 + 0.5 * PENDULUM_LENGTH]
+          // });
+          // pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
+          // world.addBody(pendulumBody);
+          bd.type = b2BodyType.b2_dynamicBody;
+          bd.position.x = 0;
+          bd.position.y = 2 + 0.5 * Segway.PENDULUM_LENGTH;
+          this.pendulumBody = this.m_world.CreateBody(bd);
+          const pendulumShape = new b2PolygonShape();
+          pendulumShape.SetAsBox(0.5, 0.5 * Segway.PENDULUM_LENGTH);
+          fd.shape = pendulumShape;
+          fd.density = 1 / (1 * Segway.PENDULUM_LENGTH); // TODO: specify mass
+          // fd.mass = 1;
+          this.pendulumBody.CreateFixture(fd);
+          // wheelBody = new p2.Body({
+          //     mass: 1,
+          //     position: [0,1]
+          // });
+          // wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
+          // world.addBody(wheelBody);
+          bd.type = b2BodyType.b2_dynamicBody;
+          bd.position.x = 0;
+          bd.position.y = 1;
+          this.wheelBody = this.m_world.CreateBody(bd);
+          const wheelShape = new b2CircleShape();
+          wheelShape.m_radius = 0.6;
+          fd.shape = wheelShape;
+          fd.density = 1 / (Math.PI * 0.6 * 0.6); // TODO: specify mass
+          // fd.mass = 1;
+          fd.friction = 10;
+          this.wheelBody.CreateFixture(fd);
+          // var wheelJoint = new p2.RevoluteConstraint(wheelBody, pendulumBody, {
+          //     localPivotA: [0, 0],
+          //     localPivotB: [0, -0.5 * PENDULUM_LENGTH],
+          //     collideConnected: false
+          // });
+          // world.addConstraint(wheelJoint);
+          // wheelJoint.motorEnabled = true;
+          // var m = 40;
+          // wheelJoint.motorEquation.maxForce = m;
+          // wheelJoint.motorEquation.minForce = -m;
+          const jd = new b2RevoluteJointDef();
+          jd.Initialize(this.wheelBody, this.pendulumBody, { x: 0, y: 0 });
+          jd.localAnchorA.Set(0, 0);
+          jd.localAnchorB.Set(0, -0.5 * Segway.PENDULUM_LENGTH);
+          jd.collideConnected = false;
+          jd.enableMotor = true;
+          jd.maxMotorTorque = 40;
+          this.wheelJoint = this.m_world.CreateJoint(jd);
+          // Create ground
+          // var groundShape = new p2.Plane();
+          // var groundBody = new p2.Body({
+          //     position:[0,0],
+          // });
+          // groundBody.addShape(groundShape);
+          // world.addBody(groundBody);
+          bd.type = b2BodyType.b2_staticBody;
+          bd.position.x = 0;
+          bd.position.y = 0;
+          this.groundBody = this.m_world.CreateBody(bd);
+          const groundShape = new b2EdgeShape();
+          groundShape.Set({ x: -100, y: 0 }, { x: 100, y: 0 });
+          fd.shape = groundShape;
+          fd.friction = 10;
+          this.groundBody.CreateFixture(fd);
+      }
+      Step(settings) {
+          let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+          if (settings.pause && !settings.singleStep) {
+              dt = 0.0;
+          }
+          super.Step(settings);
+          this.targetPositionInterval += dt;
+          if (this.targetPositionInterval >= 8) {
+              this.targetPositionInterval = 0;
+              this.targetPosition = this.targetPosition === 10 ? -10 : 10;
+          }
+          let targetAngle = 0;
+          {
+              const alpha = 0.4;
+              // posAvg = (1 - alpha) * posAvg + alpha * pendulumBody.position[0];
+              this.posAvg = (1 - alpha) * this.posAvg + alpha * this.pendulumBody.GetPosition().x;
+              this.positionController.currentError = this.targetPosition - this.posAvg;
+              // positionController.step(world.lastTimeStep);
+              this.positionController.step(dt);
+              let targetLinAccel = this.positionController.output;
+              // targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
+              targetLinAccel = b2Clamp(targetLinAccel, -10, 10);
+              // targetAngle = targetLinAccel / world.gravity[1];
+              targetAngle = targetLinAccel / this.m_world.GetGravity().y;
+              // targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
+              targetAngle = b2Clamp(targetAngle, b2DegToRad(-15), b2DegToRad(15));
+          }
+          // var currentAngle = pendulumBody.angle;
+          let currentAngle = this.pendulumBody.GetAngle();
+          currentAngle = normalizeAngle(currentAngle);
+          this.angleController.currentError = targetAngle - currentAngle;
+          // angleController.step(world.lastTimeStep);
+          this.angleController.step(dt);
+          let targetSpeed = this.angleController.output;
+          // give up if speed required is really high
+          if (Math.abs(targetSpeed) > 1000) {
+              targetSpeed = 0;
+          }
+          // this is the only output
+          // var targetAngularVelocity = -targetSpeed / (2 * Math.PI * wheelBody.shapes[0].radius); // wheel circumference = 2*pi*r
+          const targetAngularVelocity = targetSpeed / (2 * Math.PI * 0.6); // wheel circumference = 2*pi*r
+          // wheelJoint.motorSpeed = targetAngularVelocity;
+          this.wheelJoint.SetMotorSpeed(targetAngularVelocity);
+      }
+      static Create() {
+          return new Segway();
+      }
+  }
+  Segway.PENDULUM_LENGTH = 10;
+  /*
+    Simple PID controller for single float variable
+    http://en.wikipedia.org/wiki/PID_controller#Pseudocode
+  */
+  class PIDController {
+      constructor() {
+          this.gainP = 1;
+          this.gainI = 1;
+          this.gainD = 1;
+          this.currentError = 0;
+          this.previousError = 0;
+          this.integral = 0;
+          this.output = 0;
+      }
+      step(dt) {
+          this.integral = dt * (this.integral + this.currentError);
+          const derivative = (1 / dt) * (this.currentError - this.previousError);
+          this.output = this.gainP * this.currentError + this.gainI * this.integral + this.gainD * derivative;
+          this.previousError = this.currentError;
+      }
+  }
+  // var DEGTORAD = 0.0174532925199432957;
+  // var RADTODEG = 57.295779513082320876;
+  // var PENDULUM_LENGTH = 10;
+  // var targetPosition = 0;
+  // var targetPositionInterval = setInterval(changeTargetPos, 8000);
+  // function changeTargetPos(){
+  //     targetPosition = targetPosition===0 ? 10 : 0;
+  // }
+  // changeTargetPos();
+  // var posAvg = 0;
+  // var angleController = new PIDController();
+  // angleController.gainP = 1000;
+  // angleController.gainI = 0;
+  // angleController.gainD = 250;
+  // var positionController = new PIDController();
+  // positionController.gainP = 0.5;
+  // positionController.gainI = 0;
+  // positionController.gainD = 1.5;
+  // // Create demo application
+  // var app = new p2.WebGLRenderer(function(){
+  //     var world = new p2.World({
+  //         gravity : [0,-30]
+  //     });
+  //     this.setWorld(world);
+  //     world.defaultContactMaterial.friction = 10;
+  //     pendulumBody = new p2.Body({
+  //         mass: 1,
+  //         position: [0, 2 + 0.5 * PENDULUM_LENGTH]
+  //     });
+  //     pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
+  //     world.addBody(pendulumBody);
+  //     wheelBody = new p2.Body({
+  //         mass: 1,
+  //         position: [0,1]
+  //     });
+  //     wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
+  //     world.addBody(wheelBody);
+  //     var wheelJoint = new p2.RevoluteConstraint(wheelBody, pendulumBody, {
+  //         localPivotA: [0, 0],
+  //         localPivotB: [0, -0.5 * PENDULUM_LENGTH],
+  //         collideConnected: false
+  //     });
+  //     world.addConstraint(wheelJoint);
+  //     wheelJoint.motorEnabled = true;
+  //     var m = 40;
+  //     wheelJoint.motorEquation.maxForce = m;
+  //     wheelJoint.motorEquation.minForce = -m;
+  //     // Create ground
+  //     var groundShape = new p2.Plane();
+  //     var groundBody = new p2.Body({
+  //         position:[0,0],
+  //     });
+  //     groundBody.addShape(groundShape);
+  //     world.addBody(groundBody);
+  //     world.on('postStep', function(){
+  //         var targetAngle = 0;
+  //         if ( true ) {
+  //             var alpha = 0.4;
+  //             posAvg = (1 - alpha) * posAvg + alpha * pendulumBody.position[0];
+  //             positionController.currentError = targetPosition - posAvg;
+  //             positionController.step(world.lastTimeStep);
+  //             var targetLinAccel = positionController.output;
+  //             targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
+  //             targetAngle = targetLinAccel / world.gravity[1];
+  //             targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
+  //         }
+  //         var currentAngle = pendulumBody.angle;
+  //         currentAngle = normalizeAngle(currentAngle);
+  //         angleController.currentError = ( targetAngle - currentAngle );
+  //         angleController.step(world.lastTimeStep);
+  //         var targetSpeed = angleController.output;
+  //         // give up if speed required is really high
+  //         if ( Math.abs(targetSpeed) > 1000 )
+  //             targetSpeed = 0;
+  //         // this is the only output
+  //         var targetAngularVelocity = -targetSpeed / (2 * Math.PI * wheelBody.shapes[0].radius); // wheel circumference = 2*pi*r
+  //         wheelJoint.motorSpeed = targetAngularVelocity;
+  //     });
+  //     app.frame(3,5,16,16);
+  // });
+  // /*
+  //     Simple PID controller for single float variable
+  //     http://en.wikipedia.org/wiki/PID_controller#Pseudocode
+  // */
+  // function PIDController(){
+  //     this.gainP = 1;
+  //     this.gainI = 1;
+  //     this.gainD = 1;
+  //     this.currentError = 0;
+  //     this.previousError = 0;
+  //     this.integral = 0;
+  //     this.output = 0;
+  // }
+  // PIDController.prototype.step = function(dt) {
+  //     this.integral = dt * (this.integral + this.currentError);
+  //     var derivative = (1 / dt) * (this.currentError - this.previousError);
+  //     this.output = this.gainP * this.currentError + this.gainI * this.integral + this.gainD * derivative;
+  //     this.previousError = this.currentError;
+  // };
+  // function clamp(num, min, max) {
+  //     return Math.min(Math.max(num, min), max);
+  // };
+  function normalizeAngle(angle) {
+      while (angle > b2DegToRad(180)) {
+          angle -= b2DegToRad(360);
+      }
+      while (angle < b2DegToRad(-180)) {
+          angle += b2DegToRad(360);
+      }
+      return angle;
+  }
+
+  /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
   *
   * This software is provided 'as-is', without any express or implied
@@ -35308,7 +35616,6 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  // #endif
   const g_testEntries = [
       // #if B2_ENABLE_PARTICLE
       new TestEntry("Sparky", Sparky.Create),
@@ -35403,6 +35710,8 @@
       new TestEntry("Corner Case", CornerCase.Create),
       new TestEntry("Particle Collisions", ParticleCollisionFilter.Create),
       new TestEntry("Eye Candy", EyeCandy.Create),
+      // #endif
+      new TestEntry("Segway", Segway.Create),
   ];
 
   class Main {

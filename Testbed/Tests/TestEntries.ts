@@ -114,6 +114,8 @@ import { ParticleCollisionFilter } from "./ParticleCollisionFilter";
 import { EyeCandy } from "./EyeCandy";
 // #endif
 
+import { Segway } from "./Segway";
+
 export const g_testEntries: TestEntry[] = [
   // #if B2_ENABLE_PARTICLE
   new TestEntry("Sparky", Sparky.Create),
@@ -214,4 +216,6 @@ export const g_testEntries: TestEntry[] = [
   new TestEntry("Particle Collisions", ParticleCollisionFilter.Create),
   new TestEntry("Eye Candy", EyeCandy.Create),
   // #endif
+
+  new TestEntry("Segway", Segway.Create),
 ];
