@@ -19991,7 +19991,7 @@
           // #endif
       }
       QueryAABB(...args) {
-          if (args[0] instanceof b2RayCastCallback) {
+          if (args[0] instanceof b2QueryCallback) {
               this._QueryAABB(args[0], args[1]);
           }
           else {
@@ -20026,7 +20026,7 @@
           return out;
       }
       QueryPointAABB(...args) {
-          if (args[0] instanceof b2RayCastCallback) {
+          if (args[0] instanceof b2QueryCallback) {
               this._QueryPointAABB(args[0], args[1]);
           }
           else {
@@ -20061,7 +20061,7 @@
           return out;
       }
       QueryFixtureShape(...args) {
-          if (args[0] instanceof b2RayCastCallback) {
+          if (args[0] instanceof b2QueryCallback) {
               this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
           }
           else {
@@ -20100,7 +20100,7 @@
           return out;
       }
       QueryFixturePoint(...args) {
-          if (args[0] instanceof b2RayCastCallback) {
+          if (args[0] instanceof b2QueryCallback) {
               this._QueryFixturePoint(args[0], args[1]);
           }
           else {

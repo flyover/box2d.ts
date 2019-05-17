@@ -690,7 +690,7 @@ export class b2World {
   public QueryAABB(callback: b2QueryCallback, aabb: b2AABB): void;
   public QueryAABB(aabb: b2AABB, fn: b2QueryCallbackFunction): void;
   public QueryAABB(...args: any[]): void {
-    if (args[0] instanceof b2RayCastCallback) {
+    if (args[0] instanceof b2QueryCallback) {
       this._QueryAABB(args[0], args[1]);
     } else {
       this._QueryAABB(null, args[0], args[1]);
@@ -731,7 +731,7 @@ export class b2World {
   public QueryPointAABB(callback: b2QueryCallback, point: b2Vec2): void;
   public QueryPointAABB(point: b2Vec2, fn: b2QueryCallbackFunction): void;
   public QueryPointAABB(...args: any[]): void {
-    if (args[0] instanceof b2RayCastCallback) {
+    if (args[0] instanceof b2QueryCallback) {
       this._QueryPointAABB(args[0], args[1]);
     } else {
       this._QueryPointAABB(null, args[0], args[1]);
@@ -768,7 +768,7 @@ export class b2World {
   public QueryFixtureShape(callback: b2QueryCallback, shape: b2Shape, index: number, transform: b2Transform): void;
   public QueryFixtureShape(shape: b2Shape, index: number, transform: b2Transform, fn: b2QueryCallbackFunction): void;
   public QueryFixtureShape(...args: any[]): void {
-    if (args[0] instanceof b2RayCastCallback) {
+    if (args[0] instanceof b2QueryCallback) {
       this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
     } else {
       this._QueryFixtureShape(null, args[0], args[1], args[2], args[3]);
@@ -810,7 +810,7 @@ export class b2World {
   public QueryFixturePoint(callback: b2QueryCallback, point: b2Vec2): void;
   public QueryFixturePoint(point: b2Vec2, fn: b2QueryCallbackFunction): void;
   public QueryFixturePoint(...args: any[]): void {
-    if (args[0] instanceof b2RayCastCallback) {
+    if (args[0] instanceof b2QueryCallback) {
       this._QueryFixturePoint(args[0], args[1]);
     } else {
       this._QueryFixturePoint(null, args[0], args[1]);
