@@ -769,7 +769,7 @@ export class b2World {
   public QueryFixtureShape(shape: b2Shape, index: number, transform: b2Transform, fn: b2QueryCallbackFunction): void;
   public QueryFixtureShape(...args: any[]): void {
     if (args[0] instanceof b2QueryCallback) {
-      this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
+      this._QueryFixtureShape(args[0], args[1], args[2], args[3]);
     } else {
       this._QueryFixtureShape(null, args[0], args[1], args[2], args[3]);
     }
@@ -856,9 +856,9 @@ export class b2World {
   public RayCast(point1: b2Vec2, point2: b2Vec2, fn: b2RayCastCallbackFunction): void;
   public RayCast(...args: any[]): void {
     if (args[0] instanceof b2RayCastCallback) {
-      this._RayCast(args[0], args[1], args[1]);
+      this._RayCast(args[0], args[1], args[2]);
     } else {
-      this._RayCast(null, args[0], args[1], args[1]);
+      this._RayCast(null, args[0], args[1], args[2]);
     }
   }
   private static RayCast_s_input = new b2RayCastInput();
