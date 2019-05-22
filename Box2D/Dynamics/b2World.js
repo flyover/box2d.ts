@@ -679,7 +679,7 @@ System.register(["../Common/b2Settings", "../Common/b2Math", "../Common/b2Timer"
                 }
                 QueryFixtureShape(...args) {
                     if (args[0] instanceof b2WorldCallbacks_1.b2QueryCallback) {
-                        this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
+                        this._QueryFixtureShape(args[0], args[1], args[2], args[3]);
                     }
                     else {
                         this._QueryFixtureShape(null, args[0], args[1], args[2], args[3]);
@@ -755,10 +755,10 @@ System.register(["../Common/b2Settings", "../Common/b2Math", "../Common/b2Timer"
                 }
                 RayCast(...args) {
                     if (args[0] instanceof b2WorldCallbacks_2.b2RayCastCallback) {
-                        this._RayCast(args[0], args[1], args[1]);
+                        this._RayCast(args[0], args[1], args[2]);
                     }
                     else {
-                        this._RayCast(null, args[0], args[1], args[1]);
+                        this._RayCast(null, args[0], args[1], args[2]);
                     }
                 }
                 _RayCast(callback, point1, point2, fn) {
