@@ -299,7 +299,7 @@ export class b2Body {
     const fixture: b2Fixture = new b2Fixture(this, def);
 
     if (this.m_activeFlag) {
-      fixture.CreateProxies(this.m_xf);
+      fixture.CreateProxies();
     }
 
     fixture.m_next = this.m_fixtureList;
@@ -425,7 +425,7 @@ export class b2Body {
     this.m_sweep.a0 = angle;
 
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.Synchronize(this.m_xf, this.m_xf);
+      f.SynchronizeProxies(this.m_xf, this.m_xf);
     }
 
     this.m_world.m_contactManager.FindNewContacts();
@@ -972,7 +972,7 @@ export class b2Body {
     if (flag) {
       // Create all proxies.
       for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-        f.CreateProxies(this.m_xf);
+        f.CreateProxies();
       }
       // Contacts are created the next time step.
     } else {
@@ -1105,7 +1105,7 @@ export class b2Body {
     b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.Synchronize(xf1, this.m_xf);
+      f.SynchronizeProxies(xf1, this.m_xf);
     }
   }
 

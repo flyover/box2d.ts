@@ -19,7 +19,6 @@
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2Maybe } from "../Common/b2Settings";
 import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
-import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
 import { b2Shape, b2ShapeType, b2MassData } from "../Collision/Shapes/b2Shape";
@@ -128,21 +127,36 @@ export class b2FixtureProxy {
   public readonly aabb: b2AABB = new b2AABB();
   public readonly fixture: b2Fixture;
   public readonly childIndex: number = 0;
-  private _treeNode: b2TreeNode<b2FixtureProxy> | null = null;
-  public get treeNode(): b2TreeNode<b2FixtureProxy> {
-    if (this._treeNode === null) { throw new Error(); }
-    return this._treeNode;
-  }
-  public set treeNode(value: b2TreeNode<b2FixtureProxy>) {
-    if (this._treeNode !== null) { throw new Error(); }
-    this._treeNode = value;
-  }
+  public treeNode: b2TreeNode<b2FixtureProxy>;
   constructor(fixture: b2Fixture, childIndex: number) {
     this.fixture = fixture;
     this.childIndex = childIndex;
-  }
+    this.fixture.m_shape.ComputeAABB(this.aabb, this.fixture.m_body.GetTransform(), childIndex);
+    this.treeNode = this.fixture.m_body.m_world.m_contactManager.m_broadPhase.CreateProxy(this.aabb, this);
+}
   public Reset(): void {
-    this._treeNode = null;
+    this.fixture.m_body.m_world.m_contactManager.m_broadPhase.DestroyProxy(this.treeNode);
+  }
+  public Touch(): void {
+    this.fixture.m_body.m_world.m_contactManager.m_broadPhase.TouchProxy(this.treeNode);
+  }
+  private static Synchronize_s_displacement = new b2Vec2();
+  private static Synchronize_s_aabb1 = new b2AABB();
+  private static Synchronize_s_aabb2 = new b2AABB();
+  public Synchronize(transform1: b2Transform, transform2: b2Transform): void {
+    const displacement: b2Vec2 = b2Vec2.SubVV(transform2.p, transform1.p, b2FixtureProxy.Synchronize_s_displacement);
+    if (transform1 === transform2) {
+      this.fixture.m_shape.ComputeAABB(this.aabb, transform1, this.childIndex);
+      this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
+    } else {
+      // Compute an AABB that covers the swept shape (may miss some rotation effect).
+      const aabb1: b2AABB = b2FixtureProxy.Synchronize_s_aabb1;
+      const aabb2: b2AABB = b2FixtureProxy.Synchronize_s_aabb2;
+      this.fixture.m_shape.ComputeAABB(aabb1, transform1, this.childIndex);
+      this.fixture.m_shape.ComputeAABB(aabb2, transform2, this.childIndex);
+      this.aabb.Combine2(aabb1, aabb2);
+      this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
+    }
   }
 }
 
@@ -163,7 +177,7 @@ export class b2Fixture {
   public m_restitution: number = 0;
 
   public readonly m_proxies: b2FixtureProxy[] = [];
-  public m_proxyCount: number = 0;
+  public get m_proxyCount(): number { return this.m_proxies.length; }
 
   public readonly m_filter: b2Filter = new b2Filter();
 
@@ -360,65 +374,31 @@ export class b2Fixture {
   }
 
   // These support body activation/deactivation.
-  public CreateProxies(xf: b2Transform): void {
-    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
-    // DEBUG: b2Assert(this.m_proxyCount === 0);
-
+  public CreateProxies(): void {
+    if (this.m_proxies.length !== 0) { throw new Error(); }
     // Create proxies in the broad-phase.
-    this.m_proxyCount = this.m_shape.GetChildCount();
-
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      const proxy: b2FixtureProxy = this.m_proxies[i] = new b2FixtureProxy(this, i);
-      this.m_shape.ComputeAABB(proxy.aabb, xf, i);
-      proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
+    for (let i: number = 0; i < this.m_shape.GetChildCount(); ++i) {
+      this.m_proxies[i] = new b2FixtureProxy(this, i);
     }
   }
 
   public DestroyProxies(): void {
-    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
     // Destroy proxies in the broad-phase.
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      const proxy: b2FixtureProxy = this.m_proxies[i];
-      proxy.treeNode.Reset();
-      broadPhase.DestroyProxy(proxy.treeNode);
+    for (const proxy of this.m_proxies) {
       proxy.Reset();
     }
-
-    this.m_proxyCount = 0;
+    this.m_proxies.length = 0;
   }
 
   public TouchProxies(): void {
-    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
-    const proxyCount: number = this.m_proxyCount;
-    for (let i: number = 0; i < proxyCount; ++i) {
-      broadPhase.TouchProxy(this.m_proxies[i].treeNode);
+    for (const proxy of this.m_proxies) {
+      proxy.Touch();
     }
   }
 
-  private static Synchronize_s_aabb1 = new b2AABB();
-  private static Synchronize_s_aabb2 = new b2AABB();
-  private static Synchronize_s_displacement = new b2Vec2();
-  public Synchronize(transform1: b2Transform, transform2: b2Transform): void {
-    if (this.m_proxyCount === 0) {
-      return;
-    }
-
-    const broadPhase: b2BroadPhase<b2FixtureProxy> = this.m_body.m_world.m_contactManager.m_broadPhase;
-
-    for (let i: number = 0; i < this.m_proxyCount; ++i) {
-      const proxy = this.m_proxies[i];
-
-      // Compute an AABB that covers the swept shape (may miss some rotation effect).
-      const aabb1 = b2Fixture.Synchronize_s_aabb1;
-      const aabb2 = b2Fixture.Synchronize_s_aabb2;
-      this.m_shape.ComputeAABB(aabb1, transform1, i);
-      this.m_shape.ComputeAABB(aabb2, transform2, i);
-
-      proxy.aabb.Combine2(aabb1, aabb2);
-
-      const displacement: b2Vec2 = b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
-
-      broadPhase.MoveProxy(proxy.treeNode, proxy.aabb, displacement);
+  public SynchronizeProxies(transform1: b2Transform, transform2: b2Transform): void {
+    for (const proxy of this.m_proxies) {
+      proxy.Synchronize(transform1, transform2);
     }
   }
 }
