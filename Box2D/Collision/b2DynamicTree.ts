@@ -71,7 +71,7 @@ export class b2DynamicTree<T> {
 
   public m_insertionCount: number = 0;
 
-  public readonly m_stack = new b2GrowableStack<b2TreeNode<T>>(256);
+  public readonly m_stack = new b2GrowableStack<b2TreeNode<T> | null>(256);
   public static readonly s_r = new b2Vec2();
   public static readonly s_v = new b2Vec2();
   public static readonly s_abs_v = new b2Vec2();
@@ -91,16 +91,14 @@ export class b2DynamicTree<T> {
   // }
 
   public Query(aabb: b2AABB, callback: (node: b2TreeNode<T>) => boolean): void {
-    if (this.m_root === null) { return; }
-
-    const stack: b2GrowableStack<b2TreeNode<T>> = this.m_stack.Reset();
+    const stack: b2GrowableStack<b2TreeNode<T> | null> = this.m_stack.Reset();
     stack.Push(this.m_root);
 
     while (stack.GetCount() > 0) {
-      const node: b2TreeNode<T> = stack.Pop();
-      // if (node === null) {
-      //   continue;
-      // }
+      const node: b2TreeNode<T> | null = stack.Pop();
+      if (node === null) {
+        continue;
+      }
 
       if (node.aabb.TestOverlap(aabb)) {
         if (node.IsLeaf()) {
@@ -109,24 +107,22 @@ export class b2DynamicTree<T> {
             return;
           }
         } else {
-          stack.Push(verify(node.child1));
-          stack.Push(verify(node.child2));
+          stack.Push(node.child1);
+          stack.Push(node.child2);
         }
       }
     }
   }
 
   public QueryPoint(point: XY, callback: (node: b2TreeNode<T>) => boolean): void {
-    if (this.m_root === null) { return; }
-
-    const stack: b2GrowableStack<b2TreeNode<T>> = this.m_stack.Reset();
+    const stack: b2GrowableStack<b2TreeNode<T> | null> = this.m_stack.Reset();
     stack.Push(this.m_root);
 
     while (stack.GetCount() > 0) {
-      const node: b2TreeNode<T> = stack.Pop();
-      // if (node === null) {
-      //   continue;
-      // }
+      const node: b2TreeNode<T> | null = stack.Pop();
+      if (node === null) {
+        continue;
+      }
 
       if (node.aabb.TestContain(point)) {
         if (node.IsLeaf()) {
@@ -135,16 +131,14 @@ export class b2DynamicTree<T> {
             return;
           }
         } else {
-          stack.Push(verify(node.child1));
-          stack.Push(verify(node.child2));
+          stack.Push(node.child1);
+          stack.Push(node.child2);
         }
       }
     }
   }
 
   public RayCast(input: b2RayCastInput, callback: (input: b2RayCastInput, node: b2TreeNode<T>) => number): void {
-    if (this.m_root === null) { return; }
-
     const p1: b2Vec2 = input.p1;
     const p2: b2Vec2 = input.p2;
     const r: b2Vec2 = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
@@ -169,14 +163,14 @@ export class b2DynamicTree<T> {
     segmentAABB.upperBound.x = b2Max(p1.x, t_x);
     segmentAABB.upperBound.y = b2Max(p1.y, t_y);
 
-    const stack: b2GrowableStack<b2TreeNode<T>> = this.m_stack.Reset();
+    const stack: b2GrowableStack<b2TreeNode<T> | null> = this.m_stack.Reset();
     stack.Push(this.m_root);
 
     while (stack.GetCount() > 0) {
-      const node: b2TreeNode<T> = stack.Pop();
-      // if (node === null) {
-      //   continue;
-      // }
+      const node: b2TreeNode<T> | null = stack.Pop();
+      if (node === null) {
+        continue;
+      }
 
       if (!b2TestOverlapAABB(node.aabb, segmentAABB)) {
         continue;
@@ -215,8 +209,8 @@ export class b2DynamicTree<T> {
           segmentAABB.upperBound.y = b2Max(p1.y, t_y);
         }
       } else {
-        stack.Push(verify(node.child1));
-        stack.Push(verify(node.child2));
+        stack.Push(node.child1);
+        stack.Push(node.child2);
       }
     }
   }
@@ -320,7 +314,6 @@ export class b2DynamicTree<T> {
 
     // Find the best sibling for this node
     const leafAABB: b2AABB = leaf.aabb;
-    ///const center: b2Vec2 = leafAABB.GetCenter();
     let sibling: b2TreeNode<T> = this.m_root;
     while (!sibling.IsLeaf()) {
       const child1: b2TreeNode<T> = verify(sibling.child1);
