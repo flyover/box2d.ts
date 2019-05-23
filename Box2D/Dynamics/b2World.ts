@@ -728,8 +728,8 @@ export class b2World {
   /// provided point.
   /// @param callback a user implemented callback class.
   /// @param point the query point.
-  public QueryPointAABB(callback: b2QueryCallback, point: b2Vec2): void;
-  public QueryPointAABB(point: b2Vec2, fn: b2QueryCallbackFunction): void;
+  public QueryPointAABB(callback: b2QueryCallback, point: XY): void;
+  public QueryPointAABB(point: XY, fn: b2QueryCallbackFunction): void;
   public QueryPointAABB(...args: any[]): void {
     if (args[0] instanceof b2QueryCallback) {
       this._QueryPointAABB(args[0], args[1]);
@@ -737,7 +737,7 @@ export class b2World {
       this._QueryPointAABB(null, args[0], args[1]);
     }
   }
-  private _QueryPointAABB(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
+  private _QueryPointAABB(callback: b2QueryCallback | null, point: XY, fn?: b2QueryCallbackFunction): void {
     this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
       const fixture_proxy: b2FixtureProxy = proxy.userData;
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -760,7 +760,7 @@ export class b2World {
     // #endif
   }
 
-  public QueryAllPointAABB(point: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
+  public QueryAllPointAABB(point: XY, out: b2Fixture[] = []): b2Fixture[] {
     this.QueryPointAABB(point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
     return out;
   }
@@ -807,8 +807,8 @@ export class b2World {
     return out;
   }
 
-  public QueryFixturePoint(callback: b2QueryCallback, point: b2Vec2): void;
-  public QueryFixturePoint(point: b2Vec2, fn: b2QueryCallbackFunction): void;
+  public QueryFixturePoint(callback: b2QueryCallback, point: XY): void;
+  public QueryFixturePoint(point: XY, fn: b2QueryCallbackFunction): void;
   public QueryFixturePoint(...args: any[]): void {
     if (args[0] instanceof b2QueryCallback) {
       this._QueryFixturePoint(args[0], args[1]);
@@ -816,7 +816,7 @@ export class b2World {
       this._QueryFixturePoint(null, args[0], args[1]);
     }
   }
-  private _QueryFixturePoint(callback: b2QueryCallback | null, point: b2Vec2, fn?: b2QueryCallbackFunction): void {
+  private _QueryFixturePoint(callback: b2QueryCallback | null, point: XY, fn?: b2QueryCallbackFunction): void {
     this.m_contactManager.m_broadPhase.QueryPoint(point, (proxy: b2TreeNode<b2FixtureProxy>): boolean => {
       const fixture_proxy: b2FixtureProxy = proxy.userData;
       // DEBUG: b2Assert(fixture_proxy instanceof b2FixtureProxy);
@@ -841,7 +841,7 @@ export class b2World {
     // #endif
   }
 
-  public QueryAllFixturePoint(point: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
+  public QueryAllFixturePoint(point: XY, out: b2Fixture[] = []): b2Fixture[] {
     this.QueryFixturePoint(point, (fixture: b2Fixture): boolean => { out.push(fixture); return true; });
     return out;
   }
@@ -852,8 +852,8 @@ export class b2World {
   /// @param callback a user implemented callback class.
   /// @param point1 the ray starting point
   /// @param point2 the ray ending point
-  public RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void;
-  public RayCast(point1: b2Vec2, point2: b2Vec2, fn: b2RayCastCallbackFunction): void;
+  public RayCast(callback: b2RayCastCallback, point1: XY, point2: XY): void;
+  public RayCast(point1: XY, point2: XY, fn: b2RayCastCallbackFunction): void;
   public RayCast(...args: any[]): void {
     if (args[0] instanceof b2RayCastCallback) {
       this._RayCast(args[0], args[1], args[2]);
@@ -864,7 +864,7 @@ export class b2World {
   private static RayCast_s_input = new b2RayCastInput();
   private static RayCast_s_output = new b2RayCastOutput();
   private static RayCast_s_point = new b2Vec2();
-  private _RayCast(callback: b2RayCastCallback | null, point1: b2Vec2, point2: b2Vec2, fn?: b2RayCastCallbackFunction): void {
+  private _RayCast(callback: b2RayCastCallback | null, point1: XY, point2: XY, fn?: b2RayCastCallbackFunction): void {
     const input: b2RayCastInput = b2World.RayCast_s_input;
     input.maxFraction = 1;
     input.p1.Copy(point1);
@@ -899,7 +899,7 @@ export class b2World {
     // #endif
   }
 
-  public RayCastOne(point1: b2Vec2, point2: b2Vec2): b2Fixture | null {
+  public RayCastOne(point1: XY, point2: XY): b2Fixture | null {
     let result: b2Fixture | null = null;
     let min_fraction: number = 1;
     this.RayCast(point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
@@ -912,7 +912,7 @@ export class b2World {
     return result;
   }
 
-  public RayCastAll(point1: b2Vec2, point2: b2Vec2, out: b2Fixture[] = []): b2Fixture[] {
+  public RayCastAll(point1: XY, point2: XY, out: b2Fixture[] = []): b2Fixture[] {
     this.RayCast(point1, point2, (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number => {
       out.push(fixture);
       return 1;

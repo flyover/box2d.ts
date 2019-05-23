@@ -18,7 +18,7 @@
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_maxManifoldPoints, b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
+import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform, XY } from "../Common/b2Math";
 import { b2Shape } from "./Shapes/b2Shape";
 import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance";
 
@@ -539,7 +539,7 @@ export class b2AABB {
     return true;
   }
 
-  public TestContain(point: b2Vec2): boolean {
+  public TestContain(point: XY): boolean {
     if (point.x < this.lowerBound.x || this.upperBound.x < point.x) { return false; }
     if (point.y < this.lowerBound.y || this.upperBound.y < point.y) { return false; }
     return true;

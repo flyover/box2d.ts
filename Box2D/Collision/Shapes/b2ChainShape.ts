@@ -165,7 +165,7 @@ export class b2ChainShape extends b2Shape {
 
   /// This always return false.
   /// @see b2Shape::TestPoint
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(xf: b2Transform, p: XY): boolean {
     return false;
   }
 

@@ -116,7 +116,7 @@ export class b2DynamicTree<T> {
     }
   }
 
-  public QueryPoint(point: b2Vec2, callback: (node: b2TreeNode<T>) => boolean): void {
+  public QueryPoint(point: XY, callback: (node: b2TreeNode<T>) => boolean): void {
     if (this.m_root === null) { return; }
 
     const stack: b2GrowableStack<b2TreeNode<T>> = this.m_stack.Reset();

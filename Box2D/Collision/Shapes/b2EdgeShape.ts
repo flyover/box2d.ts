@@ -74,7 +74,7 @@ export class b2EdgeShape extends b2Shape {
   }
 
   /// @see b2Shape::TestPoint
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(xf: b2Transform, p: XY): boolean {
     return false;
   }
 

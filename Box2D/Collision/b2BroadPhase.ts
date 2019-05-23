@@ -180,7 +180,7 @@ export class b2BroadPhase<T> {
     this.m_tree.Query(aabb, callback);
   }
 
-  public QueryPoint(point: b2Vec2, callback: (node: b2TreeNode<T>) => boolean): void {
+  public QueryPoint(point: XY, callback: (node: b2TreeNode<T>) => boolean): void {
     this.m_tree.QueryPoint(point, callback);
   }
 

@@ -1804,7 +1804,7 @@ export class b2ParticleSystem {
   }
   public static readonly QueryShapeAABB_s_aabb = new b2AABB();
 
-  public QueryPointAABB(callback: b2QueryCallback, point: b2Vec2, slop: number = b2_linearSlop): void {
+  public QueryPointAABB(callback: b2QueryCallback, point: XY, slop: number = b2_linearSlop): void {
     const s_aabb = b2ParticleSystem.QueryPointAABB_s_aabb;
     const aabb = s_aabb;
     aabb.lowerBound.Set(point.x - slop, point.y - slop);
@@ -1824,7 +1824,7 @@ export class b2ParticleSystem {
    * @param point1 the ray starting point
    * @param point2 the ray ending point
    */
-  public RayCast(callback: b2RayCastCallback, point1: b2Vec2, point2: b2Vec2): void {
+  public RayCast(callback: b2RayCastCallback, point1: XY, point2: XY): void {
     const s_aabb = b2ParticleSystem.RayCast_s_aabb;
     const s_p = b2ParticleSystem.RayCast_s_p;
     const s_v = b2ParticleSystem.RayCast_s_v;
@@ -5032,7 +5032,7 @@ export class b2ParticleSystem_CompositeShape extends b2Shape {
   /**
    * @see b2Shape::TestPoint
    */
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(xf: b2Transform, p: XY): boolean {
     for (let i = 0; i < this.m_shapeCount; i++) {
       if (this.m_shapes[i].TestPoint(xf, p)) {
         return true;

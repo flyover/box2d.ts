@@ -18,7 +18,7 @@
 
 // DEBUG: import { b2Assert } from "../Common/b2Settings";
 import { b2Maybe } from "../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../Common/b2Math";
+import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
 import { b2BroadPhase } from "../Collision/b2BroadPhase";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
 import { b2TreeNode } from "../Collision/b2DynamicTree";
@@ -273,7 +273,7 @@ export class b2Fixture {
 
   /// Test a point for containment in this fixture.
   /// @param p a point in world coordinates.
-  public TestPoint(p: b2Vec2): boolean {
+  public TestPoint(p: XY): boolean {
     return this.m_shape.TestPoint(this.m_body.GetTransform(), p);
   }
 

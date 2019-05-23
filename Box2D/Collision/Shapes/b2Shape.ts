@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../../Common/b2Settings";
-import { b2Vec2, b2Transform } from "../../Common/b2Math";
+import { b2Vec2, b2Transform, XY } from "../../Common/b2Math";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
 import { b2DistanceProxy } from "../b2Distance";
 
@@ -78,7 +78,7 @@ export abstract class b2Shape {
   /// Test a point for containment in this shape. This only works for convex shapes.
   /// @param xf the shape world transform.
   /// @param p a point in world coordinates.
-  public abstract TestPoint(xf: b2Transform, p: b2Vec2): boolean;
+  public abstract TestPoint(xf: b2Transform, p: XY): boolean;
 
   // #if B2_ENABLE_PARTICLE
   /// Compute the distance from the current shape to the specified point. This only works for convex shapes.

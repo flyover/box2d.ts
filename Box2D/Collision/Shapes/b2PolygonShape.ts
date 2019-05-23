@@ -218,7 +218,7 @@ export class b2PolygonShape extends b2Shape {
 
   /// @see b2Shape::TestPoint
   private static TestPoint_s_pLocal = new b2Vec2();
-  public TestPoint(xf: b2Transform, p: b2Vec2): boolean {
+  public TestPoint(xf: b2Transform, p: XY): boolean {
     const pLocal: b2Vec2 = b2Transform.MulTXV(xf, p, b2PolygonShape.TestPoint_s_pLocal);
 
     for (let i: number = 0; i < this.m_count; ++i) {
