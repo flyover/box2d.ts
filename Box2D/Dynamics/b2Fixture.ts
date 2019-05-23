@@ -140,11 +140,9 @@ export class b2FixtureProxy {
   public Touch(): void {
     this.fixture.m_body.m_world.m_contactManager.m_broadPhase.TouchProxy(this.treeNode);
   }
-  private static Synchronize_s_displacement = new b2Vec2();
   private static Synchronize_s_aabb1 = new b2AABB();
   private static Synchronize_s_aabb2 = new b2AABB();
-  public Synchronize(transform1: b2Transform, transform2: b2Transform): void {
-    const displacement: b2Vec2 = b2Vec2.SubVV(transform2.p, transform1.p, b2FixtureProxy.Synchronize_s_displacement);
+  public Synchronize(transform1: b2Transform, transform2: b2Transform, displacement: b2Vec2): void {
     if (transform1 === transform2) {
       this.fixture.m_shape.ComputeAABB(this.aabb, transform1, this.childIndex);
       this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
@@ -396,9 +394,9 @@ export class b2Fixture {
     }
   }
 
-  public SynchronizeProxies(transform1: b2Transform, transform2: b2Transform): void {
+  public SynchronizeProxies(transform1: b2Transform, transform2: b2Transform, displacement: b2Vec2): void {
     for (const proxy of this.m_proxies) {
-      proxy.Synchronize(transform1, transform2);
+      proxy.Synchronize(transform1, transform2, displacement);
     }
   }
 }

@@ -425,7 +425,7 @@ export class b2Body {
     this.m_sweep.a0 = angle;
 
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.SynchronizeProxies(this.m_xf, this.m_xf);
+      f.SynchronizeProxies(this.m_xf, this.m_xf, b2Vec2.ZERO);
     }
 
     this.m_world.m_contactManager.FindNewContacts();
@@ -1098,14 +1098,18 @@ export class b2Body {
   }
 
   private static SynchronizeFixtures_s_xf1: b2Transform = new b2Transform();
+  private static SynchronizeFixtures_s_displacement: b2Vec2 = new b2Vec2();
   public SynchronizeFixtures(): void {
     const xf1: b2Transform = b2Body.SynchronizeFixtures_s_xf1;
     xf1.q.SetAngle(this.m_sweep.a0);
     b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
     b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
+    // const displacement: b2Vec2 = b2Vec2.SubVV(this.m_xf.p, xf1.p, b2Body.SynchronizeFixtures_s_displacement);
+    const displacement: b2Vec2 = b2Vec2.SubVV(this.m_sweep.c, this.m_sweep.c0, b2Body.SynchronizeFixtures_s_displacement);
+
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.SynchronizeProxies(xf1, this.m_xf);
+      f.SynchronizeProxies(xf1, this.m_xf, displacement);
     }
   }
 
