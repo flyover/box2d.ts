@@ -130,16 +130,16 @@
   const b2_branch = "master";
   const b2_commit = "fbf51801d80fc389d43dc46524520e89043b6faf";
   function b2MakeArray(length, init) {
-      const a = [];
+      const a = new Array(length);
       for (let i = 0; i < length; ++i) {
-          a.push(init(i));
+          a[i] = init(i);
       }
       return a;
   }
   function b2MakeNumberArray(length, init = 0) {
-      const a = [];
+      const a = new Array(length);
       for (let i = 0; i < length; ++i) {
-          a.push(init);
+          a[i] = init;
       }
       return a;
   }
@@ -2724,16 +2724,13 @@
       //   return node.aabb;
       // }
       Query(aabb, callback) {
-          if (this.m_root === null) {
-              return;
-          }
           const stack = this.m_stack.Reset();
           stack.Push(this.m_root);
           while (stack.GetCount() > 0) {
               const node = stack.Pop();
-              // if (node === null) {
-              //   continue;
-              // }
+              if (node === null) {
+                  continue;
+              }
               if (node.aabb.TestOverlap(aabb)) {
                   if (node.IsLeaf()) {
                       const proceed = callback(node);
@@ -2742,23 +2739,20 @@
                       }
                   }
                   else {
-                      stack.Push(verify(node.child1));
-                      stack.Push(verify(node.child2));
+                      stack.Push(node.child1);
+                      stack.Push(node.child2);
                   }
               }
           }
       }
       QueryPoint(point, callback) {
-          if (this.m_root === null) {
-              return;
-          }
           const stack = this.m_stack.Reset();
           stack.Push(this.m_root);
           while (stack.GetCount() > 0) {
               const node = stack.Pop();
-              // if (node === null) {
-              //   continue;
-              // }
+              if (node === null) {
+                  continue;
+              }
               if (node.aabb.TestContain(point)) {
                   if (node.IsLeaf()) {
                       const proceed = callback(node);
@@ -2767,16 +2761,13 @@
                       }
                   }
                   else {
-                      stack.Push(verify(node.child1));
-                      stack.Push(verify(node.child2));
+                      stack.Push(node.child1);
+                      stack.Push(node.child2);
                   }
               }
           }
       }
       RayCast(input, callback) {
-          if (this.m_root === null) {
-              return;
-          }
           const p1 = input.p1;
           const p2 = input.p2;
           const r = b2Vec2.SubVV(p2, p1, b2DynamicTree.s_r);
@@ -2800,9 +2791,9 @@
           stack.Push(this.m_root);
           while (stack.GetCount() > 0) {
               const node = stack.Pop();
-              // if (node === null) {
-              //   continue;
-              // }
+              if (node === null) {
+                  continue;
+              }
               if (!b2TestOverlapAABB(node.aabb, segmentAABB)) {
                   continue;
               }
@@ -2836,8 +2827,8 @@
                   }
               }
               else {
-                  stack.Push(verify(node.child1));
-                  stack.Push(verify(node.child2));
+                  stack.Push(node.child1);
+                  stack.Push(node.child2);
               }
           }
       }
@@ -2921,7 +2912,6 @@
           }
           // Find the best sibling for this node
           const leafAABB = leaf.aabb;
-          ///const center: b2Vec2 = leafAABB.GetCenter();
           let sibling = this.m_root;
           while (!sibling.IsLeaf()) {
               const child1 = verify(sibling.child1);
@@ -6083,26 +6073,35 @@
       constructor(fixture, childIndex) {
           this.aabb = new b2AABB();
           this.childIndex = 0;
-          this._treeNode = null;
           this.fixture = fixture;
           this.childIndex = childIndex;
-      }
-      get treeNode() {
-          if (this._treeNode === null) {
-              throw new Error();
-          }
-          return this._treeNode;
-      }
-      set treeNode(value) {
-          if (this._treeNode !== null) {
-              throw new Error();
-          }
-          this._treeNode = value;
+          this.fixture.m_shape.ComputeAABB(this.aabb, this.fixture.m_body.GetTransform(), childIndex);
+          this.treeNode = this.fixture.m_body.m_world.m_contactManager.m_broadPhase.CreateProxy(this.aabb, this);
       }
       Reset() {
-          this._treeNode = null;
+          this.fixture.m_body.m_world.m_contactManager.m_broadPhase.DestroyProxy(this.treeNode);
+      }
+      Touch() {
+          this.fixture.m_body.m_world.m_contactManager.m_broadPhase.TouchProxy(this.treeNode);
+      }
+      Synchronize(transform1, transform2, displacement) {
+          if (transform1 === transform2) {
+              this.fixture.m_shape.ComputeAABB(this.aabb, transform1, this.childIndex);
+              this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
+          }
+          else {
+              // Compute an AABB that covers the swept shape (may miss some rotation effect).
+              const aabb1 = b2FixtureProxy.Synchronize_s_aabb1;
+              const aabb2 = b2FixtureProxy.Synchronize_s_aabb2;
+              this.fixture.m_shape.ComputeAABB(aabb1, transform1, this.childIndex);
+              this.fixture.m_shape.ComputeAABB(aabb2, transform2, this.childIndex);
+              this.aabb.Combine2(aabb1, aabb2);
+              this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
+          }
       }
   }
+  b2FixtureProxy.Synchronize_s_aabb1 = new b2AABB();
+  b2FixtureProxy.Synchronize_s_aabb2 = new b2AABB();
   /// A fixture is used to attach a shape to a body for collision detection. A fixture
   /// inherits its transform from its parent. Fixtures hold additional non-geometric data
   /// such as friction, collision filters, etc.
@@ -6115,7 +6114,6 @@
           this.m_friction = 0;
           this.m_restitution = 0;
           this.m_proxies = [];
-          this.m_proxyCount = 0;
           this.m_filter = new b2Filter();
           this.m_isSensor = false;
           this.m_userData = null;
@@ -6128,6 +6126,7 @@
           this.m_isSensor = b2Maybe(def.isSensor, false);
           this.m_density = b2Maybe(def.density, 0);
       }
+      get m_proxyCount() { return this.m_proxies.length; }
       Reset() {
           // The proxies must be destroyed before calling this.
           // DEBUG: b2Assert(this.m_proxyCount === 0);
@@ -6275,56 +6274,33 @@
           log("    bodies[%d].CreateFixture(fd);\n", bodyIndex);
       }
       // These support body activation/deactivation.
-      CreateProxies(xf) {
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          // DEBUG: b2Assert(this.m_proxyCount === 0);
+      CreateProxies() {
+          if (this.m_proxies.length !== 0) {
+              throw new Error();
+          }
           // Create proxies in the broad-phase.
-          this.m_proxyCount = this.m_shape.GetChildCount();
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i] = new b2FixtureProxy(this, i);
-              this.m_shape.ComputeAABB(proxy.aabb, xf, i);
-              proxy.treeNode = broadPhase.CreateProxy(proxy.aabb, proxy);
+          for (let i = 0; i < this.m_shape.GetChildCount(); ++i) {
+              this.m_proxies[i] = new b2FixtureProxy(this, i);
           }
       }
       DestroyProxies() {
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
           // Destroy proxies in the broad-phase.
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i];
-              proxy.treeNode.Reset();
-              broadPhase.DestroyProxy(proxy.treeNode);
+          for (const proxy of this.m_proxies) {
               proxy.Reset();
           }
-          this.m_proxyCount = 0;
+          this.m_proxies.length = 0;
       }
       TouchProxies() {
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          const proxyCount = this.m_proxyCount;
-          for (let i = 0; i < proxyCount; ++i) {
-              broadPhase.TouchProxy(this.m_proxies[i].treeNode);
+          for (const proxy of this.m_proxies) {
+              proxy.Touch();
           }
       }
-      Synchronize(transform1, transform2) {
-          if (this.m_proxyCount === 0) {
-              return;
-          }
-          const broadPhase = this.m_body.m_world.m_contactManager.m_broadPhase;
-          for (let i = 0; i < this.m_proxyCount; ++i) {
-              const proxy = this.m_proxies[i];
-              // Compute an AABB that covers the swept shape (may miss some rotation effect).
-              const aabb1 = b2Fixture.Synchronize_s_aabb1;
-              const aabb2 = b2Fixture.Synchronize_s_aabb2;
-              this.m_shape.ComputeAABB(aabb1, transform1, i);
-              this.m_shape.ComputeAABB(aabb2, transform2, i);
-              proxy.aabb.Combine2(aabb1, aabb2);
-              const displacement = b2Vec2.SubVV(transform2.p, transform1.p, b2Fixture.Synchronize_s_displacement);
-              broadPhase.MoveProxy(proxy.treeNode, proxy.aabb, displacement);
+      SynchronizeProxies(transform1, transform2, displacement) {
+          for (const proxy of this.m_proxies) {
+              proxy.Synchronize(transform1, transform2, displacement);
           }
       }
   }
-  b2Fixture.Synchronize_s_aabb1 = new b2AABB();
-  b2Fixture.Synchronize_s_aabb2 = new b2AABB();
-  b2Fixture.Synchronize_s_displacement = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -6513,7 +6489,7 @@
           }
           const fixture = new b2Fixture(this, def);
           if (this.m_activeFlag) {
-              fixture.CreateProxies(this.m_xf);
+              fixture.CreateProxies();
           }
           fixture.m_next = this.m_fixtureList;
           this.m_fixtureList = fixture;
@@ -6612,7 +6588,7 @@
           this.m_sweep.c0.Copy(this.m_sweep.c);
           this.m_sweep.a0 = angle;
           for (let f = this.m_fixtureList; f; f = f.m_next) {
-              f.Synchronize(this.m_xf, this.m_xf);
+              f.SynchronizeProxies(this.m_xf, this.m_xf, b2Vec2.ZERO);
           }
           this.m_world.m_contactManager.FindNewContacts();
       }
@@ -7067,7 +7043,7 @@
           if (flag) {
               // Create all proxies.
               for (let f = this.m_fixtureList; f; f = f.m_next) {
-                  f.CreateProxies(this.m_xf);
+                  f.CreateProxies();
               }
               // Contacts are created the next time step.
           }
@@ -7182,8 +7158,10 @@
           xf1.q.SetAngle(this.m_sweep.a0);
           b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
           b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
+          // const displacement: b2Vec2 = b2Vec2.SubVV(this.m_xf.p, xf1.p, b2Body.SynchronizeFixtures_s_displacement);
+          const displacement = b2Vec2.SubVV(this.m_sweep.c, this.m_sweep.c0, b2Body.SynchronizeFixtures_s_displacement);
           for (let f = this.m_fixtureList; f; f = f.m_next) {
-              f.Synchronize(xf1, this.m_xf);
+              f.SynchronizeProxies(xf1, this.m_xf, displacement);
           }
       }
       SynchronizeTransform() {
@@ -7249,6 +7227,7 @@
   b2Body.ResetMassData_s_oldCenter = new b2Vec2();
   b2Body.ResetMassData_s_massData = new b2MassData();
   b2Body.SynchronizeFixtures_s_xf1 = new b2Transform();
+  b2Body.SynchronizeFixtures_s_displacement = new b2Vec2();
 
   /*
   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -19952,7 +19931,7 @@
       }
       QueryFixtureShape(...args) {
           if (args[0] instanceof b2QueryCallback) {
-              this._QueryFixtureShape(args[0], args[1], args[1], args[2]);
+              this._QueryFixtureShape(args[0], args[1], args[2], args[3]);
           }
           else {
               this._QueryFixtureShape(null, args[0], args[1], args[2], args[3]);
@@ -20028,10 +20007,10 @@
       }
       RayCast(...args) {
           if (args[0] instanceof b2RayCastCallback) {
-              this._RayCast(args[0], args[1], args[1]);
+              this._RayCast(args[0], args[1], args[2]);
           }
           else {
-              this._RayCast(null, args[0], args[1], args[1]);
+              this._RayCast(null, args[0], args[1], args[2]);
           }
       }
       _RayCast(callback, point1, point2, fn) {
