@@ -37,8 +37,8 @@
   "devDependencies": {
     "http-server": "^0.11.1",
     "plugin-typescript": "^8.0.0",
-    "rollup": "^1.12.2",
-    "rollup-plugin-typescript2": "^0.21.0",
+    "rollup": "^1.12.3",
+    "rollup-plugin-typescript2": "^0.21.1",
     "systemjs": "^0.21.6",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
