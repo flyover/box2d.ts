@@ -46,7 +46,19 @@ export class b2ChainShape extends b2Shape {
   /// Create a loop. This automatically adjusts connectivity.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateLoop(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
+  public CreateLoop(vertices: XY[]): b2ChainShape;
+  public CreateLoop(vertices: number[]): b2ChainShape;
+  public CreateLoop(...args: any[]): b2ChainShape {
+    if (typeof args[0][0] === "number") {
+      const vertices: number[] = args[0];
+      if (vertices.length % 2 !== 0) { throw new Error(); }
+      return this._CreateLoop((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
+    } else {
+      const vertices: XY[] = args[0];
+      return this._CreateLoop((index: number): XY => vertices[index], vertices.length);
+    }
+  }
+  private _CreateLoop(vertices: (index: number) => XY, count: number): b2ChainShape {
     // DEBUG: b2Assert(count >= 3);
     if (count < 3) {
       return this;
@@ -61,7 +73,7 @@ export class b2ChainShape extends b2Shape {
     this.m_count = count + 1;
     this.m_vertices = b2Vec2.MakeArray(this.m_count);
     for (let i: number = 0; i < count; ++i) {
-      this.m_vertices[i].Copy(vertices[start + i]);
+      this.m_vertices[i].Copy(vertices(i));
     }
     this.m_vertices[count].Copy(this.m_vertices[0]);
     this.m_prevVertex.Copy(this.m_vertices[this.m_count - 2]);
@@ -74,7 +86,19 @@ export class b2ChainShape extends b2Shape {
   /// Create a chain with isolated end vertices.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateChain(vertices: XY[], count: number = vertices.length, start: number = 0): b2ChainShape {
+  public CreateChain(vertices: XY[]): b2ChainShape;
+  public CreateChain(vertices: number[]): b2ChainShape;
+  public CreateChain(...args: any[]): b2ChainShape {
+    if (typeof args[0][0] === "number") {
+      const vertices: number[] = args[0];
+      if (vertices.length % 2 !== 0) { throw new Error(); }
+      return this._CreateChain((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
+    } else {
+      const vertices: XY[] = args[0];
+      return this._CreateChain((index: number): XY => vertices[index], vertices.length);
+    }
+  }
+  private _CreateChain(vertices: (index: number) => XY, count: number): b2ChainShape {
     // DEBUG: b2Assert(count >= 2);
     // DEBUG: for (let i: number = 1; i < count; ++i) {
     // DEBUG:   const v1 = vertices[start + i - 1];
@@ -86,7 +110,7 @@ export class b2ChainShape extends b2Shape {
     this.m_count = count;
     this.m_vertices = b2Vec2.MakeArray(count);
     for (let i: number = 0; i < count; ++i) {
-      this.m_vertices[i].Copy(vertices[start + i]);
+      this.m_vertices[i].Copy(vertices(i));
     }
     this.m_hasPrevVertex = false;
     this.m_hasNextVertex = false;
@@ -123,7 +147,7 @@ export class b2ChainShape extends b2Shape {
 
     // DEBUG: b2Assert(other instanceof b2ChainShape);
 
-    this.CreateChain(other.m_vertices, other.m_count);
+    this._CreateChain((index: number): XY => other.m_vertices[index], other.m_count);
     this.m_prevVertex.Copy(other.m_prevVertex);
     this.m_nextVertex.Copy(other.m_nextVertex);
     this.m_hasPrevVertex = other.m_hasPrevVertex;

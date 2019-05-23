@@ -69,7 +69,19 @@ export class b2PolygonShape extends b2Shape {
   /// may lead to poor stacking behavior.
   private static Set_s_r = new b2Vec2();
   private static Set_s_v = new b2Vec2();
-  public Set(vertices: XY[], count: number = vertices.length, start: number = 0): b2PolygonShape {
+  public Set(vertices: XY[]): b2PolygonShape;
+  public Set(vertices: number[]): b2PolygonShape;
+  public Set(...args: any[]): b2PolygonShape {
+    if (typeof args[0][0] === "number") {
+      const vertices: number[] = args[0];
+      if (vertices.length % 2 !== 0) { throw new Error(); }
+      return this._Set((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
+    } else {
+      const vertices: XY[] = args[0];
+      return this._Set((index: number): XY => vertices[index], vertices.length);
+    }
+  }
+  public _Set(vertices: (index: number) => XY, count: number): b2PolygonShape {
 
     // DEBUG: b2Assert(3 <= count);
     if (count < 3) {
@@ -81,7 +93,7 @@ export class b2PolygonShape extends b2Shape {
     // Perform welding and copy vertices into local buffer.
     const ps: XY[] = [];
     for (let i = 0; i < n; ++i) {
-      const /*b2Vec2*/ v = vertices[start + i];
+      const /*b2Vec2*/ v = vertices(i);
 
       let /*bool*/ unique = true;
       for (let /*int32*/ j = 0; j < ps.length; ++j) {
@@ -174,10 +186,6 @@ export class b2PolygonShape extends b2Shape {
     b2PolygonShape.ComputeCentroid(this.m_vertices, m, this.m_centroid);
 
     return this;
-  }
-
-  public SetAsArray(vertices: XY[], count: number = vertices.length): b2PolygonShape {
-    return this.Set(vertices, count);
   }
 
   /// Build vertices to represent an axis-aligned box or an oriented box.
