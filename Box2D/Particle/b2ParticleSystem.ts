@@ -738,7 +738,6 @@ export class b2ParticleSystem {
       }
     }
     const index = this.m_count++;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     this.m_flagsBuffer.data[index] = 0;
     if (this.m_lastBodyContactStepBuffer.data) {
       this.m_lastBodyContactStepBuffer.data[index] = 0;
@@ -749,8 +748,6 @@ export class b2ParticleSystem {
     if (this.m_consecutiveContactStepsBuffer.data) {
       this.m_consecutiveContactStepsBuffer.data[index] = 0;
     }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     this.m_positionBuffer.data[index] = (this.m_positionBuffer.data[index] || new b2Vec2()).Copy(b2Maybe(def.position, b2Vec2.ZERO));
     this.m_velocityBuffer.data[index] = (this.m_velocityBuffer.data[index] || new b2Vec2()).Copy(b2Maybe(def.velocity, b2Vec2.ZERO));
     this.m_weightBuffer[index] = 0;
@@ -785,7 +782,6 @@ export class b2ParticleSystem {
         this.ExpirationTimeToLifetime(-this.GetQuantizedTimeElapsed()));
       // Add a reference to the newly added particle to the end of the
       // queue.
-      if (!this.m_indexByExpirationTimeBuffer.data) { throw new Error(); }
       this.m_indexByExpirationTimeBuffer.data[index] = index;
     }
 
@@ -843,7 +839,6 @@ export class b2ParticleSystem {
    *      destroyed.
    */
   public DestroyParticle(index: number, callDestructionListener: boolean = false): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     let flags = b2ParticleFlag.b2_zombieParticle;
     if (callDestructionListener) {
       flags |= b2ParticleFlag.b2_destructionListenerParticle;
@@ -868,8 +863,6 @@ export class b2ParticleSystem {
     // DEBUG: b2Assert(index >= 0 && index < particleCount);
     // Make sure particle lifetime tracking is enabled.
     // DEBUG: b2Assert(this.m_indexByExpirationTimeBuffer.data !== null);
-    if (!this.m_indexByExpirationTimeBuffer.data) { throw new Error(); }
-    if (!this.m_expirationTimeBuffer.data) { throw new Error(); }
     // Destroy the oldest particle (preferring to destroy finite
     // lifetime particles first) to free a slot in the buffer.
     const oldestFiniteLifetimeParticle =
@@ -1216,7 +1209,6 @@ export class b2ParticleSystem {
    * @return the pointer to the head of the particle positions array.
    */
   public GetPositionBuffer(): b2Vec2[] {
-    if (!this.m_positionBuffer.data) { throw new Error(); }
     return this.m_positionBuffer.data;
   }
 
@@ -1228,7 +1220,6 @@ export class b2ParticleSystem {
    * @return the pointer to the head of the particle velocities array.
    */
   public GetVelocityBuffer(): b2Vec2[] {
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     return this.m_velocityBuffer.data;
   }
 
@@ -1286,7 +1277,6 @@ export class b2ParticleSystem {
    * @return the pointer to the head of the particle-flags array.
    */
   public GetFlagsBuffer(): b2ParticleFlag[] {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     return this.m_flagsBuffer.data;
   }
 
@@ -1294,7 +1284,6 @@ export class b2ParticleSystem {
    * Set flags for a particle. See the b2ParticleFlag enum.
    */
   public SetParticleFlags(index: number, newFlags: b2ParticleFlag): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     const oldFlags = this.m_flagsBuffer.data[index];
     if (oldFlags & ~newFlags) {
       // If any flags might be removed
@@ -1317,7 +1306,6 @@ export class b2ParticleSystem {
    * Get flags for a particle. See the b2ParticleFlag enum.
    */
   public GetParticleFlags(index: number): b2ParticleFlag {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     return this.m_flagsBuffer.data[index];
   }
 
@@ -1337,45 +1325,51 @@ export class b2ParticleSystem {
    * @param buffer a pointer to a block of memory.
    * @param capacity the number of values in the block.
    */
-  public SetFlagsBuffer(buffer: b2ParticleFlag[], capacity: number): void {
-    this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer, capacity);
+  public SetFlagsBuffer(buffer: b2ParticleFlag[]): void {
+    this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer);
   }
 
-  public SetPositionBuffer(buffer: b2Vec2[] | Float32Array, capacity: number): void {
+  public SetPositionBuffer(buffer: b2Vec2[] | Float32Array): void {
     if (buffer instanceof Float32Array) {
-      const array: b2Vec2[] = [];
-      for (let i = 0; i < capacity; ++i) {
+      if (buffer.length % 2 !== 0) { throw new Error(); }
+      const count: number = buffer.length / 2;
+      const array: b2Vec2[] = new Array(count);
+      for (let i = 0; i < count; ++i) {
         array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
       }
       buffer = array;
     }
-    this.SetUserOverridableBuffer(this.m_positionBuffer, buffer, capacity);
+    this.SetUserOverridableBuffer(this.m_positionBuffer, buffer);
   }
 
-  public SetVelocityBuffer(buffer: b2Vec2[] | Float32Array, capacity: number): void {
+  public SetVelocityBuffer(buffer: b2Vec2[] | Float32Array): void {
     if (buffer instanceof Float32Array) {
-      const array: b2Vec2[] = [];
-      for (let i = 0; i < capacity; ++i) {
+      if (buffer.length % 2 !== 0) { throw new Error(); }
+      const count: number = buffer.length / 2;
+      const array: b2Vec2[] = new Array(count);
+      for (let i = 0; i < count; ++i) {
         array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
       }
       buffer = array;
     }
-    this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer, capacity);
+    this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer);
   }
 
-  public SetColorBuffer(buffer: b2Color[] | Float32Array, capacity: number): void {
+  public SetColorBuffer(buffer: b2Color[] | Float32Array): void {
     if (buffer instanceof Float32Array) {
-      const array: b2Color[] = [];
-      for (let i = 0; i < capacity; ++i) {
+      if (buffer.length % 4 !== 0) { throw new Error(); }
+      const count: number = buffer.length / 4;
+      const array: b2Color[] = new Array(count);
+      for (let i = 0; i < count; ++i) {
         array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
       }
       buffer = array;
     }
-    this.SetUserOverridableBuffer(this.m_colorBuffer, buffer, capacity);
+    this.SetUserOverridableBuffer(this.m_colorBuffer, buffer);
   }
 
-  public SetUserDataBuffer<T>(buffer: T[], capacity: number): void {
-    this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer, capacity);
+  public SetUserDataBuffer<T>(buffer: T[]): void {
+    this.SetUserOverridableBuffer(this.m_userDataBuffer, buffer);
   }
 
   /**
@@ -1493,7 +1487,6 @@ export class b2ParticleSystem {
    * Compute the kinetic energy that can be lost by damping force
    */
   public ComputeCollisionEnergy(): number {
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const s_v = b2ParticleSystem.ComputeCollisionEnergy_s_v;
     const vel_data = this.m_velocityBuffer.data;
     let sum_v2 = 0;
@@ -1642,7 +1635,6 @@ export class b2ParticleSystem {
     } else {
       this.m_indexByExpirationTimeBuffer.data = this.RequestBuffer(this.m_indexByExpirationTimeBuffer.data);
     }
-    if (!this.m_indexByExpirationTimeBuffer.data) { throw new Error(); }
     return this.m_indexByExpirationTimeBuffer.data;
   }
 
@@ -1671,7 +1663,6 @@ export class b2ParticleSystem {
    * @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
    */
   public ApplyLinearImpulse(firstIndex: number, lastIndex: number, impulse: XY): void {
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     const numParticles = (lastIndex - firstIndex);
     const totalMass = numParticles * this.GetParticleMass();
@@ -1694,7 +1685,6 @@ export class b2ParticleSystem {
    * @param force the world force vector, usually in Newtons (N).
    */
   public ParticleApplyForce(index: number, force: XY): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     if (b2ParticleSystem.IsSignificantForce(force) &&
       this.ForceCanBeApplied(this.m_flagsBuffer.data[index])) {
       this.PrepareForceBuffer();
@@ -1717,7 +1707,6 @@ export class b2ParticleSystem {
   public ApplyForce(firstIndex: number, lastIndex: number, force: XY): void {
     // Ensure we're not trying to apply force to particles that can't move,
     // such as wall particles.
-    // DEBUG: if (!this.m_flagsBuffer.data) { throw new Error(); }
     // DEBUG: let flags = 0;
     // DEBUG: for (let i = firstIndex; i < lastIndex; i++) {
     // DEBUG:   flags |= this.m_flagsBuffer.data[i];
@@ -1770,7 +1759,6 @@ export class b2ParticleSystem {
         this.m_inverseDiameter * aabb.upperBound.x,
         this.m_inverseDiameter * aabb.upperBound.y),
       b2ParticleSystem_Proxy.CompareTagProxy);
-    if (!this.m_positionBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     for (let k = firstProxy; k < lastProxy; ++k) {
       const proxy = this.m_proxyBuffer.data[k];
@@ -1833,7 +1821,6 @@ export class b2ParticleSystem {
     if (this.m_proxyBuffer.count === 0) {
       return;
     }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const aabb = s_aabb;
     b2Vec2.MinV(point1, point2, aabb.lowerBound);
@@ -1898,7 +1885,6 @@ export class b2ParticleSystem {
     aabb.upperBound.x = -b2_maxFloat;
     aabb.upperBound.y = -b2_maxFloat;
 
-    if (!this.m_positionBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     for (let i = 0; i < particleCount; i++) {
       const p = pos_data[i];
@@ -1977,7 +1963,7 @@ export class b2ParticleSystem {
   /**
    * Reallocate a buffer
    */
-  public ReallocateBuffer4<T>(buffer: b2ParticleSystem_UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): T[] | null {
+  public ReallocateBuffer4<T>(buffer: b2ParticleSystem_UserOverridableBuffer<any>, oldCapacity: number, newCapacity: number, deferred: boolean): T[] {
     // DEBUG: b2Assert(newCapacity > oldCapacity);
     return this.ReallocateBuffer5(buffer.data, buffer.userSuppliedCapacity, oldCapacity, newCapacity, deferred);
   }
@@ -2157,9 +2143,6 @@ export class b2ParticleSystem {
 
   public CloneParticle(oldIndex: number, group: b2ParticleGroup): number {
     const def = new b2ParticleDef();
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     def.flags = this.m_flagsBuffer.data[oldIndex];
     def.position.Copy(this.m_positionBuffer.data[oldIndex]);
     def.velocity.Copy(this.m_velocityBuffer.data[oldIndex]);
@@ -2246,9 +2229,6 @@ export class b2ParticleSystem {
     const s_dab = b2ParticleSystem.UpdatePairsAndTriads_s_dab;
     const s_dbc = b2ParticleSystem.UpdatePairsAndTriads_s_dbc;
     const s_dca = b2ParticleSystem.UpdatePairsAndTriads_s_dca;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     // Create pairs or triads.
     // All particles in each pair/triad should satisfy the following:
@@ -2322,7 +2302,6 @@ export class b2ParticleSystem {
       diagram.Generate(stride / 2, stride * 2);
       const system = this;
       const callback = /*UpdateTriadsCallback*/(a: number, b: number, c: number): void => {
-        if (!system.m_flagsBuffer.data) { throw new Error(); }
         const af = system.m_flagsBuffer.data[a];
         const bf = system.m_flagsBuffer.data[b];
         const cf = system.m_flagsBuffer.data[c];
@@ -2386,7 +2365,6 @@ export class b2ParticleSystem {
     const filter = new b2ParticleSystem_ReactiveFilter(this.m_flagsBuffer);
     this.UpdatePairsAndTriads(0, this.m_count, filter);
 
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     for (let i = 0; i < this.m_count; i++) {
       this.m_flagsBuffer.data[i] &= ~b2ParticleFlag.b2_reactiveParticle;
     }
@@ -2490,7 +2468,6 @@ export class b2ParticleSystem {
   }
 
   public MergeZombieParticleListNodes(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem_ParticleListNode[], survivingList: b2ParticleSystem_ParticleListNode): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     const particleCount = group.GetParticleCount();
     for (let i = 0; i < particleCount; i++) {
       const node: b2ParticleSystem_ParticleListNode = nodeBuffer[i];
@@ -2519,7 +2496,6 @@ export class b2ParticleSystem {
   }
 
   public CreateParticleGroupsFromParticleList(group: b2ParticleGroup, nodeBuffer: b2ParticleSystem_ParticleListNode[], survivingList: b2ParticleSystem_ParticleListNode): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     const particleCount = group.GetParticleCount();
     const def = new b2ParticleGroupDef();
     def.groupFlags = group.GetGroupFlags();
@@ -2688,7 +2664,6 @@ export class b2ParticleSystem {
   }
 
   public UpdateAllParticleFlags(): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     this.m_allParticleFlags = 0;
     for (let i = 0; i < this.m_count; i++) {
       this.m_allParticleFlags |= this.m_flagsBuffer.data[i];
@@ -2705,27 +2680,22 @@ export class b2ParticleSystem {
   }
 
   public AddContact(a: number, b: number, contacts: b2GrowableBuffer<b2ParticleContact>): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    const s_d = b2ParticleSystem.AddContact_s_d;
-    const pos_data = this.m_positionBuffer.data;
     // DEBUG: b2Assert(contacts === this.m_contactBuffer);
+    const flags_data = this.m_flagsBuffer.data;
+    const pos_data = this.m_positionBuffer.data;
     ///b2Vec2 d = m_positionBuffer.data[b] - m_positionBuffer.data[a];
-    const d = b2Vec2.SubVV(pos_data[b], pos_data[a], s_d);
+    const d = b2Vec2.SubVV(pos_data[b], pos_data[a], b2ParticleSystem.AddContact_s_d);
     const distBtParticlesSq = b2Vec2.DotVV(d, d);
-    if (distBtParticlesSq < this.m_squaredDiameter) {
+    if (0 < distBtParticlesSq && distBtParticlesSq < this.m_squaredDiameter) {
       let invD = b2InvSqrt(distBtParticlesSq);
-      if (!isFinite(invD)) {
-        invD = 1.98177537e+019;
-      }
       ///b2ParticleContact& contact = contacts.Append();
       const contact = this.m_contactBuffer.data[this.m_contactBuffer.Append()];
       contact.indexA = a;
       contact.indexB = b;
-      contact.flags = this.m_flagsBuffer.data[a] | this.m_flagsBuffer.data[b];
+      contact.flags = flags_data[a] | flags_data[b];
       contact.weight = 1 - distBtParticlesSq * invD * this.m_inverseDiameter;
-      ///contact.SetNormal(invD * d);
-      b2Vec2.MulSV(invD, d, contact.normal);
+      contact.normal.x = invD * d.x;
+      contact.normal.y = invD * d.y;
     }
   }
   public static readonly AddContact_s_d = new b2Vec2();
@@ -2770,7 +2740,6 @@ export class b2ParticleSystem {
 
   public UpdateProxies_Reference(proxies: b2GrowableBuffer<b2ParticleSystem_Proxy>): void {
     // DEBUG: b2Assert(proxies === this.m_proxyBuffer);
-    if (!this.m_positionBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const inv_diam = this.m_inverseDiameter;
     for (let k = 0; k < this.m_proxyBuffer.count; ++k) {
@@ -2949,9 +2918,6 @@ export class b2ParticleSystem {
     this.NotifyBodyContactListenerPreContact(fixtureSet);
 
     if (this.m_stuckThreshold > 0) {
-      if (!this.m_bodyContactCountBuffer.data) { throw new Error(); }
-      if (!this.m_lastBodyContactStepBuffer.data) { throw new Error(); }
-      if (!this.m_consecutiveContactStepsBuffer.data) { throw new Error(); }
       const particleCount = this.GetParticleCount();
       for (let i = 0; i < particleCount; i++) {
         // Detect stuck particles, see comment in
@@ -2968,7 +2934,11 @@ export class b2ParticleSystem {
     const aabb = s_aabb;
     this.ComputeAABB(aabb);
 
-    const callback = new b2ParticleSystem_UpdateBodyContactsCallback(this, this.GetFixtureContactFilter());
+    if (this.UpdateBodyContacts_callback === null) {
+      this.UpdateBodyContacts_callback = new b2ParticleSystem_UpdateBodyContactsCallback(this);
+    }
+    const callback = this.UpdateBodyContacts_callback;
+    callback.m_contactFilter = this.GetFixtureContactFilter();
     this.m_world.QueryAABB(callback, aabb);
 
     if (this.m_def.strictContactCheck) {
@@ -2978,6 +2948,7 @@ export class b2ParticleSystem {
     this.NotifyBodyContactListenerPostContact(fixtureSet);
   }
   public static readonly UpdateBodyContacts_s_aabb = new b2AABB();
+  public UpdateBodyContacts_callback: b2ParticleSystem_UpdateBodyContactsCallback | null = null;
 
   public Solve(step: b2TimeStep): void {
     const s_subStep = b2ParticleSystem.Solve_s_subStep;
@@ -3070,8 +3041,6 @@ export class b2ParticleSystem {
         this.SolveWall();
       }
       // The particle positions can be updated only at the end of substep.
-      if (!this.m_positionBuffer.data) { throw new Error(); }
-      if (!this.m_velocityBuffer.data) { throw new Error(); }
       for (let i = 0; i < this.m_count; i++) {
         ///m_positionBuffer.data[i] += subStep.dt * m_velocityBuffer.data[i];
         this.m_positionBuffer.data[i].SelfMulAdd(subStep.dt, this.m_velocityBuffer.data[i]);
@@ -3082,8 +3051,6 @@ export class b2ParticleSystem {
 
   public SolveCollision(step: b2TimeStep): void {
     const s_aabb = b2ParticleSystem.SolveCollision_s_aabb;
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
 
@@ -3109,13 +3076,17 @@ export class b2ParticleSystem {
       aabb.upperBound.x = b2Max(aabb.upperBound.x, b2Max(p1.x, p2_x));
       aabb.upperBound.y = b2Max(aabb.upperBound.y, b2Max(p1.y, p2_y));
     }
-    const callback = new b2ParticleSystem_SolveCollisionCallback(this, step);
+    if (this.SolveCollision_callback === null) {
+      this.SolveCollision_callback = new b2ParticleSystem_SolveCollisionCallback(this, step);
+    }
+    const callback = this.SolveCollision_callback;
+    callback.m_step = step;
     this.m_world.QueryAABB(callback, aabb);
   }
   public static readonly SolveCollision_s_aabb = new b2AABB();
+  public SolveCollision_callback: b2ParticleSystem_SolveCollisionCallback | null = null;
 
   public LimitVelocity(step: b2TimeStep): void {
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     const criticalVelocitySquared = this.GetCriticalVelocitySquared(step);
     for (let i = 0; i < this.m_count; i++) {
@@ -3129,7 +3100,6 @@ export class b2ParticleSystem {
   }
 
   public SolveGravity(step: b2TimeStep): void {
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const s_gravity = b2ParticleSystem.SolveGravity_s_gravity;
     const vel_data = this.m_velocityBuffer.data;
     ///b2Vec2 gravity = step.dt * m_def.gravityScale * m_world.GetGravity();
@@ -3153,9 +3123,6 @@ export class b2ParticleSystem {
     const s_qca = b2ParticleSystem.SolveBarrier_s_qca;
     const s_dv = b2ParticleSystem.SolveBarrier_s_dv;
     const s_f = b2ParticleSystem.SolveBarrier_s_f;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     // If a particle is passing between paired barrier particles,
@@ -3308,7 +3275,6 @@ export class b2ParticleSystem {
   public static readonly SolveBarrier_s_f = new b2Vec2();
 
   public SolveStaticPressure(step: b2TimeStep): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     this.m_staticPressureBuffer = this.RequestBuffer(this.m_staticPressureBuffer);
     const criticalPressure = this.GetCriticalPressure(step);
     const pressurePerWeight = this.m_def.staticPressureStrength * criticalPressure;
@@ -3379,9 +3345,6 @@ export class b2ParticleSystem {
 
   public SolvePressure(step: b2TimeStep): void {
     const s_f = b2ParticleSystem.SolvePressure_s_f;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     // calculates pressure as a linear function of density
@@ -3448,8 +3411,6 @@ export class b2ParticleSystem {
   public SolveDamping(step: b2TimeStep): void {
     const s_v = b2ParticleSystem.SolveDamping_s_v;
     const s_f = b2ParticleSystem.SolveDamping_s_f;
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     // reduces normal velocity of each contact
@@ -3514,7 +3475,6 @@ export class b2ParticleSystem {
       tangentDistanceB = [0.0]; // TODO: static
     // Apply impulse to rigid particle groups colliding with other objects
     // to reduce relative velocity at the colliding point.
-    if (!this.m_positionBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const damping = this.m_def.dampingStrength;
     for (let k = 0; k < this.m_bodyContactBuffer.count; k++) {
@@ -3585,9 +3545,6 @@ export class b2ParticleSystem {
   public SolveExtraDamping(): void {
     const s_v = b2ParticleSystem.SolveExtraDamping_s_v;
     const s_f = b2ParticleSystem.SolveExtraDamping_s_f;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     // Applies additional damping force between bodies and particles which can
     // produce strong repulsive force. Applying damping force multiple times
@@ -3621,8 +3578,6 @@ export class b2ParticleSystem {
   public static readonly SolveExtraDamping_s_f = new b2Vec2();
 
   public SolveWall(): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     for (let i = 0; i < this.m_count; i++) {
       if (this.m_flagsBuffer.data[i] & b2ParticleFlag.b2_wallParticle) {
@@ -3636,8 +3591,6 @@ export class b2ParticleSystem {
     const s_rotation = b2ParticleSystem.SolveRigid_s_rotation;
     const s_transform = b2ParticleSystem.SolveRigid_s_transform;
     const s_velocityTransform = b2ParticleSystem.SolveRigid_s_velocityTransform;
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     for (let group = this.m_groupList; group; group = group.GetNext()) {
@@ -3681,8 +3634,6 @@ export class b2ParticleSystem {
     const s_pc = b2ParticleSystem.SolveElastic_s_pc;
     const s_r = b2ParticleSystem.SolveElastic_s_r;
     const s_t0 = b2ParticleSystem.SolveElastic_s_t0;
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     const elasticStrength = step.inv_dt * this.m_def.elasticStrength;
@@ -3764,8 +3715,6 @@ export class b2ParticleSystem {
     const s_pb = b2ParticleSystem.SolveSpring_s_pb;
     const s_d = b2ParticleSystem.SolveSpring_s_d;
     const s_f = b2ParticleSystem.SolveSpring_s_f;
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     const springStrength = step.inv_dt * this.m_def.springStrength;
@@ -3814,7 +3763,6 @@ export class b2ParticleSystem {
     const s_weightedNormal = b2ParticleSystem.SolveTensile_s_weightedNormal;
     const s_s = b2ParticleSystem.SolveTensile_s_s;
     const s_f = b2ParticleSystem.SolveTensile_s_f;
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     // DEBUG: b2Assert(this.m_accumulation2Buffer !== null);
     for (let i = 0; i < this.m_count; i++) {
@@ -3869,9 +3817,6 @@ export class b2ParticleSystem {
   public SolveViscous(): void {
     const s_v = b2ParticleSystem.SolveViscous_s_v;
     const s_f = b2ParticleSystem.SolveViscous_s_f;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     const viscousStrength = this.m_def.viscousStrength;
@@ -3916,7 +3861,6 @@ export class b2ParticleSystem {
 
   public SolveRepulsive(step: b2TimeStep): void {
     const s_f = b2ParticleSystem.SolveRepulsive_s_f;
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     const repulsiveStrength = this.m_def.repulsiveStrength * this.GetCriticalVelocity(step);
     for (let k = 0; k < this.m_contactBuffer.count; k++) {
@@ -3941,9 +3885,6 @@ export class b2ParticleSystem {
 
   public SolvePowder(step: b2TimeStep): void {
     const s_f = b2ParticleSystem.SolvePowder_s_f;
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const pos_data = this.m_positionBuffer.data;
     const vel_data = this.m_velocityBuffer.data;
     const powderStrength = this.m_def.powderStrength * this.GetCriticalVelocity(step);
@@ -3984,7 +3925,6 @@ export class b2ParticleSystem {
 
   public SolveSolid(step: b2TimeStep): void {
     const s_f = b2ParticleSystem.SolveSolid_s_f;
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     // applies extra repulsive force from solid particle groups
     this.m_depthBuffer = this.RequestBuffer(this.m_depthBuffer);
@@ -4006,7 +3946,6 @@ export class b2ParticleSystem {
   public static readonly SolveSolid_s_f = new b2Vec2();
 
   public SolveForce(step: b2TimeStep): void {
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     const vel_data = this.m_velocityBuffer.data;
     const velocityPerForce = step.dt * this.GetParticleInvMass();
     for (let i = 0; i < this.m_count; i++) {
@@ -4018,8 +3957,6 @@ export class b2ParticleSystem {
 
   public SolveColorMixing(): void {
     // mixes color between contacting particles
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_colorBuffer.data) { throw new Error(); }
     const colorMixing = 0.5 * this.m_def.colorMixingStrength;
     if (colorMixing) {
       for (let k = 0; k < this.m_contactBuffer.count; k++) {
@@ -4039,9 +3976,6 @@ export class b2ParticleSystem {
   }
 
   public SolveZombie(): void {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
     // removes particles with zombie flag
     let newCount = 0;
     const newIndices: number[] = []; // TODO: static
@@ -4238,8 +4172,6 @@ export class b2ParticleSystem {
    * by SetParticleLifetime().
    */
   public SolveLifetimes(step: b2TimeStep): void {
-    if (!this.m_expirationTimeBuffer.data) { throw new Error(); }
-    if (!this.m_indexByExpirationTimeBuffer.data) { throw new Error(); }
     // Update the time elapsed.
     this.m_timeElapsed = this.LifetimeToExpirationTime(step.dt);
     // Get the floor (non-fractional component) of the elapsed time.
@@ -4313,10 +4245,6 @@ export class b2ParticleSystem {
       }
     }
 
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_velocityBuffer.data) { throw new Error(); }
-
     ///std::rotate(m_flagsBuffer.data + start, m_flagsBuffer.data + mid, m_flagsBuffer.data + end);
     std_rotate(this.m_flagsBuffer.data, start, mid, end);
     if (this.m_lastBodyContactStepBuffer.data) {
@@ -4373,7 +4301,6 @@ export class b2ParticleSystem {
       std_rotate(this.m_expirationTimeBuffer.data, start, mid, end);
       // Update expiration time buffer indices.
       const particleCount = this.GetParticleCount();
-      if (!this.m_indexByExpirationTimeBuffer.data) { throw new Error(); }
       const indexByExpirationTime = this.m_indexByExpirationTimeBuffer.data;
       for (let i = 0; i < particleCount; ++i) {
         indexByExpirationTime[i] = newIndices(indexByExpirationTime[i]);
@@ -4489,14 +4416,9 @@ export class b2ParticleSystem {
       this.m_world.m_contactManager.m_contactListener : null;
   }
 
-  public SetUserOverridableBuffer<T>(buffer: b2ParticleSystem_UserOverridableBuffer<any>, newData: T[], newCapacity: number): void {
-    // DEBUG: b2Assert(((newData !== null) && (newCapacity > 0)) || ((newData === null) && (newCapacity === 0)));
-    ///if (!buffer.userSuppliedCapacity)
-    ///{
-    ///this.m_world.m_blockAllocator.Free(buffer.data, sizeof(T) * m_internalAllocatedCapacity);
-    ///}
-    buffer.data = newData;
-    buffer.userSuppliedCapacity = newCapacity;
+  public SetUserOverridableBuffer<T>(buffer: b2ParticleSystem_UserOverridableBuffer<T>, data: T[]): void {
+    buffer.data = data;
+    buffer.userSuppliedCapacity = data.length;
   }
 
   public SetGroupFlags(group: b2ParticleGroup, newFlags: b2ParticleGroupFlag): void {
@@ -4596,7 +4518,6 @@ export class b2ParticleSystem {
       ///n *= system.m_particleDiameter * (1 - contact.weight);
       n.SelfMul(system.m_particleDiameter * (1 - contact.weight));
       ///b2Vec2 pos = system.m_positionBuffer.data[contact.index] + n;
-      if (!system.m_positionBuffer.data) { throw new Error(); }
       const pos = b2Vec2.AddVV(system.m_positionBuffer.data[contact.index], n, s_pos);
 
       // pos is now a point projected back along the contact normal to the
@@ -4636,10 +4557,6 @@ export class b2ParticleSystem {
     if (this.m_stuckThreshold <= 0) {
       return;
     }
-
-    if (!this.m_bodyContactCountBuffer.data) { throw new Error(); }
-    if (!this.m_consecutiveContactStepsBuffer.data) { throw new Error(); }
-    if (!this.m_lastBodyContactStepBuffer.data) { throw new Error(); }
 
     // Get the state variables for this particle.
     ///int32 * const consecutiveCount = &m_consecutiveContactStepsBuffer.data[particle];
@@ -4714,7 +4631,6 @@ export class b2ParticleSystem {
     if (group && this.IsRigidGroup(group)) {
       return group.GetLinearVelocityFromWorldPoint(point, out);
     } else {
-      if (!this.m_velocityBuffer.data) { throw new Error(); }
       ///return m_velocityBuffer.data[particleIndex];
       return out.Copy(this.m_velocityBuffer.data[particleIndex]);
     }
@@ -4733,7 +4649,6 @@ export class b2ParticleSystem {
     if (group && isRigidGroup) {
       this.InitDampingParameter(invMass, invInertia, tangentDistance, group.GetMass(), group.GetInertia(), group.GetCenter(), point, normal);
     } else {
-      if (!this.m_flagsBuffer.data) { throw new Error(); }
       const flags = this.m_flagsBuffer.data[particleIndex];
       this.InitDampingParameter(invMass, invInertia, tangentDistance, flags & b2ParticleFlag.b2_wallParticle ? 0 : this.GetParticleMass(), 0, point, point, normal);
     }
@@ -4753,7 +4668,6 @@ export class b2ParticleSystem {
       ///group.m_angularVelocity += impulse * tangentDistance * invInertia;
       group.m_angularVelocity += impulse * tangentDistance * invInertia;
     } else {
-      if (!this.m_velocityBuffer.data) { throw new Error(); }
       ///m_velocityBuffer.data[particleIndex] += impulse * invMass * normal;
       this.m_velocityBuffer.data[particleIndex].SelfMulAdd(impulse * invMass, normal);
     }
@@ -4761,7 +4675,9 @@ export class b2ParticleSystem {
 }
 
 export class b2ParticleSystem_UserOverridableBuffer<T> {
-  public data: T[] | null = null;
+  public _data: T[] | null = null;
+  public get data(): T[] { return this._data as T[]; } // HACK: may return null
+  public set data(value: T[]) { this._data = value; }
   public userSuppliedCapacity: number = 0;
 }
 
@@ -4972,7 +4888,6 @@ export class b2ParticleSystem_DestroyParticlesInShapeCallback extends b2QueryCal
       return false;
     }
     // DEBUG: b2Assert(index >= 0 && index < this.m_system.m_count);
-    if (!this.m_system.m_positionBuffer.data) { throw new Error(); }
     if (this.m_shape.TestPoint(this.m_xf, this.m_system.m_positionBuffer.data[index])) {
       this.m_system.DestroyParticle(index, this.m_callDestructionListener);
       this.m_destroyed++;
@@ -5105,14 +5020,13 @@ export class b2ParticleSystem_ReactiveFilter extends b2ParticleSystem_Connection
     this.m_flagsBuffer = flagsBuffer;
   }
   public IsNecessary(index: number): boolean {
-    if (!this.m_flagsBuffer.data) { throw new Error(); }
     return (this.m_flagsBuffer.data[index] & b2ParticleFlag.b2_reactiveParticle) !== 0;
   }
 }
 
 export class b2ParticleSystem_UpdateBodyContactsCallback extends b2FixtureParticleQueryCallback {
-  public m_contactFilter: b2ContactFilter | null;
-  constructor(system: b2ParticleSystem, contactFilter: b2ContactFilter | null) {
+  public m_contactFilter: b2ContactFilter | null = null;
+  constructor(system: b2ParticleSystem, contactFilter: b2ContactFilter | null = null) {
     super(system); // base class constructor
     this.m_contactFilter = contactFilter;
   }
@@ -5133,8 +5047,6 @@ export class b2ParticleSystem_UpdateBodyContactsCallback extends b2FixturePartic
   public ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void {
     const s_n = b2ParticleSystem_UpdateBodyContactsCallback.ReportFixtureAndParticle_s_n;
     const s_rp = b2ParticleSystem_UpdateBodyContactsCallback.ReportFixtureAndParticle_s_rp;
-    if (!this.m_system.m_flagsBuffer.data) { throw new Error(); }
-    if (!this.m_system.m_positionBuffer.data) { throw new Error(); }
     const ap = this.m_system.m_positionBuffer.data[a];
     const n = s_n;
     const d = fixture.ComputeDistance(ap, n, childIndex);
@@ -5185,8 +5097,6 @@ export class b2ParticleSystem_SolveCollisionCallback extends b2FixtureParticleQu
     const s_f = b2ParticleSystem_SolveCollisionCallback.ReportFixtureAndParticle_s_f;
 
     const body = fixture.GetBody();
-    if (!this.m_system.m_positionBuffer.data) { throw new Error(); }
-    if (!this.m_system.m_velocityBuffer.data) { throw new Error(); }
     const ap = this.m_system.m_positionBuffer.data[a];
     const av = this.m_system.m_velocityBuffer.data[a];
     const output = s_output;
