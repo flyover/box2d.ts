@@ -47,6 +47,7 @@ export class b2ChainShape extends b2Shape {
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
   public CreateLoop(vertices: XY[]): b2ChainShape;
+  public CreateLoop(vertices: XY[], count: number): b2ChainShape;
   public CreateLoop(vertices: number[]): b2ChainShape;
   public CreateLoop(...args: any[]): b2ChainShape {
     if (typeof args[0][0] === "number") {
@@ -55,7 +56,8 @@ export class b2ChainShape extends b2Shape {
       return this._CreateLoop((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
     } else {
       const vertices: XY[] = args[0];
-      return this._CreateLoop((index: number): XY => vertices[index], vertices.length);
+      const count: number = args[1] || vertices.length;
+      return this._CreateLoop((index: number): XY => vertices[index], count);
     }
   }
   private _CreateLoop(vertices: (index: number) => XY, count: number): b2ChainShape {
@@ -87,6 +89,7 @@ export class b2ChainShape extends b2Shape {
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
   public CreateChain(vertices: XY[]): b2ChainShape;
+  public CreateChain(vertices: XY[], count: number): b2ChainShape;
   public CreateChain(vertices: number[]): b2ChainShape;
   public CreateChain(...args: any[]): b2ChainShape {
     if (typeof args[0][0] === "number") {
@@ -95,7 +98,8 @@ export class b2ChainShape extends b2Shape {
       return this._CreateChain((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
     } else {
       const vertices: XY[] = args[0];
-      return this._CreateChain((index: number): XY => vertices[index], vertices.length);
+      const count: number = args[1] || vertices.length;
+      return this._CreateChain((index: number): XY => vertices[index], count);
     }
   }
   private _CreateChain(vertices: (index: number) => XY, count: number): b2ChainShape {

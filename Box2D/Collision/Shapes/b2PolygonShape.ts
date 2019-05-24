@@ -70,6 +70,7 @@ export class b2PolygonShape extends b2Shape {
   private static Set_s_r = new b2Vec2();
   private static Set_s_v = new b2Vec2();
   public Set(vertices: XY[]): b2PolygonShape;
+  public Set(vertices: XY[], count: number): b2PolygonShape;
   public Set(vertices: number[]): b2PolygonShape;
   public Set(...args: any[]): b2PolygonShape {
     if (typeof args[0][0] === "number") {
@@ -78,7 +79,8 @@ export class b2PolygonShape extends b2Shape {
       return this._Set((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
     } else {
       const vertices: XY[] = args[0];
-      return this._Set((index: number): XY => vertices[index], vertices.length);
+      const count: number = args[1] || vertices.length
+      return this._Set((index: number): XY => vertices[index], count);
     }
   }
   public _Set(vertices: (index: number) => XY, count: number): b2PolygonShape {
