@@ -20,6 +20,42 @@ import { b2Vec2, XY } from "../Common/b2Math";
 import { b2AABB, b2RayCastInput } from "./b2Collision";
 import { b2TreeNode, b2DynamicTree } from "./b2DynamicTree";
 
+function std_iter_swap<T>(array: T[], a: number, b: number): void {
+  const tmp: T = array[a];
+  array[a] = array[b];
+  array[b] = tmp;
+}
+
+function default_compare<T>(a: T, b: T): boolean { return a < b; }
+
+function std_sort<T>(array: T[], first: number = 0, len: number = array.length - first, cmp: (a: T, b: T) => boolean = default_compare): T[] {
+  let left = first;
+  const stack: number[] = [];
+  let pos = 0;
+
+  for (; ; ) { /* outer loop */
+    for (; left + 1 < len; len++) { /* sort left to len-1 */
+      const pivot = array[left + Math.floor(Math.random() * (len - left))]; /* pick random pivot */
+      stack[pos++] = len; /* sort right part later */
+      for (let right = left - 1; ; ) { /* inner loop: partitioning */
+        while (cmp(array[++right], pivot)) {} /* look for greater element */
+        while (cmp(pivot, array[--len])) {} /* look for smaller element */
+        if (right >= len) {
+          break;
+        } /* partition point found? */
+        std_iter_swap(array, right, len); /* the only swap */
+      } /* partitioned, continue left part */
+    }
+    if (pos === 0) {
+      break;
+    } /* stack empty? */
+    left = len; /* left to right is sorted */
+    len = stack[--pos]; /* get next range to sort */
+  }
+
+  return array;
+}
+
 export class b2Pair<T> {
   constructor(public proxyA: b2TreeNode<T>, public proxyB: b2TreeNode<T>) {}
 }
@@ -147,8 +183,7 @@ export class b2BroadPhase<T> {
     this.m_moveCount = 0;
 
     // Sort the pair buffer to expose duplicates.
-    this.m_pairBuffer.length = this.m_pairCount;
-    this.m_pairBuffer.sort(b2PairLessThan);
+    std_sort(this.m_pairBuffer, 0, this.m_pairCount, b2PairLessThan);
 
     // Send the pairs back to the client.
     let i: number = 0;
@@ -229,10 +264,14 @@ export class b2BroadPhase<T> {
 }
 
 /// This is used to sort pairs.
-export function b2PairLessThan<T>(pair1: b2Pair<T>, pair2: b2Pair<T>): number {
-  if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
-    return pair1.proxyB.m_id - pair2.proxyB.m_id;
+export function b2PairLessThan<T>(pair1: b2Pair<T>, pair2: b2Pair<T>): boolean {
+  if (pair1.proxyA.m_id < pair2.proxyA.m_id) {
+    return true;
   }
 
-  return pair1.proxyA.m_id - pair2.proxyA.m_id;
+  if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
+    return pair1.proxyB.m_id < pair2.proxyB.m_id;
+  }
+
+  return false;
 }
