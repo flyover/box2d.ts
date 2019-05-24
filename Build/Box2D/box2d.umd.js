@@ -5228,7 +5228,21 @@
       GetChildCount() {
           return 1;
       }
-      Set(vertices, count = vertices.length, start = 0) {
+      Set(...args) {
+          if (typeof args[0][0] === "number") {
+              const vertices = args[0];
+              if (vertices.length % 2 !== 0) {
+                  throw new Error();
+              }
+              return this._Set((index) => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
+          }
+          else {
+              const vertices = args[0];
+              const count = args[1] || vertices.length;
+              return this._Set((index) => vertices[index], count);
+          }
+      }
+      _Set(vertices, count) {
           // DEBUG: b2Assert(3 <= count);
           if (count < 3) {
               return this.SetAsBox(1, 1);
@@ -5237,7 +5251,7 @@
           // Perform welding and copy vertices into local buffer.
           const ps = [];
           for (let i = 0; i < n; ++i) {
-              const /*b2Vec2*/ v = vertices[start + i];
+              const /*b2Vec2*/ v = vertices(i);
               let /*bool*/ unique = true;
               for (let /*int32*/ j = 0; j < ps.length; ++j) {
                   if (b2Vec2.DistanceSquaredVV(v, ps[j]) < ((0.5 * b2_linearSlop) * (0.5 * b2_linearSlop))) {
@@ -5313,9 +5327,6 @@
           // Compute the polygon centroid.
           b2PolygonShape.ComputeCentroid(this.m_vertices, m, this.m_centroid);
           return this;
-      }
-      SetAsArray(vertices, count = vertices.length) {
-          return this.Set(vertices, count);
       }
       /// Build vertices to represent an axis-aligned box or an oriented box.
       /// @param hx the half-width.
@@ -5918,10 +5929,21 @@
           this.m_hasPrevVertex = false;
           this.m_hasNextVertex = false;
       }
-      /// Create a loop. This automatically adjusts connectivity.
-      /// @param vertices an array of vertices, these are copied
-      /// @param count the vertex count
-      CreateLoop(vertices, count = vertices.length, start = 0) {
+      CreateLoop(...args) {
+          if (typeof args[0][0] === "number") {
+              const vertices = args[0];
+              if (vertices.length % 2 !== 0) {
+                  throw new Error();
+              }
+              return this._CreateLoop((index) => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
+          }
+          else {
+              const vertices = args[0];
+              const count = args[1] || vertices.length;
+              return this._CreateLoop((index) => vertices[index], count);
+          }
+      }
+      _CreateLoop(vertices, count) {
           // DEBUG: b2Assert(count >= 3);
           if (count < 3) {
               return this;
@@ -5935,7 +5957,7 @@
           this.m_count = count + 1;
           this.m_vertices = b2Vec2.MakeArray(this.m_count);
           for (let i = 0; i < count; ++i) {
-              this.m_vertices[i].Copy(vertices[start + i]);
+              this.m_vertices[i].Copy(vertices(i));
           }
           this.m_vertices[count].Copy(this.m_vertices[0]);
           this.m_prevVertex.Copy(this.m_vertices[this.m_count - 2]);
@@ -5944,10 +5966,21 @@
           this.m_hasNextVertex = true;
           return this;
       }
-      /// Create a chain with isolated end vertices.
-      /// @param vertices an array of vertices, these are copied
-      /// @param count the vertex count
-      CreateChain(vertices, count = vertices.length, start = 0) {
+      CreateChain(...args) {
+          if (typeof args[0][0] === "number") {
+              const vertices = args[0];
+              if (vertices.length % 2 !== 0) {
+                  throw new Error();
+              }
+              return this._CreateChain((index) => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
+          }
+          else {
+              const vertices = args[0];
+              const count = args[1] || vertices.length;
+              return this._CreateChain((index) => vertices[index], count);
+          }
+      }
+      _CreateChain(vertices, count) {
           // DEBUG: b2Assert(count >= 2);
           // DEBUG: for (let i: number = 1; i < count; ++i) {
           // DEBUG:   const v1 = vertices[start + i - 1];
@@ -5958,7 +5991,7 @@
           this.m_count = count;
           this.m_vertices = b2Vec2.MakeArray(count);
           for (let i = 0; i < count; ++i) {
-              this.m_vertices[i].Copy(vertices[start + i]);
+              this.m_vertices[i].Copy(vertices(i));
           }
           this.m_hasPrevVertex = false;
           this.m_hasNextVertex = false;
@@ -5987,7 +6020,7 @@
       Copy(other) {
           super.Copy(other);
           // DEBUG: b2Assert(other instanceof b2ChainShape);
-          this.CreateChain(other.m_vertices, other.m_count);
+          this._CreateChain((index) => other.m_vertices[index], other.m_count);
           this.m_prevVertex.Copy(other.m_prevVertex);
           this.m_nextVertex.Copy(other.m_nextVertex);
           this.m_hasPrevVertex = other.m_hasPrevVertex;
