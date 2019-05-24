@@ -287,7 +287,7 @@ export function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void {
 
   const proxyA: b2DistanceProxy = input.proxyA;
   const proxyB: b2DistanceProxy = input.proxyB;
-  const maxVertices: number = b2Max(b2_maxPolygonVertices, proxyA.m_count, proxyB.m_count);
+  const maxVertices: number = b2Max(b2_maxPolygonVertices, b2Max(proxyA.m_count, proxyB.m_count));
 
   const sweepA: b2Sweep = b2TimeOfImpact_s_sweepA.Copy(input.sweepA);
   const sweepB: b2Sweep = b2TimeOfImpact_s_sweepB.Copy(input.sweepB);

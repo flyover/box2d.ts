@@ -25,8 +25,8 @@ export const b2_two_pi: number = 2 * b2_pi;
 
 export const b2Abs = Math.abs;
 
-export const b2Min = Math.min;
-export const b2Max = Math.max;
+export function b2Min(a: number, b: number): number { return a < b ? a : b }
+export function b2Max(a: number, b: number): number { return a > b ? a : b }
 
 export function b2Clamp(a: number, lo: number, hi: number): number {
   return (a < lo) ? (lo) : ((a > hi) ? (hi) : (a));
