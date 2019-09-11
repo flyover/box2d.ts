@@ -1294,42 +1294,6 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
   /// A distance proxy is used by the GJK algorithm.
   /// It encapsulates any shape.
   class b2DistanceProxy {
@@ -3137,6 +3101,37 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  function std_iter_swap(array, a, b) {
+      const tmp = array[a];
+      array[a] = array[b];
+      array[b] = tmp;
+  }
+  function default_compare(a, b) { return a < b; }
+  function std_sort(array, first = 0, len = array.length - first, cmp = default_compare) {
+      let left = first;
+      const stack = [];
+      let pos = 0;
+      for (;;) { /* outer loop */
+          for (; left + 1 < len; len++) { /* sort left to len-1 */
+              const pivot = array[left + Math.floor(Math.random() * (len - left))]; /* pick random pivot */
+              stack[pos++] = len; /* sort right part later */
+              for (let right = left - 1;;) { /* inner loop: partitioning */
+                  while (cmp(array[++right], pivot)) { } /* look for greater element */
+                  while (cmp(pivot, array[--len])) { } /* look for smaller element */
+                  if (right >= len) {
+                      break;
+                  } /* partition point found? */
+                  std_iter_swap(array, right, len); /* the only swap */
+              } /* partitioned, continue left part */
+          }
+          if (pos === 0) {
+              break;
+          } /* stack empty? */
+          left = len; /* left to right is sorted */
+          len = stack[--pos]; /* get next range to sort */
+      }
+      return array;
+  }
   class b2Pair {
       constructor(proxyA, proxyB) {
           this.proxyA = proxyA;
@@ -3251,8 +3246,7 @@
           // Reset move buffer
           this.m_moveCount = 0;
           // Sort the pair buffer to expose duplicates.
-          this.m_pairBuffer.length = this.m_pairCount;
-          this.m_pairBuffer.sort(b2PairLessThan);
+          std_sort(this.m_pairBuffer, 0, this.m_pairCount, b2PairLessThan);
           // Send the pairs back to the client.
           let i = 0;
           while (i < this.m_pairCount) {
@@ -3320,10 +3314,13 @@
   }
   /// This is used to sort pairs.
   function b2PairLessThan(pair1, pair2) {
-      if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
-          return pair1.proxyB.m_id - pair2.proxyB.m_id;
+      if (pair1.proxyA.m_id < pair2.proxyA.m_id) {
+          return true;
       }
-      return pair1.proxyA.m_id - pair2.proxyA.m_id;
+      if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
+          return pair1.proxyB.m_id < pair2.proxyB.m_id;
+      }
+      return false;
   }
 
   /*
@@ -13884,13 +13881,13 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
-  function std_iter_swap(array, a, b) {
+  function std_iter_swap$1(array, a, b) {
       const tmp = array[a];
       array[a] = array[b];
       array[b] = tmp;
   }
-  function default_compare(a, b) { return a < b; }
-  function std_sort(array, first = 0, len = array.length - first, cmp = default_compare) {
+  function default_compare$1(a, b) { return a < b; }
+  function std_sort$1(array, first = 0, len = array.length - first, cmp = default_compare$1) {
       let left = first;
       const stack = [];
       let pos = 0;
@@ -13904,7 +13901,7 @@
                   if (right >= len) {
                       break;
                   } /* partition point found? */
-                  std_iter_swap(array, right, len); /* the only swap */
+                  std_iter_swap$1(array, right, len); /* the only swap */
               } /* partitioned, continue left part */
           }
           if (pos === 0) {
@@ -13915,8 +13912,8 @@
       }
       return array;
   }
-  function std_stable_sort(array, first = 0, len = array.length - first, cmp = default_compare) {
-      return std_sort(array, first, len, cmp);
+  function std_stable_sort(array, first = 0, len = array.length - first, cmp = default_compare$1) {
+      return std_sort$1(array, first, len, cmp);
   }
   function std_remove_if(array, predicate, length = array.length) {
       let l = 0;
@@ -13931,7 +13928,7 @@
               continue; // quick exit if we're already in the right spot
           }
           // array[l++] = array[c];
-          std_iter_swap(array, l++, c);
+          std_iter_swap$1(array, l++, c);
       }
       return l;
   }
@@ -13968,7 +13965,7 @@
   function std_rotate(array, first, n_first, last) {
       let next = n_first;
       while (first !== next) {
-          std_iter_swap(array, first++, next++);
+          std_iter_swap$1(array, first++, next++);
           if (next === last) {
               next = n_first;
           }
@@ -13985,7 +13982,7 @@
       while (++first !== last) {
           if (!cmp(array[result], array[first])) {
               ///array[++result] = array[first];
-              std_iter_swap(array, ++result, first);
+              std_iter_swap$1(array, ++result, first);
           }
       }
       return ++result;
@@ -16340,7 +16337,7 @@
       SortProxies(proxies) {
           // DEBUG: b2Assert(proxies === this.m_proxyBuffer);
           ///std::sort(proxies.Begin(), proxies.End());
-          std_sort(this.m_proxyBuffer.data, 0, this.m_proxyBuffer.count, b2ParticleSystem_Proxy.CompareProxyProxy);
+          std_sort$1(this.m_proxyBuffer.data, 0, this.m_proxyBuffer.count, b2ParticleSystem_Proxy.CompareProxyProxy);
       }
       FilterContacts(contacts) {
           // Optionally filter the contact.
@@ -17660,7 +17657,7 @@
                   return infiniteExpirationTimeA === infiniteExpirationTimeB ?
                       expirationTimeA > expirationTimeB : infiniteExpirationTimeA;
               };
-              std_sort(expirationTimeIndices, 0, particleCount, ExpirationTimeComparator);
+              std_sort$1(expirationTimeIndices, 0, particleCount, ExpirationTimeComparator);
               this.m_expirationTimeBufferRequiresSorting = false;
           }
           // Destroy particles which have expired.
@@ -17898,7 +17895,7 @@
           //      - repeat for up to n nearest contacts, currently we get good results
           //        from n=3.
           ///std::sort(m_bodyContactBuffer.Begin(), m_bodyContactBuffer.End(), b2ParticleSystem::BodyContactCompare);
-          std_sort(this.m_bodyContactBuffer.data, 0, this.m_bodyContactBuffer.count, b2ParticleSystem.BodyContactCompare);
+          std_sort$1(this.m_bodyContactBuffer.data, 0, this.m_bodyContactBuffer.count, b2ParticleSystem.BodyContactCompare);
           ///int32 discarded = 0;
           ///std::remove_if(m_bodyContactBuffer.Begin(), m_bodyContactBuffer.End(), b2ParticleBodyContactRemovePredicate(this, &discarded));
           ///
@@ -20192,25 +20189,6 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
-  // #endif
-
-  /*
-   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
   /**
    * Applies a force every frame
    */
@@ -20235,25 +20213,6 @@
       Draw(draw) { }
   }
   b2ConstantAccelController.Step_s_dtA = new b2Vec2();
-  // #endif
-
-  /*
-   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
   // #endif
 
   /*
@@ -20628,24 +20587,6 @@
   b2Rope.s_Jd2 = new b2Vec2();
   b2Rope.s_J1 = new b2Vec2();
   b2Rope.s_J2 = new b2Vec2();
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
 
   /*
   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
