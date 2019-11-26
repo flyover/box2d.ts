@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = global || self, factory(global.box2d = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -1754,9 +1754,6 @@
                   pB.x = pA.x = this.m_v1.a * this.m_v1.wA.x + this.m_v2.a * this.m_v2.wA.x + this.m_v3.a * this.m_v3.wA.x;
                   pB.y = pA.y = this.m_v1.a * this.m_v1.wA.y + this.m_v2.a * this.m_v2.wA.y + this.m_v3.a * this.m_v3.wA.y;
                   break;
-              default:
-                  // DEBUG: b2Assert(false);
-                  break;
           }
       }
       GetMetric() {
@@ -1937,9 +1934,6 @@
                   break;
               case 3:
                   simplex.Solve3();
-                  break;
-              default:
-                  // DEBUG: b2Assert(false);
                   break;
           }
           // If we have 3 points, then the origin is in the corresponding triangle.
@@ -2134,7 +2128,6 @@
               case 3:
                   simplex.Solve3();
                   break;
-              default:
               // DEBUG: b2Assert(false);
           }
           // If we have 3 points, then the origin is in the corresponding triangle.
@@ -7273,9 +7266,6 @@
                   break;
               case exports.b2BodyType.b2_dynamicBody:
                   type_str = "b2BodyType.b2_dynamicBody";
-                  break;
-              default:
-                  // DEBUG: b2Assert(false);
                   break;
           }
           log("  bd.type = %s;\n", type_str);
@@ -16391,9 +16381,6 @@
               case exports.b2ShapeType.e_circleShape:
                   this.CreateParticlesFillShapeForGroup(shape, groupDef, xf);
                   break;
-              default:
-                  // DEBUG: b2Assert(false);
-                  break;
           }
       }
       CreateParticlesWithShapesForGroup(shapes, shapeCount, groupDef, xf) {
@@ -21686,4 +21673,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));

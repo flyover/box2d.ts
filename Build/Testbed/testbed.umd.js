@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = global || self, factory(global.testbed = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -1619,9 +1619,6 @@
                   pB.x = pA.x = this.m_v1.a * this.m_v1.wA.x + this.m_v2.a * this.m_v2.wA.x + this.m_v3.a * this.m_v3.wA.x;
                   pB.y = pA.y = this.m_v1.a * this.m_v1.wA.y + this.m_v2.a * this.m_v2.wA.y + this.m_v3.a * this.m_v3.wA.y;
                   break;
-              default:
-                  // DEBUG: b2Assert(false);
-                  break;
           }
       }
       GetMetric() {
@@ -1802,9 +1799,6 @@
                   break;
               case 3:
                   simplex.Solve3();
-                  break;
-              default:
-                  // DEBUG: b2Assert(false);
                   break;
           }
           // If we have 3 points, then the origin is in the corresponding triangle.
@@ -1999,7 +1993,6 @@
               case 3:
                   simplex.Solve3();
                   break;
-              default:
               // DEBUG: b2Assert(false);
           }
           // If we have 3 points, then the origin is in the corresponding triangle.
@@ -7155,9 +7148,6 @@
                   break;
               case b2BodyType.b2_dynamicBody:
                   type_str = "b2BodyType.b2_dynamicBody";
-                  break;
-              default:
-                  // DEBUG: b2Assert(false);
                   break;
           }
           log("  bd.type = %s;\n", type_str);
@@ -16259,9 +16249,6 @@
               case b2ShapeType.e_polygonShape:
               case b2ShapeType.e_circleShape:
                   this.CreateParticlesFillShapeForGroup(shape, groupDef, xf);
-                  break;
-              default:
-                  // DEBUG: b2Assert(false);
                   break;
           }
       }
@@ -26785,8 +26772,6 @@
                       g_debugDraw.DrawPolygon(vertices, vertexCount, color);
                   }
                   break;
-              default:
-                  break;
           }
       }
   }
@@ -29112,9 +29097,6 @@
                       this.m_bullet.SetLinearVelocity(new b2Vec2(400.0, 0.0));
                   }
                   break;
-              case "b":
-                  // box2d.g_blockSolve = !box2d.g_blockSolve;
-                  break;
           }
       }
       Step(settings) {
@@ -30264,7 +30246,6 @@
               case TDC_RIGHT:
                   desiredTorque = -15;
                   break;
-              default:
               //nothing
           }
           this.m_body.ApplyTorque(desiredTorque);
@@ -30351,7 +30332,6 @@
               case TDC_RIGHT:
                   desiredAngle = -lockAngle;
                   break;
-              default:
               //nothing
           }
           const angleNow = this.flJoint.GetJointAngle();
@@ -31005,9 +30985,6 @@
                       case "g":
                           // Green emitter
                           this.AddFaucetEmitter(center, green);
-                          break;
-                      default:
-                          // add nothing
                           break;
                   }
               }
@@ -32256,8 +32233,6 @@
                   break;
               case "z":
                   this.m_particleFlags = b2ParticleFlag.b2_zombieParticle;
-                  break;
-              default:
                   break;
           }
           Test.SetParticleParameterValue(this.DetermineParticleParameter());
@@ -34114,8 +34089,6 @@
                   case Fracker_Material.WATER:
                       this.AddScore(FrackerSettings.k_scorePerWaterParticle);
                       break;
-                  default:
-                      break;
               }
           }
       }
@@ -35732,10 +35705,6 @@
                       Test.particleParameter.Increment();
                   }
                   break;
-              // #endif
-              default:
-                  // console.log(e.keyCode);
-                  break;
           }
           if (this.m_test) {
               this.m_test.Keyboard(e.key);
@@ -35748,9 +35717,6 @@
                   break;
               case "Shift":
                   this.m_shift = false;
-                  break;
-              default:
-                  // console.log(e.keyCode);
                   break;
           }
           if (this.m_test) {
@@ -35907,4 +35873,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
