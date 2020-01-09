@@ -18,8 +18,8 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "Box2D";
-import * as testbed from "Testbed";
+import * as box2d from "@box2d";
+import * as testbed from "../Testbed.js";
 
 export class ParticleLifetimeRandomizer extends testbed.EmittedParticleCallback {
   public m_minLifetime = 0.0;

@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "Box2D";
-import * as testbed from "Testbed";
+import * as box2d from "@box2d";
+import * as testbed from "../Testbed.js";
 
 export class Segway extends testbed.Test {
   public static PENDULUM_LENGTH: number = 10;

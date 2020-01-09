@@ -16,13 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2Maybe } from "../Common/b2Settings";
-import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
-import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision";
-import { b2TreeNode } from "../Collision/b2DynamicTree";
-import { b2Shape, b2ShapeType, b2MassData } from "../Collision/Shapes/b2Shape";
-import { b2Body } from "./b2Body";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2Maybe } from "../Common/b2Settings.js";
+import { b2Vec2, b2Transform, XY } from "../Common/b2Math.js";
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../Collision/b2Collision.js";
+import { b2TreeNode } from "../Collision/b2DynamicTree.js";
+import { b2Shape, b2ShapeType, b2MassData } from "../Collision/Shapes/b2Shape.js";
+import { b2Body } from "./b2Body.js";
 
 /// This holds contact filtering data.
 export interface b2IFilter {

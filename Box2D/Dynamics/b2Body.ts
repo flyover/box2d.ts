@@ -16,17 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-// DEBUG: import { b2IsValid } from "../Common/b2Math";
-import { b2Maybe } from "../Common/b2Settings";
-import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math";
-import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape";
-import { b2ContactEdge } from "./Contacts/b2Contact";
-import { b2JointEdge } from "./Joints/b2Joint";
-import { b2Fixture, b2FixtureDef, b2IFixtureDef } from "./b2Fixture";
-import { b2World } from "./b2World";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+// DEBUG: import { b2IsValid } from "../Common/b2Math.js";
+import { b2Maybe } from "../Common/b2Settings.js";
+import { b2Vec2, b2Rot, b2Transform, b2Sweep, XY } from "../Common/b2Math.js";
+import { b2Shape, b2MassData } from "../Collision/Shapes/b2Shape.js";
+import { b2ContactEdge } from "./Contacts/b2Contact.js";
+import { b2JointEdge } from "./Joints/b2Joint.js";
+import { b2Fixture, b2FixtureDef, b2IFixtureDef } from "./b2Fixture.js";
+import { b2World } from "./b2World.js";
 // #if B2_ENABLE_CONTROLLER
-import { b2ControllerEdge } from "../Controllers/b2Controller";
+import { b2ControllerEdge } from "../Controllers/b2Controller.js";
 // #endif
 
 /// The body type.

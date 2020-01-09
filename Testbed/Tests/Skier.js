@@ -1,7 +1,7 @@
 /*
 Test case for collision/jerking issue.
 */
-System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
+System.register(["@box2d", "../Testbed.js"], function (exports_1, context_1) {
     "use strict";
     var box2d, testbed, Skier;
     var __moduleName = context_1 && context_1.id;

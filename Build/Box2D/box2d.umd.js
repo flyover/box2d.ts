@@ -4211,7 +4211,7 @@
       }
   }
 
-  // DEBUG: import { b2Assert } from "../Common/b2Settings";
+  // DEBUG: import { b2Assert } from "../Common/b2Settings.js";
   const b2EdgeSeparation_s_normal1World = new b2Vec2();
   const b2EdgeSeparation_s_normal1 = new b2Vec2();
   const b2EdgeSeparation_s_v1 = new b2Vec2();
@@ -4457,7 +4457,7 @@
       manifold.pointCount = pointCount;
   }
 
-  // DEBUG: import { b2Assert } from "../Common/b2Settings";
+  // DEBUG: import { b2Assert } from "../Common/b2Settings.js";
   const b2CollideEdgeAndCircle_s_Q = new b2Vec2();
   const b2CollideEdgeAndCircle_s_e = new b2Vec2();
   const b2CollideEdgeAndCircle_s_d = new b2Vec2();
@@ -7818,7 +7818,7 @@
   b2DistanceJoint.SolveVelocityConstraints_s_P = new b2Vec2();
   b2DistanceJoint.SolvePositionConstraints_s_P = new b2Vec2();
 
-  // DEBUG: import { b2Assert } from "../../Common/b2Settings";
+  // DEBUG: import { b2Assert } from "../../Common/b2Settings.js";
   class b2AreaJointDef extends b2JointDef {
       constructor() {
           super(exports.b2JointType.e_areaJoint);
@@ -12023,7 +12023,7 @@
   }
   b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape();
 
-  // DEBUG: import { b2Assert } from "../../Common/b2Settings";
+  // DEBUG: import { b2Assert } from "../../Common/b2Settings.js";
   class b2ContactRegister {
       constructor() {
           this.pool = [];

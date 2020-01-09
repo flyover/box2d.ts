@@ -15,7 +15,7 @@
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register(["Box2D"], function (exports_1, context_1) {
+System.register(["@box2d"], function (exports_1, context_1) {
     "use strict";
     var box2d, EmittedParticleCallback, RadialEmitter;
     var __moduleName = context_1 && context_1.id;

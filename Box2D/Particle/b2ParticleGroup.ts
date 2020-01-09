@@ -18,12 +18,12 @@
 
 // #if B2_ENABLE_PARTICLE
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2Vec2, b2Transform, XY } from "../Common/b2Math";
-import { b2Color, RGBA } from "../Common/b2Draw";
-import { b2Shape } from "../Collision/Shapes/b2Shape";
-import { b2ParticleFlag } from "./b2Particle";
-import { b2ParticleSystem } from "./b2ParticleSystem";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2Vec2, b2Transform, XY } from "../Common/b2Math.js";
+import { b2Color, RGBA } from "../Common/b2Draw.js";
+import { b2Shape } from "../Collision/Shapes/b2Shape.js";
+import { b2ParticleFlag } from "./b2Particle.js";
+import { b2ParticleSystem } from "./b2ParticleSystem.js";
 
 export enum b2ParticleGroupFlag {
   /// Prevents overlapping or leaking.

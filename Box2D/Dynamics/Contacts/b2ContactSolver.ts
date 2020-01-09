@@ -16,18 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../../Common/b2Settings";
-import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../../Common/b2Settings";
-import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math";
-import { b2Manifold } from "../../Collision/b2Collision";
-import { b2ManifoldPoint } from "../../Collision/b2Collision";
-import { b2WorldManifold } from "../../Collision/b2Collision";
-import { b2ManifoldType } from "../../Collision/b2Collision";
-import { b2Shape } from "../../Collision/Shapes/b2Shape";
-import { b2Contact } from "./b2Contact";
-import { b2Body } from "../b2Body";
-import { b2Fixture } from "../b2Fixture";
-import { b2TimeStep, b2Position, b2Velocity } from "../b2TimeStep";
+// DEBUG: import { b2Assert } from "../../Common/b2Settings.js";
+import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../../Common/b2Settings.js";
+import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../../Common/b2Math.js";
+import { b2Manifold } from "../../Collision/b2Collision.js";
+import { b2ManifoldPoint } from "../../Collision/b2Collision.js";
+import { b2WorldManifold } from "../../Collision/b2Collision.js";
+import { b2ManifoldType } from "../../Collision/b2Collision.js";
+import { b2Shape } from "../../Collision/Shapes/b2Shape.js";
+import { b2Contact } from "./b2Contact.js";
+import { b2Body } from "../b2Body.js";
+import { b2Fixture } from "../b2Fixture.js";
+import { b2TimeStep, b2Position, b2Velocity } from "../b2TimeStep.js";
 
 // Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
 // #define B2_DEBUG_SOLVER 0

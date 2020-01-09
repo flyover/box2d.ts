@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Transform, XY } from "./b2Math";
+import { b2Transform, XY } from "./b2Math.js";
 
 export interface RGB {
   r: number;

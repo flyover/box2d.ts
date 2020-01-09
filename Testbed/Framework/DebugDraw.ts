@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "Box2D";
+import * as box2d from "@box2d";
 
 export class Camera {
   public readonly m_center: box2d.b2Vec2 = new box2d.b2Vec2(0, 20);

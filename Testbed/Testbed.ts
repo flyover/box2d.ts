@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-export * from "./Framework/DebugDraw";
+export * from "./Framework/DebugDraw.js";
 // #if B2_ENABLE_PARTICLE
-export * from "./Framework/FullscreenUI";
-export * from "./Framework/ParticleEmitter";
-export * from "./Framework/ParticleParameter";
+export * from "./Framework/FullscreenUI.js";
+export * from "./Framework/ParticleEmitter.js";
+export * from "./Framework/ParticleParameter.js";
 // #endif
-export * from "./Framework/Test";
-export * from "./Framework/Main";
+export * from "./Framework/Test.js";
+export * from "./Framework/Main.js";

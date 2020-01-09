@@ -1,9 +1,9 @@
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings";
-import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
-import { b2ContactFeatureType, b2ContactFeature } from "./b2Collision";
-import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
-import { b2PolygonShape } from "./Shapes/b2PolygonShape";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_maxFloat, b2_maxManifoldPoints } from "../Common/b2Settings.js";
+import { b2Vec2, b2Rot, b2Transform } from "../Common/b2Math.js";
+import { b2ContactFeatureType, b2ContactFeature } from "./b2Collision.js";
+import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision.js";
+import { b2PolygonShape } from "./Shapes/b2PolygonShape.js";
 
 const b2EdgeSeparation_s_normal1World: b2Vec2 = new b2Vec2();
 const b2EdgeSeparation_s_normal1: b2Vec2 = new b2Vec2();

@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "./b2Settings";
-import { b2MakeArray } from "./b2Settings";
+// DEBUG: import { b2Assert } from "./b2Settings.js";
+import { b2MakeArray } from "./b2Settings.js";
 
 /// This is a growable LIFO stack with an initial capacity of N.
 /// If the stack size exceeds the initial capacity, the heap is used

@@ -15,32 +15,32 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["../../Collision/b2CollideEdge", "./b2Contact"], function (exports_1, context_1) {
+System.register(["../../Collision/b2CollideEdge.js", "./b2Contact.js"], function (exports_1, context_1) {
     "use strict";
-    var b2CollideEdge_1, b2Contact_1, b2EdgeAndCircleContact;
+    var b2CollideEdge_js_1, b2Contact_js_1, b2EdgeAndCircleContact;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
-            function (b2CollideEdge_1_1) {
-                b2CollideEdge_1 = b2CollideEdge_1_1;
+            function (b2CollideEdge_js_1_1) {
+                b2CollideEdge_js_1 = b2CollideEdge_js_1_1;
             },
-            function (b2Contact_1_1) {
-                b2Contact_1 = b2Contact_1_1;
+            function (b2Contact_js_1_1) {
+                b2Contact_js_1 = b2Contact_js_1_1;
             }
         ],
         execute: function () {
-            b2EdgeAndCircleContact = class b2EdgeAndCircleContact extends b2Contact_1.b2Contact {
+            b2EdgeAndCircleContact = class b2EdgeAndCircleContact extends b2Contact_js_1.b2Contact {
                 static Create() {
                     return new b2EdgeAndCircleContact();
                 }
                 static Destroy(contact) {
                 }
                 Evaluate(manifold, xfA, xfB) {
-                    b2CollideEdge_1.b2CollideEdgeAndCircle(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
+                    b2CollideEdge_js_1.b2CollideEdgeAndCircle(manifold, this.GetShapeA(), xfA, this.GetShapeB(), xfB);
                 }
             };
             exports_1("b2EdgeAndCircleContact", b2EdgeAndCircleContact);
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJFZGdlQW5kQ2lyY2xlQ29udGFjdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyRWRnZUFuZENpcmNsZUNvbnRhY3QudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7Ozs7OztZQVNGLHlCQUFBLE1BQWEsc0JBQXVCLFNBQVEscUJBQXFDO2dCQUN4RSxNQUFNLENBQUMsTUFBTTtvQkFDbEIsT0FBTyxJQUFJLHNCQUFzQixFQUFFLENBQUM7Z0JBQ3RDLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE9BQU8sQ0FBQyxPQUFrQjtnQkFDeEMsQ0FBQztnQkFFTSxRQUFRLENBQUMsUUFBb0IsRUFBRSxHQUFnQixFQUFFLEdBQWdCO29CQUN0RSxzQ0FBc0IsQ0FBQyxRQUFRLEVBQUUsSUFBSSxDQUFDLFNBQVMsRUFBRSxFQUFFLEdBQUcsRUFBRSxJQUFJLENBQUMsU0FBUyxFQUFFLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ2pGLENBQUM7YUFDRixDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJFZGdlQW5kQ2lyY2xlQ29udGFjdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyRWRnZUFuZENpcmNsZUNvbnRhY3QudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7RUFnQkU7Ozs7Ozs7Ozs7Ozs7OztZQVNGLHlCQUFBLE1BQWEsc0JBQXVCLFNBQVEsd0JBQXFDO2dCQUN4RSxNQUFNLENBQUMsTUFBTTtvQkFDbEIsT0FBTyxJQUFJLHNCQUFzQixFQUFFLENBQUM7Z0JBQ3RDLENBQUM7Z0JBRU0sTUFBTSxDQUFDLE9BQU8sQ0FBQyxPQUFrQjtnQkFDeEMsQ0FBQztnQkFFTSxRQUFRLENBQUMsUUFBb0IsRUFBRSxHQUFnQixFQUFFLEdBQWdCO29CQUN0RSx5Q0FBc0IsQ0FBQyxRQUFRLEVBQUUsSUFBSSxDQUFDLFNBQVMsRUFBRSxFQUFFLEdBQUcsRUFBRSxJQUFJLENBQUMsU0FBUyxFQUFFLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ2pGLENBQUM7YUFDRixDQUFBIn0=

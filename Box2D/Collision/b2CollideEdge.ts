@@ -1,11 +1,11 @@
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_angularSlop, b2_maxManifoldPoints } from "../Common/b2Settings";
-import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math";
-import { b2ContactFeatureType, b2ContactID } from "./b2Collision";
-import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision";
-import { b2CircleShape } from "./Shapes/b2CircleShape";
-import { b2PolygonShape } from "./Shapes/b2PolygonShape";
-import { b2EdgeShape } from "./Shapes/b2EdgeShape";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_maxFloat, b2_angularSlop, b2_maxManifoldPoints } from "../Common/b2Settings.js";
+import { b2Min, b2Vec2, b2Rot, b2Transform } from "../Common/b2Math.js";
+import { b2ContactFeatureType, b2ContactID } from "./b2Collision.js";
+import { b2Manifold, b2ManifoldType, b2ManifoldPoint, b2ClipVertex, b2ClipSegmentToLine } from "./b2Collision.js";
+import { b2CircleShape } from "./Shapes/b2CircleShape.js";
+import { b2PolygonShape } from "./Shapes/b2PolygonShape.js";
+import { b2EdgeShape } from "./Shapes/b2EdgeShape.js";
 
 const b2CollideEdgeAndCircle_s_Q: b2Vec2 = new b2Vec2();
 const b2CollideEdgeAndCircle_s_e: b2Vec2 = new b2Vec2();

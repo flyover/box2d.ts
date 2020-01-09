@@ -1,14 +1,14 @@
-// DEBUG: import { b2Assert } from "../../Common/b2Settings";
-import { b2ShapeType } from "../../Collision/Shapes/b2Shape";
-import { b2Contact } from "./b2Contact";
-import { b2CircleContact } from "./b2CircleContact";
-import { b2PolygonContact } from "./b2PolygonContact";
-import { b2PolygonAndCircleContact } from "./b2PolygonAndCircleContact";
-import { b2EdgeAndCircleContact } from "./b2EdgeAndCircleContact";
-import { b2EdgeAndPolygonContact } from "./b2EdgeAndPolygonContact";
-import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact";
-import { b2ChainAndPolygonContact } from "./b2ChainAndPolygonContact";
-import { b2Fixture } from "../b2Fixture";
+// DEBUG: import { b2Assert } from "../../Common/b2Settings.js";
+import { b2ShapeType } from "../../Collision/Shapes/b2Shape.js";
+import { b2Contact } from "./b2Contact.js";
+import { b2CircleContact } from "./b2CircleContact.js";
+import { b2PolygonContact } from "./b2PolygonContact.js";
+import { b2PolygonAndCircleContact } from "./b2PolygonAndCircleContact.js";
+import { b2EdgeAndCircleContact } from "./b2EdgeAndCircleContact.js";
+import { b2EdgeAndPolygonContact } from "./b2EdgeAndPolygonContact.js";
+import { b2ChainAndCircleContact } from "./b2ChainAndCircleContact.js";
+import { b2ChainAndPolygonContact } from "./b2ChainAndPolygonContact.js";
+import { b2Fixture } from "../b2Fixture.js";
 
 export class b2ContactRegister {
   public pool: b2Contact[] = [];

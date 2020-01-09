@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_maxManifoldPoints, b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform, XY } from "../Common/b2Math";
-import { b2Shape } from "./Shapes/b2Shape";
-import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_maxFloat, b2_epsilon, b2_epsilon_sq, b2_maxManifoldPoints, b2MakeArray, b2MakeNumberArray } from "../Common/b2Settings.js";
+import { b2Abs, b2Min, b2Max, b2Vec2, b2Rot, b2Transform, XY } from "../Common/b2Math.js";
+import { b2Shape } from "./Shapes/b2Shape.js";
+import { b2Distance, b2DistanceInput, b2DistanceOutput, b2SimplexCache } from "./b2Distance.js";
 
 /// @file
 /// Structures and functions used for computing contact points, distance

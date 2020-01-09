@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings";
-import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math";
-import { b2Timer } from "../Common/b2Timer";
-import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_linearSlop, b2_maxPolygonVertices } from "../Common/b2Settings.js";
+import { b2Abs, b2Max, b2Vec2, b2Rot, b2Transform, b2Sweep } from "../Common/b2Math.js";
+import { b2Timer } from "../Common/b2Timer.js";
+import { b2Distance, b2DistanceInput, b2DistanceOutput, b2DistanceProxy, b2SimplexCache } from "./b2Distance.js";
 
 export let b2_toiTime: number = 0;
 export let b2_toiMaxTime: number = 0;

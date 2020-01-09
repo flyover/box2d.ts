@@ -18,8 +18,8 @@
 
 // #if B2_ENABLE_PARTICLE
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2MakeArray } from "../Common/b2Settings";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2MakeArray } from "../Common/b2Settings.js";
 
 export class b2StackQueue<T> {
   public m_buffer: Array<T | null>;

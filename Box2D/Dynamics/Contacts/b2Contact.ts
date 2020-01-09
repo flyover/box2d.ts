@@ -16,15 +16,15 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop } from "../../Common/b2Settings";
-import { b2Sqrt, b2Transform, b2Sweep } from "../../Common/b2Math";
-import { b2Manifold, b2WorldManifold, b2ManifoldPoint, b2ContactID } from "../../Collision/b2Collision";
-import { b2TestOverlapShape } from "../../Collision/b2Collision";
-import { b2TimeOfImpact, b2TOIInput, b2TOIOutput } from "../../Collision/b2TimeOfImpact";
-import { b2Body } from "../b2Body";
-import { b2Fixture } from "../b2Fixture";
-import { b2Shape } from "../../Collision/Shapes/b2Shape";
-import { b2ContactListener } from "../b2WorldCallbacks";
+import { b2_linearSlop } from "../../Common/b2Settings.js";
+import { b2Sqrt, b2Transform, b2Sweep } from "../../Common/b2Math.js";
+import { b2Manifold, b2WorldManifold, b2ManifoldPoint, b2ContactID } from "../../Collision/b2Collision.js";
+import { b2TestOverlapShape } from "../../Collision/b2Collision.js";
+import { b2TimeOfImpact, b2TOIInput, b2TOIOutput } from "../../Collision/b2TimeOfImpact.js";
+import { b2Body } from "../b2Body.js";
+import { b2Fixture } from "../b2Fixture.js";
+import { b2Shape } from "../../Collision/Shapes/b2Shape.js";
+import { b2ContactListener } from "../b2WorldCallbacks.js";
 
 /// Friction mixing law. The idea is to allow either fixture to drive the friction to zero.
 /// For example, anything slides on ice.

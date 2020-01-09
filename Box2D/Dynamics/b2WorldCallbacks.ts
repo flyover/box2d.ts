@@ -16,16 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_maxManifoldPoints, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Vec2 } from "../Common/b2Math";
-import { b2Manifold } from "../Collision/b2Collision";
-import { b2Contact } from "./Contacts/b2Contact";
-import { b2Body, b2BodyType } from "./b2Body";
-import { b2Joint } from "./Joints/b2Joint";
-import { b2Fixture, b2Filter } from "./b2Fixture";
+import { b2_maxManifoldPoints, b2MakeNumberArray } from "../Common/b2Settings.js";
+import { b2Vec2 } from "../Common/b2Math.js";
+import { b2Manifold } from "../Collision/b2Collision.js";
+import { b2Contact } from "./Contacts/b2Contact.js";
+import { b2Body, b2BodyType } from "./b2Body.js";
+import { b2Joint } from "./Joints/b2Joint.js";
+import { b2Fixture, b2Filter } from "./b2Fixture.js";
 // #if B2_ENABLE_PARTICLE
-import { b2ParticleGroup } from "../Particle/b2ParticleGroup";
-import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "../Particle/b2ParticleSystem";
+import { b2ParticleGroup } from "../Particle/b2ParticleGroup.js";
+import { b2ParticleSystem, b2ParticleContact, b2ParticleBodyContact } from "../Particle/b2ParticleSystem.js";
 // #endif
 
 /// Joints and fixtures are destroyed when their associated

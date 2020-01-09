@@ -16,20 +16,20 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_maxFloat, b2_timeToSleep } from "../Common/b2Settings";
-import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings";
-import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings";
-import { b2_linearSleepTolerance, b2_angularSleepTolerance } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2 } from "../Common/b2Math";
-import { b2Timer } from "../Common/b2Timer";
-import { b2Contact } from "./Contacts/b2Contact";
-import { b2ContactSolver, b2ContactSolverDef } from "./Contacts/b2ContactSolver";
-import { b2ContactVelocityConstraint } from "./Contacts/b2ContactSolver";
-import { b2Joint } from "./Joints/b2Joint";
-import { b2Body, b2BodyType } from "./b2Body";
-import { b2TimeStep, b2Profile, b2SolverData, b2Position, b2Velocity } from "./b2TimeStep";
-import { b2ContactImpulse, b2ContactListener } from "./b2WorldCallbacks";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_maxFloat, b2_timeToSleep } from "../Common/b2Settings.js";
+import { b2_maxTranslation, b2_maxTranslationSquared } from "../Common/b2Settings.js";
+import { b2_maxRotation, b2_maxRotationSquared } from "../Common/b2Settings.js";
+import { b2_linearSleepTolerance, b2_angularSleepTolerance } from "../Common/b2Settings.js";
+import { b2Abs, b2Min, b2Max, b2Vec2 } from "../Common/b2Math.js";
+import { b2Timer } from "../Common/b2Timer.js";
+import { b2Contact } from "./Contacts/b2Contact.js";
+import { b2ContactSolver, b2ContactSolverDef } from "./Contacts/b2ContactSolver.js";
+import { b2ContactVelocityConstraint } from "./Contacts/b2ContactSolver.js";
+import { b2Joint } from "./Joints/b2Joint.js";
+import { b2Body, b2BodyType } from "./b2Body.js";
+import { b2TimeStep, b2Profile, b2SolverData, b2Position, b2Velocity } from "./b2TimeStep.js";
+import { b2ContactImpulse, b2ContactListener } from "./b2WorldCallbacks.js";
 
 /*
 Position Correction Notes

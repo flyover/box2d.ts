@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_aabbExtension, b2_aabbMultiplier } from "../Common/b2Settings";
-import { b2Abs, b2Min, b2Max, b2Vec2, XY } from "../Common/b2Math";
-import { b2GrowableStack } from "../Common/b2GrowableStack";
-import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_aabbExtension, b2_aabbMultiplier } from "../Common/b2Settings.js";
+import { b2Abs, b2Min, b2Max, b2Vec2, XY } from "../Common/b2Math.js";
+import { b2GrowableStack } from "../Common/b2GrowableStack.js";
+import { b2AABB, b2RayCastInput, b2TestOverlapAABB } from "./b2Collision.js";
 
 function verify<T>(value: T | null): T {
   if (value === null) { throw new Error(); }

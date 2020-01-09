@@ -15,30 +15,30 @@
  * misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-System.register(["./b2Controller", "../Common/b2Math"], function (exports_1, context_1) {
+System.register(["./b2Controller.js", "../Common/b2Math.js"], function (exports_1, context_1) {
     "use strict";
-    var b2Controller_1, b2Math_1, b2ConstantForceController;
+    var b2Controller_js_1, b2Math_js_1, b2ConstantForceController;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
-            function (b2Controller_1_1) {
-                b2Controller_1 = b2Controller_1_1;
+            function (b2Controller_js_1_1) {
+                b2Controller_js_1 = b2Controller_js_1_1;
             },
-            function (b2Math_1_1) {
-                b2Math_1 = b2Math_1_1;
+            function (b2Math_js_1_1) {
+                b2Math_js_1 = b2Math_js_1_1;
             }
         ],
         execute: function () {
             /**
              * Applies a force every frame
              */
-            b2ConstantForceController = class b2ConstantForceController extends b2Controller_1.b2Controller {
+            b2ConstantForceController = class b2ConstantForceController extends b2Controller_js_1.b2Controller {
                 constructor() {
                     super(...arguments);
                     /**
                      * The force to apply
                      */
-                    this.F = new b2Math_1.b2Vec2(0, 0);
+                    this.F = new b2Math_js_1.b2Vec2(0, 0);
                 }
                 Step(step) {
                     for (let i = this.m_bodyList; i; i = i.nextBody) {
@@ -55,4 +55,4 @@ System.register(["./b2Controller", "../Common/b2Math"], function (exports_1, con
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb25zdGFudEZvcmNlQ29udHJvbGxlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyQ29uc3RhbnRGb3JjZUNvbnRyb2xsZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7R0FnQkc7Ozs7Ozs7Ozs7Ozs7OztZQVNIOztlQUVHO1lBQ0gsNEJBQUEsTUFBYSx5QkFBMEIsU0FBUSwyQkFBWTtnQkFBM0Q7O29CQUNFOzt1QkFFRztvQkFDYSxNQUFDLEdBQUcsSUFBSSxlQUFNLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQyxDQUFDO2dCQWF2QyxDQUFDO2dCQVhRLElBQUksQ0FBQyxJQUFnQjtvQkFDMUIsS0FBSyxJQUFJLENBQUMsR0FBRyxJQUFJLENBQUMsVUFBVSxFQUFFLENBQUMsRUFBRSxDQUFDLEdBQUcsQ0FBQyxDQUFDLFFBQVEsRUFBRTt3QkFDL0MsTUFBTSxJQUFJLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQzt3QkFDcEIsSUFBSSxDQUFDLElBQUksQ0FBQyxPQUFPLEVBQUUsRUFBRTs0QkFDbkIsU0FBUzt5QkFDVjt3QkFDRCxJQUFJLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxDQUFDLEVBQUUsSUFBSSxDQUFDLGNBQWMsRUFBRSxDQUFDLENBQUM7cUJBQ2hEO2dCQUNILENBQUM7Z0JBRU0sSUFBSSxDQUFDLElBQVksSUFBRyxDQUFDO2FBQzdCLENBQUEifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDb25zdGFudEZvcmNlQ29udHJvbGxlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImIyQ29uc3RhbnRGb3JjZUNvbnRyb2xsZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7R0FnQkc7Ozs7Ozs7Ozs7Ozs7OztZQVNIOztlQUVHO1lBQ0gsNEJBQUEsTUFBYSx5QkFBMEIsU0FBUSw4QkFBWTtnQkFBM0Q7O29CQUNFOzt1QkFFRztvQkFDYSxNQUFDLEdBQUcsSUFBSSxrQkFBTSxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQztnQkFhdkMsQ0FBQztnQkFYUSxJQUFJLENBQUMsSUFBZ0I7b0JBQzFCLEtBQUssSUFBSSxDQUFDLEdBQUcsSUFBSSxDQUFDLFVBQVUsRUFBRSxDQUFDLEVBQUUsQ0FBQyxHQUFHLENBQUMsQ0FBQyxRQUFRLEVBQUU7d0JBQy9DLE1BQU0sSUFBSSxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUM7d0JBQ3BCLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBTyxFQUFFLEVBQUU7NEJBQ25CLFNBQVM7eUJBQ1Y7d0JBQ0QsSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsQ0FBQyxFQUFFLElBQUksQ0FBQyxjQUFjLEVBQUUsQ0FBQyxDQUFDO3FCQUNoRDtnQkFDSCxDQUFDO2dCQUVNLElBQUksQ0FBQyxJQUFZLElBQUcsQ0FBQzthQUM3QixDQUFBIn0=

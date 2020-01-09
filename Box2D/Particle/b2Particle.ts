@@ -18,10 +18,10 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import { b2_invalidParticleIndex } from "../Common/b2Settings";
-import { b2Clamp, b2Vec2, XY } from "../Common/b2Math";
-import { b2Color, RGBA } from "../Common/b2Draw";
-import { b2ParticleGroup } from "./b2ParticleGroup";
+import { b2_invalidParticleIndex } from "../Common/b2Settings.js";
+import { b2Clamp, b2Vec2, XY } from "../Common/b2Math.js";
+import { b2Color, RGBA } from "../Common/b2Draw.js";
+import { b2ParticleGroup } from "./b2ParticleGroup.js";
 
 /**
  * The particle type. Can be combined with the | operator.

@@ -15,24 +15,24 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2EdgeShape", "./b2Contact"], function (exports_1, context_1) {
+System.register(["../../Collision/b2CollideEdge.js", "../../Collision/Shapes/b2EdgeShape.js", "./b2Contact.js"], function (exports_1, context_1) {
     "use strict";
-    var b2CollideEdge_1, b2EdgeShape_1, b2Contact_1, b2ChainAndPolygonContact;
+    var b2CollideEdge_js_1, b2EdgeShape_js_1, b2Contact_js_1, b2ChainAndPolygonContact;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
-            function (b2CollideEdge_1_1) {
-                b2CollideEdge_1 = b2CollideEdge_1_1;
+            function (b2CollideEdge_js_1_1) {
+                b2CollideEdge_js_1 = b2CollideEdge_js_1_1;
             },
-            function (b2EdgeShape_1_1) {
-                b2EdgeShape_1 = b2EdgeShape_1_1;
+            function (b2EdgeShape_js_1_1) {
+                b2EdgeShape_js_1 = b2EdgeShape_js_1_1;
             },
-            function (b2Contact_1_1) {
-                b2Contact_1 = b2Contact_1_1;
+            function (b2Contact_js_1_1) {
+                b2Contact_js_1 = b2Contact_js_1_1;
             }
         ],
         execute: function () {
-            b2ChainAndPolygonContact = class b2ChainAndPolygonContact extends b2Contact_1.b2Contact {
+            b2ChainAndPolygonContact = class b2ChainAndPolygonContact extends b2Contact_js_1.b2Contact {
                 static Create() {
                     return new b2ChainAndPolygonContact();
                 }
@@ -41,12 +41,12 @@ System.register(["../../Collision/b2CollideEdge", "../../Collision/Shapes/b2Edge
                 Evaluate(manifold, xfA, xfB) {
                     const edge = b2ChainAndPolygonContact.Evaluate_s_edge;
                     this.GetShapeA().GetChildEdge(edge, this.m_indexA);
-                    b2CollideEdge_1.b2CollideEdgeAndPolygon(manifold, edge, xfA, this.GetShapeB(), xfB);
+                    b2CollideEdge_js_1.b2CollideEdgeAndPolygon(manifold, edge, xfA, this.GetShapeB(), xfB);
                 }
             };
             exports_1("b2ChainAndPolygonContact", b2ChainAndPolygonContact);
-            b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape_1.b2EdgeShape();
+            b2ChainAndPolygonContact.Evaluate_s_edge = new b2EdgeShape_js_1.b2EdgeShape();
         }
     };
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0VBZ0JFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFVRiwyQkFBQSxNQUFhLHdCQUF5QixTQUFRLHFCQUF1QztnQkFDNUUsTUFBTSxDQUFDLE1BQU07b0JBQ2xCLE9BQU8sSUFBSSx3QkFBd0IsRUFBRSxDQUFDO2dCQUN4QyxDQUFDO2dCQUVNLE1BQU0sQ0FBQyxPQUFPLENBQUMsT0FBa0I7Z0JBQ3hDLENBQUM7Z0JBR00sUUFBUSxDQUFDLFFBQW9CLEVBQUUsR0FBZ0IsRUFBRSxHQUFnQjtvQkFDdEUsTUFBTSxJQUFJLEdBQWdCLHdCQUF3QixDQUFDLGVBQWUsQ0FBQztvQkFDbkUsSUFBSSxDQUFDLFNBQVMsRUFBRSxDQUFDLFlBQVksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO29CQUNuRCx1Q0FBdUIsQ0FBQyxRQUFRLEVBQUUsSUFBSSxFQUFFLEdBQUcsRUFBRSxJQUFJLENBQUMsU0FBUyxFQUFFLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ3RFLENBQUM7YUFDRixDQUFBOztZQU5nQix3Q0FBZSxHQUFHLElBQUkseUJBQVcsRUFBRSxDQUFDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYjJDaGFpbkFuZFBvbHlnb25Db250YWN0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7O0VBZ0JFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7WUFVRiwyQkFBQSxNQUFhLHdCQUF5QixTQUFRLHdCQUF1QztnQkFDNUUsTUFBTSxDQUFDLE1BQU07b0JBQ2xCLE9BQU8sSUFBSSx3QkFBd0IsRUFBRSxDQUFDO2dCQUN4QyxDQUFDO2dCQUVNLE1BQU0sQ0FBQyxPQUFPLENBQUMsT0FBa0I7Z0JBQ3hDLENBQUM7Z0JBR00sUUFBUSxDQUFDLFFBQW9CLEVBQUUsR0FBZ0IsRUFBRSxHQUFnQjtvQkFDdEUsTUFBTSxJQUFJLEdBQWdCLHdCQUF3QixDQUFDLGVBQWUsQ0FBQztvQkFDbkUsSUFBSSxDQUFDLFNBQVMsRUFBRSxDQUFDLFlBQVksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO29CQUNuRCwwQ0FBdUIsQ0FBQyxRQUFRLEVBQUUsSUFBSSxFQUFFLEdBQUcsRUFBRSxJQUFJLENBQUMsU0FBUyxFQUFFLEVBQUUsR0FBRyxDQUFDLENBQUM7Z0JBQ3RFLENBQUM7YUFDRixDQUFBOztZQU5nQix3Q0FBZSxHQUFHLElBQUksNEJBQVcsRUFBRSxDQUFDIn0=

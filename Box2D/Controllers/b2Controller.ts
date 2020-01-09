@@ -18,9 +18,9 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Body } from "../Dynamics/b2Body";
-import { b2TimeStep } from "../Dynamics/b2TimeStep";
-import { b2Draw } from "../Common/b2Draw";
+import { b2Body } from "../Dynamics/b2Body.js";
+import { b2TimeStep } from "../Dynamics/b2TimeStep.js";
+import { b2Draw } from "../Common/b2Draw.js";
 
 /**
  * A controller edge is used to connect bodies and controllers

@@ -1,7 +1,7 @@
-import * as box2d from "Box2D";
-import { Settings, Test } from "./Test";
-import { g_debugDraw, g_camera } from "./DebugDraw";
-import { g_testEntries } from "../Tests/TestEntries";
+import * as box2d from "@box2d";
+import { Settings, Test } from "./Test.js";
+import { g_debugDraw, g_camera } from "./DebugDraw.js";
+import { g_testEntries } from "../Tests/TestEntries.js";
 
 export class Main {
   public m_time_last: number = 0;

@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2MakeArray } from "../Common/b2Settings";
-import { b2Vec2 } from "../Common/b2Math";
+import { b2MakeArray } from "../Common/b2Settings.js";
+import { b2Vec2 } from "../Common/b2Math.js";
 
 /// Profiling data. Times are in milliseconds.
 export class b2Profile {

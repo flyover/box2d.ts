@@ -18,11 +18,11 @@
 
 // #if B2_ENABLE_CONTROLLER
 
-import { b2Controller, b2ControllerEdge } from "./b2Controller";
-import { b2Vec2 } from "../Common/b2Math";
-import { b2TimeStep } from "../Dynamics/b2TimeStep";
-import { b2_epsilon } from "../Common/b2Settings";
-import { b2Draw, b2Color } from "../Common/b2Draw";
+import { b2Controller, b2ControllerEdge } from "./b2Controller.js";
+import { b2Vec2 } from "../Common/b2Math.js";
+import { b2TimeStep } from "../Dynamics/b2TimeStep.js";
+import { b2_epsilon } from "../Common/b2Settings.js";
+import { b2Draw, b2Color } from "../Common/b2Draw.js";
 
 /**
  * Calculates buoyancy forces for fluids in the form of a half

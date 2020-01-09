@@ -16,15 +16,15 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2BroadPhase } from "../Collision/b2BroadPhase";
-import { b2TreeNode } from "../Collision/b2DynamicTree";
-import { b2TestOverlapAABB } from "../Collision/b2Collision";
-import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact";
-import { b2ContactFactory } from "./Contacts/b2ContactFactory";
-import { b2Body, b2BodyType } from "./b2Body";
-import { b2Fixture, b2FixtureProxy } from "./b2Fixture";
-import { b2ContactFilter, b2ContactListener } from "./b2WorldCallbacks";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2BroadPhase } from "../Collision/b2BroadPhase.js";
+import { b2TreeNode } from "../Collision/b2DynamicTree.js";
+import { b2TestOverlapAABB } from "../Collision/b2Collision.js";
+import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact.js";
+import { b2ContactFactory } from "./Contacts/b2ContactFactory.js";
+import { b2Body, b2BodyType } from "./b2Body.js";
+import { b2Fixture, b2FixtureProxy } from "./b2Fixture.js";
+import { b2ContactFilter, b2ContactListener } from "./b2WorldCallbacks.js";
 
 // Delegate of b2World.
 export class b2ContactManager {

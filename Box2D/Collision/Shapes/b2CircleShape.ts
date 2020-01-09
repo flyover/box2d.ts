@@ -16,13 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../../Common/b2Settings";
-import { b2_pi, b2_epsilon } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform, XY } from "../../Common/b2Math";
-import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision";
-import { b2DistanceProxy } from "../b2Distance";
-import { b2MassData } from "./b2Shape";
-import { b2Shape, b2ShapeType } from "./b2Shape";
+// DEBUG: import { b2Assert } from "../../Common/b2Settings.js";
+import { b2_pi, b2_epsilon } from "../../Common/b2Settings.js";
+import { b2Sq, b2Sqrt, b2Asin, b2Pow, b2Vec2, b2Transform, XY } from "../../Common/b2Math.js";
+import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../b2Collision.js";
+import { b2DistanceProxy } from "../b2Distance.js";
+import { b2MassData } from "./b2Shape.js";
+import { b2Shape, b2ShapeType } from "./b2Shape.js";
 
 /// A circle shape.
 export class b2CircleShape extends b2Shape {

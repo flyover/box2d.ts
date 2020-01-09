@@ -16,50 +16,50 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings";
-import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math";
-import { b2Timer } from "../Common/b2Timer";
-import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw";
-import { b2AABB, b2RayCastInput, b2RayCastOutput, b2TestOverlapShape } from "../Collision/b2Collision";
-import { b2TreeNode } from "../Collision/b2DynamicTree";
-import { b2TimeOfImpact, b2TOIInput, b2TOIOutput, b2TOIOutputState } from "../Collision/b2TimeOfImpact";
-import { b2Shape, b2ShapeType } from "../Collision/Shapes/b2Shape";
-import { b2ChainShape } from "../Collision/Shapes/b2ChainShape";
-import { b2CircleShape } from "../Collision/Shapes/b2CircleShape";
-import { b2EdgeShape } from "../Collision/Shapes/b2EdgeShape";
-import { b2PolygonShape } from "../Collision/Shapes/b2PolygonShape";
-import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact";
-import { b2Joint, b2IJointDef, b2JointType, b2JointEdge } from "./Joints/b2Joint";
-import { b2AreaJoint, b2IAreaJointDef } from "./Joints/b2AreaJoint";
-import { b2DistanceJoint, b2IDistanceJointDef } from "./Joints/b2DistanceJoint";
-import { b2FrictionJoint, b2IFrictionJointDef } from "./Joints/b2FrictionJoint";
-import { b2GearJoint, b2IGearJointDef } from "./Joints/b2GearJoint";
-import { b2MotorJoint, b2IMotorJointDef } from "./Joints/b2MotorJoint";
-import { b2MouseJoint, b2IMouseJointDef } from "./Joints/b2MouseJoint";
-import { b2PrismaticJoint, b2IPrismaticJointDef } from "./Joints/b2PrismaticJoint";
-import { b2PulleyJoint, b2IPulleyJointDef } from "./Joints/b2PulleyJoint";
-import { b2RevoluteJoint, b2IRevoluteJointDef } from "./Joints/b2RevoluteJoint";
-import { b2RopeJoint, b2IRopeJointDef } from "./Joints/b2RopeJoint";
-import { b2WeldJoint, b2IWeldJointDef } from "./Joints/b2WeldJoint";
-import { b2WheelJoint, b2IWheelJointDef } from "./Joints/b2WheelJoint";
-import { b2Body, b2IBodyDef, b2BodyType } from "./b2Body";
-import { b2ContactManager } from "./b2ContactManager";
-import { b2Fixture, b2FixtureProxy } from "./b2Fixture";
-import { b2Island } from "./b2Island";
-import { b2Profile, b2TimeStep } from "./b2TimeStep";
-import { b2ContactFilter } from "./b2WorldCallbacks";
-import { b2ContactListener } from "./b2WorldCallbacks";
-import { b2DestructionListener } from "./b2WorldCallbacks";
-import { b2QueryCallback, b2QueryCallbackFunction } from "./b2WorldCallbacks";
-import { b2RayCastCallback, b2RayCastCallbackFunction } from "./b2WorldCallbacks";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_epsilon, b2_maxSubSteps, b2_maxTOIContacts } from "../Common/b2Settings.js";
+import { b2Min, b2Vec2, b2Transform, b2Sweep, XY } from "../Common/b2Math.js";
+import { b2Timer } from "../Common/b2Timer.js";
+import { b2Color, b2Draw, b2DrawFlags } from "../Common/b2Draw.js";
+import { b2AABB, b2RayCastInput, b2RayCastOutput, b2TestOverlapShape } from "../Collision/b2Collision.js";
+import { b2TreeNode } from "../Collision/b2DynamicTree.js";
+import { b2TimeOfImpact, b2TOIInput, b2TOIOutput, b2TOIOutputState } from "../Collision/b2TimeOfImpact.js";
+import { b2Shape, b2ShapeType } from "../Collision/Shapes/b2Shape.js";
+import { b2ChainShape } from "../Collision/Shapes/b2ChainShape.js";
+import { b2CircleShape } from "../Collision/Shapes/b2CircleShape.js";
+import { b2EdgeShape } from "../Collision/Shapes/b2EdgeShape.js";
+import { b2PolygonShape } from "../Collision/Shapes/b2PolygonShape.js";
+import { b2Contact, b2ContactEdge } from "./Contacts/b2Contact.js";
+import { b2Joint, b2IJointDef, b2JointType, b2JointEdge } from "./Joints/b2Joint.js";
+import { b2AreaJoint, b2IAreaJointDef } from "./Joints/b2AreaJoint.js";
+import { b2DistanceJoint, b2IDistanceJointDef } from "./Joints/b2DistanceJoint.js";
+import { b2FrictionJoint, b2IFrictionJointDef } from "./Joints/b2FrictionJoint.js";
+import { b2GearJoint, b2IGearJointDef } from "./Joints/b2GearJoint.js";
+import { b2MotorJoint, b2IMotorJointDef } from "./Joints/b2MotorJoint.js";
+import { b2MouseJoint, b2IMouseJointDef } from "./Joints/b2MouseJoint.js";
+import { b2PrismaticJoint, b2IPrismaticJointDef } from "./Joints/b2PrismaticJoint.js";
+import { b2PulleyJoint, b2IPulleyJointDef } from "./Joints/b2PulleyJoint.js";
+import { b2RevoluteJoint, b2IRevoluteJointDef } from "./Joints/b2RevoluteJoint.js";
+import { b2RopeJoint, b2IRopeJointDef } from "./Joints/b2RopeJoint.js";
+import { b2WeldJoint, b2IWeldJointDef } from "./Joints/b2WeldJoint.js";
+import { b2WheelJoint, b2IWheelJointDef } from "./Joints/b2WheelJoint.js";
+import { b2Body, b2IBodyDef, b2BodyType } from "./b2Body.js";
+import { b2ContactManager } from "./b2ContactManager.js";
+import { b2Fixture, b2FixtureProxy } from "./b2Fixture.js";
+import { b2Island } from "./b2Island.js";
+import { b2Profile, b2TimeStep } from "./b2TimeStep.js";
+import { b2ContactFilter } from "./b2WorldCallbacks.js";
+import { b2ContactListener } from "./b2WorldCallbacks.js";
+import { b2DestructionListener } from "./b2WorldCallbacks.js";
+import { b2QueryCallback, b2QueryCallbackFunction } from "./b2WorldCallbacks.js";
+import { b2RayCastCallback, b2RayCastCallbackFunction } from "./b2WorldCallbacks.js";
 // #if B2_ENABLE_PARTICLE
-import { b2_maxFloat } from "../Common/b2Settings";
-import { b2CalculateParticleIterations } from "../Particle/b2Particle";
-import { b2ParticleSystemDef, b2ParticleSystem } from "../Particle/b2ParticleSystem";
+import { b2_maxFloat } from "../Common/b2Settings.js";
+import { b2CalculateParticleIterations } from "../Particle/b2Particle.js";
+import { b2ParticleSystemDef, b2ParticleSystem } from "../Particle/b2ParticleSystem.js";
 // #endif
 // #if B2_ENABLE_CONTROLLER
-import { b2Controller, b2ControllerEdge } from "../Controllers/b2Controller";
+import { b2Controller, b2ControllerEdge } from "../Controllers/b2Controller.js";
 // #endif
 
 /// The world class manages all physics entities, dynamic simulation,

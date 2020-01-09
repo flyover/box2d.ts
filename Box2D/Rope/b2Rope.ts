@@ -16,10 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings";
-import { b2_pi, b2MakeNumberArray } from "../Common/b2Settings";
-import { b2Atan2, b2Vec2 } from "../Common/b2Math";
-import { b2Color, b2Draw } from "../Common/b2Draw";
+// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
+import { b2_pi, b2MakeNumberArray } from "../Common/b2Settings.js";
+import { b2Atan2, b2Vec2 } from "../Common/b2Math.js";
+import { b2Color, b2Draw } from "../Common/b2Draw.js";
 
 ///
 export class b2RopeDef {

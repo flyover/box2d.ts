@@ -1,8 +1,8 @@
-import * as box2d from "Box2D";
-import { g_debugDraw } from "./DebugDraw";
+import * as box2d from "@box2d";
+import { g_debugDraw } from "./DebugDraw.js";
 // #if B2_ENABLE_PARTICLE
-import { FullScreenUI } from "./FullscreenUI";
-import { ParticleParameter, ParticleParameterValue, ParticleParameterDefinition } from "./ParticleParameter";
+import { FullScreenUI } from "./FullscreenUI.js";
+import { ParticleParameter, ParticleParameterValue, ParticleParameterDefinition } from "./ParticleParameter.js";
 // #endif
 
 export const DRAW_STRING_NEW_LINE: number = 16;

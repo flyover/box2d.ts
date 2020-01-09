@@ -15,7 +15,7 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["./Framework/DebugDraw", "./Framework/FullscreenUI", "./Framework/ParticleEmitter", "./Framework/ParticleParameter", "./Framework/Test", "./Framework/Main"], function (exports_1, context_1) {
+System.register(["./Framework/DebugDraw.js", "./Framework/FullscreenUI.js", "./Framework/ParticleEmitter.js", "./Framework/ParticleParameter.js", "./Framework/Test.js", "./Framework/Main.js"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function exportStar_1(m) {
@@ -27,23 +27,23 @@ System.register(["./Framework/DebugDraw", "./Framework/FullscreenUI", "./Framewo
     }
     return {
         setters: [
-            function (DebugDraw_1_1) {
-                exportStar_1(DebugDraw_1_1);
+            function (DebugDraw_js_1_1) {
+                exportStar_1(DebugDraw_js_1_1);
             },
-            function (FullscreenUI_1_1) {
-                exportStar_1(FullscreenUI_1_1);
+            function (FullscreenUI_js_1_1) {
+                exportStar_1(FullscreenUI_js_1_1);
             },
-            function (ParticleEmitter_1_1) {
-                exportStar_1(ParticleEmitter_1_1);
+            function (ParticleEmitter_js_1_1) {
+                exportStar_1(ParticleEmitter_js_1_1);
             },
-            function (ParticleParameter_1_1) {
-                exportStar_1(ParticleParameter_1_1);
+            function (ParticleParameter_js_1_1) {
+                exportStar_1(ParticleParameter_js_1_1);
             },
-            function (Test_1_1) {
-                exportStar_1(Test_1_1);
+            function (Test_js_1_1) {
+                exportStar_1(Test_js_1_1);
             },
-            function (Main_1_1) {
-                exportStar_1(Main_1_1);
+            function (Main_js_1_1) {
+                exportStar_1(Main_js_1_1);
             }
         ],
         execute: function () {

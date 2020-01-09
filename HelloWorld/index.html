@@ -2,44 +2,18 @@
   <head>
     <meta charset="utf-8" />
     <title>Box2D Hello World</title>
-    <!-- <script type="text/javascript" src="../node_modules/systemjs/dist/system.js"></script> -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/systemjs@0.21.6/dist/system.js"></script>
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "@box2d": "../index.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/systemjs@6.1.7/dist/system.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
-      const transpile = args.indexOf("transpile") !== -1;
-      if (transpile) {
-        SystemJS.config({
-          // map: { "typescript": "../node_modules/typescript", }
-          map: { "typescript": "https://cdn.jsdelivr.net/npm/typescript@3.4.5", },
-          packages: { "typescript": { main: "lib/typescript.js", meta: { "lib/typescript.js": { exports: "ts" } } } },
-        });
-        SystemJS.config({
-          // map: { "plugin-typescript": "../node_modules/plugin-typescript" },
-          map: { "plugin-typescript": "https://cdn.jsdelivr.net/npm/plugin-typescript@8.0.0" },
-          packages: { "plugin-typescript": { main: "lib/plugin.js" } },
-          transpiler: "plugin-typescript",
-          typescriptOptions: { tsconfig: true, module: "system" }
-        });
-        SystemJS.config({
-          map: { "Box2D": "../Box2D/" },
-          packages: { "Box2D": { main: "Box2D.ts", defaultExtension: "ts" } }
-        });
-        SystemJS.config({
-          map: { "HelloWorld": "./" },
-          packages: { "HelloWorld": { main: "HelloWorld.ts", defaultExtension: "ts" } }
-        });
-      } else {
-        SystemJS.config({
-          map: { "Box2D": "../Box2D/" },
-          packages: { "Box2D": { main: "Box2D.js", defaultExtension: "js" } }
-        });
-        SystemJS.config({
-          map: { "HelloWorld": "./" },
-          packages: { "HelloWorld": { main: "HelloWorld.js", defaultExtension: "js" } }
-        });
-      }
-      System.import("HelloWorld").then(function(HelloWorld) {
+      System.import("./HelloWorld.js").then(function(HelloWorld) {
         HelloWorld.main();
       }).catch(console.error);
     }

@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Vec2, XY } from "../Common/b2Math";
-import { b2AABB, b2RayCastInput } from "./b2Collision";
-import { b2TreeNode, b2DynamicTree } from "./b2DynamicTree";
+import { b2Vec2, XY } from "../Common/b2Math.js";
+import { b2AABB, b2RayCastInput } from "./b2Collision.js";
+import { b2TreeNode, b2DynamicTree } from "./b2DynamicTree.js";
 
 function std_iter_swap<T>(array: T[], a: number, b: number): void {
   const tmp: T = array[a];

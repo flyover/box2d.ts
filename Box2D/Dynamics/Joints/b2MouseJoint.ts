@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert, b2_epsilon } from "../../Common/b2Settings";
-// DEBUG: import { b2IsValid } from "../../Common/b2Math";
-import { b2_pi, b2Maybe } from "../../Common/b2Settings";
-import { b2Vec2, b2Mat22, b2Rot, b2Transform, XY } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
-import { b2SolverData } from "../b2TimeStep";
+// DEBUG: import { b2Assert, b2_epsilon } from "../../Common/b2Settings.js";
+// DEBUG: import { b2IsValid } from "../../Common/b2Math.js";
+import { b2_pi, b2Maybe } from "../../Common/b2Settings.js";
+import { b2Vec2, b2Mat22, b2Rot, b2Transform, XY } from "../../Common/b2Math.js";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint.js";
+import { b2SolverData } from "../b2TimeStep.js";
 
 export interface b2IMouseJointDef extends b2IJointDef {
   target?: XY;

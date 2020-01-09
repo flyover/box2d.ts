@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-// DEBUG: import { b2Assert } from "./b2Settings";
-import { b2_pi, b2_epsilon, b2MakeArray } from "./b2Settings";
+// DEBUG: import { b2Assert } from "./b2Settings.js";
+import { b2_pi, b2_epsilon, b2MakeArray } from "./b2Settings.js";
 
 export const b2_pi_over_180: number = b2_pi / 180;
 export const b2_180_over_pi: number = 180 / b2_pi;

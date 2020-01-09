@@ -2,8 +2,8 @@
 Test case for collision/jerking issue.
 */
 
-import * as box2d from "Box2D";
-import * as testbed from "Testbed";
+import * as box2d from "@box2d";
+import * as testbed from "../Testbed.js";
 
 export class Skier extends testbed.Test {
   public m_platform_width: number;

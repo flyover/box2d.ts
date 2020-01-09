@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2Transform } from "../../Common/b2Math";
-import { b2CollideEdgeAndPolygon } from "../../Collision/b2CollideEdge";
-import { b2Manifold } from "../../Collision/b2Collision";
-import { b2EdgeShape } from "../../Collision/Shapes/b2EdgeShape";
-import { b2PolygonShape } from "../../Collision/Shapes/b2PolygonShape";
-import { b2Contact } from "./b2Contact";
+import { b2Transform } from "../../Common/b2Math.js";
+import { b2CollideEdgeAndPolygon } from "../../Collision/b2CollideEdge.js";
+import { b2Manifold } from "../../Collision/b2Collision.js";
+import { b2EdgeShape } from "../../Collision/Shapes/b2EdgeShape.js";
+import { b2PolygonShape } from "../../Collision/Shapes/b2PolygonShape.js";
+import { b2Contact } from "./b2Contact.js";
 
 export class b2EdgeAndPolygonContact extends b2Contact<b2EdgeShape, b2PolygonShape> {
   public static Create(): b2Contact {

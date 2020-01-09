@@ -1,10 +1,10 @@
-// DEBUG: import { b2Assert } from "../../Common/b2Settings";
-import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNumberArray, b2Maybe } from "../../Common/b2Settings";
-import { b2Sq, b2Sqrt, b2Vec2, XY } from "../../Common/b2Math";
-import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint";
-import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint";
-import { b2SolverData } from "../b2TimeStep";
-import { b2Body } from "../b2Body";
+// DEBUG: import { b2Assert } from "../../Common/b2Settings.js";
+import { b2_epsilon, b2_linearSlop, b2_maxLinearCorrection, b2MakeNumberArray, b2Maybe } from "../../Common/b2Settings.js";
+import { b2Sq, b2Sqrt, b2Vec2, XY } from "../../Common/b2Math.js";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2Joint.js";
+import { b2DistanceJoint, b2DistanceJointDef } from "./b2DistanceJoint.js";
+import { b2SolverData } from "../b2TimeStep.js";
+import { b2Body } from "../b2Body.js";
 
 export interface b2IAreaJointDef extends b2IJointDef {
   // world: b2World;

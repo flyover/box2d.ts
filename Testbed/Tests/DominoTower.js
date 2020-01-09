@@ -1,4 +1,4 @@
-System.register(["Box2D", "Testbed"], function (exports_1, context_1) {
+System.register(["@box2d", "../Testbed.js"], function (exports_1, context_1) {
     "use strict";
     var box2d, testbed, DominoTower;
     var __moduleName = context_1 && context_1.id;

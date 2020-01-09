@@ -18,9 +18,9 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "Box2D";
-import * as testbed from "Testbed";
-import { Soup } from "./Soup";
+import * as box2d from "@box2d";
+import * as testbed from "../Testbed.js";
+import { Soup } from "./Soup.js";
 
 export class SoupStirrer extends Soup {
   public m_stirrer: box2d.b2Body;

@@ -18,8 +18,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "Box2D";
-import * as testbed from "Testbed";
+import * as box2d from "@box2d";
+import * as testbed from "../Testbed.js";
 
 const DEGTORAD = 0.0174532925199432957;
 // const RADTODEG = 57.295779513082320876;
