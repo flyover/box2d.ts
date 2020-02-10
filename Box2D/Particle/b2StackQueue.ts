@@ -18,17 +18,15 @@
 
 // #if B2_ENABLE_PARTICLE
 
-// DEBUG: import { b2Assert } from "../Common/b2Settings.js";
-import { b2MakeArray } from "../Common/b2Settings.js";
+// DEBUG: import { b2Assert } from "../Common/b2Settings";
 
 export class b2StackQueue<T> {
-  public m_buffer: Array<T | null>;
+  public readonly m_buffer: Array<T | null> = [];
   public m_front: number = 0;
   public m_back: number = 0;
-  public m_capacity: number = 0;
+  public get m_capacity(): number { return this.m_buffer.length; }
   constructor(capacity: number) {
-    this.m_buffer = b2MakeArray(capacity, (index) => null);
-    this.m_capacity = capacity;
+    this.m_buffer.fill(null, 0, capacity);
   }
   public Push(item: T): void {
     if (this.m_back >= this.m_capacity) {
@@ -37,15 +35,6 @@ export class b2StackQueue<T> {
       }
       this.m_back -= this.m_front;
       this.m_front = 0;
-      if (this.m_back >= this.m_capacity) {
-        if (this.m_capacity > 0) {
-          this.m_buffer.concat(b2MakeArray(this.m_capacity, (index) => null));
-          this.m_capacity *= 2;
-        } else {
-          this.m_buffer.concat(b2MakeArray(1, (index) => null));
-          this.m_capacity = 1;
-        }
-      }
     }
     this.m_buffer[this.m_back] = item;
     this.m_back++;

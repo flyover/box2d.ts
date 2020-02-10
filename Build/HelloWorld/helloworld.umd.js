@@ -13595,14 +13595,16 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_PARTICLE
+  // DEBUG: import { b2Assert } from "../Common/b2Settings";
   class b2StackQueue {
       constructor(capacity) {
+          this.m_buffer = [];
           this.m_front = 0;
           this.m_back = 0;
-          this.m_capacity = 0;
-          this.m_buffer = b2MakeArray(capacity, (index) => null);
-          this.m_capacity = capacity;
+          this.m_buffer.fill(null, 0, capacity);
       }
+      get m_capacity() { return this.m_buffer.length; }
       Push(item) {
           if (this.m_back >= this.m_capacity) {
               for (let i = this.m_front; i < this.m_back; i++) {
@@ -13610,16 +13612,6 @@
               }
               this.m_back -= this.m_front;
               this.m_front = 0;
-              if (this.m_back >= this.m_capacity) {
-                  if (this.m_capacity > 0) {
-                      this.m_buffer.concat(b2MakeArray(this.m_capacity, (index) => null));
-                      this.m_capacity *= 2;
-                  }
-                  else {
-                      this.m_buffer.concat(b2MakeArray(1, (index) => null));
-                      this.m_capacity = 1;
-                  }
-              }
           }
           this.m_buffer[this.m_back] = item;
           this.m_back++;
