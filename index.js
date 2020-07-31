@@ -1,4 +1,4 @@
-System.register(["./Box2D/Box2D.js"], function (exports_1, context_1) {
+System.register(["./src/box2d.js"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function exportStar_1(m) {
@@ -10,8 +10,8 @@ System.register(["./Box2D/Box2D.js"], function (exports_1, context_1) {
     }
     return {
         setters: [
-            function (Box2D_js_1_1) {
-                exportStar_1(Box2D_js_1_1);
+            function (box2d_js_1_1) {
+                exportStar_1(box2d_js_1_1);
             }
         ],
         execute: function () {

@@ -29,11 +29,11 @@ help:
 	@printf " "$(ANSI_YELLOW)"build"$(ANSI_NONE)" : build project\n"
 
 clean: clean-box2d
-clean: clean-box2d-helloworld
+clean: clean-box2d-unit-test
 clean: clean-box2d-testbed
 
 build: build-box2d
-build: build-box2d-helloworld
+build: build-box2d-unit-test
 build: build-box2d-testbed
 
 # box2d
@@ -46,22 +46,22 @@ build-box2d:
 	$$(npm bin)/tsc -p Box2D
 	$(DONE)
 
-# box2d-helloworld
+# box2d-unit-test
 
-clean-box2d-helloworld:
-	find HelloWorld -name "*.js" -delete
+clean-box2d-unit-test:
+	find unit-test -name "*.js" -delete
 	$(DONE)
 
-build-box2d-helloworld:
-	$$(npm bin)/tsc -p HelloWorld
+build-box2d-unit-test:
+	$$(npm bin)/tsc -p unit-test
 	$(DONE)
 
 # box2d-testbed
 
 clean-box2d-testbed:
-	find Testbed -name "*.js" -delete
+	find testbed -name "*.js" -delete
 	$(DONE)
 
 build-box2d-testbed:
-	$$(npm bin)/tsc -p Testbed
+	$$(npm bin)/tsc -p testbed
 	$(DONE)

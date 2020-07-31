@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Box2D Testbed</title>
+    <style>
+    @font-face { font-family: DroidSans; src: url('data/droid_sans.ttf'); }
+    body { font-family: DroidSans; font-size: 15px; }
+    </style>
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "@box2d": "../index.js"
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/systemjs@6.1.7/dist/system.js"></script>
+    <script type="text/javascript">
+
+    function boot(args) {
+      System.import("./testbed.js").then(function(testbed) {
+        let app;
+        const init = function(time) {
+          app = new testbed.Main(time);
+          window.requestAnimationFrame(loop);
+        }
+        const loop = function(time) {
+          window.requestAnimationFrame(loop);
+          app.SimulationLoop(time);
+        }
+        window.requestAnimationFrame(init);
+      }).catch(console.error);
+    }
+
+    window.addEventListener('load', function(event) {
+      const args = window.location.search.substring(1).split('&'); // args from window location
+      console.log(args);
+      boot(args);
+    });
+
+    </script>
+  </head>
+</html>

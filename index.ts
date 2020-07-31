@@ -1,1 +1,1 @@
-export * from "./Box2D/Box2D.js";
+export * from "./src/box2d.js";
