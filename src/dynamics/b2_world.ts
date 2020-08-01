@@ -66,10 +66,6 @@ import { b2Controller, b2ControllerEdge } from "../controllers/b2_controller.js"
 /// and asynchronous queries. The world also contains efficient memory
 /// management facilities.
 export class b2World {
-  public m_newFixture: boolean = false;
-  public m_locked: boolean = false;
-  public m_clearForces: boolean = true;
-
   public readonly m_contactManager: b2ContactManager = new b2ContactManager();
 
   public m_bodyList: b2Body | null = null;
@@ -91,6 +87,10 @@ export class b2World {
   // This is used to compute the time step ratio to
   // support a variable time step.
   public m_inv_dt0: number = 0;
+
+  public m_newContacts: boolean = false;
+  public m_locked: boolean = false;
+  public m_clearForces: boolean = true;
 
   // These are for debugging the solver.
   public m_warmStarting: boolean = true;
@@ -136,7 +136,7 @@ export class b2World {
   }
 
   /// Register a routine for debug drawing. The debug draw functions are called
-  /// inside with b2World::DrawDebugData method. The debug draw object is owned
+  /// inside with b2World::DebugDraw method. The debug draw object is owned
   /// by you and must remain in scope.
   public SetDebugDraw(debugDraw: b2Draw | null): void {
     this.m_debugDraw = debugDraw;
@@ -467,15 +467,15 @@ export class b2World {
   private static Step_s_timer = new b2Timer();
   // #if B2_ENABLE_PARTICLE
   public Step(dt: number, velocityIterations: number, positionIterations: number, particleIterations: number = this.CalculateReasonableParticleIterations(dt)): void {
-  // #else
-  // public Step(dt: number, velocityIterations: number, positionIterations: number): void {
-  // #endif
+    // #else
+    // public Step(dt: number, velocityIterations: number, positionIterations: number): void {
+    // #endif
     const stepTimer: b2Timer = b2World.Step_s_stepTimer.Reset();
 
     // If new fixtures were added, we need to find the new contacts.
-    if (this.m_newFixture) {
+    if (this.m_newContacts) {
       this.m_contactManager.FindNewContacts();
-      this.m_newFixture = false;
+      this.m_newContacts = false;
     }
 
     this.m_locked = true;
@@ -570,16 +570,16 @@ export class b2World {
   // #endif
 
   /// Call this to draw shapes and other debug draw data.
-  private static DrawDebugData_s_color = new b2Color(0, 0, 0);
-  private static DrawDebugData_s_vs = b2Vec2.MakeArray(4);
-  private static DrawDebugData_s_xf = new b2Transform();
-  public DrawDebugData(): void {
+  private static DebugDraw_s_color = new b2Color(0, 0, 0);
+  private static DebugDraw_s_vs = b2Vec2.MakeArray(4);
+  private static DebugDraw_s_xf = new b2Transform();
+  public DebugDraw(): void {
     if (this.m_debugDraw === null) {
       return;
     }
 
     const flags: number = this.m_debugDraw.GetFlags();
-    const color: b2Color = b2World.DrawDebugData_s_color.SetRGB(0, 0, 0);
+    const color: b2Color = b2World.DebugDraw_s_color.SetRGB(0, 0, 0);
 
     if (flags & b2DrawFlags.e_shapeBit) {
       for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
@@ -588,7 +588,10 @@ export class b2World {
         this.m_debugDraw.PushTransform(xf);
 
         for (let f: b2Fixture | null = b.GetFixtureList(); f; f = f.m_next) {
-          if (!b.IsActive()) {
+          if (b.GetType() === b2BodyType.b2_dynamicBody && b.m_mass === 0.0) {
+            // Bad body
+            this.DrawShape(f, new b2Color(1.0, 0.0, 0.0));
+          } else if (!b.IsEnabled()) {
             color.SetRGB(0.5, 0.5, 0.3);
             this.DrawShape(f, color);
           } else if (b.GetType() === b2BodyType.b2_staticBody) {
@@ -620,31 +623,30 @@ export class b2World {
 
     if (flags & b2DrawFlags.e_jointBit) {
       for (let j: b2Joint | null = this.m_jointList; j; j = j.m_next) {
-        this.DrawJoint(j);
+        j.Draw(this.m_debugDraw);
       }
     }
 
-    /*
     if (flags & b2DrawFlags.e_pairBit) {
       color.SetRGB(0.3, 0.9, 0.9);
       for (let contact = this.m_contactManager.m_contactList; contact; contact = contact.m_next) {
         const fixtureA = contact.GetFixtureA();
         const fixtureB = contact.GetFixtureB();
-
-        const cA = fixtureA.GetAABB().GetCenter();
-        const cB = fixtureB.GetAABB().GetCenter();
+        const indexA = contact.GetChildIndexA();
+        const indexB = contact.GetChildIndexB();
+        const cA = fixtureA.GetAABB(indexA).GetCenter();
+        const cB = fixtureB.GetAABB(indexB).GetCenter();
 
         this.m_debugDraw.DrawSegment(cA, cB, color);
       }
     }
-    */
 
     if (flags & b2DrawFlags.e_aabbBit) {
       color.SetRGB(0.9, 0.3, 0.9);
-      const vs: b2Vec2[] = b2World.DrawDebugData_s_vs;
+      const vs: b2Vec2[] = b2World.DebugDraw_s_vs;
 
       for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
-        if (!b.IsActive()) {
+        if (!b.IsEnabled()) {
           continue;
         }
 
@@ -666,7 +668,7 @@ export class b2World {
 
     if (flags & b2DrawFlags.e_centerOfMassBit) {
       for (let b: b2Body | null = this.m_bodyList; b; b = b.m_next) {
-        const xf: b2Transform = b2World.DrawDebugData_s_xf;
+        const xf: b2Transform = b2World.DebugDraw_s_xf;
         xf.q.Copy(b.m_xf.q);
         xf.p.Copy(b.GetWorldCenter());
         this.m_debugDraw.DrawTransform(xf);
@@ -1099,6 +1101,8 @@ export class b2World {
       return;
     }
 
+    // b2OpenDump("box2d_dump.inl");
+
     log("const g: b2Vec2 = new b2Vec2(%.15f, %.15f);\n", this.m_gravity.x, this.m_gravity.y);
     log("this.m_world.SetGravity(g);\n");
 
@@ -1138,61 +1142,10 @@ export class b2World {
       j.Dump(log);
       log("}\n");
     }
+
+    // b2CloseDump();
   }
 
-  private static DrawJoint_s_p1: b2Vec2 = new b2Vec2();
-  private static DrawJoint_s_p2: b2Vec2 = new b2Vec2();
-  private static DrawJoint_s_color: b2Color = new b2Color(0.5, 0.8, 0.8);
-  private static DrawJoint_s_c: b2Color = new b2Color();
-  public DrawJoint(joint: b2Joint): void {
-    if (this.m_debugDraw === null) {
-      return;
-    }
-    const bodyA: b2Body = joint.GetBodyA();
-    const bodyB: b2Body = joint.GetBodyB();
-    const xf1: b2Transform = bodyA.m_xf;
-    const xf2: b2Transform = bodyB.m_xf;
-    const x1: b2Vec2 = xf1.p;
-    const x2: b2Vec2 = xf2.p;
-    const p1: b2Vec2 = joint.GetAnchorA(b2World.DrawJoint_s_p1);
-    const p2: b2Vec2 = joint.GetAnchorB(b2World.DrawJoint_s_p2);
-
-    const color: b2Color = b2World.DrawJoint_s_color.SetRGB(0.5, 0.8, 0.8);
-
-    switch (joint.m_type) {
-    case b2JointType.e_distanceJoint:
-      this.m_debugDraw.DrawSegment(p1, p2, color);
-      break;
-
-    case b2JointType.e_pulleyJoint: {
-      const pulley: b2PulleyJoint = joint as b2PulleyJoint;
-      const s1: b2Vec2 = pulley.GetGroundAnchorA();
-      const s2: b2Vec2 = pulley.GetGroundAnchorB();
-      this.m_debugDraw.DrawSegment(s1, p1, color);
-      this.m_debugDraw.DrawSegment(s2, p2, color);
-      this.m_debugDraw.DrawSegment(s1, s2, color);
-      break;
-    }
-
-    case b2JointType.e_mouseJoint: {
-      const c = b2World.DrawJoint_s_c;
-      c.Set(0.0, 1.0, 0.0);
-      this.m_debugDraw.DrawPoint(p1, 4.0, c);
-      this.m_debugDraw.DrawPoint(p2, 4.0, c);
-
-      c.Set(0.8, 0.8, 0.8);
-      this.m_debugDraw.DrawSegment(p1, p2, c);
-      break;
-    }
-
-    default:
-      this.m_debugDraw.DrawSegment(x1, p1, color);
-      this.m_debugDraw.DrawSegment(p1, p2, color);
-      this.m_debugDraw.DrawSegment(x2, p2, color);
-    }
-  }
-
-  private static DrawShape_s_ghostColor: b2Color = new b2Color();
   public DrawShape(fixture: b2Fixture, color: b2Color): void {
     if (this.m_debugDraw === null) {
       return;
@@ -1200,59 +1153,49 @@ export class b2World {
     const shape: b2Shape = fixture.GetShape();
 
     switch (shape.m_type) {
-    case b2ShapeType.e_circleShape: {
-      const circle: b2CircleShape = shape as b2CircleShape;
-      const center: b2Vec2 = circle.m_p;
-      const radius: number = circle.m_radius;
-      const axis: b2Vec2 = b2Vec2.UNITX;
-      this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
-      break;
-    }
-
-    case b2ShapeType.e_edgeShape: {
-      const edge: b2EdgeShape = shape as b2EdgeShape;
-      const v1: b2Vec2 = edge.m_vertex1;
-      const v2: b2Vec2 = edge.m_vertex2;
-      this.m_debugDraw.DrawSegment(v1, v2, color);
-      break;
-    }
-
-    case b2ShapeType.e_chainShape: {
-      const chain: b2ChainShape = shape as b2ChainShape;
-      const count: number = chain.m_count;
-      const vertices: b2Vec2[] = chain.m_vertices;
-      const ghostColor: b2Color = b2World.DrawShape_s_ghostColor.SetRGBA(0.75 * color.r, 0.75 * color.g, 0.75 * color.b, color.a);
-      let v1: b2Vec2 = vertices[0];
-      this.m_debugDraw.DrawPoint(v1, 4.0, color);
-
-      if (chain.m_hasPrevVertex) {
-        const vp = chain.m_prevVertex;
-        this.m_debugDraw.DrawSegment(vp, v1, ghostColor);
-        this.m_debugDraw.DrawCircle(vp, 0.1, ghostColor);
+      case b2ShapeType.e_circleShape: {
+        const circle: b2CircleShape = shape as b2CircleShape;
+        const center: b2Vec2 = circle.m_p;
+        const radius: number = circle.m_radius;
+        const axis: b2Vec2 = b2Vec2.UNITX;
+        this.m_debugDraw.DrawSolidCircle(center, radius, axis, color);
+        break;
       }
 
-      for (let i: number = 1; i < count; ++i) {
-        const v2: b2Vec2 = vertices[i];
+      case b2ShapeType.e_edgeShape: {
+        const edge: b2EdgeShape = shape as b2EdgeShape;
+        const v1: b2Vec2 = edge.m_vertex1;
+        const v2: b2Vec2 = edge.m_vertex2;
         this.m_debugDraw.DrawSegment(v1, v2, color);
-        this.m_debugDraw.DrawPoint(v2, 4.0, color);
-        v1 = v2;
+
+        if (edge.m_oneSided === false) {
+          this.m_debugDraw.DrawPoint(v1, 4.0, color);
+          this.m_debugDraw.DrawPoint(v2, 4.0, color);
+        }
+        break;
       }
 
-      if (chain.m_hasNextVertex) {
-        const vn = chain.m_nextVertex;
-        this.m_debugDraw.DrawSegment(vn, v1, ghostColor);
-        this.m_debugDraw.DrawCircle(vn, 0.1, ghostColor);
-      }
-      break;
-    }
+      case b2ShapeType.e_chainShape: {
+        const chain: b2ChainShape = shape as b2ChainShape;
+        const count: number = chain.m_count;
+        const vertices: b2Vec2[] = chain.m_vertices;
+        let v1: b2Vec2 = vertices[0];
+        for (let i: number = 1; i < count; ++i) {
+          const v2: b2Vec2 = vertices[i];
+          this.m_debugDraw.DrawSegment(v1, v2, color);
+          v1 = v2;
+        }
 
-    case b2ShapeType.e_polygonShape: {
-      const poly: b2PolygonShape = shape as b2PolygonShape;
-      const vertexCount: number = poly.m_count;
-      const vertices: b2Vec2[] = poly.m_vertices;
-      this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
-      break;
-    }
+        break;
+      }
+
+      case b2ShapeType.e_polygonShape: {
+        const poly: b2PolygonShape = shape as b2PolygonShape;
+        const vertexCount: number = poly.m_count;
+        const vertices: b2Vec2[] = poly.m_vertices;
+        this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
+        break;
+      }
     }
   }
 
@@ -1301,7 +1244,7 @@ export class b2World {
         continue;
       }
 
-      if (!seed.IsAwake() || !seed.IsActive()) {
+      if (!seed.IsAwake() || !seed.IsEnabled()) {
         continue;
       }
 
@@ -1321,17 +1264,17 @@ export class b2World {
         // Grab the next body off the stack and add it to the island.
         const b: b2Body | null = stack[--stackCount];
         if (!b) { throw new Error(); }
-        // DEBUG: b2Assert(b.IsActive());
+        // DEBUG: b2Assert(b.IsEnabled());
         island.AddBody(b);
-
-        // Make sure the body is awake. (without resetting sleep timer).
-        b.m_awakeFlag = true;
 
         // To keep islands as small as possible, we don't
         // propagate islands across static bodies.
         if (b.GetType() === b2BodyType.b2_staticBody) {
           continue;
         }
+
+        // Make sure the body is awake. (without resetting sleep timer).
+        b.m_awakeFlag = true;
 
         // Search all contacts connected to this body.
         for (let ce: b2ContactEdge | null = b.m_contactList; ce; ce = ce.next) {
@@ -1377,8 +1320,8 @@ export class b2World {
 
           const other: b2Body = je.other;
 
-          // Don't simulate joints connected to inactive bodies.
-          if (!other.IsActive()) {
+          // Don't simulate joints connected to disabled bodies.
+          if (!other.IsEnabled()) {
             continue;
           }
 
@@ -1464,7 +1407,7 @@ export class b2World {
     }
 
     // Find TOI events and solve them.
-    for (; ; ) {
+    for (; ;) {
       // Find the first TOI.
       let minContact: b2Contact | null = null;
       let minAlpha: number = 1;

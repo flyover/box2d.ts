@@ -114,16 +114,16 @@ export class Segway extends testbed.Test {
     bd.position.y = 0;
     this.groundBody = this.m_world.CreateBody(bd);
     const groundShape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
-    groundShape.Set({ x: -100, y: 0 }, { x: 100, y: 0 });
+    groundShape.SetTwoSided({ x: -100, y: 0 }, { x: 100, y: 0 });
     fd.shape = groundShape;
     fd.friction = 10;
     this.groundBody.CreateFixture(fd);
   }
 
   public Step(settings: testbed.Settings): void {
-    let dt: number = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+    let dt: number = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
 
-    if (settings.pause && !settings.singleStep) {
+    if (settings.m_pause && !settings.m_singleStep) {
       dt = 0.0;
     }
 

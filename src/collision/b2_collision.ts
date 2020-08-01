@@ -565,7 +565,7 @@ export function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean {
 /// Clipping for contact manifolds.
 export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number {
   // Start with no output points
-  let numOut: number = 0;
+  let count: number = 0;
 
   const vIn0: b2ClipVertex = vIn[0];
   const vIn1: b2ClipVertex = vIn[1];
@@ -575,27 +575,29 @@ export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], n
   const distance1: number = b2Vec2.DotVV(normal, vIn1.v) - offset;
 
   // If the points are behind the plane
-  if (distance0 <= 0) { vOut[numOut++].Copy(vIn0); }
-  if (distance1 <= 0) { vOut[numOut++].Copy(vIn1); }
+  if (distance0 <= 0) { vOut[count++].Copy(vIn0); }
+  if (distance1 <= 0) { vOut[count++].Copy(vIn1); }
 
   // If the points are on different sides of the plane
   if (distance0 * distance1 < 0) {
     // Find intersection point of edge and plane
     const interp: number = distance0 / (distance0 - distance1);
-    const v: b2Vec2 = vOut[numOut].v;
+    const v: b2Vec2 = vOut[count].v;
     v.x = vIn0.v.x + interp * (vIn1.v.x - vIn0.v.x);
     v.y = vIn0.v.y + interp * (vIn1.v.y - vIn0.v.y);
 
     // VertexA is hitting edgeB.
-    const id: b2ContactID = vOut[numOut].id;
+    const id: b2ContactID = vOut[count].id;
     id.cf.indexA = vertexIndexA;
     id.cf.indexB = vIn0.id.cf.indexB;
     id.cf.typeA = b2ContactFeatureType.e_vertex;
     id.cf.typeB = b2ContactFeatureType.e_face;
-    ++numOut;
+    ++count;
+
+    // b2Assert(count === 2);
   }
 
-  return numOut;
+  return count;
 }
 
 /// Determine if two generic shapes overlap.

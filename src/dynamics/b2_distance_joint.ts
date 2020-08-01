@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_pi, b2_linearSlop, b2_maxLinearCorrection, b2Maybe } from "../common/b2_settings.js";
+import { b2_linearSlop, b2_maxLinearCorrection, b2Maybe } from "../common/b2_settings.js";
 import { b2Abs, b2Clamp, b2Vec2, b2Rot, XY } from "../common/b2_math.js";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint.js";
 import { b2SolverData } from "./b2_time_step.js";
@@ -26,8 +26,8 @@ export interface b2IDistanceJointDef extends b2IJointDef {
   localAnchorA: XY;
   localAnchorB: XY;
   length: number;
-  frequencyHz?: number;
-  dampingRatio?: number;
+  stiffness?: number;
+  damping?: number;
 }
 
 /// Distance joint definition. This requires defining an
@@ -40,8 +40,8 @@ export class b2DistanceJointDef extends b2JointDef implements b2IDistanceJointDe
   public readonly localAnchorA: b2Vec2 = new b2Vec2();
   public readonly localAnchorB: b2Vec2 = new b2Vec2();
   public length: number = 1;
-  public frequencyHz: number = 0;
-  public dampingRatio: number = 0;
+  public stiffness: number = 0;
+  public damping: number = 0;
 
   constructor() {
     super(b2JointType.e_distanceJoint);
@@ -53,14 +53,14 @@ export class b2DistanceJointDef extends b2JointDef implements b2IDistanceJointDe
     this.bodyA.GetLocalPoint(anchor1, this.localAnchorA);
     this.bodyB.GetLocalPoint(anchor2, this.localAnchorB);
     this.length = b2Vec2.DistanceVV(anchor1, anchor2);
-    this.frequencyHz = 0;
-    this.dampingRatio = 0;
+    this.stiffness = 0;
+    this.damping = 0;
   }
 }
 
 export class b2DistanceJoint extends b2Joint {
-  public m_frequencyHz: number = 0;
-  public m_dampingRatio: number = 0;
+  public m_stiffness: number = 0;
+  public m_damping: number = 0;
   public m_bias: number = 0;
 
   // Solver shared
@@ -92,8 +92,8 @@ export class b2DistanceJoint extends b2Joint {
   constructor(def: b2IDistanceJointDef) {
     super(def);
 
-    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
-    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
+    this.m_stiffness = b2Maybe(def.stiffness, 0);
+    this.m_damping = b2Maybe(def.damping, 0);
 
     this.m_localAnchorA.Copy(def.localAnchorA);
     this.m_localAnchorB.Copy(def.localAnchorB);
@@ -130,20 +130,20 @@ export class b2DistanceJoint extends b2Joint {
     return this.m_length;
   }
 
-  public SetFrequency(hz: number): void {
-    this.m_frequencyHz = hz;
+  public SetStiffness(stiffness: number): void {
+    this.m_stiffness = stiffness;
   }
 
-  public GetFrequency() {
-    return this.m_frequencyHz;
+  public GetStiffness() {
+    return this.m_stiffness;
   }
 
-  public SetDampingRatio(ratio: number): void {
-    this.m_dampingRatio = ratio;
+  public SetDamping(damping: number): void {
+    this.m_damping = damping;
   }
 
-  public GetDampingRatio() {
-    return this.m_dampingRatio;
+  public GetDamping() {
+    return this.m_damping;
   }
 
   public Dump(log: (format: string, ...args: any[]) => void) {
@@ -157,8 +157,8 @@ export class b2DistanceJoint extends b2Joint {
     log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
     log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
     log("  jd.length = %.15f;\n", this.m_length);
-    log("  jd.frequencyHz = %.15f;\n", this.m_frequencyHz);
-    log("  jd.dampingRatio = %.15f;\n", this.m_dampingRatio);
+    log("  jd.stiffness = %.15f;\n", this.m_stiffness);
+    log("  jd.damping = %.15f;\n", this.m_damping);
     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 
@@ -211,20 +211,11 @@ export class b2DistanceJoint extends b2Joint {
     // float32 invMass = m_invMassA + m_invIA * crAu * crAu + m_invMassB + m_invIB * crBu * crBu;
     let invMass: number = this.m_invMassA + this.m_invIA * crAu * crAu + this.m_invMassB + this.m_invIB * crBu * crBu;
 
-    // Compute the effective mass matrix.
-    this.m_mass = invMass !== 0 ? 1 / invMass : 0;
-
-    if (this.m_frequencyHz > 0) {
+    if (this.m_stiffness > 0) {
       const C: number = length - this.m_length;
 
-      // Frequency
-      const omega: number = 2 * b2_pi * this.m_frequencyHz;
-
-      // Damping coefficient
-      const d: number = 2 * this.m_mass * this.m_dampingRatio * omega;
-
-      // Spring stiffness
-      const k: number = this.m_mass * omega * omega;
+      const d: number = this.m_damping;
+      const k: number = this.m_stiffness;
 
       // magic formulas
       const h: number = data.step.dt;
@@ -237,6 +228,7 @@ export class b2DistanceJoint extends b2Joint {
     } else {
       this.m_gamma = 0;
       this.m_bias = 0;
+      this.m_mass = invMass !== 0 ? 1 / invMass : 0;
     }
 
     if (data.step.warmStarting) {
@@ -303,7 +295,7 @@ export class b2DistanceJoint extends b2Joint {
 
   private static SolvePositionConstraints_s_P = new b2Vec2();
   public SolvePositionConstraints(data: b2SolverData): boolean {
-    if (this.m_frequencyHz > 0) {
+    if (this.m_stiffness > 0) {
       // There is no position correction for soft distance constraints.
       return true;
     }

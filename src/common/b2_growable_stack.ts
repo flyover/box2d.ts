@@ -42,12 +42,11 @@ export class b2GrowableStack<T> {
     this.m_count++;
   }
 
-  public Pop(): T {
+  public Pop(): T | null {
     // DEBUG: b2Assert(this.m_count > 0);
     this.m_count--;
     const element: T | null = this.m_stack[this.m_count];
     this.m_stack[this.m_count] = null;
-    if (element === null) { throw new Error(); }
     return element;
   }
 

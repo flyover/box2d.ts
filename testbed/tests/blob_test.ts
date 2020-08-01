@@ -27,11 +27,11 @@ export class BlobTest extends testbed.Test {
 
     {
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(-40.0, 25.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(-40.0, 25.0));
       ground.CreateFixture(shape, 0.0);
-      shape.Set(new box2d.b2Vec2(40.0, 0.0), new box2d.b2Vec2(40.0, 25.0));
+      shape.SetTwoSided(new box2d.b2Vec2(40.0, 0.0), new box2d.b2Vec2(40.0, 25.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -64,8 +64,9 @@ export class BlobTest extends testbed.Test {
         ajd.AddBody(body);
       }
 
-      ajd.frequencyHz = 10.0;
-      ajd.dampingRatio = 1.0;
+      const frequencyHz: number = 10.0;
+      const dampingRatio: number = 1.0;
+      box2d.b2LinearStiffness(ajd, frequencyHz, dampingRatio, ajd.bodyA, ajd.bodyB);
       this.m_world.CreateJoint(ajd);
     }
   }

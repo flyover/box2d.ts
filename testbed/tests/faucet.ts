@@ -222,9 +222,9 @@ export class Faucet extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
+    let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
 
-    if (settings.pause && !settings.singleStep) {
+    if (settings.m_pause && !settings.m_singleStep) {
       dt = 0.0;
     }
 

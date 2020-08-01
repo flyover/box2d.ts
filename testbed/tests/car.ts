@@ -24,8 +24,6 @@ export class Car extends testbed.Test {
   public m_car: box2d.b2Body;
   public m_wheel1: box2d.b2Body;
   public m_wheel2: box2d.b2Body;
-  public m_hz: number = 0.0;
-  public m_zeta: number = 0.0;
   public m_speed: number = 0.0;
   public m_spring1: box2d.b2WheelJoint;
   public m_spring2: box2d.b2WheelJoint;
@@ -33,8 +31,6 @@ export class Car extends testbed.Test {
   constructor() {
     super();
 
-    this.m_hz = 4.0;
-    this.m_zeta = 0.7;
     this.m_speed = 50.0;
 
     let ground: box2d.b2Body;
@@ -49,7 +45,7 @@ export class Car extends testbed.Test {
       fd.density = 0.0;
       fd.friction = 0.6;
 
-      shape.Set(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
       ground.CreateFixture(fd);
 
       const hs: number[] = [0.25, 1.0, 4.0, 0.0, 0.0, -1.0, -2.0, -2.0, -1.25, 0.0];
@@ -59,7 +55,7 @@ export class Car extends testbed.Test {
 
       for (let i: number = 0; i < 10; ++i) {
         const y2: number = hs[i];
-        shape.Set(new box2d.b2Vec2(x, y1), new box2d.b2Vec2(x + dx, y2));
+        shape.SetTwoSided(new box2d.b2Vec2(x, y1), new box2d.b2Vec2(x + dx, y2));
         ground.CreateFixture(fd);
         y1 = y2;
         x += dx;
@@ -67,29 +63,29 @@ export class Car extends testbed.Test {
 
       for (let i: number = 0; i < 10; ++i) {
         const y2: number = hs[i];
-        shape.Set(new box2d.b2Vec2(x, y1), new box2d.b2Vec2(x + dx, y2));
+        shape.SetTwoSided(new box2d.b2Vec2(x, y1), new box2d.b2Vec2(x + dx, y2));
         ground.CreateFixture(fd);
         y1 = y2;
         x += dx;
       }
 
-      shape.Set(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 40.0, 0.0));
       ground.CreateFixture(fd);
 
       x += 80.0;
-      shape.Set(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 40.0, 0.0));
       ground.CreateFixture(fd);
 
       x += 40.0;
-      shape.Set(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 10.0, 5.0));
+      shape.SetTwoSided(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 10.0, 5.0));
       ground.CreateFixture(fd);
 
       x += 20.0;
-      shape.Set(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x + 40.0, 0.0));
       ground.CreateFixture(fd);
 
       x += 40.0;
-      shape.Set(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(x, 0.0), new box2d.b2Vec2(x, 20.0));
       ground.CreateFixture(fd);
     }
 
@@ -214,20 +210,33 @@ export class Car extends testbed.Test {
       const jd: box2d.b2WheelJointDef = new box2d.b2WheelJointDef();
       const axis: box2d.b2Vec2 = new box2d.b2Vec2(0.0, 1.0);
 
+			const mass1: number = this.m_wheel1.GetMass();
+			const mass2: number = this.m_wheel2.GetMass();
+
+			const hertz: number = 4.0;
+			const dampingRatio: number = 0.7;
+			const omega: number = 2.0 * box2d.b2_pi * hertz;
+
       jd.Initialize(this.m_car, this.m_wheel1, this.m_wheel1.GetPosition(), axis);
       jd.motorSpeed = 0.0;
       jd.maxMotorTorque = 20.0;
       jd.enableMotor = true;
-      jd.frequencyHz = this.m_hz;
-      jd.dampingRatio = this.m_zeta;
+			jd.stiffness = mass1 * omega * omega;
+			jd.damping = 2.0 * mass1 * dampingRatio * omega;
+			jd.lowerTranslation = -0.25;
+			jd.upperTranslation = 0.25;
+			jd.enableLimit = true;
       this.m_spring1 = this.m_world.CreateJoint(jd);
 
       jd.Initialize(this.m_car, this.m_wheel2, this.m_wheel2.GetPosition(), axis);
       jd.motorSpeed = 0.0;
       jd.maxMotorTorque = 10.0;
       jd.enableMotor = false;
-      jd.frequencyHz = this.m_hz;
-      jd.dampingRatio = this.m_zeta;
+			jd.stiffness = mass2 * omega * omega;
+			jd.damping = 2.0 * mass2 * dampingRatio * omega;
+			jd.lowerTranslation = -0.25;
+			jd.upperTranslation = 0.25;
+			jd.enableLimit = true;
       this.m_spring2 = this.m_world.CreateJoint(jd);
     }
   }
@@ -245,25 +254,11 @@ export class Car extends testbed.Test {
     case "d":
       this.m_spring1.SetMotorSpeed(-this.m_speed);
       break;
-
-    case "q":
-      this.m_hz = box2d.b2Max(0.0, this.m_hz - 1.0);
-      this.m_spring1.SetSpringFrequencyHz(this.m_hz);
-      this.m_spring2.SetSpringFrequencyHz(this.m_hz);
-      break;
-
-    case "e":
-      this.m_hz += 1.0;
-      this.m_spring1.SetSpringFrequencyHz(this.m_hz);
-      this.m_spring2.SetSpringFrequencyHz(this.m_hz);
-      break;
     }
   }
 
   public Step(settings: testbed.Settings): void {
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: left = a, brake = s, right = d, hz down = q, hz up = e");
-    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-    testbed.g_debugDraw.DrawString(5, this.m_textLine, "frequency = " + this.m_hz.toFixed(2) + " hz, damping ratio = " + this.m_zeta.toFixed(2));
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
     testbed.g_camera.m_center.x = this.m_car.GetPosition().x;

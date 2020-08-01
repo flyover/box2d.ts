@@ -1062,10 +1062,9 @@ export class b2Sweep {
   }
 
   public GetTransform(xf: b2Transform, beta: number): b2Transform {
-    const one_minus_beta: number = (1 - beta);
-    xf.p.x = one_minus_beta * this.c0.x + beta * this.c.x;
-    xf.p.y = one_minus_beta * this.c0.y + beta * this.c.y;
-    const angle: number = one_minus_beta * this.a0 + beta * this.a;
+    xf.p.x = this.c0.x + beta * (this.c.x - this.c0.x);
+    xf.p.y = this.c0.y + beta * (this.c.y - this.c0.y);
+    const angle: number = this.a0 + beta * (this.a - this.a0);
     xf.q.SetAngle(angle);
 
     xf.p.SelfSub(b2Rot.MulRV(xf.q, this.localCenter, b2Vec2.s_t0));

@@ -142,10 +142,11 @@ export class b2FixtureProxy {
   }
   private static Synchronize_s_aabb1 = new b2AABB();
   private static Synchronize_s_aabb2 = new b2AABB();
-  public Synchronize(transform1: b2Transform, transform2: b2Transform, displacement: b2Vec2): void {
+  private static Synchronize_s_displacement = new b2Vec2();
+  public Synchronize(transform1: b2Transform, transform2: b2Transform): void {
     if (transform1 === transform2) {
       this.fixture.m_shape.ComputeAABB(this.aabb, transform1, this.childIndex);
-      this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
+      this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, b2Vec2.ZERO);
     } else {
       // Compute an AABB that covers the swept shape (may miss some rotation effect).
       const aabb1: b2AABB = b2FixtureProxy.Synchronize_s_aabb1;
@@ -153,6 +154,8 @@ export class b2FixtureProxy {
       this.fixture.m_shape.ComputeAABB(aabb1, transform1, this.childIndex);
       this.fixture.m_shape.ComputeAABB(aabb2, transform2, this.childIndex);
       this.aabb.Combine2(aabb1, aabb2);
+      const displacement: b2Vec2 = b2FixtureProxy.Synchronize_s_displacement;
+      displacement.Copy(aabb2.GetCenter()).SelfSub(aabb1.GetCenter());
       this.fixture.m_body.m_world.m_contactManager.m_broadPhase.MoveProxy(this.treeNode, this.aabb, displacement);
     }
   }
@@ -394,9 +397,9 @@ export class b2Fixture {
     }
   }
 
-  public SynchronizeProxies(transform1: b2Transform, transform2: b2Transform, displacement: b2Vec2): void {
+  public SynchronizeProxies(transform1: b2Transform, transform2: b2Transform): void {
     for (const proxy of this.m_proxies) {
-      proxy.Synchronize(transform1, transform2, displacement);
+      proxy.Synchronize(transform1, transform2);
     }
   }
 }

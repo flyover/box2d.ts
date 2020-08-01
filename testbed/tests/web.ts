@@ -34,7 +34,7 @@ export class Web extends testbed.Test {
       ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -64,11 +64,12 @@ export class Web extends testbed.Test {
       const jd = new box2d.b2DistanceJointDef();
       let p1, p2, d;
 
-      jd.frequencyHz = 2.0;
-      jd.dampingRatio = 0.0;
+      const frequencyHz: number = 2.0;
+      const dampingRatio: number = 0.0;
 
       jd.bodyA = ground;
       jd.bodyB = body0;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(-10.0, 0.0);
       jd.localAnchorB.Set(-0.5, -0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -79,6 +80,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = ground;
       jd.bodyB = body1;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(10.0, 0.0);
       jd.localAnchorB.Set(0.5, -0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -89,6 +91,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = ground;
       jd.bodyB = body2;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(10.0, 20.0);
       jd.localAnchorB.Set(0.5, 0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -99,6 +102,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = ground;
       jd.bodyB = body3;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(-10.0, 20.0);
       jd.localAnchorB.Set(-0.5, 0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -109,6 +113,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = body0;
       jd.bodyB = body1;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(0.5, 0.0);
       jd.localAnchorB.Set(-0.5, 0.0);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -119,6 +124,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = body1;
       jd.bodyB = body2;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(0.0, 0.5);
       jd.localAnchorB.Set(0.0, -0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -129,6 +135,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = body2;
       jd.bodyB = body3;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(-0.5, 0.0);
       jd.localAnchorB.Set(0.5, 0.0);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());
@@ -139,6 +146,7 @@ export class Web extends testbed.Test {
 
       jd.bodyA = body3;
       jd.bodyB = body0;
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
       jd.localAnchorA.Set(0.0, -0.5);
       jd.localAnchorB.Set(0.0, 0.5);
       p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new box2d.b2Vec2());

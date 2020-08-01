@@ -24,7 +24,7 @@ import { b2DistanceProxy } from "./b2_distance.js";
 import { b2MassData } from "./b2_shape.js";
 import { b2Shape, b2ShapeType } from "./b2_shape.js";
 
-/// A convex polygon. It is assumed that the interior of the polygon is to
+/// A solid convex polygon. It is assumed that the interior of the polygon is to
 /// the left of each edge.
 /// In most cases you should not need many vertices for a convex polygon.
 export class b2PolygonShape extends b2Shape {
@@ -135,7 +135,7 @@ export class b2PolygonShape extends b2Shape {
     let m: number = 0;
     let ih: number = i0;
 
-    for (; ; ) {
+    for (; ;) {
       hull[m] = ih;
 
       let ie: number = 0;
@@ -283,6 +283,8 @@ export class b2PolygonShape extends b2Shape {
   // #endif
 
   /// Implement b2Shape.
+  /// @note because the polygon is solid, rays that start inside do not hit because the normal is
+  /// not defined.
   private static RayCast_s_p1 = new b2Vec2();
   private static RayCast_s_p2 = new b2Vec2();
   private static RayCast_s_d = new b2Vec2();
@@ -397,15 +399,9 @@ export class b2PolygonShape extends b2Shape {
     let area: number = 0;
     let I: number = 0;
 
-    // s is the reference point for forming triangles.
-    // It's location doesn't change the result (except for rounding error).
-    const s: b2Vec2 = b2PolygonShape.ComputeMass_s_s.SetZero();
-
-    // This code would put the reference point inside the polygon.
-    for (let i: number = 0; i < this.m_count; ++i) {
-      s.SelfAdd(this.m_vertices[i]);
-    }
-    s.SelfMul(1 / this.m_count);
+    // Get a reference point for forming triangles.
+    // Use the first vertex to reduce round-off errors.
+    const s: b2Vec2 = b2PolygonShape.ComputeMass_s_s.Copy(this.m_vertices[0]);
 
     const k_inv3: number = 1 / 3;
 
@@ -514,24 +510,24 @@ export class b2PolygonShape extends b2Shape {
       lastSubmerged = isSubmerged;
     }
     switch (diveCount) {
-    case 0:
-      if (lastSubmerged) {
-        // Completely submerged
-        const md: b2MassData = b2PolygonShape.ComputeSubmergedArea_s_md;
-        this.ComputeMass(md, 1);
-        b2Transform.MulXV(xf, md.center, c);
-        return md.mass;
-      } else {
-        // Completely dry
-        return 0;
-      }
-    case 1:
-      if (intoIndex === (-1)) {
-        intoIndex = this.m_count - 1;
-      } else {
-        outoIndex = this.m_count - 1;
-      }
-      break;
+      case 0:
+        if (lastSubmerged) {
+          // Completely submerged
+          const md: b2MassData = b2PolygonShape.ComputeSubmergedArea_s_md;
+          this.ComputeMass(md, 1);
+          b2Transform.MulXV(xf, md.center, c);
+          return md.mass;
+        } else {
+          // Completely dry
+          return 0;
+        }
+      case 1:
+        if (intoIndex === (-1)) {
+          intoIndex = this.m_count - 1;
+        } else {
+          outoIndex = this.m_count - 1;
+        }
+        break;
     }
     const intoIndex2: number = ((intoIndex + 1) % this.m_count);
     const outoIndex2: number = ((outoIndex + 1) % this.m_count);
@@ -558,7 +554,7 @@ export class b2PolygonShape extends b2Shape {
       if (i === outoIndex2) {
         p3 = outoVec;
       } else {
-        p3  = this.m_vertices[i];
+        p3 = this.m_vertices[i];
       }
 
       const triangleArea: number = 0.5 * ((p2.x - intoVec.x) * (p3.y - intoVec.y) - (p2.y - intoVec.y) * (p3.x - intoVec.x));
@@ -586,7 +582,10 @@ export class b2PolygonShape extends b2Shape {
     log("    shape.Set(vs, %d);\n", this.m_count);
   }
 
-  private static ComputeCentroid_s_pRef = new b2Vec2();
+  private static ComputeCentroid_s_s = new b2Vec2();
+  private static ComputeCentroid_s_p1 = new b2Vec2();
+  private static ComputeCentroid_s_p2 = new b2Vec2();
+  private static ComputeCentroid_s_p3 = new b2Vec2();
   private static ComputeCentroid_s_e1 = new b2Vec2();
   private static ComputeCentroid_s_e2 = new b2Vec2();
   public static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2 {
@@ -595,26 +594,17 @@ export class b2PolygonShape extends b2Shape {
     const c: b2Vec2 = out; c.SetZero();
     let area: number = 0;
 
-    // s is the reference point for forming triangles.
-    // It's location doesn't change the result (except for rounding error).
-    const pRef: b2Vec2 = b2PolygonShape.ComputeCentroid_s_pRef.SetZero();
-    /*
-#if 0
-    // This code would put the reference point inside the polygon.
-    for (let i: number = 0; i < count; ++i) {
-      pRef.SelfAdd(vs[i]);
-    }
-    pRef.SelfMul(1 / count);
-#endif
-    */
+    // Get a reference point for forming triangles.
+    // Use the first vertex to reduce round-off errors.
+    const s: b2Vec2 = b2PolygonShape.ComputeCentroid_s_s.Copy(vs[0]);
 
     const inv3: number = 1 / 3;
 
     for (let i: number = 0; i < count; ++i) {
       // Triangle vertices.
-      const p1: b2Vec2 = pRef;
-      const p2: b2Vec2 = vs[i];
-      const p3: b2Vec2 = vs[(i + 1) % count];
+      const p1: b2Vec2 = b2Vec2.SubVV(vs[0], s, b2PolygonShape.ComputeCentroid_s_p1);
+      const p2: b2Vec2 = b2Vec2.SubVV(vs[i], s, b2PolygonShape.ComputeCentroid_s_p2);
+      const p3: b2Vec2 = b2Vec2.SubVV(vs[(i + 1) % count], s, b2PolygonShape.ComputeCentroid_s_p3);
 
       const e1: b2Vec2 = b2Vec2.SubVV(p2, p1, b2PolygonShape.ComputeCentroid_s_e1);
       const e2: b2Vec2 = b2Vec2.SubVV(p3, p1, b2PolygonShape.ComputeCentroid_s_e2);
@@ -631,7 +621,9 @@ export class b2PolygonShape extends b2Shape {
 
     // Centroid
     // DEBUG: b2Assert(area > b2_epsilon);
-    c.SelfMul(1 / area);
+    // c = (1.0f / area) * c + s;
+    c.x = (1 / area) * c.x + s.x;
+    c.y = (1 / area) * c.y + s.y;
     return c;
   }
 

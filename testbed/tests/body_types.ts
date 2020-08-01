@@ -33,7 +33,7 @@ export class BodyTypes extends testbed.Test {
 
     /*box2d.b2EdgeShape*/
     const shape = new box2d.b2EdgeShape();
-    shape.Set(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+    shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
 
     /*box2d.b2FixtureDef*/
     const fd = new box2d.b2FixtureDef();

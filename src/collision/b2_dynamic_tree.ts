@@ -45,6 +45,8 @@ export class b2TreeNode<T> {
   public child2: b2TreeNode<T> | null = null;
   public height: number = 0; // leaf = 0, free node = -1
 
+  public moved: boolean = false;
+
   constructor(id: number = 0) {
     this.m_id = id;
   }
@@ -83,6 +85,14 @@ export class b2DynamicTree<T> {
   // public GetUserData(node: b2TreeNode<T>): T {
   //   // DEBUG: b2Assert(node !== null);
   //   return node.userData;
+  // }
+
+  // public WasMoved(node: b2TreeNode<T>): boolean {
+  //   return node.moved;
+  // }
+
+  // public ClearMoved(node: b2TreeNode<T>): void {
+  //   node.moved = false;
   // }
 
   // public GetFatAABB(node: b2TreeNode<T>): b2AABB {
@@ -226,6 +236,7 @@ export class b2DynamicTree<T> {
       node.child1 = null;
       node.child2 = null;
       node.height = 0;
+      node.moved = false;
       return node;
     }
 
@@ -253,6 +264,7 @@ export class b2DynamicTree<T> {
     node.aabb.upperBound.y = aabb.upperBound.y + r_y;
     node.userData = userData;
     node.height = 0;
+    node.moved = true;
 
     this.InsertLeaf(node);
 
@@ -266,40 +278,64 @@ export class b2DynamicTree<T> {
     this.FreeNode(node);
   }
 
+  private static MoveProxy_s_fatAABB = new b2AABB();
+  private static MoveProxy_s_hugeAABB = new b2AABB();
   public MoveProxy(node: b2TreeNode<T>, aabb: b2AABB, displacement: b2Vec2): boolean {
     // DEBUG: b2Assert(node.IsLeaf());
 
-    if (node.aabb.Contains(aabb)) {
-      return false;
-    }
-
-    this.RemoveLeaf(node);
-
-    // Extend AABB.
+    // Extend AABB
+    const fatAABB: b2AABB = b2DynamicTree.MoveProxy_s_fatAABB;
     const r_x: number = b2_aabbExtension;
     const r_y: number = b2_aabbExtension;
-    node.aabb.lowerBound.x = aabb.lowerBound.x - r_x;
-    node.aabb.lowerBound.y = aabb.lowerBound.y - r_y;
-    node.aabb.upperBound.x = aabb.upperBound.x + r_x;
-    node.aabb.upperBound.y = aabb.upperBound.y + r_y;
+    fatAABB.lowerBound.x = aabb.lowerBound.x - r_x;
+    fatAABB.lowerBound.y = aabb.lowerBound.y - r_y;
+    fatAABB.upperBound.x = aabb.upperBound.x + r_x;
+    fatAABB.upperBound.y = aabb.upperBound.y + r_y;
 
-    // Predict AABB displacement.
+    // Predict AABB movement
     const d_x: number = b2_aabbMultiplier * displacement.x;
     const d_y: number = b2_aabbMultiplier * displacement.y;
 
     if (d_x < 0.0) {
-    	node.aabb.lowerBound.x += d_x;
+      fatAABB.lowerBound.x += d_x;
     } else {
-    	node.aabb.upperBound.x += d_x;
+      fatAABB.upperBound.x += d_x;
     }
 
     if (d_y < 0.0) {
-    	node.aabb.lowerBound.y += d_y;
+      fatAABB.lowerBound.y += d_y;
     } else {
-    	node.aabb.upperBound.y += d_y;
+      fatAABB.upperBound.y += d_y;
     }
 
+    const treeAABB = node.aabb; // m_nodes[proxyId].aabb;
+    if (treeAABB.Contains(aabb)) {
+      // The tree AABB still contains the object, but it might be too large.
+      // Perhaps the object was moving fast but has since gone to sleep.
+      // The huge AABB is larger than the new fat AABB.
+      const hugeAABB: b2AABB = b2DynamicTree.MoveProxy_s_hugeAABB;
+      hugeAABB.lowerBound.x = fatAABB.lowerBound.x - 4.0 * r_x;
+      hugeAABB.lowerBound.y = fatAABB.lowerBound.y - 4.0 * r_y;
+      hugeAABB.upperBound.x = fatAABB.upperBound.x + 4.0 * r_x;
+      hugeAABB.upperBound.y = fatAABB.upperBound.y + 4.0 * r_y;
+
+      if (hugeAABB.Contains(treeAABB)) {
+        // The tree AABB contains the object AABB and the tree AABB is
+        // not too large. No tree update needed.
+        return false;
+      }
+
+      // Otherwise the tree AABB is huge and needs to be shrunk
+    }
+
+    this.RemoveLeaf(node);
+
+    node.aabb.Copy(fatAABB); // m_nodes[proxyId].aabb = fatAABB;
+
     this.InsertLeaf(node);
+
+    node.moved = true;
+
     return true;
   }
 

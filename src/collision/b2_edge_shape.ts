@@ -25,26 +25,40 @@ import { b2MassData } from "./b2_shape.js";
 import { b2Shape, b2ShapeType } from "./b2_shape.js";
 
 /// A line segment (edge) shape. These can be connected in chains or loops
-/// to other edge shapes. The connectivity information is used to ensure
-/// correct contact normals.
+/// to other edge shapes. Edges created independently are two-sided and do
+/// no provide smooth movement across junctions.
 export class b2EdgeShape extends b2Shape {
   public readonly m_vertex1: b2Vec2 = new b2Vec2();
   public readonly m_vertex2: b2Vec2 = new b2Vec2();
   public readonly m_vertex0: b2Vec2 = new b2Vec2();
   public readonly m_vertex3: b2Vec2 = new b2Vec2();
-  public m_hasVertex0: boolean = false;
-  public m_hasVertex3: boolean = false;
+
+  /// Uses m_vertex0 and m_vertex3 to create smooth collision.
+  public m_oneSided: boolean = false;
 
   constructor() {
     super(b2ShapeType.e_edgeShape, b2_polygonRadius);
   }
 
-  /// Set this as an isolated edge.
-  public Set(v1: XY, v2: XY): b2EdgeShape {
+  /// Set this as a part of a sequence. Vertex v0 precedes the edge and vertex v3
+	/// follows. These extra vertices are used to provide smooth movement
+	/// across junctions. This also makes the collision one-sided. The edge
+	/// normal points to the right looking from v1 to v2.
+	// void SetOneSided(const b2Vec2& v0, const b2Vec2& v1,const b2Vec2& v2, const b2Vec2& v3);
+  public SetOneSided(v0: XY, v1: XY, v2: XY, v3: XY): b2EdgeShape {
+    this.m_vertex0.Copy(v0);
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
-    this.m_hasVertex0 = false;
-    this.m_hasVertex3 = false;
+    this.m_vertex3.Copy(v3);
+    this.m_oneSided = true;
+    return this;
+  }
+
+	/// Set this as an isolated edge. Collision is two-sided.
+  public SetTwoSided(v1: XY, v2: XY): b2EdgeShape {
+    this.m_vertex1.Copy(v1);
+    this.m_vertex2.Copy(v2);
+    this.m_oneSided = false;
     return this;
   }
 
@@ -62,8 +76,7 @@ export class b2EdgeShape extends b2Shape {
     this.m_vertex2.Copy(other.m_vertex2);
     this.m_vertex0.Copy(other.m_vertex0);
     this.m_vertex3.Copy(other.m_vertex3);
-    this.m_hasVertex0 = other.m_hasVertex0;
-    this.m_hasVertex3 = other.m_hasVertex3;
+    this.m_oneSided = other.m_oneSided;
 
     return this;
   }
@@ -124,12 +137,18 @@ export class b2EdgeShape extends b2Shape {
     const v1: b2Vec2 = this.m_vertex1;
     const v2: b2Vec2 = this.m_vertex2;
     const e: b2Vec2 = b2Vec2.SubVV(v2, v1, b2EdgeShape.RayCast_s_e);
+
+  	// Normal points to the right, looking from v1 at v2
     const normal: b2Vec2 = output.normal.Set(e.y, -e.x).SelfNormalize();
 
     // q = p1 + t * d
     // dot(normal, q - v1) = 0
     // dot(normal, p1 - v1) + t * dot(normal, d) = 0
     const numerator: number = b2Vec2.DotVV(normal, b2Vec2.SubVV(v1, p1, b2Vec2.s_t0));
+    if (this.m_oneSided && numerator > 0.0) {
+      return false;
+    }
+
     const denominator: number = b2Vec2.DotVV(normal, d);
 
     if (denominator === 0) {
@@ -206,7 +225,6 @@ export class b2EdgeShape extends b2Shape {
     log("    shape.m_vertex1.Set(%.15f, %.15f);\n", this.m_vertex1.x, this.m_vertex1.y);
     log("    shape.m_vertex2.Set(%.15f, %.15f);\n", this.m_vertex2.x, this.m_vertex2.y);
     log("    shape.m_vertex3.Set(%.15f, %.15f);\n", this.m_vertex3.x, this.m_vertex3.y);
-    log("    shape.m_hasVertex0 = %s;\n", this.m_hasVertex0);
-    log("    shape.m_hasVertex3 = %s;\n", this.m_hasVertex3);
+    log("    shape.m_oneSided = %s;\n", this.m_oneSided);
   }
 }

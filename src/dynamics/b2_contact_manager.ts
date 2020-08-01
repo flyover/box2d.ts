@@ -129,12 +129,6 @@ export class b2ContactManager {
     }
     bodyB.m_contactList = c.m_nodeB;
 
-    // Wake up the bodies
-    if (!fixtureA.IsSensor() && !fixtureB.IsSensor()) {
-      bodyA.SetAwake(true);
-      bodyB.SetAwake(true);
-    }
-
     ++this.m_contactCount;
   }
 

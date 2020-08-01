@@ -33,19 +33,19 @@ export class Confined extends testbed.Test {
       const shape = new box2d.b2EdgeShape();
 
       // Floor
-      shape.Set(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
       ground.CreateFixture(shape, 0.0);
 
       // Left wall
-      shape.Set(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(-10.0, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(-10.0, 20.0));
       ground.CreateFixture(shape, 0.0);
 
       // Right wall
-      shape.Set(new box2d.b2Vec2(10.0, 0.0), new box2d.b2Vec2(10.0, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(10.0, 0.0), new box2d.b2Vec2(10.0, 20.0));
       ground.CreateFixture(shape, 0.0);
 
       // Roof
-      shape.Set(new box2d.b2Vec2(-10.0, 20.0), new box2d.b2Vec2(10.0, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-10.0, 20.0), new box2d.b2Vec2(10.0, 20.0));
       ground.CreateFixture(shape, 0.0);
     }
 

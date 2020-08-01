@@ -65,7 +65,7 @@ export class EdgeShapes extends testbed.Test {
         const y2 = 2.0 * box2d.b2Cos(x2 / 10.0 * box2d.b2_pi);
 
         const shape = new box2d.b2EdgeShape();
-        shape.Set(new box2d.b2Vec2(x1, y1), new box2d.b2Vec2(x2, y2));
+        shape.SetTwoSided(new box2d.b2Vec2(x1, y1), new box2d.b2Vec2(x2, y2));
         ground.CreateFixture(shape, 0.0);
 
         x1 = x2;
@@ -187,7 +187,7 @@ export class EdgeShapes extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    const advanceRay = !settings.pause || settings.singleStep;
+    const advanceRay = !settings.m_pause || settings.m_singleStep;
     super.Step(settings);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 1-5 to drop stuff, m to change the mode");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;

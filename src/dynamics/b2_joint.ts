@@ -17,10 +17,12 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings.js";
-import { b2Maybe } from "../common/b2_settings.js";
-import { b2Vec2, XY } from "../common/b2_math.js";
+import { b2Maybe, b2_pi } from "../common/b2_settings.js";
+import { b2Vec2, XY, b2Transform } from "../common/b2_math.js";
 import { b2Body } from "./b2_body.js";
 import { b2SolverData } from "./b2_time_step.js";
+import { b2Draw, b2Color } from "../common/b2_draw.js";
+import { b2PulleyJoint } from "./b2_pulley_joint.js";
 
 export enum b2JointType {
   e_unknownJoint = 0,
@@ -36,13 +38,6 @@ export enum b2JointType {
   e_ropeJoint = 10,
   e_motorJoint = 11,
   e_areaJoint = 12,
-}
-
-export enum b2LimitState {
-  e_inactiveLimit = 0,
-  e_atLowerLimit = 1,
-  e_atUpperLimit = 2,
-  e_equalLimits = 3,
 }
 
 export class b2Jacobian {
@@ -133,6 +128,48 @@ export abstract class b2JointDef implements b2IJointDef {
   }
 }
 
+/// Utility to compute linear stiffness values from frequency and damping ratio
+// void b2LinearStiffness(float& stiffness, float& damping,
+// 	float frequencyHertz, float dampingRatio,
+// 	const b2Body* bodyA, const b2Body* bodyB);
+export function b2LinearStiffness(def: { stiffness: number, damping: number }, frequencyHertz: number, dampingRatio: number, bodyA: b2Body, bodyB: b2Body): void {
+  const massA: number = bodyA.GetMass();
+  const massB: number = bodyB.GetMass();
+  let mass: number;
+  if (massA > 0.0 && massB > 0.0) {
+    mass = massA * massB / (massA + massB);
+  } else if (massA > 0.0) {
+    mass = massA;
+  } else {
+    mass = massB;
+  }
+
+  const omega: number = 2.0 * b2_pi * frequencyHertz;
+  def.stiffness = mass * omega * omega;
+  def.damping = 2.0 * mass * dampingRatio * omega;
+}
+
+/// Utility to compute rotational stiffness values frequency and damping ratio
+// void b2AngularStiffness(float& stiffness, float& damping,
+// 	float frequencyHertz, float dampingRatio,
+// 	const b2Body* bodyA, const b2Body* bodyB);
+export function b2AngularStiffness(def: { stiffness: number, damping: number }, frequencyHertz: number, dampingRatio: number, bodyA: b2Body, bodyB: b2Body): void {
+  const IA: number = bodyA.GetInertia();
+  const IB: number = bodyB.GetInertia();
+  let I: number;
+  if (IA > 0.0 && IB > 0.0) {
+    I = IA * IB / (IA + IB);
+  } else if (IA > 0.0) {
+    I = IA;
+  } else {
+    I = IB;
+  }
+
+  const omega: number = 2.0 * b2_pi * frequencyHertz;
+  def.stiffness = I * omega * omega;
+  def.damping = 2.0 * I * dampingRatio * omega;
+}
+
 /// The base joint class. Joints are used to constraint two bodies together in
 /// various fashions. Some joints also feature limits and motors.
 export abstract class b2Joint {
@@ -208,8 +245,8 @@ export abstract class b2Joint {
   }
 
   /// Short-cut function to determine if either body is inactive.
-  public IsActive(): boolean {
-    return this.m_bodyA.IsActive() && this.m_bodyB.IsActive();
+  public IsEnabled(): boolean {
+    return this.m_bodyA.IsEnabled() && this.m_bodyB.IsEnabled();
   }
 
   /// Get collide connected.
@@ -225,8 +262,57 @@ export abstract class b2Joint {
   }
 
   /// Shift the origin for any points stored in world coordinates.
-  public ShiftOrigin(newOrigin: XY): void {
-  }
+  public ShiftOrigin(newOrigin: XY): void { }
+
+  /// Debug draw this joint
+  private static Draw_s_p1: b2Vec2 = new b2Vec2();
+  private static Draw_s_p2: b2Vec2 = new b2Vec2();
+  private static Draw_s_color: b2Color = new b2Color(0.5, 0.8, 0.8);
+  private static Draw_s_c: b2Color = new b2Color();
+  public Draw(draw: b2Draw): void {
+    const xf1: b2Transform = this.m_bodyA.GetTransform();
+    const xf2: b2Transform = this.m_bodyB.GetTransform();
+    const x1: b2Vec2 = xf1.p;
+    const x2: b2Vec2 = xf2.p;
+    const p1: b2Vec2 = this.GetAnchorA(b2Joint.Draw_s_p1);
+    const p2: b2Vec2 = this.GetAnchorB(b2Joint.Draw_s_p2);
+
+    const color: b2Color = b2Joint.Draw_s_color.SetRGB(0.5, 0.8, 0.8);
+
+    switch (this.m_type) {
+      case b2JointType.e_distanceJoint:
+        draw.DrawSegment(p1, p2, color);
+        break;
+
+      case b2JointType.e_pulleyJoint:
+        {
+          const pulley: b2PulleyJoint = this as unknown as b2PulleyJoint;
+          const s1: b2Vec2 = pulley.GetGroundAnchorA();
+          const s2: b2Vec2 = pulley.GetGroundAnchorB();
+          draw.DrawSegment(s1, p1, color);
+          draw.DrawSegment(s2, p2, color);
+          draw.DrawSegment(s1, s2, color);
+        }
+        break;
+
+      case b2JointType.e_mouseJoint:
+        {
+          const c = b2Joint.Draw_s_c;
+          c.Set(0.0, 1.0, 0.0);
+          draw.DrawPoint(p1, 4.0, c);
+          draw.DrawPoint(p2, 4.0, c);
+
+          c.Set(0.8, 0.8, 0.8);
+          draw.DrawSegment(p1, p2, c);
+        }
+        break;
+
+      default:
+        draw.DrawSegment(x1, p1, color);
+        draw.DrawSegment(p1, p2, color);
+        draw.DrawSegment(x2, p2, color);
+      }
+    }
 
   public abstract InitVelocityConstraints(data: b2SolverData): void;
 

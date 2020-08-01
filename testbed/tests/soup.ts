@@ -120,7 +120,7 @@ export class Soup extends testbed.Test {
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(0, 2), new box2d.b2Vec2(0.1, 2.1));
+      shape.SetTwoSided(new box2d.b2Vec2(0, 2), new box2d.b2Vec2(0.1, 2.1));
       body.CreateFixture(shape, 1);
       ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
       const massData = new box2d.b2MassData();
@@ -136,7 +136,7 @@ export class Soup extends testbed.Test {
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(0.3, 2.0), new box2d.b2Vec2(0.4, 2.1));
+      shape.SetTwoSided(new box2d.b2Vec2(0.3, 2.0), new box2d.b2Vec2(0.4, 2.1));
       body.CreateFixture(shape, 1);
       ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
       const massData = new box2d.b2MassData();
@@ -152,7 +152,7 @@ export class Soup extends testbed.Test {
       bd.type = box2d.b2BodyType.b2_dynamicBody;
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-0.3, 2.1), new box2d.b2Vec2(-0.2, 2.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-0.3, 2.1), new box2d.b2Vec2(-0.2, 2.0));
       body.CreateFixture(shape, 1);
       ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
       const massData = new box2d.b2MassData();

@@ -1,5 +1,6 @@
 import * as box2d from "@box2d";
-import { Settings, Test } from "./test.js";
+import { Settings } from "./settings.js";
+import { Test } from "./test.js";
 import { g_debugDraw, g_camera } from "./draw.js";
 import { g_testEntries } from "./tests/test_entries.js";
 
@@ -12,7 +13,6 @@ export class Main {
   public m_debug_div: HTMLDivElement;
   public readonly m_settings: Settings = new Settings();
   public m_test?: Test;
-  public m_test_index: number = 0;
   public m_test_select: HTMLSelectElement;
   public m_shift: boolean = false;
   public m_ctrl: boolean = false;
@@ -49,7 +49,7 @@ export class Main {
     debug_div.style.zIndex = "256";
     debug_div.innerHTML = "";
 
-    document.body.style.backgroundColor = "black";
+    document.body.style.backgroundColor = "rgba(51, 51, 51, 1.0)";
 
     const main_div: HTMLDivElement = document.body.appendChild(document.createElement("div"));
     main_div.style.position = "absolute"; // relative to document.body
@@ -68,7 +68,7 @@ export class Main {
     const title_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
     title_div.style.textAlign = "center";
     title_div.style.color = "grey";
-    title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version + "<br>(branch: " + box2d.b2_branch + " commit: " + box2d.b2_commit + ")";
+    title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version.toString();
 
     const view_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
 
@@ -115,9 +115,9 @@ export class Main {
       option.value = i.toString();
       test_select.add(option);
     }
-    test_select.selectedIndex = this.m_test_index;
+    test_select.selectedIndex = this.m_settings.m_testIndex;
     test_select.addEventListener("change", (e: Event): void => {
-      this.m_test_index = test_select.selectedIndex;
+      this.m_settings.m_testIndex = test_select.selectedIndex;
       this.LoadTest();
     });
     controls_div.appendChild(test_select);
@@ -147,12 +147,12 @@ export class Main {
     }
 
     const number_input_table: HTMLTableElement = controls_div.appendChild(document.createElement("table"));
-    connect_number_input(number_input_table, "Vel Iters", this.m_settings.velocityIterations, (value: number): void => { this.m_settings.velocityIterations = value; }, 1, 20, 1);
-    connect_number_input(number_input_table, "Pos Iters", this.m_settings.positionIterations, (value: number): void => { this.m_settings.positionIterations = value; }, 1, 20, 1);
+    connect_number_input(number_input_table, "Vel Iters", this.m_settings.m_velocityIterations, (value: number): void => { this.m_settings.m_velocityIterations = value; }, 1, 20, 1);
+    connect_number_input(number_input_table, "Pos Iters", this.m_settings.m_positionIterations, (value: number): void => { this.m_settings.m_positionIterations = value; }, 1, 20, 1);
     // #if B2_ENABLE_PARTICLE
-    connect_number_input(number_input_table, "Pcl Iters", this.m_settings.particleIterations, (value: number): void => { this.m_settings.particleIterations = value; }, 1, 100, 1);
+    connect_number_input(number_input_table, "Pcl Iters", this.m_settings.m_particleIterations, (value: number): void => { this.m_settings.m_particleIterations = value; }, 1, 100, 1);
     // #endif
-    connect_number_input(number_input_table, "Hertz", this.m_settings.hz, (value: number): void => { this.m_settings.hz = value; }, 10, 120, 1);
+    connect_number_input(number_input_table, "Hertz", this.m_settings.m_hertz, (value: number): void => { this.m_settings.m_hertz = value; }, 10, 120, 1);
 
     // simulation checkbox inputs
     function connect_checkbox_input(parent: Node, label: string, init: boolean, update: (value: boolean) => void): HTMLInputElement {
@@ -168,31 +168,31 @@ export class Main {
       return checkbox_input;
     }
 
-    connect_checkbox_input(controls_div, "Sleep", this.m_settings.enableSleep, (value: boolean): void => { this.m_settings.enableSleep = value; });
-    connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.enableWarmStarting, (value: boolean): void => { this.m_settings.enableWarmStarting = value; });
-    connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.enableContinuous, (value: boolean): void => { this.m_settings.enableContinuous = value; });
-    connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.enableSubStepping, (value: boolean): void => { this.m_settings.enableSubStepping = value; });
+    connect_checkbox_input(controls_div, "Sleep", this.m_settings.m_enableSleep, (value: boolean): void => { this.m_settings.m_enableSleep = value; });
+    connect_checkbox_input(controls_div, "Warm Starting", this.m_settings.m_enableWarmStarting, (value: boolean): void => { this.m_settings.m_enableWarmStarting = value; });
+    connect_checkbox_input(controls_div, "Time of Impact", this.m_settings.m_enableContinuous, (value: boolean): void => { this.m_settings.m_enableContinuous = value; });
+    connect_checkbox_input(controls_div, "Sub-Stepping", this.m_settings.m_enableSubStepping, (value: boolean): void => { this.m_settings.m_enableSubStepping = value; });
     // #if B2_ENABLE_PARTICLE
-    connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", this.m_settings.strictContacts, (value: boolean): void => { this.m_settings.strictContacts = value; });
+    connect_checkbox_input(controls_div, "Strict Particle/Body Contacts", this.m_settings.m_strictContacts, (value: boolean): void => { this.m_settings.m_strictContacts = value; });
     // #endif
 
     // draw checkbox inputs
     const draw_fieldset: HTMLFieldSetElement = controls_div.appendChild(document.createElement("fieldset"));
     const draw_legend: HTMLLegendElement = draw_fieldset.appendChild(document.createElement("legend"));
     draw_legend.appendChild(document.createTextNode("Draw"));
-    connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.drawShapes, (value: boolean): void => { this.m_settings.drawShapes = value; });
+    connect_checkbox_input(draw_fieldset, "Shapes", this.m_settings.m_drawShapes, (value: boolean): void => { this.m_settings.m_drawShapes = value; });
     // #if B2_ENABLE_PARTICLE
-    connect_checkbox_input(draw_fieldset, "Particles", this.m_settings.drawParticles, (value: boolean): void => { this.m_settings.drawParticles = value; });
+    connect_checkbox_input(draw_fieldset, "Particles", this.m_settings.m_drawParticles, (value: boolean): void => { this.m_settings.m_drawParticles = value; });
     // #endif
-    connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.drawJoints, (value: boolean): void => { this.m_settings.drawJoints = value; });
-    connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.drawAABBs, (value: boolean): void => { this.m_settings.drawAABBs = value; });
-    connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.drawContactPoints, (value: boolean): void => { this.m_settings.drawContactPoints = value; });
-    connect_checkbox_input(draw_fieldset, "Contact Normals", this.m_settings.drawContactNormals, (value: boolean): void => { this.m_settings.drawContactNormals = value; });
-    connect_checkbox_input(draw_fieldset, "Contact Impulses", this.m_settings.drawContactImpulse, (value: boolean): void => { this.m_settings.drawContactImpulse = value; });
-    connect_checkbox_input(draw_fieldset, "Friction Impulses", this.m_settings.drawFrictionImpulse, (value: boolean): void => { this.m_settings.drawFrictionImpulse = value; });
-    connect_checkbox_input(draw_fieldset, "Center of Masses", this.m_settings.drawCOMs, (value: boolean): void => { this.m_settings.drawCOMs = value; });
-    connect_checkbox_input(draw_fieldset, "Statistics", this.m_settings.drawStats, (value: boolean): void => { this.m_settings.drawStats = value; });
-    connect_checkbox_input(draw_fieldset, "Profile", this.m_settings.drawProfile, (value: boolean): void => { this.m_settings.drawProfile = value; });
+    connect_checkbox_input(draw_fieldset, "Joints", this.m_settings.m_drawJoints, (value: boolean): void => { this.m_settings.m_drawJoints = value; });
+    connect_checkbox_input(draw_fieldset, "AABBs", this.m_settings.m_drawAABBs, (value: boolean): void => { this.m_settings.m_drawAABBs = value; });
+    connect_checkbox_input(draw_fieldset, "Contact Points", this.m_settings.m_drawContactPoints, (value: boolean): void => { this.m_settings.m_drawContactPoints = value; });
+    connect_checkbox_input(draw_fieldset, "Contact Normals", this.m_settings.m_drawContactNormals, (value: boolean): void => { this.m_settings.m_drawContactNormals = value; });
+    connect_checkbox_input(draw_fieldset, "Contact Impulses", this.m_settings.m_drawContactImpulse, (value: boolean): void => { this.m_settings.m_drawContactImpulse = value; });
+    connect_checkbox_input(draw_fieldset, "Friction Impulses", this.m_settings.m_drawFrictionImpulse, (value: boolean): void => { this.m_settings.m_drawFrictionImpulse = value; });
+    connect_checkbox_input(draw_fieldset, "Center of Masses", this.m_settings.m_drawCOMs, (value: boolean): void => { this.m_settings.m_drawCOMs = value; });
+    connect_checkbox_input(draw_fieldset, "Statistics", this.m_settings.m_drawStats, (value: boolean): void => { this.m_settings.m_drawStats = value; });
+    connect_checkbox_input(draw_fieldset, "Profile", this.m_settings.m_drawProfile, (value: boolean): void => { this.m_settings.m_drawProfile = value; });
 
     // simulation buttons
     function connect_button_input(parent: Node, label: string, callback: (e: MouseEvent) => void): HTMLInputElement {
@@ -479,20 +479,20 @@ export class Main {
   }
 
   public DecrementTest(): void {
-    if (this.m_test_index <= 0) {
-      this.m_test_index = g_testEntries.length;
+    if (this.m_settings.m_testIndex <= 0) {
+      this.m_settings.m_testIndex = g_testEntries.length;
     }
-    this.m_test_index--;
-    this.m_test_select.selectedIndex = this.m_test_index;
+    this.m_settings.m_testIndex--;
+    this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
     this.LoadTest();
   }
 
   public IncrementTest(): void {
-    this.m_test_index++;
-    if (this.m_test_index >= g_testEntries.length) {
-      this.m_test_index = 0;
+    this.m_settings.m_testIndex++;
+    if (this.m_settings.m_testIndex >= g_testEntries.length) {
+      this.m_settings.m_testIndex = 0;
     }
-    this.m_test_select.selectedIndex = this.m_test_index;
+    this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
     this.LoadTest();
   }
 
@@ -507,19 +507,19 @@ export class Main {
       this.m_test.RestoreParticleParameters();
     }
     // #endif
-    this.m_test = g_testEntries[this.m_test_index].createFcn();
+    this.m_test = g_testEntries[this.m_settings.m_testIndex].createFcn();
     if (!restartTest) {
       this.HomeCamera();
     }
   }
 
   public Pause(): void {
-    this.m_settings.pause = !this.m_settings.pause;
+    this.m_settings.m_pause = !this.m_settings.m_pause;
   }
 
   public SingleStep(): void {
-    this.m_settings.pause = true;
-    this.m_settings.singleStep = true;
+    this.m_settings.m_pause = true;
+    this.m_settings.m_singleStep = true;
   }
 
   public ToggleDemo(): void {
@@ -585,14 +585,14 @@ export class Main {
         // #endif
 
         // #if B2_ENABLE_PARTICLE
-        let msg = g_testEntries[this.m_test_index].name;
+        let msg = g_testEntries[this.m_settings.m_testIndex].name;
         if (Test.fullscreenUI.GetParticleParameterSelectionEnabled()) {
           msg += " : ";
           msg += Test.particleParameter.GetName();
         }
         if (this.m_test) { this.m_test.DrawTitle(msg); }
         // #else
-        // if (this.m_test) { this.m_test.DrawTitle(g_testEntries[this.m_test_index].name); }
+        // if (this.m_test) { this.m_test.DrawTitle(g_testEntries[this.m_settings.m_testIndex].name); }
         // #endif
 
         // ctx.strokeStyle = "yellow";

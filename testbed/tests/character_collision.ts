@@ -31,7 +31,7 @@ export class CharacterCollision extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -43,11 +43,11 @@ export class CharacterCollision extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-8.0, 1.0), new box2d.b2Vec2(-6.0, 1.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-8.0, 1.0), new box2d.b2Vec2(-6.0, 1.0));
       ground.CreateFixture(shape, 0.0);
-      shape.Set(new box2d.b2Vec2(-6.0, 1.0), new box2d.b2Vec2(-4.0, 1.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-6.0, 1.0), new box2d.b2Vec2(-4.0, 1.0));
       ground.CreateFixture(shape, 0.0);
-      shape.Set(new box2d.b2Vec2(-4.0, 1.0), new box2d.b2Vec2(-2.0, 1.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-4.0, 1.0), new box2d.b2Vec2(-2.0, 1.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -65,7 +65,7 @@ export class CharacterCollision extends testbed.Test {
       vs[3].Set(8.0, 7.0);
       /*box2d.b2ChainShape*/
       const shape = new box2d.b2ChainShape();
-      shape.CreateChain(vs, 4);
+      shape.CreateLoop(vs, 4);
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -98,7 +98,7 @@ export class CharacterCollision extends testbed.Test {
       vs[3].Set(-1.0, 5.0);
       /*box2d.b2ChainShape*/
       const shape = new box2d.b2ChainShape();
-      shape.CreateChain(vs, 4);
+      shape.CreateLoop(vs, 4);
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -122,7 +122,7 @@ export class CharacterCollision extends testbed.Test {
       vs[9].Set(-6.0, 0.0);
       /*box2d.b2ChainShape*/
       const shape = new box2d.b2ChainShape();
-      shape.CreateChain(vs, 10);
+      shape.CreateLoop(vs, 10);
       ground.CreateFixture(shape, 0.0);
     }
 

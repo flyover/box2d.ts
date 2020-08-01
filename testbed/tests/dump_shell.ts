@@ -44,7 +44,7 @@ export class DumpShell extends testbed.Test {
       bd.awake = true;
       bd.fixedRotation = false;
       bd.bullet = false;
-      bd.active = true;
+      bd.enabled = true;
       bd.gravityScale = 1.000000000000000;
 
       bodies[0] = this.m_world.CreateBody(bd);
@@ -66,8 +66,8 @@ export class DumpShell extends testbed.Test {
         shape.m_vertex1.Set(0.000000000000000, 0.000000000000000);
         shape.m_vertex2.Set(44.521739959716797, 0.000000000000000);
         shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-        shape.m_hasVertex0 = false;
-        shape.m_hasVertex3 = false;
+        // shape.m_hasVertex0 = false;
+        // shape.m_hasVertex3 = false;
 
         fd.shape = shape;
 
@@ -90,8 +90,8 @@ export class DumpShell extends testbed.Test {
         shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
         shape.m_vertex2.Set(44.521739959716797, 16.695652008056641);
         shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-        shape.m_hasVertex0 = false;
-        shape.m_hasVertex3 = false;
+        // shape.m_hasVertex0 = false;
+        // shape.m_hasVertex3 = false;
 
         fd.shape = shape;
 
@@ -114,8 +114,8 @@ export class DumpShell extends testbed.Test {
         shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
         shape.m_vertex2.Set(0.000000000000000, 0.000000000000000);
         shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-        shape.m_hasVertex0 = false;
-        shape.m_hasVertex3 = false;
+        // shape.m_hasVertex0 = false;
+        // shape.m_hasVertex3 = false;
 
         fd.shape = shape;
 
@@ -138,8 +138,8 @@ export class DumpShell extends testbed.Test {
         shape.m_vertex1.Set(44.521739959716797, 16.695652008056641);
         shape.m_vertex2.Set(44.521739959716797, 0.000000000000000);
         shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-        shape.m_hasVertex0 = false;
-        shape.m_hasVertex3 = false;
+        // shape.m_hasVertex0 = false;
+        // shape.m_hasVertex3 = false;
 
         fd.shape = shape;
 
@@ -160,7 +160,7 @@ export class DumpShell extends testbed.Test {
       bd.awake = true;
       bd.fixedRotation = false;
       bd.bullet = false;
-      bd.active = true;
+      bd.enabled = true;
       bd.gravityScale = 1.000000000000000;
 
       bodies[1] = this.m_world.CreateBody(bd);
@@ -204,7 +204,7 @@ export class DumpShell extends testbed.Test {
       bd.awake = true;
       bd.fixedRotation = false;
       bd.bullet = false;
-      bd.active = true;
+      bd.enabled = true;
       bd.gravityScale = 1.000000000000000;
 
       bodies[2] = this.m_world.CreateBody(bd);
@@ -248,7 +248,7 @@ export class DumpShell extends testbed.Test {
       bd.awake = true;
       bd.fixedRotation = false;
       bd.bullet = false;
-      bd.active = true;
+      bd.enabled = true;
       bd.gravityScale = 1.000000000000000;
 
       bodies[3] = this.m_world.CreateBody(bd);

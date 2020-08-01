@@ -69,7 +69,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-2, 3.2), new box2d.b2Vec2(-1.2, 3.2));
+      shape.SetTwoSided(new box2d.b2Vec2(-2, 3.2), new box2d.b2Vec2(-1.2, 3.2));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -77,7 +77,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-1.1, 3.2), new box2d.b2Vec2(2, 3.2));
+      shape.SetTwoSided(new box2d.b2Vec2(-1.1, 3.2), new box2d.b2Vec2(2, 3.2));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -85,7 +85,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-1.2, 3.2), new box2d.b2Vec2(-1.2, 2.8));
+      shape.SetTwoSided(new box2d.b2Vec2(-1.2, 3.2), new box2d.b2Vec2(-1.2, 2.8));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -93,7 +93,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-1.1, 3.2), new box2d.b2Vec2(-1.1, 2.8));
+      shape.SetTwoSided(new box2d.b2Vec2(-1.1, 3.2), new box2d.b2Vec2(-1.1, 2.8));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -101,7 +101,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-1.6, 2.4), new box2d.b2Vec2(0.8, 2));
+      shape.SetTwoSided(new box2d.b2Vec2(-1.6, 2.4), new box2d.b2Vec2(0.8, 2));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -109,7 +109,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(1.6, 1.6), new box2d.b2Vec2(-0.8, 1.2));
+      shape.SetTwoSided(new box2d.b2Vec2(1.6, 1.6), new box2d.b2Vec2(-0.8, 1.2));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -117,7 +117,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-1.2, 0.8), new box2d.b2Vec2(-1.2, 0));
+      shape.SetTwoSided(new box2d.b2Vec2(-1.2, 0.8), new box2d.b2Vec2(-1.2, 0));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -125,7 +125,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-0.4, 0.8), new box2d.b2Vec2(-0.4, 0));
+      shape.SetTwoSided(new box2d.b2Vec2(-0.4, 0.8), new box2d.b2Vec2(-0.4, 0));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -133,7 +133,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(0.4, 0.8), new box2d.b2Vec2(0.4, 0));
+      shape.SetTwoSided(new box2d.b2Vec2(0.4, 0.8), new box2d.b2Vec2(0.4, 0));
       body.CreateFixture(shape, 0.1);
     }
 
@@ -141,7 +141,7 @@ export class LiquidTimer extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       const body = this.m_world.CreateBody(bd);
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(1.2, 0.8), new box2d.b2Vec2(1.2, 0));
+      shape.SetTwoSided(new box2d.b2Vec2(1.2, 0.8), new box2d.b2Vec2(1.2, 0));
       body.CreateFixture(shape, 0.1);
     }
   }

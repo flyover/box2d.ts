@@ -44,48 +44,13 @@ export class PolyShapesCallback extends box2d.b2QueryCallback {
     const overlap = box2d.b2TestOverlapShape(shape, 0, this.m_circle, 0, body.GetTransform(), this.m_transform);
 
     if (overlap) {
-      this.DrawFixture(fixture);
+      const color = new box2d.b2Color(0.95, 0.95, 0.6);
+      const center = body.GetWorldCenter();
+      testbed.g_debugDraw.DrawPoint(center, 5.0, color);
       ++this.m_count;
     }
 
     return true;
-  }
-
-  public DrawFixture(fixture: box2d.b2Fixture) {
-    const color = new box2d.b2Color(0.95, 0.95, 0.6);
-    const xf = fixture.GetBody().GetTransform();
-
-    switch (fixture.GetType()) {
-      case box2d.b2ShapeType.e_circleShape:
-        {
-          //const circle = ((shape instanceof box2d.b2CircleShape ? shape : null));
-          const circle: box2d.b2CircleShape = fixture.GetShape() as box2d.b2CircleShape;
-
-          const center = box2d.b2Transform.MulXV(xf, circle.m_p, new box2d.b2Vec2());
-          const radius = circle.m_radius;
-
-          testbed.g_debugDraw.DrawCircle(center, radius, color);
-        }
-        break;
-
-      case box2d.b2ShapeType.e_polygonShape:
-        {
-          //const poly = ((shape instanceof box2d.b2PolygonShape ? shape : null));
-          const poly: box2d.b2PolygonShape = fixture.GetShape() as box2d.b2PolygonShape;
-          const vertexCount = poly.m_count;
-          const vertices = [];
-
-          for (let i = 0; i < vertexCount; ++i) {
-            vertices[i] = box2d.b2Transform.MulXV(xf, poly.m_vertices[i], new box2d.b2Vec2());
-          }
-
-          testbed.g_debugDraw.DrawPolygon(vertices, vertexCount, color);
-        }
-        break;
-
-      default:
-        break;
-    }
   }
 }
 
@@ -93,7 +58,7 @@ export class PolyShapes extends testbed.Test {
   public static readonly e_maxBodies = 256;
 
   public m_bodyIndex = 0;
-  public m_bodies = new Array(PolyShapes.e_maxBodies);
+  public m_bodies: Array<box2d.b2Body | null> = box2d.b2MakeArray(PolyShapes.e_maxBodies, () => null);
   public m_polygons = box2d.b2MakeArray(4, () => new box2d.b2PolygonShape());
   public m_circle = new box2d.b2CircleShape();
 
@@ -106,7 +71,7 @@ export class PolyShapes extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -159,7 +124,7 @@ export class PolyShapes extends testbed.Test {
 
   public CreateBody(index: number) {
     if (this.m_bodies[this.m_bodyIndex] !== null) {
-      this.m_world.DestroyBody(this.m_bodies[this.m_bodyIndex]);
+      this.m_world.DestroyBody(this.m_bodies[this.m_bodyIndex]!);
       this.m_bodies[this.m_bodyIndex] = null;
     }
 
@@ -181,14 +146,14 @@ export class PolyShapes extends testbed.Test {
       fd.shape = this.m_polygons[index];
       fd.density = 1.0;
       fd.friction = 0.3;
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+      this.m_bodies[this.m_bodyIndex]!.CreateFixture(fd);
     } else {
       const fd = new box2d.b2FixtureDef();
       fd.shape = this.m_circle;
       fd.density = 1.0;
       fd.friction = 0.3;
 
-      this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
+      this.m_bodies[this.m_bodyIndex]!.CreateFixture(fd);
     }
 
     this.m_bodyIndex = (this.m_bodyIndex + 1) % PolyShapes.e_maxBodies;
@@ -197,7 +162,7 @@ export class PolyShapes extends testbed.Test {
   public DestroyBody() {
     for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
       if (this.m_bodies[i] !== null) {
-        this.m_world.DestroyBody(this.m_bodies[i]);
+        this.m_world.DestroyBody(this.m_bodies[i]!);
         this.m_bodies[i] = null;
         return;
       }
@@ -216,9 +181,9 @@ export class PolyShapes extends testbed.Test {
 
       case "a":
         for (let i = 0; i < PolyShapes.e_maxBodies; i += 2) {
-          if (this.m_bodies[i]) {
-            const active = this.m_bodies[i].IsActive();
-            this.m_bodies[i].SetActive(!active);
+          if (this.m_bodies[i] !== null) {
+            const enabled = this.m_bodies[i]!.IsEnabled();
+            this.m_bodies[i]!.SetEnabled(!enabled);
           }
         }
         break;
@@ -245,9 +210,9 @@ export class PolyShapes extends testbed.Test {
     const color = new box2d.b2Color(0.4, 0.7, 0.8);
     testbed.g_debugDraw.DrawCircle(callback.m_circle.m_p, callback.m_circle.m_radius, color);
 
-    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 1-5 to drop stuff");
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolyShapesCallback.e_maxCount} overlaps detected`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 'a' to (de)activate some bodies");
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 'a' to enable/disable some bodies");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 'd' to destroy a body");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;

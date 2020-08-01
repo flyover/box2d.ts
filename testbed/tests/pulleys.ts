@@ -35,10 +35,6 @@ export class Pulleys extends testbed.Test {
       const bd = new box2d.b2BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      const edge = new box2d.b2EdgeShape();
-      edge.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
-      //ground.CreateFixture(edge, 0.0);
-
       /*box2d.b2CircleShape*/
       const circle = new box2d.b2CircleShape();
       circle.m_radius = 2.0;

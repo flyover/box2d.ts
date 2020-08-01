@@ -28,9 +28,9 @@ export interface b2IMouseJointDef extends b2IJointDef {
 
   maxForce?: number;
 
-  frequencyHz?: number;
+  stiffness?: number;
 
-  dampingRatio?: number;
+  damping?: number;
 }
 
 /// Mouse joint definition. This requires a world target point,
@@ -40,9 +40,9 @@ export class b2MouseJointDef extends b2JointDef implements b2IMouseJointDef {
 
   public maxForce: number = 0;
 
-  public frequencyHz: number = 5;
+  public stiffness: number = 5;
 
-  public dampingRatio: number = 0.7;
+  public damping: number = 0.7;
 
   constructor() {
     super(b2JointType.e_mouseJoint);
@@ -52,8 +52,8 @@ export class b2MouseJointDef extends b2JointDef implements b2IMouseJointDef {
 export class b2MouseJoint extends b2Joint {
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public readonly m_targetA: b2Vec2 = new b2Vec2();
-  public m_frequencyHz: number = 0;
-  public m_dampingRatio: number = 0;
+  public m_stiffness: number = 0;
+  public m_damping: number = 0;
   public m_beta: number = 0;
 
   // Solver shared
@@ -85,10 +85,10 @@ export class b2MouseJoint extends b2Joint {
     // DEBUG: b2Assert(b2IsValid(this.m_maxForce) && this.m_maxForce >= 0);
     this.m_impulse.SetZero();
 
-    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
-    // DEBUG: b2Assert(b2IsValid(this.m_frequencyHz) && this.m_frequencyHz >= 0);
-    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
-    // DEBUG: b2Assert(b2IsValid(this.m_dampingRatio) && this.m_dampingRatio >= 0);
+    this.m_stiffness = b2Maybe(def.stiffness, 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_stiffness) && this.m_stiffness >= 0);
+    this.m_damping = b2Maybe(def.damping, 0);
+    // DEBUG: b2Assert(b2IsValid(this.m_damping) && this.m_damping >= 0);
 
     this.m_beta = 0;
     this.m_gamma = 0;
@@ -113,20 +113,20 @@ export class b2MouseJoint extends b2Joint {
     return this.m_maxForce;
   }
 
-  public SetFrequency(hz: number): void {
-    this.m_frequencyHz = hz;
+  public SetStiffness(stiffness: number): void {
+    this.m_stiffness = stiffness;
   }
 
-  public GetFrequency() {
-    return this.m_frequencyHz;
+  public GetStiffness() {
+    return this.m_stiffness;
   }
 
-  public SetDampingRatio(ratio: number) {
-    this.m_dampingRatio = ratio;
+  public SetDamping(damping: number) {
+    this.m_damping = damping;
   }
 
-  public GetDampingRatio() {
-    return this.m_dampingRatio;
+  public GetDamping() {
+    return this.m_damping;
   }
 
   public InitVelocityConstraints(data: b2SolverData): void {
@@ -145,10 +145,10 @@ export class b2MouseJoint extends b2Joint {
     const mass: number = this.m_bodyB.GetMass();
 
     // Frequency
-    const omega: number = 2 * b2_pi * this.m_frequencyHz;
+    const omega: number = 2 * b2_pi * this.m_stiffness;
 
     // Damping coefficient
-    const d: number = 2 * mass * this.m_dampingRatio * omega;
+    const d: number = 2 * mass * this.m_damping * omega;
 
     // Spring stiffness
     const k: number = mass * (omega * omega);
@@ -157,7 +157,6 @@ export class b2MouseJoint extends b2Joint {
     // gamma has units of inverse mass.
     // beta has units of inverse time.
     const h: number = data.step.dt;
-    // DEBUG: b2Assert(d + h * k > b2_epsilon);
     this.m_gamma = h * (d + h * k);
     if (this.m_gamma !== 0) {
       this.m_gamma = 1 / this.m_gamma;

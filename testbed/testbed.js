@@ -15,7 +15,7 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["./draw.js", "./fullscreen_ui.js", "./particle_emitter.js", "./particle_parameter.js", "./test.js", "./main.js"], function (exports_1, context_1) {
+System.register(["./settings.js", "./draw.js", "./fullscreen_ui.js", "./particle_emitter.js", "./particle_parameter.js", "./test.js", "./main.js"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function exportStar_1(m) {
@@ -27,6 +27,9 @@ System.register(["./draw.js", "./fullscreen_ui.js", "./particle_emitter.js", "./
     }
     return {
         setters: [
+            function (settings_js_1_1) {
+                exportStar_1(settings_js_1_1);
+            },
             function (draw_js_1_1) {
                 exportStar_1(draw_js_1_1);
             },

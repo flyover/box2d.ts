@@ -28,7 +28,7 @@ export class CompoundShapes extends testbed.Test {
       const body = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(50.0, 0.0), new box2d.b2Vec2(-50.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(50.0, 0.0), new box2d.b2Vec2(-50.0, 0.0));
 
       body.CreateFixture(shape, 0.0);
     }

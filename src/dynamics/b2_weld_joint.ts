@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_pi, b2_linearSlop, b2_angularSlop, b2Maybe } from "../common/b2_settings.js";
+import { b2_linearSlop, b2_angularSlop, b2Maybe } from "../common/b2_settings.js";
 import { b2Abs, b2Vec2, b2Vec3, b2Mat33, b2Rot, XY } from "../common/b2_math.js";
 import { b2Body } from "./b2_body.js";
 import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint.js";
@@ -29,9 +29,9 @@ export interface b2IWeldJointDef extends b2IJointDef {
 
   referenceAngle?: number;
 
-  frequencyHz?: number;
+  stiffness?: number;
 
-  dampingRatio?: number;
+  damping?: number;
 }
 
 /// Weld joint definition. You need to specify local anchor points
@@ -44,9 +44,9 @@ export class b2WeldJointDef extends b2JointDef implements b2IWeldJointDef {
 
   public referenceAngle: number = 0;
 
-  public frequencyHz: number = 0;
+  public stiffness: number = 0;
 
-  public dampingRatio: number = 0;
+  public damping: number = 0;
 
   constructor() {
     super(b2JointType.e_weldJoint);
@@ -62,8 +62,8 @@ export class b2WeldJointDef extends b2JointDef implements b2IWeldJointDef {
 }
 
 export class b2WeldJoint extends b2Joint {
-  public m_frequencyHz: number = 0;
-  public m_dampingRatio: number = 0;
+  public m_stiffness: number = 0;
+  public m_damping: number = 0;
   public m_bias: number = 0;
 
   // Solver shared
@@ -95,8 +95,8 @@ export class b2WeldJoint extends b2Joint {
   constructor(def: b2IWeldJointDef) {
     super(def);
 
-    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
-    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
+    this.m_stiffness = b2Maybe(def.stiffness, 0);
+    this.m_damping = b2Maybe(def.damping, 0);
 
     this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, b2Vec2.ZERO));
     this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, b2Vec2.ZERO));
@@ -155,22 +155,18 @@ export class b2WeldJoint extends b2Joint {
     K.ey.z = K.ez.y;
     K.ez.z = iA + iB;
 
-    if (this.m_frequencyHz > 0) {
+    if (this.m_stiffness > 0) {
       K.GetInverse22(this.m_mass);
 
       let invM: number = iA + iB;
-      const m: number = invM > 0 ? 1 / invM : 0;
 
       const C: number = aB - aA - this.m_referenceAngle;
 
-      // Frequency
-      const omega: number = 2 * b2_pi * this.m_frequencyHz;
-
       // Damping coefficient
-      const d: number = 2 * m * this.m_dampingRatio * omega;
+      const d: number = this.m_damping;
 
       // Spring stiffness
-      const k: number = m * omega * omega;
+      const k: number = this.m_stiffness;
 
       // magic formulas
       const h: number = data.step.dt;
@@ -223,7 +219,7 @@ export class b2WeldJoint extends b2Joint {
     const mA: number = this.m_invMassA, mB: number = this.m_invMassB;
     const iA: number = this.m_invIA, iB: number = this.m_invIB;
 
-    if (this.m_frequencyHz > 0) {
+    if (this.m_stiffness > 0) {
       const Cdot2: number = wB - wA;
 
       const impulse2: number = -this.m_mass.ez.z * (Cdot2 + this.m_bias + this.m_gamma * this.m_impulse.z);
@@ -320,7 +316,7 @@ export class b2WeldJoint extends b2Joint {
     K.ey.z = K.ez.y;
     K.ez.z = iA + iB;
 
-    if (this.m_frequencyHz > 0) {
+    if (this.m_stiffness > 0) {
       // b2Vec2 C1 =  cB + rB - cA - rA;
       const C1 =
         b2Vec2.SubVV(
@@ -403,11 +399,11 @@ export class b2WeldJoint extends b2Joint {
 
   public GetReferenceAngle(): number { return this.m_referenceAngle; }
 
-  public SetFrequency(hz: number): void { this.m_frequencyHz = hz; }
-  public GetFrequency(): number { return this.m_frequencyHz; }
+  public SetStiffness(stiffness: number): void { this.m_stiffness = stiffness; }
+  public GetStiffness(): number { return this.m_stiffness; }
 
-  public SetDampingRatio(ratio: number) { this.m_dampingRatio = ratio; }
-  public GetDampingRatio() { return this.m_dampingRatio; }
+  public SetDamping(damping: number) { this.m_damping = damping; }
+  public GetDamping() { return this.m_damping; }
 
   public Dump(log: (format: string, ...args: any[]) => void) {
     const indexA = this.m_bodyA.m_islandIndex;
@@ -420,8 +416,8 @@ export class b2WeldJoint extends b2Joint {
     log("  jd.localAnchorA.Set(%.15f, %.15f);\n", this.m_localAnchorA.x, this.m_localAnchorA.y);
     log("  jd.localAnchorB.Set(%.15f, %.15f);\n", this.m_localAnchorB.x, this.m_localAnchorB.y);
     log("  jd.referenceAngle = %.15f;\n", this.m_referenceAngle);
-    log("  jd.frequencyHz = %.15f;\n", this.m_frequencyHz);
-    log("  jd.dampingRatio = %.15f;\n", this.m_dampingRatio);
+    log("  jd.stiffness = %.15f;\n", this.m_stiffness);
+    log("  jd.damping = %.15f;\n", this.m_damping);
     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 }

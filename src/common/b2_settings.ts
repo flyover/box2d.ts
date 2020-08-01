@@ -54,7 +54,7 @@ export const b2_aabbExtension: number = 0.1;
 /// This is used to fatten AABBs in the dynamic tree. This is used to predict
 /// the future position based on the current displacement.
 /// This is a dimensionless multiplier.
-export const b2_aabbMultiplier: number = 2;
+export const b2_aabbMultiplier: number = 4;
 
 /// A small length used as a collision and constraint tolerance. Usually it is
 /// chosen to be numerically significant, but visually insignificant.
@@ -165,6 +165,33 @@ export function b2Log(message: string, ...args: any[]): void {
   // console.log(message, ...args);
 }
 
+// FILE* b2_dumpFile = nullptr;
+
+// void b2OpenDump(const char* fileName)
+// {
+// 	b2Assert(b2_dumpFile == nullptr);
+// 	b2_dumpFile = fopen(fileName, "w");
+// }
+
+// void b2Dump(const char* string, ...)
+// {
+// 	if (b2_dumpFile == nullptr)
+// 	{
+// 		return;
+// 	}
+
+// 	va_list args;
+// 	va_start(args, string);
+// 	vfprintf(b2_dumpFile, string, args);
+// 	va_end(args);
+// }
+
+// void b2CloseDump()
+// {
+// 	fclose(b2_dumpFile);
+// 	b2_dumpFile = nullptr;
+// }
+
 /// Version numbering scheme.
 /// See http://en.wikipedia.org/wiki/Software_versioning
 export class b2Version {
@@ -184,10 +211,10 @@ export class b2Version {
 }
 
 /// Current version.
-export const b2_version: b2Version = new b2Version(2, 3, 2);
+export const b2_version: b2Version = new b2Version(2, 4, 0);
 
 export const b2_branch: string = "master";
-export const b2_commit: string = "fbf51801d80fc389d43dc46524520e89043b6faf";
+export const b2_commit: string = "4d7757feedc9dd36f64393ae08acfd3b9600ac17";
 
 export function b2ParseInt(v: string): number {
   return parseInt(v, 10);

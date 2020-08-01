@@ -37,7 +37,7 @@ export class BulletTest extends testbed.Test {
       /*box2d.b2EdgeShape*/
       const edge = new box2d.b2EdgeShape();
 
-      edge.Set(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
+      edge.SetTwoSided(new box2d.b2Vec2(-10.0, 0.0), new box2d.b2Vec2(10.0, 0.0));
       body.CreateFixture(edge, 0.0);
 
       /*box2d.b2PolygonShape*/

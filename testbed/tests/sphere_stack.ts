@@ -32,7 +32,7 @@ export class SphereStack extends testbed.Test {
       const ground: box2d.b2Body = this.m_world.CreateBody(bd);
 
       const shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 

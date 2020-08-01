@@ -1,4 +1,5 @@
 import * as box2d from "@box2d";
+import { Settings } from "./settings.js";
 import { g_debugDraw } from "./draw.js";
 // #if B2_ENABLE_PARTICLE
 import { FullScreenUI } from "./fullscreen_ui.js";
@@ -11,41 +12,6 @@ export function RandomFloat(lo: number = -1, hi: number = 1) {
   let r = Math.random();
   r = (hi - lo) * r + lo;
   return r;
-}
-
-export class Settings {
-  public hz: number = 60;
-  public velocityIterations: number = 8;
-  public positionIterations: number = 3;
-  // #if B2_ENABLE_PARTICLE
-  // Particle iterations are needed for numerical stability in particle
-  // simulations with small particles and relatively high gravity.
-  // b2CalculateParticleIterations helps to determine the number.
-  public particleIterations: number = box2d.b2CalculateParticleIterations(10, 0.04, 1 / this.hz);
-  // #endif
-  public drawShapes: boolean = true;
-  // #if B2_ENABLE_PARTICLE
-  public drawParticles: boolean = true;
-  // #endif
-  public drawJoints: boolean = true;
-  public drawAABBs: boolean = false;
-  public drawContactPoints: boolean = false;
-  public drawContactNormals: boolean = false;
-  public drawContactImpulse: boolean = false;
-  public drawFrictionImpulse: boolean = false;
-  public drawCOMs: boolean = false;
-  public drawControllers: boolean = true;
-  public drawStats: boolean = false;
-  public drawProfile: boolean = false;
-  public enableWarmStarting: boolean = true;
-  public enableContinuous: boolean = true;
-  public enableSubStepping: boolean = false;
-  public enableSleep: boolean = true;
-  public pause: boolean = false;
-  public singleStep: boolean = false;
-  // #if B2_ENABLE_PARTICLE
-  public strictContacts: boolean = false;
-  // #endif
 }
 
 export class TestEntry {
@@ -375,11 +341,11 @@ export class Test extends box2d.b2ContactListener {
   }
 
   public Step(settings: Settings): void {
-    let timeStep = settings.hz > 0 ? 1 / settings.hz : 0;
+    let timeStep = settings.m_hertz > 0 ? 1 / settings.m_hertz : 0;
 
-    if (settings.pause) {
-      if (settings.singleStep) {
-        settings.singleStep = false;
+    if (settings.m_pause) {
+      if (settings.m_singleStep) {
+        settings.m_singleStep = false;
       } else {
         timeStep = 0;
       }
@@ -389,39 +355,41 @@ export class Test extends box2d.b2ContactListener {
     }
 
     let flags = box2d.b2DrawFlags.e_none;
-    if (settings.drawShapes) { flags |= box2d.b2DrawFlags.e_shapeBit;        }
+    if (settings.m_drawShapes) { flags |= box2d.b2DrawFlags.e_shapeBit;        }
     // #if B2_ENABLE_PARTICLE
-    if (settings.drawParticles) { flags |= box2d.b2DrawFlags.e_particleBit; }
+    if (settings.m_drawParticles) { flags |= box2d.b2DrawFlags.e_particleBit; }
     // #endif
-    if (settings.drawJoints) { flags |= box2d.b2DrawFlags.e_jointBit;        }
-    if (settings.drawAABBs ) { flags |= box2d.b2DrawFlags.e_aabbBit;         }
-    if (settings.drawCOMs  ) { flags |= box2d.b2DrawFlags.e_centerOfMassBit; }
-    if (settings.drawControllers  ) { flags |= box2d.b2DrawFlags.e_controllerBit; }
+    if (settings.m_drawJoints) { flags |= box2d.b2DrawFlags.e_jointBit;        }
+    if (settings.m_drawAABBs ) { flags |= box2d.b2DrawFlags.e_aabbBit;         }
+    if (settings.m_drawCOMs  ) { flags |= box2d.b2DrawFlags.e_centerOfMassBit; }
+    // #if B2_ENABLE_CONTROLLER
+    if (settings.m_drawControllers  ) { flags |= box2d.b2DrawFlags.e_controllerBit; }
+    // #endif
     g_debugDraw.SetFlags(flags);
 
-    this.m_world.SetAllowSleeping(settings.enableSleep);
-    this.m_world.SetWarmStarting(settings.enableWarmStarting);
-    this.m_world.SetContinuousPhysics(settings.enableContinuous);
-    this.m_world.SetSubStepping(settings.enableSubStepping);
+    this.m_world.SetAllowSleeping(settings.m_enableSleep);
+    this.m_world.SetWarmStarting(settings.m_enableWarmStarting);
+    this.m_world.SetContinuousPhysics(settings.m_enableContinuous);
+    this.m_world.SetSubStepping(settings.m_enableSubStepping);
     // #if B2_ENABLE_PARTICLE
-    this.m_particleSystem.SetStrictContactCheck(settings.strictContacts);
+    this.m_particleSystem.SetStrictContactCheck(settings.m_strictContacts);
     // #endif
 
     this.m_pointCount = 0;
 
     // #if B2_ENABLE_PARTICLE
-    this.m_world.Step(timeStep, settings.velocityIterations, settings.positionIterations, settings.particleIterations);
+    this.m_world.Step(timeStep, settings.m_velocityIterations, settings.m_positionIterations, settings.m_particleIterations);
     // #else
     // this.m_world.Step(timeStep, settings.velocityIterations, settings.positionIterations);
     // #endif
 
-    this.m_world.DrawDebugData();
+    this.m_world.DebugDraw();
 
     if (timeStep > 0) {
       ++this.m_stepCount;
     }
 
-    if (settings.drawStats) {
+    if (settings.m_drawStats) {
       const bodyCount = this.m_world.GetBodyCount();
       const contactCount = this.m_world.GetContactCount();
       const jointCount = this.m_world.GetJointCount();
@@ -467,7 +435,7 @@ export class Test extends box2d.b2ContactListener {
       this.m_totalProfile.broadphase += p.broadphase;
     }
 
-    if (settings.drawProfile) {
+    if (settings.m_drawProfile) {
       const p = this.m_world.GetProfile();
 
       const aveProfile: box2d.b2Profile = new box2d.b2Profile();
@@ -533,7 +501,7 @@ export class Test extends box2d.b2ContactListener {
       g_debugDraw.DrawSegment(this.m_mouseWorld, this.m_bombSpawnPoint, c);
     }
 
-    if (settings.drawContactPoints) {
+    if (settings.m_drawContactPoints) {
       const k_impulseScale: number = 0.1;
       const k_axisScale: number = 0.3;
 
@@ -548,17 +516,17 @@ export class Test extends box2d.b2ContactListener {
           g_debugDraw.DrawPoint(point.position, 5, new box2d.b2Color(0.3, 0.3, 0.95));
         }
 
-        if (settings.drawContactNormals) {
+        if (settings.m_drawContactNormals) {
           const p1 = point.position;
           const p2: box2d.b2Vec2 = box2d.b2Vec2.AddVV(p1, box2d.b2Vec2.MulSV(k_axisScale, point.normal, box2d.b2Vec2.s_t0), new box2d.b2Vec2());
           g_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.9));
-        } else if (settings.drawContactImpulse) {
+        } else if (settings.m_drawContactImpulse) {
           const p1 = point.position;
           const p2: box2d.b2Vec2 = box2d.b2Vec2.AddVMulSV(p1, k_impulseScale * point.normalImpulse, point.normal, new box2d.b2Vec2());
           g_debugDraw.DrawSegment(p1, p2, new box2d.b2Color(0.9, 0.9, 0.3));
         }
 
-        if (settings.drawFrictionImpulse) {
+        if (settings.m_drawFrictionImpulse) {
           const tangent: box2d.b2Vec2 = box2d.b2Vec2.CrossVOne(point.normal, new box2d.b2Vec2());
           const p1 = point.position;
           const p2: box2d.b2Vec2 = box2d.b2Vec2.AddVMulSV(p1, k_impulseScale * point.tangentImpulse, tangent, new box2d.b2Vec2());

@@ -208,7 +208,9 @@ export enum b2DrawFlags {
   // #if B2_ENABLE_PARTICLE
   e_particleBit = 0x0020, ///< draw particles
   // #endif
+  // #if B2_ENABLE_CONTROLLER
   e_controllerBit = 0x0040, /// @see b2Controller list
+  // #endif
   e_all = 0x003f,
 }
 

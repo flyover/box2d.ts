@@ -26,7 +26,7 @@ export class Dominos extends testbed.Test {
     let b1 = null;
     {
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
 
       const bd = new box2d.b2BodyDef();
       b1 = this.m_world.CreateBody(bd);

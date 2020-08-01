@@ -20,44 +20,8 @@ import { b2Vec2, XY } from "../common/b2_math.js";
 import { b2AABB, b2RayCastInput } from "./b2_collision.js";
 import { b2TreeNode, b2DynamicTree } from "./b2_dynamic_tree.js";
 
-function std_iter_swap<T>(array: T[], a: number, b: number): void {
-  const tmp: T = array[a];
-  array[a] = array[b];
-  array[b] = tmp;
-}
-
-function default_compare<T>(a: T, b: T): boolean { return a < b; }
-
-function std_sort<T>(array: T[], first: number = 0, len: number = array.length - first, cmp: (a: T, b: T) => boolean = default_compare): T[] {
-  let left = first;
-  const stack: number[] = [];
-  let pos = 0;
-
-  for (; ; ) { /* outer loop */
-    for (; left + 1 < len; len++) { /* sort left to len-1 */
-      const pivot = array[left + Math.floor(Math.random() * (len - left))]; /* pick random pivot */
-      stack[pos++] = len; /* sort right part later */
-      for (let right = left - 1; ; ) { /* inner loop: partitioning */
-        while (cmp(array[++right], pivot)) {} /* look for greater element */
-        while (cmp(pivot, array[--len])) {} /* look for smaller element */
-        if (right >= len) {
-          break;
-        } /* partition point found? */
-        std_iter_swap(array, right, len); /* the only swap */
-      } /* partitioned, continue left part */
-    }
-    if (pos === 0) {
-      break;
-    } /* stack empty? */
-    left = len; /* left to right is sorted */
-    len = stack[--pos]; /* get next range to sort */
-  }
-
-  return array;
-}
-
 export class b2Pair<T> {
-  constructor(public proxyA: b2TreeNode<T>, public proxyB: b2TreeNode<T>) {}
+  constructor(public proxyA: b2TreeNode<T>, public proxyB: b2TreeNode<T>) { }
 }
 
 /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
@@ -152,6 +116,12 @@ export class b2BroadPhase<T> {
           return true;
         }
 
+        const moved: boolean = proxy.moved; // this.m_tree.WasMoved(proxy);
+        if (moved && proxy.m_id > queryProxy.m_id) {
+          // Both proxies are moving. Avoid duplicate pairs.
+          return true;
+        }
+
         // const proxyA = proxy < queryProxy ? proxy : queryProxy;
         // const proxyB = proxy >= queryProxy ? proxy : queryProxy;
         let proxyA: b2TreeNode<T>;
@@ -179,34 +149,27 @@ export class b2BroadPhase<T> {
       });
     }
 
-    // Reset move buffer
-    this.m_moveCount = 0;
-
-    // Sort the pair buffer to expose duplicates.
-    std_sort(this.m_pairBuffer, 0, this.m_pairCount, b2PairLessThan);
-
-    // Send the pairs back to the client.
-    let i: number = 0;
-    while (i < this.m_pairCount) {
+    // Send pairs to caller
+    for (let i = 0; i < this.m_pairCount; ++i) {
       const primaryPair: b2Pair<T> = this.m_pairBuffer[i];
       const userDataA: T = primaryPair.proxyA.userData; // this.m_tree.GetUserData(primaryPair.proxyA);
       const userDataB: T = primaryPair.proxyB.userData; // this.m_tree.GetUserData(primaryPair.proxyB);
 
       callback(userDataA, userDataB);
-      ++i;
+  }
 
-      // Skip any duplicate pairs.
-      while (i < this.m_pairCount) {
-        const pair: b2Pair<T> = this.m_pairBuffer[i];
-        if (pair.proxyA.m_id !== primaryPair.proxyA.m_id || pair.proxyB.m_id !== primaryPair.proxyB.m_id) {
-          break;
-        }
-        ++i;
+    // Clear move flags
+    for (let i = 0; i < this.m_moveCount; ++i) {
+      const proxy: b2TreeNode<T> | null = this.m_moveBuffer[i];
+      if (proxy === null) {
+        continue;
       }
+
+      proxy.moved = false; // this.m_tree.ClearMoved(proxy);
     }
 
-    // Try to keep the tree balanced.
-    // this.m_tree.Rebalance(4);
+    // Reset move buffer
+    this.m_moveCount = 0;
   }
 
   /// Query an AABB for overlapping proxies. The callback class
@@ -261,17 +224,4 @@ export class b2BroadPhase<T> {
     const i: number = this.m_moveBuffer.indexOf(proxy);
     this.m_moveBuffer[i] = null;
   }
-}
-
-/// This is used to sort pairs.
-export function b2PairLessThan<T>(pair1: b2Pair<T>, pair2: b2Pair<T>): boolean {
-  if (pair1.proxyA.m_id < pair2.proxyA.m_id) {
-    return true;
-  }
-
-  if (pair1.proxyA.m_id === pair2.proxyA.m_id) {
-    return pair1.proxyB.m_id < pair2.proxyB.m_id;
-  }
-
-  return false;
 }

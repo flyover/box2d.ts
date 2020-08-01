@@ -43,11 +43,11 @@ export class Pinball extends testbed.Test {
 
       /*box2d.b2Vec2*/
       const vs = box2d.b2Vec2.MakeArray(5);
-      vs[0].Set(0.0, -2.0);
-      vs[1].Set(8.0, 6.0);
-      vs[2].Set(8.0, 20.0);
-      vs[3].Set(-8.0, 20.0);
-      vs[4].Set(-8.0, 6.0);
+			vs[0].Set(-8.0, 6.0);
+			vs[1].Set(-8.0, 20.0);
+			vs[2].Set(8.0, 20.0);
+			vs[3].Set(8.0, 6.0);
+			vs[4].Set(0.0, -2.0);
 
       /*box2d.b2ChainShape*/
       const loop = new box2d.b2ChainShape();

@@ -126,7 +126,7 @@ export class SoupStirrer extends Soup {
     // Maximum speed of the body.
     const k_maxSpeed = 2.0;
 
-    this.m_oscillationOffset += (1.0 / settings.hz);
+    this.m_oscillationOffset += (1.0 / settings.m_hertz);
     if (this.m_oscillationOffset > k_forceOscillationPeriod) {
       this.m_oscillationOffset -= k_forceOscillationPeriod;
     }

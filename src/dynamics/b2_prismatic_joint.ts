@@ -16,11 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import { b2_linearSlop, b2_maxLinearCorrection, b2_angularSlop, b2Maybe } from "../common/b2_settings.js";
-import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY } from "../common/b2_math.js";
+import { b2_linearSlop, b2_angularSlop, b2Maybe } from "../common/b2_settings.js";
+import { b2Abs, b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Vec3, b2Mat33, b2Rot, XY, b2Transform } from "../common/b2_math.js";
 import { b2Body } from "./b2_body.js";
-import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2_joint.js";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint.js";
 import { b2SolverData } from "./b2_time_step.js";
+import { b2Draw, b2Color } from "../common/b2_draw.js";
 
 export interface b2IPrismaticJointDef extends b2IJointDef {
   localAnchorA?: XY;
@@ -85,22 +86,67 @@ export class b2PrismaticJointDef extends b2JointDef implements b2IPrismaticJoint
   }
 }
 
+// Linear constraint (point-to-line)
+// d = p2 - p1 = x2 + r2 - x1 - r1
+// C = dot(perp, d)
+// Cdot = dot(d, cross(w1, perp)) + dot(perp, v2 + cross(w2, r2) - v1 - cross(w1, r1))
+//      = -dot(perp, v1) - dot(cross(d + r1, perp), w1) + dot(perp, v2) + dot(cross(r2, perp), v2)
+// J = [-perp, -cross(d + r1, perp), perp, cross(r2,perp)]
+//
+// Angular constraint
+// C = a2 - a1 + a_initial
+// Cdot = w2 - w1
+// J = [0 0 -1 0 0 1]
+//
+// K = J * invM * JT
+//
+// J = [-a -s1 a s2]
+//     [0  -1  0  1]
+// a = perp
+// s1 = cross(d + r1, a) = cross(p2 - x1, a)
+// s2 = cross(r2, a) = cross(p2 - x2, a)
+
+// Motor/Limit linear constraint
+// C = dot(ax1, d)
+// Cdot = -dot(ax1, v1) - dot(cross(d + r1, ax1), w1) + dot(ax1, v2) + dot(cross(r2, ax1), v2)
+// J = [-ax1 -cross(d+r1,ax1) ax1 cross(r2,ax1)]
+
+// Predictive limit is applied even when the limit is not active.
+// Prevents a constraint speed that can lead to a constraint error in one time step.
+// Want C2 = C1 + h * Cdot >= 0
+// Or:
+// Cdot + C1/h >= 0
+// I do not apply a negative constraint error because that is handled in position correction.
+// So:
+// Cdot + max(C1, 0)/h >= 0
+
+// Block Solver
+// We develop a block solver that includes the angular and linear constraints. This makes the limit stiffer.
+//
+// The Jacobian has 2 rows:
+// J = [-uT -s1 uT s2] // linear
+//     [0   -1   0  1] // angular
+//
+// u = perp
+// s1 = cross(d + r1, u), s2 = cross(r2, u)
+// a1 = cross(d + r1, v), a2 = cross(r2, v)
+
 export class b2PrismaticJoint extends b2Joint {
-  // Solver shared
   public readonly m_localAnchorA: b2Vec2 = new b2Vec2();
   public readonly m_localAnchorB: b2Vec2 = new b2Vec2();
   public readonly m_localXAxisA: b2Vec2 = new b2Vec2();
   public readonly m_localYAxisA: b2Vec2 = new b2Vec2();
   public m_referenceAngle: number = 0;
-  public readonly m_impulse: b2Vec3 = new b2Vec3(0, 0, 0);
+  public readonly m_impulse: b2Vec2 = new b2Vec2(0, 0);
   public m_motorImpulse: number = 0;
+  public m_lowerImpulse: number = 0;
+  public m_upperImpulse: number = 0;
   public m_lowerTranslation: number = 0;
   public m_upperTranslation: number = 0;
   public m_maxMotorForce: number = 0;
   public m_motorSpeed: number = 0;
   public m_enableLimit: boolean = false;
   public m_enableMotor: boolean = false;
-  public m_limitState: b2LimitState = b2LimitState.e_inactiveLimit;
 
   // Solver temp
   public m_indexA: number = 0;
@@ -117,10 +163,11 @@ export class b2PrismaticJoint extends b2Joint {
   public m_s2: number = 0;
   public m_a1: number = 0;
   public m_a2: number = 0;
-  public readonly m_K: b2Mat33 = new b2Mat33();
+  public readonly m_K: b2Mat22 = new b2Mat22();
   public readonly m_K3: b2Mat33 = new b2Mat33();
   public readonly m_K2: b2Mat22 = new b2Mat22();
-  public m_motorMass: number = 0;
+  public m_translation: number = 0;
+  public m_axialMass: number = 0;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -139,6 +186,7 @@ export class b2PrismaticJoint extends b2Joint {
     this.m_referenceAngle = b2Maybe(def.referenceAngle, 0);
     this.m_lowerTranslation = b2Maybe(def.lowerTranslation, 0);
     this.m_upperTranslation = b2Maybe(def.upperTranslation, 0);
+    // b2Assert(this.m_lowerTranslation <= this.m_upperTranslation);
     this.m_maxMotorForce = b2Maybe(def.maxMotorForce, 0);
     this.m_motorSpeed = b2Maybe(def.motorSpeed, 0);
     this.m_enableLimit = b2Maybe(def.enableLimit, false);
@@ -194,9 +242,9 @@ export class b2PrismaticJoint extends b2Joint {
       // m_a2 = b2Cross(rB, m_axis);
       this.m_a2 = b2Vec2.CrossVV(rB, this.m_axis);
 
-      this.m_motorMass = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
-      if (this.m_motorMass > 0) {
-        this.m_motorMass = 1 / this.m_motorMass;
+      this.m_axialMass = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
+      if (this.m_axialMass > 0) {
+        this.m_axialMass = 1 / this.m_axialMass;
       }
     }
 
@@ -214,8 +262,6 @@ export class b2PrismaticJoint extends b2Joint {
       this.m_K.ex.x = mA + mB + iA * this.m_s1 * this.m_s1 + iB * this.m_s2 * this.m_s2;
       // float32 k12 = iA * m_s1 + iB * m_s2;
       this.m_K.ex.y = iA * this.m_s1 + iB * this.m_s2;
-      // float32 k13 = iA * m_s1 * m_a1 + iB * m_s2 * m_a2;
-      this.m_K.ex.z = iA * this.m_s1 * this.m_a1 + iB * this.m_s2 * this.m_a2;
       this.m_K.ey.x = this.m_K.ex.y;
       // float32 k22 = iA + iB;
       this.m_K.ey.y = iA + iB;
@@ -223,41 +269,17 @@ export class b2PrismaticJoint extends b2Joint {
         // For bodies with fixed rotation.
         this.m_K.ey.y = 1;
       }
-      // float32 k23 = iA * m_a1 + iB * m_a2;
-      this.m_K.ey.z = iA * this.m_a1 + iB * this.m_a2;
-      this.m_K.ez.x = this.m_K.ex.z;
-      this.m_K.ez.y = this.m_K.ey.z;
-      // float32 k33 = mA + mB + iA * m_a1 * m_a1 + iB * m_a2 * m_a2;
-      this.m_K.ez.z = mA + mB + iA * this.m_a1 * this.m_a1 + iB * this.m_a2 * this.m_a2;
 
-      // m_K.ex.Set(k11, k12, k13);
-      // m_K.ey.Set(k12, k22, k23);
-      // m_K.ez.Set(k13, k23, k33);
+      // m_K.ex.Set(k11, k12);
+      // m_K.ey.Set(k12, k22);
     }
 
     // Compute motor and limit terms.
     if (this.m_enableLimit) {
-      // float32 jointTranslation = b2Dot(m_axis, d);
-      const jointTranslation: number = b2Vec2.DotVV(this.m_axis, d);
-      if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
-        this.m_limitState = b2LimitState.e_equalLimits;
-      } else if (jointTranslation <= this.m_lowerTranslation) {
-        if (this.m_limitState !== b2LimitState.e_atLowerLimit) {
-          this.m_limitState = b2LimitState.e_atLowerLimit;
-          this.m_impulse.z = 0;
-        }
-      } else if (jointTranslation >= this.m_upperTranslation) {
-        if (this.m_limitState !== b2LimitState.e_atUpperLimit) {
-          this.m_limitState = b2LimitState.e_atUpperLimit;
-          this.m_impulse.z = 0;
-        }
-      } else {
-        this.m_limitState = b2LimitState.e_inactiveLimit;
-        this.m_impulse.z = 0;
-      }
+      this.m_translation = b2Vec2.DotVV(this.m_axis, d);
     } else {
-      this.m_limitState = b2LimitState.e_inactiveLimit;
-      this.m_impulse.z = 0;
+      this.m_lowerImpulse = 0.0;
+      this.m_upperImpulse = 0.0;
     }
 
     if (!this.m_enableMotor) {
@@ -269,16 +291,19 @@ export class b2PrismaticJoint extends b2Joint {
       // m_impulse *= data.step.dtRatio;
       this.m_impulse.SelfMul(data.step.dtRatio);
       this.m_motorImpulse *= data.step.dtRatio;
+      this.m_lowerImpulse *= data.step.dtRatio;
+      this.m_upperImpulse *= data.step.dtRatio;
 
-      // b2Vec2 P = m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis;
+      const axialImpulse: number = this.m_motorImpulse + this.m_lowerImpulse - this.m_upperImpulse;
+      // b2Vec2 P = m_impulse.x * m_perp + axialImpulse * m_axis;
       const P: b2Vec2 = b2Vec2.AddVV(
         b2Vec2.MulSV(this.m_impulse.x, this.m_perp, b2Vec2.s_t0),
-        b2Vec2.MulSV((this.m_motorImpulse + this.m_impulse.z), this.m_axis, b2Vec2.s_t1),
+        b2Vec2.MulSV(axialImpulse, this.m_axis, b2Vec2.s_t1),
         b2PrismaticJoint.InitVelocityConstraints_s_P);
-      // float32 LA = m_impulse.x * m_s1 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a1;
-      const LA = this.m_impulse.x * this.m_s1 + this.m_impulse.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_a1;
-      // float32 LB = m_impulse.x * m_s2 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a2;
-      const LB = this.m_impulse.x * this.m_s2 + this.m_impulse.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_a2;
+      // float LA = m_impulse.x * m_s1 + m_impulse.y + axialImpulse * m_a1;
+      const LA = this.m_impulse.x * this.m_s1 + this.m_impulse.y + axialImpulse * this.m_a1;
+      // float LB = m_impulse.x * m_s2 + m_impulse.y + axialImpulse * m_a2;
+      const LB = this.m_impulse.x * this.m_s2 + this.m_impulse.y + axialImpulse * this.m_a2;
 
       // vA -= mA * P;
       vA.SelfMulSub(mA, P);
@@ -289,7 +314,9 @@ export class b2PrismaticJoint extends b2Joint {
       wB += iB * LB;
     } else {
       this.m_impulse.SetZero();
-      this.m_motorImpulse = 0;
+      this.m_motorImpulse = 0.0;
+      this.m_lowerImpulse = 0.0;
+      this.m_upperImpulse = 0.0;
     }
 
     // data.velocities[this.m_indexA].v = vA;
@@ -299,10 +326,10 @@ export class b2PrismaticJoint extends b2Joint {
   }
 
   private static SolveVelocityConstraints_s_P = new b2Vec2();
-  private static SolveVelocityConstraints_s_f2r = new b2Vec2();
-  private static SolveVelocityConstraints_s_f1 = new b2Vec3();
-  private static SolveVelocityConstraints_s_df3 = new b2Vec3();
-  private static SolveVelocityConstraints_s_df2 = new b2Vec2();
+  // private static SolveVelocityConstraints_s_f2r = new b2Vec2();
+  // private static SolveVelocityConstraints_s_f1 = new b2Vec3();
+  // private static SolveVelocityConstraints_s_df3 = new b2Vec3();
+  private static SolveVelocityConstraints_s_df = new b2Vec2();
   public SolveVelocityConstraints(data: b2SolverData): void {
     const vA: b2Vec2 = data.velocities[this.m_indexA].v;
     let wA: number = data.velocities[this.m_indexA].w;
@@ -313,10 +340,10 @@ export class b2PrismaticJoint extends b2Joint {
     const iA: number = this.m_invIA, iB: number = this.m_invIB;
 
     // Solve linear motor constraint.
-    if (this.m_enableMotor && this.m_limitState !== b2LimitState.e_equalLimits) {
+    if (this.m_enableMotor) {
       // float32 Cdot = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
       const Cdot: number = b2Vec2.DotVV(this.m_axis, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
-      let impulse = this.m_motorMass * (this.m_motorSpeed - Cdot);
+      let impulse = this.m_axialMass * (this.m_motorSpeed - Cdot);
       const oldImpulse = this.m_motorImpulse;
       const maxImpulse = data.step.dt * this.m_maxMotorForce;
       this.m_motorImpulse = b2Clamp(this.m_motorImpulse + impulse, (-maxImpulse), maxImpulse);
@@ -330,86 +357,78 @@ export class b2PrismaticJoint extends b2Joint {
       // vA -= mA * P;
       vA.SelfMulSub(mA, P);
       wA -= iA * LA;
-
       // vB += mB * P;
       vB.SelfMulAdd(mB, P);
       wB += iB * LB;
     }
 
-    // b2Vec2 Cdot1;
-    // Cdot1.x = b2Dot(m_perp, vB - vA) + m_s2 * wB - m_s1 * wA;
-    const Cdot1_x: number = b2Vec2.DotVV(this.m_perp, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
-    // Cdot1.y = wB - wA;
-    const Cdot1_y = wB - wA;
+    if (this.m_enableLimit) {
+      // Lower limit
+      {
+        const C: number = this.m_translation - this.m_lowerTranslation;
+        const Cdot: number = b2Vec2.DotVV(this.m_axis, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
+        let impulse: number = -this.m_axialMass * (Cdot + b2Max(C, 0.0) * data.step.inv_dt);
+        const oldImpulse: number = this.m_lowerImpulse;
+        this.m_lowerImpulse = b2Max(this.m_lowerImpulse + impulse, 0.0);
+        impulse = this.m_lowerImpulse - oldImpulse;
 
-    if (this.m_enableLimit && this.m_limitState !== b2LimitState.e_inactiveLimit) {
-      // Solve prismatic and limit constraint in block form.
-      // float32 Cdot2;
-      // Cdot2 = b2Dot(m_axis, vB - vA) + m_a2 * wB - m_a1 * wA;
-      const Cdot2: number = b2Vec2.DotVV(this.m_axis, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_a2 * wB - this.m_a1 * wA;
-      // b2Vec3 Cdot(Cdot1.x, Cdot1.y, Cdot2);
+        // b2Vec2 P = impulse * this.m_axis;
+        const P: b2Vec2 = b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+        const LA: number = impulse * this.m_a1;
+        const LB: number = impulse * this.m_a2;
 
-      // b2Vec3 f1 = m_impulse;
-      const f1 = b2PrismaticJoint.SolveVelocityConstraints_s_f1.Copy(this.m_impulse);
-      // b2Vec3 df =  m_K.Solve33(-Cdot);
-      const df3 = this.m_K.Solve33((-Cdot1_x), (-Cdot1_y), (-Cdot2), b2PrismaticJoint.SolveVelocityConstraints_s_df3);
-      // m_impulse += df;
-      this.m_impulse.SelfAdd(df3);
-
-      if (this.m_limitState === b2LimitState.e_atLowerLimit) {
-        this.m_impulse.z = b2Max(this.m_impulse.z, 0);
-      } else if (this.m_limitState === b2LimitState.e_atUpperLimit) {
-        this.m_impulse.z = b2Min(this.m_impulse.z, 0);
+        // vA -= mA * P;
+        vA.SelfMulSub(mA, P);
+        wA -= iA * LA;
+        // vB += mB * P;
+        vB.SelfMulAdd(mB, P);
+        wB += iB * LB;
       }
 
-      // f2(1:2) = invK(1:2,1:2) * (-Cdot(1:2) - K(1:2,3) * (f2(3) - f1(3))) + f1(1:2)
-      // b2Vec2 b = -Cdot1 - (m_impulse.z - f1.z) * b2Vec2(m_K.ez.x, m_K.ez.y);
-      const b_x = (-Cdot1_x) - (this.m_impulse.z - f1.z) * this.m_K.ez.x;
-      const b_y = (-Cdot1_y) - (this.m_impulse.z - f1.z) * this.m_K.ez.y;
-      // b2Vec2 f2r = m_K.Solve22(b) + b2Vec2(f1.x, f1.y);
-      const f2r = this.m_K.Solve22(b_x, b_y, b2PrismaticJoint.SolveVelocityConstraints_s_f2r);
-      f2r.x += f1.x;
-      f2r.y += f1.y;
-      // m_impulse.x = f2r.x;
-      this.m_impulse.x = f2r.x;
-      // m_impulse.y = f2r.y;
-      this.m_impulse.y = f2r.y;
+      // Upper limit
+      // Note: signs are flipped to keep C positive when the constraint is satisfied.
+      // This also keeps the impulse positive when the limit is active.
+      {
+        const C: number = this.m_upperTranslation - this.m_translation;
+        const Cdot: number = b2Vec2.DotVV(this.m_axis, b2Vec2.SubVV(vA, vB, b2Vec2.s_t0)) + this.m_a1 * wA - this.m_a2 * wB;
+        let impulse: number = -this.m_axialMass * (Cdot + b2Max(C, 0.0) * data.step.inv_dt);
+        const oldImpulse: number = this.m_upperImpulse;
+        this.m_upperImpulse = b2Max(this.m_upperImpulse + impulse, 0.0);
+        impulse = this.m_upperImpulse - oldImpulse;
 
-      // df = m_impulse - f1;
-      df3.x = this.m_impulse.x - f1.x;
-      df3.y = this.m_impulse.y - f1.y;
-      df3.z = this.m_impulse.z - f1.z;
+        // b2Vec2 P = impulse * this.m_axis;
+        const P: b2Vec2 = b2Vec2.MulSV(impulse, this.m_axis, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+        const LA: number = impulse * this.m_a1;
+        const LB: number = impulse * this.m_a2;
 
-      // b2Vec2 P = df.x * m_perp + df.z * m_axis;
-      const P: b2Vec2 = b2Vec2.AddVV(
-        b2Vec2.MulSV(df3.x, this.m_perp, b2Vec2.s_t0),
-        b2Vec2.MulSV(df3.z, this.m_axis, b2Vec2.s_t1),
-        b2PrismaticJoint.SolveVelocityConstraints_s_P);
-      // float32 LA = df.x * m_s1 + df.y + df.z * m_a1;
-      const LA = df3.x * this.m_s1 + df3.y + df3.z * this.m_a1;
-      // float32 LB = df.x * m_s2 + df.y + df.z * m_a2;
-      const LB = df3.x * this.m_s2 + df3.y + df3.z * this.m_a2;
+        // vA += mA * P;
+        vA.SelfMulAdd(mA, P);
+        wA += iA * LA;
+        // vB -= mB * P;
+        vB.SelfMulSub(mB, P);
+        wB -= iB * LB;
+      }
+    }
 
-      // vA -= mA * P;
-      vA.SelfMulSub(mA, P);
-      wA -= iA * LA;
+    // Solve the prismatic constraint in block form.
+    {
+      // b2Vec2 Cdot;
+      // Cdot.x = b2Dot(m_perp, vB - vA) + m_s2 * wB - m_s1 * wA;
+      const Cdot_x: number = b2Vec2.DotVV(this.m_perp, b2Vec2.SubVV(vB, vA, b2Vec2.s_t0)) + this.m_s2 * wB - this.m_s1 * wA;
+      // Cdot.y = wB - wA;
+      const Cdot_y = wB - wA;
 
-      // vB += mB * P;
-      vB.SelfMulAdd(mB, P);
-      wB += iB * LB;
-    } else {
-      // Limit is inactive, just solve the prismatic constraint in block form.
-      // b2Vec2 df = m_K.Solve22(-Cdot1);
-      const df2 = this.m_K.Solve22((-Cdot1_x), (-Cdot1_y), b2PrismaticJoint.SolveVelocityConstraints_s_df2);
-      this.m_impulse.x += df2.x;
-      this.m_impulse.y += df2.y;
+      // b2Vec2 df = m_K.Solve(-Cdot);
+      const df = this.m_K.Solve(-Cdot_x, -Cdot_y, b2PrismaticJoint.SolveVelocityConstraints_s_df);
+      // m_impulse += df;
+      this.m_impulse.SelfAdd(df);
 
       // b2Vec2 P = df.x * m_perp;
-      const P: b2Vec2 = b2Vec2.MulSV(df2.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
+      const P: b2Vec2 = b2Vec2.MulSV(df.x, this.m_perp, b2PrismaticJoint.SolveVelocityConstraints_s_P);
       // float32 LA = df.x * m_s1 + df.y;
-      const LA = df2.x * this.m_s1 + df2.y;
+      const LA = df.x * this.m_s1 + df.y;
       // float32 LB = df.x * m_s2 + df.y;
-      const LB = df2.x * this.m_s2 + df2.y;
+      const LB = df.x * this.m_s2 + df.y;
 
       // vA -= mA * P;
       vA.SelfMulSub(mA, P);
@@ -489,18 +508,15 @@ export class b2PrismaticJoint extends b2Joint {
       // float32 translation = b2Dot(axis, d);
       const translation: number = b2Vec2.DotVV(axis, d);
       if (b2Abs(this.m_upperTranslation - this.m_lowerTranslation) < 2 * b2_linearSlop) {
-        // Prevent large angular corrections
-        C2 = b2Clamp(translation, (-b2_maxLinearCorrection), b2_maxLinearCorrection);
+        C2 = translation;
         linearError = b2Max(linearError, b2Abs(translation));
         active = true;
       } else if (translation <= this.m_lowerTranslation) {
-        // Prevent large linear corrections and allow some slop.
-        C2 = b2Clamp(translation - this.m_lowerTranslation + b2_linearSlop, (-b2_maxLinearCorrection), 0);
+        C2 = b2Min(translation - this.m_lowerTranslation, 0.0);
         linearError = b2Max(linearError, this.m_lowerTranslation - translation);
         active = true;
       } else if (translation >= this.m_upperTranslation) {
-        // Prevent large linear corrections and allow some slop.
-        C2 = b2Clamp(translation - this.m_upperTranslation - b2_linearSlop, 0, b2_maxLinearCorrection);
+        C2 = b2Max(translation - this.m_upperTranslation, 0.0);
         linearError = b2Max(linearError, translation - this.m_upperTranslation);
         active = true;
       }
@@ -600,8 +616,8 @@ export class b2PrismaticJoint extends b2Joint {
 
   public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
     // return inv_dt * (m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis);
-    out.x = inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.x);
-    out.y = inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_impulse.z) * this.m_axis.y);
+    out.x = inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_lowerImpulse + this.m_upperImpulse) * this.m_axis.x);
+    out.y = inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_lowerImpulse + this.m_upperImpulse) * this.m_axis.y);
     return out;
   }
 
@@ -681,7 +697,8 @@ export class b2PrismaticJoint extends b2Joint {
       this.m_bodyA.SetAwake(true);
       this.m_bodyB.SetAwake(true);
       this.m_enableLimit = flag;
-      this.m_impulse.z = 0;
+      this.m_lowerImpulse = 0.0;
+      this.m_upperImpulse = 0.0;
     }
   }
 
@@ -699,7 +716,8 @@ export class b2PrismaticJoint extends b2Joint {
       this.m_bodyB.SetAwake(true);
       this.m_lowerTranslation = lower;
       this.m_upperTranslation = upper;
-      this.m_impulse.z = 0;
+      this.m_lowerImpulse = 0.0;
+      this.m_upperImpulse = 0.0;
     }
   }
 
@@ -760,5 +778,51 @@ export class b2PrismaticJoint extends b2Joint {
     log("  jd.motorSpeed = %.15f;\n", this.m_motorSpeed);
     log("  jd.maxMotorForce = %.15f;\n", this.m_maxMotorForce);
     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
+  }
+
+  private static Draw_s_pA = new b2Vec2();
+  private static Draw_s_pB = new b2Vec2();
+  private static Draw_s_axis = new b2Vec2();
+  private static Draw_s_c1 = new b2Color(0.7, 0.7, 0.7);
+  // private static Draw_s_c2 = new b2Color(0.3, 0.9, 0.3);
+  // private static Draw_s_c3 = new b2Color(0.9, 0.3, 0.3);
+  private static Draw_s_c4 = new b2Color(0.3, 0.3, 0.9);
+  private static Draw_s_c5 = new b2Color(0.4, 0.4, 0.4);
+  private static Draw_s_lower = new b2Vec2();
+  private static Draw_s_upper = new b2Vec2();
+  // private static Draw_s_perp = new b2Vec2();
+  public Draw(draw: b2Draw): void {
+    const xfA: Readonly<b2Transform> = this.m_bodyA.GetTransform();
+    const xfB: Readonly<b2Transform> = this.m_bodyB.GetTransform();
+    const pA = b2Transform.MulXV(xfA, this.m_localAnchorA, b2PrismaticJoint.Draw_s_pA);
+    const pB = b2Transform.MulXV(xfB, this.m_localAnchorB, b2PrismaticJoint.Draw_s_pB);
+
+    // b2Vec2 axis = b2Mul(xfA.q, m_localXAxisA);
+    const axis: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_localXAxisA, b2PrismaticJoint.Draw_s_axis);
+
+    const c1 = b2PrismaticJoint.Draw_s_c1; // b2Color c1(0.7f, 0.7f, 0.7f);
+    // const c2 = b2PrismaticJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
+    // const c3 = b2PrismaticJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
+    const c4 = b2PrismaticJoint.Draw_s_c4; // b2Color c4(0.3f, 0.3f, 0.9f);
+    const c5 = b2PrismaticJoint.Draw_s_c5; // b2Color c5(0.4f, 0.4f, 0.4f);
+
+    draw.DrawSegment(pA, pB, c5);
+
+    if (this.m_enableLimit) {
+      // b2Vec2 lower = pA + m_lowerTranslation * axis;
+      const lower = b2PrismaticJoint.Draw_s_lower.Copy(pA).SelfAdd(b2Vec2.MulSV(this.m_lowerTranslation, axis, b2Vec2.s_t0));
+      // b2Vec2 upper = pA + m_upperTranslation * axis;
+      const upper = b2PrismaticJoint.Draw_s_upper.Copy(pA).SelfAdd(b2Vec2.MulSV(this.m_upperTranslation, axis, b2Vec2.s_t0));
+      // b2Vec2 perp = b2Mul(xfA.q, m_localYAxisA);
+      // const perp = b2Rot.MulRV(xfA.q, this.m_localYAxisA, b2PrismaticJoint.Draw_s_perp);
+      draw.DrawSegment(lower, upper, c1);
+      // draw.DrawSegment(lower - 0.5 * perp, lower + 0.5 * perp, c2);
+      // draw.DrawSegment(upper - 0.5 * perp, upper + 0.5 * perp, c3);
+    } else {
+      // draw.DrawSegment(pA - 1.0 * axis, pA + 1.0 * axis, c1);
+    }
+
+    draw.DrawPoint(pA, 5.0, c1);
+    draw.DrawPoint(pB, 5.0, c4);
   }
 }

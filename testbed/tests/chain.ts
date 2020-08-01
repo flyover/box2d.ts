@@ -19,6 +19,8 @@
 import * as box2d from "@box2d";
 import * as testbed from "../testbed.js";
 
+const TEST_BAD_BODY: boolean = false;
+
 export class Chain extends testbed.Test {
   public static readonly e_count = 30;
 
@@ -32,7 +34,7 @@ export class Chain extends testbed.Test {
       ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -55,6 +57,15 @@ export class Chain extends testbed.Test {
         bd.type = box2d.b2BodyType.b2_dynamicBody;
         bd.position.Set(0.5 + i, y);
         const body = this.m_world.CreateBody(bd);
+
+        if (TEST_BAD_BODY) {
+          if (i === 10) {
+            fd.density = 0.0;
+          } else {
+            fd.density = 20.0;
+          }
+        }
+
         body.CreateFixture(fd);
 
         const anchor = new box2d.b2Vec2(i, y);

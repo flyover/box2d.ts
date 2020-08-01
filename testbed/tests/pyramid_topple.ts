@@ -41,7 +41,7 @@ export class PyramidTopple extends testbed.Test {
     const bd = new box2d.b2BodyDef();
     const body = world.CreateBody(bd);
     const shape = new box2d.b2EdgeShape();
-    shape.Set(new box2d.b2Vec2(-600, -240), new box2d.b2Vec2(600, -240));
+    shape.SetTwoSided(new box2d.b2Vec2(-600, -240), new box2d.b2Vec2(600, -240));
     const fd = new box2d.b2FixtureDef();
     fd.shape = shape;
     fd.friction = 1.0;

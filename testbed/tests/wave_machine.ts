@@ -86,8 +86,8 @@ export class WaveMachine extends testbed.Test {
 
   public Step(settings: testbed.Settings) {
     super.Step(settings);
-    if (settings.hz > 0) {
-      this.m_time += 1 / settings.hz;
+    if (settings.m_hertz > 0) {
+      this.m_time += 1 / settings.m_hertz;
     }
     this.m_joint.SetMotorSpeed(0.05 * Math.cos(this.m_time) * box2d.b2_pi);
   }

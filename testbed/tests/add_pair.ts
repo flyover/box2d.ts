@@ -54,7 +54,7 @@ export class AddPair extends testbed.Test {
       bd.bullet = true;
       const body = this.m_world.CreateBody(bd);
       body.CreateFixture(shape, 1.0);
-      body.SetLinearVelocity(new box2d.b2Vec2(150.0, 0.0));
+      body.SetLinearVelocity(new box2d.b2Vec2(10.0, 0.0));
     }
   }
 

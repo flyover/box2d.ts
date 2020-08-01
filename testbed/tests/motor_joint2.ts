@@ -31,7 +31,7 @@ export class MotorJoint2 extends testbed.Test {
       ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
 
       const fd = new box2d.b2FixtureDef();
       fd.shape = shape;

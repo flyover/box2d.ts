@@ -48,19 +48,19 @@ export class ApplyForce extends testbed.Test {
       sd.restitution = k_restitution;
 
       // Left vertical
-      shape.Set(new box2d.b2Vec2(-20.0, -20.0), new box2d.b2Vec2(-20.0, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-20.0, -20.0), new box2d.b2Vec2(-20.0, 20.0));
       ground.CreateFixture(sd);
 
       // Right vertical
-      shape.Set(new box2d.b2Vec2(20.0, -20.0), new box2d.b2Vec2(20.0, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(20.0, -20.0), new box2d.b2Vec2(20.0, 20.0));
       ground.CreateFixture(sd);
 
       // Top horizontal
-      shape.Set(new box2d.b2Vec2(-20.0, 20.0), new box2d.b2Vec2(20.0, 20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 20.0), new box2d.b2Vec2(20.0, 20.0));
       ground.CreateFixture(sd);
 
       // Bottom horizontal
-      shape.Set(new box2d.b2Vec2(-20.0, -20.0), new box2d.b2Vec2(20.0, -20.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-20.0, -20.0), new box2d.b2Vec2(20.0, -20.0));
       ground.CreateFixture(sd);
     }
 
@@ -83,7 +83,7 @@ export class ApplyForce extends testbed.Test {
       /*box2d.b2FixtureDef*/
       const sd1 = new box2d.b2FixtureDef();
       sd1.shape = poly1;
-      sd1.density = 4.0;
+      sd1.density = 2.0;
 
       /*box2d.b2Transform*/
       const xf2 = new box2d.b2Transform();
@@ -106,15 +106,34 @@ export class ApplyForce extends testbed.Test {
       /*box2d.b2BodyDef*/
       const bd = new box2d.b2BodyDef();
       bd.type = box2d.b2BodyType.b2_dynamicBody;
-      bd.angularDamping = 2.0;
-      bd.linearDamping = 0.5;
 
-      bd.position.Set(0.0, 2.0);
+      bd.position.Set(0.0, 3.0);
       bd.angle = box2d.b2_pi;
       bd.allowSleep = false;
       this.m_body = this.m_world.CreateBody(bd);
       this.m_body.CreateFixture(sd1);
       this.m_body.CreateFixture(sd2);
+
+      const gravity: number = 10.0;
+      const I: number = this.m_body.GetInertia();
+      const mass: number = this.m_body.GetMass();
+
+      // Compute an effective radius that can be used to
+      // set the max torque for a friction joint
+      // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
+      const radius: number = box2d.b2Sqrt(2.0 * I / mass);
+
+      // b2FrictionJointDef jd;
+      const jd = new box2d.b2FrictionJointDef();
+      jd.bodyA = ground;
+      jd.bodyB = this.m_body;
+      jd.localAnchorA.SetZero();
+      jd.localAnchorB.Copy(this.m_body.GetLocalCenter());
+      jd.collideConnected = true;
+      jd.maxForce = 0.5 * mass * gravity;
+      jd.maxTorque = 0.2 * mass * radius * gravity;
+
+      this.m_world.CreateJoint(jd);
     }
 
     {
@@ -133,7 +152,7 @@ export class ApplyForce extends testbed.Test {
         const bd = new box2d.b2BodyDef();
         bd.type = box2d.b2BodyType.b2_dynamicBody;
 
-        bd.position.Set(0.0, 5.0 + 1.54 * i);
+        bd.position.Set(0.0, 7.0 + 1.54 * i);
         /*box2d.b2Body*/
         const body = this.m_world.CreateBody(bd);
 
@@ -158,7 +177,7 @@ export class ApplyForce extends testbed.Test {
         jd.bodyB = body;
         jd.collideConnected = true;
         jd.maxForce = mass * gravity;
-        jd.maxTorque = mass * radius * gravity;
+        jd.maxTorque = 0.1 * mass * radius * gravity;
 
         this.m_world.CreateJoint(jd);
       }
@@ -170,22 +189,22 @@ export class ApplyForce extends testbed.Test {
       case "w":
         {
           /*box2d.b2Vec2*/
-          const f = this.m_body.GetWorldVector(new box2d.b2Vec2(0.0, -200.0), new box2d.b2Vec2());
+          const f = this.m_body.GetWorldVector(new box2d.b2Vec2(0.0, -50.0), new box2d.b2Vec2());
           /*box2d.b2Vec2*/
-          const p = this.m_body.GetWorldPoint(new box2d.b2Vec2(0.0, 2.0), new box2d.b2Vec2());
+          const p = this.m_body.GetWorldPoint(new box2d.b2Vec2(0.0, 3.0), new box2d.b2Vec2());
           this.m_body.ApplyForce(f, p);
         }
         break;
 
       case "a":
         {
-          this.m_body.ApplyTorque(50.0);
+          this.m_body.ApplyTorque(10.0);
         }
         break;
 
       case "d":
         {
-          this.m_body.ApplyTorque(-50.0);
+          this.m_body.ApplyTorque(-10.0);
         }
         break;
     }
@@ -194,6 +213,11 @@ export class ApplyForce extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
+		// g_debugDraw.DrawString(5, m_textLine, "Forward (W), Turn (A) and (D)");
+		// m_textLine += m_textIncrement;
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Forward (W), Turn (A) and (D)`);
+    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+
     super.Step(settings);
   }
 

@@ -18,7 +18,7 @@
 
 import { b2_linearSlop, b2_maxLinearCorrection, b2Maybe } from "../common/b2_settings.js";
 import { b2Min, b2Clamp, b2Vec2, b2Rot, XY } from "../common/b2_math.js";
-import { b2Joint, b2JointDef, b2JointType, b2LimitState, b2IJointDef } from "./b2_joint.js";
+import { b2Joint, b2JointDef, b2JointType, b2IJointDef } from "./b2_joint.js";
 import { b2SolverData } from "./b2_time_step.js";
 
 export interface b2IRopeJointDef extends b2IJointDef {
@@ -66,7 +66,6 @@ export class b2RopeJoint extends b2Joint {
   public m_invIA: number = 0;
   public m_invIB: number = 0;
   public m_mass: number = 0;
-  public m_state = b2LimitState.e_inactiveLimit;
 
   public readonly m_qA: b2Rot = new b2Rot();
   public readonly m_qB: b2Rot = new b2Rot();
@@ -114,13 +113,6 @@ export class b2RopeJoint extends b2Joint {
     this.m_u.Copy(cB).SelfAdd(this.m_rB).SelfSub(cA).SelfSub(this.m_rA);
 
     this.m_length = this.m_u.Length();
-
-    const C: number = this.m_length - this.m_maxLength;
-    if (C > 0) {
-      this.m_state = b2LimitState.e_atUpperLimit;
-    } else {
-      this.m_state = b2LimitState.e_inactiveLimit;
-    }
 
     if (this.m_length > b2_linearSlop) {
       this.m_u.SelfMul(1 / this.m_length);
@@ -222,8 +214,8 @@ export class b2RopeJoint extends b2Joint {
     // b2Vec2 u = cB + rB - cA - rA;
     const u: b2Vec2 = this.m_u.Copy(cB).SelfAdd(rB).SelfSub(cA).SelfSub(rA);
 
-    const length: number = u.Normalize();
-    let C: number = length - this.m_maxLength;
+    this.m_length = u.Normalize();
+    let C: number = this.m_length - this.m_maxLength;
 
     C = b2Clamp(C, 0, b2_maxLinearCorrection);
 
@@ -243,7 +235,7 @@ export class b2RopeJoint extends b2Joint {
     // data.positions[this.m_indexB].c = cB;
     data.positions[this.m_indexB].a = aB;
 
-    return length - this.m_maxLength < b2_linearSlop;
+    return this.m_length - this.m_maxLength < b2_linearSlop;
   }
 
   public GetAnchorA<T extends XY>(out: T): T {
@@ -272,8 +264,8 @@ export class b2RopeJoint extends b2Joint {
     return this.m_maxLength;
   }
 
-  public GetLimitState(): b2LimitState {
-    return this.m_state;
+  public GetLength(): number {
+    return this.m_length;
   }
 
   public Dump(log: (format: string, ...args: any[]) => void): void {

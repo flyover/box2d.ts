@@ -254,8 +254,9 @@ export class b2Island {
 
       if (b.m_type === b2BodyType.b2_dynamicBody) {
         // Integrate velocities.
-        v.x += h * (b.m_gravityScale * gravity.x + b.m_invMass * b.m_force.x);
-        v.y += h * (b.m_gravityScale * gravity.y + b.m_invMass * b.m_force.y);
+        // v += h * b->m_invMass * (b->m_gravityScale * b->m_mass * gravity + b->m_force);
+        v.x += h * b.m_invMass * (b.m_gravityScale * b.m_mass * gravity.x + b.m_force.x);
+        v.y += h * b.m_invMass * (b.m_gravityScale * b.m_mass * gravity.y + b.m_force.y);
         w += h * b.m_invI * b.m_torque;
 
         // Apply damping.

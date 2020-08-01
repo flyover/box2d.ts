@@ -34,7 +34,7 @@ export class SliderCrank extends testbed.Test {
       ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -138,7 +138,7 @@ export class SliderCrank extends testbed.Test {
     super.Step(settings);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (f) toggle friction, (m) toggle motor");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-    const torque = this.m_joint1.GetMotorTorque(settings.hz);
+    const torque = this.m_joint1.GetMotorTorque(settings.m_hertz);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque.toFixed(0)}`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }

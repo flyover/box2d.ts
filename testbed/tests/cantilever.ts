@@ -32,7 +32,7 @@ export class Cantilever extends testbed.Test {
       ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -71,8 +71,8 @@ export class Cantilever extends testbed.Test {
       fd.density = 20.0;
 
       const jd = new box2d.b2WeldJointDef();
-      jd.frequencyHz = 5.0;
-      jd.dampingRatio = 0.7;
+      const frequencyHz: number = 5.0;
+      const dampingRatio: number = 0.7;
 
       let prevBody = ground;
       for (let i = 0; i < 3; ++i) {
@@ -84,6 +84,7 @@ export class Cantilever extends testbed.Test {
 
         const anchor = new box2d.b2Vec2(-15.0 + 2.0 * i, 15.0);
         jd.Initialize(prevBody, body, anchor);
+				box2d.b2AngularStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
         this.m_world.CreateJoint(jd);
 
         prevBody = body;
@@ -127,8 +128,8 @@ export class Cantilever extends testbed.Test {
       fd.density = 20.0;
 
       const jd = new box2d.b2WeldJointDef();
-      jd.frequencyHz = 8.0;
-      jd.dampingRatio = 0.7;
+      const frequencyHz: number = 8.0;
+      const dampingRatio: number = 0.7;
 
       let prevBody = ground;
       for (let i = 0; i < Cantilever.e_count; ++i) {
@@ -141,6 +142,7 @@ export class Cantilever extends testbed.Test {
         if (i > 0) {
           const anchor = new box2d.b2Vec2(5.0 + 1.0 * i, 10.0);
           jd.Initialize(prevBody, body, anchor);
+          box2d.b2AngularStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
           this.m_world.CreateJoint(jd);
         }
 

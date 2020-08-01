@@ -99,30 +99,38 @@ export class TheoJansen extends testbed.Test {
     body1.CreateFixture(fd1);
     body2.CreateFixture(fd2);
 
-    const djd = new box2d.b2DistanceJointDef();
+    {
+      const jd = new box2d.b2DistanceJointDef();
 
-    // Using a soft distance constraint can reduce some jitter.
-    // It also makes the structure seem a bit more fluid by
-    // acting like a suspension system.
-    djd.dampingRatio = 0.5;
-    djd.frequencyHz = 10.0;
+      // Using a soft distance constraint can reduce some jitter.
+      // It also makes the structure seem a bit more fluid by
+      // acting like a suspension system.
+      const dampingRatio: number = 0.5;
+      const frequencyHz: number = 10.0;
 
-    djd.Initialize(body1, body2, box2d.b2Vec2.AddVV(p2, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(p5, this.m_offset, new box2d.b2Vec2()));
-    this.m_world.CreateJoint(djd);
+      jd.Initialize(body1, body2, box2d.b2Vec2.AddVV(p2, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(p5, this.m_offset, new box2d.b2Vec2()));
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+      this.m_world.CreateJoint(jd);
 
-    djd.Initialize(body1, body2, box2d.b2Vec2.AddVV(p3, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(p4, this.m_offset, new box2d.b2Vec2()));
-    this.m_world.CreateJoint(djd);
+      jd.Initialize(body1, body2, box2d.b2Vec2.AddVV(p3, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(p4, this.m_offset, new box2d.b2Vec2()));
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+      this.m_world.CreateJoint(jd);
 
-    djd.Initialize(body1, this.m_wheel, box2d.b2Vec2.AddVV(p3, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(wheelAnchor, this.m_offset, new box2d.b2Vec2()));
-    this.m_world.CreateJoint(djd);
+      jd.Initialize(body1, this.m_wheel, box2d.b2Vec2.AddVV(p3, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(wheelAnchor, this.m_offset, new box2d.b2Vec2()));
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+      this.m_world.CreateJoint(jd);
 
-    djd.Initialize(body2, this.m_wheel, box2d.b2Vec2.AddVV(p6, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(wheelAnchor, this.m_offset, new box2d.b2Vec2()));
-    this.m_world.CreateJoint(djd);
+      jd.Initialize(body2, this.m_wheel, box2d.b2Vec2.AddVV(p6, this.m_offset, new box2d.b2Vec2()), box2d.b2Vec2.AddVV(wheelAnchor, this.m_offset, new box2d.b2Vec2()));
+      box2d.b2LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+      this.m_world.CreateJoint(jd);
+    }
 
-    const rjd = new box2d.b2RevoluteJointDef();
+    {
+      const jd = new box2d.b2RevoluteJointDef();
 
-    rjd.Initialize(body2, this.m_chassis, box2d.b2Vec2.AddVV(p4, this.m_offset, new box2d.b2Vec2()));
-    this.m_world.CreateJoint(rjd);
+      jd.Initialize(body2, this.m_chassis, box2d.b2Vec2.AddVV(p4, this.m_offset, new box2d.b2Vec2()));
+      this.m_world.CreateJoint(jd);
+    }
   }
 
   public Construct() {
@@ -137,13 +145,13 @@ export class TheoJansen extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-50.0, 0.0), new box2d.b2Vec2(50.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-50.0, 0.0), new box2d.b2Vec2(50.0, 0.0));
       ground.CreateFixture(shape, 0.0);
 
-      shape.Set(new box2d.b2Vec2(-50.0, 0.0), new box2d.b2Vec2(-50.0, 10.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-50.0, 0.0), new box2d.b2Vec2(-50.0, 10.0));
       ground.CreateFixture(shape, 0.0);
 
-      shape.Set(new box2d.b2Vec2(50.0, 0.0), new box2d.b2Vec2(50.0, 10.0));
+      shape.SetTwoSided(new box2d.b2Vec2(50.0, 0.0), new box2d.b2Vec2(50.0, 10.0));
       ground.CreateFixture(shape, 0.0);
     }
 

@@ -152,7 +152,7 @@ export class RayCast extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
 
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -199,7 +199,7 @@ export class RayCast extends testbed.Test {
     }
 
     {
-      this.m_edge.Set(new box2d.b2Vec2(-1, 0), new box2d.b2Vec2(1, 0));
+      this.m_edge.SetTwoSided(new box2d.b2Vec2(-1, 0), new box2d.b2Vec2(1, 0));
     }
 
     this.m_bodyIndex = 0;
@@ -293,7 +293,7 @@ export class RayCast extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    const advanceRay: boolean = !settings.pause || settings.singleStep;
+    const advanceRay: boolean = !settings.m_pause || settings.m_singleStep;
 
     super.Step(settings);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 1-6 to drop stuff, m to change the mode");

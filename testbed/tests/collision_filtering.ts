@@ -22,7 +22,6 @@ import * as testbed from "../testbed.js";
 export class CollisionFiltering extends testbed.Test {
   public static readonly k_smallGroup = 1;
   public static readonly k_largeGroup = -1;
-  public static readonly k_defaultCategory = 0x0001;
   public static readonly k_triangleCategory = 0x0002;
   public static readonly k_boxCategory = 0x0004;
   public static readonly k_circleCategory = 0x0008;
@@ -36,7 +35,7 @@ export class CollisionFiltering extends testbed.Test {
     // Ground body
     {
       const shape = new box2d.b2EdgeShape();
-      shape.Set(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
 
       const sd = new box2d.b2FixtureDef();
       sd.shape = shape;

@@ -64,13 +64,13 @@ export interface b2IBodyDef {
   /// Linear damping is use to reduce the linear velocity. The damping parameter
   /// can be larger than 1.0f but the damping effect becomes sensitive to the
   /// time step when the damping parameter is large.
-	/// Units are 1/time
+  /// Units are 1/time
   linearDamping?: number;
 
   /// Angular damping is use to reduce the angular velocity. The damping parameter
   /// can be larger than 1.0f but the damping effect becomes sensitive to the
   /// time step when the damping parameter is large.
-	/// Units are 1/time
+  /// Units are 1/time
   angularDamping?: number;
 
   /// Set this flag to false if this body should never fall asleep. Note that
@@ -89,8 +89,8 @@ export interface b2IBodyDef {
   /// @warning You should use this flag sparingly since it increases processing time.
   bullet?: boolean;
 
-  /// Does this body start out active?
-  active?: boolean;
+  /// Does this body start out enabled?
+  enabled?: boolean;
 
   /// Use this to store application specific body data.
   userData?: any;
@@ -145,8 +145,8 @@ export class b2BodyDef implements b2IBodyDef {
   /// @warning You should use this flag sparingly since it increases processing time.
   public bullet: boolean = false;
 
-  /// Does this body start out active?
-  public active: boolean = true;
+  /// Does this body start out enabled?
+  public enabled: boolean = true;
 
   /// Use this to store application specific body data.
   public userData: any = null;
@@ -164,7 +164,7 @@ export class b2Body {
   public m_autoSleepFlag: boolean = false;
   public m_bulletFlag: boolean = false;
   public m_fixedRotationFlag: boolean = false;
-  public m_activeFlag: boolean = false;
+  public m_enabledFlag: boolean = false;
   public m_toiFlag: boolean = false;
 
   public m_islandIndex: number = 0;
@@ -215,8 +215,11 @@ export class b2Body {
     this.m_bulletFlag = b2Maybe(bd.bullet, false);
     this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
     this.m_autoSleepFlag = b2Maybe(bd.allowSleep, true);
-    this.m_awakeFlag = b2Maybe(bd.awake, true);
-    this.m_activeFlag = b2Maybe(bd.active, true);
+    // this.m_awakeFlag = b2Maybe(bd.awake, true);
+    if (b2Maybe(bd.awake, false) && b2Maybe(bd.type, b2BodyType.b2_staticBody) !== b2BodyType.b2_staticBody) {
+      this.m_awakeFlag = true;
+    }
+    this.m_enabledFlag = b2Maybe(bd.enabled, true);
 
     this.m_world = world;
 
@@ -253,13 +256,8 @@ export class b2Body {
 
     this.m_type = b2Maybe(bd.type, b2BodyType.b2_staticBody);
 
-    if (bd.type === b2BodyType.b2_dynamicBody) {
-      this.m_mass = 1;
-      this.m_invMass = 1;
-    } else {
-      this.m_mass = 0;
-      this.m_invMass = 0;
-    }
+    this.m_mass = 0;
+    this.m_invMass = 0;
 
     this.m_I = 0;
     this.m_invI = 0;
@@ -298,7 +296,7 @@ export class b2Body {
 
     const fixture: b2Fixture = new b2Fixture(this, def);
 
-    if (this.m_activeFlag) {
+    if (this.m_enabledFlag) {
       fixture.CreateProxies();
     }
 
@@ -315,7 +313,7 @@ export class b2Body {
 
     // Let the world know we have a new fixture. This will cause new contacts
     // to be created at the beginning of the next time step.
-    this.m_world.m_newFixture = true;
+    this.m_world.m_newContacts = true;
 
     return fixture;
   }
@@ -386,7 +384,7 @@ export class b2Body {
       }
     }
 
-    if (this.m_activeFlag) {
+    if (this.m_enabledFlag) {
       fixture.DestroyProxies();
     }
 
@@ -425,7 +423,7 @@ export class b2Body {
     this.m_sweep.a0 = angle;
 
     for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.SynchronizeProxies(this.m_xf, this.m_xf, b2Vec2.ZERO);
+      f.SynchronizeProxies(this.m_xf, this.m_xf);
     }
 
     this.m_world.m_contactManager.FindNewContacts();
@@ -757,10 +755,6 @@ export class b2Body {
       this.m_invMass = 1 / this.m_mass;
       localCenter.x *= this.m_invMass;
       localCenter.y *= this.m_invMass;
-    } else {
-      // Force all dynamic bodies to have a positive mass.
-      this.m_mass = 1;
-      this.m_invMass = 1;
     }
 
     if (this.m_I > 0 && !this.m_fixedRotationFlag) {
@@ -872,6 +866,7 @@ export class b2Body {
       this.m_angularVelocity = 0;
       this.m_sweep.a0 = this.m_sweep.a;
       this.m_sweep.c0.Copy(this.m_sweep.c);
+      this.m_awakeFlag = false;
       this.SynchronizeFixtures();
     }
 
@@ -928,6 +923,9 @@ export class b2Body {
   /// low CPU cost.
   /// @param flag set to true to wake the body, false to put it to sleep.
   public SetAwake(flag: boolean): void {
+    if (this.m_type === b2BodyType.b2_staticBody) {
+      return;
+    }
     if (flag) {
       this.m_awakeFlag = true;
       this.m_sleepTime = 0;
@@ -947,34 +945,34 @@ export class b2Body {
     return this.m_awakeFlag;
   }
 
-  /// Set the active state of the body. An inactive body is not
-  /// simulated and cannot be collided with or woken up.
-  /// If you pass a flag of true, all fixtures will be added to the
-  /// broad-phase.
-  /// If you pass a flag of false, all fixtures will be removed from
-  /// the broad-phase and all contacts will be destroyed.
+  /// Allow a body to be disabled. A disabled body is not simulated and cannot
+  /// be collided with or woken up.
+  /// If you pass a flag of true, all fixtures will be added to the broad-phase.
+  /// If you pass a flag of false, all fixtures will be removed from the
+  /// broad-phase and all contacts will be destroyed.
   /// Fixtures and joints are otherwise unaffected. You may continue
-  /// to create/destroy fixtures and joints on inactive bodies.
-  /// Fixtures on an inactive body are implicitly inactive and will
+  /// to create/destroy fixtures and joints on disabled bodies.
+  /// Fixtures on a disabled body are implicitly disabled and will
   /// not participate in collisions, ray-casts, or queries.
-  /// Joints connected to an inactive body are implicitly inactive.
-  /// An inactive body is still owned by a b2World object and remains
+  /// Joints connected to a disabled body are implicitly disabled.
+  /// An diabled body is still owned by a b2World object and remains
   /// in the body list.
-  public SetActive(flag: boolean): void {
+  public SetEnabled(flag: boolean): void {
     if (this.m_world.IsLocked()) { throw new Error(); }
 
-    if (flag === this.IsActive()) {
+    if (flag === this.IsEnabled()) {
       return;
     }
 
-    this.m_activeFlag = flag;
+    this.m_enabledFlag = flag;
 
     if (flag) {
       // Create all proxies.
       for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
         f.CreateProxies();
       }
-      // Contacts are created the next time step.
+      // Contacts are created at the beginning of the next
+      this.m_world.m_newContacts = true;
     } else {
       // Destroy all proxies.
       for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
@@ -992,8 +990,8 @@ export class b2Body {
   }
 
   /// Get the active state of the body.
-  public IsActive(): boolean {
-    return this.m_activeFlag;
+  public IsEnabled(): boolean {
+    return this.m_enabledFlag;
   }
 
   /// Set this body to have fixed rotation. This causes the mass
@@ -1052,7 +1050,7 @@ export class b2Body {
     return this.m_world;
   }
 
-  /// Dump this body to a log file
+  /// Dump this body to a file
   public Dump(log: (format: string, ...args: any[]) => void): void {
     const bodyIndex: number = this.m_islandIndex;
 
@@ -1060,18 +1058,18 @@ export class b2Body {
     log("  const bd: b2BodyDef = new b2BodyDef();\n");
     let type_str: string = "";
     switch (this.m_type) {
-    case b2BodyType.b2_staticBody:
-      type_str = "b2BodyType.b2_staticBody";
-      break;
-    case b2BodyType.b2_kinematicBody:
-      type_str = "b2BodyType.b2_kinematicBody";
-      break;
-    case b2BodyType.b2_dynamicBody:
-      type_str = "b2BodyType.b2_dynamicBody";
-      break;
-    default:
-      // DEBUG: b2Assert(false);
-      break;
+      case b2BodyType.b2_staticBody:
+        type_str = "b2BodyType.b2_staticBody";
+        break;
+      case b2BodyType.b2_kinematicBody:
+        type_str = "b2BodyType.b2_kinematicBody";
+        break;
+      case b2BodyType.b2_dynamicBody:
+        type_str = "b2BodyType.b2_dynamicBody";
+        break;
+      default:
+        // DEBUG: b2Assert(false);
+        break;
     }
     log("  bd.type = %s;\n", type_str);
     log("  bd.position.Set(%.15f, %.15f);\n", this.m_xf.p.x, this.m_xf.p.y);
@@ -1084,7 +1082,7 @@ export class b2Body {
     log("  bd.awake = %s;\n", (this.m_awakeFlag) ? ("true") : ("false"));
     log("  bd.fixedRotation = %s;\n", (this.m_fixedRotationFlag) ? ("true") : ("false"));
     log("  bd.bullet = %s;\n", (this.m_bulletFlag) ? ("true") : ("false"));
-    log("  bd.active = %s;\n", (this.m_activeFlag) ? ("true") : ("false"));
+    log("  bd.active = %s;\n", (this.m_enabledFlag) ? ("true") : ("false"));
     log("  bd.gravityScale = %.15f;\n", this.m_gravityScale);
     log("\n");
     log("  bodies[%d] = this.m_world.CreateBody(bd);\n", this.m_islandIndex);
@@ -1098,18 +1096,20 @@ export class b2Body {
   }
 
   private static SynchronizeFixtures_s_xf1: b2Transform = new b2Transform();
-  private static SynchronizeFixtures_s_displacement: b2Vec2 = new b2Vec2();
   public SynchronizeFixtures(): void {
-    const xf1: b2Transform = b2Body.SynchronizeFixtures_s_xf1;
-    xf1.q.SetAngle(this.m_sweep.a0);
-    b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
-    b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
+    if (this.m_awakeFlag) {
+      const xf1: b2Transform = b2Body.SynchronizeFixtures_s_xf1;
+      xf1.q.SetAngle(this.m_sweep.a0);
+      b2Rot.MulRV(xf1.q, this.m_sweep.localCenter, xf1.p);
+      b2Vec2.SubVV(this.m_sweep.c0, xf1.p, xf1.p);
 
-    // const displacement: b2Vec2 = b2Vec2.SubVV(this.m_xf.p, xf1.p, b2Body.SynchronizeFixtures_s_displacement);
-    const displacement: b2Vec2 = b2Vec2.SubVV(this.m_sweep.c, this.m_sweep.c0, b2Body.SynchronizeFixtures_s_displacement);
-
-    for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
-      f.SynchronizeProxies(xf1, this.m_xf, displacement);
+      for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
+        f.SynchronizeProxies(xf1, this.m_xf);
+      }
+    } else {
+      for (let f: b2Fixture | null = this.m_fixtureList; f; f = f.m_next) {
+        f.SynchronizeProxies(this.m_xf, this.m_xf);
+      }
     }
   }
 

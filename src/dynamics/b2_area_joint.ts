@@ -11,17 +11,17 @@ export interface b2IAreaJointDef extends b2IJointDef {
 
   bodies: b2Body[];
 
-  frequencyHz?: number;
+  stiffness?: number;
 
-  dampingRatio?: number;
+  damping?: number;
 }
 
 export class b2AreaJointDef extends b2JointDef implements b2IAreaJointDef {
   public bodies: b2Body[] = [];
 
-  public frequencyHz: number = 0;
+  public stiffness: number = 0;
 
-  public dampingRatio: number = 0;
+  public damping: number = 0;
 
   constructor() {
     super(b2JointType.e_areaJoint);
@@ -40,8 +40,8 @@ export class b2AreaJointDef extends b2JointDef implements b2IAreaJointDef {
 
 export class b2AreaJoint extends b2Joint {
   public m_bodies: b2Body[];
-  public m_frequencyHz: number = 0;
-  public m_dampingRatio: number = 0;
+  public m_stiffness: number = 0;
+  public m_damping: number = 0;
 
   // Solver shared
   public m_impulse: number = 0;
@@ -60,8 +60,8 @@ export class b2AreaJoint extends b2Joint {
     // DEBUG: b2Assert(def.bodies.length >= 3, "You cannot create an area joint with less than three bodies.");
 
     this.m_bodies = def.bodies;
-    this.m_frequencyHz = b2Maybe(def.frequencyHz, 0);
-    this.m_dampingRatio = b2Maybe(def.dampingRatio, 0);
+    this.m_stiffness = b2Maybe(def.stiffness, 0);
+    this.m_damping = b2Maybe(def.damping, 0);
 
     this.m_targetLengths = b2MakeNumberArray(def.bodies.length);
     this.m_normals = b2Vec2.MakeArray(def.bodies.length);
@@ -69,8 +69,8 @@ export class b2AreaJoint extends b2Joint {
     this.m_deltas = b2Vec2.MakeArray(def.bodies.length);
 
     const djd: b2DistanceJointDef = new b2DistanceJointDef();
-    djd.frequencyHz = this.m_frequencyHz;
-    djd.dampingRatio = this.m_dampingRatio;
+    djd.stiffness = this.m_stiffness;
+    djd.damping = this.m_damping;
 
     this.m_targetArea = 0;
 
@@ -108,28 +108,28 @@ export class b2AreaJoint extends b2Joint {
     return 0;
   }
 
-  public SetFrequency(hz: number): void {
-    this.m_frequencyHz = hz;
+  public SetStiffness(stiffness: number): void {
+    this.m_stiffness = stiffness;
 
     for (let i: number = 0; i < this.m_joints.length; ++i) {
-      this.m_joints[i].SetFrequency(hz);
+      this.m_joints[i].SetStiffness(stiffness);
     }
   }
 
-  public GetFrequency() {
-    return this.m_frequencyHz;
+  public GetStiffness() {
+    return this.m_stiffness;
   }
 
-  public SetDampingRatio(ratio: number): void {
-    this.m_dampingRatio = ratio;
+  public SetDamping(damping: number): void {
+    this.m_damping = damping;
 
     for (let i: number = 0; i < this.m_joints.length; ++i) {
-      this.m_joints[i].SetDampingRatio(ratio);
+      this.m_joints[i].SetDamping(damping);
     }
   }
 
-  public GetDampingRatio() {
-    return this.m_dampingRatio;
+  public GetDamping() {
+    return this.m_damping;
   }
 
   public Dump(log: (format: string, ...args: any[]) => void) {

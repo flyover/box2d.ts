@@ -16,6 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+export * from "./settings.js";
 export * from "./draw.js";
 // #if B2_ENABLE_PARTICLE
 export * from "./fullscreen_ui.js";

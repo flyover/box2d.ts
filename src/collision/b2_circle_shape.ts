@@ -24,7 +24,7 @@ import { b2DistanceProxy } from "./b2_distance.js";
 import { b2MassData } from "./b2_shape.js";
 import { b2Shape, b2ShapeType } from "./b2_shape.js";
 
-/// A circle shape.
+/// A solid circle shape
 export class b2CircleShape extends b2Shape {
   public readonly m_p: b2Vec2 = new b2Vec2();
 
@@ -77,6 +77,8 @@ export class b2CircleShape extends b2Shape {
   // #endif
 
   /// Implement b2Shape.
+	/// @note because the circle is solid, rays that start inside do not hit because the normal is
+	/// not defined.
   // Collision Detection in Interactive 3D Environments by Gino van den Bergen
   // From Section 3.1.2
   // x = s + a * r

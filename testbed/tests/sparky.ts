@@ -182,8 +182,8 @@ export class Sparky extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     const particleFlags = testbed.Test.GetParticleParameterValue();
-    let dt = settings.hz > 0.0 ? 1.0 / settings.hz : 0.0;
-    if (settings.pause && !settings.singleStep) {
+    let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
+    if (settings.m_pause && !settings.m_singleStep) {
       dt = 0.0;
     }
 
