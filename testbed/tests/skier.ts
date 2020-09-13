@@ -2,12 +2,12 @@
 Test case for collision/jerking issue.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Skier extends testbed.Test {
   public m_platform_width: number;
-  public m_skier: box2d.b2Body;
+  public m_skier: b2.Body;
   public m_fixed_camera: boolean;
 
   constructor() {
@@ -35,24 +35,24 @@ export class Skier extends testbed.Test {
     const SurfaceFriction = 0.2;
 
     // Convert to radians
-    const Slope1Incline = -Angle1Degrees * box2d.b2_pi / 180.0;
-    const Slope2Incline = Slope1Incline - Angle2Degrees * box2d.b2_pi / 180.0;
+    const Slope1Incline = -Angle1Degrees * b2.pi / 180.0;
+    const Slope2Incline = Slope1Incline - Angle2Degrees * b2.pi / 180.0;
     //
 
     this.m_platform_width = PlatformWidth;
 
     // Horizontal platform
-    const v1: box2d.b2Vec2 = new box2d.b2Vec2(-PlatformWidth, 0.0);
-    const v2: box2d.b2Vec2 = new box2d.b2Vec2(0.0, 0.0);
-    const v3: box2d.b2Vec2 = new box2d.b2Vec2(SlopeLength * Math.cos(Slope1Incline), -SlopeLength * Math.sin(Slope1Incline));
-    const v4: box2d.b2Vec2 = new box2d.b2Vec2(v3.x + SlopeLength * Math.cos(Slope2Incline), v3.y - SlopeLength * Math.sin(Slope2Incline));
-    const v5: box2d.b2Vec2 = new box2d.b2Vec2(v4.x, v4.y - 1.0);
+    const v1: b2.Vec2 = new b2.Vec2(-PlatformWidth, 0.0);
+    const v2: b2.Vec2 = new b2.Vec2(0.0, 0.0);
+    const v3: b2.Vec2 = new b2.Vec2(SlopeLength * Math.cos(Slope1Incline), -SlopeLength * Math.sin(Slope1Incline));
+    const v4: b2.Vec2 = new b2.Vec2(v3.x + SlopeLength * Math.cos(Slope2Incline), v3.y - SlopeLength * Math.sin(Slope2Incline));
+    const v5: b2.Vec2 = new b2.Vec2(v4.x, v4.y - 1.0);
 
-    const vertices: box2d.b2Vec2[] = [ v5, v4, v3, v2, v1 ];
+    const vertices: b2.Vec2[] = [ v5, v4, v3, v2, v1 ];
 
-    const shape = new box2d.b2ChainShape();
+    const shape = new b2.ChainShape();
     shape.CreateLoop(vertices);
-    const fd = new box2d.b2FixtureDef();
+    const fd = new b2.FixtureDef();
     fd.shape = shape;
     fd.density = 0.0;
     fd.friction = SurfaceFriction;
@@ -72,23 +72,23 @@ export class Skier extends testbed.Test {
       const SkiFriction = 0.0;
       const SkiRestitution = 0.15;
 
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
 
       const initial_y = BodyHeight / 2 + SkiThickness;
       bd.position.Set(-this.m_platform_width / 2, initial_y);
 
       const skier = this.m_world.CreateBody(bd);
 
-      const ski = new box2d.b2PolygonShape();
-      const verts: box2d.b2Vec2[] = [];
-      verts.push(new box2d.b2Vec2(-SkiLength / 2 - SkiThickness, -BodyHeight / 2));
-      verts.push(new box2d.b2Vec2(-SkiLength / 2, -BodyHeight / 2 - SkiThickness));
-      verts.push(new box2d.b2Vec2(SkiLength / 2, -BodyHeight / 2 - SkiThickness));
-      verts.push(new box2d.b2Vec2(SkiLength / 2 + SkiThickness, -BodyHeight / 2));
+      const ski = new b2.PolygonShape();
+      const verts: b2.Vec2[] = [];
+      verts.push(new b2.Vec2(-SkiLength / 2 - SkiThickness, -BodyHeight / 2));
+      verts.push(new b2.Vec2(-SkiLength / 2, -BodyHeight / 2 - SkiThickness));
+      verts.push(new b2.Vec2(SkiLength / 2, -BodyHeight / 2 - SkiThickness));
+      verts.push(new b2.Vec2(SkiLength / 2 + SkiThickness, -BodyHeight / 2));
       ski.Set(verts);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.density = 1.0;
 
       fd.friction = SkiFriction;
@@ -97,7 +97,7 @@ export class Skier extends testbed.Test {
       fd.shape = ski;
       skier.CreateFixture(fd);
 
-      skier.SetLinearVelocity(new box2d.b2Vec2(0.5, 0.0));
+      skier.SetLinearVelocity(new b2.Vec2(0.5, 0.0));
 
       this.m_skier = skier;
     }

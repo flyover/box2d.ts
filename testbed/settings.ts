@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 
 export class Settings {
   public m_testIndex: number = 0;
@@ -33,7 +33,7 @@ export class Settings {
   // Particle iterations are needed for numerical stability in particle
   // simulations with small particles and relatively high gravity.
   // b2CalculateParticleIterations helps to determine the number.
-  public m_particleIterations: number = box2d.b2CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
+  public m_particleIterations: number = b2.CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
   // #endif
   public m_drawShapes: boolean = true;
   // #if B2_ENABLE_PARTICLE
@@ -70,7 +70,7 @@ export class Settings {
     // Particle iterations are needed for numerical stability in particle
     // simulations with small particles and relatively high gravity.
     // b2CalculateParticleIterations helps to determine the number.
-    this.m_particleIterations = box2d.b2CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
+    this.m_particleIterations = b2.CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
     // #endif
     this.m_drawShapes = true;
     // #if B2_ENABLE_PARTICLE

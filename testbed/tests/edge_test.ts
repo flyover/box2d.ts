@@ -16,52 +16,52 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class EdgeTest extends testbed.Test {
-  public readonly m_offset1: box2d.b2Vec2 = new box2d.b2Vec2();
-  public readonly m_offset2: box2d.b2Vec2 = new box2d.b2Vec2();
-  public m_body1: box2d.b2Body | null = null;
-  public m_body2: box2d.b2Body | null = null;
+  public readonly m_offset1: b2.Vec2 = new b2.Vec2();
+  public readonly m_offset2: b2.Vec2 = new b2.Vec2();
+  public m_body1: b2.Body | null = null;
+  public m_body2: b2.Body | null = null;
   public m_boxes: boolean = false;
 
   constructor() {
     super();
 
-    const vertices: box2d.b2Vec2[] =
+    const vertices: b2.Vec2[] =
       [
-        new box2d.b2Vec2(10.0, -4.0),
-        new box2d.b2Vec2(10.0, 0.0),
-        new box2d.b2Vec2(6.0, 0.0),
-        new box2d.b2Vec2(4.0, 2.0),
-        new box2d.b2Vec2(2.0, 0.0),
-        new box2d.b2Vec2(-2.0, 0.0),
-        new box2d.b2Vec2(-6.0, 0.0),
-        new box2d.b2Vec2(-8.0, -3.0),
-        new box2d.b2Vec2(-10.0, 0.0),
-        new box2d.b2Vec2(-10.0, -4.0),
+        new b2.Vec2(10.0, -4.0),
+        new b2.Vec2(10.0, 0.0),
+        new b2.Vec2(6.0, 0.0),
+        new b2.Vec2(4.0, 2.0),
+        new b2.Vec2(2.0, 0.0),
+        new b2.Vec2(-2.0, 0.0),
+        new b2.Vec2(-6.0, 0.0),
+        new b2.Vec2(-8.0, -3.0),
+        new b2.Vec2(-10.0, 0.0),
+        new b2.Vec2(-10.0, -4.0),
       ];
 
     this.m_offset1.Set(0.0, 8.0);
     this.m_offset2.Set(0.0, 16.0);
 
     {
-      const v1: box2d.b2Vec2 = vertices[0].Clone().SelfAdd(this.m_offset1);
-      const v2: box2d.b2Vec2 = vertices[1].Clone().SelfAdd(this.m_offset1);
-      const v3: box2d.b2Vec2 = vertices[2].Clone().SelfAdd(this.m_offset1);
-      const v4: box2d.b2Vec2 = vertices[3].Clone().SelfAdd(this.m_offset1);
-      const v5: box2d.b2Vec2 = vertices[4].Clone().SelfAdd(this.m_offset1);
-      const v6: box2d.b2Vec2 = vertices[5].Clone().SelfAdd(this.m_offset1);
-      const v7: box2d.b2Vec2 = vertices[6].Clone().SelfAdd(this.m_offset1);
-      const v8: box2d.b2Vec2 = vertices[7].Clone().SelfAdd(this.m_offset1);
-      const v9: box2d.b2Vec2 = vertices[8].Clone().SelfAdd(this.m_offset1);
-      const v10: box2d.b2Vec2 = vertices[9].Clone().SelfAdd(this.m_offset1);
+      const v1: b2.Vec2 = vertices[0].Clone().SelfAdd(this.m_offset1);
+      const v2: b2.Vec2 = vertices[1].Clone().SelfAdd(this.m_offset1);
+      const v3: b2.Vec2 = vertices[2].Clone().SelfAdd(this.m_offset1);
+      const v4: b2.Vec2 = vertices[3].Clone().SelfAdd(this.m_offset1);
+      const v5: b2.Vec2 = vertices[4].Clone().SelfAdd(this.m_offset1);
+      const v6: b2.Vec2 = vertices[5].Clone().SelfAdd(this.m_offset1);
+      const v7: b2.Vec2 = vertices[6].Clone().SelfAdd(this.m_offset1);
+      const v8: b2.Vec2 = vertices[7].Clone().SelfAdd(this.m_offset1);
+      const v9: b2.Vec2 = vertices[8].Clone().SelfAdd(this.m_offset1);
+      const v10: b2.Vec2 = vertices[9].Clone().SelfAdd(this.m_offset1);
 
-      const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
-      const ground: box2d.b2Body = this.m_world.CreateBody(bd);
+      const bd: b2.BodyDef = new b2.BodyDef();
+      const ground: b2.Body = this.m_world.CreateBody(bd);
 
-      const shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
+      const shape: b2.EdgeShape = new b2.EdgeShape();
 
       shape.SetOneSided(v10, v1, v2, v3);
       ground.CreateFixture(shape, 0.0);
@@ -95,21 +95,21 @@ export class EdgeTest extends testbed.Test {
     }
 
     {
-      const v1: box2d.b2Vec2 = vertices[0].Clone().SelfAdd(this.m_offset2);
-      const v2: box2d.b2Vec2 = vertices[1].Clone().SelfAdd(this.m_offset2);
-      const v3: box2d.b2Vec2 = vertices[2].Clone().SelfAdd(this.m_offset2);
-      const v4: box2d.b2Vec2 = vertices[3].Clone().SelfAdd(this.m_offset2);
-      const v5: box2d.b2Vec2 = vertices[4].Clone().SelfAdd(this.m_offset2);
-      const v6: box2d.b2Vec2 = vertices[5].Clone().SelfAdd(this.m_offset2);
-      const v7: box2d.b2Vec2 = vertices[6].Clone().SelfAdd(this.m_offset2);
-      const v8: box2d.b2Vec2 = vertices[7].Clone().SelfAdd(this.m_offset2);
-      const v9: box2d.b2Vec2 = vertices[8].Clone().SelfAdd(this.m_offset2);
-      const v10: box2d.b2Vec2 = vertices[9].Clone().SelfAdd(this.m_offset2);
+      const v1: b2.Vec2 = vertices[0].Clone().SelfAdd(this.m_offset2);
+      const v2: b2.Vec2 = vertices[1].Clone().SelfAdd(this.m_offset2);
+      const v3: b2.Vec2 = vertices[2].Clone().SelfAdd(this.m_offset2);
+      const v4: b2.Vec2 = vertices[3].Clone().SelfAdd(this.m_offset2);
+      const v5: b2.Vec2 = vertices[4].Clone().SelfAdd(this.m_offset2);
+      const v6: b2.Vec2 = vertices[5].Clone().SelfAdd(this.m_offset2);
+      const v7: b2.Vec2 = vertices[6].Clone().SelfAdd(this.m_offset2);
+      const v8: b2.Vec2 = vertices[7].Clone().SelfAdd(this.m_offset2);
+      const v9: b2.Vec2 = vertices[8].Clone().SelfAdd(this.m_offset2);
+      const v10: b2.Vec2 = vertices[9].Clone().SelfAdd(this.m_offset2);
 
-      const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
-      const ground: box2d.b2Body = this.m_world.CreateBody(bd);
+      const bd: b2.BodyDef = new b2.BodyDef();
+      const ground: b2.Body = this.m_world.CreateBody(bd);
 
-      const shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
+      const shape: b2.EdgeShape = new b2.EdgeShape();
 
       shape.SetTwoSided(v1, v2);
       ground.CreateFixture(shape, 0.0);
@@ -160,30 +160,30 @@ export class EdgeTest extends testbed.Test {
     }
 
     {
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       // bd.position = b2Vec2(8.0, 2.6) + this.m_offset1;
       bd.position.x = 8.0 + this.m_offset1.x;
       bd.position.y = 2.6 + this.m_offset1.y;
       bd.allowSleep = false;
       this.m_body1 = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 1.0);
 
       this.m_body1.CreateFixture(shape, 1.0);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       // bd.position = b2Vec2(8.0, 2.6f) + this.m_offset2;
       bd.position.x = 8.0 + this.m_offset2.x;
       bd.position.y = 2.6 + this.m_offset2.y;
       bd.allowSleep = false;
       this.m_body2 = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 1.0);
 
       this.m_body2.CreateFixture(shape, 1.0);
@@ -251,14 +251,14 @@ export class EdgeTest extends testbed.Test {
   public Step(settings: testbed.Settings): void {
     // if (glfwGetKey(g_mainWindow, GLFW_KEY_A) == GLFW_PRESS)
     // {
-    // 	this.m_body1.ApplyForceToCenter(new box2d.b2Vec2(-10.0, 0.0), true);
-    // 	this.m_body2.ApplyForceToCenter(new box2d.b2Vec2(-10.0, 0.0), true);
+    // 	this.m_body1.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+    // 	this.m_body2.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
     // }
 
     // if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_PRESS)
     // {
-    // 	this.m_body1.ApplyForceToCenter(new box2d.b2Vec2(10.0, 0.0), true);
-    // 	this.m_body2.ApplyForceToCenter(new box2d.b2Vec2(10.0, 0.0), true);
+    // 	this.m_body1.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+    // 	this.m_body2.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
     // }
 
     super.Step(settings);
@@ -267,13 +267,13 @@ export class EdgeTest extends testbed.Test {
   public Keyboard(key: string): void {
     switch (key) {
       case "a":
-        this.m_body1?.ApplyForceToCenter(new box2d.b2Vec2(-10.0, 0.0), true);
-        this.m_body2?.ApplyForceToCenter(new box2d.b2Vec2(-10.0, 0.0), true);
+        this.m_body1?.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+        this.m_body2?.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
         break;
 
       case "d":
-        this.m_body1?.ApplyForceToCenter(new box2d.b2Vec2(10.0, 0.0), true);
-        this.m_body2?.ApplyForceToCenter(new box2d.b2Vec2(10.0, 0.0), true);
+        this.m_body1?.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+        this.m_body2?.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
         break;
     }
   }

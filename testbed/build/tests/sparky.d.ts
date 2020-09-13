@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class Sparky extends testbed.Test {
     private static c_maxCircles;
@@ -10,9 +10,9 @@ export declare class Sparky extends testbed.Test {
     private m_contact;
     private m_contactPoint;
     constructor();
-    BeginContact(contact: box2d.b2Contact): void;
+    BeginContact(contact: b2.Contact): void;
     Step(settings: testbed.Settings): void;
-    AddVFX(p: box2d.b2Vec2, particleFlags: box2d.b2ParticleFlag): void;
+    AddVFX(p: b2.Vec2, particleFlags: b2.ParticleFlag): void;
     CreateWalls(): void;
     static Create(): testbed.Test;
 }

@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 /**
@@ -27,14 +27,14 @@ import * as testbed from "../testbed.js";
  */
 
 export class Pointy extends testbed.Test {
-  public m_killfieldShape = new box2d.b2PolygonShape();
-  public m_killfieldTransform = new box2d.b2Transform();
+  public m_killfieldShape = new b2.PolygonShape();
+  public m_killfieldTransform = new b2.Transform();
 
   constructor() {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
       // Construct a triangle out of many polygons to ensure there's no
@@ -42,11 +42,11 @@ export class Pointy extends testbed.Test {
 
       const xstep = 1.0;
       for (let x = -10.0; x < 10.0; x += xstep) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(x, -10.0),
-          new box2d.b2Vec2(x + xstep, -10.0),
-          new box2d.b2Vec2(0.0, 25.0),
+          new b2.Vec2(x, -10.0),
+          new b2.Vec2(x + xstep, -10.0),
+          new b2.Vec2(0.0, 25.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -55,17 +55,17 @@ export class Pointy extends testbed.Test {
 
     this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
     const particleType = testbed.Test.GetParticleParameterValue();
-    if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
+    if (particleType === b2.ParticleFlag.b2_waterParticle) {
       this.m_particleSystem.SetDamping(0.2);
     }
 
     // Create killfield shape and transform
-    this.m_killfieldShape = new box2d.b2PolygonShape();
+    this.m_killfieldShape = new b2.PolygonShape();
     this.m_killfieldShape.SetAsBox(50.0, 1.0);
 
     // Put this at the bottom of the world
-    this.m_killfieldTransform = new box2d.b2Transform();
-    const loc = new box2d.b2Vec2(-25, 1);
+    this.m_killfieldTransform = new b2.Transform();
+    const loc = new b2.Vec2(-25, 1);
     this.m_killfieldTransform.SetPositionAngle(loc, 0);
   }
 
@@ -73,16 +73,16 @@ export class Pointy extends testbed.Test {
     super.Step(settings);
 
     const flags = testbed.Test.GetParticleParameterValue();
-    const pd = new box2d.b2ParticleDef();
+    const pd = new b2.ParticleDef();
 
     pd.position.Set(0.0, 33.0);
     pd.velocity.Set(0.0, -1.0);
     pd.flags = flags;
 
-    if (flags & (box2d.b2ParticleFlag.b2_springParticle | box2d.b2ParticleFlag.b2_elasticParticle)) {
+    if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
       const count = this.m_particleSystem.GetParticleCount();
       pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
-      pd.flags |= box2d.b2ParticleFlag.b2_reactiveParticle;
+      pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
     }
 
     this.m_particleSystem.CreateParticle(pd);

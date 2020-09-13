@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class DumpShell extends testbed.Test {
@@ -24,16 +24,16 @@ export class DumpShell extends testbed.Test {
     super();
 
     // dump begin
-    /*box2d.b2Vec2*/
-    const g = new box2d.b2Vec2(0.000000000000000, 0.000000000000000);
+    /*b2.Vec2*/
+    const g = new b2.Vec2(0.000000000000000, 0.000000000000000);
     this.m_world.SetGravity(g);
-    /*box2d.b2Body*/
+    /*b2.Body*/
     const bodies = new Array(4);
-    /*box2d.b2Joint*/
+    /*b2.Joint*/
     const joints = new Array(2); {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_staticBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_staticBody;
       bd.position.Set(0.000000000000000, 0.000000000000000);
       bd.angle = 0.000000000000000;
       bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -50,8 +50,8 @@ export class DumpShell extends testbed.Test {
       bodies[0] = this.m_world.CreateBody(bd);
 
       {
-        /*box2d.b2FixtureDef*/
-        const fd = new box2d.b2FixtureDef();
+        /*b2.FixtureDef*/
+        const fd = new b2.FixtureDef();
         fd.friction = 10.000000000000000;
         fd.restitution = 0.000000000000000;
         fd.density = 0.000000000000000;
@@ -59,8 +59,8 @@ export class DumpShell extends testbed.Test {
         fd.filter.categoryBits = 1;
         fd.filter.maskBits = 65535;
         fd.filter.groupIndex = 0;
-        /*box2d.b2EdgeShape*/
-        const shape = new box2d.b2EdgeShape();
+        /*b2.EdgeShape*/
+        const shape = new b2.EdgeShape();
         shape.m_radius = 0.009999999776483;
         shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
         shape.m_vertex1.Set(0.000000000000000, 0.000000000000000);
@@ -74,8 +74,8 @@ export class DumpShell extends testbed.Test {
         bodies[0].CreateFixture(fd);
       }
       {
-        /*box2d.b2FixtureDef*/
-        const fd = new box2d.b2FixtureDef();
+        /*b2.FixtureDef*/
+        const fd = new b2.FixtureDef();
         fd.friction = 10.000000000000000;
         fd.restitution = 0.000000000000000;
         fd.density = 0.000000000000000;
@@ -83,8 +83,8 @@ export class DumpShell extends testbed.Test {
         fd.filter.categoryBits = 1;
         fd.filter.maskBits = 65535;
         fd.filter.groupIndex = 0;
-        /*box2d.b2EdgeShape*/
-        const shape = new box2d.b2EdgeShape();
+        /*b2.EdgeShape*/
+        const shape = new b2.EdgeShape();
         shape.m_radius = 0.009999999776483;
         shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
         shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
@@ -98,8 +98,8 @@ export class DumpShell extends testbed.Test {
         bodies[0].CreateFixture(fd);
       }
       {
-        /*box2d.b2FixtureDef*/
-        const fd = new box2d.b2FixtureDef();
+        /*b2.FixtureDef*/
+        const fd = new b2.FixtureDef();
         fd.friction = 10.000000000000000;
         fd.restitution = 0.000000000000000;
         fd.density = 0.000000000000000;
@@ -107,8 +107,8 @@ export class DumpShell extends testbed.Test {
         fd.filter.categoryBits = 1;
         fd.filter.maskBits = 65535;
         fd.filter.groupIndex = 0;
-        /*box2d.b2EdgeShape*/
-        const shape = new box2d.b2EdgeShape();
+        /*b2.EdgeShape*/
+        const shape = new b2.EdgeShape();
         shape.m_radius = 0.009999999776483;
         shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
         shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
@@ -122,8 +122,8 @@ export class DumpShell extends testbed.Test {
         bodies[0].CreateFixture(fd);
       }
       {
-        /*box2d.b2FixtureDef*/
-        const fd = new box2d.b2FixtureDef();
+        /*b2.FixtureDef*/
+        const fd = new b2.FixtureDef();
         fd.friction = 10.000000000000000;
         fd.restitution = 0.000000000000000;
         fd.density = 0.000000000000000;
@@ -131,8 +131,8 @@ export class DumpShell extends testbed.Test {
         fd.filter.categoryBits = 1;
         fd.filter.maskBits = 65535;
         fd.filter.groupIndex = 0;
-        /*box2d.b2EdgeShape*/
-        const shape = new box2d.b2EdgeShape();
+        /*b2.EdgeShape*/
+        const shape = new b2.EdgeShape();
         shape.m_radius = 0.009999999776483;
         shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
         shape.m_vertex1.Set(44.521739959716797, 16.695652008056641);
@@ -147,9 +147,9 @@ export class DumpShell extends testbed.Test {
       }
     }
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.847826063632965, 2.500000000000000);
       bd.angle = 0.000000000000000;
       bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -166,8 +166,8 @@ export class DumpShell extends testbed.Test {
       bodies[1] = this.m_world.CreateBody(bd);
 
       {
-        /*box2d.b2FixtureDef*/
-        const fd = new box2d.b2FixtureDef();
+        /*b2.FixtureDef*/
+        const fd = new b2.FixtureDef();
         fd.friction = 1.000000000000000;
         fd.restitution = 0.500000000000000;
         fd.density = 10.000000000000000;
@@ -175,10 +175,10 @@ export class DumpShell extends testbed.Test {
         fd.filter.categoryBits = 1;
         fd.filter.maskBits = 65535;
         fd.filter.groupIndex = 0;
-        /*box2d.b2PolygonShape*/
-        const shape = new box2d.b2PolygonShape();
-        /*box2d.b2Vec2[]*/
-        const vs = box2d.b2Vec2.MakeArray(8);
+        /*b2.PolygonShape*/
+        const shape = new b2.PolygonShape();
+        /*b2.Vec2[]*/
+        const vs = b2.Vec2.MakeArray(8);
         vs[0].Set(6.907599925994873, 0.327199995517731);
         vs[1].Set(-0.322800010442734, 0.282599985599518);
         vs[2].Set(-0.322800010442734, -0.295700013637543);
@@ -191,9 +191,9 @@ export class DumpShell extends testbed.Test {
       }
     }
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(13.043478012084959, 2.500000000000000);
       bd.angle = 0.000000000000000;
       bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -210,8 +210,8 @@ export class DumpShell extends testbed.Test {
       bodies[2] = this.m_world.CreateBody(bd);
 
       {
-        /*box2d.b2FixtureDef*/
-        const fd = new box2d.b2FixtureDef();
+        /*b2.FixtureDef*/
+        const fd = new b2.FixtureDef();
         fd.friction = 1.000000000000000;
         fd.restitution = 0.500000000000000;
         fd.density = 10.000000000000000;
@@ -219,10 +219,10 @@ export class DumpShell extends testbed.Test {
         fd.filter.categoryBits = 1;
         fd.filter.maskBits = 65535;
         fd.filter.groupIndex = 0;
-        /*box2d.b2PolygonShape*/
-        const shape = new box2d.b2PolygonShape();
-        /*box2d.b2Vec2[]*/
-        const vs = box2d.b2Vec2.MakeArray(8);
+        /*b2.PolygonShape*/
+        const shape = new b2.PolygonShape();
+        /*b2.Vec2[]*/
+        const vs = b2.Vec2.MakeArray(8);
         vs[0].Set(0.200000002980232, -0.300000011920929);
         vs[1].Set(0.200000002980232, 0.200000002980232);
         vs[2].Set(-6.900000095367432, 0.200000002980232);
@@ -235,9 +235,9 @@ export class DumpShell extends testbed.Test {
       }
     }
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_staticBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_staticBody;
       bd.position.Set(0.000000000000000, 0.000000000000000);
       bd.angle = 0.000000000000000;
       bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -255,8 +255,8 @@ export class DumpShell extends testbed.Test {
 
     }
     {
-      /*box2d.b2RevoluteJointDef*/
-      const jd = new box2d.b2RevoluteJointDef();
+      /*b2.RevoluteJointDef*/
+      const jd = new b2.RevoluteJointDef();
       jd.bodyA = bodies[1];
       jd.bodyB = bodies[0];
       jd.collideConnected = false;
@@ -272,8 +272,8 @@ export class DumpShell extends testbed.Test {
       joints[0] = this.m_world.CreateJoint(jd);
     }
     {
-      /*box2d.b2PrismaticJointDef*/
-      const jd = new box2d.b2PrismaticJointDef();
+      /*b2.PrismaticJointDef*/
+      const jd = new b2.PrismaticJointDef();
       jd.bodyA = bodies[1];
       jd.bodyB = bodies[2];
       jd.collideConnected = false;

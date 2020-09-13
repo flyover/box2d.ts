@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@box2d')) :
   typeof define === 'function' && define.amd ? define(['exports', '@box2d'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.unit_test = {}, global.box2d));
-}(this, (function (exports, box2d) { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.unit_test = {}, global.b2));
+}(this, (function (exports, b2) { 'use strict';
 
   /*
   * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
@@ -28,32 +28,32 @@
   // with your rendering engine in your game engine.
   function main() {
       // Define the gravity vector.
-      const gravity = new box2d.b2Vec2(0, -10);
+      const gravity = new b2.Vec2(0, -10);
       // Construct a world object, which will hold and simulate the rigid bodies.
-      const world = new box2d.b2World(gravity);
+      const world = new b2.World(gravity);
       // Define the ground body.
-      const groundBodyDef = new box2d.b2BodyDef();
+      const groundBodyDef = new b2.BodyDef();
       groundBodyDef.position.Set(0, -10);
       // Call the body factory which allocates memory for the ground body
       // from a pool and creates the ground box shape (also from a pool).
       // The body is also added to the world.
       const groundBody = world.CreateBody(groundBodyDef);
       // Define the ground box shape.
-      const groundBox = new box2d.b2PolygonShape();
+      const groundBox = new b2.PolygonShape();
       // The extents are the half-widths of the box.
       groundBox.SetAsBox(50, 10);
       // Add the ground fixture to the ground body.
       groundBody.CreateFixture(groundBox, 0);
       // Define the dynamic body. We set its position and call the body factory.
-      const bodyDef = new box2d.b2BodyDef();
-      bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
+      const bodyDef = new b2.BodyDef();
+      bodyDef.type = b2.BodyType.b2_dynamicBody;
       bodyDef.position.Set(0, 4);
       const body = world.CreateBody(bodyDef);
       // Define another box shape for our dynamic body.
-      const dynamicBox = new box2d.b2PolygonShape();
+      const dynamicBox = new b2.PolygonShape();
       dynamicBox.SetAsBox(1, 1);
       // Define the dynamic body fixture.
-      const fixtureDef = new box2d.b2FixtureDef();
+      const fixtureDef = new b2.FixtureDef();
       fixtureDef.shape = dynamicBox;
       // Set the box density to be non-zero, so it will be dynamic.
       fixtureDef.density = 1;

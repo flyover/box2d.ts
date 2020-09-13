@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class RigidParticles extends testbed.Test {
@@ -26,40 +26,40 @@ export class RigidParticles extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-4, -1),
-          new box2d.b2Vec2(4, -1),
-          new box2d.b2Vec2(4, 0),
-          new box2d.b2Vec2(-4, 0),
+          new b2.Vec2(-4, -1),
+          new b2.Vec2(4, -1),
+          new b2.Vec2(4, 0),
+          new b2.Vec2(-4, 0),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-4, -0.1),
-          new box2d.b2Vec2(-2, -0.1),
-          new box2d.b2Vec2(-2, 2),
-          new box2d.b2Vec2(-4, 2),
+          new b2.Vec2(-4, -0.1),
+          new b2.Vec2(-2, -0.1),
+          new b2.Vec2(-2, 2),
+          new b2.Vec2(-4, 2),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
       }
 
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(2, -0.1),
-          new box2d.b2Vec2(4, -0.1),
-          new box2d.b2Vec2(4, 2),
-          new box2d.b2Vec2(2, 2),
+          new b2.Vec2(2, -0.1),
+          new b2.Vec2(4, -0.1),
+          new b2.Vec2(4, 2),
+          new b2.Vec2(2, 2),
         ];
         shape.Set(vertices, 4);
         ground.CreateFixture(shape, 0.0);
@@ -69,39 +69,39 @@ export class RigidParticles extends testbed.Test {
     this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
 
     {
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_p.Set(0, 3);
       shape.m_radius = 0.5;
-      const pd = new box2d.b2ParticleGroupDef();
-      pd.groupFlags = box2d.b2ParticleGroupFlag.b2_rigidParticleGroup | box2d.b2ParticleGroupFlag.b2_solidParticleGroup;
+      const pd = new b2.ParticleGroupDef();
+      pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
       pd.shape = shape;
       pd.color.SetByteRGBA(255, 0, 0, 255);
       this.m_particleSystem.CreateParticleGroup(pd);
     }
 
     {
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_p.Set(-1, 3);
       shape.m_radius = 0.5;
-      const pd = new box2d.b2ParticleGroupDef();
-      pd.groupFlags = box2d.b2ParticleGroupFlag.b2_rigidParticleGroup | box2d.b2ParticleGroupFlag.b2_solidParticleGroup;
+      const pd = new b2.ParticleGroupDef();
+      pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
       pd.shape = shape;
       pd.color.SetByteRGBA(0, 255, 0, 255);
       this.m_particleSystem.CreateParticleGroup(pd);
     }
 
     {
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       //const vertices = [
-      //  new box2d.b2Vec2(0, 3),
-      //  new box2d.b2Vec2(2, 3),
-      //  new box2d.b2Vec2(2, 3.5),
-      //  new box2d.b2Vec2(0, 3.5)
+      //  new b2.Vec2(0, 3),
+      //  new b2.Vec2(2, 3),
+      //  new b2.Vec2(2, 3.5),
+      //  new b2.Vec2(0, 3.5)
       //];
       //shape.Set(vertices, 4);
       shape.SetAsBox(1, 0.5);
-      const pd = new box2d.b2ParticleGroupDef();
-      pd.groupFlags = box2d.b2ParticleGroupFlag.b2_rigidParticleGroup | box2d.b2ParticleGroupFlag.b2_solidParticleGroup;
+      const pd = new b2.ParticleGroupDef();
+      pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
       pd.position.Set(1, 4);
       pd.angle = -0.5;
       pd.angularVelocity = 2.0;
@@ -111,10 +111,10 @@ export class RigidParticles extends testbed.Test {
     }
 
     {
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_p.Set(0, 8);
       shape.m_radius = 0.5;
       body.CreateFixture(shape, 0.5);

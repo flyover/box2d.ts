@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 /**
@@ -35,16 +35,16 @@ export class Tiles extends testbed.Test {
     super();
 
     this.m_fixtureCount = 0;
-    /*box2d.b2Timer*/
-    const timer = new box2d.b2Timer();
+    /*b2.Timer*/
+    const timer = new b2.Timer();
 
     {
       /*float32*/
       const a = 0.5;
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
       bd.position.y = -a;
-      /*box2d.b2Body*/
+      /*b2.Body*/
       const ground = this.m_world.CreateBody(bd);
 
       {
@@ -52,14 +52,14 @@ export class Tiles extends testbed.Test {
         const N = 200;
         /*int32*/
         const M = 10;
-        /*box2d.b2Vec2*/
-        const position = new box2d.b2Vec2();
+        /*b2.Vec2*/
+        const position = new b2.Vec2();
         position.y = 0.0;
         for ( /*int32*/ let j = 0; j < M; ++j) {
           position.x = -N * a;
           for ( /*int32*/ let i = 0; i < N; ++i) {
-            /*box2d.b2PolygonShape*/
-            const shape = new box2d.b2PolygonShape();
+            /*b2.PolygonShape*/
+            const shape = new b2.PolygonShape();
             shape.SetAsBox(a, a, position, 0.0);
             ground.CreateFixture(shape, 0.0);
             ++this.m_fixtureCount;
@@ -72,14 +72,14 @@ export class Tiles extends testbed.Test {
       //    {
       //      /*int32*/ const N = 200;
       //      /*int32*/ const M = 10;
-      //      /*box2d.b2Vec2*/ const position = new box2d.b2Vec2();
+      //      /*b2.Vec2*/ const position = new b2.Vec2();
       //      position.x = -N * a;
       //      for (/*int32*/ let i = 0; i < N; ++i)
       //      {
       //        position.y = 0.0;
       //        for (/*int32*/ let j = 0; j < M; ++j)
       //        {
-      //          /*box2d.b2PolygonShape*/ const shape = new box2d.b2PolygonShape();
+      //          /*b2.PolygonShape*/ const shape = new b2.PolygonShape();
       //          shape.SetAsBox(a, a, position, 0.0);
       //          ground.CreateFixture(shape, 0.0);
       //          position.y -= 2.0 * a;
@@ -92,26 +92,26 @@ export class Tiles extends testbed.Test {
     {
       /*float32*/
       const a = 0.5;
-      /*box2d.b2PolygonShape*/
-      const shape = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(a, a);
 
-      /*box2d.b2Vec2*/
-      const x = new box2d.b2Vec2(-7.0, 0.75);
-      /*box2d.b2Vec2*/
-      const y = new box2d.b2Vec2();
-      /*box2d.b2Vec2*/
-      const deltaX = new box2d.b2Vec2(0.5625, 1.25);
-      /*box2d.b2Vec2*/
-      const deltaY = new box2d.b2Vec2(1.125, 0.0);
+      /*b2.Vec2*/
+      const x = new b2.Vec2(-7.0, 0.75);
+      /*b2.Vec2*/
+      const y = new b2.Vec2();
+      /*b2.Vec2*/
+      const deltaX = new b2.Vec2(0.5625, 1.25);
+      /*b2.Vec2*/
+      const deltaY = new b2.Vec2(1.125, 0.0);
 
       for ( /*int32*/ let i = 0; i < Tiles.e_count; ++i) {
         y.Copy(x);
 
         for ( /*int32*/ let j = i; j < Tiles.e_count; ++j) {
-          /*box2d.b2BodyDef*/
-          const bd = new box2d.b2BodyDef();
-          bd.type = box2d.b2BodyType.b2_dynamicBody;
+          /*b2.BodyDef*/
+          const bd = new b2.BodyDef();
+          bd.type = b2.BodyType.b2_dynamicBody;
           bd.position.Copy(y);
 
           //if (i === 0 && j === 0)
@@ -123,7 +123,7 @@ export class Tiles extends testbed.Test {
           //  bd.allowSleep = true;
           //}
 
-          /*box2d.b2Body*/
+          /*b2.Body*/
           const body = this.m_world.CreateBody(bd);
           body.CreateFixture(shape, 5.0);
           ++this.m_fixtureCount;
@@ -138,7 +138,7 @@ export class Tiles extends testbed.Test {
   }
 
   public Step(settings: testbed.Settings): void {
-    /*const box2d.b2ContactManager*/
+    /*const b2.ContactManager*/
     const cm = this.m_world.GetContactManager();
     /*int32*/
     const height = cm.m_broadPhase.GetTreeHeight();
@@ -156,7 +156,7 @@ export class Tiles extends testbed.Test {
     testbed.g_debugDraw.DrawString(5, this.m_textLine, `create time = ${this.m_createTime.toFixed(2)} ms, fixture count = ${this.m_fixtureCount}`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
-    //box2d.b2DynamicTree* tree = this.m_world.this.m_contactManager.m_broadPhase.m_tree;
+    //b2.DynamicTree* tree = this.m_world.this.m_contactManager.m_broadPhase.m_tree;
 
     //if (this.m_stepCount === 400)
     //{

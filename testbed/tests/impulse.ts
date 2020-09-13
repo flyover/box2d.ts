@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Impulse extends testbed.Test {
@@ -34,16 +34,16 @@ export class Impulse extends testbed.Test {
 
     // Create the containing box.
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
       const box = [
-        new box2d.b2Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
-        new box2d.b2Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
-        new box2d.b2Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
-        new box2d.b2Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
+        new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
+        new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
+        new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
+        new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
       ];
-      const shape = new box2d.b2ChainShape();
+      const shape = new b2.ChainShape();
       shape.CreateLoop(box, box.length);
       ground.CreateFixture(shape, 0.0);
     }
@@ -53,28 +53,28 @@ export class Impulse extends testbed.Test {
 
     // Create the particles.
     {
-      const shape = new box2d.b2PolygonShape();
-      shape.SetAsBox(0.8, 1.0, new box2d.b2Vec2(0.0, 1.01), 0);
-      const pd = new box2d.b2ParticleGroupDef();
+      const shape = new b2.PolygonShape();
+      shape.SetAsBox(0.8, 1.0, new b2.Vec2(0.0, 1.01), 0);
+      const pd = new b2.ParticleGroupDef();
       pd.flags = testbed.Test.GetParticleParameterValue();
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
-      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+      if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
         this.ColorParticleGroup(group, 0);
       }
     }
   }
 
-  public MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: b2.Vec2) {
     super.MouseUp(p);
 
     // Apply an impulse to the particles.
     const isInsideBox = Impulse.kBoxLeft <= p.x && p.x <= Impulse.kBoxRight &&
       Impulse.kBoxBottom <= p.y && p.y <= Impulse.kBoxTop;
     if (isInsideBox) {
-      const kBoxCenter = new box2d.b2Vec2(0.5 * (Impulse.kBoxLeft + Impulse.kBoxRight),
+      const kBoxCenter = new b2.Vec2(0.5 * (Impulse.kBoxLeft + Impulse.kBoxRight),
         0.5 * (Impulse.kBoxBottom + Impulse.kBoxTop));
-      const direction = box2d.b2Vec2.SubVV(p, kBoxCenter, new box2d.b2Vec2());
+      const direction = b2.Vec2.SubVV(p, kBoxCenter, new b2.Vec2());
       direction.Normalize();
       this.ApplyImpulseOrForce(direction);
     }
@@ -93,7 +93,7 @@ export class Impulse extends testbed.Test {
     }
   }
 
-  public ApplyImpulseOrForce(direction: box2d.b2Vec2) {
+  public ApplyImpulseOrForce(direction: b2.Vec2) {
     const particleSystem = this.m_world.GetParticleSystemList();
     if (!particleSystem) { throw new Error(); }
     const particleGroup = particleSystem.GetParticleGroupList();
@@ -103,12 +103,12 @@ export class Impulse extends testbed.Test {
     if (this.m_useLinearImpulse) {
       const kImpulseMagnitude = 0.005;
       ///  const b2Vec2 impulse = kImpulseMagnitude * direction * (float32)numParticles;
-      const impulse = box2d.b2Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new box2d.b2Vec2());
+      const impulse = b2.Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new b2.Vec2());
       particleGroup.ApplyLinearImpulse(impulse);
     } else {
       const kForceMagnitude = 1.0;
       ///  const b2Vec2 force = kForceMagnitude * direction * (float32)numParticles;
-      const force = box2d.b2Vec2.MulSV(kForceMagnitude * numParticles, direction, new box2d.b2Vec2());
+      const force = b2.Vec2.MulSV(kForceMagnitude * numParticles, direction, new b2.Vec2());
       particleGroup.ApplyForce(force);
     }
   }

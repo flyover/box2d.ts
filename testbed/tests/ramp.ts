@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Ramp extends testbed.Test {
@@ -26,7 +26,7 @@ export class Ramp extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
       // Construct a ramp out of many polygons to ensure there's no
@@ -35,22 +35,22 @@ export class Ramp extends testbed.Test {
       const xstep = 5.0, ystep = 5.0;
 
       for (let y = 30.0; y > 0.0; y -= ystep) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-25.0, y),
-          new box2d.b2Vec2(-25.0, y - ystep),
-          new box2d.b2Vec2(0.0, 15.0),
+          new b2.Vec2(-25.0, y),
+          new b2.Vec2(-25.0, y - ystep),
+          new b2.Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
       }
 
       for (let x = -25.0; x < 25.0; x += xstep) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(x, 0.0),
-          new box2d.b2Vec2(x + xstep, 0.0),
-          new box2d.b2Vec2(0.0, 15.0),
+          new b2.Vec2(x, 0.0),
+          new b2.Vec2(x + xstep, 0.0),
+          new b2.Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
@@ -59,19 +59,19 @@ export class Ramp extends testbed.Test {
 
     this.m_particleSystem.SetRadius(0.25);
     const particleType = testbed.Test.GetParticleParameterValue();
-    if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
+    if (particleType === b2.ParticleFlag.b2_waterParticle) {
       this.m_particleSystem.SetDamping(0.2);
     }
 
     {
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_p.Set(-20, 33);
       shape.m_radius = 3;
-      const pd = new box2d.b2ParticleGroupDef();
+      const pd = new b2.ParticleGroupDef();
       pd.flags = particleType;
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
-      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+      if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
         this.ColorParticleGroup(group, 0);
       }
     }

@@ -5,9 +5,9 @@
   "main": "./dist/box2d.umd.js",
   "types": "./src/box2d.ts",
   "scripts": {
-    "build": "npm run build-testbed",
+    "build": "npm run build-box2d",
     "build-all": "npm run build-box2d && npm run build-unit-test && npm run build-testbed",
-    "watch": "npm run watch-testbed",
+    "watch": "npm run watch-box2d",
     "start": "http-server -c-1 -o",
     "dist": "npm run dist-box2d && npm run dist-unit-test && npm run dist-testbed",
     "build-box2d": "tsc",

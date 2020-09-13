@@ -1,7 +1,7 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class Soup extends testbed.Test {
-    m_ground: box2d.b2Body;
+    m_ground: b2.Body;
     constructor();
     GetDefaultViewZoom(): number;
     static Create(): Soup;

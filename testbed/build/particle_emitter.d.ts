@@ -1,9 +1,9 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 export declare class EmittedParticleCallback {
     /**
      * Called for each created particle.
      */
-    ParticleCreated(system: box2d.b2ParticleSystem, particleIndex: number): void;
+    ParticleCreated(system: b2.ParticleSystem, particleIndex: number): void;
 }
 /**
  * Emit particles from a circular region.
@@ -12,7 +12,7 @@ export declare class RadialEmitter {
     /**
      * Pointer to global world
      */
-    m_particleSystem: box2d.b2ParticleSystem | null;
+    m_particleSystem: b2.ParticleSystem | null;
     /**
      * Called for each created particle.
      */
@@ -20,11 +20,11 @@ export declare class RadialEmitter {
     /**
      * Center of particle emitter
      */
-    m_origin: box2d.b2Vec2;
+    m_origin: b2.Vec2;
     /**
      * Launch direction.
      */
-    m_startingVelocity: box2d.b2Vec2;
+    m_startingVelocity: b2.Vec2;
     /**
      * Speed particles are emitted
      */
@@ -32,7 +32,7 @@ export declare class RadialEmitter {
     /**
      * Half width / height of particle emitter
      */
-    m_halfSize: box2d.b2Vec2;
+    m_halfSize: b2.Vec2;
     /**
      * Particles per second
      */
@@ -40,7 +40,7 @@ export declare class RadialEmitter {
     /**
      * Initial color of particle emitted.
      */
-    m_color: box2d.b2Color;
+    m_color: b2.Color;
     /**
      * Number particles to emit on the next frame
      */
@@ -48,11 +48,11 @@ export declare class RadialEmitter {
     /**
      * Flags for created particles, see b2ParticleFlag.
      */
-    m_flags: box2d.b2ParticleFlag;
+    m_flags: b2.ParticleFlag;
     /**
      * Group to put newly created particles in.
      */
-    m_group: box2d.b2ParticleGroup | null;
+    m_group: b2.ParticleGroup | null;
     /**
      * Calculate a random number 0.0..1.0.
      */
@@ -61,27 +61,27 @@ export declare class RadialEmitter {
     /**
      * Set the center of the emitter.
      */
-    SetPosition(origin: box2d.b2Vec2): void;
+    SetPosition(origin: b2.Vec2): void;
     /**
      * Get the center of the emitter.
      */
-    GetPosition(out: box2d.b2Vec2): box2d.b2Vec2;
+    GetPosition(out: b2.Vec2): b2.Vec2;
     /**
      * Set the size of the circle which emits particles.
      */
-    SetSize(size: box2d.b2Vec2): void;
+    SetSize(size: b2.Vec2): void;
     /**
      * Get the size of the circle which emits particles.
      */
-    GetSize(out: box2d.b2Vec2): box2d.b2Vec2;
+    GetSize(out: b2.Vec2): b2.Vec2;
     /**
      * Set the starting velocity of emitted particles.
      */
-    SetVelocity(velocity: box2d.b2Vec2): void;
+    SetVelocity(velocity: b2.Vec2): void;
     /**
      * Get the starting velocity.
      */
-    GetVelocity(out: box2d.b2Vec2): box2d.b2Vec2;
+    GetVelocity(out: b2.Vec2): b2.Vec2;
     /**
      * Set the speed of particles along the direction from the
      * center of the emitter.
@@ -95,19 +95,19 @@ export declare class RadialEmitter {
     /**
      * Set the flags for created particles.
      */
-    SetParticleFlags(flags: box2d.b2ParticleFlag): void;
+    SetParticleFlags(flags: b2.ParticleFlag): void;
     /**
      * Get the flags for created particles.
      */
-    GetParticleFlags(): box2d.b2ParticleFlag;
+    GetParticleFlags(): b2.ParticleFlag;
     /**
      * Set the color of particles.
      */
-    SetColor(color: box2d.b2Color): void;
+    SetColor(color: b2.Color): void;
     /**
      * Get the color of particles emitter.
      */
-    GetColor(out: box2d.b2Color): box2d.b2Color;
+    GetColor(out: b2.Color): b2.Color;
     /**
      * Set the emit rate in particles per second.
      */
@@ -119,11 +119,11 @@ export declare class RadialEmitter {
     /**
      * Set the particle system this emitter is adding particles to.
      */
-    SetParticleSystem(particleSystem: box2d.b2ParticleSystem): void;
+    SetParticleSystem(particleSystem: b2.ParticleSystem): void;
     /**
      * Get the particle system this emitter is adding particle to.
      */
-    GetParticleSystem(): box2d.b2ParticleSystem | null;
+    GetParticleSystem(): b2.ParticleSystem | null;
     /**
      * Set the callback that is called on the creation of each
      * particle.
@@ -141,11 +141,11 @@ export declare class RadialEmitter {
      * longer references it so that the group can potentially be
      * cleaned up.
      */
-    SetGroup(group: box2d.b2ParticleGroup | null): void;
+    SetGroup(group: b2.ParticleGroup | null): void;
     /**
      * Get the group particles should be created within.
      */
-    GetGroup(): box2d.b2ParticleGroup | null;
+    GetGroup(): b2.ParticleGroup | null;
     /**
      * dt is seconds that have passed, particleIndices is an
      * optional pointer to an array which tracks which particles

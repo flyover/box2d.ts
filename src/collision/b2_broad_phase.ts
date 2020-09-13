@@ -102,7 +102,7 @@ export class b2BroadPhase<T> {
         continue;
       }
 
-      // This is called from box2d.b2DynamicTree::Query when we are gathering pairs.
+      // This is called from b2.DynamicTree::Query when we are gathering pairs.
       // boolean b2BroadPhase::QueryCallback(int32 proxyId);
 
       // We have to query the tree with the fat AABB so that

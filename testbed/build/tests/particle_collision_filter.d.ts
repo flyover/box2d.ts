@@ -1,6 +1,6 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
-export declare class ParticleContactDisabler extends box2d.b2ContactFilter {
+export declare class ParticleContactDisabler extends b2.ContactFilter {
     m_enableFixtureParticleCollisions: boolean;
     m_enableParticleParticleCollisions: boolean;
     ShouldCollideFixtureParticle(): boolean;
@@ -13,7 +13,7 @@ export declare class ParticleCollisionFilter extends testbed.Test {
     ToggleFixtureCollisions(): void;
     ToggleParticleCollisions(): void;
     m_contactDisabler: ParticleContactDisabler;
-    m_particleGroup: box2d.b2ParticleGroup;
+    m_particleGroup: b2.ParticleGroup;
     static readonly kBoxSize = 10;
     static readonly kBoxSizeHalf: number;
     static readonly kOffset = 20;

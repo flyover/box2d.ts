@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Segway extends testbed.Test {
@@ -27,10 +27,10 @@ export class Segway extends testbed.Test {
   public posAvg: number = 0;
   public readonly angleController: PIDController = new PIDController();
   public readonly positionController: PIDController = new PIDController();
-  public pendulumBody: box2d.b2Body;
-  public wheelBody: box2d.b2Body;
-  public groundBody: box2d.b2Body;
-  public wheelJoint: box2d.b2RevoluteJoint;
+  public pendulumBody: b2.Body;
+  public wheelBody: b2.Body;
+  public groundBody: b2.Body;
+  public wheelJoint: b2.RevoluteJoint;
 
   constructor() {
     super();
@@ -45,8 +45,8 @@ export class Segway extends testbed.Test {
     this.positionController.gainI = 0;
     this.positionController.gainD = 1.5;
 
-    const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
-    const fd: box2d.b2FixtureDef = new box2d.b2FixtureDef();
+    const bd: b2.BodyDef = new b2.BodyDef();
+    const fd: b2.FixtureDef = new b2.FixtureDef();
 
     // pendulumBody = new p2.Body({
     //     mass: 1,
@@ -54,11 +54,11 @@ export class Segway extends testbed.Test {
     // });
     // pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
     // world.addBody(pendulumBody);
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.x = 0;
     bd.position.y = 2 + 0.5 * Segway.PENDULUM_LENGTH;
     this.pendulumBody = this.m_world.CreateBody(bd);
-    const pendulumShape: box2d.b2PolygonShape = new box2d.b2PolygonShape();
+    const pendulumShape: b2.PolygonShape = new b2.PolygonShape();
     pendulumShape.SetAsBox(0.5, 0.5 * Segway.PENDULUM_LENGTH);
     fd.shape = pendulumShape;
     fd.density = 1 / (1 * Segway.PENDULUM_LENGTH); // TODO: specify mass
@@ -71,11 +71,11 @@ export class Segway extends testbed.Test {
     // });
     // wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
     // world.addBody(wheelBody);
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.x = 0;
     bd.position.y = 1;
     this.wheelBody = this.m_world.CreateBody(bd);
-    const wheelShape: box2d.b2CircleShape = new box2d.b2CircleShape();
+    const wheelShape: b2.CircleShape = new b2.CircleShape();
     wheelShape.m_radius = 0.6;
     fd.shape = wheelShape;
     fd.density = 1 / (Math.PI * 0.6 * 0.6); // TODO: specify mass
@@ -93,7 +93,7 @@ export class Segway extends testbed.Test {
     // var m = 40;
     // wheelJoint.motorEquation.maxForce = m;
     // wheelJoint.motorEquation.minForce = -m;
-    const jd: box2d.b2RevoluteJointDef = new box2d.b2RevoluteJointDef();
+    const jd: b2.RevoluteJointDef = new b2.RevoluteJointDef();
     jd.Initialize(this.wheelBody, this.pendulumBody, { x: 0, y: 0 });
     jd.localAnchorA.Set(0, 0);
     jd.localAnchorB.Set(0, -0.5 * Segway.PENDULUM_LENGTH);
@@ -109,11 +109,11 @@ export class Segway extends testbed.Test {
     // });
     // groundBody.addShape(groundShape);
     // world.addBody(groundBody);
-    bd.type = box2d.b2BodyType.b2_staticBody;
+    bd.type = b2.BodyType.b2_staticBody;
     bd.position.x = 0;
     bd.position.y = 0;
     this.groundBody = this.m_world.CreateBody(bd);
-    const groundShape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
+    const groundShape: b2.EdgeShape = new b2.EdgeShape();
     groundShape.SetTwoSided({ x: -100, y: 0 }, { x: 100, y: 0 });
     fd.shape = groundShape;
     fd.friction = 10;
@@ -145,11 +145,11 @@ export class Segway extends testbed.Test {
       this.positionController.step(dt);
       let targetLinAccel: number = this.positionController.output;
       // targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
-      targetLinAccel = box2d.b2Clamp(targetLinAccel, -10, 10);
+      targetLinAccel = b2.Clamp(targetLinAccel, -10, 10);
       // targetAngle = targetLinAccel / world.gravity[1];
       targetAngle = targetLinAccel / this.m_world.GetGravity().y;
       // targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
-      targetAngle = box2d.b2Clamp(targetAngle, box2d.b2DegToRad(-15), box2d.b2DegToRad(15));
+      targetAngle = b2.Clamp(targetAngle, b2.DegToRad(-15), b2.DegToRad(15));
     }
     // var currentAngle = pendulumBody.angle;
     let currentAngle: number = this.pendulumBody.GetAngle();
@@ -298,7 +298,7 @@ class PIDController {
 //     return Math.min(Math.max(num, min), max);
 // };
 function normalizeAngle(angle: number): number {
-    while (angle > box2d.b2DegToRad( 180)) { angle -= box2d.b2DegToRad(360); }
-    while (angle < box2d.b2DegToRad(-180)) { angle += box2d.b2DegToRad(360); }
+    while (angle > b2.DegToRad( 180)) { angle -= b2.DegToRad(360); }
+    while (angle < b2.DegToRad(-180)) { angle += b2.DegToRad(360); }
     return angle;
 }

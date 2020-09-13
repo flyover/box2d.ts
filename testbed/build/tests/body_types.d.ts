@@ -1,8 +1,8 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class BodyTypes extends testbed.Test {
-    m_attachment: box2d.b2Body;
-    m_platform: box2d.b2Body;
+    m_attachment: b2.Body;
+    m_platform: b2.Body;
     m_speed: number;
     constructor();
     Keyboard(key: string): void;

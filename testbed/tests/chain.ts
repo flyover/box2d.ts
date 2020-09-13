@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 const TEST_BAD_BODY: boolean = false;
@@ -30,31 +30,31 @@ export class Chain extends testbed.Test {
     let ground = null;
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.6, 0.125);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       fd.friction = 0.2;
 
-      const jd = new box2d.b2RevoluteJointDef();
+      const jd = new b2.RevoluteJointDef();
       jd.collideConnected = false;
 
       const y = 25.0;
       let prevBody = ground;
       for (let i = 0; i < Chain.e_count; ++i) {
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.5 + i, y);
         const body = this.m_world.CreateBody(bd);
 
@@ -68,7 +68,7 @@ export class Chain extends testbed.Test {
 
         body.CreateFixture(fd);
 
-        const anchor = new box2d.b2Vec2(i, y);
+        const anchor = new b2.Vec2(i, y);
         jd.Initialize(prevBody, body, anchor);
         this.m_world.CreateJoint(jd);
 

@@ -1,14 +1,14 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class Rope extends testbed.Test {
-    readonly m_rope1: box2d.b2Rope;
-    readonly m_rope2: box2d.b2Rope;
-    readonly m_tuning1: box2d.b2RopeTuning;
-    readonly m_tuning2: box2d.b2RopeTuning;
+    readonly m_rope1: b2.Rope;
+    readonly m_rope2: b2.Rope;
+    readonly m_tuning1: b2.RopeTuning;
+    readonly m_tuning2: b2.RopeTuning;
     m_iterations1: number;
     m_iterations2: number;
-    readonly m_position1: box2d.b2Vec2;
-    readonly m_position2: box2d.b2Vec2;
+    readonly m_position1: b2.Vec2;
+    readonly m_position2: b2.Vec2;
     m_speed: number;
     constructor();
     m_move_x: number;

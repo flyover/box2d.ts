@@ -16,18 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class AddPair extends testbed.Test {
   constructor() {
     super();
 
-    this.m_world.SetGravity(new box2d.b2Vec2(0.0, 0.0));
+    this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
     {
       // const a = 0.1;
 
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_p.SetZero();
       shape.m_radius = 0.1;
 
@@ -37,24 +37,24 @@ export class AddPair extends testbed.Test {
       const maxY = 6.0;
 
       for (let i = 0; i < 400; ++i) {
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
-        bd.position.Set(box2d.b2RandomRange(minX, maxX), box2d.b2RandomRange(minY, maxY));
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
+        bd.position.Set(b2.RandomRange(minX, maxX), b2.RandomRange(minY, maxY));
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 0.01);
       }
     }
 
     {
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(1.5, 1.5);
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(-40.0, 5.0);
       bd.bullet = true;
       const body = this.m_world.CreateBody(bd);
       body.CreateFixture(shape, 1.0);
-      body.SetLinearVelocity(new box2d.b2Vec2(10.0, 0.0));
+      body.SetLinearVelocity(new b2.Vec2(10.0, 0.0));
     }
   }
 

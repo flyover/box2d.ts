@@ -16,74 +16,74 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class BodyTypes extends testbed.Test {
-  public m_attachment: box2d.b2Body;
-  public m_platform: box2d.b2Body;
+  public m_attachment: b2.Body;
+  public m_platform: b2.Body;
   public m_speed = 0;
 
   constructor() {
     super();
 
-    /*box2d.b2BodyDef*/
-    const bd = new box2d.b2BodyDef();
+    /*b2.BodyDef*/
+    const bd = new b2.BodyDef();
     const ground = this.m_world.CreateBody(bd);
 
-    /*box2d.b2EdgeShape*/
-    const shape = new box2d.b2EdgeShape();
-    shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+    /*b2.EdgeShape*/
+    const shape = new b2.EdgeShape();
+    shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
 
-    /*box2d.b2FixtureDef*/
-    const fd = new box2d.b2FixtureDef();
+    /*b2.FixtureDef*/
+    const fd = new b2.FixtureDef();
     fd.shape = shape;
 
     ground.CreateFixture(fd);
 
     // Define attachment
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 3.0);
       this.m_attachment = this.m_world.CreateBody(bd);
 
-      /*box2d.b2PolygonShape*/
-      const shape = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 2.0);
       this.m_attachment.CreateFixture(shape, 2.0);
     }
 
     // Define platform
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(-4.0, 5.0);
       this.m_platform = this.m_world.CreateBody(bd);
 
-      /*box2d.b2PolygonShape*/
-      const shape = new box2d.b2PolygonShape();
-      shape.SetAsBox(0.5, 4.0, new box2d.b2Vec2(4.0, 0.0), 0.5 * box2d.b2_pi);
+      /*b2.PolygonShape*/
+      const shape = new b2.PolygonShape();
+      shape.SetAsBox(0.5, 4.0, new b2.Vec2(4.0, 0.0), 0.5 * b2.pi);
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.friction = 0.6;
       fd.density = 2.0;
       this.m_platform.CreateFixture(fd);
 
-      /*box2d.b2RevoluteJointDef*/
-      const rjd = new box2d.b2RevoluteJointDef();
-      rjd.Initialize(this.m_attachment, this.m_platform, new box2d.b2Vec2(0.0, 5.0));
+      /*b2.RevoluteJointDef*/
+      const rjd = new b2.RevoluteJointDef();
+      rjd.Initialize(this.m_attachment, this.m_platform, new b2.Vec2(0.0, 5.0));
       rjd.maxMotorTorque = 50.0;
       rjd.enableMotor = true;
       this.m_world.CreateJoint(rjd);
 
-      /*box2d.b2PrismaticJointDef*/
-      const pjd = new box2d.b2PrismaticJointDef();
-      pjd.Initialize(ground, this.m_platform, new box2d.b2Vec2(0.0, 5.0), new box2d.b2Vec2(1.0, 0.0));
+      /*b2.PrismaticJointDef*/
+      const pjd = new b2.PrismaticJointDef();
+      pjd.Initialize(ground, this.m_platform, new b2.Vec2(0.0, 5.0), new b2.Vec2(1.0, 0.0));
 
       pjd.maxMotorForce = 1000.0;
       pjd.enableMotor = true;
@@ -98,19 +98,19 @@ export class BodyTypes extends testbed.Test {
 
     // Create a payload
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 8.0);
-      /*box2d.b2Body*/
+      /*b2.Body*/
       const body = this.m_world.CreateBody(bd);
 
-      /*box2d.b2PolygonShape*/
-      const shape = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.75, 0.75);
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.friction = 0.6;
       fd.density = 2.0;
@@ -122,16 +122,16 @@ export class BodyTypes extends testbed.Test {
   public Keyboard(key: string) {
     switch (key) {
       case "d":
-        this.m_platform.SetType(box2d.b2BodyType.b2_dynamicBody);
+        this.m_platform.SetType(b2.BodyType.b2_dynamicBody);
         break;
 
       case "s":
-        this.m_platform.SetType(box2d.b2BodyType.b2_staticBody);
+        this.m_platform.SetType(b2.BodyType.b2_staticBody);
         break;
 
       case "k":
-        this.m_platform.SetType(box2d.b2BodyType.b2_kinematicBody);
-        this.m_platform.SetLinearVelocity(new box2d.b2Vec2(-this.m_speed, 0.0));
+        this.m_platform.SetType(b2.BodyType.b2_kinematicBody);
+        this.m_platform.SetLinearVelocity(new b2.Vec2(-this.m_speed, 0.0));
         this.m_platform.SetAngularVelocity(0.0);
         break;
     }
@@ -139,15 +139,15 @@ export class BodyTypes extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     // Drive the kinematic body.
-    if (this.m_platform.GetType() === box2d.b2BodyType.b2_kinematicBody) {
-      /*box2d.b2Vec2*/
+    if (this.m_platform.GetType() === b2.BodyType.b2_kinematicBody) {
+      /*b2.Vec2*/
       const p = this.m_platform.GetTransform().p;
-      /*box2d.b2Vec2*/
+      /*b2.Vec2*/
       const v = this.m_platform.GetLinearVelocity();
 
       if ((p.x < -10.0 && v.x < 0.0) ||
         (p.x > 10.0 && v.x > 0.0)) {
-        this.m_platform.SetLinearVelocity(new box2d.b2Vec2(-v.x, v.y));
+        this.m_platform.SetLinearVelocity(new b2.Vec2(-v.x, v.y));
       }
     }
 

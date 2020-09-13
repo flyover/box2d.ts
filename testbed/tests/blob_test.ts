@@ -16,27 +16,27 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class BlobTest extends testbed.Test {
   constructor() {
     super();
 
-    const ground = this.m_world.CreateBody(new box2d.b2BodyDef());
+    const ground = this.m_world.CreateBody(new b2.BodyDef());
 
     {
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(-40.0, 25.0));
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(-40.0, 25.0));
       ground.CreateFixture(shape, 0.0);
-      shape.SetTwoSided(new box2d.b2Vec2(40.0, 0.0), new box2d.b2Vec2(40.0, 25.0));
+      shape.SetTwoSided(new b2.Vec2(40.0, 0.0), new b2.Vec2(40.0, 25.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
-      const ajd = new box2d.b2AreaJointDef();
+      const ajd = new b2.AreaJointDef();
 
       const cx = 0.0;
       const cy = 10.0;
@@ -46,18 +46,18 @@ export class BlobTest extends testbed.Test {
       const bodyRadius = 0.5;
       for (let i = 0; i < nBodies; ++i) {
         const angle = (i * 2.0 * Math.PI) / nBodies;
-        const bd = new box2d.b2BodyDef();
+        const bd = new b2.BodyDef();
         //bd.isBullet = true;
         bd.fixedRotation = true;
 
         const x = cx + rx * Math.cos(angle);
         const y = cy + ry * Math.sin(angle);
         bd.position.Set(x, y);
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        bd.type = b2.BodyType.b2_dynamicBody;
         const body = this.m_world.CreateBody(bd);
 
-        const fd = new box2d.b2FixtureDef();
-        fd.shape = new box2d.b2CircleShape(bodyRadius);
+        const fd = new b2.FixtureDef();
+        fd.shape = new b2.CircleShape(bodyRadius);
         fd.density = 1.0;
         body.CreateFixture(fd);
 
@@ -66,7 +66,7 @@ export class BlobTest extends testbed.Test {
 
       const frequencyHz: number = 10.0;
       const dampingRatio: number = 1.0;
-      box2d.b2LinearStiffness(ajd, frequencyHz, dampingRatio, ajd.bodyA, ajd.bodyB);
+      b2.LinearStiffness(ajd, frequencyHz, dampingRatio, ajd.bodyA, ajd.bodyB);
       this.m_world.CreateJoint(ajd);
     }
   }

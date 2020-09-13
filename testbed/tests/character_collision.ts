@@ -16,22 +16,22 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class CharacterCollision extends testbed.Test {
-  public m_character: box2d.b2Body;
+  public m_character: b2.Body;
 
   constructor() {
     super();
 
     // Ground body
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -39,32 +39,32 @@ export class CharacterCollision extends testbed.Test {
     // This shows the problematic case where a box shape can hit
     // an internal vertex.
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-8.0, 1.0), new box2d.b2Vec2(-6.0, 1.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-8.0, 1.0), new b2.Vec2(-6.0, 1.0));
       ground.CreateFixture(shape, 0.0);
-      shape.SetTwoSided(new box2d.b2Vec2(-6.0, 1.0), new box2d.b2Vec2(-4.0, 1.0));
+      shape.SetTwoSided(new b2.Vec2(-6.0, 1.0), new b2.Vec2(-4.0, 1.0));
       ground.CreateFixture(shape, 0.0);
-      shape.SetTwoSided(new box2d.b2Vec2(-4.0, 1.0), new box2d.b2Vec2(-2.0, 1.0));
+      shape.SetTwoSided(new b2.Vec2(-4.0, 1.0), new b2.Vec2(-2.0, 1.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     // Chain shape
     {
-      const bd = new box2d.b2BodyDef();
-      bd.angle = 0.25 * box2d.b2_pi;
+      const bd = new b2.BodyDef();
+      bd.angle = 0.25 * b2.pi;
       const ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2Vec2[]*/
-      const vs = box2d.b2Vec2.MakeArray(4);
+      /*b2.Vec2[]*/
+      const vs = b2.Vec2.MakeArray(4);
       vs[0].Set(5.0, 7.0);
       vs[1].Set(6.0, 8.0);
       vs[2].Set(7.0, 8.0);
       vs[3].Set(8.0, 7.0);
-      /*box2d.b2ChainShape*/
-      const shape = new box2d.b2ChainShape();
+      /*b2.ChainShape*/
+      const shape = new b2.ChainShape();
       shape.CreateLoop(vs, 4);
       ground.CreateFixture(shape, 0.0);
     }
@@ -73,43 +73,43 @@ export class CharacterCollision extends testbed.Test {
     // have non-smooth collision. There is no solution
     // to this problem.
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
-      shape.SetAsBox(1.0, 1.0, new box2d.b2Vec2(4.0, 3.0), 0.0);
+      const shape = new b2.PolygonShape();
+      shape.SetAsBox(1.0, 1.0, new b2.Vec2(4.0, 3.0), 0.0);
       ground.CreateFixture(shape, 0.0);
-      shape.SetAsBox(1.0, 1.0, new box2d.b2Vec2(6.0, 3.0), 0.0);
+      shape.SetAsBox(1.0, 1.0, new b2.Vec2(6.0, 3.0), 0.0);
       ground.CreateFixture(shape, 0.0);
-      shape.SetAsBox(1.0, 1.0, new box2d.b2Vec2(8.0, 3.0), 0.0);
+      shape.SetAsBox(1.0, 1.0, new b2.Vec2(8.0, 3.0), 0.0);
       ground.CreateFixture(shape, 0.0);
     }
 
     // Square made from an edge loop. Collision should be smooth.
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2Vec2[]*/
-      const vs = box2d.b2Vec2.MakeArray(4);
+      /*b2.Vec2[]*/
+      const vs = b2.Vec2.MakeArray(4);
       vs[0].Set(-1.0, 3.0);
       vs[1].Set(1.0, 3.0);
       vs[2].Set(1.0, 5.0);
       vs[3].Set(-1.0, 5.0);
-      /*box2d.b2ChainShape*/
-      const shape = new box2d.b2ChainShape();
+      /*b2.ChainShape*/
+      const shape = new b2.ChainShape();
       shape.CreateLoop(vs, 4);
       ground.CreateFixture(shape, 0.0);
     }
 
     // Edge loop. Collision should be smooth.
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(-10.0, 4.0);
       const ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2Vec2[]*/
-      const vs = box2d.b2Vec2.MakeArray(10);
+      /*b2.Vec2[]*/
+      const vs = b2.Vec2.MakeArray(10);
       vs[0].Set(0.0, 0.0);
       vs[1].Set(6.0, 0.0);
       vs[2].Set(6.0, 2.0);
@@ -120,26 +120,26 @@ export class CharacterCollision extends testbed.Test {
       vs[7].Set(-4.0, 3.0);
       vs[8].Set(-6.0, 2.0);
       vs[9].Set(-6.0, 0.0);
-      /*box2d.b2ChainShape*/
-      const shape = new box2d.b2ChainShape();
+      /*b2.ChainShape*/
+      const shape = new b2.ChainShape();
       shape.CreateLoop(vs, 10);
       ground.CreateFixture(shape, 0.0);
     }
 
     // Square character 1
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(-3.0, 8.0);
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.fixedRotation = true;
       bd.allowSleep = false;
 
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 0.5);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       body.CreateFixture(fd);
@@ -147,18 +147,18 @@ export class CharacterCollision extends testbed.Test {
 
     // Square character 2
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(-5.0, 5.0);
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.fixedRotation = true;
       bd.allowSleep = false;
 
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.25, 0.25);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       body.CreateFixture(fd);
@@ -166,26 +166,26 @@ export class CharacterCollision extends testbed.Test {
 
     // Hexagon character
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(-5.0, 8.0);
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.fixedRotation = true;
       bd.allowSleep = false;
 
       const body = this.m_world.CreateBody(bd);
 
       let angle = 0.0;
-      const delta = box2d.b2_pi / 3.0;
-      const vertices = box2d.b2Vec2.MakeArray(6);
+      const delta = b2.pi / 3.0;
+      const vertices = b2.Vec2.MakeArray(6);
       for (let i = 0; i < 6; ++i) {
-        vertices[i].Set(0.5 * box2d.b2Cos(angle), 0.5 * box2d.b2Sin(angle));
+        vertices[i].Set(0.5 * b2.Cos(angle), 0.5 * b2.Sin(angle));
         angle += delta;
       }
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.Set(vertices, 6);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       body.CreateFixture(fd);
@@ -193,18 +193,18 @@ export class CharacterCollision extends testbed.Test {
 
     // Circle character
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(3.0, 5.0);
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.fixedRotation = true;
       bd.allowSleep = false;
 
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_radius = 0.5;
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       body.CreateFixture(fd);
@@ -212,17 +212,17 @@ export class CharacterCollision extends testbed.Test {
 
     // Circle character
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(-7.0, 6.0);
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.allowSleep = false;
 
       this.m_character = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_radius = 0.25;
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       fd.friction = 1.0;

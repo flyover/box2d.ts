@@ -18,12 +18,12 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class LiquidTimer extends testbed.Test {
   public static readonly k_paramValues = [
-    new testbed.ParticleParameterValue(box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile + viscous"),
+    new testbed.ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle, testbed.ParticleParameter.k_DefaultOptions, "tensile + viscous"),
   ];
   public static readonly k_paramDef = [
     new testbed.ParticleParameterDefinition(LiquidTimer.k_paramValues),
@@ -38,15 +38,15 @@ export class LiquidTimer extends testbed.Test {
     testbed.Test.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2ChainShape();
+      const shape = new b2.ChainShape();
       const vertices = [
-        new box2d.b2Vec2(-2, 0),
-        new box2d.b2Vec2(2, 0),
-        new box2d.b2Vec2(2, 4),
-        new box2d.b2Vec2(-2, 4),
+        new b2.Vec2(-2, 0),
+        new b2.Vec2(2, 0),
+        new b2.Vec2(2, 4),
+        new b2.Vec2(-2, 4),
       ];
       shape.CreateLoop(vertices, 4);
       ground.CreateFixture(shape, 0.0);
@@ -54,94 +54,94 @@ export class LiquidTimer extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(0.025); {
-      const shape = new box2d.b2PolygonShape();
-      shape.SetAsBox(2, 0.4, new box2d.b2Vec2(0, 3.6), 0);
-      const pd = new box2d.b2ParticleGroupDef();
+      const shape = new b2.PolygonShape();
+      shape.SetAsBox(2, 0.4, new b2.Vec2(0, 3.6), 0);
+      const pd = new b2.ParticleGroupDef();
       pd.flags = testbed.Test.GetParticleParameterValue();
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
-      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+      if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
         this.ColorParticleGroup(group, 0);
       }
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-2, 3.2), new box2d.b2Vec2(-1.2, 3.2));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-2, 3.2), new b2.Vec2(-1.2, 3.2));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-1.1, 3.2), new box2d.b2Vec2(2, 3.2));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(2, 3.2));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-1.2, 3.2), new box2d.b2Vec2(-1.2, 2.8));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-1.2, 3.2), new b2.Vec2(-1.2, 2.8));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-1.1, 3.2), new box2d.b2Vec2(-1.1, 2.8));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(-1.1, 2.8));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-1.6, 2.4), new box2d.b2Vec2(0.8, 2));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-1.6, 2.4), new b2.Vec2(0.8, 2));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(1.6, 1.6), new box2d.b2Vec2(-0.8, 1.2));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(1.6, 1.6), new b2.Vec2(-0.8, 1.2));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-1.2, 0.8), new box2d.b2Vec2(-1.2, 0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-1.2, 0.8), new b2.Vec2(-1.2, 0));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-0.4, 0.8), new box2d.b2Vec2(-0.4, 0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-0.4, 0.8), new b2.Vec2(-0.4, 0));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(0.4, 0.8), new box2d.b2Vec2(0.4, 0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(0.4, 0.8), new b2.Vec2(0.4, 0));
       body.CreateFixture(shape, 0.1);
     }
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(1.2, 0.8), new box2d.b2Vec2(1.2, 0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(1.2, 0.8), new b2.Vec2(1.2, 0));
       body.CreateFixture(shape, 0.1);
     }
   }

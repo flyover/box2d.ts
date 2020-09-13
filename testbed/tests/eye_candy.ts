@@ -1,11 +1,11 @@
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class EyeCandy extends testbed.Test {
-  public m_mover: box2d.b2Body;
-  public m_joint: box2d.b2RevoluteJoint;
+  public m_mover: b2.Body;
+  public m_joint: b2.RevoluteJoint;
 
   constructor() {
     super();
@@ -15,32 +15,32 @@ export class EyeCandy extends testbed.Test {
     this.m_particleSystem.SetGravityScale(0.4);
     this.m_particleSystem.SetDensity(1.2);
 
-    const bdg = new box2d.b2BodyDef();
+    const bdg = new b2.BodyDef();
     const ground = this.m_world.CreateBody(bdg);
 
-    const bd = new box2d.b2BodyDef();
-    bd.type = box2d.b2BodyType.b2_staticBody; //box2d.b2BodyType.b2_dynamicBody;
+    const bd = new b2.BodyDef();
+    bd.type = b2.BodyType.b2_staticBody; //b2.BodyType.b2_dynamicBody;
     bd.allowSleep = false;
     bd.position.Set(0.0, 0.0);
     const body = this.m_world.CreateBody(bd);
 
-    const shape = new box2d.b2PolygonShape();
-    shape.SetAsBox(0.5, 10.0, new box2d.b2Vec2(20.0, 0.0), 0.0);
+    const shape = new b2.PolygonShape();
+    shape.SetAsBox(0.5, 10.0, new b2.Vec2(20.0, 0.0), 0.0);
     body.CreateFixture(shape, 5.0);
-    shape.SetAsBox(0.5, 10.0, new box2d.b2Vec2(-20.0, 0.0), 0.0);
+    shape.SetAsBox(0.5, 10.0, new b2.Vec2(-20.0, 0.0), 0.0);
     body.CreateFixture(shape, 5.0);
-    shape.SetAsBox(0.5, 20.0, new box2d.b2Vec2(0.0, 10.0), Math.PI / 2.0);
+    shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, 10.0), Math.PI / 2.0);
     body.CreateFixture(shape, 5.0);
-    shape.SetAsBox(0.5, 20.0, new box2d.b2Vec2(0.0, -10.0), Math.PI / 2.0);
+    shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, -10.0), Math.PI / 2.0);
     body.CreateFixture(shape, 5.0);
 
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.Set(0.0, 0.0);
     this.m_mover = this.m_world.CreateBody(bd);
-    shape.SetAsBox(1.0, 5.0, new box2d.b2Vec2(0.0, 2.0), 0.0);
+    shape.SetAsBox(1.0, 5.0, new b2.Vec2(0.0, 2.0), 0.0);
     this.m_mover.CreateFixture(shape, 5.0);
 
-    const jd = new box2d.b2RevoluteJointDef();
+    const jd = new b2.RevoluteJointDef();
     jd.bodyA = ground;
     jd.bodyB = this.m_mover;
     jd.localAnchorA.Set(0.0, 0.0);
@@ -51,11 +51,11 @@ export class EyeCandy extends testbed.Test {
     jd.enableMotor = true;
     this.m_joint = this.m_world.CreateJoint(jd);
 
-    const pd = new box2d.b2ParticleGroupDef();
-    pd.flags = box2d.b2ParticleFlag.b2_waterParticle;
+    const pd = new b2.ParticleGroupDef();
+    pd.flags = b2.ParticleFlag.b2_waterParticle;
 
-    const shape2 = new box2d.b2PolygonShape();
-    shape2.SetAsBox(9.0, 9.0, new box2d.b2Vec2(0.0, 0.0), 0.0);
+    const shape2 = new b2.PolygonShape();
+    shape2.SetAsBox(9.0, 9.0, new b2.Vec2(0.0, 0.0), 0.0);
 
     pd.shape = shape2;
     this.m_particleSystem.CreateParticleGroup(pd);

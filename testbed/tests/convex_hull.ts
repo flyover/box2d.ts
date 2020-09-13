@@ -16,13 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class ConvexHull extends testbed.Test {
   public static readonly e_count = 10;
 
-  public m_test_points: box2d.b2Vec2[] = [];
+  public m_test_points: b2.Vec2[] = [];
   public m_count = 0;
   public m_auto = false;
 
@@ -34,14 +34,14 @@ export class ConvexHull extends testbed.Test {
 
   public Generate(): void {
     for (let i = 0; i < ConvexHull.e_count; ++i) {
-      let x = box2d.b2RandomRange(-10.0, 10.0);
-      let y = box2d.b2RandomRange(-10.0, 10.0);
+      let x = b2.RandomRange(-10.0, 10.0);
+      let y = b2.RandomRange(-10.0, 10.0);
 
       // Clamp onto a square to help create collinearities.
       // This will stress the convex hull algorithm.
-      x = box2d.b2Clamp(x, -8.0, 8.0);
-      y = box2d.b2Clamp(y, -8.0, 8.0);
-      this.m_test_points[i] = new box2d.b2Vec2(x, y);
+      x = b2.Clamp(x, -8.0, 8.0);
+      y = b2.Clamp(y, -8.0, 8.0);
+      this.m_test_points[i] = new b2.Vec2(x, y);
     }
 
     this.m_count = ConvexHull.e_count;
@@ -62,16 +62,16 @@ export class ConvexHull extends testbed.Test {
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
-    const shape = new box2d.b2PolygonShape();
+    const shape = new b2.PolygonShape();
     shape.Set(this.m_test_points, this.m_count);
 
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press g to generate a new random convex hull");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
-    testbed.g_debugDraw.DrawPolygon(shape.m_vertices, shape.m_count, new box2d.b2Color(0.9, 0.9, 0.9));
+    testbed.g_debugDraw.DrawPolygon(shape.m_vertices, shape.m_count, new b2.Color(0.9, 0.9, 0.9));
 
     for (let i = 0; i < this.m_count; ++i) {
-      testbed.g_debugDraw.DrawPoint(this.m_test_points[i], 3.0, new box2d.b2Color(0.3, 0.9, 0.3));
+      testbed.g_debugDraw.DrawPoint(this.m_test_points[i], 3.0, new b2.Color(0.3, 0.9, 0.3));
       testbed.g_debugDraw.DrawStringWorld(this.m_test_points[i].x + 0.05, this.m_test_points[i].y + 0.05, `${i}`);
     }
 

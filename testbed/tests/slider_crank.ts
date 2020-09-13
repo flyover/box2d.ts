@@ -16,25 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class SliderCrank extends testbed.Test {
   public static readonly e_count = 30;
 
-  public m_joint1: box2d.b2RevoluteJoint;
-  public m_joint2: box2d.b2PrismaticJoint;
+  public m_joint1: b2.RevoluteJoint;
+  public m_joint2: b2.PrismaticJoint;
 
   constructor() {
     super();
 
     let ground = null;
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
@@ -43,18 +43,18 @@ export class SliderCrank extends testbed.Test {
 
       // Define crank.
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(0.5, 2.0);
 
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 7.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
 
-        const rjd = new box2d.b2RevoluteJointDef();
-        rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 5.0));
-        rjd.motorSpeed = 1.0 * box2d.b2_pi;
+        const rjd = new b2.RevoluteJointDef();
+        rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 5.0));
+        rjd.motorSpeed = 1.0 * b2.pi;
         rjd.maxMotorTorque = 10000.0;
         rjd.enableMotor = true;
         this.m_joint1 = this.m_world.CreateJoint(rjd);
@@ -64,17 +64,17 @@ export class SliderCrank extends testbed.Test {
 
       // Define follower.
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(0.5, 4.0);
 
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 13.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
 
-        const rjd = new box2d.b2RevoluteJointDef();
-        rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 9.0));
+        const rjd = new b2.RevoluteJointDef();
+        rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 9.0));
         rjd.enableMotor = false;
         this.m_world.CreateJoint(rjd);
 
@@ -83,22 +83,22 @@ export class SliderCrank extends testbed.Test {
 
       // Define piston
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(1.5, 1.5);
 
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.fixedRotation = true;
         bd.position.Set(0.0, 17.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
 
-        const rjd = new box2d.b2RevoluteJointDef();
-        rjd.Initialize(prevBody, body, new box2d.b2Vec2(0.0, 17.0));
+        const rjd = new b2.RevoluteJointDef();
+        rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 17.0));
         this.m_world.CreateJoint(rjd);
 
-        const pjd = new box2d.b2PrismaticJointDef();
-        pjd.Initialize(ground, body, new box2d.b2Vec2(0.0, 17.0), new box2d.b2Vec2(0.0, 1.0));
+        const pjd = new b2.PrismaticJointDef();
+        pjd.Initialize(ground, body, new b2.Vec2(0.0, 17.0), new b2.Vec2(0.0, 1.0));
 
         pjd.maxMotorForce = 1000.0;
         pjd.enableMotor = true;
@@ -108,11 +108,11 @@ export class SliderCrank extends testbed.Test {
 
       // Create a payload
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(1.5, 1.5);
 
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 23.0);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);

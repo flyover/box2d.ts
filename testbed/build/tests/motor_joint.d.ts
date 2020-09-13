@@ -1,7 +1,7 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class MotorJoint extends testbed.Test {
-    m_joint: box2d.b2MotorJoint;
+    m_joint: b2.MotorJoint;
     m_time: number;
     m_go: boolean;
     constructor();

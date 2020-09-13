@@ -16,99 +16,99 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class ApplyForce extends testbed.Test {
-  public m_body: box2d.b2Body;
+  public m_body: b2.Body;
 
   constructor() {
     super();
 
-    this.m_world.SetGravity(new box2d.b2Vec2(0.0, 0.0));
+    this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
 
     /*float32*/
     const k_restitution = 0.4;
 
-    /*box2d.b2Body*/
+    /*b2.Body*/
     let ground = null;
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
       bd.position.Set(0.0, 20.0);
       ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2EdgeShape*/
-      const shape = new box2d.b2EdgeShape();
+      /*b2.EdgeShape*/
+      const shape = new b2.EdgeShape();
 
-      /*box2d.b2FixtureDef*/
-      const sd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const sd = new b2.FixtureDef();
       sd.shape = shape;
       sd.density = 0.0;
       sd.restitution = k_restitution;
 
       // Left vertical
-      shape.SetTwoSided(new box2d.b2Vec2(-20.0, -20.0), new box2d.b2Vec2(-20.0, 20.0));
+      shape.SetTwoSided(new b2.Vec2(-20.0, -20.0), new b2.Vec2(-20.0, 20.0));
       ground.CreateFixture(sd);
 
       // Right vertical
-      shape.SetTwoSided(new box2d.b2Vec2(20.0, -20.0), new box2d.b2Vec2(20.0, 20.0));
+      shape.SetTwoSided(new b2.Vec2(20.0, -20.0), new b2.Vec2(20.0, 20.0));
       ground.CreateFixture(sd);
 
       // Top horizontal
-      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 20.0), new box2d.b2Vec2(20.0, 20.0));
+      shape.SetTwoSided(new b2.Vec2(-20.0, 20.0), new b2.Vec2(20.0, 20.0));
       ground.CreateFixture(sd);
 
       // Bottom horizontal
-      shape.SetTwoSided(new box2d.b2Vec2(-20.0, -20.0), new box2d.b2Vec2(20.0, -20.0));
+      shape.SetTwoSided(new b2.Vec2(-20.0, -20.0), new b2.Vec2(20.0, -20.0));
       ground.CreateFixture(sd);
     }
 
     {
-      /*box2d.b2Transform*/
-      const xf1 = new box2d.b2Transform();
-      xf1.q.SetAngle(0.3524 * box2d.b2_pi);
-      xf1.p.Copy(box2d.b2Rot.MulRV(xf1.q, new box2d.b2Vec2(1.0, 0.0), new box2d.b2Vec2()));
+      /*b2.Transform*/
+      const xf1 = new b2.Transform();
+      xf1.q.SetAngle(0.3524 * b2.pi);
+      xf1.p.Copy(b2.Rot.MulRV(xf1.q, new b2.Vec2(1.0, 0.0), new b2.Vec2()));
 
-      /*box2d.b2Vec2[]*/
+      /*b2.Vec2[]*/
       const vertices = new Array();
-      vertices[0] = box2d.b2Transform.MulXV(xf1, new box2d.b2Vec2(-1.0, 0.0), new box2d.b2Vec2());
-      vertices[1] = box2d.b2Transform.MulXV(xf1, new box2d.b2Vec2(1.0, 0.0), new box2d.b2Vec2());
-      vertices[2] = box2d.b2Transform.MulXV(xf1, new box2d.b2Vec2(0.0, 0.5), new box2d.b2Vec2());
+      vertices[0] = b2.Transform.MulXV(xf1, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
+      vertices[1] = b2.Transform.MulXV(xf1, new b2.Vec2(1.0, 0.0), new b2.Vec2());
+      vertices[2] = b2.Transform.MulXV(xf1, new b2.Vec2(0.0, 0.5), new b2.Vec2());
 
-      /*box2d.b2PolygonShape*/
-      const poly1 = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const poly1 = new b2.PolygonShape();
       poly1.Set(vertices, 3);
 
-      /*box2d.b2FixtureDef*/
-      const sd1 = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const sd1 = new b2.FixtureDef();
       sd1.shape = poly1;
       sd1.density = 2.0;
 
-      /*box2d.b2Transform*/
-      const xf2 = new box2d.b2Transform();
-      xf2.q.SetAngle(-0.3524 * box2d.b2_pi);
-      xf2.p.Copy(box2d.b2Rot.MulRV(xf2.q, new box2d.b2Vec2(-1.0, 0.0), new box2d.b2Vec2()));
+      /*b2.Transform*/
+      const xf2 = new b2.Transform();
+      xf2.q.SetAngle(-0.3524 * b2.pi);
+      xf2.p.Copy(b2.Rot.MulRV(xf2.q, new b2.Vec2(-1.0, 0.0), new b2.Vec2()));
 
-      vertices[0] = box2d.b2Transform.MulXV(xf2, new box2d.b2Vec2(-1.0, 0.0), new box2d.b2Vec2());
-      vertices[1] = box2d.b2Transform.MulXV(xf2, new box2d.b2Vec2(1.0, 0.0), new box2d.b2Vec2());
-      vertices[2] = box2d.b2Transform.MulXV(xf2, new box2d.b2Vec2(0.0, 0.5), new box2d.b2Vec2());
+      vertices[0] = b2.Transform.MulXV(xf2, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
+      vertices[1] = b2.Transform.MulXV(xf2, new b2.Vec2(1.0, 0.0), new b2.Vec2());
+      vertices[2] = b2.Transform.MulXV(xf2, new b2.Vec2(0.0, 0.5), new b2.Vec2());
 
-      /*box2d.b2PolygonShape*/
-      const poly2 = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const poly2 = new b2.PolygonShape();
       poly2.Set(vertices, 3);
 
-      /*box2d.b2FixtureDef*/
-      const sd2 = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const sd2 = new b2.FixtureDef();
       sd2.shape = poly2;
       sd2.density = 2.0;
 
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
 
       bd.position.Set(0.0, 3.0);
-      bd.angle = box2d.b2_pi;
+      bd.angle = b2.pi;
       bd.allowSleep = false;
       this.m_body = this.m_world.CreateBody(bd);
       this.m_body.CreateFixture(sd1);
@@ -121,10 +121,10 @@ export class ApplyForce extends testbed.Test {
       // Compute an effective radius that can be used to
       // set the max torque for a friction joint
       // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
-      const radius: number = box2d.b2Sqrt(2.0 * I / mass);
+      const radius: number = b2.Sqrt(2.0 * I / mass);
 
       // b2FrictionJointDef jd;
-      const jd = new box2d.b2FrictionJointDef();
+      const jd = new b2.FrictionJointDef();
       jd.bodyA = ground;
       jd.bodyB = this.m_body;
       jd.localAnchorA.SetZero();
@@ -137,23 +137,23 @@ export class ApplyForce extends testbed.Test {
     }
 
     {
-      /*box2d.b2PolygonShape*/
-      const shape = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 0.5);
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 1.0;
       fd.friction = 0.3;
 
       for ( /*int*/ let i = 0; i < 10; ++i) {
-        /*box2d.b2BodyDef*/
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        /*b2.BodyDef*/
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
 
         bd.position.Set(0.0, 7.0 + 1.54 * i);
-        /*box2d.b2Body*/
+        /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
 
         body.CreateFixture(fd);
@@ -167,10 +167,10 @@ export class ApplyForce extends testbed.Test {
 
         // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
         /*float32*/
-        const radius = box2d.b2Sqrt(2.0 * I / mass);
+        const radius = b2.Sqrt(2.0 * I / mass);
 
-        /*box2d.b2FrictionJointDef*/
-        const jd = new box2d.b2FrictionJointDef();
+        /*b2.FrictionJointDef*/
+        const jd = new b2.FrictionJointDef();
         jd.localAnchorA.SetZero();
         jd.localAnchorB.SetZero();
         jd.bodyA = ground;
@@ -188,10 +188,10 @@ export class ApplyForce extends testbed.Test {
     switch (key) {
       case "w":
         {
-          /*box2d.b2Vec2*/
-          const f = this.m_body.GetWorldVector(new box2d.b2Vec2(0.0, -50.0), new box2d.b2Vec2());
-          /*box2d.b2Vec2*/
-          const p = this.m_body.GetWorldPoint(new box2d.b2Vec2(0.0, 3.0), new box2d.b2Vec2());
+          /*b2.Vec2*/
+          const f = this.m_body.GetWorldVector(new b2.Vec2(0.0, -50.0), new b2.Vec2());
+          /*b2.Vec2*/
+          const p = this.m_body.GetWorldPoint(new b2.Vec2(0.0, 3.0), new b2.Vec2());
           this.m_body.ApplyForce(f, p);
         }
         break;

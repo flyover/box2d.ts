@@ -18,7 +18,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 const DEGTORAD = 0.0174532925199432957;
@@ -74,19 +74,19 @@ export class GroundAreaFUD extends FixtureUserData {
 
 export class TDTire {
   public m_groundAreas: GroundAreaFUD[] = [];
-  public m_body: box2d.b2Body;
+  public m_body: b2.Body;
   public m_currentTraction: number = 1;
   public m_maxForwardSpeed: number = 0;
   public m_maxBackwardSpeed: number = 0;
   public m_maxDriveForce: number = 0;
   public m_maxLateralImpulse: number = 0;
 
-  constructor(world: box2d.b2World) {
-    const bodyDef = new box2d.b2BodyDef();
-    bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
+  constructor(world: b2.World) {
+    const bodyDef = new b2.BodyDef();
+    bodyDef.type = b2.BodyType.b2_dynamicBody;
     this.m_body = world.CreateBody(bodyDef);
 
-    const polygonShape = new box2d.b2PolygonShape();
+    const polygonShape = new b2.PolygonShape();
     polygonShape.SetAsBox(0.5, 1.25);
     const fixture = this.m_body.CreateFixture(polygonShape, 1); //shape, density
     fixture.SetUserData(new CarTireFUD());
@@ -125,14 +125,14 @@ export class TDTire {
     }
   }
 
-  public getLateralVelocity(): box2d.b2Vec2 {
-    const currentRightNormal = this.m_body.GetWorldVector(new box2d.b2Vec2(1, 0), new box2d.b2Vec2());
-    return currentRightNormal.SelfMul(box2d.b2Vec2.DotVV(currentRightNormal, this.m_body.GetLinearVelocity()));
+  public getLateralVelocity(): b2.Vec2 {
+    const currentRightNormal = this.m_body.GetWorldVector(new b2.Vec2(1, 0), new b2.Vec2());
+    return currentRightNormal.SelfMul(b2.Vec2.DotVV(currentRightNormal, this.m_body.GetLinearVelocity()));
   }
 
-  public getForwardVelocity(): box2d.b2Vec2 {
-    const currentForwardNormal = this.m_body.GetWorldVector(new box2d.b2Vec2(0, 1), new box2d.b2Vec2());
-    return currentForwardNormal.SelfMul(box2d.b2Vec2.DotVV(currentForwardNormal, this.m_body.GetLinearVelocity()));
+  public getForwardVelocity(): b2.Vec2 {
+    const currentForwardNormal = this.m_body.GetWorldVector(new b2.Vec2(0, 1), new b2.Vec2());
+    return currentForwardNormal.SelfMul(b2.Vec2.DotVV(currentForwardNormal, this.m_body.GetLinearVelocity()));
   }
 
   public updateFriction(): void {
@@ -169,8 +169,8 @@ export class TDTire {
     }
 
     //find current speed in forward direction
-    const currentForwardNormal = this.m_body.GetWorldVector(new box2d.b2Vec2(0, 1), new box2d.b2Vec2());
-    const currentSpeed = box2d.b2Vec2.DotVV(this.getForwardVelocity(), currentForwardNormal);
+    const currentForwardNormal = this.m_body.GetWorldVector(new b2.Vec2(0, 1), new b2.Vec2());
+    const currentSpeed = b2.Vec2.DotVV(this.getForwardVelocity(), currentForwardNormal);
 
     //apply necessary force
     let force = 0;
@@ -202,34 +202,34 @@ export class TDTire {
 
 export class TDCar {
   public m_tires: TDTire[];
-  public m_body: box2d.b2Body;
-  public flJoint: box2d.b2RevoluteJoint;
-  public frJoint: box2d.b2RevoluteJoint;
+  public m_body: b2.Body;
+  public flJoint: b2.RevoluteJoint;
+  public frJoint: b2.RevoluteJoint;
 
-  constructor(world: box2d.b2World) {
+  constructor(world: b2.World) {
     this.m_tires = [];
 
     //create car body
-    const bodyDef = new box2d.b2BodyDef();
-    bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
+    const bodyDef = new b2.BodyDef();
+    bodyDef.type = b2.BodyType.b2_dynamicBody;
     this.m_body = world.CreateBody(bodyDef);
     this.m_body.SetAngularDamping(3);
 
     const vertices = [];
-    vertices[0] = new box2d.b2Vec2(1.5, 0);
-    vertices[1] = new box2d.b2Vec2(3, 2.5);
-    vertices[2] = new box2d.b2Vec2(2.8, 5.5);
-    vertices[3] = new box2d.b2Vec2(1, 10);
-    vertices[4] = new box2d.b2Vec2(-1, 10);
-    vertices[5] = new box2d.b2Vec2(-2.8, 5.5);
-    vertices[6] = new box2d.b2Vec2(-3, 2.5);
-    vertices[7] = new box2d.b2Vec2(-1.5, 0);
-    const polygonShape = new box2d.b2PolygonShape();
+    vertices[0] = new b2.Vec2(1.5, 0);
+    vertices[1] = new b2.Vec2(3, 2.5);
+    vertices[2] = new b2.Vec2(2.8, 5.5);
+    vertices[3] = new b2.Vec2(1, 10);
+    vertices[4] = new b2.Vec2(-1, 10);
+    vertices[5] = new b2.Vec2(-2.8, 5.5);
+    vertices[6] = new b2.Vec2(-3, 2.5);
+    vertices[7] = new b2.Vec2(-1.5, 0);
+    const polygonShape = new b2.PolygonShape();
     polygonShape.Set(vertices, 8);
     this.m_body.CreateFixture(polygonShape, 0.1); //shape, density
 
     //prepare common joint parameters
-    const jointDef = new box2d.b2RevoluteJointDef();
+    const jointDef = new b2.RevoluteJointDef();
     jointDef.bodyA = this.m_body;
     jointDef.enableLimit = true;
     jointDef.lowerAngle = 0;
@@ -301,7 +301,7 @@ export class TDCar {
     }
     const angleNow = this.flJoint.GetJointAngle();
     let angleToTurn = desiredAngle - angleNow;
-    angleToTurn = box2d.b2Clamp(angleToTurn, -turnPerTimeStep, turnPerTimeStep);
+    angleToTurn = b2.Clamp(angleToTurn, -turnPerTimeStep, turnPerTimeStep);
     const newAngle = angleNow + angleToTurn;
     this.flJoint.SetLimits(newAngle, newAngle);
     this.frJoint.SetLimits(newAngle, newAngle);
@@ -309,7 +309,7 @@ export class TDCar {
 }
 
 export class MyDestructionListener extends testbed.DestructionListener {
-  public SayGoodbyeFixture(fixture: box2d.b2Fixture): void {
+  public SayGoodbyeFixture(fixture: b2.Fixture): void {
     ///  if ( FixtureUserData* fud = (FixtureUserData*)fixture.GetUserData() )
     ///    delete fud;
     super.SayGoodbyeFixture(fixture);
@@ -318,7 +318,7 @@ export class MyDestructionListener extends testbed.DestructionListener {
   /**
    * (unused but must implement all pure virtual functions)
    */
-  public SayGoodbyeJoint(joint: box2d.b2Joint): void {
+  public SayGoodbyeJoint(joint: b2.Joint): void {
     super.SayGoodbyeJoint(joint);
   }
 }
@@ -332,24 +332,24 @@ export class TopdownCar extends testbed.Test {
 
     //this.m_destructionListener = new MyDestructionListener(this);
 
-    this.m_world.SetGravity(new box2d.b2Vec2(0.0, 0.0));
+    this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
     this.m_world.SetDestructionListener(this.m_destructionListener);
 
     //set up ground areas
     {
-      const bodyDef = new box2d.b2BodyDef();
+      const bodyDef = new b2.BodyDef();
       this.m_groundBody = this.m_world.CreateBody(bodyDef);
 
-      const polygonShape = new box2d.b2PolygonShape();
-      const fixtureDef = new box2d.b2FixtureDef();
+      const polygonShape = new b2.PolygonShape();
+      const fixtureDef = new b2.FixtureDef();
       fixtureDef.shape = polygonShape;
       fixtureDef.isSensor = true;
 
-      polygonShape.SetAsBox(9, 7, new box2d.b2Vec2(-10, 15), 20 * DEGTORAD);
+      polygonShape.SetAsBox(9, 7, new b2.Vec2(-10, 15), 20 * DEGTORAD);
       let groundAreaFixture = this.m_groundBody.CreateFixture(fixtureDef);
       groundAreaFixture.SetUserData(new GroundAreaFUD(0.5, false));
 
-      polygonShape.SetAsBox(9, 5, new box2d.b2Vec2(5, 20), -40 * DEGTORAD);
+      polygonShape.SetAsBox(9, 5, new b2.Vec2(5, 20), -40 * DEGTORAD);
       groundAreaFixture = this.m_groundBody.CreateFixture(fixtureDef);
       groundAreaFixture.SetUserData(new GroundAreaFUD(0.2, false));
     }
@@ -400,7 +400,7 @@ export class TopdownCar extends testbed.Test {
     }
   }
 
-  public static handleContact(contact: box2d.b2Contact, began: boolean): void {
+  public static handleContact(contact: b2.Contact, began: boolean): void {
     const a = contact.GetFixtureA();
     const b = contact.GetFixtureB();
     const fudA = a.GetUserData();
@@ -417,15 +417,15 @@ export class TopdownCar extends testbed.Test {
     }
   }
 
-  public BeginContact(contact: box2d.b2Contact): void {
+  public BeginContact(contact: b2.Contact): void {
     TopdownCar.handleContact(contact, true);
   }
 
-  public EndContact(contact: box2d.b2Contact): void {
+  public EndContact(contact: b2.Contact): void {
     TopdownCar.handleContact(contact, false);
   }
 
-  public static tire_vs_groundArea(tireFixture: box2d.b2Fixture, groundAreaFixture: box2d.b2Fixture, began: boolean): void {
+  public static tire_vs_groundArea(tireFixture: b2.Fixture, groundAreaFixture: b2.Fixture, began: boolean): void {
     const tire = tireFixture.GetBody().GetUserData();
     const gaFud = groundAreaFixture.GetUserData();
     if (began) {

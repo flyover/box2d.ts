@@ -18,13 +18,13 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 
 export class EmittedParticleCallback {
   /**
    * Called for each created particle.
    */
-  public ParticleCreated(system: box2d.b2ParticleSystem, particleIndex: number): void {}
+  public ParticleCreated(system: b2.ParticleSystem, particleIndex: number): void {}
 }
 
 /**
@@ -34,7 +34,7 @@ export class RadialEmitter {
   /**
    * Pointer to global world
    */
-  public m_particleSystem: box2d.b2ParticleSystem | null = null;
+  public m_particleSystem: b2.ParticleSystem | null = null;
   /**
    * Called for each created particle.
    */
@@ -42,11 +42,11 @@ export class RadialEmitter {
   /**
    * Center of particle emitter
    */
-  public m_origin: box2d.b2Vec2 = new box2d.b2Vec2();
+  public m_origin: b2.Vec2 = new b2.Vec2();
   /**
    * Launch direction.
    */
-  public m_startingVelocity: box2d.b2Vec2 = new box2d.b2Vec2();
+  public m_startingVelocity: b2.Vec2 = new b2.Vec2();
   /**
    * Speed particles are emitted
    */
@@ -54,7 +54,7 @@ export class RadialEmitter {
   /**
    * Half width / height of particle emitter
    */
-  public m_halfSize: box2d.b2Vec2 = new box2d.b2Vec2();
+  public m_halfSize: b2.Vec2 = new b2.Vec2();
   /**
    * Particles per second
    */
@@ -62,7 +62,7 @@ export class RadialEmitter {
   /**
    * Initial color of particle emitted.
    */
-  public m_color: box2d.b2Color = new box2d.b2Color();
+  public m_color: b2.Color = new b2.Color();
   /**
    * Number particles to emit on the next frame
    */
@@ -70,11 +70,11 @@ export class RadialEmitter {
   /**
    * Flags for created particles, see b2ParticleFlag.
    */
-  public m_flags: box2d.b2ParticleFlag = box2d.b2ParticleFlag.b2_waterParticle;
+  public m_flags: b2.ParticleFlag = b2.ParticleFlag.b2_waterParticle;
   /**
    * Group to put newly created particles in.
    */
-  public m_group: box2d.b2ParticleGroup | null = null;
+  public m_group: b2.ParticleGroup | null = null;
 
   /**
    * Calculate a random number 0.0..1.0.
@@ -90,42 +90,42 @@ export class RadialEmitter {
   /**
    * Set the center of the emitter.
    */
-  public SetPosition(origin: box2d.b2Vec2): void {
+  public SetPosition(origin: b2.Vec2): void {
     this.m_origin.Copy(origin);
   }
 
   /**
    * Get the center of the emitter.
    */
-  public GetPosition(out: box2d.b2Vec2): box2d.b2Vec2 {
+  public GetPosition(out: b2.Vec2): b2.Vec2 {
     return out.Copy(this.m_origin);
   }
 
   /**
    * Set the size of the circle which emits particles.
    */
-  public SetSize(size: box2d.b2Vec2): void {
+  public SetSize(size: b2.Vec2): void {
     this.m_halfSize.Copy(size).SelfMul(0.5);
   }
 
   /**
    * Get the size of the circle which emits particles.
    */
-  public GetSize(out: box2d.b2Vec2): box2d.b2Vec2 {
+  public GetSize(out: b2.Vec2): b2.Vec2 {
     return out.Copy(this.m_halfSize).SelfMul(2.0);
   }
 
   /**
    * Set the starting velocity of emitted particles.
    */
-  public SetVelocity(velocity: box2d.b2Vec2): void {
+  public SetVelocity(velocity: b2.Vec2): void {
     this.m_startingVelocity.Copy(velocity);
   }
 
   /**
    * Get the starting velocity.
    */
-  public GetVelocity(out: box2d.b2Vec2): box2d.b2Vec2 {
+  public GetVelocity(out: b2.Vec2): b2.Vec2 {
     return out.Copy(this.m_startingVelocity);
   }
 
@@ -148,28 +148,28 @@ export class RadialEmitter {
   /**
    * Set the flags for created particles.
    */
-  public SetParticleFlags(flags: box2d.b2ParticleFlag): void {
+  public SetParticleFlags(flags: b2.ParticleFlag): void {
     this.m_flags = flags;
   }
 
   /**
    * Get the flags for created particles.
    */
-  public GetParticleFlags(): box2d.b2ParticleFlag {
+  public GetParticleFlags(): b2.ParticleFlag {
     return this.m_flags;
   }
 
   /**
    * Set the color of particles.
    */
-  public SetColor(color: box2d.b2Color): void {
+  public SetColor(color: b2.Color): void {
     this.m_color.Copy(color);
   }
 
   /**
    * Get the color of particles emitter.
    */
-  public GetColor(out: box2d.b2Color): box2d.b2Color {
+  public GetColor(out: b2.Color): b2.Color {
     return out.Copy(this.m_color);
   }
 
@@ -190,14 +190,14 @@ export class RadialEmitter {
   /**
    * Set the particle system this emitter is adding particles to.
    */
-  public SetParticleSystem(particleSystem: box2d.b2ParticleSystem): void {
+  public SetParticleSystem(particleSystem: b2.ParticleSystem): void {
     this.m_particleSystem = particleSystem;
   }
 
   /**
    * Get the particle system this emitter is adding particle to.
    */
-  public GetParticleSystem(): box2d.b2ParticleSystem | null {
+  public GetParticleSystem(): b2.ParticleSystem | null {
     return this.m_particleSystem;
   }
 
@@ -224,20 +224,20 @@ export class RadialEmitter {
    * longer references it so that the group can potentially be
    * cleaned up.
    */
-  public SetGroup(group: box2d.b2ParticleGroup | null): void {
+  public SetGroup(group: b2.ParticleGroup | null): void {
     if (this.m_group) {
-      this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() & ~box2d.b2ParticleGroupFlag.b2_particleGroupCanBeEmpty);
+      this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() & ~b2.ParticleGroupFlag.b2_particleGroupCanBeEmpty);
     }
     this.m_group = group;
     if (this.m_group) {
-      this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() | box2d.b2ParticleGroupFlag.b2_particleGroupCanBeEmpty);
+      this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() | b2.ParticleGroupFlag.b2_particleGroupCanBeEmpty);
     }
   }
 
   /**
    * Get the group particles should be created within.
    */
-  public GetGroup(): box2d.b2ParticleGroup | null {
+  public GetGroup(): b2.ParticleGroup | null {
     return this.m_group;
   }
 
@@ -254,7 +254,7 @@ export class RadialEmitter {
     // How many (fractional) particles should we have emitted this frame?
     this.m_emitRemainder += this.m_emitRate * dt;
 
-    const pd = new box2d.b2ParticleDef();
+    const pd = new b2.ParticleDef();
     pd.color.Copy(this.m_color);
     pd.flags = this.m_flags;
     pd.group = this.m_group;
@@ -265,10 +265,10 @@ export class RadialEmitter {
       this.m_emitRemainder -= 1.0;
 
       // Randomly pick a position within the emitter's radius.
-      const angle = RadialEmitter.Random() * 2.0 * box2d.b2_pi;
+      const angle = RadialEmitter.Random() * 2.0 * b2.pi;
       // Distance from the center of the circle.
       const distance = RadialEmitter.Random();
-      const positionOnUnitCircle = new box2d.b2Vec2(Math.sin(angle), Math.cos(angle));
+      const positionOnUnitCircle = new b2.Vec2(Math.sin(angle), Math.cos(angle));
 
       // Initial position.
       pd.position.Set(

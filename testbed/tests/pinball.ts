@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 /**
@@ -25,35 +25,35 @@ import * as testbed from "../testbed.js";
  */
 
 export class Pinball extends testbed.Test {
-  public m_leftJoint: box2d.b2RevoluteJoint;
-  public m_rightJoint: box2d.b2RevoluteJoint;
-  public m_ball: box2d.b2Body;
+  public m_leftJoint: b2.RevoluteJoint;
+  public m_rightJoint: b2.RevoluteJoint;
+  public m_ball: b2.Body;
   public m_button: boolean = false;
 
   constructor() {
     super();
 
     // Ground body
-    /*box2d.b2Body*/
+    /*b2.Body*/
     let ground = null;
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2Vec2*/
-      const vs = box2d.b2Vec2.MakeArray(5);
+      /*b2.Vec2*/
+      const vs = b2.Vec2.MakeArray(5);
 			vs[0].Set(-8.0, 6.0);
 			vs[1].Set(-8.0, 20.0);
 			vs[2].Set(8.0, 20.0);
 			vs[3].Set(8.0, 6.0);
 			vs[4].Set(0.0, -2.0);
 
-      /*box2d.b2ChainShape*/
-      const loop = new box2d.b2ChainShape();
+      /*b2.ChainShape*/
+      const loop = new b2.ChainShape();
       loop.CreateLoop(vs, 5);
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = loop;
       fd.density = 0.0;
       ground.CreateFixture(fd);
@@ -61,36 +61,36 @@ export class Pinball extends testbed.Test {
 
     // Flippers
     {
-      /*box2d.b2Vec2*/
-      const p1 = new box2d.b2Vec2(-2.0, 0.0),
-        p2 = new box2d.b2Vec2(2.0, 0.0);
+      /*b2.Vec2*/
+      const p1 = new b2.Vec2(-2.0, 0.0),
+        p2 = new b2.Vec2(2.0, 0.0);
 
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
 
       bd.position.Copy(p1);
-      /*box2d.b2Body*/
+      /*b2.Body*/
       const leftFlipper = this.m_world.CreateBody(bd);
 
       bd.position.Copy(p2);
-      /*box2d.b2Body*/
+      /*b2.Body*/
       const rightFlipper = this.m_world.CreateBody(bd);
 
-      /*box2d.b2PolygonShape*/
-      const box = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const box = new b2.PolygonShape();
       box.SetAsBox(1.75, 0.1);
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = box;
       fd.density = 1.0;
 
       leftFlipper.CreateFixture(fd);
       rightFlipper.CreateFixture(fd);
 
-      /*box2d.b2RevoluteJointDef*/
-      const jd = new box2d.b2RevoluteJointDef();
+      /*b2.RevoluteJointDef*/
+      const jd = new b2.RevoluteJointDef();
       jd.bodyA = ground;
       jd.localAnchorB.SetZero();
       jd.enableMotor = true;
@@ -100,34 +100,34 @@ export class Pinball extends testbed.Test {
       jd.motorSpeed = 0.0;
       jd.localAnchorA.Copy(p1);
       jd.bodyB = leftFlipper;
-      jd.lowerAngle = -30.0 * box2d.b2_pi / 180.0;
-      jd.upperAngle = 5.0 * box2d.b2_pi / 180.0;
+      jd.lowerAngle = -30.0 * b2.pi / 180.0;
+      jd.upperAngle = 5.0 * b2.pi / 180.0;
       this.m_leftJoint = this.m_world.CreateJoint(jd);
 
       jd.motorSpeed = 0.0;
       jd.localAnchorA.Copy(p2);
       jd.bodyB = rightFlipper;
-      jd.lowerAngle = -5.0 * box2d.b2_pi / 180.0;
-      jd.upperAngle = 30.0 * box2d.b2_pi / 180.0;
+      jd.lowerAngle = -5.0 * b2.pi / 180.0;
+      jd.upperAngle = 30.0 * b2.pi / 180.0;
       this.m_rightJoint = this.m_world.CreateJoint(jd);
     }
 
     // Circle character
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
       bd.position.Set(1.0, 15.0);
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.bullet = true;
 
       this.m_ball = this.m_world.CreateBody(bd);
 
-      /*box2d.b2CircleShape*/
-      const shape = new box2d.b2CircleShape();
+      /*b2.CircleShape*/
+      const shape = new b2.CircleShape();
       shape.m_radius = 0.2;
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 1.0;
       this.m_ball.CreateFixture(fd);

@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class SandboxParams {
     /**
@@ -59,21 +59,21 @@ export declare class SandboxParams {
  * Class which tracks a set of particles and applies a special
  * effect to them.
  */
-export declare class SpecialParticleTracker extends box2d.b2DestructionListener {
+export declare class SpecialParticleTracker extends b2.DestructionListener {
     /**
      * Set of particle handles used to track special particles.
      */
-    m_particles: box2d.b2ParticleHandle[];
+    m_particles: b2.ParticleHandle[];
     /**
      * Pointer to the world used to enable / disable this class as a
      * destruction listener.
      */
-    m_world: box2d.b2World;
+    m_world: b2.World;
     /**
      * Pointer to the particle system used to retrieve particle
      * handles.
      */
-    m_particleSystem: box2d.b2ParticleSystem;
+    m_particleSystem: b2.ParticleSystem;
     /**
      * Current offset into this.m_colorOscillationPeriod.
      */
@@ -86,7 +86,7 @@ export declare class SpecialParticleTracker extends box2d.b2DestructionListener 
      * Register this class as a destruction listener so that it's
      * possible to keep track of special particles.
      */
-    constructor(world: box2d.b2World, system: box2d.b2ParticleSystem);
+    constructor(world: b2.World, system: b2.ParticleSystem);
     __dtor__(): void;
     /**
      * Add as many of the specified particles to the set of special
@@ -97,14 +97,14 @@ export declare class SpecialParticleTracker extends box2d.b2DestructionListener 
      * Apply effects to special particles.
      */
     Step(dt: number): void;
-    SayGoodbyeJoint(joint: box2d.b2Joint): void;
-    SayGoodbyeFixture(fixture: box2d.b2Fixture): void;
-    SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void;
+    SayGoodbyeJoint(joint: b2.Joint): void;
+    SayGoodbyeFixture(fixture: b2.Fixture): void;
+    SayGoodbyeParticleGroup(group: b2.ParticleGroup): void;
     /**
      * When a particle is about to be destroyed, remove it from the
      * list of special particles as the handle will become invalid.
      */
-    SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void;
+    SayGoodbyeParticle(particleSystem: b2.ParticleSystem, index: number): void;
 }
 /**
  * Sandbox test creates a maze of faucets, pumps, ramps,
@@ -132,19 +132,19 @@ export declare class Sandbox extends testbed.Test {
     /**
      * Pump force
      */
-    readonly m_pumpForce: box2d.b2Vec2;
+    readonly m_pumpForce: b2.Vec2;
     /**
      * The shape we will use for the killfield
      */
-    m_killFieldShape: box2d.b2PolygonShape;
+    m_killFieldShape: b2.PolygonShape;
     /**
      * Transform for the killfield shape
      */
-    m_killFieldTransform: box2d.b2Transform;
+    m_killFieldTransform: b2.Transform;
     /**
      * Pumps and emitters
      */
-    readonly m_pumps: Array<box2d.b2Body | null>;
+    readonly m_pumps: Array<b2.Body | null>;
     readonly m_emitters: Array<testbed.RadialEmitter | null>;
     /**
      * Special particle tracker.
@@ -156,23 +156,23 @@ export declare class Sandbox extends testbed.Test {
     constructor();
     __dtor__(): void;
     SetupMaze(): void;
-    CreateBody(center: box2d.b2Vec2, shape: box2d.b2Shape, type: box2d.b2BodyType): void;
-    AddPump(center: box2d.b2Vec2): void;
-    AddFaucetEmitter(center: box2d.b2Vec2, color: box2d.b2Color): void;
-    JointDestroyed(joint: box2d.b2Joint): void;
-    ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
-    BeginContact(contact: box2d.b2Contact): void;
-    EndContact(contact: box2d.b2Contact): void;
-    PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
-    PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void;
+    CreateBody(center: b2.Vec2, shape: b2.Shape, type: b2.BodyType): void;
+    AddPump(center: b2.Vec2): void;
+    AddFaucetEmitter(center: b2.Vec2, color: b2.Color): void;
+    JointDestroyed(joint: b2.Joint): void;
+    ParticleGroupDestroyed(group: b2.ParticleGroup): void;
+    BeginContact(contact: b2.Contact): void;
+    EndContact(contact: b2.Contact): void;
+    PreSolve(contact: b2.Contact, oldManifold: b2.Manifold): void;
+    PostSolve(contact: b2.Contact, impulse: b2.ContactImpulse): void;
     /**
      * Allows you to set particle flags on devices with keyboards
      */
     Keyboard(key: string): void;
     KeyboardUp(key: string): void;
-    MouseDown(p: box2d.b2Vec2): void;
-    MouseUp(p: box2d.b2Vec2): void;
-    MouseMove(p: box2d.b2Vec2): void;
+    MouseDown(p: b2.Vec2): void;
+    MouseUp(p: b2.Vec2): void;
+    MouseMove(p: b2.Vec2): void;
     /**
      * Per-frame step updater overridden from Test
      */

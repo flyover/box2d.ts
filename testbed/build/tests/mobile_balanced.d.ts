@@ -1,9 +1,9 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class MobileBalanced extends testbed.Test {
     static readonly e_depth = 4;
     constructor();
-    AddNode(parent: box2d.b2Body, localAnchor: box2d.b2Vec2, depth: number, offset: number, a: number): box2d.b2Body;
+    AddNode(parent: b2.Body, localAnchor: b2.Vec2, depth: number, offset: number, a: number): b2.Body;
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }

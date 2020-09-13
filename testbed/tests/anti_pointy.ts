@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 /**
@@ -33,7 +33,7 @@ export class AntiPointy extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
       // Construct a valley out of many polygons to ensure there's no
@@ -43,29 +43,29 @@ export class AntiPointy extends testbed.Test {
       const step = 1.0;
 
       for (let i = -10.0; i < 10.0; i += step) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(i, -10.0),
-          new box2d.b2Vec2(i + step, -10.0),
-          new box2d.b2Vec2(0.0, 15.0),
+          new b2.Vec2(i, -10.0),
+          new b2.Vec2(i + step, -10.0),
+          new b2.Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
       }
       for (let i = -10.0; i < 35.0; i += step) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-10.0, i),
-          new box2d.b2Vec2(-10.0, i + step),
-          new box2d.b2Vec2(0.0, 15.0),
+          new b2.Vec2(-10.0, i),
+          new b2.Vec2(-10.0, i + step),
+          new b2.Vec2(0.0, 15.0),
         ];
         shape.Set(vertices, 3);
         ground.CreateFixture(shape, 0.0);
 
         const vertices2 = [
-          new box2d.b2Vec2(10.0, i),
-          new box2d.b2Vec2(10.0, i + step),
-          new box2d.b2Vec2(0.0, 15.0),
+          new b2.Vec2(10.0, i),
+          new b2.Vec2(10.0, i + step),
+          new b2.Vec2(0.0, 15.0),
         ];
         shape.Set(vertices2, 3);
         ground.CreateFixture(shape, 0.0);
@@ -77,7 +77,7 @@ export class AntiPointy extends testbed.Test {
 
     this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
     const particleType = testbed.Test.GetParticleParameterValue();
-    if (particleType === box2d.b2ParticleFlag.b2_waterParticle) {
+    if (particleType === b2.ParticleFlag.b2_waterParticle) {
       this.m_particleSystem.SetDamping(0.2);
     }
   }
@@ -92,16 +92,16 @@ export class AntiPointy extends testbed.Test {
     --this.m_particlesToCreate;
 
     const flags = testbed.Test.GetParticleParameterValue();
-    const pd = new box2d.b2ParticleDef();
+    const pd = new b2.ParticleDef();
 
     pd.position.Set(0.0, 40.0);
     pd.velocity.Set(0.0, -1.0);
     pd.flags = flags;
 
-    if (flags & (box2d.b2ParticleFlag.b2_springParticle | box2d.b2ParticleFlag.b2_elasticParticle)) {
+    if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
       const count = this.m_particleSystem.GetParticleCount();
       pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
-      pd.flags |= box2d.b2ParticleFlag.b2_reactiveParticle;
+      pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
     }
 
     this.m_particleSystem.CreateParticle(pd);

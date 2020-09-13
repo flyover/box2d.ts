@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 /**
  * Tracks instances of RadialEmitter and destroys them after a
@@ -28,21 +28,21 @@ export declare class EmitterTracker {
  * Keep track of particle groups in a set, removing them when
  * they're destroyed.
  */
-export declare class ParticleGroupTracker extends box2d.b2DestructionListener {
-    m_particleGroups: box2d.b2ParticleGroup[];
+export declare class ParticleGroupTracker extends b2.DestructionListener {
+    m_particleGroups: b2.ParticleGroup[];
     /**
      * Called when any particle group is about to be destroyed.
      */
-    SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void;
+    SayGoodbyeParticleGroup(group: b2.ParticleGroup): void;
     /**
      * Add a particle group to the tracker.
      */
-    AddParticleGroup(group: box2d.b2ParticleGroup): void;
+    AddParticleGroup(group: b2.ParticleGroup): void;
     /**
      * Remove a particle group from the tracker.
      */
-    RemoveParticleGroup(group: box2d.b2ParticleGroup): void;
-    GetParticleGroups(): box2d.b2ParticleGroup[];
+    RemoveParticleGroup(group: b2.ParticleGroup): void;
+    GetParticleGroups(): b2.ParticleGroup[];
 }
 export declare class FrackerSettings {
     /**
@@ -77,12 +77,12 @@ export declare class FrackerSettings {
     /**
      * Colors of tiles.
      */
-    static readonly k_playerColor: box2d.b2Color;
-    static readonly k_playerFrackColor: box2d.b2Color;
-    static readonly k_wellColor: box2d.b2Color;
-    static readonly k_oilColor: box2d.b2Color;
-    static readonly k_waterColor: box2d.b2Color;
-    static readonly k_frackingFluidColor: box2d.b2Color;
+    static readonly k_playerColor: b2.Color;
+    static readonly k_playerFrackColor: b2.Color;
+    static readonly k_wellColor: b2.Color;
+    static readonly k_oilColor: b2.Color;
+    static readonly k_waterColor: b2.Color;
+    static readonly k_frackingFluidColor: b2.Color;
     /**
      * Default density of each body.
      */
@@ -133,7 +133,7 @@ export declare class FrackerSettings {
  * fluids to the well head and ultimately score points.
  */
 export declare class Fracker extends testbed.Test {
-    m_player: box2d.b2Body;
+    m_player: b2.Body;
     m_wellX: number;
     m_wellTop: number;
     m_wellBottom: number;
@@ -141,7 +141,7 @@ export declare class Fracker extends testbed.Test {
     m_allowInput: boolean;
     m_frackingFluidChargeTime: number;
     m_material: Fracker_Material[];
-    m_bodies: Array<box2d.b2Body | null>;
+    m_bodies: Array<b2.Body | null>;
     /**
      * Set of particle groups the well has influence over.
      */
@@ -164,11 +164,11 @@ export declare class Fracker extends testbed.Test {
     /**
      * Get the body associated with the specified tile position.
      */
-    GetBody(x: number, y: number): box2d.b2Body | null;
+    GetBody(x: number, y: number): b2.Body | null;
     /**
      * Set the body associated with the specified tile position.
      */
-    SetBody(x: number, y: number, body: box2d.b2Body | null): void;
+    SetBody(x: number, y: number, body: b2.Body | null): void;
     /**
      * Create the player.
      */
@@ -197,7 +197,7 @@ export declare class Fracker extends testbed.Test {
     /**
      * Create a fracking fluid emitter.
      */
-    CreateFrackingFluidEmitter(position: box2d.b2Vec2): void;
+    CreateFrackingFluidEmitter(position: b2.Vec2): void;
     /**
      * Update the player's position.
      */
@@ -212,24 +212,24 @@ export declare class Fracker extends testbed.Test {
      * coordinates.
      */
     DestroyParticlesInTiles(startX: number, startY: number, endX: number, endY: number): void;
-    JointDestroyed(joint: box2d.b2Joint): void;
-    ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
-    BeginContact(contact: box2d.b2Contact): void;
-    EndContact(contact: box2d.b2Contact): void;
-    PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
-    PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void;
+    JointDestroyed(joint: b2.Joint): void;
+    ParticleGroupDestroyed(group: b2.ParticleGroup): void;
+    BeginContact(contact: b2.Contact): void;
+    EndContact(contact: b2.Contact): void;
+    PreSolve(contact: b2.Contact, oldManifold: b2.Manifold): void;
+    PostSolve(contact: b2.Contact, impulse: b2.ContactImpulse): void;
     /**
      * a = left, d = right, a = up, s = down, e = deploy fracking
      * fluid.
      */
     Keyboard(key: string): void;
     KeyboardUp(key: string): void;
-    MouseDown(p: box2d.b2Vec2): void;
+    MouseDown(p: b2.Vec2): void;
     /**
      * Try to deploy the fracking fluid or move the player.
      */
-    MouseUp(p: box2d.b2Vec2): void;
-    MouseMove(p: box2d.b2Vec2): void;
+    MouseUp(p: b2.Vec2): void;
+    MouseMove(p: b2.Vec2): void;
     Step(settings: testbed.Settings): void;
     /**
      * Render the well.
@@ -247,22 +247,22 @@ export declare class Fracker extends testbed.Test {
      * Draw a quad at position of color that is either just an
      * outline (fill = false) or solid (fill = true).
      */
-    DrawQuad(position: box2d.b2Vec2, color: box2d.b2Color, fill?: boolean): void;
+    DrawQuad(position: b2.Vec2, color: b2.Color, fill?: boolean): void;
     GetDefaultViewZoom(): number;
     static Create(): testbed.Test;
     /**
      * Get the bottom left position of the world in world units.
      */
-    static GetBottomLeft(bottomLeft: box2d.b2Vec2): void;
+    static GetBottomLeft(bottomLeft: b2.Vec2): void;
     /**
      * Get the extents of the world in world units.
      */
-    static GetExtents(bottomLeft: box2d.b2Vec2, topRight: box2d.b2Vec2): void;
-    static WorldToTile(position: box2d.b2Vec2, x: [number], y: [number]): void;
+    static GetExtents(bottomLeft: b2.Vec2, topRight: b2.Vec2): void;
+    static WorldToTile(position: b2.Vec2, x: [number], y: [number]): void;
     /**
      * Convert a tile position to a point  in world coordinates.
      */
-    static TileToWorld(x: number, y: number, out?: box2d.b2Vec2): box2d.b2Vec2;
+    static TileToWorld(x: number, y: number, out?: b2.Vec2): b2.Vec2;
     /**
      * Calculate the offset within an array of all world tiles using
      * the specified tile coordinates.
@@ -271,11 +271,11 @@ export declare class Fracker extends testbed.Test {
     /**
      * Calculate the center of a tile position in world units.
      */
-    static CenteredPosition(position: box2d.b2Vec2, out?: box2d.b2Vec2): box2d.b2Vec2;
+    static CenteredPosition(position: b2.Vec2, out?: b2.Vec2): b2.Vec2;
     /**
      * Interpolate between color a and b using t.
      */
-    static LerpColor(a: box2d.b2Color, b: box2d.b2Color, t: number): box2d.b2Color;
+    static LerpColor(a: b2.Color, b: b2.Color, t: number): b2.Color;
     /**
      * Interpolate between a and b using t.
      */
@@ -300,8 +300,8 @@ export declare enum Fracker_Material {
 export declare class Fracker_DestructionListener extends ParticleGroupTracker {
     m_score: number;
     m_oil: number;
-    m_world: box2d.b2World;
-    m_previousListener: box2d.b2DestructionListener | null;
+    m_world: b2.World;
+    m_previousListener: b2.DestructionListener | null;
     /**
      * Initialize the score.
      */
@@ -310,7 +310,7 @@ export declare class Fracker_DestructionListener extends ParticleGroupTracker {
      * Initialize the particle system and world, setting this class
      * as a destruction listener for the world.
      */
-    constructor(world: box2d.b2World);
+    constructor(world: b2.World);
     __dtor__(): void;
     /**
      * Add to the current score.
@@ -331,6 +331,6 @@ export declare class Fracker_DestructionListener extends ParticleGroupTracker {
     /**
      * Update the score when certain particles are destroyed.
      */
-    SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void;
+    SayGoodbyeParticle(particleSystem: b2.ParticleSystem, index: number): void;
 }
 //# sourceMappingURL=fracker.d.ts.map

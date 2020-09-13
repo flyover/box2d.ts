@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class CompoundShapes extends testbed.Test {
@@ -24,30 +24,30 @@ export class CompoundShapes extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(50.0, 0.0), new box2d.b2Vec2(-50.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(50.0, 0.0), new b2.Vec2(-50.0, 0.0));
 
       body.CreateFixture(shape, 0.0);
     }
 
     {
-      const circle1 = new box2d.b2CircleShape();
+      const circle1 = new b2.CircleShape();
       circle1.m_radius = 0.5;
       circle1.m_p.Set(-0.5, 0.5);
 
-      const circle2 = new box2d.b2CircleShape();
+      const circle2 = new b2.CircleShape();
       circle2.m_radius = 0.5;
       circle2.m_p.Set(0.5, 0.5);
 
       for (let i = 0; i < 10; ++i) {
-        const x = box2d.b2RandomRange(-0.1, 0.1);
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const x = b2.RandomRange(-0.1, 0.1);
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(x + 5.0, 1.05 + 2.5 * i);
-        bd.angle = box2d.b2RandomRange(-box2d.b2_pi, box2d.b2_pi);
+        bd.angle = b2.RandomRange(-b2.pi, b2.pi);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(circle1, 2.0);
         body.CreateFixture(circle2, 0.0);
@@ -55,18 +55,18 @@ export class CompoundShapes extends testbed.Test {
     }
 
     {
-      const polygon1 = new box2d.b2PolygonShape();
+      const polygon1 = new b2.PolygonShape();
       polygon1.SetAsBox(0.25, 0.5);
 
-      const polygon2 = new box2d.b2PolygonShape();
-      polygon2.SetAsBox(0.25, 0.5, new box2d.b2Vec2(0.0, -0.5), 0.5 * box2d.b2_pi);
+      const polygon2 = new b2.PolygonShape();
+      polygon2.SetAsBox(0.25, 0.5, new b2.Vec2(0.0, -0.5), 0.5 * b2.pi);
 
       for (let i = 0; i < 10; ++i) {
-        const x = box2d.b2RandomRange(-0.1, 0.1);
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const x = b2.RandomRange(-0.1, 0.1);
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(x - 5.0, 1.05 + 2.5 * i);
-        bd.angle = box2d.b2RandomRange(-box2d.b2_pi, box2d.b2_pi);
+        bd.angle = b2.RandomRange(-b2.pi, b2.pi);
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(polygon1, 2.0);
         body.CreateFixture(polygon2, 2.0);
@@ -74,32 +74,32 @@ export class CompoundShapes extends testbed.Test {
     }
 
     {
-      const xf1 = new box2d.b2Transform();
-      xf1.q.SetAngle(0.3524 * box2d.b2_pi);
-      xf1.p.Copy(box2d.b2Rot.MulRV(xf1.q, new box2d.b2Vec2(1.0, 0.0), new box2d.b2Vec2()));
+      const xf1 = new b2.Transform();
+      xf1.q.SetAngle(0.3524 * b2.pi);
+      xf1.p.Copy(b2.Rot.MulRV(xf1.q, new b2.Vec2(1.0, 0.0), new b2.Vec2()));
 
       const vertices = new Array();
 
-      const triangle1 = new box2d.b2PolygonShape();
-      vertices[0] = box2d.b2Transform.MulXV(xf1, new box2d.b2Vec2(-1.0, 0.0), new box2d.b2Vec2());
-      vertices[1] = box2d.b2Transform.MulXV(xf1, new box2d.b2Vec2(1.0, 0.0), new box2d.b2Vec2());
-      vertices[2] = box2d.b2Transform.MulXV(xf1, new box2d.b2Vec2(0.0, 0.5), new box2d.b2Vec2());
+      const triangle1 = new b2.PolygonShape();
+      vertices[0] = b2.Transform.MulXV(xf1, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
+      vertices[1] = b2.Transform.MulXV(xf1, new b2.Vec2(1.0, 0.0), new b2.Vec2());
+      vertices[2] = b2.Transform.MulXV(xf1, new b2.Vec2(0.0, 0.5), new b2.Vec2());
       triangle1.Set(vertices, 3);
 
-      const xf2 = new box2d.b2Transform();
-      xf2.q.SetAngle(-0.3524 * box2d.b2_pi);
-      xf2.p.Copy(box2d.b2Rot.MulRV(xf2.q, new box2d.b2Vec2(-1.0, 0.0), new box2d.b2Vec2()));
+      const xf2 = new b2.Transform();
+      xf2.q.SetAngle(-0.3524 * b2.pi);
+      xf2.p.Copy(b2.Rot.MulRV(xf2.q, new b2.Vec2(-1.0, 0.0), new b2.Vec2()));
 
-      const triangle2 = new box2d.b2PolygonShape();
-      vertices[0] = box2d.b2Transform.MulXV(xf2, new box2d.b2Vec2(-1.0, 0.0), new box2d.b2Vec2());
-      vertices[1] = box2d.b2Transform.MulXV(xf2, new box2d.b2Vec2(1.0, 0.0), new box2d.b2Vec2());
-      vertices[2] = box2d.b2Transform.MulXV(xf2, new box2d.b2Vec2(0.0, 0.5), new box2d.b2Vec2());
+      const triangle2 = new b2.PolygonShape();
+      vertices[0] = b2.Transform.MulXV(xf2, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
+      vertices[1] = b2.Transform.MulXV(xf2, new b2.Vec2(1.0, 0.0), new b2.Vec2());
+      vertices[2] = b2.Transform.MulXV(xf2, new b2.Vec2(0.0, 0.5), new b2.Vec2());
       triangle2.Set(vertices, 3);
 
       for (let i = 0; i < 10; ++i) {
-        const x = box2d.b2RandomRange(-0.1, 0.1);
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const x = b2.RandomRange(-0.1, 0.1);
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(x, 2.05 + 2.5 * i);
         bd.angle = 0;
         const body = this.m_world.CreateBody(bd);
@@ -109,17 +109,17 @@ export class CompoundShapes extends testbed.Test {
     }
 
     {
-      const bottom = new box2d.b2PolygonShape();
+      const bottom = new b2.PolygonShape();
       bottom.SetAsBox(1.5, 0.15);
 
-      const left = new box2d.b2PolygonShape();
-      left.SetAsBox(0.15, 2.7, new box2d.b2Vec2(-1.45, 2.35), 0.2);
+      const left = new b2.PolygonShape();
+      left.SetAsBox(0.15, 2.7, new b2.Vec2(-1.45, 2.35), 0.2);
 
-      const right = new box2d.b2PolygonShape();
-      right.SetAsBox(0.15, 2.7, new box2d.b2Vec2(1.45, 2.35), -0.2);
+      const right = new b2.PolygonShape();
+      right.SetAsBox(0.15, 2.7, new b2.Vec2(1.45, 2.35), -0.2);
 
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 2.0);
       const body = this.m_world.CreateBody(bd);
       body.CreateFixture(bottom, 4.0);

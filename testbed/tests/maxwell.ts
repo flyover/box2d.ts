@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 /**
@@ -37,8 +37,8 @@ export class Maxwell extends testbed.Test {
   public m_density = Maxwell.k_densityDefault;
   public m_position = Maxwell.k_containerHalfHeight;
   public m_temperature = Maxwell.k_temperatureDefault;
-  public m_barrierBody: box2d.b2Body | null = null;
-  public m_particleGroup: box2d.b2ParticleGroup | null = null;
+  public m_barrierBody: b2.Body | null = null;
+  public m_particleGroup: b2.ParticleGroup | null = null;
 
   public static readonly k_containerWidth = 2.0;
   public static readonly k_containerHeight = 4.0;
@@ -58,21 +58,21 @@ export class Maxwell extends testbed.Test {
   constructor() {
     super();
 
-    this.m_world.SetGravity(new box2d.b2Vec2(0, 0));
+    this.m_world.SetGravity(new b2.Vec2(0, 0));
 
     // Create the container.
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
-      const shape = new box2d.b2ChainShape();
+      const shape = new b2.ChainShape();
       const vertices = [
-        new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, 0),
-        new box2d.b2Vec2(Maxwell.k_containerHalfWidth, 0),
-        new box2d.b2Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
-        new box2d.b2Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
+        new b2.Vec2(-Maxwell.k_containerHalfWidth, 0),
+        new b2.Vec2(Maxwell.k_containerHalfWidth, 0),
+        new b2.Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
+        new b2.Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
       ];
       shape.CreateLoop(vertices, 4);
-      const def = new box2d.b2FixtureDef();
+      const def = new b2.FixtureDef();
       def.shape = shape;
       def.density = 0;
       def.restitution = 1.0;
@@ -100,12 +100,12 @@ export class Maxwell extends testbed.Test {
    */
   public EnableBarrier() {
     if (!this.m_barrierBody) {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       this.m_barrierBody = this.m_world.CreateBody(bd);
-      const barrierShape = new box2d.b2PolygonShape();
+      const barrierShape = new b2.PolygonShape();
       barrierShape.SetAsBox(Maxwell.k_containerHalfWidth, Maxwell.k_barrierHeight,
-        new box2d.b2Vec2(0, this.m_position), 0);
-      const def = new box2d.b2FixtureDef();
+        new b2.Vec2(0, this.m_position), 0);
+      const def = new b2.FixtureDef();
       def.shape = barrierShape;
       def.density = 0;
       def.restitution = 1.0;
@@ -134,12 +134,12 @@ export class Maxwell extends testbed.Test {
     }
 
     this.m_particleSystem.SetRadius(Maxwell.k_containerHalfWidth / 20.0); {
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(this.m_density * Maxwell.k_containerHalfWidth,
         this.m_density * Maxwell.k_containerHalfHeight,
-        new box2d.b2Vec2(0, Maxwell.k_containerHalfHeight), 0);
-      const pd = new box2d.b2ParticleGroupDef();
-      pd.flags = box2d.b2ParticleFlag.b2_powderParticle;
+        new b2.Vec2(0, Maxwell.k_containerHalfHeight), 0);
+      const pd = new b2.ParticleGroupDef();
+      pd.flags = b2.ParticleFlag.b2_powderParticle;
       pd.shape = shape;
       this.m_particleGroup = this.m_particleSystem.CreateParticleGroup(pd);
       ///  b2Vec2* velocities =
@@ -167,12 +167,12 @@ export class Maxwell extends testbed.Test {
         break;
       case "=":
         // Increase the particle density.
-        this.m_density = box2d.b2Min(this.m_density * Maxwell.k_densityStep, Maxwell.k_densityMax);
+        this.m_density = b2.Min(this.m_density * Maxwell.k_densityStep, Maxwell.k_densityMax);
         this.Reset();
         break;
       case "-":
         // Reduce the particle density.
-        this.m_density = box2d.b2Max(this.m_density / Maxwell.k_densityStep, Maxwell.k_densityMin);
+        this.m_density = b2.Max(this.m_density / Maxwell.k_densityStep, Maxwell.k_densityMin);
         this.Reset();
         break;
       case ".":
@@ -185,13 +185,13 @@ export class Maxwell extends testbed.Test {
         break;
       case ";":
         // Reduce the temperature (velocity of particles).
-        this.m_temperature = box2d.b2Max(this.m_temperature - Maxwell.k_temperatureStep,
+        this.m_temperature = b2.Max(this.m_temperature - Maxwell.k_temperatureStep,
           Maxwell.k_temperatureMin);
         this.Reset();
         break;
       case "'":
         // Increase the temperature (velocity of particles).
-        this.m_temperature = box2d.b2Min(this.m_temperature + Maxwell.k_temperatureStep,
+        this.m_temperature = b2.Min(this.m_temperature + Maxwell.k_temperatureStep,
           Maxwell.k_temperatureMax);
         this.Reset();
         break;
@@ -204,18 +204,18 @@ export class Maxwell extends testbed.Test {
   /**
    * Determine whether a point is in the container.
    */
-  public InContainer(p: box2d.b2Vec2) {
+  public InContainer(p: b2.Vec2) {
     return p.x >= -Maxwell.k_containerHalfWidth && p.x <= Maxwell.k_containerHalfWidth &&
       p.y >= 0.0 && p.y <= Maxwell.k_containerHalfHeight * 2.0;
   }
 
-  public MouseDown(p: box2d.b2Vec2) {
+  public MouseDown(p: b2.Vec2) {
     if (!this.InContainer(p)) {
       super.MouseDown(p);
     }
   }
 
-  public MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: b2.Vec2) {
     // If the pointer is in the container.
     if (this.InContainer(p)) {
       // Enable / disable the barrier.
@@ -283,7 +283,7 @@ export class Maxwell extends testbed.Test {
    * Move the divider / barrier.
    */
   public MoveDivider(newPosition: number) {
-    this.m_position = box2d.b2Clamp(newPosition, Maxwell.k_barrierMovementIncrement,
+    this.m_position = b2.Clamp(newPosition, Maxwell.k_barrierMovementIncrement,
       Maxwell.k_containerHeight - Maxwell.k_barrierMovementIncrement);
     this.Reset();
   }

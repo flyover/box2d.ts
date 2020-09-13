@@ -16,7 +16,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class HeavyOnLight extends testbed.Test {
@@ -24,26 +24,26 @@ export class HeavyOnLight extends testbed.Test {
     super();
 
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      /*box2d.b2Body*/
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      /*b2.Body*/
       const ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2EdgeShape*/
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      /*b2.EdgeShape*/
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
-    /*box2d.b2BodyDef*/
-    const bd = new box2d.b2BodyDef();
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    /*b2.BodyDef*/
+    const bd = new b2.BodyDef();
+    bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.Set(0.0, 0.5);
-    /*box2d.b2Body*/
+    /*b2.Body*/
     let body = this.m_world.CreateBody(bd);
 
-    /*box2d.b2CircleShape*/
-    const shape = new box2d.b2CircleShape();
+    /*b2.CircleShape*/
+    const shape = new b2.CircleShape();
     shape.m_radius = 0.5;
     body.CreateFixture(shape, 10.0);
 

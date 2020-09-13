@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Pyramid extends testbed.Test {
@@ -26,30 +26,30 @@ export class Pyramid extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
       const a = 0.5;
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(a, a);
 
-      const x = new box2d.b2Vec2(-7.0, 0.75);
-      const y = new box2d.b2Vec2(0.0, 0.0);
-      const deltaX = new box2d.b2Vec2(0.5625, 1.25);
-      const deltaY = new box2d.b2Vec2(1.125, 0.0);
+      const x = new b2.Vec2(-7.0, 0.75);
+      const y = new b2.Vec2(0.0, 0.0);
+      const deltaX = new b2.Vec2(0.5625, 1.25);
+      const deltaY = new b2.Vec2(1.125, 0.0);
 
       for (let i = 0; i < Pyramid.e_count; ++i) {
         y.Copy(x);
 
         for (let j = i; j < Pyramid.e_count; ++j) {
-          const bd = new box2d.b2BodyDef();
-          bd.type = box2d.b2BodyType.b2_dynamicBody;
+          const bd = new b2.BodyDef();
+          bd.type = b2.BodyType.b2_dynamicBody;
           bd.position.Copy(y);
           const body = this.m_world.CreateBody(bd);
           body.CreateFixture(shape, 5.0);
@@ -65,7 +65,7 @@ export class Pyramid extends testbed.Test {
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
-    // box2d.b2DynamicTree* tree = &m_world.m_contactManager.m_broadPhase.m_tree;
+    // b2.DynamicTree* tree = &m_world.m_contactManager.m_broadPhase.m_tree;
 
     // if (m_stepCount === 400) {
     //   tree.RebuildBottomUp();

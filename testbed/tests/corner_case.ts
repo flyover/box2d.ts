@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class CornerCase extends testbed.Test {
@@ -26,7 +26,7 @@ export class CornerCase extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
       // Construct a pathological corner intersection out of many
@@ -35,12 +35,12 @@ export class CornerCase extends testbed.Test {
 
       // left edge
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-20.0, 30.0),
-          new box2d.b2Vec2(-20.0, 0.0),
-          new box2d.b2Vec2(-25.0, 0.0),
-          new box2d.b2Vec2(-25.0, 30.0),
+          new b2.Vec2(-20.0, 30.0),
+          new b2.Vec2(-20.0, 0.0),
+          new b2.Vec2(-25.0, 0.0),
+          new b2.Vec2(-25.0, 30.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
@@ -52,33 +52,33 @@ export class CornerCase extends testbed.Test {
         xstep = xrange / 2.0;
 
       {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-25.0, 0.0),
-          new box2d.b2Vec2(20.0, 15.0),
-          new box2d.b2Vec2(25.0, 0.0),
+          new b2.Vec2(-25.0, 0.0),
+          new b2.Vec2(20.0, 15.0),
+          new b2.Vec2(25.0, 0.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
       }
 
       for (let x = -xrange; x < xrange; x += xstep) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(-25.0, 0.0),
-          new box2d.b2Vec2(x, 15.0),
-          new box2d.b2Vec2(x + xstep, 15.0),
+          new b2.Vec2(-25.0, 0.0),
+          new b2.Vec2(x, 15.0),
+          new b2.Vec2(x + xstep, 15.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
       }
 
       for (let y = 0.0; y < yrange; y += ystep) {
-        const shape = new box2d.b2PolygonShape();
+        const shape = new b2.PolygonShape();
         const vertices = [
-          new box2d.b2Vec2(25.0, y),
-          new box2d.b2Vec2(25.0, y + ystep),
-          new box2d.b2Vec2(20.0, 15.0),
+          new b2.Vec2(25.0, y),
+          new b2.Vec2(25.0, y + ystep),
+          new b2.Vec2(20.0, 15.0),
         ];
         shape.Set(vertices);
         ground.CreateFixture(shape, 0.0);
@@ -90,14 +90,14 @@ export class CornerCase extends testbed.Test {
     const particleType = testbed.Test.GetParticleParameterValue();
 
     {
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_p.Set(0, 35);
       shape.m_radius = 12;
-      const pd = new box2d.b2ParticleGroupDef();
+      const pd = new b2.ParticleGroupDef();
       pd.flags = particleType;
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
-      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+      if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
         this.ColorParticleGroup(group, 0);
       }
     }

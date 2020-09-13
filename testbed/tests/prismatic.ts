@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Prismatic extends testbed.Test {
-  public m_joint: box2d.b2PrismaticJoint;
+  public m_joint: b2.PrismaticJoint;
 
   constructor() {
     super();
@@ -28,35 +28,35 @@ export class Prismatic extends testbed.Test {
     let ground = null;
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(2.0, 0.5);
 
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(-10.0, 10.0);
-      bd.angle = 0.5 * box2d.b2_pi;
+      bd.angle = 0.5 * b2.pi;
       bd.allowSleep = false;
       const body = this.m_world.CreateBody(bd);
       body.CreateFixture(shape, 5.0);
 
-      const pjd = new box2d.b2PrismaticJointDef();
+      const pjd = new b2.PrismaticJointDef();
 
       // Bouncy limit
-      const axis = new box2d.b2Vec2(2.0, 1.0);
+      const axis = new b2.Vec2(2.0, 1.0);
       axis.Normalize();
-      pjd.Initialize(ground, body, new box2d.b2Vec2(0.0, 0.0), axis);
+      pjd.Initialize(ground, body, new b2.Vec2(0.0, 0.0), axis);
 
       // Non-bouncy limit
-      //pjd.Initialize(ground, body, new box2d.b2Vec2(-10.0, 10.0), new box2d.b2Vec2(1.0, 0.0));
+      //pjd.Initialize(ground, body, new b2.Vec2(-10.0, 10.0), new b2.Vec2(1.0, 0.0));
 
       pjd.motorSpeed = 10.0;
       pjd.maxMotorForce = 10000.0;

@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class CollisionProcessing extends testbed.Test {
@@ -25,13 +25,13 @@ export class CollisionProcessing extends testbed.Test {
 
     // Ground body
     {
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
 
-      const sd = new box2d.b2FixtureDef();
+      const sd = new b2.FixtureDef();
       sd.shape = shape;
 
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
       ground.CreateFixture(sd);
     }
@@ -43,20 +43,20 @@ export class CollisionProcessing extends testbed.Test {
 
     // Small triangle
     const vertices = new Array(3);
-    vertices[0] = new box2d.b2Vec2(-1.0, 0.0);
-    vertices[1] = new box2d.b2Vec2(1.0, 0.0);
-    vertices[2] = new box2d.b2Vec2(0.0, 2.0);
+    vertices[0] = new b2.Vec2(-1.0, 0.0);
+    vertices[1] = new b2.Vec2(1.0, 0.0);
+    vertices[2] = new b2.Vec2(0.0, 2.0);
 
-    const polygon = new box2d.b2PolygonShape();
+    const polygon = new b2.PolygonShape();
     polygon.Set(vertices, 3);
 
-    const triangleShapeDef = new box2d.b2FixtureDef();
+    const triangleShapeDef = new b2.FixtureDef();
     triangleShapeDef.shape = polygon;
     triangleShapeDef.density = 1.0;
 
-    const triangleBodyDef = new box2d.b2BodyDef();
-    triangleBodyDef.type = box2d.b2BodyType.b2_dynamicBody;
-    triangleBodyDef.position.Set(box2d.b2RandomRange(xLo, xHi), box2d.b2RandomRange(yLo, yHi));
+    const triangleBodyDef = new b2.BodyDef();
+    triangleBodyDef.type = b2.BodyType.b2_dynamicBody;
+    triangleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
 
     const body1 = this.m_world.CreateBody(triangleBodyDef);
     body1.CreateFixture(triangleShapeDef);
@@ -67,7 +67,7 @@ export class CollisionProcessing extends testbed.Test {
     vertices[2].SelfMul(2.0);
     polygon.Set(vertices, 3);
 
-    triangleBodyDef.position.Set(box2d.b2RandomRange(xLo, xHi), box2d.b2RandomRange(yLo, yHi));
+    triangleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
 
     const body2 = this.m_world.CreateBody(triangleBodyDef);
     body2.CreateFixture(triangleShapeDef);
@@ -75,42 +75,42 @@ export class CollisionProcessing extends testbed.Test {
     // Small box
     polygon.SetAsBox(1.0, 0.5);
 
-    const boxShapeDef = new box2d.b2FixtureDef();
+    const boxShapeDef = new b2.FixtureDef();
     boxShapeDef.shape = polygon;
     boxShapeDef.density = 1.0;
 
-    const boxBodyDef = new box2d.b2BodyDef();
-    boxBodyDef.type = box2d.b2BodyType.b2_dynamicBody;
-    boxBodyDef.position.Set(box2d.b2RandomRange(xLo, xHi), box2d.b2RandomRange(yLo, yHi));
+    const boxBodyDef = new b2.BodyDef();
+    boxBodyDef.type = b2.BodyType.b2_dynamicBody;
+    boxBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
 
     const body3 = this.m_world.CreateBody(boxBodyDef);
     body3.CreateFixture(boxShapeDef);
 
     // Large box (recycle definitions)
     polygon.SetAsBox(2.0, 1.0);
-    boxBodyDef.position.Set(box2d.b2RandomRange(xLo, xHi), box2d.b2RandomRange(yLo, yHi));
+    boxBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
 
     const body4 = this.m_world.CreateBody(boxBodyDef);
     body4.CreateFixture(boxShapeDef);
 
     // Small circle
-    const circle = new box2d.b2CircleShape();
+    const circle = new b2.CircleShape();
     circle.m_radius = 1.0;
 
-    const circleShapeDef = new box2d.b2FixtureDef();
+    const circleShapeDef = new b2.FixtureDef();
     circleShapeDef.shape = circle;
     circleShapeDef.density = 1.0;
 
-    const circleBodyDef = new box2d.b2BodyDef();
-    circleBodyDef.type = box2d.b2BodyType.b2_dynamicBody;
-    circleBodyDef.position.Set(box2d.b2RandomRange(xLo, xHi), box2d.b2RandomRange(yLo, yHi));
+    const circleBodyDef = new b2.BodyDef();
+    circleBodyDef.type = b2.BodyType.b2_dynamicBody;
+    circleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
 
     const body5 = this.m_world.CreateBody(circleBodyDef);
     body5.CreateFixture(circleShapeDef);
 
     // Large circle
     circle.m_radius *= 2.0;
-    circleBodyDef.position.Set(box2d.b2RandomRange(xLo, xHi), box2d.b2RandomRange(yLo, yHi));
+    circleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
 
     const body6 = this.m_world.CreateBody(circleBodyDef);
     body6.CreateFixture(circleShapeDef);

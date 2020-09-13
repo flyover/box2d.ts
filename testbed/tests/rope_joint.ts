@@ -16,44 +16,44 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class RopeJoint extends testbed.Test {
-  public m_ropeDef = new box2d.b2RopeJointDef();
-  public m_rope: box2d.b2RopeJoint | null = null;
+  public m_ropeDef = new b2.RopeJointDef();
+  public m_rope: b2.RopeJoint | null = null;
 
   constructor() {
     super();
 
-    /*box2d.b2Body*/
+    /*b2.Body*/
     let ground = null;
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2EdgeShape*/
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      /*b2.EdgeShape*/
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
-      /*box2d.b2PolygonShape*/
-      const shape = new box2d.b2PolygonShape();
+      /*b2.PolygonShape*/
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 0.125);
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
       fd.friction = 0.2;
       fd.filter.categoryBits = 0x0001;
       fd.filter.maskBits = 0xFFFF & ~0x0002;
 
-      /*box2d.b2RevoluteJointDef*/
-      const jd = new box2d.b2RevoluteJointDef();
+      /*b2.RevoluteJointDef*/
+      const jd = new b2.RevoluteJointDef();
       jd.collideConnected = false;
 
       /*const int32*/
@@ -62,12 +62,12 @@ export class RopeJoint extends testbed.Test {
       const y = 15.0;
       this.m_ropeDef.localAnchorA.Set(0.0, y);
 
-      /*box2d.b2Body*/
+      /*b2.Body*/
       let prevBody = ground;
       for ( /*int32*/ let i = 0; i < N; ++i) {
-        /*box2d.b2BodyDef*/
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        /*b2.BodyDef*/
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.5 + 1.0 * i, y);
         if (i === N - 1) {
           shape.SetAsBox(1.5, 1.5);
@@ -77,13 +77,13 @@ export class RopeJoint extends testbed.Test {
           bd.angularDamping = 0.4;
         }
 
-        /*box2d.b2Body*/
+        /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
 
         body.CreateFixture(fd);
 
-        /*box2d.b2Vec2*/
-        const anchor = new box2d.b2Vec2(i, y);
+        /*b2.Vec2*/
+        const anchor = new b2.Vec2(i, y);
         jd.Initialize(prevBody, body, anchor);
         this.m_world.CreateJoint(jd);
 
@@ -100,7 +100,7 @@ export class RopeJoint extends testbed.Test {
 
     {
       this.m_ropeDef.bodyA = ground;
-      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as box2d.b2RopeJoint;
+      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as b2.RopeJoint;
     }
   }
 
@@ -111,7 +111,7 @@ export class RopeJoint extends testbed.Test {
           this.m_world.DestroyJoint(this.m_rope);
           this.m_rope = null;
         } else {
-          this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as box2d.b2RopeJoint;
+          this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as b2.RopeJoint;
         }
         break;
     }

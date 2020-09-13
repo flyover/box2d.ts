@@ -1,8 +1,8 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class ConvexHull extends testbed.Test {
     static readonly e_count = 10;
-    m_test_points: box2d.b2Vec2[];
+    m_test_points: b2.Vec2[];
     m_count: number;
     m_auto: boolean;
     constructor();

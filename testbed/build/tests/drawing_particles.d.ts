@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class DrawingParticles extends testbed.Test {
     /**
@@ -13,7 +13,7 @@ export declare class DrawingParticles extends testbed.Test {
         e_parameterSpringBarrier: number;
         e_parameterRepulsive: number;
     };
-    m_lastGroup: box2d.b2ParticleGroup | null;
+    m_lastGroup: b2.ParticleGroup | null;
     m_drawing: boolean;
     m_particleFlags: number;
     m_groupFlags: number;
@@ -24,9 +24,9 @@ export declare class DrawingParticles extends testbed.Test {
     constructor();
     DetermineParticleParameter(): number;
     Keyboard(key: string): void;
-    MouseMove(p: box2d.b2Vec2): void;
-    MouseUp(p: box2d.b2Vec2): void;
-    ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
+    MouseMove(p: b2.Vec2): void;
+    MouseUp(p: b2.Vec2): void;
+    ParticleGroupDestroyed(group: b2.ParticleGroup): void;
     SplitParticleGroups(): void;
     Step(settings: testbed.Settings): void;
     GetDefaultViewZoom(): number;

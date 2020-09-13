@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 /**
  * Game which adds some fun to Maxwell's demon.
@@ -15,8 +15,8 @@ export declare class Maxwell extends testbed.Test {
     m_density: number;
     m_position: number;
     m_temperature: number;
-    m_barrierBody: box2d.b2Body | null;
-    m_particleGroup: box2d.b2ParticleGroup | null;
+    m_barrierBody: b2.Body | null;
+    m_particleGroup: b2.ParticleGroup | null;
     static readonly k_containerWidth = 2;
     static readonly k_containerHeight = 4;
     static readonly k_containerHalfWidth: number;
@@ -52,9 +52,9 @@ export declare class Maxwell extends testbed.Test {
     /**
      * Determine whether a point is in the container.
      */
-    InContainer(p: box2d.b2Vec2): boolean;
-    MouseDown(p: box2d.b2Vec2): void;
-    MouseUp(p: box2d.b2Vec2): void;
+    InContainer(p: b2.Vec2): boolean;
+    MouseDown(p: b2.Vec2): void;
+    MouseUp(p: b2.Vec2): void;
     Step(settings: testbed.Settings): void;
     /**
      * Reset the particles and the barrier.

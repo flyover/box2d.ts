@@ -1,9 +1,9 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 import { Soup } from "./soup.js";
 export declare class SoupStirrer extends Soup {
-    m_stirrer: box2d.b2Body;
-    m_joint: box2d.b2Joint | null;
+    m_stirrer: b2.Body;
+    m_joint: b2.Joint | null;
     m_oscillationOffset: number;
     constructor();
     CreateJoint(): void;
@@ -21,11 +21,11 @@ export declare class SoupStirrer extends Soup {
      * Click the soup to toggle between enabling / disabling the
      * joint.
      */
-    MouseUp(p: box2d.b2Vec2): void;
+    MouseUp(p: b2.Vec2): void;
     /**
      * Determine whether a point is in the soup.
      */
-    InSoup(pos: box2d.b2Vec2): boolean;
+    InSoup(pos: b2.Vec2): boolean;
     /**
      * Apply a force to the stirrer.
      */

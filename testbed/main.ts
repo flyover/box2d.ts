@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import { Settings } from "./settings.js";
 import { Test } from "./test.js";
 import { g_debugDraw, g_camera } from "./draw.js";
@@ -18,8 +18,8 @@ export class Main {
   public m_ctrl: boolean = false;
   public m_lMouseDown: boolean = false;
   public m_rMouseDown: boolean = false;
-  public readonly m_projection0: box2d.b2Vec2 = new box2d.b2Vec2();
-  public readonly m_viewCenter0: box2d.b2Vec2 = new box2d.b2Vec2();
+  public readonly m_projection0: b2.Vec2 = new b2.Vec2();
+  public readonly m_viewCenter0: b2.Vec2 = new b2.Vec2();
   public m_demo_mode: boolean = false;
   public m_demo_time: number = 0;
   public m_max_demo_time: number = 1000 * 10;
@@ -68,7 +68,7 @@ export class Main {
     const title_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
     title_div.style.textAlign = "center";
     title_div.style.color = "grey";
-    title_div.innerHTML = "Box2D Testbed version " + box2d.b2_version.toString();
+    title_div.innerHTML = "Box2D Testbed version " + b2.version.toString();
 
     const view_div: HTMLDivElement = main_div.appendChild(document.createElement("div"));
 
@@ -236,11 +236,11 @@ export class Main {
   public HomeCamera(): void {
     g_camera.m_zoom = (this.m_test) ? (this.m_test.GetDefaultViewZoom()) : (1.0);
     g_camera.m_center.Set(0, 20 * g_camera.m_zoom);
-    ///g_camera.m_roll.SetAngle(box2d.b2DegToRad(0));
+    ///g_camera.m_roll.SetAngle(b2.DegToRad(0));
   }
 
-  public MoveCamera(move: box2d.b2Vec2): void {
-    const position: box2d.b2Vec2 = g_camera.m_center.Clone();
+  public MoveCamera(move: b2.Vec2): void {
+    const position: b2.Vec2 = g_camera.m_center.Clone();
     ///move.SelfRotate(g_camera.m_roll.GetAngle());
     position.SelfAdd(move);
     g_camera.m_center.Copy(position);
@@ -253,14 +253,14 @@ export class Main {
 
   public ZoomCamera(zoom: number): void {
     g_camera.m_zoom *= zoom;
-    g_camera.m_zoom = box2d.b2Clamp(g_camera.m_zoom, 0.02, 20);
+    g_camera.m_zoom = b2.Clamp(g_camera.m_zoom, 0.02, 20);
   }
 
-  private m_mouse = new box2d.b2Vec2();
+  private m_mouse = new b2.Vec2();
 
   public HandleMouseMove(e: MouseEvent): void {
-    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.clientX, e.clientY);
-    const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
+    const element: b2.Vec2 = new b2.Vec2(e.clientX, e.clientY);
+    const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
 
     this.m_mouse.Copy(element);
 
@@ -270,16 +270,16 @@ export class Main {
 
     if (this.m_rMouseDown) {
       // m_center = viewCenter0 - (projection - projection0);
-      const projection: box2d.b2Vec2 = g_camera.ConvertElementToProjection(element, new box2d.b2Vec2());
-      const diff: box2d.b2Vec2 = box2d.b2Vec2.SubVV(projection, this.m_projection0, new box2d.b2Vec2());
-      const center: box2d.b2Vec2 = box2d.b2Vec2.SubVV(this.m_viewCenter0, diff, new box2d.b2Vec2());
+      const projection: b2.Vec2 = g_camera.ConvertElementToProjection(element, new b2.Vec2());
+      const diff: b2.Vec2 = b2.Vec2.SubVV(projection, this.m_projection0, new b2.Vec2());
+      const center: b2.Vec2 = b2.Vec2.SubVV(this.m_viewCenter0, diff, new b2.Vec2());
       g_camera.m_center.Copy(center);
     }
   }
 
   public HandleMouseDown(e: MouseEvent): void {
-    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.clientX, e.clientY);
-    const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
+    const element: b2.Vec2 = new b2.Vec2(e.clientX, e.clientY);
+    const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
 
     switch (e.which) {
     case 1: // left mouse button
@@ -292,7 +292,7 @@ export class Main {
       break;
     case 3: // right mouse button
       this.m_rMouseDown = true;
-      const projection: box2d.b2Vec2 = g_camera.ConvertElementToProjection(element, new box2d.b2Vec2());
+      const projection: b2.Vec2 = g_camera.ConvertElementToProjection(element, new b2.Vec2());
       this.m_projection0.Copy(projection);
       this.m_viewCenter0.Copy(g_camera.m_center);
       break;
@@ -300,8 +300,8 @@ export class Main {
   }
 
   public HandleMouseUp(e: MouseEvent): void {
-    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.clientX, e.clientY);
-    const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
+    const element: b2.Vec2 = new b2.Vec2(e.clientX, e.clientY);
+    const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
 
     switch (e.which) {
     case 1: // left mouse button
@@ -315,15 +315,15 @@ export class Main {
   }
 
   public HandleTouchMove(e: TouchEvent): void {
-    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
-    const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
+    const element: b2.Vec2 = new b2.Vec2(e.touches[0].clientX, e.touches[0].clientY);
+    const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
     if (this.m_test) { this.m_test.MouseMove(world); }
     e.preventDefault();
   }
 
   public HandleTouchStart(e: TouchEvent): void {
-    const element: box2d.b2Vec2 = new box2d.b2Vec2(e.touches[0].clientX, e.touches[0].clientY);
-    const world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(element, new box2d.b2Vec2());
+    const element: b2.Vec2 = new b2.Vec2(e.touches[0].clientX, e.touches[0].clientY);
+    const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
     if (this.m_test) { this.m_test.MouseDown(world); }
     e.preventDefault();
   }
@@ -353,47 +353,47 @@ export class Main {
     case "ArrowLeft":
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new box2d.b2Vec2(2, 0));
+          this.m_test.ShiftOrigin(new b2.Vec2(2, 0));
         }
       } else {
-        this.MoveCamera(new box2d.b2Vec2(-0.5, 0));
+        this.MoveCamera(new b2.Vec2(-0.5, 0));
       }
       break;
     case "ArrowRight":
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new box2d.b2Vec2(-2, 0));
+          this.m_test.ShiftOrigin(new b2.Vec2(-2, 0));
         }
       } else {
-        this.MoveCamera(new box2d.b2Vec2(0.5, 0));
+        this.MoveCamera(new b2.Vec2(0.5, 0));
       }
       break;
     case "ArrowDown":
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new box2d.b2Vec2(0, 2));
+          this.m_test.ShiftOrigin(new b2.Vec2(0, 2));
         }
       } else {
-        this.MoveCamera(new box2d.b2Vec2(0, -0.5));
+        this.MoveCamera(new b2.Vec2(0, -0.5));
       }
       break;
     case "ArrowUp":
       if (this.m_ctrl) {
         if (this.m_test) {
-          this.m_test.ShiftOrigin(new box2d.b2Vec2(0, -2));
+          this.m_test.ShiftOrigin(new b2.Vec2(0, -2));
         }
       } else {
-        this.MoveCamera(new box2d.b2Vec2(0, 0.5));
+        this.MoveCamera(new b2.Vec2(0, 0.5));
       }
       break;
     case "Home":
       this.HomeCamera();
       break;
     ///case "PageUp":
-    ///  this.RollCamera(box2d.b2DegToRad(-1));
+    ///  this.RollCamera(b2.DegToRad(-1));
     ///  break;
     ///case "PageDown":
-    ///  this.RollCamera(box2d.b2DegToRad(1));
+    ///  this.RollCamera(b2.DegToRad(1));
     ///  break;
     case "z":
       this.ZoomCamera(1.1);
@@ -558,7 +558,7 @@ export class Main {
         // ctx.strokeStyle = "blue";
         // ctx.strokeRect(this.m_mouse.x - 24, this.m_mouse.y - 24, 48, 48);
 
-        // const mouse_world: box2d.b2Vec2 = g_camera.ConvertScreenToWorld(this.m_mouse, new box2d.b2Vec2());
+        // const mouse_world: b2.Vec2 = g_camera.ConvertScreenToWorld(this.m_mouse, new b2.Vec2());
 
         ctx.save();
 

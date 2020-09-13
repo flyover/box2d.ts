@@ -16,43 +16,43 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class BasicSliderCrank extends testbed.Test {
   constructor() {
     super();
 
-    /*box2d.b2Body*/
+    /*b2.Body*/
     let ground = null;
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
       bd.position.Set(0.0, 17.0);
       ground = this.m_world.CreateBody(bd);
     }
 
     {
-      /*box2d.b2Body*/
+      /*b2.Body*/
       let prevBody = ground;
 
       // Define crank.
       {
-        /*box2d.b2PolygonShape*/
-        const shape = new box2d.b2PolygonShape();
+        /*b2.PolygonShape*/
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(4.0, 1.0);
 
-        /*box2d.b2BodyDef*/
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        /*b2.BodyDef*/
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(-8.0, 20.0);
-        /*box2d.b2Body*/
+        /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
 
-        /*box2d.b2RevoluteJointDef*/
-        const rjd = new box2d.b2RevoluteJointDef();
-        rjd.Initialize(prevBody, body, new box2d.b2Vec2(-12.0, 20.0));
+        /*b2.RevoluteJointDef*/
+        const rjd = new b2.RevoluteJointDef();
+        rjd.Initialize(prevBody, body, new b2.Vec2(-12.0, 20.0));
         this.m_world.CreateJoint(rjd);
 
         prevBody = body;
@@ -60,21 +60,21 @@ export class BasicSliderCrank extends testbed.Test {
 
       // Define connecting rod
       {
-        /*box2d.b2PolygonShape*/
-        const shape = new box2d.b2PolygonShape();
+        /*b2.PolygonShape*/
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(8.0, 1.0);
 
-        /*box2d.b2BodyDef*/
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        /*b2.BodyDef*/
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(4.0, 20.0);
-        /*box2d.b2Body*/
+        /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
 
-        /*box2d.b2RevoluteJointDef*/
-        const rjd = new box2d.b2RevoluteJointDef();
-        rjd.Initialize(prevBody, body, new box2d.b2Vec2(-4.0, 20.0));
+        /*b2.RevoluteJointDef*/
+        const rjd = new b2.RevoluteJointDef();
+        rjd.Initialize(prevBody, body, new b2.Vec2(-4.0, 20.0));
         this.m_world.CreateJoint(rjd);
 
         prevBody = body;
@@ -82,27 +82,27 @@ export class BasicSliderCrank extends testbed.Test {
 
       // Define piston
       {
-        /*box2d.b2PolygonShape*/
-        const shape = new box2d.b2PolygonShape();
+        /*b2.PolygonShape*/
+        const shape = new b2.PolygonShape();
         shape.SetAsBox(3.0, 3.0);
 
-        /*box2d.b2BodyDef*/
-        const bd = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        /*b2.BodyDef*/
+        const bd = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.fixedRotation = true;
         bd.position.Set(12.0, 20.0);
-        /*box2d.b2Body*/
+        /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
         body.CreateFixture(shape, 2.0);
 
-        /*box2d.b2RevoluteJointDef*/
-        const rjd = new box2d.b2RevoluteJointDef();
-        rjd.Initialize(prevBody, body, new box2d.b2Vec2(12.0, 20.0));
+        /*b2.RevoluteJointDef*/
+        const rjd = new b2.RevoluteJointDef();
+        rjd.Initialize(prevBody, body, new b2.Vec2(12.0, 20.0));
         this.m_world.CreateJoint(rjd);
 
-        /*box2d.b2PrismaticJointDef*/
-        const pjd = new box2d.b2PrismaticJointDef();
-        pjd.Initialize(ground, body, new box2d.b2Vec2(12.0, 17.0), new box2d.b2Vec2(1.0, 0.0));
+        /*b2.PrismaticJointDef*/
+        const pjd = new b2.PrismaticJointDef();
+        pjd.Initialize(ground, body, new b2.Vec2(12.0, 17.0), new b2.Vec2(1.0, 0.0));
         this.m_world.CreateJoint(pjd);
       }
     }

@@ -1,9 +1,9 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class ConveyorBelt extends testbed.Test {
-    m_platform: box2d.b2Fixture;
+    m_platform: b2.Fixture;
     constructor();
-    PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
+    PreSolve(contact: b2.Contact, oldManifold: b2.Manifold): void;
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }

@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class MotorJoint extends testbed.Test {
-  public m_joint: box2d.b2MotorJoint;
+  public m_joint: b2.MotorJoint;
   public m_time = 0;
   public m_go = false;
 
@@ -30,13 +30,13 @@ export class MotorJoint extends testbed.Test {
     let ground = null;
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
 
       ground.CreateFixture(fd);
@@ -44,22 +44,22 @@ export class MotorJoint extends testbed.Test {
 
     // Define motorized body
     {
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 8.0);
       /*b2Body*/
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(2.0, 0.5);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.friction = 0.6;
       fd.density = 2.0;
       body.CreateFixture(fd);
 
-      const mjd = new box2d.b2MotorJointDef();
+      const mjd = new b2.MotorJointDef();
       mjd.Initialize(ground, body);
       mjd.maxForce = 1000.0;
       mjd.maxTorque = 1000.0;
@@ -84,9 +84,9 @@ export class MotorJoint extends testbed.Test {
     }
 
     /*b2Vec2*/
-    const linearOffset = new box2d.b2Vec2();
-    linearOffset.x = 6.0 * box2d.b2Sin(2.0 * this.m_time);
-    linearOffset.y = 8.0 + 4.0 * box2d.b2Sin(1.0 * this.m_time);
+    const linearOffset = new b2.Vec2();
+    linearOffset.x = 6.0 * b2.Sin(2.0 * this.m_time);
+    linearOffset.y = 8.0 + 4.0 * b2.Sin(1.0 * this.m_time);
 
     /*float32*/
     const angularOffset = 4.0 * this.m_time;
@@ -94,7 +94,7 @@ export class MotorJoint extends testbed.Test {
     this.m_joint.SetLinearOffset(linearOffset);
     this.m_joint.SetAngularOffset(angularOffset);
 
-    testbed.g_debugDraw.DrawPoint(linearOffset, 4.0, new box2d.b2Color(0.9, 0.9, 0.9));
+    testbed.g_debugDraw.DrawPoint(linearOffset, 4.0, new b2.Color(0.9, 0.9, 0.9));
 
     super.Step(settings);
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (s) pause");

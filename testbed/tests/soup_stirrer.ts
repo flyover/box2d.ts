@@ -18,13 +18,13 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 import { Soup } from "./soup.js";
 
 export class SoupStirrer extends Soup {
-  public m_stirrer: box2d.b2Body;
-  public m_joint: box2d.b2Joint | null = null;
+  public m_stirrer: b2.Body;
+  public m_joint: b2.Joint | null = null;
   public m_oscillationOffset = 0.0;
 
   constructor() {
@@ -33,18 +33,18 @@ export class SoupStirrer extends Soup {
     this.m_particleSystem.SetDamping(1.0);
 
     // Shape of the stirrer.
-    const shape = new box2d.b2CircleShape();
+    const shape = new b2.CircleShape();
     shape.m_p.Set(0, 0.7);
     shape.m_radius = 0.4;
 
     // Create the stirrer.
-    const bd = new box2d.b2BodyDef();
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    const bd = new b2.BodyDef();
+    bd.type = b2.BodyType.b2_dynamicBody;
     this.m_stirrer = this.m_world.CreateBody(bd);
     this.m_stirrer.CreateFixture(shape, 1.0);
 
     // Destroy all particles under the stirrer.
-    const xf = new box2d.b2Transform();
+    const xf = new b2.Transform();
     xf.SetIdentity();
     this.m_particleSystem.DestroyParticlesInShape(shape, xf);
 
@@ -53,11 +53,11 @@ export class SoupStirrer extends Soup {
   }
 
   public CreateJoint() {
-    // DEBUG: box2d.b2Assert(!this.m_joint);
+    // DEBUG: b2.Assert(!this.m_joint);
     // Create a prismatic joint and connect to the ground, and have it
     // slide along the x axis.
     // Disconnect the body from this joint to have more fun.
-    const prismaticJointDef = new box2d.b2PrismaticJointDef();
+    const prismaticJointDef = new b2.PrismaticJointDef();
     prismaticJointDef.bodyA = this.m_groundBody;
     prismaticJointDef.bodyB = this.m_stirrer;
     prismaticJointDef.collideConnected = true;
@@ -98,7 +98,7 @@ export class SoupStirrer extends Soup {
    * Click the soup to toggle between enabling / disabling the
    * joint.
    */
-  public MouseUp(p: box2d.b2Vec2) {
+  public MouseUp(p: b2.Vec2) {
     super.MouseUp(p);
     if (this.InSoup(p)) {
       this.ToggleJoint();
@@ -108,7 +108,7 @@ export class SoupStirrer extends Soup {
   /**
    * Determine whether a point is in the soup.
    */
-  public InSoup(pos: box2d.b2Vec2) {
+  public InSoup(pos: b2.Vec2) {
     // The soup dimensions are from the container initialization in the
     // Soup test.
     return pos.y > -1.0 && pos.y < 2.0 && pos.x > -3.0 && pos.x < 3.0;
@@ -132,8 +132,8 @@ export class SoupStirrer extends Soup {
     }
 
     // Calculate the force vector.
-    const forceAngle = this.m_oscillationOffset * k_forceOscillationPerSecond * 2.0 * box2d.b2_pi;
-    const forceVector = new box2d.b2Vec2(Math.sin(forceAngle), Math.cos(forceAngle)).SelfMul(k_forceMagnitude);
+    const forceAngle = this.m_oscillationOffset * k_forceOscillationPerSecond * 2.0 * b2.pi;
+    const forceVector = new b2.Vec2(Math.sin(forceAngle), Math.cos(forceAngle)).SelfMul(k_forceMagnitude);
 
     // Only apply force to the body when it's within the soup.
     if (this.InSoup(this.m_stirrer.GetPosition()) &&

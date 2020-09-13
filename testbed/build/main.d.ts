@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import { Settings } from "./settings.js";
 import { Test } from "./test.js";
 export declare class Main {
@@ -15,8 +15,8 @@ export declare class Main {
     m_ctrl: boolean;
     m_lMouseDown: boolean;
     m_rMouseDown: boolean;
-    readonly m_projection0: box2d.b2Vec2;
-    readonly m_viewCenter0: box2d.b2Vec2;
+    readonly m_projection0: b2.Vec2;
+    readonly m_viewCenter0: b2.Vec2;
     m_demo_mode: boolean;
     m_demo_time: number;
     m_max_demo_time: number;
@@ -26,7 +26,7 @@ export declare class Main {
     m_demo_button: HTMLInputElement;
     constructor(time: number);
     HomeCamera(): void;
-    MoveCamera(move: box2d.b2Vec2): void;
+    MoveCamera(move: b2.Vec2): void;
     ZoomCamera(zoom: number): void;
     private m_mouse;
     HandleMouseMove(e: MouseEvent): void;

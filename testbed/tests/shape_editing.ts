@@ -16,34 +16,34 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class ShapeEditing extends testbed.Test {
-  public m_body: box2d.b2Body;
-  public m_fixture1: box2d.b2Fixture;
-  public m_fixture2: box2d.b2Fixture | null = null;
+  public m_body: b2.Body;
+  public m_fixture1: b2.Fixture;
+  public m_fixture2: b2.Fixture | null = null;
   public m_sensor = false;
 
   constructor() {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
-    const bd = new box2d.b2BodyDef();
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    const bd = new b2.BodyDef();
+    bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.Set(0.0, 10.0);
     this.m_body = this.m_world.CreateBody(bd);
 
-    const shape = new box2d.b2PolygonShape();
-    shape.SetAsBox(4.0, 4.0, new box2d.b2Vec2(0.0, 0.0), 0.0);
+    const shape = new b2.PolygonShape();
+    shape.SetAsBox(4.0, 4.0, new b2.Vec2(0.0, 0.0), 0.0);
     this.m_fixture1 = this.m_body.CreateFixture(shape, 10.0);
   }
 
@@ -51,7 +51,7 @@ export class ShapeEditing extends testbed.Test {
     switch (key) {
       case "c":
         if (this.m_fixture2 === null) {
-          const shape = new box2d.b2CircleShape();
+          const shape = new b2.CircleShape();
           shape.m_radius = 3.0;
           shape.m_p.Set(0.5, -4.0);
           this.m_fixture2 = this.m_body.CreateFixture(shape, 10.0);

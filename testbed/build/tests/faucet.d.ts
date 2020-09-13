@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class ParticleLifetimeRandomizer extends testbed.EmittedParticleCallback {
     m_minLifetime: number;
@@ -7,7 +7,7 @@ export declare class ParticleLifetimeRandomizer extends testbed.EmittedParticleC
     /**
      * Called for each created particle.
      */
-    ParticleCreated(system: box2d.b2ParticleSystem, particleIndex: number): void;
+    ParticleCreated(system: b2.ParticleSystem, particleIndex: number): void;
 }
 /**
  * Faucet test creates a container from boxes and continually

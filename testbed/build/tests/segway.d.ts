@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class Segway extends testbed.Test {
     static PENDULUM_LENGTH: number;
@@ -7,10 +7,10 @@ export declare class Segway extends testbed.Test {
     posAvg: number;
     readonly angleController: PIDController;
     readonly positionController: PIDController;
-    pendulumBody: box2d.b2Body;
-    wheelBody: box2d.b2Body;
-    groundBody: box2d.b2Body;
-    wheelJoint: box2d.b2RevoluteJoint;
+    pendulumBody: b2.Body;
+    wheelBody: b2.Body;
+    groundBody: b2.Body;
+    wheelJoint: b2.RevoluteJoint;
     constructor();
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;

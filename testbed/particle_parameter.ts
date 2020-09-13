@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 
 export enum ParticleParameterOptions {
   OptionStrictContacts = 1 << 0,
@@ -99,18 +99,18 @@ export class ParticleParameterDefinition {
 export class ParticleParameter {
   public static readonly k_DefaultOptions: ParticleParameterOptions = ParticleParameterOptions.OptionDrawShapes | ParticleParameterOptions.OptionDrawParticles;
   public static readonly k_particleTypes: ParticleParameterValue[] = [
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_springParticle, ParticleParameter.k_DefaultOptions, "spring"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_elasticParticle, ParticleParameter.k_DefaultOptions, "elastic"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "wall"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_barrierParticle | box2d.b2ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "barrier"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
-    new ParticleParameterValue(box2d.b2ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionDrawAABBs, "water (bounding boxes)"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_springParticle, ParticleParameter.k_DefaultOptions, "spring"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_elasticParticle, ParticleParameter.k_DefaultOptions, "elastic"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "wall"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "barrier"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
+    new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | ParticleParameterOptions.OptionDrawAABBs, "water (bounding boxes)"),
   ];
   public static readonly k_defaultDefinition: ParticleParameterDefinition[] = [
     new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
@@ -154,7 +154,7 @@ export class ParticleParameter {
     this.m_changed = this.m_index !== index;
     this.m_index = this.m_valueCount ? index % this.m_valueCount : index;
     this.m_value = this.FindParticleParameterValue();
-    // DEBUG: box2d.b2Assert(this.m_value !== null);
+    // DEBUG: b2.Assert(this.m_value !== null);
   }
 
   public Increment(): void {

@@ -1,8 +1,8 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 export declare class Skier extends testbed.Test {
     m_platform_width: number;
-    m_skier: box2d.b2Body;
+    m_skier: b2.Body;
     m_fixed_camera: boolean;
     constructor();
     Keyboard(key: string): void;

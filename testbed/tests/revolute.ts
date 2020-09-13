@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Revolute extends testbed.Test {
-  public m_ball: box2d.b2Body;
-  public m_joint: box2d.b2RevoluteJoint;
+  public m_ball: b2.Body;
+  public m_joint: b2.RevoluteJoint;
 
   constructor() {
     super();
@@ -29,14 +29,14 @@ export class Revolute extends testbed.Test {
     let ground = null;
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       //fd.filter.categoryBits = 2;
 
@@ -44,13 +44,13 @@ export class Revolute extends testbed.Test {
     }
 
     {
-      const shape = new box2d.b2CircleShape();
+      const shape = new b2.CircleShape();
       shape.m_radius = 0.5;
 
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
 
-      const rjd = new box2d.b2RevoluteJointDef();
+      const rjd = new b2.RevoluteJointDef();
 
       bd.position.Set(-10.0, 20.0);
       const body = this.m_world.CreateBody(bd);
@@ -58,14 +58,14 @@ export class Revolute extends testbed.Test {
 
       const w = 100.0;
       body.SetAngularVelocity(w);
-      body.SetLinearVelocity(new box2d.b2Vec2(-8.0 * w, 0.0));
+      body.SetLinearVelocity(new b2.Vec2(-8.0 * w, 0.0));
 
-      rjd.Initialize(ground, body, new box2d.b2Vec2(-10.0, 12.0));
-      rjd.motorSpeed = 1.0 * box2d.b2_pi;
+      rjd.Initialize(ground, body, new b2.Vec2(-10.0, 12.0));
+      rjd.motorSpeed = 1.0 * b2.pi;
       rjd.maxMotorTorque = 10000.0;
       rjd.enableMotor = false;
-      rjd.lowerAngle = -0.25 * box2d.b2_pi;
-      rjd.upperAngle = 0.5 * box2d.b2_pi;
+      rjd.lowerAngle = -0.25 * b2.pi;
+      rjd.upperAngle = 0.5 * b2.pi;
       rjd.enableLimit = true;
       rjd.collideConnected = true;
 
@@ -73,16 +73,16 @@ export class Revolute extends testbed.Test {
     }
 
     {
-      /*box2d.b2CircleShape*/
-      const circle_shape = new box2d.b2CircleShape();
+      /*b2.CircleShape*/
+      const circle_shape = new b2.CircleShape();
       circle_shape.m_radius = 3.0;
 
-      const circle_bd = new box2d.b2BodyDef();
-      circle_bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const circle_bd = new b2.BodyDef();
+      circle_bd.type = b2.BodyType.b2_dynamicBody;
       circle_bd.position.Set(5.0, 30.0);
 
-      /*box2d.b2FixtureDef*/
-      const fd = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const fd = new b2.FixtureDef();
       fd.density = 5.0;
       fd.filter.maskBits = 1;
       fd.shape = circle_shape;
@@ -90,44 +90,44 @@ export class Revolute extends testbed.Test {
       this.m_ball = this.m_world.CreateBody(circle_bd);
       this.m_ball.CreateFixture(fd);
 
-      /*box2d.b2PolygonShape*/
-      const polygon_shape = new box2d.b2PolygonShape();
-      polygon_shape.SetAsBox(10.0, 0.2, new box2d.b2Vec2(-10.0, 0.0), 0.0);
+      /*b2.PolygonShape*/
+      const polygon_shape = new b2.PolygonShape();
+      polygon_shape.SetAsBox(10.0, 0.2, new b2.Vec2(-10.0, 0.0), 0.0);
 
-      const polygon_bd = new box2d.b2BodyDef();
+      const polygon_bd = new b2.BodyDef();
       polygon_bd.position.Set(20.0, 10.0);
-      polygon_bd.type = box2d.b2BodyType.b2_dynamicBody;
+      polygon_bd.type = b2.BodyType.b2_dynamicBody;
       polygon_bd.bullet = true;
-      /*box2d.b2Body*/
+      /*b2.Body*/
       const polygon_body = this.m_world.CreateBody(polygon_bd);
       polygon_body.CreateFixture(polygon_shape, 2.0);
 
-      const rjd = new box2d.b2RevoluteJointDef();
-      rjd.Initialize(ground, polygon_body, new box2d.b2Vec2(20.0, 10.0));
-      rjd.lowerAngle = -0.25 * box2d.b2_pi;
-      rjd.upperAngle = 0.0 * box2d.b2_pi;
+      const rjd = new b2.RevoluteJointDef();
+      rjd.Initialize(ground, polygon_body, new b2.Vec2(20.0, 10.0));
+      rjd.lowerAngle = -0.25 * b2.pi;
+      rjd.upperAngle = 0.0 * b2.pi;
       rjd.enableLimit = true;
       this.m_world.CreateJoint(rjd);
     }
 
     // Tests mass computation of a small object far from the origin
     {
-      const bodyDef = new box2d.b2BodyDef();
-      bodyDef.type = box2d.b2BodyType.b2_dynamicBody;
-      /*box2d.b2Body*/
+      const bodyDef = new b2.BodyDef();
+      bodyDef.type = b2.BodyType.b2_dynamicBody;
+      /*b2.Body*/
       const body = this.m_world.CreateBody(bodyDef);
 
-      /*box2d.b2PolygonShape*/
-      const polyShape = new box2d.b2PolygonShape();
-      /*box2d.b2Vec2*/
-      const verts = box2d.b2Vec2.MakeArray(3);
+      /*b2.PolygonShape*/
+      const polyShape = new b2.PolygonShape();
+      /*b2.Vec2*/
+      const verts = b2.Vec2.MakeArray(3);
       verts[0].Set(17.63, 36.31);
       verts[1].Set(17.52, 36.69);
       verts[2].Set(17.19, 36.36);
       polyShape.Set(verts, 3);
 
-      /*box2d.b2FixtureDef*/
-      const polyFixtureDef = new box2d.b2FixtureDef();
+      /*b2.FixtureDef*/
+      const polyFixtureDef = new b2.FixtureDef();
       polyFixtureDef.shape = polyShape;
       polyFixtureDef.density = 1;
 
@@ -153,7 +153,7 @@ export class Revolute extends testbed.Test {
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
 
     // if (this.m_stepCount === 360) {
-    //   this.m_ball.SetTransformVec(new box2d.b2Vec2(0.0, 0.5), 0.0);
+    //   this.m_ball.SetTransformVec(new b2.Vec2(0.0, 0.5), 0.0);
     // }
 
     // const torque1 = this.m_joint.GetMotorTorque(settings.hz);

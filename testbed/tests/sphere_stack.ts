@@ -16,40 +16,40 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class SphereStack extends testbed.Test {
   public static readonly e_count: number = 10;
 
-  public m_bodies: box2d.b2Body[] = [];
+  public m_bodies: b2.Body[] = [];
 
   constructor() {
     super();
 
     {
-      const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
-      const ground: box2d.b2Body = this.m_world.CreateBody(bd);
+      const bd: b2.BodyDef = new b2.BodyDef();
+      const ground: b2.Body = this.m_world.CreateBody(bd);
 
-      const shape: box2d.b2EdgeShape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      const shape: b2.EdgeShape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
-      const shape: box2d.b2CircleShape = new box2d.b2CircleShape();
+      const shape: b2.CircleShape = new b2.CircleShape();
       shape.m_radius = 1.0;
 
       for (let i: number = 0; i < SphereStack.e_count; ++i) {
-        const bd: box2d.b2BodyDef = new box2d.b2BodyDef();
-        bd.type = box2d.b2BodyType.b2_dynamicBody;
+        const bd: b2.BodyDef = new b2.BodyDef();
+        bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.0, 4.0 + 3.0 * i);
 
         this.m_bodies[i] = this.m_world.CreateBody(bd);
 
         this.m_bodies[i].CreateFixture(shape, 1.0);
 
-        this.m_bodies[i].SetLinearVelocity(new box2d.b2Vec2(0.0, -50.0));
+        this.m_bodies[i].SetLinearVelocity(new b2.Vec2(0.0, -50.0));
       }
     }
   }

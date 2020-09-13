@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 /**
@@ -87,31 +87,31 @@ export class EmitterTracker {
  * Keep track of particle groups in a set, removing them when
  * they're destroyed.
  */
-export class ParticleGroupTracker extends box2d.b2DestructionListener {
-  public m_particleGroups: box2d.b2ParticleGroup[] = [];
+export class ParticleGroupTracker extends b2.DestructionListener {
+  public m_particleGroups: b2.ParticleGroup[] = [];
 
   /**
    * Called when any particle group is about to be destroyed.
    */
-  public SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void {
+  public SayGoodbyeParticleGroup(group: b2.ParticleGroup): void {
     this.RemoveParticleGroup(group);
   }
 
   /**
    * Add a particle group to the tracker.
    */
-  public AddParticleGroup(group: box2d.b2ParticleGroup): void {
+  public AddParticleGroup(group: b2.ParticleGroup): void {
     this.m_particleGroups.push(group);
   }
 
   /**
    * Remove a particle group from the tracker.
    */
-  public RemoveParticleGroup(group: box2d.b2ParticleGroup): void {
+  public RemoveParticleGroup(group: b2.ParticleGroup): void {
     this.m_particleGroups.splice(this.m_particleGroups.indexOf(group), 1);
   }
 
-  public GetParticleGroups(): box2d.b2ParticleGroup[] {
+  public GetParticleGroups(): b2.ParticleGroup[] {
     return this.m_particleGroups;
   }
 }
@@ -150,12 +150,12 @@ export class FrackerSettings {
   /**
    * Colors of tiles.
    */
-  public static readonly k_playerColor = new box2d.b2Color(1.0, 1.0, 1.0);
-  public static readonly k_playerFrackColor = new box2d.b2Color(1.0, 0.5, 0.5);
-  public static readonly k_wellColor = new box2d.b2Color(0.5, 0.5, 0.5);
-  public static readonly k_oilColor = new box2d.b2Color(1.0, 0.0, 0.0);
-  public static readonly k_waterColor = new box2d.b2Color(0.0, 0.2, 1.0);
-  public static readonly k_frackingFluidColor = new box2d.b2Color(0.8, 0.4, 0.0);
+  public static readonly k_playerColor = new b2.Color(1.0, 1.0, 1.0);
+  public static readonly k_playerFrackColor = new b2.Color(1.0, 0.5, 0.5);
+  public static readonly k_wellColor = new b2.Color(0.5, 0.5, 0.5);
+  public static readonly k_oilColor = new b2.Color(1.0, 0.0, 0.0);
+  public static readonly k_waterColor = new b2.Color(0.0, 0.2, 1.0);
+  public static readonly k_frackingFluidColor = new b2.Color(0.8, 0.4, 0.0);
 
   /**
    * Default density of each body.
@@ -214,7 +214,7 @@ export class FrackerSettings {
  * fluids to the well head and ultimately score points.
  */
 export class Fracker extends testbed.Test {
-  public m_player!: box2d.b2Body;
+  public m_player!: b2.Body;
   public m_wellX = FrackerSettings.k_worldWidthTiles - (FrackerSettings.k_worldWidthTiles / 4);
   public m_wellTop = FrackerSettings.k_worldHeightTiles - 1;
   public m_wellBottom = FrackerSettings.k_worldHeightTiles / 8;
@@ -222,7 +222,7 @@ export class Fracker extends testbed.Test {
   public m_allowInput = false;
   public m_frackingFluidChargeTime = -1.0;
   public m_material: Fracker_Material[] = [];
-  public m_bodies: Array<box2d.b2Body | null> = [];
+  public m_bodies: Array<b2.Body | null> = [];
   /**
    * Set of particle groups the well has influence over.
    */
@@ -277,7 +277,7 @@ export class Fracker extends testbed.Test {
   /**
    * Get the body associated with the specified tile position.
    */
-  public GetBody(x: number, y: number): box2d.b2Body | null {
+  public GetBody(x: number, y: number): b2.Body | null {
     ///  return *const_cast<Fracker*>(this).GetBodyStorage(x, y);
     return this.m_bodies[Fracker.TileToArrayOffset(x, y)];
   }
@@ -285,7 +285,7 @@ export class Fracker extends testbed.Test {
   /**
    * Set the body associated with the specified tile position.
    */
-  public SetBody(x: number, y: number, body: box2d.b2Body | null): void {
+  public SetBody(x: number, y: number, body: b2.Body | null): void {
     ///  b2Body** const currentBody = GetBodyStorage(x, y);
     const currentBody = this.m_bodies[Fracker.TileToArrayOffset(x, y)];
     if (currentBody) {
@@ -298,13 +298,13 @@ export class Fracker extends testbed.Test {
    * Create the player.
    */
   public CreatePlayer(): void {
-    const bd = new box2d.b2BodyDef();
-    bd.type = box2d.b2BodyType.b2_kinematicBody;
+    const bd = new b2.BodyDef();
+    bd.type = b2.BodyType.b2_kinematicBody;
     this.m_player = this.m_world.CreateBody(bd);
-    const shape = new box2d.b2PolygonShape();
+    const shape = new b2.PolygonShape();
     shape.SetAsBox(FrackerSettings.k_tileHalfWidth,
       FrackerSettings.k_tileHalfHeight,
-      new box2d.b2Vec2(FrackerSettings.k_tileHalfWidth,
+      new b2.Vec2(FrackerSettings.k_tileHalfWidth,
         FrackerSettings.k_tileHalfHeight), 0);
     this.m_player.CreateFixture(shape, FrackerSettings.k_density);
     this.m_player.SetTransformVec(
@@ -318,7 +318,7 @@ export class Fracker extends testbed.Test {
    * Create the geography / features of the world.
    */
   public CreateGeo(): void {
-    // DEBUG: box2d.b2Assert(FrackerSettings.k_dirtProbability +
+    // DEBUG: b2.Assert(FrackerSettings.k_dirtProbability +
     // DEBUG:   FrackerSettings.k_emptyProbability +
     // DEBUG:   FrackerSettings.k_oilProbability +
     // DEBUG:   FrackerSettings.k_waterProbability === 100);
@@ -350,17 +350,17 @@ export class Fracker extends testbed.Test {
    * Create the boundary of the world.
    */
   public CreateGround(): void {
-    const bd = new box2d.b2BodyDef();
+    const bd = new b2.BodyDef();
     const ground = this.m_world.CreateBody(bd);
-    const shape = new box2d.b2ChainShape();
-    const bottomLeft = new box2d.b2Vec2(),
-      topRight = new box2d.b2Vec2();
+    const shape = new b2.ChainShape();
+    const bottomLeft = new b2.Vec2(),
+      topRight = new b2.Vec2();
     Fracker.GetExtents(bottomLeft, topRight);
     const vertices = [
-      new box2d.b2Vec2(bottomLeft.x, bottomLeft.y),
-      new box2d.b2Vec2(topRight.x, bottomLeft.y),
-      new box2d.b2Vec2(topRight.x, topRight.y),
-      new box2d.b2Vec2(bottomLeft.x, topRight.y),
+      new b2.Vec2(bottomLeft.x, bottomLeft.y),
+      new b2.Vec2(topRight.x, bottomLeft.y),
+      new b2.Vec2(topRight.x, topRight.y),
+      new b2.Vec2(bottomLeft.x, topRight.y),
     ];
     shape.CreateLoop(vertices, 4);
     ground.CreateFixture(shape, 0.0);
@@ -371,9 +371,9 @@ export class Fracker extends testbed.Test {
    */
   public CreateDirtBlock(x: number, y: number): void {
     const position = Fracker.TileToWorld(x, y);
-    const bd = new box2d.b2BodyDef();
+    const bd = new b2.BodyDef();
     const body = this.m_world.CreateBody(bd);
-    const shape = new box2d.b2PolygonShape();
+    const shape = new b2.PolygonShape();
     shape.SetAsBox(FrackerSettings.k_tileHalfWidth,
       FrackerSettings.k_tileHalfHeight,
       Fracker.CenteredPosition(position), 0);
@@ -387,13 +387,13 @@ export class Fracker extends testbed.Test {
    */
   public CreateReservoirBlock(x: number, y: number, material: Fracker_Material): void {
     const position = Fracker.TileToWorld(x, y);
-    const shape = new box2d.b2PolygonShape();
+    const shape = new b2.PolygonShape();
     this.SetMaterial(x, y, material);
     shape.SetAsBox(FrackerSettings.k_tileHalfWidth,
       FrackerSettings.k_tileHalfHeight,
       Fracker.CenteredPosition(position), 0);
-    const pd = new box2d.b2ParticleGroupDef();
-    pd.flags = box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle | box2d.b2ParticleFlag.b2_destructionListenerParticle;
+    const pd = new b2.ParticleGroupDef();
+    pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_destructionListenerParticle;
     pd.shape = shape;
     pd.color.Copy(material === Fracker_Material.OIL ?
       FrackerSettings.k_oilColor : FrackerSettings.k_waterColor);
@@ -428,21 +428,21 @@ export class Fracker extends testbed.Test {
   /**
    * Create a fracking fluid emitter.
    */
-  public CreateFrackingFluidEmitter(position: box2d.b2Vec2): void {
-    const groupDef = new box2d.b2ParticleGroupDef();
+  public CreateFrackingFluidEmitter(position: b2.Vec2): void {
+    const groupDef = new b2.ParticleGroupDef();
     const group = this.m_particleSystem.CreateParticleGroup(groupDef);
     this.m_listener.AddParticleGroup(group);
     const emitter = new testbed.RadialEmitter();
     emitter.SetGroup(group);
     emitter.SetParticleSystem(this.m_particleSystem);
     emitter.SetPosition(Fracker.CenteredPosition(position));
-    emitter.SetVelocity(new box2d.b2Vec2(0.0, -FrackerSettings.k_tileHalfHeight));
+    emitter.SetVelocity(new b2.Vec2(0.0, -FrackerSettings.k_tileHalfHeight));
     emitter.SetSpeed(FrackerSettings.k_tileHalfWidth * 0.1);
-    emitter.SetSize(new box2d.b2Vec2(FrackerSettings.k_tileHalfWidth,
+    emitter.SetSize(new b2.Vec2(FrackerSettings.k_tileHalfWidth,
       FrackerSettings.k_tileHalfHeight));
     emitter.SetEmitRate(20.0);
     emitter.SetColor(FrackerSettings.k_frackingFluidColor);
-    emitter.SetParticleFlags(box2d.b2ParticleFlag.b2_tensileParticle | box2d.b2ParticleFlag.b2_viscousParticle);
+    emitter.SetParticleFlags(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle);
     this.m_tracker.Add(emitter, FrackerSettings.k_frackingFluidEmitterLifetime);
     this.m_listener.AddScore(FrackerSettings.k_scorePerFrackingDeployment);
   }
@@ -456,8 +456,8 @@ export class Fracker extends testbed.Test {
     const currentPlayerY: [number] = [0];
     Fracker.WorldToTile(playerPosition, currentPlayerX, currentPlayerY);
 
-    playerX = box2d.b2Clamp(playerX, 0, FrackerSettings.k_worldWidthTiles - 1);
-    playerY = box2d.b2Clamp(playerY, 0, FrackerSettings.k_worldHeightTiles - 1);
+    playerX = b2.Clamp(playerX, 0, FrackerSettings.k_worldWidthTiles - 1);
+    playerY = b2.Clamp(playerY, 0, FrackerSettings.k_worldHeightTiles - 1);
 
     // Only update if the player has moved and isn't attempting to
     // move through the well.
@@ -491,7 +491,7 @@ export class Fracker extends testbed.Test {
    * coordinates.
    */
   public DestroyParticlesInTiles(startX: number, startY: number, endX: number, endY: number): void {
-    const shape = new box2d.b2PolygonShape();
+    const shape = new b2.PolygonShape();
     const width = endX - startX + 1;
     const height = endY - startY + 1;
     const centerX = startX + width / 2;
@@ -499,32 +499,32 @@ export class Fracker extends testbed.Test {
     shape.SetAsBox(
       FrackerSettings.k_tileHalfWidth * width,
       FrackerSettings.k_tileHalfHeight * height);
-    const killLocation = new box2d.b2Transform();
+    const killLocation = new b2.Transform();
     killLocation.SetPositionAngle(Fracker.CenteredPosition(Fracker.TileToWorld(centerX, centerY)), 0);
     this.m_particleSystem.DestroyParticlesInShape(shape, killLocation);
   }
 
-  public JointDestroyed(joint: box2d.b2Joint): void {
+  public JointDestroyed(joint: b2.Joint): void {
     super.JointDestroyed(joint);
   }
 
-  public ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void {
+  public ParticleGroupDestroyed(group: b2.ParticleGroup): void {
     super.ParticleGroupDestroyed(group);
   }
 
-  public BeginContact(contact: box2d.b2Contact): void {
+  public BeginContact(contact: b2.Contact): void {
     super.BeginContact(contact);
   }
 
-  public EndContact(contact: box2d.b2Contact): void {
+  public EndContact(contact: b2.Contact): void {
     super.EndContact(contact);
   }
 
-  public PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void {
+  public PreSolve(contact: b2.Contact, oldManifold: b2.Manifold): void {
     super.PreSolve(contact, oldManifold);
   }
 
-  public PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void {
+  public PostSolve(contact: b2.Contact, impulse: b2.ContactImpulse): void {
     super.PostSolve(contact, impulse);
   }
 
@@ -580,7 +580,7 @@ export class Fracker extends testbed.Test {
     super.KeyboardUp(key);
   }
 
-  public MouseDown(p: box2d.b2Vec2): void {
+  public MouseDown(p: b2.Vec2): void {
     super.MouseDown(p);
     this.m_frackingFluidChargeTime = 0.0;
   }
@@ -588,7 +588,7 @@ export class Fracker extends testbed.Test {
   /**
    * Try to deploy the fracking fluid or move the player.
    */
-  public MouseUp(p: box2d.b2Vec2): void {
+  public MouseUp(p: b2.Vec2): void {
     super.MouseUp(p);
     if (!this.m_allowInput) {
       return;
@@ -602,7 +602,7 @@ export class Fracker extends testbed.Test {
       Fracker.WorldToTile(playerPosition, playerX, playerY);
       // Move the player towards the mouse position, preferring to move
       // along the axis with the maximal distance from the cursor.
-      const distance = box2d.b2Vec2.SubVV(p, Fracker.CenteredPosition(playerPosition), new box2d.b2Vec2());
+      const distance = b2.Vec2.SubVV(p, Fracker.CenteredPosition(playerPosition), new b2.Vec2());
       const absDistX = Math.abs(distance.x);
       const absDistY = Math.abs(distance.y);
       if (absDistX > absDistY &&
@@ -616,7 +616,7 @@ export class Fracker extends testbed.Test {
     this.m_allowInput = false;
   }
 
-  public MouseMove(p: box2d.b2Vec2): void {
+  public MouseMove(p: b2.Vec2): void {
     super.MouseMove(p);
   }
 
@@ -669,7 +669,7 @@ export class Fracker extends testbed.Test {
         const particlePosition = positionBuffer[index + i];
         // Distance from the well's bottom.
         ///  const b2Vec2 distance = particlePosition - wellEnd;
-        const distance = box2d.b2Vec2.SubVV(particlePosition, wellEnd, new box2d.b2Vec2());
+        const distance = b2.Vec2.SubVV(particlePosition, wellEnd, new b2.Vec2());
           // Distance from either well side wall.
         const absDistX = Math.abs(distance.x);
         if (absDistX < FrackerSettings.k_tileWidth &&
@@ -678,7 +678,7 @@ export class Fracker extends testbed.Test {
           distance.y < 0.0) {
           // Suck the particles towards the end of the well.
           ///  b2Vec2 velocity = wellEnd - particlePosition;
-          const velocity = box2d.b2Vec2.SubVV(wellEnd, particlePosition, new box2d.b2Vec2());
+          const velocity = b2.Vec2.SubVV(wellEnd, particlePosition, new b2.Vec2());
           velocity.Normalize();
           ///  velocityBuffer[i] = velocity * FrackerSettings.k_wellSuckSpeedOutside;
           velocityBuffer[index + i].Copy(velocity.SelfMul(FrackerSettings.k_wellSuckSpeedOutside));
@@ -686,7 +686,7 @@ export class Fracker extends testbed.Test {
           // Suck the particles up the well with a random
           // x component moving them side to side in the well.
           const randomX = (Math.random() * FrackerSettings.k_tileHalfWidth) - distance.x;
-          const velocity = new box2d.b2Vec2(randomX, FrackerSettings.k_tileHeight);
+          const velocity = new b2.Vec2(randomX, FrackerSettings.k_tileHeight);
           velocity.Normalize();
           ///  velocityBuffer[i] = velocity * FrackerSettings.k_wellSuckSpeedInside;
           velocityBuffer[index + i].Copy(velocity.SelfMul(FrackerSettings.k_wellSuckSpeedInside));
@@ -717,7 +717,7 @@ export class Fracker extends testbed.Test {
       this.m_player.GetTransform().p,
       Fracker.LerpColor(FrackerSettings.k_playerColor,
         FrackerSettings.k_playerFrackColor,
-        box2d.b2Max(this.m_frackingFluidChargeTime /
+        b2.Max(this.m_frackingFluidChargeTime /
           FrackerSettings.k_frackingFluidChargeTime, 0.0)),
       true);
   }
@@ -745,9 +745,9 @@ export class Fracker extends testbed.Test {
    * Draw a quad at position of color that is either just an
    * outline (fill = false) or solid (fill = true).
    */
-  public DrawQuad(position: box2d.b2Vec2, color: box2d.b2Color, fill: boolean = false): void {
+  public DrawQuad(position: b2.Vec2, color: b2.Color, fill: boolean = false): void {
     ///  b2Vec2 verts[4];
-    const verts = box2d.b2Vec2.MakeArray(4);
+    const verts = b2.Vec2.MakeArray(4);
     const maxX = position.x + FrackerSettings.k_tileWidth;
     const maxY = position.y + FrackerSettings.k_tileHeight;
     verts[0].Set(position.x, maxY);
@@ -785,7 +785,7 @@ export class Fracker extends testbed.Test {
   /**
    * Get the bottom left position of the world in world units.
    */
-  public static GetBottomLeft(bottomLeft: box2d.b2Vec2): void {
+  public static GetBottomLeft(bottomLeft: b2.Vec2): void {
     bottomLeft.Set(FrackerSettings.k_worldCenterX -
       FrackerSettings.k_worldHalfWidth,
       FrackerSettings.k_worldCenterY -
@@ -795,7 +795,7 @@ export class Fracker extends testbed.Test {
   /**
    * Get the extents of the world in world units.
    */
-  public static GetExtents(bottomLeft: box2d.b2Vec2, topRight: box2d.b2Vec2): void {
+  public static GetExtents(bottomLeft: b2.Vec2, topRight: b2.Vec2): void {
     Fracker.GetBottomLeft(bottomLeft);
     topRight.Set(FrackerSettings.k_worldCenterX +
       FrackerSettings.k_worldHalfWidth,
@@ -804,10 +804,10 @@ export class Fracker extends testbed.Test {
   }
 
   // Convert a point in world coordintes to a tile location
-  public static WorldToTile(position: box2d.b2Vec2, x: [number], y: [number]): void {
+  public static WorldToTile(position: b2.Vec2, x: [number], y: [number]): void {
     // Translate relative to the world center and scale based upon the
     // tile size.
-    const bottomLeft = new box2d.b2Vec2();
+    const bottomLeft = new b2.Vec2();
     Fracker.GetBottomLeft(bottomLeft);
     x[0] = Math.floor(((position.x - bottomLeft.x) /
         FrackerSettings.k_tileWidth) +
@@ -820,10 +820,10 @@ export class Fracker extends testbed.Test {
   /**
    * Convert a tile position to a point  in world coordinates.
    */
-  public static TileToWorld(x: number, y: number, out: box2d.b2Vec2 = new box2d.b2Vec2()): box2d.b2Vec2 {
+  public static TileToWorld(x: number, y: number, out: b2.Vec2 = new b2.Vec2()): b2.Vec2 {
     // Scale based upon the tile size and translate relative to the world
     // center.
-    const bottomLeft = new box2d.b2Vec2();
+    const bottomLeft = new b2.Vec2();
     Fracker.GetBottomLeft(bottomLeft);
     return out.Set(
       (x * FrackerSettings.k_tileWidth) + bottomLeft.x, (y * FrackerSettings.k_tileHeight) + bottomLeft.y);
@@ -834,17 +834,17 @@ export class Fracker extends testbed.Test {
    * the specified tile coordinates.
    */
   public static TileToArrayOffset(x: number, y: number): number {
-    // DEBUG: box2d.b2Assert(x >= 0);
-    // DEBUG: box2d.b2Assert(x < FrackerSettings.k_worldWidthTiles);
-    // DEBUG: box2d.b2Assert(y >= 0);
-    // DEBUG: box2d.b2Assert(y < FrackerSettings.k_worldHeightTiles);
+    // DEBUG: b2.Assert(x >= 0);
+    // DEBUG: b2.Assert(x < FrackerSettings.k_worldWidthTiles);
+    // DEBUG: b2.Assert(y >= 0);
+    // DEBUG: b2.Assert(y < FrackerSettings.k_worldHeightTiles);
     return x + (y * FrackerSettings.k_worldWidthTiles);
   }
 
   /**
    * Calculate the center of a tile position in world units.
    */
-  public static CenteredPosition(position: box2d.b2Vec2, out: box2d.b2Vec2 = new box2d.b2Vec2()): box2d.b2Vec2 {
+  public static CenteredPosition(position: b2.Vec2, out: b2.Vec2 = new b2.Vec2()): b2.Vec2 {
     return out.Set(position.x + FrackerSettings.k_tileHalfWidth,
       position.y + FrackerSettings.k_tileHalfHeight);
   }
@@ -852,8 +852,8 @@ export class Fracker extends testbed.Test {
   /**
    * Interpolate between color a and b using t.
    */
-  public static LerpColor(a: box2d.b2Color, b: box2d.b2Color, t: number): box2d.b2Color {
-    return new box2d.b2Color(Fracker.Lerp(a.r, b.r, t),
+  public static LerpColor(a: b2.Color, b: b2.Color, t: number): b2.Color {
+    return new b2.Color(Fracker.Lerp(a.r, b.r, t),
       Fracker.Lerp(a.g, b.g, t),
       Fracker.Lerp(a.b, b.b, t));
   }
@@ -886,8 +886,8 @@ export enum Fracker_Material {
 export class Fracker_DestructionListener extends ParticleGroupTracker {
   public m_score = 0;
   public m_oil = 0;
-  public m_world: box2d.b2World;
-  public m_previousListener: box2d.b2DestructionListener | null = null;
+  public m_world: b2.World;
+  public m_previousListener: b2.DestructionListener | null = null;
 
   /**
    * Initialize the score.
@@ -898,9 +898,9 @@ export class Fracker_DestructionListener extends ParticleGroupTracker {
    * Initialize the particle system and world, setting this class
    * as a destruction listener for the world.
    */
-  constructor(world: box2d.b2World) {
+  constructor(world: b2.World) {
     super();
-    // DEBUG: box2d.b2Assert(world !== null);
+    // DEBUG: b2.Assert(world !== null);
     this.m_world = world;
     this.m_previousListener = world.m_destructionListener;
     this.m_world.SetDestructionListener(this);
@@ -943,8 +943,8 @@ export class Fracker_DestructionListener extends ParticleGroupTracker {
   /**
    * Update the score when certain particles are destroyed.
    */
-  public SayGoodbyeParticle(particleSystem: box2d.b2ParticleSystem, index: number): void {
-    // DEBUG: box2d.b2Assert(particleSystem !== null);
+  public SayGoodbyeParticle(particleSystem: b2.ParticleSystem, index: number): void {
+    // DEBUG: b2.Assert(particleSystem !== null);
     ///  const void * const userData = particleSystem.GetUserDataBuffer()[index];
     const userData = particleSystem.GetUserDataBuffer()[index];
     if (userData) {

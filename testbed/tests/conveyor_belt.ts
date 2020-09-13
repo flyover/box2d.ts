@@ -16,37 +16,37 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class ConveyorBelt extends testbed.Test {
-  public m_platform: box2d.b2Fixture;
+  public m_platform: b2.Fixture;
 
   constructor() {
     super();
 
     // Ground
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       /*b2Body*/
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-20.0, 0.0), new box2d.b2Vec2(20.0, 0.0));
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     // Platform
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       bd.position.Set(-5.0, 5.0);
       /*b2Body*/
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(10.0, 0.5);
 
-      const fd = new box2d.b2FixtureDef();
+      const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.friction = 0.8;
       this.m_platform = body.CreateFixture(fd);
@@ -54,19 +54,19 @@ export class ConveyorBelt extends testbed.Test {
 
     // Boxes
     for ( /*int*/ let i = 0; i < 5; ++i) {
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(-10.0 + 2.0 * i, 7.0);
       /*b2Body*/
       const body = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 0.5);
       body.CreateFixture(shape, 20.0);
     }
   }
 
-  public PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold) {
+  public PreSolve(contact: b2.Contact, oldManifold: b2.Manifold) {
     super.PreSolve(contact, oldManifold);
 
     /*b2Fixture*/

@@ -18,7 +18,7 @@
 
 // #if B2_ENABLE_PARTICLE
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class DamBreak extends testbed.Test {
@@ -26,15 +26,15 @@ export class DamBreak extends testbed.Test {
     super();
 
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       const ground = this.m_world.CreateBody(bd);
 
-      const shape = new box2d.b2ChainShape();
+      const shape = new b2.ChainShape();
       const vertices = [
-        new box2d.b2Vec2(-2, 0),
-        new box2d.b2Vec2(2, 0),
-        new box2d.b2Vec2(2, 4),
-        new box2d.b2Vec2(-2, 4),
+        new b2.Vec2(-2, 0),
+        new b2.Vec2(2, 0),
+        new b2.Vec2(2, 4),
+        new b2.Vec2(-2, 4),
       ];
       shape.CreateLoop(vertices, 4);
       ground.CreateFixture(shape, 0.0);
@@ -45,13 +45,13 @@ export class DamBreak extends testbed.Test {
     this.m_particleSystem.SetDamping(0.2);
 
     {
-      const shape = new box2d.b2PolygonShape();
-      shape.SetAsBox(0.8, 1.0, new box2d.b2Vec2(-1.2, 1.01), 0);
-      const pd = new box2d.b2ParticleGroupDef();
+      const shape = new b2.PolygonShape();
+      shape.SetAsBox(0.8, 1.0, new b2.Vec2(-1.2, 1.01), 0);
+      const pd = new b2.ParticleGroupDef();
       pd.flags = testbed.Test.GetParticleParameterValue();
       pd.shape = shape;
       const group = this.m_particleSystem.CreateParticleGroup(pd);
-      if (pd.flags & box2d.b2ParticleFlag.b2_colorMixingParticle) {
+      if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
         this.ColorParticleGroup(group, 0);
       }
     }

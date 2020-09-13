@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Pulleys extends testbed.Test {
-  public m_joint1: box2d.b2PulleyJoint;
+  public m_joint1: b2.PulleyJoint;
 
   constructor() {
     super();
@@ -32,11 +32,11 @@ export class Pulleys extends testbed.Test {
 
     let ground = null;
     {
-      const bd = new box2d.b2BodyDef();
+      const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2CircleShape*/
-      const circle = new box2d.b2CircleShape();
+      /*b2.CircleShape*/
+      const circle = new b2.CircleShape();
       circle.m_radius = 2.0;
 
       circle.m_p.Set(-10.0, y + b + L);
@@ -48,11 +48,11 @@ export class Pulleys extends testbed.Test {
 
     {
 
-      const shape = new box2d.b2PolygonShape();
+      const shape = new b2.PolygonShape();
       shape.SetAsBox(a, b);
 
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
 
       //bd.fixedRotation = true;
       bd.position.Set(-10.0, y);
@@ -63,11 +63,11 @@ export class Pulleys extends testbed.Test {
       const body2 = this.m_world.CreateBody(bd);
       body2.CreateFixture(shape, 5.0);
 
-      const pulleyDef = new box2d.b2PulleyJointDef();
-      const anchor1 = new box2d.b2Vec2(-10.0, y + b);
-      const anchor2 = new box2d.b2Vec2(10.0, y + b);
-      const groundAnchor1 = new box2d.b2Vec2(-10.0, y + b + L);
-      const groundAnchor2 = new box2d.b2Vec2(10.0, y + b + L);
+      const pulleyDef = new b2.PulleyJointDef();
+      const anchor1 = new b2.Vec2(-10.0, y + b);
+      const anchor2 = new b2.Vec2(10.0, y + b);
+      const groundAnchor1 = new b2.Vec2(-10.0, y + b + L);
+      const groundAnchor2 = new b2.Vec2(10.0, y + b + L);
       pulleyDef.Initialize(body1, body2, groundAnchor1, groundAnchor2, anchor1, anchor2, 1.5);
 
       this.m_joint1 = this.m_world.CreateJoint(pulleyDef);

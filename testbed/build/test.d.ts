@@ -1,4 +1,4 @@
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import { Settings } from "./settings.js";
 import { FullScreenUI } from "./fullscreen_ui.js";
 import { ParticleParameter, ParticleParameterValue, ParticleParameterDefinition } from "./particle_parameter.js";
@@ -9,73 +9,73 @@ export declare class TestEntry {
     createFcn: () => Test;
     constructor(name: string, createFcn: () => Test);
 }
-export declare class DestructionListener extends box2d.b2DestructionListener {
+export declare class DestructionListener extends b2.DestructionListener {
     test: Test;
     constructor(test: Test);
-    SayGoodbyeJoint(joint: box2d.b2Joint): void;
-    SayGoodbyeFixture(fixture: box2d.b2Fixture): void;
-    SayGoodbyeParticleGroup(group: box2d.b2ParticleGroup): void;
+    SayGoodbyeJoint(joint: b2.Joint): void;
+    SayGoodbyeFixture(fixture: b2.Fixture): void;
+    SayGoodbyeParticleGroup(group: b2.ParticleGroup): void;
 }
 export declare class ContactPoint {
-    fixtureA: box2d.b2Fixture;
-    fixtureB: box2d.b2Fixture;
-    readonly normal: box2d.b2Vec2;
-    readonly position: box2d.b2Vec2;
-    state: box2d.b2PointState;
+    fixtureA: b2.Fixture;
+    fixtureB: b2.Fixture;
+    readonly normal: b2.Vec2;
+    readonly position: b2.Vec2;
+    state: b2.PointState;
     normalImpulse: number;
     tangentImpulse: number;
     separation: number;
 }
-export declare class Test extends box2d.b2ContactListener {
+export declare class Test extends b2.ContactListener {
     static readonly fullscreenUI: FullScreenUI;
     static readonly particleParameter: ParticleParameter;
     static readonly k_maxContactPoints: number;
-    m_world: box2d.b2World;
-    m_particleSystem: box2d.b2ParticleSystem;
-    m_bomb: box2d.b2Body | null;
+    m_world: b2.World;
+    m_particleSystem: b2.ParticleSystem;
+    m_bomb: b2.Body | null;
     m_textLine: number;
-    m_mouseJoint: box2d.b2MouseJoint | null;
+    m_mouseJoint: b2.MouseJoint | null;
     readonly m_points: ContactPoint[];
     m_pointCount: number;
     m_destructionListener: DestructionListener;
-    readonly m_bombSpawnPoint: box2d.b2Vec2;
+    readonly m_bombSpawnPoint: b2.Vec2;
     m_bombSpawning: boolean;
-    readonly m_mouseWorld: box2d.b2Vec2;
+    readonly m_mouseWorld: b2.Vec2;
     m_mouseTracing: boolean;
-    readonly m_mouseTracerPosition: box2d.b2Vec2;
-    readonly m_mouseTracerVelocity: box2d.b2Vec2;
+    readonly m_mouseTracerPosition: b2.Vec2;
+    readonly m_mouseTracerVelocity: b2.Vec2;
     m_stepCount: number;
-    readonly m_maxProfile: box2d.b2Profile;
-    readonly m_totalProfile: box2d.b2Profile;
-    m_groundBody: box2d.b2Body;
+    readonly m_maxProfile: b2.Profile;
+    readonly m_totalProfile: b2.Profile;
+    m_groundBody: b2.Body;
     m_particleParameters: ParticleParameterValue[] | null;
     m_particleParameterDef: ParticleParameterDefinition | null;
     constructor();
-    JointDestroyed(joint: box2d.b2Joint): void;
-    ParticleGroupDestroyed(group: box2d.b2ParticleGroup): void;
-    BeginContact(contact: box2d.b2Contact): void;
-    EndContact(contact: box2d.b2Contact): void;
+    JointDestroyed(joint: b2.Joint): void;
+    ParticleGroupDestroyed(group: b2.ParticleGroup): void;
+    BeginContact(contact: b2.Contact): void;
+    EndContact(contact: b2.Contact): void;
     private static PreSolve_s_state1;
     private static PreSolve_s_state2;
     private static PreSolve_s_worldManifold;
-    PreSolve(contact: box2d.b2Contact, oldManifold: box2d.b2Manifold): void;
-    PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse): void;
+    PreSolve(contact: b2.Contact, oldManifold: b2.Manifold): void;
+    PostSolve(contact: b2.Contact, impulse: b2.ContactImpulse): void;
     Keyboard(key: string): void;
     KeyboardUp(key: string): void;
     SetTextLine(line: number): void;
     DrawTitle(title: string): void;
-    MouseDown(p: box2d.b2Vec2): void;
-    SpawnBomb(worldPt: box2d.b2Vec2): void;
-    CompleteBombSpawn(p: box2d.b2Vec2): void;
-    ShiftMouseDown(p: box2d.b2Vec2): void;
-    MouseUp(p: box2d.b2Vec2): void;
-    MouseMove(p: box2d.b2Vec2): void;
+    MouseDown(p: b2.Vec2): void;
+    SpawnBomb(worldPt: b2.Vec2): void;
+    CompleteBombSpawn(p: b2.Vec2): void;
+    ShiftMouseDown(p: b2.Vec2): void;
+    MouseUp(p: b2.Vec2): void;
+    MouseMove(p: b2.Vec2): void;
     LaunchBomb(): void;
-    LaunchBombAt(position: box2d.b2Vec2, velocity: box2d.b2Vec2): void;
+    LaunchBombAt(position: b2.Vec2, velocity: b2.Vec2): void;
     Step(settings: Settings): void;
-    ShiftOrigin(newOrigin: box2d.b2Vec2): void;
+    ShiftOrigin(newOrigin: b2.Vec2): void;
     GetDefaultViewZoom(): number;
-    static readonly k_ParticleColors: box2d.b2Color[];
+    static readonly k_ParticleColors: b2.Color[];
     static readonly k_ParticleColorsCount: number;
     /**
      * Apply a preset range of colors to a particle group.
@@ -87,7 +87,7 @@ export declare class Test extends box2d.b2ContactListener {
      * divided into k_ParticleColorsCount equal sets of colored
      * particles.
      */
-    ColorParticleGroup(group: box2d.b2ParticleGroup, particlesPerColor: number): void;
+    ColorParticleGroup(group: b2.ParticleGroup, particlesPerColor: number): void;
     /**
      * Remove particle parameters matching "filterMask" from the set
      * of particle parameters available for this test.

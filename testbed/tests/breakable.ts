@@ -16,19 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import * as box2d from "@box2d";
+import * as b2 from "@box2d";
 import * as testbed from "../testbed.js";
 
 export class Breakable extends testbed.Test {
   public static readonly e_count = 7;
 
-  public readonly m_body1: box2d.b2Body;
-  public readonly m_velocity = new box2d.b2Vec2();
+  public readonly m_body1: b2.Body;
+  public readonly m_velocity = new b2.Vec2();
   public m_angularVelocity = 0;
-  public readonly m_shape1 = new box2d.b2PolygonShape();
-  public readonly m_shape2 = new box2d.b2PolygonShape();
-  public m_piece1: box2d.b2Fixture | null = null;
-  public m_piece2: box2d.b2Fixture | null = null;
+  public readonly m_shape1 = new b2.PolygonShape();
+  public readonly m_shape2 = new b2.PolygonShape();
+  public m_piece1: b2.Fixture | null = null;
+  public m_piece2: b2.Fixture | null = null;
   public m_broke = false;
   public m_break = false;
 
@@ -37,37 +37,37 @@ export class Breakable extends testbed.Test {
 
     // Ground body
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      /*box2d.b2Body*/
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      /*b2.Body*/
       const ground = this.m_world.CreateBody(bd);
 
-      /*box2d.b2EdgeShape*/
-      const shape = new box2d.b2EdgeShape();
-      shape.SetTwoSided(new box2d.b2Vec2(-40.0, 0.0), new box2d.b2Vec2(40.0, 0.0));
+      /*b2.EdgeShape*/
+      const shape = new b2.EdgeShape();
+      shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     // Breakable dynamic body
     {
-      /*box2d.b2BodyDef*/
-      const bd = new box2d.b2BodyDef();
-      bd.type = box2d.b2BodyType.b2_dynamicBody;
+      /*b2.BodyDef*/
+      const bd = new b2.BodyDef();
+      bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 40.0);
-      bd.angle = 0.25 * box2d.b2_pi;
+      bd.angle = 0.25 * b2.pi;
       this.m_body1 = this.m_world.CreateBody(bd);
 
-      this.m_shape1 = new box2d.b2PolygonShape();
-      this.m_shape1.SetAsBox(0.5, 0.5, new box2d.b2Vec2(-0.5, 0.0), 0.0);
+      this.m_shape1 = new b2.PolygonShape();
+      this.m_shape1.SetAsBox(0.5, 0.5, new b2.Vec2(-0.5, 0.0), 0.0);
       this.m_piece1 = this.m_body1.CreateFixture(this.m_shape1, 1.0);
 
-      this.m_shape2 = new box2d.b2PolygonShape();
-      this.m_shape2.SetAsBox(0.5, 0.5, new box2d.b2Vec2(0.5, 0.0), 0.0);
+      this.m_shape2 = new b2.PolygonShape();
+      this.m_shape2.SetAsBox(0.5, 0.5, new b2.Vec2(0.5, 0.0), 0.0);
       this.m_piece2 = this.m_body1.CreateFixture(this.m_shape2, 1.0);
     }
   }
 
-  public PostSolve(contact: box2d.b2Contact, impulse: box2d.b2ContactImpulse) {
+  public PostSolve(contact: b2.Contact, impulse: b2.ContactImpulse) {
     if (this.m_broke) {
       // The body already broke.
       return;
@@ -80,7 +80,7 @@ export class Breakable extends testbed.Test {
     /*float32*/
     let maxImpulse = 0.0;
     for (let i = 0; i < count; ++i) {
-      maxImpulse = box2d.b2Max(maxImpulse, impulse.normalImpulses[i]);
+      maxImpulse = b2.Max(maxImpulse, impulse.normalImpulses[i]);
     }
 
     if (maxImpulse > 40.0) {
@@ -99,27 +99,27 @@ export class Breakable extends testbed.Test {
     body1.DestroyFixture(this.m_piece2);
     this.m_piece2 = null;
 
-    /*box2d.b2BodyDef*/
-    const bd = new box2d.b2BodyDef();
-    bd.type = box2d.b2BodyType.b2_dynamicBody;
+    /*b2.BodyDef*/
+    const bd = new b2.BodyDef();
+    bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.Copy(body1.GetPosition());
     bd.angle = body1.GetAngle();
 
-    /*box2d.b2Body*/
+    /*b2.Body*/
     const body2 = this.m_world.CreateBody(bd);
     this.m_piece2 = body2.CreateFixture(this.m_shape2, 1.0);
 
     // Compute consistent velocities for new bodies based on
     // cached velocity.
-    /*box2d.b2Vec2*/
+    /*b2.Vec2*/
     const center1 = body1.GetWorldCenter();
-    /*box2d.b2Vec2*/
+    /*b2.Vec2*/
     const center2 = body2.GetWorldCenter();
 
-    /*box2d.b2Vec2*/
-    const velocity1 = box2d.b2Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, box2d.b2Vec2.SubVV(center1, center, box2d.b2Vec2.s_t0), new box2d.b2Vec2());
-    /*box2d.b2Vec2*/
-    const velocity2 = box2d.b2Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, box2d.b2Vec2.SubVV(center2, center, box2d.b2Vec2.s_t0), new box2d.b2Vec2());
+    /*b2.Vec2*/
+    const velocity1 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center1, center, b2.Vec2.s_t0), new b2.Vec2());
+    /*b2.Vec2*/
+    const velocity2 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center2, center, b2.Vec2.s_t0), new b2.Vec2());
 
     body1.SetAngularVelocity(this.m_angularVelocity);
     body1.SetLinearVelocity(velocity1);
