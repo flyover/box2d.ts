@@ -1,0 +1,1 @@
+{"version":3,"file":"motor_joint2.d.ts","sourceRoot":"","sources":["../../tests/motor_joint2.ts"],"names":[],"mappings":"AAkBA,OAAO,KAAK,KAAK,MAAM,QAAQ,CAAC;AAChC,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAIzC,qBAAa,WAAY,SAAQ,OAAO,CAAC,IAAI;;IAgEpC,OAAO,EAAE,KAAK,CAAC,YAAY,CAAC;IAE5B,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ,GAAG,IAAI;WAI/B,MAAM,IAAI,OAAO,CAAC,IAAI;CAGrC"}

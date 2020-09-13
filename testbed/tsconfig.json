@@ -8,10 +8,13 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "inlineSourceMap": true,
-    "rootDirs": [ ".." ],
+    "outDir": "./build",
+    "declaration": true,
+    "declarationDir": "./build",
+    "declarationMap": true,
     "baseUrl": ".",
     "paths": {
-      "@box2d": [ "../index.ts" ]
+      "@box2d": [ "../build/box2d" ]
     }
   },
   "include": [

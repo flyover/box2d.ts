@@ -1,0 +1,1 @@
+{"version":3,"file":"b2_growable_stack.d.ts","sourceRoot":"","sources":["../../src/common/b2_growable_stack.ts"],"names":[],"mappings":"AAyBA,qBAAa,eAAe,CAAC,CAAC;IACrB,OAAO,EAAE,KAAK,CAAC,CAAC,GAAG,IAAI,CAAC,CAAM;IAC9B,OAAO,EAAE,MAAM,CAAK;gBAEf,CAAC,EAAE,MAAM;IAKd,KAAK,IAAI,IAAI;IAKb,IAAI,CAAC,OAAO,EAAE,CAAC,GAAG,IAAI;IAKtB,GAAG,IAAI,CAAC,GAAG,IAAI;IAQf,QAAQ,IAAI,MAAM;CAG1B"}

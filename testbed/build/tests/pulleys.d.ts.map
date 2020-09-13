@@ -1,0 +1,1 @@
+{"version":3,"file":"pulleys.d.ts","sourceRoot":"","sources":["../../tests/pulleys.ts"],"names":[],"mappings":"AAkBA,OAAO,KAAK,KAAK,MAAM,QAAQ,CAAC;AAChC,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAEzC,qBAAa,OAAQ,SAAQ,OAAO,CAAC,IAAI;IAChC,QAAQ,EAAE,KAAK,CAAC,aAAa,CAAC;;IAsD9B,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ,GAAG,IAAI;WAQ/B,MAAM,IAAI,OAAO,CAAC,IAAI;CAGrC"}

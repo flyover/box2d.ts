@@ -2,7 +2,7 @@
   "name": "@flyover/box2d",
   "version": "1.0.1",
   "description": "A TypeScript port of Box2D",
-  "main": "./build/box2d/box2d.umd.js",
+  "main": "./dist/box2d.umd.js",
   "types": "./src/box2d.ts",
   "scripts": {
     "build": "npm run build-testbed",
@@ -10,9 +10,9 @@
     "watch": "npm run watch-testbed",
     "start": "http-server -c-1 -o",
     "dist": "npm run dist-box2d && npm run dist-unit-test && npm run dist-testbed",
-    "build-box2d": "tsc -p src",
-    "watch-box2d": "tsc -p src --watch",
-    "dist-box2d": "(cd src && rollup -c)",
+    "build-box2d": "tsc",
+    "watch-box2d": "tsc --watch",
+    "dist-box2d": "rollup -c",
     "build-unit-test": "tsc -p unit-test",
     "watch-unit-test": "tsc -p unit-test --watch",
     "dist-unit-test": "(cd unit-test && rollup -c)",
@@ -32,15 +32,14 @@
   },
   "homepage": "https://github.com/flyover/box2d.ts#readme",
   "dependencies": {
-    "@types/systemjs": "^0.20.6"
+    "@types/systemjs": "^6.1.0"
   },
   "devDependencies": {
     "http-server": "^0.12.3",
     "plugin-typescript": "^8.0.0",
-    "rollup": "^1.21.2",
-    "rollup-plugin-typescript2": "^0.25.2",
-    "systemjs": "^0.21.6",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "rollup": "^2.26.11",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "systemjs": "^6.6.1",
+    "typescript": "^4.0.2"
   }
 }

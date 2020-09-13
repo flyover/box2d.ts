@@ -27,8 +27,8 @@ export class Breakable extends testbed.Test {
   public m_angularVelocity = 0;
   public readonly m_shape1 = new box2d.b2PolygonShape();
   public readonly m_shape2 = new box2d.b2PolygonShape();
-  public m_piece1: box2d.b2Fixture;
-  public m_piece2: box2d.b2Fixture;
+  public m_piece1: box2d.b2Fixture | null = null;
+  public m_piece2: box2d.b2Fixture | null = null;
   public m_broke = false;
   public m_break = false;
 
@@ -90,14 +90,14 @@ export class Breakable extends testbed.Test {
   }
 
   public Break() {
+    if (this.m_piece1 === null) { return; }
+    if (this.m_piece2 === null) { return; }
     // Create two bodies from one.
-    /*box2d.b2Body*/
     const body1 = this.m_piece1.GetBody();
-    /*box2d.b2Vec2*/
     const center = body1.GetWorldCenter();
 
     body1.DestroyFixture(this.m_piece2);
-    delete this.m_piece2; // = null;
+    this.m_piece2 = null;
 
     /*box2d.b2BodyDef*/
     const bd = new box2d.b2BodyDef();

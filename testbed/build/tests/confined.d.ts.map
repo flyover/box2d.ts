@@ -1,0 +1,1 @@
+{"version":3,"file":"confined.d.ts","sourceRoot":"","sources":["../../tests/confined.ts"],"names":[],"mappings":"AAmBA,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAEzC,qBAAa,QAAS,SAAQ,OAAO,CAAC,IAAI;IACxC,gBAAuB,aAAa,KAAK;IACzC,gBAAuB,UAAU,KAAK;;IAoD/B,YAAY;IAqBZ,QAAQ,CAAC,GAAG,EAAE,MAAM;IAQpB,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ,GAAG,IAAI;WAqC/B,MAAM,IAAI,OAAO,CAAC,IAAI;CAGrC"}

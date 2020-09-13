@@ -9,15 +9,15 @@
     <script type="systemjs-importmap">
       {
         "imports": {
-          "@box2d": "../index.js"
+          "@box2d": "../build/box2d.js"
         }
       }
     </script>
-    <script src="https://unpkg.com/systemjs@6.1.7/dist/system.js"></script>
+    <script src="https://unpkg.com/systemjs@6.6.1/dist/system.js"></script>
     <script type="text/javascript">
 
     function boot(args) {
-      System.import("./testbed.js").then(function(testbed) {
+      System.import("./build/testbed.js").then(function(testbed) {
         let app;
         const init = function(time) {
           app = new testbed.Main(time);
