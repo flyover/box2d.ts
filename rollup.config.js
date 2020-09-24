@@ -8,6 +8,6 @@ export default {
     format: "umd"
   },
   plugins: [
-    typescript({ clean: true, tsconfigOverride: { compilerOptions: { target: "ES2015", module: "ES2015", declaration: false, declarationMap: false } } }),
+    typescript({ clean: true, tsconfigOverride: { compilerOptions: { target: "ES2015", module: "ES2015", declaration: false } } }),
   ]
 };
