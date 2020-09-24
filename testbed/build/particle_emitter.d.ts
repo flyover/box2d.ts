@@ -155,4 +155,3 @@ export declare class RadialEmitter {
      */
     Step(dt: number, particleIndices?: number[], particleIndicesCount?: number): number;
 }
-//# sourceMappingURL=particle_emitter.d.ts.map

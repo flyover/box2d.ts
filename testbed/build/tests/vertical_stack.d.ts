@@ -11,4 +11,3 @@ export declare class VerticalStack extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=vertical_stack.d.ts.map

@@ -7,4 +7,3 @@ export declare class ConveyorBelt extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=conveyor_belt.d.ts.map

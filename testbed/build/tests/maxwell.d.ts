@@ -67,4 +67,3 @@ export declare class Maxwell extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): Maxwell;
 }
-//# sourceMappingURL=maxwell.d.ts.map

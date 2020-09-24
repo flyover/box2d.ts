@@ -9,4 +9,3 @@ export declare class BodyTypes extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=body_types.d.ts.map

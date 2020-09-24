@@ -8,4 +8,3 @@ export declare class b2EdgeAndPolygonContact extends b2Contact<b2EdgeShape, b2Po
     static Destroy(contact: b2Contact): void;
     Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
 }
-//# sourceMappingURL=b2_edge_polygon_contact.d.ts.map

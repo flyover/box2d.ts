@@ -16,4 +16,3 @@ export declare class b2Counter {
     Increment(): void;
     Decrement(): void;
 }
-//# sourceMappingURL=b2_timer.d.ts.map

@@ -59,4 +59,3 @@ export declare abstract class b2Controller {
      */
     Clear(): void;
 }
-//# sourceMappingURL=b2_controller.d.ts.map

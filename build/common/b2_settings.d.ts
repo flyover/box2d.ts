@@ -53,4 +53,3 @@ export declare function b2ParseUInt(v: string): number;
 export declare function b2MakeArray<T>(length: number, init: (i: number) => T): T[];
 export declare function b2MakeNullArray<T>(length: number): Array<T | null>;
 export declare function b2MakeNumberArray(length: number, init?: number): number[];
-//# sourceMappingURL=b2_settings.d.ts.map

@@ -8,4 +8,3 @@ export declare class Revolute extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=revolute.d.ts.map

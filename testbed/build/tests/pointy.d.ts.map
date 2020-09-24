@@ -1,1 +1,0 @@
-{"version":3,"file":"pointy.d.ts","sourceRoot":"","sources":["../../tests/pointy.ts"],"names":[],"mappings":"AAoBA,OAAO,KAAK,EAAE,MAAM,QAAQ,CAAC;AAC7B,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAEzC;;;GAGG;AAEH,qBAAa,MAAO,SAAQ,OAAO,CAAC,IAAI;IAC/B,gBAAgB,kBAAyB;IACzC,oBAAoB,eAAsB;;IAyC1C,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ;WAsBxB,MAAM;CAGrB"}

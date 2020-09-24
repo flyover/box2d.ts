@@ -36,4 +36,3 @@ export declare class b2EdgeShape extends b2Shape {
     ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_edge_shape.d.ts.map

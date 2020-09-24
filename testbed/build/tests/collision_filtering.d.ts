@@ -12,4 +12,3 @@ export declare class CollisionFiltering extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=collision_filtering.d.ts.map

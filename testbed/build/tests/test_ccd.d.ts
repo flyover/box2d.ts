@@ -4,4 +4,3 @@ export declare class TestCCD extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=test_ccd.d.ts.map

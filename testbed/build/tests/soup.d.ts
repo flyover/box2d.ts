@@ -6,4 +6,3 @@ export declare class Soup extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): Soup;
 }
-//# sourceMappingURL=soup.d.ts.map

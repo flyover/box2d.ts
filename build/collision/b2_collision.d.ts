@@ -111,4 +111,3 @@ export declare class b2AABB {
 export declare function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean;
 export declare function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number;
 export declare function b2TestOverlapShape(shapeA: b2Shape, indexA: number, shapeB: b2Shape, indexB: number, xfA: b2Transform, xfB: b2Transform): boolean;
-//# sourceMappingURL=b2_collision.d.ts.map

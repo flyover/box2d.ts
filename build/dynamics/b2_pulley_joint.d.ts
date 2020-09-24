@@ -78,4 +78,3 @@ export declare class b2PulleyJoint extends b2Joint {
     Dump(log: (format: string, ...args: any[]) => void): void;
     ShiftOrigin(newOrigin: b2Vec2): void;
 }
-//# sourceMappingURL=b2_pulley_joint.d.ts.map

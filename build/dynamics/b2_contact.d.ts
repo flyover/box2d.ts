@@ -66,4 +66,3 @@ export declare abstract class b2Contact<A extends b2Shape = b2Shape, B extends b
     private static ComputeTOI_s_output;
     ComputeTOI(sweepA: b2Sweep, sweepB: b2Sweep): number;
 }
-//# sourceMappingURL=b2_contact.d.ts.map

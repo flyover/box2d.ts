@@ -158,4 +158,3 @@ export declare class b2Body {
     GetControllerList(): b2ControllerEdge | null;
     GetControllerCount(): number;
 }
-//# sourceMappingURL=b2_body.d.ts.map

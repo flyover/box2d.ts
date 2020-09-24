@@ -7,4 +7,3 @@ export declare class b2GrowableStack<T> {
     Pop(): T | null;
     GetCount(): number;
 }
-//# sourceMappingURL=b2_growable_stack.d.ts.map

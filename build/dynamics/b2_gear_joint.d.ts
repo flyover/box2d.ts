@@ -88,4 +88,3 @@ export declare class b2GearJoint extends b2Joint {
     SetRatio(ratio: number): void;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_gear_joint.d.ts.map

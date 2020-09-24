@@ -31,4 +31,3 @@ export declare abstract class b2Shape {
     abstract ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
     abstract Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_shape.d.ts.map

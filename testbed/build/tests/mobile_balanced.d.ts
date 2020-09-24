@@ -7,4 +7,3 @@ export declare class MobileBalanced extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=mobile_balanced.d.ts.map

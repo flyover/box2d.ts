@@ -93,4 +93,3 @@ export declare abstract class b2Joint {
     abstract SolveVelocityConstraints(data: b2SolverData): void;
     abstract SolvePositionConstraints(data: b2SolverData): boolean;
 }
-//# sourceMappingURL=b2_joint.d.ts.map

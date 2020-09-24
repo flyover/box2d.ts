@@ -4,4 +4,3 @@ export declare class VaryingRestitution extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=varying_restitution.d.ts.map

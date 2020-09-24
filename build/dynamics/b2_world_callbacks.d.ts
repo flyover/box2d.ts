@@ -45,4 +45,3 @@ export declare class b2RayCastCallback {
     ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
 }
 export declare type b2RayCastCallbackFunction = (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number) => number;
-//# sourceMappingURL=b2_world_callbacks.d.ts.map

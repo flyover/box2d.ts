@@ -26,4 +26,3 @@ declare class PIDController {
     step(dt: number): void;
 }
 export {};
-//# sourceMappingURL=segway.d.ts.map

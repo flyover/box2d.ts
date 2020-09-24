@@ -7,4 +7,3 @@ export declare class TimeOfImpact extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=time_of_impact.d.ts.map

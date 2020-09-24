@@ -50,4 +50,3 @@ export declare class b2VoronoiDiagram_Task {
     m_generator: b2VoronoiDiagram_Generator;
     constructor(x: number, y: number, i: number, g: b2VoronoiDiagram_Generator);
 }
-//# sourceMappingURL=b2_voronoi_diagram.d.ts.map

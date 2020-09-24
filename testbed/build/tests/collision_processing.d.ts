@@ -4,4 +4,3 @@ export declare class CollisionProcessing extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=collision_processing.d.ts.map

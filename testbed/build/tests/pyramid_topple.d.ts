@@ -4,4 +4,3 @@ export declare class PyramidTopple extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): PyramidTopple;
 }
-//# sourceMappingURL=pyramid_topple.d.ts.map

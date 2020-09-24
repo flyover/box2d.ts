@@ -102,4 +102,3 @@ export declare class Faucet extends testbed.Test {
      */
     static Create(): Faucet;
 }
-//# sourceMappingURL=faucet.d.ts.map

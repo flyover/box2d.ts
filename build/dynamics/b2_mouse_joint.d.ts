@@ -56,4 +56,3 @@ export declare class b2MouseJoint extends b2Joint {
     Dump(log: (format: string, ...args: any[]) => void): void;
     ShiftOrigin(newOrigin: b2Vec2): void;
 }
-//# sourceMappingURL=b2_mouse_joint.d.ts.map

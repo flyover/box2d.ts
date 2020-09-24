@@ -4,4 +4,3 @@ export declare class Dominos extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=dominos.d.ts.map

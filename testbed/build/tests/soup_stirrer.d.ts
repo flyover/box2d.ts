@@ -32,4 +32,3 @@ export declare class SoupStirrer extends Soup {
     Step(settings: testbed.Settings): void;
     static Create(): SoupStirrer;
 }
-//# sourceMappingURL=soup_stirrer.d.ts.map

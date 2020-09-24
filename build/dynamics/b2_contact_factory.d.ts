@@ -14,4 +14,3 @@ export declare class b2ContactFactory {
     Create(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): b2Contact | null;
     Destroy(contact: b2Contact): void;
 }
-//# sourceMappingURL=b2_contact_factory.d.ts.map

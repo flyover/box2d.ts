@@ -5,4 +5,3 @@ export declare class Cantilever extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=cantilever.d.ts.map

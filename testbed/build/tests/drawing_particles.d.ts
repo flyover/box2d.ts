@@ -32,4 +32,3 @@ export declare class DrawingParticles extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): DrawingParticles;
 }
-//# sourceMappingURL=drawing_particles.d.ts.map

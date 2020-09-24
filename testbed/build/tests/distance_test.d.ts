@@ -12,4 +12,3 @@ export declare class DistanceTest extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=distance_test.d.ts.map

@@ -47,4 +47,3 @@ export declare class b2BuoyancyController extends b2Controller {
     Step(step: b2TimeStep): void;
     Draw(debugDraw: b2Draw): void;
 }
-//# sourceMappingURL=b2_buoyancy_controller.d.ts.map

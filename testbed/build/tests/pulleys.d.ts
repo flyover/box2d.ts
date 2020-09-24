@@ -6,4 +6,3 @@ export declare class Pulleys extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=pulleys.d.ts.map

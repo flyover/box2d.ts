@@ -119,4 +119,3 @@ export declare class Test extends b2.ContactListener {
      */
     static SetParticleParameters(particleParameterDef: ParticleParameterDefinition[], particleParameterDefCount?: number): void;
 }
-//# sourceMappingURL=test.d.ts.map

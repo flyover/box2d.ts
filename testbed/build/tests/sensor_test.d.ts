@@ -11,4 +11,3 @@ export declare class SensorTest extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=sensor_test.d.ts.map

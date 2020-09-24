@@ -152,4 +152,3 @@ export declare class b2World {
     AddController(controller: b2Controller): b2Controller;
     RemoveController(controller: b2Controller): b2Controller;
 }
-//# sourceMappingURL=b2_world.d.ts.map

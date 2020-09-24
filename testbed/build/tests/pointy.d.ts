@@ -11,4 +11,3 @@ export declare class Pointy extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): Pointy;
 }
-//# sourceMappingURL=pointy.d.ts.map

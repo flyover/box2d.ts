@@ -7,4 +7,3 @@ export declare class ApplyForce extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=apply_force.d.ts.map

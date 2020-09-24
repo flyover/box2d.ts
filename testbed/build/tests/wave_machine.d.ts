@@ -8,4 +8,3 @@ export declare class WaveMachine extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): WaveMachine;
 }
-//# sourceMappingURL=wave_machine.d.ts.map

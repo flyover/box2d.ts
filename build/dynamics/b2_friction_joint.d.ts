@@ -59,4 +59,3 @@ export declare class b2FrictionJoint extends b2Joint {
     GetMaxTorque(): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_friction_joint.d.ts.map

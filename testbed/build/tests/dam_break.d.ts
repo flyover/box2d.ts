@@ -4,4 +4,3 @@ export declare class DamBreak extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): DamBreak;
 }
-//# sourceMappingURL=dam_break.d.ts.map

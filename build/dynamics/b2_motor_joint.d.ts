@@ -64,4 +64,3 @@ export declare class b2MotorJoint extends b2Joint {
     SolvePositionConstraints(data: b2SolverData): boolean;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_motor_joint.d.ts.map

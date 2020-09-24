@@ -66,4 +66,3 @@ export declare class TopdownCar extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): TopdownCar;
 }
-//# sourceMappingURL=top_down_car.d.ts.map

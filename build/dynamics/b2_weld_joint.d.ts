@@ -68,4 +68,3 @@ export declare class b2WeldJoint extends b2Joint {
     GetDamping(): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_weld_joint.d.ts.map

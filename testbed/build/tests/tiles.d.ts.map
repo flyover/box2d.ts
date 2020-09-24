@@ -1,1 +1,0 @@
-{"version":3,"file":"tiles.d.ts","sourceRoot":"","sources":["../../tests/tiles.ts"],"names":[],"mappings":"AAmBA,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAEzC;;;;GAIG;AAEH,qBAAa,KAAM,SAAQ,OAAO,CAAC,IAAI;IACrC,gBAAuB,OAAO,MAAM;IAE7B,cAAc,SAAK;IACnB,YAAY,SAAO;;IA4GnB,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ,GAAG,IAAI;WA2B/B,MAAM,IAAI,OAAO,CAAC,IAAI;CAGrC"}

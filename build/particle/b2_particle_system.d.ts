@@ -1263,4 +1263,3 @@ export declare class b2ParticleSystem_SolveCollisionCallback extends b2FixturePa
     static readonly ReportFixtureAndParticle_s_f: b2Vec2;
     ReportParticle(system: b2ParticleSystem, index: number): boolean;
 }
-//# sourceMappingURL=b2_particle_system.d.ts.map

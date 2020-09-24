@@ -7,4 +7,3 @@ export declare class HeavyOnLightTwo extends testbed.Test {
     Keyboard(key: string): void;
     static Create(): HeavyOnLightTwo;
 }
-//# sourceMappingURL=heavy2.d.ts.map

@@ -14,4 +14,3 @@ export declare class TheoJansen extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=theo_jansen.d.ts.map

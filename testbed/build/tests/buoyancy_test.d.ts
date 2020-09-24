@@ -7,4 +7,3 @@ export declare class BuoyancyTest extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=buoyancy_test.d.ts.map

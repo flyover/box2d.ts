@@ -27,4 +27,3 @@ export declare class PolyShapes extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=poly_shapes.d.ts.map

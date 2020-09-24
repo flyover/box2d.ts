@@ -9,4 +9,3 @@ export declare class SliderCrank extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=slider_crank.d.ts.map

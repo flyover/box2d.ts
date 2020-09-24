@@ -16,4 +16,3 @@ export declare class Sparky extends testbed.Test {
     CreateWalls(): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=sparky.d.ts.map

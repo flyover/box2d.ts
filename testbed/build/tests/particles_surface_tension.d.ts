@@ -4,4 +4,3 @@ export declare class ParticlesSurfaceTension extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): ParticlesSurfaceTension;
 }
-//# sourceMappingURL=particles_surface_tension.d.ts.map

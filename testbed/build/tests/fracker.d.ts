@@ -333,4 +333,3 @@ export declare class Fracker_DestructionListener extends ParticleGroupTracker {
      */
     SayGoodbyeParticle(particleSystem: b2.ParticleSystem, index: number): void;
 }
-//# sourceMappingURL=fracker.d.ts.map

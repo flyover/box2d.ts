@@ -83,4 +83,3 @@ export declare class b2Simplex {
 }
 export declare function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, input: b2DistanceInput): void;
 export declare function b2ShapeCast(output: b2ShapeCastOutput, input: b2ShapeCastInput): boolean;
-//# sourceMappingURL=b2_distance.d.ts.map

@@ -180,4 +180,3 @@ export declare class Sandbox extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): Sandbox;
 }
-//# sourceMappingURL=sandbox.d.ts.map

@@ -29,4 +29,3 @@ export declare class Settings {
     Save(): void;
     Load(): void;
 }
-//# sourceMappingURL=settings.d.ts.map

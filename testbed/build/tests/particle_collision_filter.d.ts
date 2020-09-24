@@ -21,4 +21,3 @@ export declare class ParticleCollisionFilter extends testbed.Test {
     static readonly kSpeedup = 8;
     static Create(): ParticleCollisionFilter;
 }
-//# sourceMappingURL=particle_collision_filter.d.ts.map

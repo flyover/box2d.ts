@@ -21,4 +21,3 @@ export declare class b2TensorDampingController extends b2Controller {
      */
     SetAxisAligned(xDamping: number, yDamping: number): void;
 }
-//# sourceMappingURL=b2_tensor_damping_controller.d.ts.map

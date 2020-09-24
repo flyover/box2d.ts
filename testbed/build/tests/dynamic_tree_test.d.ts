@@ -32,4 +32,3 @@ export declare class DynamicTreeTest_Actor {
     overlap: boolean;
     proxyId: b2.TreeNode<DynamicTreeTest_Actor> | null;
 }
-//# sourceMappingURL=dynamic_tree_test.d.ts.map

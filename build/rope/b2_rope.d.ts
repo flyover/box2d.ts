@@ -61,4 +61,3 @@ export declare class b2Rope {
     private SolveBend_PBD_Height;
     private ApplyBendForces;
 }
-//# sourceMappingURL=b2_rope.d.ts.map

@@ -3,4 +3,3 @@ export declare class Ramp extends testbed.Test {
     constructor();
     static Create(): Ramp;
 }
-//# sourceMappingURL=ramp.d.ts.map

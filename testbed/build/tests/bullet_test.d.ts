@@ -9,4 +9,3 @@ export declare class BulletTest extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=bullet_test.d.ts.map

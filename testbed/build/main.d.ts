@@ -47,4 +47,3 @@ export declare class Main {
     ToggleDemo(): void;
     SimulationLoop(time: number): void;
 }
-//# sourceMappingURL=main.d.ts.map

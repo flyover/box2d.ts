@@ -40,4 +40,3 @@ export declare class DebugDraw extends b2.Draw {
 }
 export declare const g_debugDraw: DebugDraw;
 export declare const g_camera: Camera;
-//# sourceMappingURL=draw.d.ts.map

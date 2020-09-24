@@ -8,4 +8,3 @@ export declare class ContinuousTest extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=continuous_test.d.ts.map

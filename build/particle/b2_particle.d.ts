@@ -48,4 +48,3 @@ export declare class b2ParticleHandle {
     GetIndex(): number;
     SetIndex(index: number): void;
 }
-//# sourceMappingURL=b2_particle.d.ts.map

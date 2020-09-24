@@ -5,4 +5,3 @@ export declare class Pyramid extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=pyramid.d.ts.map

@@ -12,4 +12,3 @@ export declare class PolyCollision extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=poly_collision.d.ts.map

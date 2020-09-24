@@ -7,4 +7,3 @@ export declare class EyeCandy extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): EyeCandy;
 }
-//# sourceMappingURL=eye_candy.d.ts.map

@@ -12,4 +12,3 @@ export declare class ShapeCast extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=shape_cast.d.ts.map

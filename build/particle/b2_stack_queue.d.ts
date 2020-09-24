@@ -9,4 +9,3 @@ export declare class b2StackQueue<T> {
     Empty(): boolean;
     Front(): T;
 }
-//# sourceMappingURL=b2_stack_queue.d.ts.map

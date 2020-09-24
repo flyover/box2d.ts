@@ -91,4 +91,3 @@ export declare class b2ParticleGroup {
     DestroyParticles(callDestructionListener: boolean): void;
     UpdateStatistics(): void;
 }
-//# sourceMappingURL=b2_particle_group.d.ts.map

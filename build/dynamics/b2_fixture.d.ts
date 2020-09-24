@@ -89,4 +89,3 @@ export declare class b2Fixture {
     TouchProxies(): void;
     SynchronizeProxies(transform1: b2Transform, transform2: b2Transform): void;
 }
-//# sourceMappingURL=b2_fixture.d.ts.map

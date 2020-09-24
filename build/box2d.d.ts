@@ -64,4 +64,3 @@ export * from "./particle/b2_particle.js";
 export * from "./particle/b2_particle_group.js";
 export * from "./particle/b2_particle_system.js";
 export * from "./rope/b2_rope.js";
-//# sourceMappingURL=box2d.d.ts.map

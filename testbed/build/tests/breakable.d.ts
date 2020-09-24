@@ -17,4 +17,3 @@ export declare class Breakable extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=breakable.d.ts.map

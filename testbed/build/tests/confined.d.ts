@@ -8,4 +8,3 @@ export declare class Confined extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=confined.d.ts.map

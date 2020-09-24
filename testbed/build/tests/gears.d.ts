@@ -10,4 +10,3 @@ export declare class Gears extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=gears.d.ts.map

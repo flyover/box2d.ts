@@ -1,1 +1,0 @@
-{"version":3,"file":"collision_processing.d.ts","sourceRoot":"","sources":["../../tests/collision_processing.ts"],"names":[],"mappings":"AAmBA,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAEzC,qBAAa,mBAAoB,SAAQ,OAAO,CAAC,IAAI;;IAkG5C,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ,GAAG,IAAI;WAoD/B,MAAM,IAAI,OAAO,CAAC,IAAI;CAGrC"}

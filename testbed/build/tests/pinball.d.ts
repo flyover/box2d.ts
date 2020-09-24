@@ -15,4 +15,3 @@ export declare class Pinball extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=pinball.d.ts.map

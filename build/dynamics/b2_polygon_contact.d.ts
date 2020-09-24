@@ -7,4 +7,3 @@ export declare class b2PolygonContact extends b2Contact<b2PolygonShape, b2Polygo
     static Destroy(contact: b2Contact): void;
     Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
 }
-//# sourceMappingURL=b2_polygon_contact.d.ts.map

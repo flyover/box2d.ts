@@ -35,4 +35,3 @@ export declare class b2SolverData {
     positions: b2Position[];
     velocities: b2Velocity[];
 }
-//# sourceMappingURL=b2_time_step.d.ts.map

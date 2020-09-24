@@ -14,4 +14,3 @@ export declare class b2ConstantAccelController extends b2Controller {
     private static Step_s_dtA;
     Draw(draw: b2Draw): void;
 }
-//# sourceMappingURL=b2_constant_accel_controller.d.ts.map

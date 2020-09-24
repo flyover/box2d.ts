@@ -45,4 +45,3 @@ export declare class b2SeparationFunction {
     Evaluate(indexA: number, indexB: number, t: number): number;
 }
 export declare function b2TimeOfImpact(output: b2TOIOutput, input: b2TOIInput): void;
-//# sourceMappingURL=b2_time_of_impact.d.ts.map

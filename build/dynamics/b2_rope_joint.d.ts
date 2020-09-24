@@ -54,4 +54,3 @@ export declare class b2RopeJoint extends b2Joint {
     GetLength(): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_rope_joint.d.ts.map

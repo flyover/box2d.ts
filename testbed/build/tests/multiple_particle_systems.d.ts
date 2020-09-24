@@ -47,4 +47,3 @@ export declare class MultipleParticleSystems extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): MultipleParticleSystems;
 }
-//# sourceMappingURL=multiple_particle_systems.d.ts.map

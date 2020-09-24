@@ -17,4 +17,3 @@ export declare class Rope extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=rope.d.ts.map

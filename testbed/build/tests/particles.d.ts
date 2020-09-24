@@ -4,4 +4,3 @@ export declare class Particles extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): Particles;
 }
-//# sourceMappingURL=particles.d.ts.map

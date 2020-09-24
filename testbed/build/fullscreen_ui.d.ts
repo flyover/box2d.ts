@@ -20,4 +20,3 @@ export declare class FullScreenUI {
      */
     GetParticleParameterSelectionEnabled(): boolean;
 }
-//# sourceMappingURL=fullscreen_ui.d.ts.map

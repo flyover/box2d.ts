@@ -4,4 +4,3 @@ export declare class VaryingFriction extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=varying_friction.d.ts.map

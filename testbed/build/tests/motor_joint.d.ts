@@ -9,4 +9,3 @@ export declare class MotorJoint extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=motor_joint.d.ts.map

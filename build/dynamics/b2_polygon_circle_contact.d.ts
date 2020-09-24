@@ -8,4 +8,3 @@ export declare class b2PolygonAndCircleContact extends b2Contact<b2PolygonShape,
     static Destroy(contact: b2Contact): void;
     Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
 }
-//# sourceMappingURL=b2_polygon_circle_contact.d.ts.map

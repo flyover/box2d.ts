@@ -26,4 +26,3 @@ export declare class b2CircleShape extends b2Shape {
     ComputeSubmergedArea(normal: b2Vec2, offset: number, xf: b2Transform, c: b2Vec2): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
 }
-//# sourceMappingURL=b2_circle_shape.d.ts.map

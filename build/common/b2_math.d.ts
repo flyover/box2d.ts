@@ -227,4 +227,3 @@ export declare class b2Sweep {
     Advance(alpha: number): void;
     Normalize(): void;
 }
-//# sourceMappingURL=b2_math.d.ts.map

@@ -7,4 +7,3 @@ export declare class SphereStack extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=sphere_stack.d.ts.map

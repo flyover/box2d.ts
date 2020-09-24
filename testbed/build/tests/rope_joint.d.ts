@@ -8,4 +8,3 @@ export declare class RopeJoint extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=rope_joint.d.ts.map

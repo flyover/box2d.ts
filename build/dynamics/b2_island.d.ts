@@ -33,4 +33,3 @@ export declare class b2Island {
     private static s_impulse;
     Report(constraints: b2ContactVelocityConstraint[]): void;
 }
-//# sourceMappingURL=b2_island.d.ts.map

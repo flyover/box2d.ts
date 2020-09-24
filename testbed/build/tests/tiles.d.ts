@@ -12,4 +12,3 @@ export declare class Tiles extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=tiles.d.ts.map

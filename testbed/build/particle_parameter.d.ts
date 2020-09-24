@@ -69,4 +69,3 @@ export declare class ParticleParameter {
     FindIndexByValue(value: number): number;
     FindParticleParameterValue(): ParticleParameterValue | null;
 }
-//# sourceMappingURL=particle_parameter.d.ts.map

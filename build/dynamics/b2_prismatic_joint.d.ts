@@ -119,4 +119,3 @@ export declare class b2PrismaticJoint extends b2Joint {
     private static Draw_s_upper;
     Draw(draw: b2Draw): void;
 }
-//# sourceMappingURL=b2_prismatic_joint.d.ts.map

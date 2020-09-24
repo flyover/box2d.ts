@@ -4,4 +4,3 @@ export declare class ElasticParticles extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): ElasticParticles;
 }
-//# sourceMappingURL=elastic_particles.d.ts.map

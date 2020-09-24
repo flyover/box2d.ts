@@ -66,4 +66,3 @@ export declare class b2DistanceJoint extends b2Joint {
     private static SolvePositionConstraints_s_P;
     SolvePositionConstraints(data: b2SolverData): boolean;
 }
-//# sourceMappingURL=b2_distance_joint.d.ts.map

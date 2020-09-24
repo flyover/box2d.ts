@@ -6,4 +6,3 @@ export declare class CharacterCollision extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=character_collision.d.ts.map

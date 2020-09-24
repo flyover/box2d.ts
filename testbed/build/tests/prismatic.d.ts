@@ -7,4 +7,3 @@ export declare class Prismatic extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=prismatic.d.ts.map

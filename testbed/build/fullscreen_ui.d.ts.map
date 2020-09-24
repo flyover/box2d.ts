@@ -1,1 +1,0 @@
-{"version":3,"file":"fullscreen_ui.d.ts","sourceRoot":"","sources":["../fullscreen_ui.ts"],"names":[],"mappings":"AAoBA;;GAEG;AACH,qBAAa,YAAY;;IAKvB;;OAEG;IACI,mCAAmC,EAAE,OAAO,CAAS;IAE5D;;OAEG;IACI,KAAK,IAAI,IAAI;IAIpB;;OAEG;IACI,oCAAoC,CAAC,MAAM,EAAE,OAAO,GAAG,IAAI;IAIlE;;OAEG;IACI,oCAAoC,IAAI,OAAO;CAGvD"}

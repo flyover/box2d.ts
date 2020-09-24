@@ -9,4 +9,3 @@ export declare class AntiPointy extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): AntiPointy;
 }
-//# sourceMappingURL=anti_pointy.d.ts.map

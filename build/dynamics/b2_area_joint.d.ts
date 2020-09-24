@@ -40,4 +40,3 @@ export declare class b2AreaJoint extends b2Joint {
     SolveVelocityConstraints(data: b2SolverData): void;
     SolvePositionConstraints(data: b2SolverData): boolean;
 }
-//# sourceMappingURL=b2_area_joint.d.ts.map

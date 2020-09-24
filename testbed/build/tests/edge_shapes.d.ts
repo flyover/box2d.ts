@@ -20,4 +20,3 @@ export declare class EdgeShapes extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=edge_shapes.d.ts.map

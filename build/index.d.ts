@@ -297,4 +297,3 @@ export { /*class*/ b2VoronoiDiagram as VoronoiDiagram } from "./particle/b2_voro
 export { /*class*/ b2VoronoiDiagram_Generator as VoronoiDiagram_Generator } from "./particle/b2_voronoi_diagram.js";
 export { /*class*/ b2VoronoiDiagram_Task as VoronoiDiagram_Task } from "./particle/b2_voronoi_diagram.js";
 export { /*type*/ b2VoronoiDiagram_NodeCallback as VoronoiDiagram_NodeCallback } from "./particle/b2_voronoi_diagram.js";
-//# sourceMappingURL=index.d.ts.map

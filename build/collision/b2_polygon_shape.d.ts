@@ -56,4 +56,3 @@ export declare class b2PolygonShape extends b2Shape {
     private static ComputeCentroid_s_e2;
     static ComputeCentroid(vs: b2Vec2[], count: number, out: b2Vec2): b2Vec2;
 }
-//# sourceMappingURL=b2_polygon_shape.d.ts.map

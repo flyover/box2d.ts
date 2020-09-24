@@ -14,4 +14,3 @@ export declare class EdgeTest extends testbed.Test {
     Keyboard(key: string): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=edge_test.d.ts.map

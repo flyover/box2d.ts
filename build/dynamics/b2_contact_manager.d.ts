@@ -15,4 +15,3 @@ export declare class b2ContactManager {
     Destroy(c: b2Contact): void;
     Collide(): void;
 }
-//# sourceMappingURL=b2_contact_manager.d.ts.map

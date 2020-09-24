@@ -13,4 +13,3 @@ export declare class b2ConstantForceController extends b2Controller {
     Step(step: b2TimeStep): void;
     Draw(draw: b2Draw): void;
 }
-//# sourceMappingURL=b2_constant_force_controller.d.ts.map

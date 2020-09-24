@@ -5,4 +5,3 @@ export declare class Chain extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=chain.d.ts.map

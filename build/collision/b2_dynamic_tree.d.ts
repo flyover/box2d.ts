@@ -57,4 +57,3 @@ export declare class b2DynamicTree<T> {
     private static ShiftOriginNode;
     ShiftOrigin(newOrigin: XY): void;
 }
-//# sourceMappingURL=b2_dynamic_tree.d.ts.map

@@ -9,4 +9,3 @@ export declare class Skier extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=skier.d.ts.map

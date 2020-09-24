@@ -13,4 +13,3 @@ export declare class Impulse extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): Impulse;
 }
-//# sourceMappingURL=impulse.d.ts.map

@@ -7,4 +7,3 @@ export declare class LiquidTimer extends testbed.Test {
     GetDefaultViewZoom(): number;
     static Create(): LiquidTimer;
 }
-//# sourceMappingURL=liquid_timer.d.ts.map

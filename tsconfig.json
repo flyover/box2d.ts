@@ -7,11 +7,9 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "inlineSourceMap": true,
     "outDir": "./build",
     "declaration": true,
-    "declarationDir": "./build",
-    "declarationMap": true
+    "sourceMap": true,
   },
   "include": [
     "src/**/*.ts"

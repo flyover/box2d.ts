@@ -20,4 +20,3 @@ export declare class b2GravityController extends b2Controller {
     private static Step_s_f;
     Draw(draw: b2Draw): void;
 }
-//# sourceMappingURL=b2_gravity_controller.d.ts.map

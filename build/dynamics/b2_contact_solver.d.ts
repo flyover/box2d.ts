@@ -110,4 +110,3 @@ export declare class b2ContactSolver {
     private static SolveTOIPositionConstraints_s_P;
     SolveTOIPositionConstraints(toiIndexA: number, toiIndexB: number): boolean;
 }
-//# sourceMappingURL=b2_contact_solver.d.ts.map

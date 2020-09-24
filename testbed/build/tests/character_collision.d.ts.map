@@ -1,1 +1,0 @@
-{"version":3,"file":"character_collision.d.ts","sourceRoot":"","sources":["../../tests/character_collision.ts"],"names":[],"mappings":"AAkBA,OAAO,KAAK,EAAE,MAAM,QAAQ,CAAC;AAC7B,OAAO,KAAK,OAAO,MAAM,eAAe,CAAC;AAEzC,qBAAa,kBAAmB,SAAQ,OAAO,CAAC,IAAI;IAC3C,WAAW,EAAE,EAAE,CAAC,IAAI,CAAC;;IAkNrB,IAAI,CAAC,QAAQ,EAAE,OAAO,CAAC,QAAQ,GAAG,IAAI;WAc/B,MAAM,IAAI,OAAO,CAAC,IAAI;CAGrC"}

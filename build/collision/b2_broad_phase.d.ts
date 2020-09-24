@@ -29,4 +29,3 @@ export declare class b2BroadPhase<T> {
     BufferMove(proxy: b2TreeNode<T>): void;
     UnBufferMove(proxy: b2TreeNode<T>): void;
 }
-//# sourceMappingURL=b2_broad_phase.d.ts.map

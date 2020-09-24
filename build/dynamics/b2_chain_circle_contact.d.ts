@@ -9,4 +9,3 @@ export declare class b2ChainAndCircleContact extends b2Contact<b2ChainShape, b2C
     private static Evaluate_s_edge;
     Evaluate(manifold: b2Manifold, xfA: b2Transform, xfB: b2Transform): void;
 }
-//# sourceMappingURL=b2_chain_circle_contact.d.ts.map

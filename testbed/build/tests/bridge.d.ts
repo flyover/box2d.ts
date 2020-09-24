@@ -7,4 +7,3 @@ export declare class Bridge extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=bridge.d.ts.map

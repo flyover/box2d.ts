@@ -73,4 +73,3 @@ export declare abstract class b2Draw {
     abstract DrawTransform(xf: b2Transform): void;
     abstract DrawPoint(p: XY, size: number, color: RGBA): void;
 }
-//# sourceMappingURL=b2_draw.d.ts.map

@@ -11,4 +11,3 @@ export declare class ConvexHull extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
-//# sourceMappingURL=convex_hull.d.ts.map

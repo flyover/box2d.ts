@@ -125,4 +125,3 @@ export declare class b2WheelJoint extends b2Joint {
     private static Draw_s_c5;
     Draw(draw: b2Draw): void;
 }
-//# sourceMappingURL=b2_wheel_joint.d.ts.map
