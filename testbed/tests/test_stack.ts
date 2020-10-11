@@ -28,10 +28,10 @@ export class TestStack extends testbed.Test {
       const ground = this.m_world.CreateBody(bd);
 
       const vertices = [];
-      vertices[0] = new b2.Vec2(-30.0, 0.0);
-      vertices[1] = new b2.Vec2(30.0, 0.0);
-      vertices[2] = new b2.Vec2(30.0, 40.0);
-      vertices[3] = new b2.Vec2(-30.0, 40.0);
+      vertices[0] = new b2.Vec2(-30.0, 40.0);
+      vertices[1] = new b2.Vec2(30.0, 40.0);
+      vertices[2] = new b2.Vec2(30.0, 0.0);
+      vertices[3] = new b2.Vec2(-30.0, 0.0);
       const shape = new b2.ChainShape();
       shape.CreateLoop(vertices);
       ground.CreateFixture(shape, 0.0);
