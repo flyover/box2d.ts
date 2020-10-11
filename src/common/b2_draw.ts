@@ -36,28 +36,30 @@ export class b2Color implements RGBA {
   public static readonly GREEN: Readonly<b2Color> = new b2Color(0, 1, 0);
   public static readonly BLUE: Readonly<b2Color> = new b2Color(0, 0, 1);
 
-  public readonly data: Float32Array;
-  public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
-  public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
-  public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
-  public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
+  // public readonly data: Float32Array;
+  // public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
+  // public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
+  // public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
+  // public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
 
-  constructor();
-  constructor(data: Float32Array);
-  constructor(rr: number, gg: number, bb: number);
-  constructor(rr: number, gg: number, bb: number, aa: number);
-  constructor(...args: any[]) {
-    if (args[0] instanceof Float32Array) {
-      if (args[0].length !== 4) { throw new Error(); }
-      this.data = args[0];
-    } else {
-      const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
-      const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
-      const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
-      const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
-      this.data = new Float32Array([ rr, gg, bb, aa ]);
-    }
-  }
+  // constructor();
+  // constructor(data: Float32Array);
+  // constructor(rr: number, gg: number, bb: number);
+  // constructor(rr: number, gg: number, bb: number, aa: number);
+  // constructor(...args: any[]) {
+  //   if (args[0] instanceof Float32Array) {
+  //     if (args[0].length !== 4) { throw new Error(); }
+  //     this.data = args[0];
+  //   } else {
+  //     const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
+  //     const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
+  //     const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
+  //     const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
+  //     this.data = new Float32Array([ rr, gg, bb, aa ]);
+  //   }
+  // }
+
+  constructor(public r: number = 0.5, public g: number = 0.5, public b: number = 0.5, public a: number = 1.0) {}
 
   public Clone(): b2Color {
     return new b2Color().Copy(this);

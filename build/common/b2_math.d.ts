@@ -27,6 +27,8 @@ export interface XY {
     y: number;
 }
 export declare class b2Vec2 implements XY {
+    x: number;
+    y: number;
     static readonly ZERO: Readonly<b2Vec2>;
     static readonly UNITX: Readonly<b2Vec2>;
     static readonly UNITY: Readonly<b2Vec2>;
@@ -34,14 +36,7 @@ export declare class b2Vec2 implements XY {
     static readonly s_t1: b2Vec2;
     static readonly s_t2: b2Vec2;
     static readonly s_t3: b2Vec2;
-    readonly data: Float32Array;
-    get x(): number;
-    set x(value: number);
-    get y(): number;
-    set y(value: number);
-    constructor();
-    constructor(data: Float32Array);
-    constructor(x: number, y: number);
+    constructor(x?: number, y?: number);
     Clone(): b2Vec2;
     SetZero(): this;
     Set(x: number, y: number): this;
@@ -127,7 +122,6 @@ export declare class b2Vec3 implements XYZ {
 }
 export declare class b2Mat22 {
     static readonly IDENTITY: Readonly<b2Mat22>;
-    readonly data: Float32Array;
     readonly ex: b2Vec2;
     readonly ey: b2Vec2;
     Clone(): b2Mat22;

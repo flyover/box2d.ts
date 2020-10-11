@@ -95,23 +95,26 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
             exports_1("b2Atan2", b2Atan2 = Math.atan2);
             /// A 2D column vector.
             b2Vec2 = class b2Vec2 {
-                constructor(...args) {
-                    if (args[0] instanceof Float32Array) {
-                        if (args[0].length !== 2) {
-                            throw new Error();
-                        }
-                        this.data = args[0];
-                    }
-                    else {
-                        const x = typeof args[0] === "number" ? args[0] : 0;
-                        const y = typeof args[1] === "number" ? args[1] : 0;
-                        this.data = new Float32Array([x, y]);
-                    }
+                // public readonly data: Float32Array;
+                // public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
+                // public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
+                // constructor();
+                // constructor(data: Float32Array);
+                // constructor(x: number, y: number);
+                // constructor(...args: any[]) {
+                //   if (args[0] instanceof Float32Array) {
+                //     if (args[0].length !== 2) { throw new Error(); }
+                //     this.data = args[0];
+                //   } else {
+                //     const x: number = typeof args[0] === "number" ? args[0] : 0;
+                //     const y: number = typeof args[1] === "number" ? args[1] : 0;
+                //     this.data = new Float32Array([ x, y ]);
+                //   }
+                // }
+                constructor(x = 0, y = 0) {
+                    this.x = x;
+                    this.y = y;
                 }
-                get x() { return this.data[0]; }
-                set x(value) { this.data[0] = value; }
-                get y() { return this.data[1]; }
-                set y(value) { this.data[1] = value; }
                 Clone() {
                     return new b2Vec2(this.x, this.y);
                 }
@@ -448,9 +451,11 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
             /// A 2-by-2 matrix. Stored in column-major order.
             b2Mat22 = class b2Mat22 {
                 constructor() {
-                    this.data = new Float32Array([1, 0, 0, 1]);
-                    this.ex = new b2Vec2(this.data.subarray(0, 2));
-                    this.ey = new b2Vec2(this.data.subarray(2, 4));
+                    // public readonly data: Float32Array = new Float32Array([ 1, 0, 0, 1 ]);
+                    // public readonly ex: b2Vec2 = new b2Vec2(this.data.subarray(0, 2));
+                    // public readonly ey: b2Vec2 = new b2Vec2(this.data.subarray(2, 4));
+                    this.ex = new b2Vec2(1, 0);
+                    this.ey = new b2Vec2(0, 1);
                 }
                 Clone() {
                     return new b2Mat22().Copy(this);

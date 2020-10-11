@@ -43,29 +43,33 @@
   */
   /// Color for debug drawing. Each value has the range [0,1].
   class b2Color {
-      constructor(...args) {
-          if (args[0] instanceof Float32Array) {
-              if (args[0].length !== 4) {
-                  throw new Error();
-              }
-              this.data = args[0];
-          }
-          else {
-              const rr = typeof args[0] === "number" ? args[0] : 0.5;
-              const gg = typeof args[1] === "number" ? args[1] : 0.5;
-              const bb = typeof args[2] === "number" ? args[2] : 0.5;
-              const aa = typeof args[3] === "number" ? args[3] : 1.0;
-              this.data = new Float32Array([rr, gg, bb, aa]);
-          }
+      // public readonly data: Float32Array;
+      // public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
+      // public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
+      // public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
+      // public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
+      // constructor();
+      // constructor(data: Float32Array);
+      // constructor(rr: number, gg: number, bb: number);
+      // constructor(rr: number, gg: number, bb: number, aa: number);
+      // constructor(...args: any[]) {
+      //   if (args[0] instanceof Float32Array) {
+      //     if (args[0].length !== 4) { throw new Error(); }
+      //     this.data = args[0];
+      //   } else {
+      //     const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
+      //     const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
+      //     const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
+      //     const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
+      //     this.data = new Float32Array([ rr, gg, bb, aa ]);
+      //   }
+      // }
+      constructor(r = 0.5, g = 0.5, b = 0.5, a = 1.0) {
+          this.r = r;
+          this.g = g;
+          this.b = b;
+          this.a = a;
       }
-      get r() { return this.data[0]; }
-      set r(value) { this.data[0] = value; }
-      get g() { return this.data[1]; }
-      set g(value) { this.data[1] = value; }
-      get b() { return this.data[2]; }
-      set b(value) { this.data[2] = value; }
-      get a() { return this.data[3]; }
-      set a(value) { this.data[3] = value; }
       Clone() {
           return new b2Color().Copy(this);
       }
@@ -541,23 +545,26 @@
   }
   /// A 2D column vector.
   class b2Vec2 {
-      constructor(...args) {
-          if (args[0] instanceof Float32Array) {
-              if (args[0].length !== 2) {
-                  throw new Error();
-              }
-              this.data = args[0];
-          }
-          else {
-              const x = typeof args[0] === "number" ? args[0] : 0;
-              const y = typeof args[1] === "number" ? args[1] : 0;
-              this.data = new Float32Array([x, y]);
-          }
+      // public readonly data: Float32Array;
+      // public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
+      // public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
+      // constructor();
+      // constructor(data: Float32Array);
+      // constructor(x: number, y: number);
+      // constructor(...args: any[]) {
+      //   if (args[0] instanceof Float32Array) {
+      //     if (args[0].length !== 2) { throw new Error(); }
+      //     this.data = args[0];
+      //   } else {
+      //     const x: number = typeof args[0] === "number" ? args[0] : 0;
+      //     const y: number = typeof args[1] === "number" ? args[1] : 0;
+      //     this.data = new Float32Array([ x, y ]);
+      //   }
+      // }
+      constructor(x = 0, y = 0) {
+          this.x = x;
+          this.y = y;
       }
-      get x() { return this.data[0]; }
-      set x(value) { this.data[0] = value; }
-      get y() { return this.data[1]; }
-      set y(value) { this.data[1] = value; }
       Clone() {
           return new b2Vec2(this.x, this.y);
       }
@@ -892,9 +899,11 @@
   /// A 2-by-2 matrix. Stored in column-major order.
   class b2Mat22 {
       constructor() {
-          this.data = new Float32Array([1, 0, 0, 1]);
-          this.ex = new b2Vec2(this.data.subarray(0, 2));
-          this.ey = new b2Vec2(this.data.subarray(2, 4));
+          // public readonly data: Float32Array = new Float32Array([ 1, 0, 0, 1 ]);
+          // public readonly ex: b2Vec2 = new b2Vec2(this.data.subarray(0, 2));
+          // public readonly ey: b2Vec2 = new b2Vec2(this.data.subarray(2, 4));
+          this.ex = new b2Vec2(1, 0);
+          this.ey = new b2Vec2(0, 1);
       }
       Clone() {
           return new b2Mat22().Copy(this);
@@ -15865,46 +15874,40 @@
       SetFlagsBuffer(buffer) {
           this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer);
       }
-      SetPositionBuffer(buffer) {
-          if (buffer instanceof Float32Array) {
-              if (buffer.length % 2 !== 0) {
-                  throw new Error();
-              }
-              const count = buffer.length / 2;
-              const array = new Array(count);
-              for (let i = 0; i < count; ++i) {
-                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-              }
-              buffer = array;
-          }
+      SetPositionBuffer(buffer /*| Float32Array*/) {
+          // if (buffer instanceof Float32Array) {
+          //   if (buffer.length % 2 !== 0) { throw new Error(); }
+          //   const count: number = buffer.length / 2;
+          //   const array: b2Vec2[] = new Array(count);
+          //   for (let i = 0; i < count; ++i) {
+          //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+          //   }
+          //   buffer = array;
+          // }
           this.SetUserOverridableBuffer(this.m_positionBuffer, buffer);
       }
-      SetVelocityBuffer(buffer) {
-          if (buffer instanceof Float32Array) {
-              if (buffer.length % 2 !== 0) {
-                  throw new Error();
-              }
-              const count = buffer.length / 2;
-              const array = new Array(count);
-              for (let i = 0; i < count; ++i) {
-                  array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-              }
-              buffer = array;
-          }
+      SetVelocityBuffer(buffer /*| Float32Array*/) {
+          // if (buffer instanceof Float32Array) {
+          //   if (buffer.length % 2 !== 0) { throw new Error(); }
+          //   const count: number = buffer.length / 2;
+          //   const array: b2Vec2[] = new Array(count);
+          //   for (let i = 0; i < count; ++i) {
+          //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+          //   }
+          //   buffer = array;
+          // }
           this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer);
       }
-      SetColorBuffer(buffer) {
-          if (buffer instanceof Float32Array) {
-              if (buffer.length % 4 !== 0) {
-                  throw new Error();
-              }
-              const count = buffer.length / 4;
-              const array = new Array(count);
-              for (let i = 0; i < count; ++i) {
-                  array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-              }
-              buffer = array;
-          }
+      SetColorBuffer(buffer /*| Float32Array*/) {
+          // if (buffer instanceof Float32Array) {
+          //   if (buffer.length % 4 !== 0) { throw new Error(); }
+          //   const count: number = buffer.length / 4;
+          //   const array: b2Color[] = new Array(count);
+          //   for (let i = 0; i < count; ++i) {
+          //     array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
+          //   }
+          //   buffer = array;
+          // }
           this.SetUserOverridableBuffer(this.m_colorBuffer, buffer);
       }
       SetUserDataBuffer(buffer) {

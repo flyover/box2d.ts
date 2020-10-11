@@ -24,29 +24,33 @@ System.register([], function (exports_1, context_1) {
         execute: function () {
             /// Color for debug drawing. Each value has the range [0,1].
             b2Color = class b2Color {
-                constructor(...args) {
-                    if (args[0] instanceof Float32Array) {
-                        if (args[0].length !== 4) {
-                            throw new Error();
-                        }
-                        this.data = args[0];
-                    }
-                    else {
-                        const rr = typeof args[0] === "number" ? args[0] : 0.5;
-                        const gg = typeof args[1] === "number" ? args[1] : 0.5;
-                        const bb = typeof args[2] === "number" ? args[2] : 0.5;
-                        const aa = typeof args[3] === "number" ? args[3] : 1.0;
-                        this.data = new Float32Array([rr, gg, bb, aa]);
-                    }
+                // public readonly data: Float32Array;
+                // public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
+                // public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
+                // public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
+                // public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
+                // constructor();
+                // constructor(data: Float32Array);
+                // constructor(rr: number, gg: number, bb: number);
+                // constructor(rr: number, gg: number, bb: number, aa: number);
+                // constructor(...args: any[]) {
+                //   if (args[0] instanceof Float32Array) {
+                //     if (args[0].length !== 4) { throw new Error(); }
+                //     this.data = args[0];
+                //   } else {
+                //     const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
+                //     const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
+                //     const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
+                //     const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
+                //     this.data = new Float32Array([ rr, gg, bb, aa ]);
+                //   }
+                // }
+                constructor(r = 0.5, g = 0.5, b = 0.5, a = 1.0) {
+                    this.r = r;
+                    this.g = g;
+                    this.b = b;
+                    this.a = a;
                 }
-                get r() { return this.data[0]; }
-                set r(value) { this.data[0] = value; }
-                get g() { return this.data[1]; }
-                set g(value) { this.data[1] = value; }
-                get b() { return this.data[2]; }
-                set b(value) { this.data[2] = value; }
-                get a() { return this.data[3]; }
-                set a(value) { this.data[3] = value; }
                 Clone() {
                     return new b2Color().Copy(this);
                 }

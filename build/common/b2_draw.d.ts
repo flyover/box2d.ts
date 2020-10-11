@@ -8,23 +8,15 @@ export interface RGBA extends RGB {
     a: number;
 }
 export declare class b2Color implements RGBA {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
     static readonly ZERO: Readonly<b2Color>;
     static readonly RED: Readonly<b2Color>;
     static readonly GREEN: Readonly<b2Color>;
     static readonly BLUE: Readonly<b2Color>;
-    readonly data: Float32Array;
-    get r(): number;
-    set r(value: number);
-    get g(): number;
-    set g(value: number);
-    get b(): number;
-    set b(value: number);
-    get a(): number;
-    set a(value: number);
-    constructor();
-    constructor(data: Float32Array);
-    constructor(rr: number, gg: number, bb: number);
-    constructor(rr: number, gg: number, bb: number, aa: number);
+    constructor(r?: number, g?: number, b?: number, a?: number);
     Clone(): b2Color;
     Copy(other: RGBA): this;
     IsEqual(color: RGBA): boolean;

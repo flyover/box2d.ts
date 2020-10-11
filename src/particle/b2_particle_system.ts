@@ -1329,42 +1329,42 @@ export class b2ParticleSystem {
     this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer);
   }
 
-  public SetPositionBuffer(buffer: b2Vec2[] | Float32Array): void {
-    if (buffer instanceof Float32Array) {
-      if (buffer.length % 2 !== 0) { throw new Error(); }
-      const count: number = buffer.length / 2;
-      const array: b2Vec2[] = new Array(count);
-      for (let i = 0; i < count; ++i) {
-        array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-      }
-      buffer = array;
-    }
+  public SetPositionBuffer(buffer: b2Vec2[] /*| Float32Array*/): void {
+    // if (buffer instanceof Float32Array) {
+    //   if (buffer.length % 2 !== 0) { throw new Error(); }
+    //   const count: number = buffer.length / 2;
+    //   const array: b2Vec2[] = new Array(count);
+    //   for (let i = 0; i < count; ++i) {
+    //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+    //   }
+    //   buffer = array;
+    // }
     this.SetUserOverridableBuffer(this.m_positionBuffer, buffer);
   }
 
-  public SetVelocityBuffer(buffer: b2Vec2[] | Float32Array): void {
-    if (buffer instanceof Float32Array) {
-      if (buffer.length % 2 !== 0) { throw new Error(); }
-      const count: number = buffer.length / 2;
-      const array: b2Vec2[] = new Array(count);
-      for (let i = 0; i < count; ++i) {
-        array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-      }
-      buffer = array;
-    }
+  public SetVelocityBuffer(buffer: b2Vec2[] /*| Float32Array*/): void {
+    // if (buffer instanceof Float32Array) {
+    //   if (buffer.length % 2 !== 0) { throw new Error(); }
+    //   const count: number = buffer.length / 2;
+    //   const array: b2Vec2[] = new Array(count);
+    //   for (let i = 0; i < count; ++i) {
+    //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
+    //   }
+    //   buffer = array;
+    // }
     this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer);
   }
 
-  public SetColorBuffer(buffer: b2Color[] | Float32Array): void {
-    if (buffer instanceof Float32Array) {
-      if (buffer.length % 4 !== 0) { throw new Error(); }
-      const count: number = buffer.length / 4;
-      const array: b2Color[] = new Array(count);
-      for (let i = 0; i < count; ++i) {
-        array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-      }
-      buffer = array;
-    }
+  public SetColorBuffer(buffer: b2Color[] /*| Float32Array*/): void {
+    // if (buffer instanceof Float32Array) {
+    //   if (buffer.length % 4 !== 0) { throw new Error(); }
+    //   const count: number = buffer.length / 4;
+    //   const array: b2Color[] = new Array(count);
+    //   for (let i = 0; i < count; ++i) {
+    //     array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
+    //   }
+    //   buffer = array;
+    // }
     this.SetUserOverridableBuffer(this.m_colorBuffer, buffer);
   }
 

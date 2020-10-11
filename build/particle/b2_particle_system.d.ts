@@ -616,9 +616,9 @@ export declare class b2ParticleSystem {
      * @param capacity the number of values in the block.
      */
     SetFlagsBuffer(buffer: b2ParticleFlag[]): void;
-    SetPositionBuffer(buffer: b2Vec2[] | Float32Array): void;
-    SetVelocityBuffer(buffer: b2Vec2[] | Float32Array): void;
-    SetColorBuffer(buffer: b2Color[] | Float32Array): void;
+    SetPositionBuffer(buffer: b2Vec2[]): void;
+    SetVelocityBuffer(buffer: b2Vec2[]): void;
+    SetColorBuffer(buffer: b2Color[]): void;
     SetUserDataBuffer<T>(buffer: T[]): void;
     /**
      * Get contacts between particles
