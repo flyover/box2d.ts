@@ -563,7 +563,7 @@ export function b2TestOverlapAABB(a: b2AABB, b: b2AABB): boolean {
 }
 
 /// Clipping for contact manifolds.
-export function b2ClipSegmentToLine(vOut: b2ClipVertex[], vIn: b2ClipVertex[], normal: b2Vec2, offset: number, vertexIndexA: number): number {
+export function b2ClipSegmentToLine(vOut: [b2ClipVertex, b2ClipVertex], vIn: [b2ClipVertex, b2ClipVertex], normal: b2Vec2, offset: number, vertexIndexA: number): number {
   // Start with no output points
   let count: number = 0;
 
