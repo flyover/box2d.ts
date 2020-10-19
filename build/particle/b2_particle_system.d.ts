@@ -1,4 +1,4 @@
-import { b2Vec2, b2Rot, b2Transform, XY } from "../common/b2_math.js";
+import { b2Vec2, b2TypedVec2, b2Rot, b2Transform, XY } from "../common/b2_math.js";
 import { b2Color } from "../common/b2_draw.js";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../collision/b2_collision.js";
 import { b2Shape, b2MassData } from "../collision/b2_shape.js";
@@ -616,9 +616,9 @@ export declare class b2ParticleSystem {
      * @param capacity the number of values in the block.
      */
     SetFlagsBuffer(buffer: b2ParticleFlag[]): void;
-    SetPositionBuffer(buffer: b2Vec2[]): void;
-    SetVelocityBuffer(buffer: b2Vec2[]): void;
-    SetColorBuffer(buffer: b2Color[]): void;
+    SetPositionBuffer(buffer: b2Vec2[] | Float32Array): void;
+    SetVelocityBuffer(buffer: b2TypedVec2[] | Float32Array): void;
+    SetColorBuffer(buffer: b2Color[] | Float32Array): void;
     SetUserDataBuffer<T>(buffer: T[]): void;
     /**
      * Get contacts between particles

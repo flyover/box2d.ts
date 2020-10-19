@@ -37,6 +37,38 @@ export declare class b2Color implements RGBA {
     MakeStyleString(alpha?: number): string;
     static MakeStyleString(r: number, g: number, b: number, a?: number): string;
 }
+export declare class b2TypedColor implements b2Color {
+    readonly data: Float32Array;
+    get r(): number;
+    set r(value: number);
+    get g(): number;
+    set g(value: number);
+    get b(): number;
+    set b(value: number);
+    get a(): number;
+    set a(value: number);
+    constructor();
+    constructor(data: Float32Array);
+    constructor(rr: number, gg: number, bb: number);
+    constructor(rr: number, gg: number, bb: number, aa: number);
+    Clone(): b2TypedColor;
+    Copy(other: RGBA): this;
+    IsEqual(color: RGBA): boolean;
+    IsZero(): boolean;
+    Set(r: number, g: number, b: number, a?: number): void;
+    SetByteRGB(r: number, g: number, b: number): this;
+    SetByteRGBA(r: number, g: number, b: number, a: number): this;
+    SetRGB(rr: number, gg: number, bb: number): this;
+    SetRGBA(rr: number, gg: number, bb: number, aa: number): this;
+    SelfAdd(color: RGBA): this;
+    Add<T extends RGBA>(color: RGBA, out: T): T;
+    SelfSub(color: RGBA): this;
+    Sub<T extends RGBA>(color: RGBA, out: T): T;
+    SelfMul(s: number): this;
+    Mul<T extends RGBA>(s: number, out: T): T;
+    Mix(mixColor: RGBA, strength: number): void;
+    MakeStyleString(alpha?: number): string;
+}
 export declare enum b2DrawFlags {
     e_none = 0,
     e_shapeBit = 1,

@@ -17,7 +17,7 @@
 */
 System.register(["./b2_settings.js"], function (exports_1, context_1) {
     "use strict";
-    var b2_settings_js_1, b2_pi_over_180, b2_180_over_pi, b2_two_pi, b2Abs, b2IsValid, b2Sqrt, b2Pow, b2Cos, b2Sin, b2Acos, b2Asin, b2Atan2, b2Vec2, b2Vec2_zero, b2Vec3, b2Mat22, b2Mat33, b2Rot, b2Transform, b2Sweep;
+    var b2_settings_js_1, b2_pi_over_180, b2_180_over_pi, b2_two_pi, b2Abs, b2IsValid, b2Sqrt, b2Pow, b2Cos, b2Sin, b2Acos, b2Asin, b2Atan2, b2Vec2, b2Vec2_zero, b2TypedVec2, b2Vec3, b2Mat22, b2Mat33, b2Rot, b2Transform, b2Sweep;
     var __moduleName = context_1 && context_1.id;
     function b2Min(a, b) { return a < b ? a : b; }
     exports_1("b2Min", b2Min);
@@ -95,22 +95,6 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
             exports_1("b2Atan2", b2Atan2 = Math.atan2);
             /// A 2D column vector.
             b2Vec2 = class b2Vec2 {
-                // public readonly data: Float32Array;
-                // public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
-                // public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
-                // constructor();
-                // constructor(data: Float32Array);
-                // constructor(x: number, y: number);
-                // constructor(...args: any[]) {
-                //   if (args[0] instanceof Float32Array) {
-                //     if (args[0].length !== 2) { throw new Error(); }
-                //     this.data = args[0];
-                //   } else {
-                //     const x: number = typeof args[0] === "number" ? args[0] : 0;
-                //     const y: number = typeof args[1] === "number" ? args[1] : 0;
-                //     this.data = new Float32Array([ x, y ]);
-                //   }
-                // }
                 constructor(x = 0, y = 0) {
                     this.x = x;
                     this.y = y;
@@ -354,6 +338,171 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
             b2Vec2.s_t2 = new b2Vec2();
             b2Vec2.s_t3 = new b2Vec2();
             exports_1("b2Vec2_zero", b2Vec2_zero = new b2Vec2(0, 0));
+            b2TypedVec2 = class b2TypedVec2 {
+                constructor(...args) {
+                    if (args[0] instanceof Float32Array) {
+                        if (args[0].length !== 2) {
+                            throw new Error();
+                        }
+                        this.data = args[0];
+                    }
+                    else {
+                        const x = typeof args[0] === "number" ? args[0] : 0;
+                        const y = typeof args[1] === "number" ? args[1] : 0;
+                        this.data = new Float32Array([x, y]);
+                    }
+                }
+                get x() { return this.data[0]; }
+                set x(value) { this.data[0] = value; }
+                get y() { return this.data[1]; }
+                set y(value) { this.data[1] = value; }
+                Clone() {
+                    return new b2TypedVec2(new Float32Array(this.data));
+                }
+                SetZero() {
+                    this.x = 0;
+                    this.y = 0;
+                    return this;
+                }
+                Set(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    return this;
+                }
+                Copy(other) {
+                    if (other instanceof b2TypedVec2) {
+                        this.data.set(other.data);
+                    }
+                    else {
+                        this.x = other.x;
+                        this.y = other.y;
+                    }
+                    return this;
+                }
+                SelfAdd(v) {
+                    this.x += v.x;
+                    this.y += v.y;
+                    return this;
+                }
+                SelfAddXY(x, y) {
+                    this.x += x;
+                    this.y += y;
+                    return this;
+                }
+                SelfSub(v) {
+                    this.x -= v.x;
+                    this.y -= v.y;
+                    return this;
+                }
+                SelfSubXY(x, y) {
+                    this.x -= x;
+                    this.y -= y;
+                    return this;
+                }
+                SelfMul(s) {
+                    this.x *= s;
+                    this.y *= s;
+                    return this;
+                }
+                SelfMulAdd(s, v) {
+                    this.x += s * v.x;
+                    this.y += s * v.y;
+                    return this;
+                }
+                SelfMulSub(s, v) {
+                    this.x -= s * v.x;
+                    this.y -= s * v.y;
+                    return this;
+                }
+                Dot(v) {
+                    return this.x * v.x + this.y * v.y;
+                }
+                Cross(v) {
+                    return this.x * v.y - this.y * v.x;
+                }
+                Length() {
+                    const x = this.x, y = this.y;
+                    return Math.sqrt(x * x + y * y);
+                }
+                LengthSquared() {
+                    const x = this.x, y = this.y;
+                    return (x * x + y * y);
+                }
+                Normalize() {
+                    const length = this.Length();
+                    if (length >= b2_settings_js_1.b2_epsilon) {
+                        const inv_length = 1 / length;
+                        this.x *= inv_length;
+                        this.y *= inv_length;
+                    }
+                    return length;
+                }
+                SelfNormalize() {
+                    const length = this.Length();
+                    if (length >= b2_settings_js_1.b2_epsilon) {
+                        const inv_length = 1 / length;
+                        this.x *= inv_length;
+                        this.y *= inv_length;
+                    }
+                    return this;
+                }
+                SelfRotate(radians) {
+                    const c = Math.cos(radians);
+                    const s = Math.sin(radians);
+                    const x = this.x;
+                    this.x = c * x - s * this.y;
+                    this.y = s * x + c * this.y;
+                    return this;
+                }
+                SelfRotateCosSin(c, s) {
+                    const x = this.x;
+                    this.x = c * x - s * this.y;
+                    this.y = s * x + c * this.y;
+                    return this;
+                }
+                IsValid() {
+                    return isFinite(this.x) && isFinite(this.y);
+                }
+                SelfCrossVS(s) {
+                    const x = this.x;
+                    this.x = s * this.y;
+                    this.y = -s * x;
+                    return this;
+                }
+                SelfCrossSV(s) {
+                    const x = this.x;
+                    this.x = -s * this.y;
+                    this.y = s * x;
+                    return this;
+                }
+                SelfMinV(v) {
+                    this.x = b2Min(this.x, v.x);
+                    this.y = b2Min(this.y, v.y);
+                    return this;
+                }
+                SelfMaxV(v) {
+                    this.x = b2Max(this.x, v.x);
+                    this.y = b2Max(this.y, v.y);
+                    return this;
+                }
+                SelfAbs() {
+                    this.x = b2Abs(this.x);
+                    this.y = b2Abs(this.y);
+                    return this;
+                }
+                SelfNeg() {
+                    this.x = (-this.x);
+                    this.y = (-this.y);
+                    return this;
+                }
+                SelfSkew() {
+                    const x = this.x;
+                    this.x = -this.y;
+                    this.y = x;
+                    return this;
+                }
+            };
+            exports_1("b2TypedVec2", b2TypedVec2);
             /// A 2D column vector with 3 elements.
             b2Vec3 = class b2Vec3 {
                 constructor(...args) {

@@ -36,29 +36,6 @@ export class b2Color implements RGBA {
   public static readonly GREEN: Readonly<b2Color> = new b2Color(0, 1, 0);
   public static readonly BLUE: Readonly<b2Color> = new b2Color(0, 0, 1);
 
-  // public readonly data: Float32Array;
-  // public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
-  // public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
-  // public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
-  // public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
-
-  // constructor();
-  // constructor(data: Float32Array);
-  // constructor(rr: number, gg: number, bb: number);
-  // constructor(rr: number, gg: number, bb: number, aa: number);
-  // constructor(...args: any[]) {
-  //   if (args[0] instanceof Float32Array) {
-  //     if (args[0].length !== 4) { throw new Error(); }
-  //     this.data = args[0];
-  //   } else {
-  //     const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
-  //     const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
-  //     const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
-  //     const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
-  //     this.data = new Float32Array([ rr, gg, bb, aa ]);
-  //   }
-  // }
-
   constructor(public r: number = 0.5, public g: number = 0.5, public b: number = 0.5, public a: number = 1.0) {}
 
   public Clone(): b2Color {
@@ -197,6 +174,146 @@ export class b2Color implements RGBA {
     } else {
       return `rgb(${r},${g},${b})`;
     }
+  }
+}
+
+export class b2TypedColor implements b2Color {
+  public readonly data: Float32Array;
+  public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
+  public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
+  public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
+  public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
+
+  constructor();
+  constructor(data: Float32Array);
+  constructor(rr: number, gg: number, bb: number);
+  constructor(rr: number, gg: number, bb: number, aa: number);
+  constructor(...args: any[]) {
+    if (args[0] instanceof Float32Array) {
+      if (args[0].length !== 4) { throw new Error(); }
+      this.data = args[0];
+    } else {
+      const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
+      const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
+      const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
+      const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
+      this.data = new Float32Array([ rr, gg, bb, aa ]);
+    }
+  }
+
+  public Clone(): b2TypedColor {
+    return new b2TypedColor(new Float32Array(this.data));
+  }
+
+  public Copy(other: RGBA): this {
+    if (other instanceof b2TypedColor) {
+      this.data.set(other.data);
+    }
+    else {
+      this.r = other.r;
+      this.g = other.g;
+      this.b = other.b;
+      this.a = other.a;
+    }
+    return this;
+  }
+
+  public IsEqual(color: RGBA): boolean {
+    return (this.r === color.r) && (this.g === color.g) && (this.b === color.b) && (this.a === color.a);
+  }
+
+  public IsZero(): boolean {
+    return (this.r === 0) && (this.g === 0) && (this.b === 0) && (this.a === 0);
+  }
+
+  public Set(r: number, g: number, b: number, a: number = this.a): void {
+    this.SetRGBA(r, g, b, a);
+  }
+
+  public SetByteRGB(r: number, g: number, b: number): this {
+    this.r = r / 0xff;
+    this.g = g / 0xff;
+    this.b = b / 0xff;
+    return this;
+  }
+
+  public SetByteRGBA(r: number, g: number, b: number, a: number): this {
+    this.r = r / 0xff;
+    this.g = g / 0xff;
+    this.b = b / 0xff;
+    this.a = a / 0xff;
+    return this;
+  }
+
+  public SetRGB(rr: number, gg: number, bb: number): this {
+    this.r = rr;
+    this.g = gg;
+    this.b = bb;
+    return this;
+  }
+
+  public SetRGBA(rr: number, gg: number, bb: number, aa: number): this {
+    this.r = rr;
+    this.g = gg;
+    this.b = bb;
+    this.a = aa;
+    return this;
+  }
+
+  public SelfAdd(color: RGBA): this {
+    this.r += color.r;
+    this.g += color.g;
+    this.b += color.b;
+    this.a += color.a;
+    return this;
+  }
+
+  public Add<T extends RGBA>(color: RGBA, out: T): T {
+    out.r = this.r + color.r;
+    out.g = this.g + color.g;
+    out.b = this.b + color.b;
+    out.a = this.a + color.a;
+    return out;
+  }
+
+  public SelfSub(color: RGBA): this {
+    this.r -= color.r;
+    this.g -= color.g;
+    this.b -= color.b;
+    this.a -= color.a;
+    return this;
+  }
+
+  public Sub<T extends RGBA>(color: RGBA, out: T): T {
+    out.r = this.r - color.r;
+    out.g = this.g - color.g;
+    out.b = this.b - color.b;
+    out.a = this.a - color.a;
+    return out;
+  }
+
+  public SelfMul(s: number): this {
+    this.r *= s;
+    this.g *= s;
+    this.b *= s;
+    this.a *= s;
+    return this;
+  }
+
+  public Mul<T extends RGBA>(s: number, out: T): T {
+    out.r = this.r * s;
+    out.g = this.g * s;
+    out.b = this.b * s;
+    out.a = this.a * s;
+    return out;
+  }
+
+  public Mix(mixColor: RGBA, strength: number): void {
+    b2Color.MixColors(this, mixColor, strength);
+  }
+
+  public MakeStyleString(alpha: number = this.a): string {
+    return b2Color.MakeStyleString(this.r, this.g, this.b, alpha);
   }
 }
 

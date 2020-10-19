@@ -21,8 +21,8 @@
 // DEBUG: import { b2Assert, b2_maxParticleIndex } from "../common/b2_settings.js";
 import { b2_linearSlop, b2_maxFloat, b2_invalidParticleIndex, b2_minParticleSystemBufferCapacity, b2_maxTriadDistanceSquared, b2_barrierCollisionTime, b2MakeArray, b2Maybe } from "../common/b2_settings.js";
 import { b2_maxParticlePressure, b2_minParticleWeight, b2_maxParticleForce, b2_particleStride } from "../common/b2_settings.js";
-import { b2Min, b2Max, b2Abs, b2Clamp, b2Sqrt, b2InvSqrt, b2Vec2, b2Rot, b2Transform, XY } from "../common/b2_math.js";
-import { b2Color } from "../common/b2_draw.js";
+import { b2Min, b2Max, b2Abs, b2Clamp, b2Sqrt, b2InvSqrt, b2Vec2, b2TypedVec2, b2Rot, b2Transform, XY } from "../common/b2_math.js";
+import { b2Color, b2TypedColor } from "../common/b2_draw.js";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../collision/b2_collision.js";
 import { b2ShapeType, b2Shape, b2MassData } from "../collision/b2_shape.js";
 import { b2EdgeShape } from "../collision/b2_edge_shape.js";
@@ -1329,42 +1329,42 @@ export class b2ParticleSystem {
     this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer);
   }
 
-  public SetPositionBuffer(buffer: b2Vec2[] /*| Float32Array*/): void {
-    // if (buffer instanceof Float32Array) {
-    //   if (buffer.length % 2 !== 0) { throw new Error(); }
-    //   const count: number = buffer.length / 2;
-    //   const array: b2Vec2[] = new Array(count);
-    //   for (let i = 0; i < count; ++i) {
-    //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-    //   }
-    //   buffer = array;
-    // }
+  public SetPositionBuffer(buffer: b2Vec2[] | Float32Array): void {
+    if (buffer instanceof Float32Array) {
+      if (buffer.length % 2 !== 0) { throw new Error(); }
+      const count: number = buffer.length / 2;
+      const array: b2TypedVec2[] = new Array(count);
+      for (let i = 0; i < count; ++i) {
+        array[i] = new b2TypedVec2(buffer.subarray(i * 2, i * 2 + 2));
+      }
+      buffer = array;
+    }
     this.SetUserOverridableBuffer(this.m_positionBuffer, buffer);
   }
 
-  public SetVelocityBuffer(buffer: b2Vec2[] /*| Float32Array*/): void {
-    // if (buffer instanceof Float32Array) {
-    //   if (buffer.length % 2 !== 0) { throw new Error(); }
-    //   const count: number = buffer.length / 2;
-    //   const array: b2Vec2[] = new Array(count);
-    //   for (let i = 0; i < count; ++i) {
-    //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-    //   }
-    //   buffer = array;
-    // }
+  public SetVelocityBuffer(buffer: b2TypedVec2[] | Float32Array): void {
+    if (buffer instanceof Float32Array) {
+      if (buffer.length % 2 !== 0) { throw new Error(); }
+      const count: number = buffer.length / 2;
+      const array: b2TypedVec2[] = new Array(count);
+      for (let i = 0; i < count; ++i) {
+        array[i] = new b2TypedVec2(buffer.subarray(i * 2, i * 2 + 2));
+      }
+      buffer = array;
+    }
     this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer);
   }
 
-  public SetColorBuffer(buffer: b2Color[] /*| Float32Array*/): void {
-    // if (buffer instanceof Float32Array) {
-    //   if (buffer.length % 4 !== 0) { throw new Error(); }
-    //   const count: number = buffer.length / 4;
-    //   const array: b2Color[] = new Array(count);
-    //   for (let i = 0; i < count; ++i) {
-    //     array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-    //   }
-    //   buffer = array;
-    // }
+  public SetColorBuffer(buffer: b2Color[] | Float32Array): void {
+    if (buffer instanceof Float32Array) {
+      if (buffer.length % 4 !== 0) { throw new Error(); }
+      const count: number = buffer.length / 4;
+      const array: b2Color[] = new Array(count);
+      for (let i = 0; i < count; ++i) {
+        array[i] = new b2TypedColor(buffer.subarray(i * 4, i * 4 + 4));
+      }
+      buffer = array;
+    }
     this.SetUserOverridableBuffer(this.m_colorBuffer, buffer);
   }
 

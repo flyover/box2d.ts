@@ -107,24 +107,6 @@ export class b2Vec2 implements XY {
   public static readonly s_t2: b2Vec2 = new b2Vec2();
   public static readonly s_t3: b2Vec2 = new b2Vec2();
 
-  // public readonly data: Float32Array;
-  // public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
-  // public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
-
-  // constructor();
-  // constructor(data: Float32Array);
-  // constructor(x: number, y: number);
-  // constructor(...args: any[]) {
-  //   if (args[0] instanceof Float32Array) {
-  //     if (args[0].length !== 2) { throw new Error(); }
-  //     this.data = args[0];
-  //   } else {
-  //     const x: number = typeof args[0] === "number" ? args[0] : 0;
-  //     const y: number = typeof args[1] === "number" ? args[1] : 0;
-  //     this.data = new Float32Array([ x, y ]);
-  //   }
-  // }
-
   public constructor(public x: number = 0, public y: number = 0) {}
 
   public Clone(): b2Vec2 {
@@ -409,6 +391,198 @@ export class b2Vec2 implements XY {
 }
 
 export const b2Vec2_zero: Readonly<b2Vec2> = new b2Vec2(0, 0);
+
+export class b2TypedVec2 implements b2Vec2 {
+  public readonly data: Float32Array;
+  public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
+  public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
+
+  constructor();
+  constructor(data: Float32Array);
+  constructor(x: number, y: number);
+  constructor(...args: any[]) {
+    if (args[0] instanceof Float32Array) {
+      if (args[0].length !== 2) { throw new Error(); }
+      this.data = args[0];
+    } else {
+      const x: number = typeof args[0] === "number" ? args[0] : 0;
+      const y: number = typeof args[1] === "number" ? args[1] : 0;
+      this.data = new Float32Array([ x, y ]);
+    }
+  }
+
+  public Clone(): b2TypedVec2 {
+    return new b2TypedVec2(new Float32Array(this.data));
+  }
+
+  public SetZero(): this {
+    this.x = 0;
+    this.y = 0;
+    return this;
+  }
+
+  public Set(x: number, y: number): this {
+    this.x = x;
+    this.y = y;
+    return this;
+  }
+
+  public Copy(other: XY): this {
+    if (other instanceof b2TypedVec2) {
+      this.data.set(other.data);
+    }
+    else {
+      this.x = other.x;
+      this.y = other.y;
+    }
+    return this;
+  }
+
+  public SelfAdd(v: XY): this {
+    this.x += v.x;
+    this.y += v.y;
+    return this;
+  }
+
+  public SelfAddXY(x: number, y: number): this {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+
+  public SelfSub(v: XY): this {
+    this.x -= v.x;
+    this.y -= v.y;
+    return this;
+  }
+
+  public SelfSubXY(x: number, y: number): this {
+    this.x -= x;
+    this.y -= y;
+    return this;
+  }
+
+  public SelfMul(s: number): this {
+    this.x *= s;
+    this.y *= s;
+    return this;
+  }
+
+  public SelfMulAdd(s: number, v: XY): this {
+    this.x += s * v.x;
+    this.y += s * v.y;
+    return this;
+  }
+
+  public SelfMulSub(s: number, v: XY): this {
+    this.x -= s * v.x;
+    this.y -= s * v.y;
+    return this;
+  }
+
+  public Dot(v: XY): number {
+    return this.x * v.x + this.y * v.y;
+  }
+
+  public Cross(v: XY): number {
+    return this.x * v.y - this.y * v.x;
+  }
+
+  public Length(): number {
+    const x: number = this.x, y: number = this.y;
+    return Math.sqrt(x * x + y * y);
+  }
+
+  public LengthSquared(): number {
+    const x: number = this.x, y: number = this.y;
+    return (x * x + y * y);
+  }
+
+  public Normalize(): number {
+    const length: number = this.Length();
+    if (length >= b2_epsilon) {
+      const inv_length: number = 1 / length;
+      this.x *= inv_length;
+      this.y *= inv_length;
+    }
+    return length;
+  }
+
+  public SelfNormalize(): this {
+    const length: number = this.Length();
+    if (length >= b2_epsilon) {
+      const inv_length: number = 1 / length;
+      this.x *= inv_length;
+      this.y *= inv_length;
+    }
+    return this;
+  }
+
+  public SelfRotate(radians: number): this {
+    const c: number = Math.cos(radians);
+    const s: number = Math.sin(radians);
+    const x: number = this.x;
+    this.x = c * x - s * this.y;
+    this.y = s * x + c * this.y;
+    return this;
+  }
+
+  public SelfRotateCosSin(c: number, s: number): this {
+    const x: number = this.x;
+    this.x = c * x - s * this.y;
+    this.y = s * x + c * this.y;
+    return this;
+  }
+
+  public IsValid(): boolean {
+    return isFinite(this.x) && isFinite(this.y);
+  }
+
+  public SelfCrossVS(s: number): this {
+    const x: number = this.x;
+    this.x =  s * this.y;
+    this.y = -s * x;
+    return this;
+  }
+
+  public SelfCrossSV(s: number): this {
+    const x: number = this.x;
+    this.x = -s * this.y;
+    this.y =  s * x;
+    return this;
+  }
+
+  public SelfMinV(v: XY): this {
+    this.x = b2Min(this.x, v.x);
+    this.y = b2Min(this.y, v.y);
+    return this;
+  }
+
+  public SelfMaxV(v: XY): this {
+    this.x = b2Max(this.x, v.x);
+    this.y = b2Max(this.y, v.y);
+    return this;
+  }
+
+  public SelfAbs(): this {
+    this.x = b2Abs(this.x);
+    this.y = b2Abs(this.y);
+    return this;
+  }
+
+  public SelfNeg(): this {
+    this.x = (-this.x);
+    this.y = (-this.y);
+    return this;
+  }
+
+  public SelfSkew(): this {
+    const x: number = this.x;
+    this.x = -this.y;
+    this.y = x;
+    return this;
+  }
+}
 
 export interface XYZ extends XY {
   z: number;

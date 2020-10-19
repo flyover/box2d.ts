@@ -43,27 +43,6 @@
   */
   /// Color for debug drawing. Each value has the range [0,1].
   class b2Color {
-      // public readonly data: Float32Array;
-      // public get r(): number { return this.data[0]; } public set r(value: number) { this.data[0] = value; }
-      // public get g(): number { return this.data[1]; } public set g(value: number) { this.data[1] = value; }
-      // public get b(): number { return this.data[2]; } public set b(value: number) { this.data[2] = value; }
-      // public get a(): number { return this.data[3]; } public set a(value: number) { this.data[3] = value; }
-      // constructor();
-      // constructor(data: Float32Array);
-      // constructor(rr: number, gg: number, bb: number);
-      // constructor(rr: number, gg: number, bb: number, aa: number);
-      // constructor(...args: any[]) {
-      //   if (args[0] instanceof Float32Array) {
-      //     if (args[0].length !== 4) { throw new Error(); }
-      //     this.data = args[0];
-      //   } else {
-      //     const rr: number = typeof args[0] === "number" ? args[0] : 0.5;
-      //     const gg: number = typeof args[1] === "number" ? args[1] : 0.5;
-      //     const bb: number = typeof args[2] === "number" ? args[2] : 0.5;
-      //     const aa: number = typeof args[3] === "number" ? args[3] : 1.0;
-      //     this.data = new Float32Array([ rr, gg, bb, aa ]);
-      //   }
-      // }
       constructor(r = 0.5, g = 0.5, b = 0.5, a = 1.0) {
           this.r = r;
           this.g = g;
@@ -195,6 +174,129 @@
   b2Color.RED = new b2Color(1, 0, 0);
   b2Color.GREEN = new b2Color(0, 1, 0);
   b2Color.BLUE = new b2Color(0, 0, 1);
+  class b2TypedColor {
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 4) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const rr = typeof args[0] === "number" ? args[0] : 0.5;
+              const gg = typeof args[1] === "number" ? args[1] : 0.5;
+              const bb = typeof args[2] === "number" ? args[2] : 0.5;
+              const aa = typeof args[3] === "number" ? args[3] : 1.0;
+              this.data = new Float32Array([rr, gg, bb, aa]);
+          }
+      }
+      get r() { return this.data[0]; }
+      set r(value) { this.data[0] = value; }
+      get g() { return this.data[1]; }
+      set g(value) { this.data[1] = value; }
+      get b() { return this.data[2]; }
+      set b(value) { this.data[2] = value; }
+      get a() { return this.data[3]; }
+      set a(value) { this.data[3] = value; }
+      Clone() {
+          return new b2TypedColor(new Float32Array(this.data));
+      }
+      Copy(other) {
+          if (other instanceof b2TypedColor) {
+              this.data.set(other.data);
+          }
+          else {
+              this.r = other.r;
+              this.g = other.g;
+              this.b = other.b;
+              this.a = other.a;
+          }
+          return this;
+      }
+      IsEqual(color) {
+          return (this.r === color.r) && (this.g === color.g) && (this.b === color.b) && (this.a === color.a);
+      }
+      IsZero() {
+          return (this.r === 0) && (this.g === 0) && (this.b === 0) && (this.a === 0);
+      }
+      Set(r, g, b, a = this.a) {
+          this.SetRGBA(r, g, b, a);
+      }
+      SetByteRGB(r, g, b) {
+          this.r = r / 0xff;
+          this.g = g / 0xff;
+          this.b = b / 0xff;
+          return this;
+      }
+      SetByteRGBA(r, g, b, a) {
+          this.r = r / 0xff;
+          this.g = g / 0xff;
+          this.b = b / 0xff;
+          this.a = a / 0xff;
+          return this;
+      }
+      SetRGB(rr, gg, bb) {
+          this.r = rr;
+          this.g = gg;
+          this.b = bb;
+          return this;
+      }
+      SetRGBA(rr, gg, bb, aa) {
+          this.r = rr;
+          this.g = gg;
+          this.b = bb;
+          this.a = aa;
+          return this;
+      }
+      SelfAdd(color) {
+          this.r += color.r;
+          this.g += color.g;
+          this.b += color.b;
+          this.a += color.a;
+          return this;
+      }
+      Add(color, out) {
+          out.r = this.r + color.r;
+          out.g = this.g + color.g;
+          out.b = this.b + color.b;
+          out.a = this.a + color.a;
+          return out;
+      }
+      SelfSub(color) {
+          this.r -= color.r;
+          this.g -= color.g;
+          this.b -= color.b;
+          this.a -= color.a;
+          return this;
+      }
+      Sub(color, out) {
+          out.r = this.r - color.r;
+          out.g = this.g - color.g;
+          out.b = this.b - color.b;
+          out.a = this.a - color.a;
+          return out;
+      }
+      SelfMul(s) {
+          this.r *= s;
+          this.g *= s;
+          this.b *= s;
+          this.a *= s;
+          return this;
+      }
+      Mul(s, out) {
+          out.r = this.r * s;
+          out.g = this.g * s;
+          out.b = this.b * s;
+          out.a = this.a * s;
+          return out;
+      }
+      Mix(mixColor, strength) {
+          b2Color.MixColors(this, mixColor, strength);
+      }
+      MakeStyleString(alpha = this.a) {
+          return b2Color.MakeStyleString(this.r, this.g, this.b, alpha);
+      }
+  }
   (function (b2DrawFlags) {
       b2DrawFlags[b2DrawFlags["e_none"] = 0] = "e_none";
       b2DrawFlags[b2DrawFlags["e_shapeBit"] = 1] = "e_shapeBit";
@@ -545,22 +647,6 @@
   }
   /// A 2D column vector.
   class b2Vec2 {
-      // public readonly data: Float32Array;
-      // public get x(): number { return this.data[0]; } public set x(value: number) { this.data[0] = value; }
-      // public get y(): number { return this.data[1]; } public set y(value: number) { this.data[1] = value; }
-      // constructor();
-      // constructor(data: Float32Array);
-      // constructor(x: number, y: number);
-      // constructor(...args: any[]) {
-      //   if (args[0] instanceof Float32Array) {
-      //     if (args[0].length !== 2) { throw new Error(); }
-      //     this.data = args[0];
-      //   } else {
-      //     const x: number = typeof args[0] === "number" ? args[0] : 0;
-      //     const y: number = typeof args[1] === "number" ? args[1] : 0;
-      //     this.data = new Float32Array([ x, y ]);
-      //   }
-      // }
       constructor(x = 0, y = 0) {
           this.x = x;
           this.y = y;
@@ -803,6 +889,170 @@
   b2Vec2.s_t2 = new b2Vec2();
   b2Vec2.s_t3 = new b2Vec2();
   const b2Vec2_zero = new b2Vec2(0, 0);
+  class b2TypedVec2 {
+      constructor(...args) {
+          if (args[0] instanceof Float32Array) {
+              if (args[0].length !== 2) {
+                  throw new Error();
+              }
+              this.data = args[0];
+          }
+          else {
+              const x = typeof args[0] === "number" ? args[0] : 0;
+              const y = typeof args[1] === "number" ? args[1] : 0;
+              this.data = new Float32Array([x, y]);
+          }
+      }
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
+      Clone() {
+          return new b2TypedVec2(new Float32Array(this.data));
+      }
+      SetZero() {
+          this.x = 0;
+          this.y = 0;
+          return this;
+      }
+      Set(x, y) {
+          this.x = x;
+          this.y = y;
+          return this;
+      }
+      Copy(other) {
+          if (other instanceof b2TypedVec2) {
+              this.data.set(other.data);
+          }
+          else {
+              this.x = other.x;
+              this.y = other.y;
+          }
+          return this;
+      }
+      SelfAdd(v) {
+          this.x += v.x;
+          this.y += v.y;
+          return this;
+      }
+      SelfAddXY(x, y) {
+          this.x += x;
+          this.y += y;
+          return this;
+      }
+      SelfSub(v) {
+          this.x -= v.x;
+          this.y -= v.y;
+          return this;
+      }
+      SelfSubXY(x, y) {
+          this.x -= x;
+          this.y -= y;
+          return this;
+      }
+      SelfMul(s) {
+          this.x *= s;
+          this.y *= s;
+          return this;
+      }
+      SelfMulAdd(s, v) {
+          this.x += s * v.x;
+          this.y += s * v.y;
+          return this;
+      }
+      SelfMulSub(s, v) {
+          this.x -= s * v.x;
+          this.y -= s * v.y;
+          return this;
+      }
+      Dot(v) {
+          return this.x * v.x + this.y * v.y;
+      }
+      Cross(v) {
+          return this.x * v.y - this.y * v.x;
+      }
+      Length() {
+          const x = this.x, y = this.y;
+          return Math.sqrt(x * x + y * y);
+      }
+      LengthSquared() {
+          const x = this.x, y = this.y;
+          return (x * x + y * y);
+      }
+      Normalize() {
+          const length = this.Length();
+          if (length >= b2_epsilon) {
+              const inv_length = 1 / length;
+              this.x *= inv_length;
+              this.y *= inv_length;
+          }
+          return length;
+      }
+      SelfNormalize() {
+          const length = this.Length();
+          if (length >= b2_epsilon) {
+              const inv_length = 1 / length;
+              this.x *= inv_length;
+              this.y *= inv_length;
+          }
+          return this;
+      }
+      SelfRotate(radians) {
+          const c = Math.cos(radians);
+          const s = Math.sin(radians);
+          const x = this.x;
+          this.x = c * x - s * this.y;
+          this.y = s * x + c * this.y;
+          return this;
+      }
+      SelfRotateCosSin(c, s) {
+          const x = this.x;
+          this.x = c * x - s * this.y;
+          this.y = s * x + c * this.y;
+          return this;
+      }
+      IsValid() {
+          return isFinite(this.x) && isFinite(this.y);
+      }
+      SelfCrossVS(s) {
+          const x = this.x;
+          this.x = s * this.y;
+          this.y = -s * x;
+          return this;
+      }
+      SelfCrossSV(s) {
+          const x = this.x;
+          this.x = -s * this.y;
+          this.y = s * x;
+          return this;
+      }
+      SelfMinV(v) {
+          this.x = b2Min(this.x, v.x);
+          this.y = b2Min(this.y, v.y);
+          return this;
+      }
+      SelfMaxV(v) {
+          this.x = b2Max(this.x, v.x);
+          this.y = b2Max(this.y, v.y);
+          return this;
+      }
+      SelfAbs() {
+          this.x = b2Abs(this.x);
+          this.y = b2Abs(this.y);
+          return this;
+      }
+      SelfNeg() {
+          this.x = (-this.x);
+          this.y = (-this.y);
+          return this;
+      }
+      SelfSkew() {
+          const x = this.x;
+          this.x = -this.y;
+          this.y = x;
+          return this;
+      }
+  }
   /// A 2D column vector with 3 elements.
   class b2Vec3 {
       constructor(...args) {
@@ -15818,40 +16068,46 @@
       SetFlagsBuffer(buffer) {
           this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer);
       }
-      SetPositionBuffer(buffer /*| Float32Array*/) {
-          // if (buffer instanceof Float32Array) {
-          //   if (buffer.length % 2 !== 0) { throw new Error(); }
-          //   const count: number = buffer.length / 2;
-          //   const array: b2Vec2[] = new Array(count);
-          //   for (let i = 0; i < count; ++i) {
-          //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          //   }
-          //   buffer = array;
-          // }
+      SetPositionBuffer(buffer) {
+          if (buffer instanceof Float32Array) {
+              if (buffer.length % 2 !== 0) {
+                  throw new Error();
+              }
+              const count = buffer.length / 2;
+              const array = new Array(count);
+              for (let i = 0; i < count; ++i) {
+                  array[i] = new b2TypedVec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_positionBuffer, buffer);
       }
-      SetVelocityBuffer(buffer /*| Float32Array*/) {
-          // if (buffer instanceof Float32Array) {
-          //   if (buffer.length % 2 !== 0) { throw new Error(); }
-          //   const count: number = buffer.length / 2;
-          //   const array: b2Vec2[] = new Array(count);
-          //   for (let i = 0; i < count; ++i) {
-          //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-          //   }
-          //   buffer = array;
-          // }
+      SetVelocityBuffer(buffer) {
+          if (buffer instanceof Float32Array) {
+              if (buffer.length % 2 !== 0) {
+                  throw new Error();
+              }
+              const count = buffer.length / 2;
+              const array = new Array(count);
+              for (let i = 0; i < count; ++i) {
+                  array[i] = new b2TypedVec2(buffer.subarray(i * 2, i * 2 + 2));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer);
       }
-      SetColorBuffer(buffer /*| Float32Array*/) {
-          // if (buffer instanceof Float32Array) {
-          //   if (buffer.length % 4 !== 0) { throw new Error(); }
-          //   const count: number = buffer.length / 4;
-          //   const array: b2Color[] = new Array(count);
-          //   for (let i = 0; i < count; ++i) {
-          //     array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-          //   }
-          //   buffer = array;
-          // }
+      SetColorBuffer(buffer) {
+          if (buffer instanceof Float32Array) {
+              if (buffer.length % 4 !== 0) {
+                  throw new Error();
+              }
+              const count = buffer.length / 4;
+              const array = new Array(count);
+              for (let i = 0; i < count; ++i) {
+                  array[i] = new b2TypedColor(buffer.subarray(i * 4, i * 4 + 4));
+              }
+              buffer = array;
+          }
           this.SetUserOverridableBuffer(this.m_colorBuffer, buffer);
       }
       SetUserDataBuffer(buffer) {

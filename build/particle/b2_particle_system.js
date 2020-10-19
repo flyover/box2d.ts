@@ -1225,40 +1225,46 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                 SetFlagsBuffer(buffer) {
                     this.SetUserOverridableBuffer(this.m_flagsBuffer, buffer);
                 }
-                SetPositionBuffer(buffer /*| Float32Array*/) {
-                    // if (buffer instanceof Float32Array) {
-                    //   if (buffer.length % 2 !== 0) { throw new Error(); }
-                    //   const count: number = buffer.length / 2;
-                    //   const array: b2Vec2[] = new Array(count);
-                    //   for (let i = 0; i < count; ++i) {
-                    //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-                    //   }
-                    //   buffer = array;
-                    // }
+                SetPositionBuffer(buffer) {
+                    if (buffer instanceof Float32Array) {
+                        if (buffer.length % 2 !== 0) {
+                            throw new Error();
+                        }
+                        const count = buffer.length / 2;
+                        const array = new Array(count);
+                        for (let i = 0; i < count; ++i) {
+                            array[i] = new b2_math_js_1.b2TypedVec2(buffer.subarray(i * 2, i * 2 + 2));
+                        }
+                        buffer = array;
+                    }
                     this.SetUserOverridableBuffer(this.m_positionBuffer, buffer);
                 }
-                SetVelocityBuffer(buffer /*| Float32Array*/) {
-                    // if (buffer instanceof Float32Array) {
-                    //   if (buffer.length % 2 !== 0) { throw new Error(); }
-                    //   const count: number = buffer.length / 2;
-                    //   const array: b2Vec2[] = new Array(count);
-                    //   for (let i = 0; i < count; ++i) {
-                    //     array[i] = new b2Vec2(buffer.subarray(i * 2, i * 2 + 2));
-                    //   }
-                    //   buffer = array;
-                    // }
+                SetVelocityBuffer(buffer) {
+                    if (buffer instanceof Float32Array) {
+                        if (buffer.length % 2 !== 0) {
+                            throw new Error();
+                        }
+                        const count = buffer.length / 2;
+                        const array = new Array(count);
+                        for (let i = 0; i < count; ++i) {
+                            array[i] = new b2_math_js_1.b2TypedVec2(buffer.subarray(i * 2, i * 2 + 2));
+                        }
+                        buffer = array;
+                    }
                     this.SetUserOverridableBuffer(this.m_velocityBuffer, buffer);
                 }
-                SetColorBuffer(buffer /*| Float32Array*/) {
-                    // if (buffer instanceof Float32Array) {
-                    //   if (buffer.length % 4 !== 0) { throw new Error(); }
-                    //   const count: number = buffer.length / 4;
-                    //   const array: b2Color[] = new Array(count);
-                    //   for (let i = 0; i < count; ++i) {
-                    //     array[i] = new b2Color(buffer.subarray(i * 4, i * 4 + 4));
-                    //   }
-                    //   buffer = array;
-                    // }
+                SetColorBuffer(buffer) {
+                    if (buffer instanceof Float32Array) {
+                        if (buffer.length % 4 !== 0) {
+                            throw new Error();
+                        }
+                        const count = buffer.length / 4;
+                        const array = new Array(count);
+                        for (let i = 0; i < count; ++i) {
+                            array[i] = new b2_draw_js_1.b2TypedColor(buffer.subarray(i * 4, i * 4 + 4));
+                        }
+                        buffer = array;
+                    }
                     this.SetUserOverridableBuffer(this.m_colorBuffer, buffer);
                 }
                 SetUserDataBuffer(buffer) {

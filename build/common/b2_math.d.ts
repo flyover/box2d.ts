@@ -91,6 +91,43 @@ export declare class b2Vec2 implements XY {
     static NegV<T extends XY>(v: XY, out: T): T;
 }
 export declare const b2Vec2_zero: Readonly<b2Vec2>;
+export declare class b2TypedVec2 implements b2Vec2 {
+    readonly data: Float32Array;
+    get x(): number;
+    set x(value: number);
+    get y(): number;
+    set y(value: number);
+    constructor();
+    constructor(data: Float32Array);
+    constructor(x: number, y: number);
+    Clone(): b2TypedVec2;
+    SetZero(): this;
+    Set(x: number, y: number): this;
+    Copy(other: XY): this;
+    SelfAdd(v: XY): this;
+    SelfAddXY(x: number, y: number): this;
+    SelfSub(v: XY): this;
+    SelfSubXY(x: number, y: number): this;
+    SelfMul(s: number): this;
+    SelfMulAdd(s: number, v: XY): this;
+    SelfMulSub(s: number, v: XY): this;
+    Dot(v: XY): number;
+    Cross(v: XY): number;
+    Length(): number;
+    LengthSquared(): number;
+    Normalize(): number;
+    SelfNormalize(): this;
+    SelfRotate(radians: number): this;
+    SelfRotateCosSin(c: number, s: number): this;
+    IsValid(): boolean;
+    SelfCrossVS(s: number): this;
+    SelfCrossSV(s: number): this;
+    SelfMinV(v: XY): this;
+    SelfMaxV(v: XY): this;
+    SelfAbs(): this;
+    SelfNeg(): this;
+    SelfSkew(): this;
+}
 export interface XYZ extends XY {
     z: number;
 }
