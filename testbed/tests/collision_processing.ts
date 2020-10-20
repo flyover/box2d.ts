@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class CollisionProcessing extends testbed.Test {
   constructor() {
@@ -173,3 +173,5 @@ export class CollisionProcessing extends testbed.Test {
     return new CollisionProcessing();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Collision Processing", CollisionProcessing.Create);

@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class ConveyorBelt extends testbed.Test {
     m_platform: b2.Fixture;
     constructor();
@@ -7,3 +7,4 @@ export declare class ConveyorBelt extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

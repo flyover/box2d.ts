@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class Rope extends testbed.Test {
     readonly m_rope1: b2.Rope;
     readonly m_rope2: b2.Rope;
@@ -17,3 +17,4 @@ export declare class Rope extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

@@ -3,7 +3,7 @@ Test case for collision/jerking issue.
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Skier extends testbed.Test {
   public m_platform_width: number;
@@ -133,3 +133,5 @@ export class Skier extends testbed.Test {
     return new Skier();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Bugs", "Skier", Skier.Create);

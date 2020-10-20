@@ -15,9 +15,9 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["@box2d", "../testbed.js"], function (exports_1, context_1) {
+System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, Mobile;
+    var b2, testbed, Mobile, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -85,6 +85,7 @@ System.register(["@box2d", "../testbed.js"], function (exports_1, context_1) {
             };
             exports_1("Mobile", Mobile);
             Mobile.e_depth = 4;
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create));
         }
     };
 });

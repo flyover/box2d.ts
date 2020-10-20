@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class BulletTest extends testbed.Test {
   public m_body: b2.Body;
@@ -128,3 +128,5 @@ export class BulletTest extends testbed.Test {
     return new BulletTest();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Continuous", "Bullet Test", BulletTest.Create);

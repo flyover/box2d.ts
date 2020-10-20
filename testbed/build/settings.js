@@ -28,7 +28,7 @@ System.register(["@box2d"], function (exports_1, context_1) {
                     // #if B2_ENABLE_PARTICLE
                     this.m_drawParticles = true;
                     // #endif
-                    this.m_drawJoints = false;
+                    this.m_drawJoints = true;
                     this.m_drawAABBs = false;
                     this.m_drawContactPoints = false;
                     this.m_drawContactNormals = false;
@@ -65,7 +65,7 @@ System.register(["@box2d"], function (exports_1, context_1) {
                     // #if B2_ENABLE_PARTICLE
                     this.m_drawParticles = true;
                     // #endif
-                    this.m_drawJoints = false;
+                    this.m_drawJoints = true;
                     this.m_drawAABBs = false;
                     this.m_drawContactPoints = false;
                     this.m_drawContactNormals = false;

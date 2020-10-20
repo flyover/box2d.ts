@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Web extends testbed.Test {
   public m_bodies: Array<b2.Body | null>;
@@ -204,3 +204,5 @@ export class Web extends testbed.Test {
     return new Web();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Web", Web.Create);

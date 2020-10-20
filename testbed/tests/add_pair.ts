@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class AddPair extends testbed.Test {
   constructor() {
@@ -66,3 +66,5 @@ export class AddPair extends testbed.Test {
     return new AddPair();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Benchmark", "Add Pair", AddPair.Create);

@@ -1,8 +1,7 @@
 import * as b2 from "@box2d";
 import { Settings } from "./settings.js";
-import { Test } from "./test.js";
+import { Test, g_testEntries } from "./test.js";
 import { g_debugDraw, g_camera } from "./draw.js";
-import { g_testEntries } from "./tests/test_entries.js";
 
 export class Main {
   public m_time_last: number = 0;
@@ -14,6 +13,7 @@ export class Main {
   public readonly m_settings: Settings = new Settings();
   public m_test?: Test;
   public m_test_select: HTMLSelectElement;
+  public m_test_options: HTMLOptionElement[];
   public m_shift: boolean = false;
   public m_ctrl: boolean = false;
   public m_lMouseDown: boolean = false;
@@ -109,19 +109,26 @@ export class Main {
     controls_div.appendChild(document.createTextNode("Tests"));
     controls_div.appendChild(document.createElement("br"));
     const test_select: HTMLSelectElement = document.createElement("select");
+    const test_options: HTMLOptionElement[] = [];
     for (let i: number = 0; i < g_testEntries.length; ++i) {
       const option: HTMLOptionElement = document.createElement("option");
-      option.text = g_testEntries[i].name;
+      option.text = `${g_testEntries[i].category}:${g_testEntries[i].name}`;
       option.value = i.toString();
+      test_options.push(option);
+    }
+    test_options.sort((a: HTMLOptionElement, b: HTMLOptionElement) => a.text.localeCompare(b.text));
+    for (let i: number = 0; i < test_options.length; ++i) {
+      const option: HTMLOptionElement = test_options[i];
       test_select.add(option);
     }
-    test_select.selectedIndex = this.m_settings.m_testIndex;
+    test_select.selectedIndex = this.m_settings.m_testIndex = 76;
     test_select.addEventListener("change", (e: Event): void => {
       this.m_settings.m_testIndex = test_select.selectedIndex;
       this.LoadTest();
     });
     controls_div.appendChild(test_select);
     this.m_test_select = test_select;
+    this.m_test_options = test_options;
     controls_div.appendChild(document.createElement("br"));
 
     controls_div.appendChild(document.createElement("hr"));
@@ -480,7 +487,7 @@ export class Main {
 
   public DecrementTest(): void {
     if (this.m_settings.m_testIndex <= 0) {
-      this.m_settings.m_testIndex = g_testEntries.length;
+      this.m_settings.m_testIndex = this.m_test_options.length;
     }
     this.m_settings.m_testIndex--;
     this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
@@ -489,7 +496,7 @@ export class Main {
 
   public IncrementTest(): void {
     this.m_settings.m_testIndex++;
-    if (this.m_settings.m_testIndex >= g_testEntries.length) {
+    if (this.m_settings.m_testIndex >= this.m_test_options.length) {
       this.m_settings.m_testIndex = 0;
     }
     this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
@@ -507,7 +514,7 @@ export class Main {
       this.m_test.RestoreParticleParameters();
     }
     // #endif
-    this.m_test = g_testEntries[this.m_settings.m_testIndex].createFcn();
+    this.m_test = g_testEntries[parseInt(this.m_test_options[this.m_settings.m_testIndex].value)].createFcn();
     if (!restartTest) {
       this.HomeCamera();
     }
@@ -585,14 +592,14 @@ export class Main {
         // #endif
 
         // #if B2_ENABLE_PARTICLE
-        let msg = g_testEntries[this.m_settings.m_testIndex].name;
+        let msg = this.m_test_options[this.m_settings.m_testIndex].text;
         if (Test.fullscreenUI.GetParticleParameterSelectionEnabled()) {
           msg += " : ";
           msg += Test.particleParameter.GetName();
         }
         if (this.m_test) { this.m_test.DrawTitle(msg); }
         // #else
-        // if (this.m_test) { this.m_test.DrawTitle(g_testEntries[this.m_settings.m_testIndex].name); }
+        // if (this.m_test) { this.m_test.DrawTitle(this.m_test_options[this.m_settings.m_testIndex].text); }
         // #endif
 
         // ctx.strokeStyle = "yellow";
@@ -611,3 +618,99 @@ export class Main {
     }
   }
 }
+
+import "./tests/add_pair.js";
+import "./tests/apply_force.js";
+import "./tests/body_types.js";
+import "./tests/box_stack.js";
+import "./tests/breakable.js";
+import "./tests/bridge.js";
+import "./tests/bullet_test.js";
+import "./tests/cantilever.js";
+import "./tests/car.js";
+import "./tests/chain.js";
+import "./tests/character_collision.js";
+import "./tests/circle_stack.js";
+import "./tests/collision_filtering.js";
+import "./tests/collision_processing.js";
+import "./tests/compound_shapes.js";
+import "./tests/confined.js";
+import "./tests/continuous_test.js";
+import "./tests/convex_hull.js";
+import "./tests/conveyor_belt.js";
+import "./tests/distance_test.js";
+import "./tests/dominos.js";
+import "./tests/dump_loader.js";
+import "./tests/dynamic_tree.js";
+import "./tests/edge_shapes.js";
+import "./tests/edge_test.js";
+import "./tests/friction.js";
+import "./tests/gear_joint.js";
+import "./tests/heavy1.js";
+import "./tests/heavy2.js";
+import "./tests/mobile_balanced.js";
+import "./tests/mobile_unbalanced.js";
+import "./tests/motor_joint.js";
+import "./tests/pinball.js";
+import "./tests/platformer.js";
+import "./tests/polygon_collision.js";
+import "./tests/polygon_shapes.js";
+import "./tests/prismatic_joint.js";
+import "./tests/pulley_joint.js";
+import "./tests/pyramid.js";
+import "./tests/ray_cast.js";
+import "./tests/restitution.js";
+import "./tests/revolute_joint.js";
+import "./tests/rope.js";
+import "./tests/sensor.js";
+import "./tests/shape_cast.js";
+import "./tests/shape_editing.js";
+import "./tests/skier.js";
+import "./tests/slider_crank_1.js";
+import "./tests/slider_crank_2.js";
+import "./tests/theo_jansen.js";
+import "./tests/tiles.js";
+import "./tests/time_of_impact.js";
+import "./tests/tumbler.js";
+import "./tests/web.js";
+import "./tests/wheel_joint.js";
+import "./tests/wrecking_ball.js";
+
+import "./tests/extras/blob_test.js";
+import "./tests/extras/domino_tower.js";
+import "./tests/extras/pyramid_topple.js";
+import "./tests/extras/test_ccd.js";
+import "./tests/extras/test_ragdoll.js";
+import "./tests/extras/test_stack.js";
+import "./tests/extras/top_down_car.js";
+import "./tests/extras/segway.js";
+
+// #if B2_ENABLE_CONTROLLER
+import "./tests/extras/buoyancy_test.js";
+// #endif
+
+// #if B2_ENABLE_PARTICLE
+import "./tests/particles/anti_pointy.js";
+import "./tests/particles/corner_case.js";
+import "./tests/particles/dam_break.js";
+import "./tests/particles/drawing_particles.js";
+import "./tests/particles/elastic_particles.js";
+import "./tests/particles/eye_candy.js";
+import "./tests/particles/faucet.js";
+import "./tests/particles/fracker.js";
+import "./tests/particles/impulse.js";
+import "./tests/particles/liquid_timer.js";
+import "./tests/particles/maxwell.js";
+import "./tests/particles/multiple_particle_systems.js";
+import "./tests/particles/particle_collision_filter.js";
+import "./tests/particles/particles_surface_tension.js";
+import "./tests/particles/particles.js";
+import "./tests/particles/pointy.js";
+import "./tests/particles/ramp.js";
+import "./tests/particles/rigid_particles.js";
+import "./tests/particles/sandbox.js";
+import "./tests/particles/soup_stirrer.js";
+import "./tests/particles/soup.js";
+import "./tests/particles/sparky.js";
+import "./tests/particles/wave_machine.js";
+// #endif

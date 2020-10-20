@@ -17,7 +17,7 @@
  */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class HeavyOnLightTwo extends testbed.Test {
   public m_heavy: b2.Body | null = null;
@@ -84,3 +84,5 @@ export class HeavyOnLightTwo extends testbed.Test {
     return new HeavyOnLightTwo();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Solver", "Heavy 2", HeavyOnLightTwo.Create);

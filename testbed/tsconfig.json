@@ -12,7 +12,8 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@box2d": [ "../build/index" ]
+      "@box2d": [ "../build/index" ],
+      "@testbed": [ "./testbed" ]
     }
   },
   "include": [

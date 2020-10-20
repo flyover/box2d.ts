@@ -1,6 +1,6 @@
-System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/test_entries.js"], function (exports_1, context_1) {
+System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/add_pair.js", "./tests/apply_force.js", "./tests/body_types.js", "./tests/box_stack.js", "./tests/breakable.js", "./tests/bridge.js", "./tests/bullet_test.js", "./tests/cantilever.js", "./tests/car.js", "./tests/chain.js", "./tests/character_collision.js", "./tests/circle_stack.js", "./tests/collision_filtering.js", "./tests/collision_processing.js", "./tests/compound_shapes.js", "./tests/confined.js", "./tests/continuous_test.js", "./tests/convex_hull.js", "./tests/conveyor_belt.js", "./tests/distance_test.js", "./tests/dominos.js", "./tests/dump_loader.js", "./tests/dynamic_tree.js", "./tests/edge_shapes.js", "./tests/edge_test.js", "./tests/friction.js", "./tests/gear_joint.js", "./tests/heavy1.js", "./tests/heavy2.js", "./tests/mobile_balanced.js", "./tests/mobile_unbalanced.js", "./tests/motor_joint.js", "./tests/pinball.js", "./tests/platformer.js", "./tests/polygon_collision.js", "./tests/polygon_shapes.js", "./tests/prismatic_joint.js", "./tests/pulley_joint.js", "./tests/pyramid.js", "./tests/ray_cast.js", "./tests/restitution.js", "./tests/revolute_joint.js", "./tests/rope.js", "./tests/sensor.js", "./tests/shape_cast.js", "./tests/shape_editing.js", "./tests/skier.js", "./tests/slider_crank_1.js", "./tests/slider_crank_2.js", "./tests/theo_jansen.js", "./tests/tiles.js", "./tests/time_of_impact.js", "./tests/tumbler.js", "./tests/web.js", "./tests/wheel_joint.js", "./tests/wrecking_ball.js", "./tests/extras/blob_test.js", "./tests/extras/domino_tower.js", "./tests/extras/pyramid_topple.js", "./tests/extras/test_ccd.js", "./tests/extras/test_ragdoll.js", "./tests/extras/test_stack.js", "./tests/extras/top_down_car.js", "./tests/extras/segway.js", "./tests/extras/buoyancy_test.js", "./tests/particles/anti_pointy.js", "./tests/particles/corner_case.js", "./tests/particles/dam_break.js", "./tests/particles/drawing_particles.js", "./tests/particles/elastic_particles.js", "./tests/particles/eye_candy.js", "./tests/particles/faucet.js", "./tests/particles/fracker.js", "./tests/particles/impulse.js", "./tests/particles/liquid_timer.js", "./tests/particles/maxwell.js", "./tests/particles/multiple_particle_systems.js", "./tests/particles/particle_collision_filter.js", "./tests/particles/particles_surface_tension.js", "./tests/particles/particles.js", "./tests/particles/pointy.js", "./tests/particles/ramp.js", "./tests/particles/rigid_particles.js", "./tests/particles/sandbox.js", "./tests/particles/soup_stirrer.js", "./tests/particles/soup.js", "./tests/particles/sparky.js", "./tests/particles/wave_machine.js"], function (exports_1, context_1) {
     "use strict";
-    var b2, settings_js_1, test_js_1, draw_js_1, test_entries_js_1, Main;
+    var b2, settings_js_1, test_js_1, draw_js_1, Main;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -16,8 +16,181 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
             function (draw_js_1_1) {
                 draw_js_1 = draw_js_1_1;
             },
-            function (test_entries_js_1_1) {
-                test_entries_js_1 = test_entries_js_1_1;
+            function (_1) {
+            },
+            function (_2) {
+            },
+            function (_3) {
+            },
+            function (_4) {
+            },
+            function (_5) {
+            },
+            function (_6) {
+            },
+            function (_7) {
+            },
+            function (_8) {
+            },
+            function (_9) {
+            },
+            function (_10) {
+            },
+            function (_11) {
+            },
+            function (_12) {
+            },
+            function (_13) {
+            },
+            function (_14) {
+            },
+            function (_15) {
+            },
+            function (_16) {
+            },
+            function (_17) {
+            },
+            function (_18) {
+            },
+            function (_19) {
+            },
+            function (_20) {
+            },
+            function (_21) {
+            },
+            function (_22) {
+            },
+            function (_23) {
+            },
+            function (_24) {
+            },
+            function (_25) {
+            },
+            function (_26) {
+            },
+            function (_27) {
+            },
+            function (_28) {
+            },
+            function (_29) {
+            },
+            function (_30) {
+            },
+            function (_31) {
+            },
+            function (_32) {
+            },
+            function (_33) {
+            },
+            function (_34) {
+            },
+            function (_35) {
+            },
+            function (_36) {
+            },
+            function (_37) {
+            },
+            function (_38) {
+            },
+            function (_39) {
+            },
+            function (_40) {
+            },
+            function (_41) {
+            },
+            function (_42) {
+            },
+            function (_43) {
+            },
+            function (_44) {
+            },
+            function (_45) {
+            },
+            function (_46) {
+            },
+            function (_47) {
+            },
+            function (_48) {
+            },
+            function (_49) {
+            },
+            function (_50) {
+            },
+            function (_51) {
+            },
+            function (_52) {
+            },
+            function (_53) {
+            },
+            function (_54) {
+            },
+            function (_55) {
+            },
+            function (_56) {
+            },
+            function (_57) {
+            },
+            function (_58) {
+            },
+            function (_59) {
+            },
+            function (_60) {
+            },
+            function (_61) {
+            },
+            function (_62) {
+            },
+            function (_63) {
+            },
+            function (_64) {
+            },
+            function (_65) {
+            },
+            function (_66) {
+            },
+            function (_67) {
+            },
+            function (_68) {
+            },
+            function (_69) {
+            },
+            function (_70) {
+            },
+            function (_71) {
+            },
+            function (_72) {
+            },
+            function (_73) {
+            },
+            function (_74) {
+            },
+            function (_75) {
+            },
+            function (_76) {
+            },
+            function (_77) {
+            },
+            function (_78) {
+            },
+            function (_79) {
+            },
+            function (_80) {
+            },
+            function (_81) {
+            },
+            function (_82) {
+            },
+            function (_83) {
+            },
+            function (_84) {
+            },
+            function (_85) {
+            },
+            function (_86) {
+            },
+            function (_87) {
+            },
+            function (_88) {
             }
         ],
         execute: function () {
@@ -107,19 +280,26 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
                     controls_div.appendChild(document.createTextNode("Tests"));
                     controls_div.appendChild(document.createElement("br"));
                     const test_select = document.createElement("select");
-                    for (let i = 0; i < test_entries_js_1.g_testEntries.length; ++i) {
+                    const test_options = [];
+                    for (let i = 0; i < test_js_1.g_testEntries.length; ++i) {
                         const option = document.createElement("option");
-                        option.text = test_entries_js_1.g_testEntries[i].name;
+                        option.text = `${test_js_1.g_testEntries[i].category}:${test_js_1.g_testEntries[i].name}`;
                         option.value = i.toString();
+                        test_options.push(option);
+                    }
+                    test_options.sort((a, b) => a.text.localeCompare(b.text));
+                    for (let i = 0; i < test_options.length; ++i) {
+                        const option = test_options[i];
                         test_select.add(option);
                     }
-                    test_select.selectedIndex = this.m_settings.m_testIndex;
+                    test_select.selectedIndex = this.m_settings.m_testIndex = 76;
                     test_select.addEventListener("change", (e) => {
                         this.m_settings.m_testIndex = test_select.selectedIndex;
                         this.LoadTest();
                     });
                     controls_div.appendChild(test_select);
                     this.m_test_select = test_select;
+                    this.m_test_options = test_options;
                     controls_div.appendChild(document.createElement("br"));
                     controls_div.appendChild(document.createElement("hr"));
                     // simulation number inputs
@@ -459,7 +639,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
                 }
                 DecrementTest() {
                     if (this.m_settings.m_testIndex <= 0) {
-                        this.m_settings.m_testIndex = test_entries_js_1.g_testEntries.length;
+                        this.m_settings.m_testIndex = this.m_test_options.length;
                     }
                     this.m_settings.m_testIndex--;
                     this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
@@ -467,7 +647,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
                 }
                 IncrementTest() {
                     this.m_settings.m_testIndex++;
-                    if (this.m_settings.m_testIndex >= test_entries_js_1.g_testEntries.length) {
+                    if (this.m_settings.m_testIndex >= this.m_test_options.length) {
                         this.m_settings.m_testIndex = 0;
                     }
                     this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
@@ -486,7 +666,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
                         this.m_test.RestoreParticleParameters();
                     }
                     // #endif
-                    this.m_test = test_entries_js_1.g_testEntries[this.m_settings.m_testIndex].createFcn();
+                    this.m_test = test_js_1.g_testEntries[parseInt(this.m_test_options[this.m_settings.m_testIndex].value)].createFcn();
                     if (!restartTest) {
                         this.HomeCamera();
                     }
@@ -548,7 +728,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
                             test_js_1.Test.particleParameter.Changed(restartTest);
                             // #endif
                             // #if B2_ENABLE_PARTICLE
-                            let msg = test_entries_js_1.g_testEntries[this.m_settings.m_testIndex].name;
+                            let msg = this.m_test_options[this.m_settings.m_testIndex].text;
                             if (test_js_1.Test.fullscreenUI.GetParticleParameterSelectionEnabled()) {
                                 msg += " : ";
                                 msg += test_js_1.Test.particleParameter.GetName();
@@ -557,7 +737,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/t
                                 this.m_test.DrawTitle(msg);
                             }
                             // #else
-                            // if (this.m_test) { this.m_test.DrawTitle(g_testEntries[this.m_settings.m_testIndex].name); }
+                            // if (this.m_test) { this.m_test.DrawTitle(this.m_test_options[this.m_settings.m_testIndex].text); }
                             // #endif
                             // ctx.strokeStyle = "yellow";
                             // ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);

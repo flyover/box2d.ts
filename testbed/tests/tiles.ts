@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 /**
  * This stress tests the dynamic tree broad-phase. This also
@@ -168,3 +168,5 @@ export class Tiles extends testbed.Test {
     return new Tiles();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Benchmark", "Tiles", Tiles.Create);

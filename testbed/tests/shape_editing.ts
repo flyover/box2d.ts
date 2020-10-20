@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class ShapeEditing extends testbed.Test {
   public m_body: b2.Body;
@@ -88,3 +88,5 @@ export class ShapeEditing extends testbed.Test {
     return new ShapeEditing();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Shape Editing", ShapeEditing.Create);

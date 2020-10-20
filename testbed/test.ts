@@ -15,13 +15,22 @@ export function RandomFloat(lo: number = -1, hi: number = 1) {
 }
 
 export class TestEntry {
+  public category: string = "";
   public name: string = "unknown";
   public createFcn: () => Test;
 
-  constructor(name: string, createFcn: () => Test) {
+  constructor(category: string, name: string, createFcn: () => Test) {
+    this.category = category;
     this.name = name;
     this.createFcn = createFcn;
   }
+}
+
+export const g_testEntries: TestEntry[] = [
+]
+
+export function RegisterTest(category: string, name: string, fcn: () => Test): number {
+  return g_testEntries.push(new TestEntry(category, name, fcn));
 }
 
 export class DestructionListener extends b2.DestructionListener {

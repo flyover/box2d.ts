@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class TimeOfImpact extends testbed.Test {
   public m_shapeA: b2.PolygonShape = new b2.PolygonShape();
@@ -117,3 +117,5 @@ export class TimeOfImpact extends testbed.Test {
     return new TimeOfImpact();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);

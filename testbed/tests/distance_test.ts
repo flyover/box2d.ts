@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class DistanceTest extends testbed.Test {
   public m_positionB = new b2.Vec2();
@@ -123,3 +123,5 @@ export class DistanceTest extends testbed.Test {
     return new DistanceTest();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Geometry", "Distance Test", DistanceTest.Create);

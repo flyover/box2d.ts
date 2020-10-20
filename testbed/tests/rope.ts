@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 ///
 export class Rope extends testbed.Test {
@@ -306,6 +306,9 @@ export class Rope extends testbed.Test {
     return new Rope();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Rope", "Bending", Rope.Create);
+
 // class Rope : public Test
 // {
 // public:

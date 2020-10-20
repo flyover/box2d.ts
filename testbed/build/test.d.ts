@@ -5,10 +5,13 @@ import { ParticleParameter, ParticleParameterValue, ParticleParameterDefinition 
 export declare const DRAW_STRING_NEW_LINE: number;
 export declare function RandomFloat(lo?: number, hi?: number): number;
 export declare class TestEntry {
+    category: string;
     name: string;
     createFcn: () => Test;
-    constructor(name: string, createFcn: () => Test);
+    constructor(category: string, name: string, createFcn: () => Test);
 }
+export declare const g_testEntries: TestEntry[];
+export declare function RegisterTest(category: string, name: string, fcn: () => Test): number;
 export declare class DestructionListener extends b2.DestructionListener {
     test: Test;
     constructor(test: Test);

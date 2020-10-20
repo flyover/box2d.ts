@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class Breakable extends testbed.Test {
     static readonly e_count = 7;
     readonly m_body1: b2.Body;
@@ -17,3 +17,4 @@ export declare class Breakable extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

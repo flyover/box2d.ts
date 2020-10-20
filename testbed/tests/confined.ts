@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Confined extends testbed.Test {
   public static readonly e_columnCount = 0;
@@ -143,3 +143,5 @@ export class Confined extends testbed.Test {
     return new Confined();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Solver", "Confined", Confined.Create);

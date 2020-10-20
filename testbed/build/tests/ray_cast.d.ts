@@ -1,4 +1,4 @@
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class RayCast extends testbed.Test {
     private static e_maxBodies;
     private m_bodyIndex;
@@ -15,3 +15,4 @@ export declare class RayCast extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

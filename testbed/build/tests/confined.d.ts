@@ -1,4 +1,4 @@
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class Confined extends testbed.Test {
     static readonly e_columnCount = 0;
     static readonly e_rowCount = 0;
@@ -8,3 +8,4 @@ export declare class Confined extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

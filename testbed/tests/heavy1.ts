@@ -17,7 +17,7 @@
  */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class HeavyOnLight extends testbed.Test {
   constructor() {
@@ -57,3 +57,5 @@ export class HeavyOnLight extends testbed.Test {
     return new HeavyOnLight();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Solver", "Heavy 1", HeavyOnLight.Create);

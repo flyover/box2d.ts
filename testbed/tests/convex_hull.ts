@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class ConvexHull extends testbed.Test {
   public static readonly e_count = 10;
@@ -88,3 +88,5 @@ export class ConvexHull extends testbed.Test {
     return new ConvexHull();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Geometry", "Convex Hull", ConvexHull.Create);

@@ -9,7 +9,8 @@
     <script type="systemjs-importmap">
       {
         "imports": {
-          "@box2d": "../build/index.js"
+          "@box2d": "../build/index.js",
+          "@testbed": "./build/testbed.js"
         }
       }
     </script>
@@ -17,7 +18,7 @@
     <script type="text/javascript">
 
     function boot(args) {
-      System.import("./build/testbed.js").then(function(testbed) {
+      System.import("@testbed").then(function(testbed) {
         let app;
         const init = function(time) {
           app = new testbed.Main(time);

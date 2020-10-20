@@ -23,7 +23,7 @@
           // #if B2_ENABLE_PARTICLE
           this.m_drawParticles = true;
           // #endif
-          this.m_drawJoints = false;
+          this.m_drawJoints = true;
           this.m_drawAABBs = false;
           this.m_drawContactPoints = false;
           this.m_drawContactNormals = false;
@@ -60,7 +60,7 @@
           // #if B2_ENABLE_PARTICLE
           this.m_drawParticles = true;
           // #endif
-          this.m_drawJoints = false;
+          this.m_drawJoints = true;
           this.m_drawAABBs = false;
           this.m_drawContactPoints = false;
           this.m_drawContactNormals = false;
@@ -893,11 +893,17 @@
       return r;
   }
   class TestEntry {
-      constructor(name, createFcn) {
+      constructor(category, name, createFcn) {
+          this.category = "";
           this.name = "unknown";
+          this.category = category;
           this.name = name;
           this.createFcn = createFcn;
       }
+  }
+  const g_testEntries = [];
+  function RegisterTest(category, name, fcn) {
+      return g_testEntries.push(new TestEntry(category, name, fcn));
   }
   class DestructionListener extends b2.DestructionListener {
       constructor(test) {
@@ -1511,6 +1517,7 @@
           return new AddPair();
       }
   }
+  const testIndex = RegisterTest("Benchmark", "Add Pair", AddPair.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -1694,102 +1701,7 @@
           return new ApplyForce();
       }
   }
-
-  /*
-   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class BasicSliderCrank extends Test {
-      constructor() {
-          super();
-          /*b2.Body*/
-          let ground = null;
-          {
-              /*b2.BodyDef*/
-              const bd = new b2.BodyDef();
-              bd.position.Set(0.0, 17.0);
-              ground = this.m_world.CreateBody(bd);
-          }
-          {
-              /*b2.Body*/
-              let prevBody = ground;
-              // Define crank.
-              {
-                  /*b2.PolygonShape*/
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(4.0, 1.0);
-                  /*b2.BodyDef*/
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(-8.0, 20.0);
-                  /*b2.Body*/
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-                  /*b2.RevoluteJointDef*/
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(-12.0, 20.0));
-                  this.m_world.CreateJoint(rjd);
-                  prevBody = body;
-              }
-              // Define connecting rod
-              {
-                  /*b2.PolygonShape*/
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(8.0, 1.0);
-                  /*b2.BodyDef*/
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(4.0, 20.0);
-                  /*b2.Body*/
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-                  /*b2.RevoluteJointDef*/
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(-4.0, 20.0));
-                  this.m_world.CreateJoint(rjd);
-                  prevBody = body;
-              }
-              // Define piston
-              {
-                  /*b2.PolygonShape*/
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(3.0, 3.0);
-                  /*b2.BodyDef*/
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.fixedRotation = true;
-                  bd.position.Set(12.0, 20.0);
-                  /*b2.Body*/
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-                  /*b2.RevoluteJointDef*/
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(12.0, 20.0));
-                  this.m_world.CreateJoint(rjd);
-                  /*b2.PrismaticJointDef*/
-                  const pjd = new b2.PrismaticJointDef();
-                  pjd.Initialize(ground, body, new b2.Vec2(12.0, 17.0), new b2.Vec2(1.0, 0.0));
-                  this.m_world.CreateJoint(pjd);
-              }
-          }
-      }
-      static Create() {
-          return new BasicSliderCrank();
-      }
-  }
+  const testIndex$1 = RegisterTest("Forces", "Apply Force", ApplyForce.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -1921,6 +1833,126 @@
           return new BodyTypes();
       }
   }
+  const testIndex$2 = RegisterTest("Examples", "Body Types", BodyTypes.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class VerticalStack extends Test {
+      constructor() {
+          super();
+          this.m_bullet = null;
+          this.m_bodies = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
+          this.m_indices = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+              shape.SetTwoSided(new b2.Vec2(20.0, 0.0), new b2.Vec2(20.0, 20.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          const xs = [0.0, -10.0, -5.0, 5.0, 10.0];
+          for (let j = 0; j < VerticalStack.e_columnCount; ++j) {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.5, 0.5);
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.density = 1.0;
+              fd.friction = 0.3;
+              for (let i = 0; i < VerticalStack.e_rowCount; ++i) {
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const n = j * VerticalStack.e_rowCount + i;
+                  // DEBUG: b2.Assert(n < VerticalStack.e_rowCount * VerticalStack.e_columnCount);
+                  this.m_indices[n] = n;
+                  bd.userData = this.m_indices[n];
+                  const x = 0.0;
+                  //const x = b2.RandomRange(-0.02, 0.02);
+                  //const x = i % 2 === 0 ? -0.01 : 0.01;
+                  bd.position.Set(xs[j] + x, 0.55 + 1.1 * i);
+                  const body = this.m_world.CreateBody(bd);
+                  this.m_bodies[n] = body;
+                  body.CreateFixture(fd);
+              }
+          }
+      }
+      Keyboard(key) {
+          switch (key) {
+              case ",":
+                  if (this.m_bullet) {
+                      this.m_world.DestroyBody(this.m_bullet);
+                      this.m_bullet = null;
+                  }
+                  {
+                      const shape = new b2.CircleShape();
+                      shape.m_radius = 0.25;
+                      const fd = new b2.FixtureDef();
+                      fd.shape = shape;
+                      fd.density = 20.0;
+                      fd.restitution = 0.05;
+                      const bd = new b2.BodyDef();
+                      bd.type = b2.BodyType.b2_dynamicBody;
+                      bd.bullet = true;
+                      bd.position.Set(-31.0, 5.0);
+                      this.m_bullet = this.m_world.CreateBody(bd);
+                      this.m_bullet.CreateFixture(fd);
+                      this.m_bullet.SetLinearVelocity(new b2.Vec2(400.0, 0.0));
+                  }
+                  break;
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          g_debugDraw.DrawString(5, this.m_textLine, "Press: (,) to launch a bullet.");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          // testbed.g_debugDraw.DrawString(5, this.m_textLine, `Blocksolve = ${(b2.blockSolve) ? (1) : (0)}`);
+          //if (this.m_stepCount === 300)
+          //{
+          //  if (this.m_bullet !== null)
+          //  {
+          //    this.m_world.DestroyBody(this.m_bullet);
+          //    this.m_bullet = null;
+          //  }
+          //  {
+          //    const shape = new b2.CircleShape();
+          //    shape.m_radius = 0.25;
+          //    const fd = new b2.FixtureDef();
+          //    fd.shape = shape;
+          //    fd.density = 20.0;
+          //    fd.restitution = 0.05;
+          //    const bd = new b2.BodyDef();
+          //    bd.type = b2.BodyType.b2_dynamicBody;
+          //    bd.bullet = true;
+          //    bd.position.Set(-31.0, 5.0);
+          //    this.m_bullet = this.m_world.CreateBody(bd);
+          //    this.m_bullet.CreateFixture(fd);
+          //    this.m_bullet.SetLinearVelocity(new b2.Vec2(400.0, 0.0));
+          //  }
+          //}
+      }
+      static Create() {
+          return new VerticalStack();
+      }
+  }
+  VerticalStack.e_columnCount = 1;
+  VerticalStack.e_rowCount = 15;
+  const testIndex$3 = RegisterTest("Stacking", "Boxes", VerticalStack.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -2048,6 +2080,7 @@
       }
   }
   Breakable.e_count = 7;
+  const testIndex$4 = RegisterTest("Examples", "Breakable", Breakable.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -2141,6 +2174,7 @@
       }
   }
   Bridge.e_count = 30;
+  const testIndex$5 = RegisterTest("Joints", "Bridge", Bridge.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -2243,6 +2277,7 @@
           return new BulletTest();
       }
   }
+  const testIndex$6 = RegisterTest("Continuous", "Bullet Test", BulletTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -2399,6 +2434,7 @@
       }
   }
   Cantilever.e_count = 8;
+  const testIndex$7 = RegisterTest("Joints", "Cantilever", Cantilever.Create);
 
   /*
   * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
@@ -2612,126 +2648,7 @@
           return new Car();
       }
   }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class ContinuousTest extends Test {
-      constructor() {
-          super();
-          this.m_angularVelocity = 0.0;
-          {
-              const bd = new b2.BodyDef();
-              bd.position.Set(0.0, 0.0);
-              const body = this.m_world.CreateBody(bd);
-              const edge = new b2.EdgeShape();
-              edge.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(10.0, 0.0));
-              body.CreateFixture(edge, 0.0);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.2, 1.0, new b2.Vec2(0.5, 1.0), 0.0);
-              body.CreateFixture(shape, 0.0);
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(0.0, 20.0);
-              //bd.angle = 0.1;
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(2.0, 0.1);
-              this.m_body = this.m_world.CreateBody(bd);
-              this.m_body.CreateFixture(shape, 1.0);
-              this.m_angularVelocity = b2.RandomRange(-50.0, 50.0);
-              //this.m_angularVelocity = 46.661274;
-              this.m_body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
-              this.m_body.SetAngularVelocity(this.m_angularVelocity);
-          }
-          /*
-          else
-          {
-            const bd = new b2.BodyDef();
-            bd.type = b2.BodyType.b2_dynamicBody;
-            bd.position.Set(0.0, 2.0);
-            const body = this.m_world.CreateBody(bd);
-            const shape = new b2.CircleShape();
-            shape.m_p.SetZero();
-            shape.m_radius = 0.5;
-            body.CreateFixture(shape, 1.0);
-            bd.bullet = true;
-            bd.position.Set(0.0, 10.0);
-            body = this.m_world.CreateBody(bd);
-            body.CreateFixture(shape, 1.0);
-            body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
-          }
-          */
-          // b2.gjkCalls = 0;
-          // b2.gjkIters = 0;
-          // b2.gjkMaxIters = 0;
-          b2.gjk_reset();
-          // b2.toiCalls = 0;
-          // b2.toiIters = 0;
-          // b2.toiRootIters = 0;
-          // b2.toiMaxRootIters = 0;
-          // b2.toiTime = 0.0;
-          // b2.toiMaxTime = 0.0;
-          b2.toi_reset();
-      }
-      Launch() {
-          // b2.gjkCalls = 0;
-          // b2.gjkIters = 0;
-          // b2.gjkMaxIters = 0;
-          b2.gjk_reset();
-          // b2.toiCalls = 0;
-          // b2.toiIters = 0;
-          // b2.toiRootIters = 0;
-          // b2.toiMaxRootIters = 0;
-          // b2.toiTime = 0.0;
-          // b2.toiMaxTime = 0.0;
-          b2.toi_reset();
-          this.m_body.SetTransformVec(new b2.Vec2(0.0, 20.0), 0.0);
-          this.m_angularVelocity = b2.RandomRange(-50.0, 50.0);
-          this.m_body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
-          this.m_body.SetAngularVelocity(this.m_angularVelocity);
-      }
-      Step(settings) {
-          super.Step(settings);
-          if (b2.gjkCalls > 0) {
-              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "gjk calls = %d, ave gjk iters = %3.1f, max gjk iters = %d",
-              g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${b2.gjkCalls.toFixed(0)}, ave gjk iters = ${(b2.gjkIters / b2.gjkCalls).toFixed(1)}, max gjk iters = ${b2.gjkMaxIters.toFixed(0)}`);
-              this.m_textLine += DRAW_STRING_NEW_LINE;
-          }
-          if (b2.toiCalls > 0) {
-              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "toi [max] calls = %d, ave toi iters = %3.1f [%d]",
-              g_debugDraw.DrawString(5, this.m_textLine, `toi [max] calls = ${b2.toiCalls}, ave toi iters = ${(b2.toiIters / b2.toiCalls).toFixed(1)} [${b2.toiMaxRootIters}]`);
-              this.m_textLine += DRAW_STRING_NEW_LINE;
-              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi root iters = %3.1f [%d]",
-              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi root iters = ${(b2.toiRootIters / b2.toiCalls).toFixed(1)} [${b2.toiMaxRootIters.toFixed(0)}]`);
-              this.m_textLine += DRAW_STRING_NEW_LINE;
-              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi time = %.1f [%.1f] (microseconds)",
-              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi time = ${(1000.0 * b2.toiTime / b2.toiCalls).toFixed(1)} [${(1000.0 * b2.toiMaxTime).toFixed(1)}] (microseconds)`);
-              this.m_textLine += DRAW_STRING_NEW_LINE;
-          }
-          if (this.m_stepCount % 60 === 0) {
-              this.Launch();
-          }
-      }
-      static Create() {
-          return new ContinuousTest();
-      }
-  }
+  const testIndex$8 = RegisterTest("Examples", "Car", Car.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -2793,6 +2710,7 @@
       }
   }
   Chain.e_count = 30;
+  const testIndex$9 = RegisterTest("Joints", "Chain", Chain.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3002,6 +2920,67 @@
           return new CharacterCollision();
       }
   }
+  const testIndex$a = RegisterTest("Examples", "Character Collision", CharacterCollision.Create);
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class SphereStack extends Test {
+      constructor() {
+          super();
+          this.m_bodies = [];
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_radius = 1.0;
+              for (let i = 0; i < SphereStack.e_count; ++i) {
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(0.0, 4.0 + 3.0 * i);
+                  this.m_bodies[i] = this.m_world.CreateBody(bd);
+                  this.m_bodies[i].CreateFixture(shape, 1.0);
+                  this.m_bodies[i].SetLinearVelocity(new b2.Vec2(0.0, -50.0));
+              }
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          // for (let i: number = 0; i < SphereStack.e_count; ++i)
+          // {
+          //   printf("%g ", this.m_bodies[i].GetWorldCenter().y);
+          // }
+          // for (let i: number = 0; i < SphereStack.e_count; ++i)
+          // {
+          //   printf("%g ", this.m_bodies[i].GetLinearVelocity().y);
+          // }
+          // printf("\n");
+      }
+      static Create() {
+          return new SphereStack();
+      }
+  }
+  SphereStack.e_count = 10;
+  const testIndex$b = RegisterTest("Stacking", "Circles", SphereStack.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3137,6 +3116,7 @@
   CollisionFiltering.k_triangleMask = 0xFFFF;
   CollisionFiltering.k_boxMask = 0xFFFF ^ CollisionFiltering.k_triangleCategory;
   CollisionFiltering.k_circleMask = 0xFFFF;
+  const testIndex$c = RegisterTest("Examples", "Collision Filtering", CollisionFiltering.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3273,6 +3253,7 @@
           return new CollisionProcessing();
       }
   }
+  const testIndex$d = RegisterTest("Examples", "Collision Processing", CollisionProcessing.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3387,6 +3368,7 @@
           return new CompoundShapes();
       }
   }
+  const testIndex$e = RegisterTest("Examples", "Compound Shapes", CompoundShapes.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3497,6 +3479,128 @@
   }
   Confined.e_columnCount = 0;
   Confined.e_rowCount = 0;
+  const testIndex$f = RegisterTest("Solver", "Confined", Confined.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class ContinuousTest extends Test {
+      constructor() {
+          super();
+          this.m_angularVelocity = 0.0;
+          {
+              const bd = new b2.BodyDef();
+              bd.position.Set(0.0, 0.0);
+              const body = this.m_world.CreateBody(bd);
+              const edge = new b2.EdgeShape();
+              edge.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(10.0, 0.0));
+              body.CreateFixture(edge, 0.0);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.2, 1.0, new b2.Vec2(0.5, 1.0), 0.0);
+              body.CreateFixture(shape, 0.0);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Set(0.0, 20.0);
+              //bd.angle = 0.1;
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(2.0, 0.1);
+              this.m_body = this.m_world.CreateBody(bd);
+              this.m_body.CreateFixture(shape, 1.0);
+              this.m_angularVelocity = b2.RandomRange(-50.0, 50.0);
+              //this.m_angularVelocity = 46.661274;
+              this.m_body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
+              this.m_body.SetAngularVelocity(this.m_angularVelocity);
+          }
+          /*
+          else
+          {
+            const bd = new b2.BodyDef();
+            bd.type = b2.BodyType.b2_dynamicBody;
+            bd.position.Set(0.0, 2.0);
+            const body = this.m_world.CreateBody(bd);
+            const shape = new b2.CircleShape();
+            shape.m_p.SetZero();
+            shape.m_radius = 0.5;
+            body.CreateFixture(shape, 1.0);
+            bd.bullet = true;
+            bd.position.Set(0.0, 10.0);
+            body = this.m_world.CreateBody(bd);
+            body.CreateFixture(shape, 1.0);
+            body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
+          }
+          */
+          // b2.gjkCalls = 0;
+          // b2.gjkIters = 0;
+          // b2.gjkMaxIters = 0;
+          b2.gjk_reset();
+          // b2.toiCalls = 0;
+          // b2.toiIters = 0;
+          // b2.toiRootIters = 0;
+          // b2.toiMaxRootIters = 0;
+          // b2.toiTime = 0.0;
+          // b2.toiMaxTime = 0.0;
+          b2.toi_reset();
+      }
+      Launch() {
+          // b2.gjkCalls = 0;
+          // b2.gjkIters = 0;
+          // b2.gjkMaxIters = 0;
+          b2.gjk_reset();
+          // b2.toiCalls = 0;
+          // b2.toiIters = 0;
+          // b2.toiRootIters = 0;
+          // b2.toiMaxRootIters = 0;
+          // b2.toiTime = 0.0;
+          // b2.toiMaxTime = 0.0;
+          b2.toi_reset();
+          this.m_body.SetTransformVec(new b2.Vec2(0.0, 20.0), 0.0);
+          this.m_angularVelocity = b2.RandomRange(-50.0, 50.0);
+          this.m_body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
+          this.m_body.SetAngularVelocity(this.m_angularVelocity);
+      }
+      Step(settings) {
+          super.Step(settings);
+          if (b2.gjkCalls > 0) {
+              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "gjk calls = %d, ave gjk iters = %3.1f, max gjk iters = %d",
+              g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${b2.gjkCalls.toFixed(0)}, ave gjk iters = ${(b2.gjkIters / b2.gjkCalls).toFixed(1)}, max gjk iters = ${b2.gjkMaxIters.toFixed(0)}`);
+              this.m_textLine += DRAW_STRING_NEW_LINE;
+          }
+          if (b2.toiCalls > 0) {
+              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "toi [max] calls = %d, ave toi iters = %3.1f [%d]",
+              g_debugDraw.DrawString(5, this.m_textLine, `toi [max] calls = ${b2.toiCalls}, ave toi iters = ${(b2.toiIters / b2.toiCalls).toFixed(1)} [${b2.toiMaxRootIters}]`);
+              this.m_textLine += DRAW_STRING_NEW_LINE;
+              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi root iters = %3.1f [%d]",
+              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi root iters = ${(b2.toiRootIters / b2.toiCalls).toFixed(1)} [${b2.toiMaxRootIters.toFixed(0)}]`);
+              this.m_textLine += DRAW_STRING_NEW_LINE;
+              // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi time = %.1f [%.1f] (microseconds)",
+              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi time = ${(1000.0 * b2.toiTime / b2.toiCalls).toFixed(1)} [${(1000.0 * b2.toiMaxTime).toFixed(1)}] (microseconds)`);
+              this.m_textLine += DRAW_STRING_NEW_LINE;
+          }
+          if (this.m_stepCount % 60 === 0) {
+              this.Launch();
+          }
+      }
+      static Create() {
+          return new ContinuousTest();
+      }
+  }
+  const testIndex$g = RegisterTest("Continuous", "Continuous Test", ContinuousTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3568,6 +3672,7 @@
       }
   }
   ConvexHull.e_count = 10;
+  const testIndex$h = RegisterTest("Geometry", "Convex Hull", ConvexHull.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3643,6 +3748,7 @@
           return new ConveyorBelt();
       }
   }
+  const testIndex$i = RegisterTest("Examples", "Conveyor Belt", ConveyorBelt.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3744,6 +3850,7 @@
           return new DistanceTest();
       }
   }
+  const testIndex$j = RegisterTest("Geometry", "Distance Test", DistanceTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -3915,6 +4022,7 @@
           return new Dominos();
       }
   }
+  const testIndex$k = RegisterTest("Examples", "Dominos", Dominos.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4192,6 +4300,7 @@
           return new DumpShell();
       }
   }
+  const testIndex$l = RegisterTest("Bugs", "Dump Loader", DumpShell.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4450,6 +4559,7 @@
           this.proxyId = null;
       }
   }
+  const testIndex$m = RegisterTest("Collision", "Dynamic Tree", DynamicTreeTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4635,6 +4745,7 @@
       }
   }
   EdgeShapes.e_maxBodies = 256;
+  const testIndex$n = RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4860,6 +4971,103 @@
           return new EdgeTest();
       }
   }
+  const testIndex$o = RegisterTest("Geometry", "Edge Test", EdgeTest.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class VaryingFriction extends Test {
+      constructor() {
+          super();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(13.0, 0.25);
+              const bd = new b2.BodyDef();
+              bd.position.Set(-4.0, 22.0);
+              bd.angle = -0.25;
+              const ground = this.m_world.CreateBody(bd);
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.25, 1.0);
+              const bd = new b2.BodyDef();
+              bd.position.Set(10.5, 19.0);
+              const ground = this.m_world.CreateBody(bd);
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(13.0, 0.25);
+              const bd = new b2.BodyDef();
+              bd.position.Set(4.0, 14.0);
+              bd.angle = 0.25;
+              const ground = this.m_world.CreateBody(bd);
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.25, 1.0);
+              const bd = new b2.BodyDef();
+              bd.position.Set(-10.5, 11.0);
+              const ground = this.m_world.CreateBody(bd);
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(13.0, 0.25);
+              const bd = new b2.BodyDef();
+              bd.position.Set(-4.0, 6.0);
+              bd.angle = -0.25;
+              const ground = this.m_world.CreateBody(bd);
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.5, 0.5);
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.density = 25.0;
+              const friction = [0.75, 0.5, 0.35, 0.1, 0.0];
+              for (let i = 0; i < 5; ++i) {
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(-15.0 + 4.0 * i, 28.0);
+                  const body = this.m_world.CreateBody(bd);
+                  fd.friction = friction[i];
+                  body.CreateFixture(fd);
+              }
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+      }
+      static Create() {
+          return new VaryingFriction();
+      }
+  }
+  const testIndex$p = RegisterTest("Forces", "Friction", VaryingFriction.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4986,6 +5194,7 @@
           return new Gears();
       }
   }
+  const testIndex$q = RegisterTest("Joints", "Gear", Gears.Create);
 
   /*
    * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -5036,6 +5245,7 @@
           return new HeavyOnLight();
       }
   }
+  const testIndex$r = RegisterTest("Solver", "Heavy 1", HeavyOnLight.Create);
 
   /*
    * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -5110,79 +5320,7 @@
           return new HeavyOnLightTwo();
       }
   }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class Mobile extends Test {
-      constructor() {
-          super();
-          // Create ground body.
-          const bodyDef = new b2.BodyDef();
-          bodyDef.position.Set(0.0, 20.0);
-          const ground = this.m_world.CreateBody(bodyDef);
-          const a = 0.5;
-          const h = new b2.Vec2(0.0, a);
-          const root = this.AddNode(ground, b2.Vec2_zero, 0, 3.0, a);
-          const jointDef = new b2.RevoluteJointDef();
-          jointDef.bodyA = ground;
-          jointDef.bodyB = root;
-          jointDef.localAnchorA.SetZero();
-          jointDef.localAnchorB.Copy(h);
-          this.m_world.CreateJoint(jointDef);
-      }
-      AddNode(parent, localAnchor, depth, offset, a) {
-          const /*float32*/ density = 20.0;
-          const /*b2Vec2*/ h = new b2.Vec2(0.0, a);
-          //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
-          const /*b2Vec2*/ p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
-          const /*b2BodyDef*/ bodyDef = new b2.BodyDef();
-          bodyDef.type = b2.BodyType.b2_dynamicBody;
-          bodyDef.position.Copy(p);
-          const /*b2Body*/ body = this.m_world.CreateBody(bodyDef);
-          const /*b2PolygonShape*/ shape = new b2.PolygonShape();
-          shape.SetAsBox(0.25 * a, a);
-          body.CreateFixture(shape, density);
-          if (depth === Mobile.e_depth) {
-              return body;
-          }
-          const /*b2Vec2*/ a1 = new b2.Vec2(offset, -a);
-          const /*b2Vec2*/ a2 = new b2.Vec2(-offset, -a);
-          const /*b2Body*/ body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
-          const /*b2Body*/ body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
-          const /*b2RevoluteJointDef*/ jointDef = new b2.RevoluteJointDef();
-          jointDef.bodyA = body;
-          jointDef.localAnchorB.Copy(h);
-          jointDef.localAnchorA.Copy(a1);
-          jointDef.bodyB = body1;
-          this.m_world.CreateJoint(jointDef);
-          jointDef.localAnchorA.Copy(a2);
-          jointDef.bodyB = body2;
-          this.m_world.CreateJoint(jointDef);
-          return body;
-      }
-      Step(settings) {
-          super.Step(settings);
-      }
-      static Create() {
-          return new Mobile();
-      }
-  }
-  Mobile.e_depth = 4;
+  const testIndex$s = RegisterTest("Solver", "Heavy 2", HeavyOnLightTwo.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5258,6 +5396,81 @@
       }
   }
   MobileBalanced.e_depth = 4;
+  const testIndex$t = RegisterTest("Solver", "Mobile Balanced", MobileBalanced.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class Mobile extends Test {
+      constructor() {
+          super();
+          // Create ground body.
+          const bodyDef = new b2.BodyDef();
+          bodyDef.position.Set(0.0, 20.0);
+          const ground = this.m_world.CreateBody(bodyDef);
+          const a = 0.5;
+          const h = new b2.Vec2(0.0, a);
+          const root = this.AddNode(ground, b2.Vec2_zero, 0, 3.0, a);
+          const jointDef = new b2.RevoluteJointDef();
+          jointDef.bodyA = ground;
+          jointDef.bodyB = root;
+          jointDef.localAnchorA.SetZero();
+          jointDef.localAnchorB.Copy(h);
+          this.m_world.CreateJoint(jointDef);
+      }
+      AddNode(parent, localAnchor, depth, offset, a) {
+          const /*float32*/ density = 20.0;
+          const /*b2Vec2*/ h = new b2.Vec2(0.0, a);
+          //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
+          const /*b2Vec2*/ p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
+          const /*b2BodyDef*/ bodyDef = new b2.BodyDef();
+          bodyDef.type = b2.BodyType.b2_dynamicBody;
+          bodyDef.position.Copy(p);
+          const /*b2Body*/ body = this.m_world.CreateBody(bodyDef);
+          const /*b2PolygonShape*/ shape = new b2.PolygonShape();
+          shape.SetAsBox(0.25 * a, a);
+          body.CreateFixture(shape, density);
+          if (depth === Mobile.e_depth) {
+              return body;
+          }
+          const /*b2Vec2*/ a1 = new b2.Vec2(offset, -a);
+          const /*b2Vec2*/ a2 = new b2.Vec2(-offset, -a);
+          const /*b2Body*/ body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
+          const /*b2Body*/ body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
+          const /*b2RevoluteJointDef*/ jointDef = new b2.RevoluteJointDef();
+          jointDef.bodyA = body;
+          jointDef.localAnchorB.Copy(h);
+          jointDef.localAnchorA.Copy(a1);
+          jointDef.bodyB = body1;
+          this.m_world.CreateJoint(jointDef);
+          jointDef.localAnchorA.Copy(a2);
+          jointDef.bodyB = body2;
+          this.m_world.CreateJoint(jointDef);
+          return body;
+      }
+      Step(settings) {
+          super.Step(settings);
+      }
+      static Create() {
+          return new Mobile();
+      }
+  }
+  Mobile.e_depth = 4;
+  const testIndex$u = RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5342,92 +5555,7 @@
           return new MotorJoint();
       }
   }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class OneSidedPlatform extends Test {
-      constructor() {
-          super();
-          this.m_radius = 0.0;
-          this.m_top = 0.0;
-          this.m_bottom = 0.0;
-          this.m_state = OneSidedPlatform_State.e_unknown;
-          // Ground
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          // Platform
-          {
-              const bd = new b2.BodyDef();
-              bd.position.Set(0.0, 10.0);
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(3.0, 0.5);
-              this.m_platform = body.CreateFixture(shape, 0.0);
-              this.m_bottom = 10.0 - 0.5;
-              this.m_top = 10.0 + 0.5;
-          }
-          // Actor
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(0.0, 12.0);
-              const body = this.m_world.CreateBody(bd);
-              this.m_radius = 0.5;
-              const shape = new b2.CircleShape();
-              shape.m_radius = this.m_radius;
-              this.m_character = body.CreateFixture(shape, 20.0);
-              body.SetLinearVelocity(new b2.Vec2(0.0, -50.0));
-              this.m_state = OneSidedPlatform_State.e_unknown;
-          }
-      }
-      PreSolve(contact, oldManifold) {
-          super.PreSolve(contact, oldManifold);
-          const fixtureA = contact.GetFixtureA();
-          const fixtureB = contact.GetFixtureB();
-          if (fixtureA !== this.m_platform && fixtureA !== this.m_character) {
-              return;
-          }
-          if (fixtureB !== this.m_platform && fixtureB !== this.m_character) {
-              return;
-          }
-          const position = this.m_character.GetBody().GetPosition();
-          if (position.y < this.m_top + this.m_radius - 3.0 * b2.linearSlop) {
-              contact.SetEnabled(false);
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-      }
-      static Create() {
-          return new OneSidedPlatform();
-      }
-  }
-  var OneSidedPlatform_State;
-  (function (OneSidedPlatform_State) {
-      OneSidedPlatform_State[OneSidedPlatform_State["e_unknown"] = 0] = "e_unknown";
-      OneSidedPlatform_State[OneSidedPlatform_State["e_above"] = 1] = "e_above";
-      OneSidedPlatform_State[OneSidedPlatform_State["e_below"] = 2] = "e_below";
-  })(OneSidedPlatform_State || (OneSidedPlatform_State = {}));
+  const testIndex$v = RegisterTest("Joints", "Motor Joint", MotorJoint.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5569,6 +5697,94 @@
           return new Pinball();
       }
   }
+  const testIndex$w = RegisterTest("Examples", "Pinball", Pinball.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class OneSidedPlatform extends Test {
+      constructor() {
+          super();
+          this.m_radius = 0.0;
+          this.m_top = 0.0;
+          this.m_bottom = 0.0;
+          this.m_state = OneSidedPlatform_State.e_unknown;
+          // Ground
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          // Platform
+          {
+              const bd = new b2.BodyDef();
+              bd.position.Set(0.0, 10.0);
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(3.0, 0.5);
+              this.m_platform = body.CreateFixture(shape, 0.0);
+              this.m_bottom = 10.0 - 0.5;
+              this.m_top = 10.0 + 0.5;
+          }
+          // Actor
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Set(0.0, 12.0);
+              const body = this.m_world.CreateBody(bd);
+              this.m_radius = 0.5;
+              const shape = new b2.CircleShape();
+              shape.m_radius = this.m_radius;
+              this.m_character = body.CreateFixture(shape, 20.0);
+              body.SetLinearVelocity(new b2.Vec2(0.0, -50.0));
+              this.m_state = OneSidedPlatform_State.e_unknown;
+          }
+      }
+      PreSolve(contact, oldManifold) {
+          super.PreSolve(contact, oldManifold);
+          const fixtureA = contact.GetFixtureA();
+          const fixtureB = contact.GetFixtureB();
+          if (fixtureA !== this.m_platform && fixtureA !== this.m_character) {
+              return;
+          }
+          if (fixtureB !== this.m_platform && fixtureB !== this.m_character) {
+              return;
+          }
+          const position = this.m_character.GetBody().GetPosition();
+          if (position.y < this.m_top + this.m_radius - 3.0 * b2.linearSlop) {
+              contact.SetEnabled(false);
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+      }
+      static Create() {
+          return new OneSidedPlatform();
+      }
+  }
+  var OneSidedPlatform_State;
+  (function (OneSidedPlatform_State) {
+      OneSidedPlatform_State[OneSidedPlatform_State["e_unknown"] = 0] = "e_unknown";
+      OneSidedPlatform_State[OneSidedPlatform_State["e_above"] = 1] = "e_above";
+      OneSidedPlatform_State[OneSidedPlatform_State["e_below"] = 2] = "e_below";
+  })(OneSidedPlatform_State || (OneSidedPlatform_State = {}));
+  const testIndex$x = RegisterTest("Examples", "Platformer", OneSidedPlatform.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5658,6 +5874,7 @@
           return new PolyCollision();
       }
   }
+  const testIndex$y = RegisterTest("Geometry", "Polygon Collision", PolyCollision.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5845,6 +6062,7 @@
       }
   }
   PolyShapes.e_maxBodies = 256;
+  const testIndex$z = RegisterTest("Geometry", "Polygon Shapes", PolyShapes.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5925,6 +6143,7 @@
           return new Prismatic();
       }
   }
+  const testIndex$A = RegisterTest("Joints", "Prismatic", Prismatic.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5994,6 +6213,7 @@
           return new Pulleys();
       }
   }
+  const testIndex$B = RegisterTest("Joints", "Pulley", Pulleys.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6056,6 +6276,7 @@
       }
   }
   Pyramid.e_count = 20;
+  const testIndex$C = RegisterTest("Stacking", "Pyramid", Pyramid.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6418,6 +6639,62 @@
       }
   }
   RayCast.e_maxBodies = 256;
+  const testIndex$D = RegisterTest("Collision", "Ray Cast", RayCast.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  // Note: even with a restitution of 1.0, there is some energy change
+  // due to position correction.
+  class VaryingRestitution extends Test {
+      constructor() {
+          super();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_radius = 1.0;
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.density = 1.0;
+              const restitution = [0.0, 0.1, 0.3, 0.5, 0.75, 0.9, 1.0];
+              for (let i = 0; i < 7; ++i) {
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(-10.0 + 3.0 * i, 20.0);
+                  const body = this.m_world.CreateBody(bd);
+                  fd.restitution = restitution[i];
+                  body.CreateFixture(fd);
+              }
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+      }
+      static Create() {
+          return new VaryingRestitution();
+      }
+  }
+  const testIndex$E = RegisterTest("Forces", "Restitution", VaryingRestitution.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6550,1665 +6827,7 @@
           return new Revolute();
       }
   }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class RopeJoint extends Test {
-      constructor() {
-          super();
-          this.m_ropeDef = new b2.RopeJointDef();
-          this.m_rope = null;
-          /*b2.Body*/
-          let ground = null;
-          {
-              /*b2.BodyDef*/
-              const bd = new b2.BodyDef();
-              ground = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              /*b2.PolygonShape*/
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 0.125);
-              /*b2.FixtureDef*/
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.density = 20.0;
-              fd.friction = 0.2;
-              fd.filter.categoryBits = 0x0001;
-              fd.filter.maskBits = 0xFFFF & ~0x0002;
-              /*b2.RevoluteJointDef*/
-              const jd = new b2.RevoluteJointDef();
-              jd.collideConnected = false;
-              /*const int32*/
-              const N = 10;
-              /*const float32*/
-              const y = 15.0;
-              this.m_ropeDef.localAnchorA.Set(0.0, y);
-              /*b2.Body*/
-              let prevBody = ground;
-              for ( /*int32*/let i = 0; i < N; ++i) {
-                  /*b2.BodyDef*/
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(0.5 + 1.0 * i, y);
-                  if (i === N - 1) {
-                      shape.SetAsBox(1.5, 1.5);
-                      fd.density = 100.0;
-                      fd.filter.categoryBits = 0x0002;
-                      bd.position.Set(1.0 * i, y);
-                      bd.angularDamping = 0.4;
-                  }
-                  /*b2.Body*/
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(fd);
-                  /*b2.Vec2*/
-                  const anchor = new b2.Vec2(i, y);
-                  jd.Initialize(prevBody, body, anchor);
-                  this.m_world.CreateJoint(jd);
-                  prevBody = body;
-              }
-              this.m_ropeDef.localAnchorB.SetZero();
-              /*float32*/
-              const extraLength = 0.01;
-              this.m_ropeDef.maxLength = N - 1.0 + extraLength;
-              this.m_ropeDef.bodyB = prevBody;
-          }
-          {
-              this.m_ropeDef.bodyA = ground;
-              this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
-          }
-      }
-      Keyboard(key) {
-          switch (key) {
-              case "j":
-                  if (this.m_rope) {
-                      this.m_world.DestroyJoint(this.m_rope);
-                      this.m_rope = null;
-                  }
-                  else {
-                      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
-                  }
-                  break;
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the rope joint.");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          if (this.m_rope) {
-              g_debugDraw.DrawString(5, this.m_textLine, "Rope ON");
-          }
-          else {
-              g_debugDraw.DrawString(5, this.m_textLine, "Rope OFF");
-          }
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-      }
-      static Create() {
-          return new RopeJoint();
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class SensorTest extends Test {
-      constructor() {
-          super();
-          this.m_bodies = new Array(SensorTest.e_count);
-          this.m_touching = new Array(SensorTest.e_count);
-          for (let i = 0; i < SensorTest.e_count; ++i) {
-              this.m_touching[i] = new Array(1);
-          }
-          const bd = new b2.BodyDef();
-          const ground = this.m_world.CreateBody(bd);
-          {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          /*
-          {
-            const sd = new b2.FixtureDef();
-            sd.SetAsBox(10.0, 2.0, new b2.Vec2(0.0, 20.0), 0.0);
-            sd.isSensor = true;
-            this.m_sensor = ground.CreateFixture(sd);
-          }
-          */
-          {
-              const shape = new b2.CircleShape();
-              shape.m_radius = 5.0;
-              shape.m_p.Set(0.0, 10.0);
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.isSensor = true;
-              this.m_sensor = ground.CreateFixture(fd);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_radius = 1.0;
-              for (let i = 0; i < SensorTest.e_count; ++i) {
-                  //const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(-10.0 + 3.0 * i, 20.0);
-                  bd.userData = this.m_touching[i];
-                  this.m_touching[i][0] = false;
-                  this.m_bodies[i] = this.m_world.CreateBody(bd);
-                  this.m_bodies[i].CreateFixture(shape, 1.0);
-              }
-          }
-      }
-      BeginContact(contact) {
-          const fixtureA = contact.GetFixtureA();
-          const fixtureB = contact.GetFixtureB();
-          if (fixtureA === this.m_sensor) {
-              const userData = fixtureB.GetBody().GetUserData();
-              if (userData) {
-                  const touching = userData;
-                  touching[0] = true;
-              }
-          }
-          if (fixtureB === this.m_sensor) {
-              const userData = fixtureA.GetBody().GetUserData();
-              if (userData) {
-                  const touching = userData;
-                  touching[0] = true;
-              }
-          }
-      }
-      EndContact(contact) {
-          const fixtureA = contact.GetFixtureA();
-          const fixtureB = contact.GetFixtureB();
-          if (fixtureA === this.m_sensor) {
-              const userData = fixtureB.GetBody().GetUserData();
-              if (userData) {
-                  const touching = userData;
-                  touching[0] = false;
-              }
-          }
-          if (fixtureB === this.m_sensor) {
-              const userData = fixtureA.GetBody().GetUserData();
-              if (userData) {
-                  const touching = userData;
-                  touching[0] = false;
-              }
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          // Traverse the contact results. Apply a force on shapes
-          // that overlap the sensor.
-          for (let i = 0; i < SensorTest.e_count; ++i) {
-              if (!this.m_touching[i][0]) {
-                  continue;
-              }
-              const body = this.m_bodies[i];
-              const ground = this.m_sensor.GetBody();
-              const circle = this.m_sensor.GetShape();
-              const center = ground.GetWorldPoint(circle.m_p, new b2.Vec2());
-              const position = body.GetPosition();
-              const d = b2.Vec2.SubVV(center, position, new b2.Vec2());
-              if (d.LengthSquared() < b2.epsilon_sq) {
-                  continue;
-              }
-              d.Normalize();
-              const F = b2.Vec2.MulSV(100.0, d, new b2.Vec2());
-              body.ApplyForce(F, position);
-          }
-      }
-      static Create() {
-          return new SensorTest();
-      }
-  }
-  SensorTest.e_count = 7;
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class ShapeCast extends Test {
-      constructor() {
-          super();
-          this.m_vAs = [];
-          this.m_countA = 0;
-          this.m_radiusA = 0;
-          this.m_vBs = [];
-          this.m_countB = 0;
-          this.m_radiusB = 0;
-          // #if 1
-          this.m_vAs[0] = new b2.Vec2(-0.5, 1.0);
-          this.m_vAs[1] = new b2.Vec2(0.5, 1.0);
-          this.m_vAs[2] = new b2.Vec2(0.0, 0.0);
-          this.m_countA = 3;
-          this.m_radiusA = b2.polygonRadius;
-          this.m_vBs[0] = new b2.Vec2(-0.5, -0.5);
-          this.m_vBs[1] = new b2.Vec2(0.5, -0.5);
-          this.m_vBs[2] = new b2.Vec2(0.5, 0.5);
-          this.m_vBs[3] = new b2.Vec2(-0.5, 0.5);
-          this.m_countB = 4;
-          this.m_radiusB = b2.polygonRadius;
-          // #else
-          // this.m_vAs[0] = new b2.Vec2(0.0, 0.0);
-          // this.m_countA = 1;
-          // this.m_radiusA = 0.5;
-          // this.m_vBs[0] = new b2.Vec2(0.0, 0.0);
-          // this.m_countB = 1;
-          // this.m_radiusB = 0.5;
-          // #endif
-      }
-      Step(settings) {
-          super.Step(settings);
-          const transformA = new b2.Transform();
-          transformA.p.Set(0.0, 0.25);
-          transformA.q.SetIdentity();
-          const transformB = new b2.Transform();
-          transformB.SetIdentity();
-          const input = new b2.ShapeCastInput();
-          input.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
-          input.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
-          input.transformA.Copy(transformA);
-          input.transformB.Copy(transformB);
-          input.translationB.Set(8.0, 0.0);
-          const output = new b2.ShapeCastOutput();
-          const hit = b2.ShapeCast(output, input);
-          const transformB2 = new b2.Transform();
-          transformB2.q.Copy(transformB.q);
-          // transformB2.p = transformB.p + output.lambda * input.translationB;
-          transformB2.p.Copy(transformB.p).SelfMulAdd(output.lambda, input.translationB);
-          const distanceInput = new b2.DistanceInput();
-          distanceInput.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
-          distanceInput.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
-          distanceInput.transformA.Copy(transformA);
-          distanceInput.transformB.Copy(transformB2);
-          distanceInput.useRadii = false;
-          const simplexCache = new b2.SimplexCache();
-          simplexCache.count = 0;
-          const distanceOutput = new b2.DistanceOutput();
-          b2.Distance(distanceOutput, simplexCache, distanceInput);
-          g_debugDraw.DrawString(5, this.m_textLine, `hit = ${hit ? "true" : "false"}, iters = ${output.iterations}, lambda = ${output.lambda}, distance = ${distanceOutput.distance.toFixed(5)}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.PushTransform(transformA);
-          // testbed.g_debugDraw.DrawCircle(this.m_vAs[0], this.m_radiusA, new b2.Color(0.9, 0.9, 0.9));
-          g_debugDraw.DrawPolygon(this.m_vAs, this.m_countA, new b2.Color(0.9, 0.9, 0.9));
-          g_debugDraw.PopTransform(transformA);
-          g_debugDraw.PushTransform(transformB);
-          // testbed.g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.9, 0.5));
-          g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.9, 0.5));
-          g_debugDraw.PopTransform(transformB);
-          g_debugDraw.PushTransform(transformB2);
-          // testbed.g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.7, 0.9));
-          g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.7, 0.9));
-          g_debugDraw.PopTransform(transformB2);
-          if (hit) {
-              const p1 = output.point;
-              g_debugDraw.DrawPoint(p1, 10.0, new b2.Color(0.9, 0.3, 0.3));
-              // b2Vec2 p2 = p1 + output.normal;
-              const p2 = b2.Vec2.AddVV(p1, output.normal, new b2.Vec2());
-              g_debugDraw.DrawSegment(p1, p2, new b2.Color(0.9, 0.3, 0.3));
-          }
-      }
-      static Create() {
-          return new ShapeCast();
-      }
-  }
-  ShapeCast.e_vertexCount = 8;
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class ShapeEditing extends Test {
-      constructor() {
-          super();
-          this.m_fixture2 = null;
-          this.m_sensor = false;
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
-          bd.position.Set(0.0, 10.0);
-          this.m_body = this.m_world.CreateBody(bd);
-          const shape = new b2.PolygonShape();
-          shape.SetAsBox(4.0, 4.0, new b2.Vec2(0.0, 0.0), 0.0);
-          this.m_fixture1 = this.m_body.CreateFixture(shape, 10.0);
-      }
-      Keyboard(key) {
-          switch (key) {
-              case "c":
-                  if (this.m_fixture2 === null) {
-                      const shape = new b2.CircleShape();
-                      shape.m_radius = 3.0;
-                      shape.m_p.Set(0.5, -4.0);
-                      this.m_fixture2 = this.m_body.CreateFixture(shape, 10.0);
-                      this.m_body.SetAwake(true);
-                  }
-                  break;
-              case "d":
-                  if (this.m_fixture2 !== null) {
-                      this.m_body.DestroyFixture(this.m_fixture2);
-                      this.m_fixture2 = null;
-                      this.m_body.SetAwake(true);
-                  }
-                  break;
-              case "s":
-                  if (this.m_fixture2 !== null) {
-                      this.m_sensor = !this.m_sensor;
-                      this.m_fixture2.SetSensor(this.m_sensor);
-                  }
-                  break;
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "Press: (c) create a shape, (d) destroy a shape.");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.DrawString(5, this.m_textLine, `sensor = ${(this.m_sensor) ? (1) : (0)}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-      }
-      static Create() {
-          return new ShapeEditing();
-      }
-  }
-
-  /*
-  Test case for collision/jerking issue.
-  */
-  class Skier extends Test {
-      constructor() {
-          super();
-          const ground = this.m_world.CreateBody();
-          const PlatformWidth = 8.0;
-          /*
-          First angle is from the horizontal and should be negative for a downward slope.
-          Second angle is relative to the preceding slope, and should be positive, creating a kind of
-          loose 'Z'-shape from the 3 edges.
-          If A1 = -10, then A2 <= ~1.5 will result in the collision glitch.
-          If A1 = -30, then A2 <= ~10.0 will result in the glitch.
-          */
-          const Angle1Degrees = -30.0;
-          const Angle2Degrees = 10.0;
-          /*
-          The larger the value of SlopeLength, the less likely the glitch will show up.
-          */
-          const SlopeLength = 2.0;
-          const SurfaceFriction = 0.2;
-          // Convert to radians
-          const Slope1Incline = -Angle1Degrees * b2.pi / 180.0;
-          const Slope2Incline = Slope1Incline - Angle2Degrees * b2.pi / 180.0;
-          //
-          this.m_platform_width = PlatformWidth;
-          // Horizontal platform
-          const v1 = new b2.Vec2(-PlatformWidth, 0.0);
-          const v2 = new b2.Vec2(0.0, 0.0);
-          const v3 = new b2.Vec2(SlopeLength * Math.cos(Slope1Incline), -SlopeLength * Math.sin(Slope1Incline));
-          const v4 = new b2.Vec2(v3.x + SlopeLength * Math.cos(Slope2Incline), v3.y - SlopeLength * Math.sin(Slope2Incline));
-          const v5 = new b2.Vec2(v4.x, v4.y - 1.0);
-          const vertices = [v5, v4, v3, v2, v1];
-          const shape = new b2.ChainShape();
-          shape.CreateLoop(vertices);
-          const fd = new b2.FixtureDef();
-          fd.shape = shape;
-          fd.density = 0.0;
-          fd.friction = SurfaceFriction;
-          ground.CreateFixture(fd);
-          {
-              // const BodyWidth = 1.0;
-              const BodyHeight = 2.5;
-              const SkiLength = 3.0;
-              /*
-              Larger values for this seem to alleviate the issue to some extent.
-              */
-              const SkiThickness = 0.3;
-              const SkiFriction = 0.0;
-              const SkiRestitution = 0.15;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const initial_y = BodyHeight / 2 + SkiThickness;
-              bd.position.Set(-this.m_platform_width / 2, initial_y);
-              const skier = this.m_world.CreateBody(bd);
-              const ski = new b2.PolygonShape();
-              const verts = [];
-              verts.push(new b2.Vec2(-SkiLength / 2 - SkiThickness, -BodyHeight / 2));
-              verts.push(new b2.Vec2(-SkiLength / 2, -BodyHeight / 2 - SkiThickness));
-              verts.push(new b2.Vec2(SkiLength / 2, -BodyHeight / 2 - SkiThickness));
-              verts.push(new b2.Vec2(SkiLength / 2 + SkiThickness, -BodyHeight / 2));
-              ski.Set(verts);
-              const fd = new b2.FixtureDef();
-              fd.density = 1.0;
-              fd.friction = SkiFriction;
-              fd.restitution = SkiRestitution;
-              fd.shape = ski;
-              skier.CreateFixture(fd);
-              skier.SetLinearVelocity(new b2.Vec2(0.5, 0.0));
-              this.m_skier = skier;
-          }
-          g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
-          g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
-          g_camera.m_zoom = 0.4;
-          this.m_fixed_camera = true;
-      }
-      Keyboard(key) {
-          switch (key) {
-              case "c":
-                  this.m_fixed_camera = !this.m_fixed_camera;
-                  if (this.m_fixed_camera) {
-                      g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
-                  }
-                  break;
-          }
-      }
-      Step(settings) {
-          g_debugDraw.DrawString(5, this.m_textLine, "Keys: c = Camera fixed/tracking");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          if (!this.m_fixed_camera) {
-              g_camera.m_center.Copy(this.m_skier.GetPosition());
-          }
-          super.Step(settings);
-      }
-      static Create() {
-          return new Skier();
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class SliderCrank extends Test {
-      constructor() {
-          super();
-          let ground = null;
-          {
-              const bd = new b2.BodyDef();
-              ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              let prevBody = ground;
-              // Define crank.
-              {
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(0.5, 2.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(0.0, 7.0);
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 5.0));
-                  rjd.motorSpeed = 1.0 * b2.pi;
-                  rjd.maxMotorTorque = 10000.0;
-                  rjd.enableMotor = true;
-                  this.m_joint1 = this.m_world.CreateJoint(rjd);
-                  prevBody = body;
-              }
-              // Define follower.
-              {
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(0.5, 4.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(0.0, 13.0);
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 9.0));
-                  rjd.enableMotor = false;
-                  this.m_world.CreateJoint(rjd);
-                  prevBody = body;
-              }
-              // Define piston
-              {
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(1.5, 1.5);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.fixedRotation = true;
-                  bd.position.Set(0.0, 17.0);
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 17.0));
-                  this.m_world.CreateJoint(rjd);
-                  const pjd = new b2.PrismaticJointDef();
-                  pjd.Initialize(ground, body, new b2.Vec2(0.0, 17.0), new b2.Vec2(0.0, 1.0));
-                  pjd.maxMotorForce = 1000.0;
-                  pjd.enableMotor = true;
-                  this.m_joint2 = this.m_world.CreateJoint(pjd);
-              }
-              // Create a payload
-              {
-                  const shape = new b2.PolygonShape();
-                  shape.SetAsBox(1.5, 1.5);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(0.0, 23.0);
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(shape, 2.0);
-              }
-          }
-      }
-      Keyboard(key) {
-          switch (key) {
-              case "f":
-                  this.m_joint2.EnableMotor(!this.m_joint2.IsMotorEnabled());
-                  this.m_joint2.GetBodyB().SetAwake(true);
-                  break;
-              case "m":
-                  this.m_joint1.EnableMotor(!this.m_joint1.IsMotorEnabled());
-                  this.m_joint1.GetBodyB().SetAwake(true);
-                  break;
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "Keys: (f) toggle friction, (m) toggle motor");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          const torque = this.m_joint1.GetMotorTorque(settings.m_hertz);
-          g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque.toFixed(0)}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-      }
-      static Create() {
-          return new SliderCrank();
-      }
-  }
-  SliderCrank.e_count = 30;
-
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class SphereStack extends Test {
-      constructor() {
-          super();
-          this.m_bodies = [];
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_radius = 1.0;
-              for (let i = 0; i < SphereStack.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(0.0, 4.0 + 3.0 * i);
-                  this.m_bodies[i] = this.m_world.CreateBody(bd);
-                  this.m_bodies[i].CreateFixture(shape, 1.0);
-                  this.m_bodies[i].SetLinearVelocity(new b2.Vec2(0.0, -50.0));
-              }
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          // for (let i: number = 0; i < SphereStack.e_count; ++i)
-          // {
-          //   printf("%g ", this.m_bodies[i].GetWorldCenter().y);
-          // }
-          // for (let i: number = 0; i < SphereStack.e_count; ++i)
-          // {
-          //   printf("%g ", this.m_bodies[i].GetLinearVelocity().y);
-          // }
-          // printf("\n");
-      }
-      static Create() {
-          return new SphereStack();
-      }
-  }
-  SphereStack.e_count = 10;
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  // Inspired by a contribution by roman_m
-  // Dimensions scooped from APE (http://www.cove.org/ape/index.htm)
-  class TheoJansen extends Test {
-      constructor() {
-          super();
-          this.m_offset = new b2.Vec2();
-          this.m_motorOn = false;
-          this.m_motorSpeed = 0;
-          this.Construct();
-      }
-      CreateLeg(s, wheelAnchor) {
-          const p1 = new b2.Vec2(5.4 * s, -6.1);
-          const p2 = new b2.Vec2(7.2 * s, -1.2);
-          const p3 = new b2.Vec2(4.3 * s, -1.9);
-          const p4 = new b2.Vec2(3.1 * s, 0.8);
-          const p5 = new b2.Vec2(6.0 * s, 1.5);
-          const p6 = new b2.Vec2(2.5 * s, 3.7);
-          const fd1 = new b2.FixtureDef();
-          const fd2 = new b2.FixtureDef();
-          fd1.filter.groupIndex = -1;
-          fd2.filter.groupIndex = -1;
-          fd1.density = 1.0;
-          fd2.density = 1.0;
-          const poly1 = new b2.PolygonShape();
-          const poly2 = new b2.PolygonShape();
-          if (s > 0.0) {
-              const vertices = new Array();
-              vertices[0] = p1;
-              vertices[1] = p2;
-              vertices[2] = p3;
-              poly1.Set(vertices);
-              vertices[0] = b2.Vec2_zero;
-              vertices[1] = b2.Vec2.SubVV(p5, p4, new b2.Vec2());
-              vertices[2] = b2.Vec2.SubVV(p6, p4, new b2.Vec2());
-              poly2.Set(vertices);
-          }
-          else {
-              const vertices = new Array();
-              vertices[0] = p1;
-              vertices[1] = p3;
-              vertices[2] = p2;
-              poly1.Set(vertices);
-              vertices[0] = b2.Vec2_zero;
-              vertices[1] = b2.Vec2.SubVV(p6, p4, new b2.Vec2());
-              vertices[2] = b2.Vec2.SubVV(p5, p4, new b2.Vec2());
-              poly2.Set(vertices);
-          }
-          fd1.shape = poly1;
-          fd2.shape = poly2;
-          const bd1 = new b2.BodyDef();
-          const bd2 = new b2.BodyDef();
-          bd1.type = b2.BodyType.b2_dynamicBody;
-          bd2.type = b2.BodyType.b2_dynamicBody;
-          bd1.position.Copy(this.m_offset);
-          bd2.position.Copy(b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
-          bd1.angularDamping = 10.0;
-          bd2.angularDamping = 10.0;
-          const body1 = this.m_world.CreateBody(bd1);
-          const body2 = this.m_world.CreateBody(bd2);
-          body1.CreateFixture(fd1);
-          body2.CreateFixture(fd2);
-          {
-              const jd = new b2.DistanceJointDef();
-              // Using a soft distance constraint can reduce some jitter.
-              // It also makes the structure seem a bit more fluid by
-              // acting like a suspension system.
-              const dampingRatio = 0.5;
-              const frequencyHz = 10.0;
-              jd.Initialize(body1, body2, b2.Vec2.AddVV(p2, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(p5, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              this.m_world.CreateJoint(jd);
-              jd.Initialize(body1, body2, b2.Vec2.AddVV(p3, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              this.m_world.CreateJoint(jd);
-              jd.Initialize(body1, this.m_wheel, b2.Vec2.AddVV(p3, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(wheelAnchor, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              this.m_world.CreateJoint(jd);
-              jd.Initialize(body2, this.m_wheel, b2.Vec2.AddVV(p6, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(wheelAnchor, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              this.m_world.CreateJoint(jd);
-          }
-          {
-              const jd = new b2.RevoluteJointDef();
-              jd.Initialize(body2, this.m_chassis, b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
-              this.m_world.CreateJoint(jd);
-          }
-      }
-      Construct() {
-          this.m_offset.Set(0.0, 8.0);
-          this.m_motorSpeed = 2.0;
-          this.m_motorOn = true;
-          const pivot = new b2.Vec2(0.0, 0.8);
-          // Ground
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(50.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(-50.0, 10.0));
-              ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(50.0, 0.0), new b2.Vec2(50.0, 10.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          // Balls
-          for (let i = 0; i < 40; ++i) {
-              const shape = new b2.CircleShape();
-              shape.m_radius = 0.25;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(-40.0 + 2.0 * i, 0.5);
-              const body = this.m_world.CreateBody(bd);
-              body.CreateFixture(shape, 1.0);
-          }
-          // Chassis
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(2.5, 1.0);
-              const sd = new b2.FixtureDef();
-              sd.density = 1.0;
-              sd.shape = shape;
-              sd.filter.groupIndex = -1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Copy(pivot).SelfAdd(this.m_offset);
-              this.m_chassis = this.m_world.CreateBody(bd);
-              this.m_chassis.CreateFixture(sd);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_radius = 1.6;
-              const sd = new b2.FixtureDef();
-              sd.density = 1.0;
-              sd.shape = shape;
-              sd.filter.groupIndex = -1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Copy(pivot).SelfAdd(this.m_offset);
-              this.m_wheel = this.m_world.CreateBody(bd);
-              this.m_wheel.CreateFixture(sd);
-          }
-          {
-              const jd = new b2.RevoluteJointDef();
-              jd.Initialize(this.m_wheel, this.m_chassis, b2.Vec2.AddVV(pivot, this.m_offset, new b2.Vec2()));
-              jd.collideConnected = false;
-              jd.motorSpeed = this.m_motorSpeed;
-              jd.maxMotorTorque = 400.0;
-              jd.enableMotor = this.m_motorOn;
-              this.m_motorJoint = this.m_world.CreateJoint(jd);
-          }
-          const wheelAnchor = b2.Vec2.AddVV(pivot, new b2.Vec2(0.0, -0.8), new b2.Vec2());
-          this.CreateLeg(-1.0, wheelAnchor);
-          this.CreateLeg(1.0, wheelAnchor);
-          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), 120.0 * b2.pi / 180.0);
-          this.CreateLeg(-1.0, wheelAnchor);
-          this.CreateLeg(1.0, wheelAnchor);
-          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), -120.0 * b2.pi / 180.0);
-          this.CreateLeg(-1.0, wheelAnchor);
-          this.CreateLeg(1.0, wheelAnchor);
-      }
-      Keyboard(key) {
-          switch (key) {
-              case "a":
-                  this.m_motorJoint.SetMotorSpeed(-this.m_motorSpeed);
-                  break;
-              case "s":
-                  this.m_motorJoint.SetMotorSpeed(0.0);
-                  break;
-              case "d":
-                  this.m_motorJoint.SetMotorSpeed(this.m_motorSpeed);
-                  break;
-              case "m":
-                  this.m_motorJoint.EnableMotor(!this.m_motorJoint.IsMotorEnabled());
-                  break;
-          }
-      }
-      Step(settings) {
-          g_debugDraw.DrawString(5, this.m_textLine, "Keys: left = a, brake = s, right = d, toggle motor = m");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          super.Step(settings);
-      }
-      static Create() {
-          return new TheoJansen();
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  /**
-   * This stress tests the dynamic tree broad-phase. This also
-   * shows that tile based collision is _not_ smooth due to Box2D
-   * not knowing about adjacency.
-   */
-  class Tiles extends Test {
-      constructor() {
-          super();
-          this.m_fixtureCount = 0;
-          this.m_createTime = 0.0;
-          this.m_fixtureCount = 0;
-          /*b2.Timer*/
-          const timer = new b2.Timer();
-          {
-              /*float32*/
-              const a = 0.5;
-              /*b2.BodyDef*/
-              const bd = new b2.BodyDef();
-              bd.position.y = -a;
-              /*b2.Body*/
-              const ground = this.m_world.CreateBody(bd);
-              {
-                  /*int32*/
-                  const N = 200;
-                  /*int32*/
-                  const M = 10;
-                  /*b2.Vec2*/
-                  const position = new b2.Vec2();
-                  position.y = 0.0;
-                  for ( /*int32*/let j = 0; j < M; ++j) {
-                      position.x = -N * a;
-                      for ( /*int32*/let i = 0; i < N; ++i) {
-                          /*b2.PolygonShape*/
-                          const shape = new b2.PolygonShape();
-                          shape.SetAsBox(a, a, position, 0.0);
-                          ground.CreateFixture(shape, 0.0);
-                          ++this.m_fixtureCount;
-                          position.x += 2.0 * a;
-                      }
-                      position.y -= 2.0 * a;
-                  }
-              }
-              //    else
-              //    {
-              //      /*int32*/ const N = 200;
-              //      /*int32*/ const M = 10;
-              //      /*b2.Vec2*/ const position = new b2.Vec2();
-              //      position.x = -N * a;
-              //      for (/*int32*/ let i = 0; i < N; ++i)
-              //      {
-              //        position.y = 0.0;
-              //        for (/*int32*/ let j = 0; j < M; ++j)
-              //        {
-              //          /*b2.PolygonShape*/ const shape = new b2.PolygonShape();
-              //          shape.SetAsBox(a, a, position, 0.0);
-              //          ground.CreateFixture(shape, 0.0);
-              //          position.y -= 2.0 * a;
-              //        }
-              //        position.x += 2.0 * a;
-              //      }
-              //    }
-          }
-          {
-              /*float32*/
-              const a = 0.5;
-              /*b2.PolygonShape*/
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(a, a);
-              /*b2.Vec2*/
-              const x = new b2.Vec2(-7.0, 0.75);
-              /*b2.Vec2*/
-              const y = new b2.Vec2();
-              /*b2.Vec2*/
-              const deltaX = new b2.Vec2(0.5625, 1.25);
-              /*b2.Vec2*/
-              const deltaY = new b2.Vec2(1.125, 0.0);
-              for ( /*int32*/let i = 0; i < Tiles.e_count; ++i) {
-                  y.Copy(x);
-                  for ( /*int32*/let j = i; j < Tiles.e_count; ++j) {
-                      /*b2.BodyDef*/
-                      const bd = new b2.BodyDef();
-                      bd.type = b2.BodyType.b2_dynamicBody;
-                      bd.position.Copy(y);
-                      //if (i === 0 && j === 0)
-                      //{
-                      //  bd.allowSleep = false;
-                      //}
-                      //else
-                      //{
-                      //  bd.allowSleep = true;
-                      //}
-                      /*b2.Body*/
-                      const body = this.m_world.CreateBody(bd);
-                      body.CreateFixture(shape, 5.0);
-                      ++this.m_fixtureCount;
-                      y.SelfAdd(deltaY);
-                  }
-                  x.SelfAdd(deltaX);
-              }
-          }
-          this.m_createTime = timer.GetMilliseconds();
-      }
-      Step(settings) {
-          /*const b2.ContactManager*/
-          const cm = this.m_world.GetContactManager();
-          /*int32*/
-          const height = cm.m_broadPhase.GetTreeHeight();
-          /*int32*/
-          const leafCount = cm.m_broadPhase.GetProxyCount();
-          /*int32*/
-          const minimumNodeCount = 2 * leafCount - 1;
-          /*float32*/
-          const minimumHeight = Math.ceil(Math.log(minimumNodeCount) / Math.log(2.0));
-          g_debugDraw.DrawString(5, this.m_textLine, `dynamic tree height = ${height}, min = ${minimumHeight}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, `create time = ${this.m_createTime.toFixed(2)} ms, fixture count = ${this.m_fixtureCount}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          //b2.DynamicTree* tree = this.m_world.this.m_contactManager.m_broadPhase.m_tree;
-          //if (this.m_stepCount === 400)
-          //{
-          //  tree.RebuildBottomUp();
-          //}
-      }
-      static Create() {
-          return new Tiles();
-      }
-  }
-  Tiles.e_count = 20;
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class TimeOfImpact extends Test {
-      constructor() {
-          super();
-          this.m_shapeA = new b2.PolygonShape();
-          this.m_shapeB = new b2.PolygonShape();
-          this.m_shapeA.SetAsBox(25.0, 5.0);
-          this.m_shapeB.SetAsBox(2.5, 2.5);
-      }
-      Step(settings) {
-          super.Step(settings);
-          const sweepA = new b2.Sweep();
-          sweepA.c0.Set(0.0, 20.0 + 8.0 * Math.cos(Date.now() / 1000)); // (24.0, -60.0);
-          sweepA.a0 = 2.95;
-          sweepA.c.Copy(sweepA.c0);
-          sweepA.a = sweepA.a0;
-          sweepA.localCenter.SetZero();
-          const sweepB = new b2.Sweep();
-          sweepB.c0.Set(20.0, 40.0); // (53.474274, -50.252514);
-          sweepB.a0 = 0.1; // 513.36676; // - 162.0 * b2.pi;
-          sweepB.c.Set(-20.0, 0.0); // (54.595478, -51.083473);
-          sweepB.a = 3.1; // 513.62781; //  - 162.0 * b2.pi;
-          sweepB.localCenter.SetZero();
-          //sweepB.a0 -= 300.0 * b2.pi;
-          //sweepB.a -= 300.0 * b2.pi;
-          const input = new b2.TOIInput();
-          input.proxyA.SetShape(this.m_shapeA, 0);
-          input.proxyB.SetShape(this.m_shapeB, 0);
-          input.sweepA.Copy(sweepA);
-          input.sweepB.Copy(sweepB);
-          input.tMax = 1.0;
-          const output = new b2.TOIOutput();
-          b2.TimeOfImpact(output, input);
-          g_debugDraw.DrawString(5, this.m_textLine, `toi = ${output.t.toFixed(3)}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.DrawString(5, this.m_textLine, `max toi iters = ${b2.toiMaxIters}, max root iters = ${b2.toiMaxRootIters}`);
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          const vertices = [];
-          const transformA = new b2.Transform();
-          sweepA.GetTransform(transformA, 0.0);
-          for (let i = 0; i < this.m_shapeA.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformA, this.m_shapeA.m_vertices[i], new b2.Vec2());
-          }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeA.m_count, new b2.Color(0.9, 0.9, 0.9));
-          const transformB = new b2.Transform();
-          sweepB.GetTransform(transformB, 0.0);
-          //b2.Vec2 localPoint(2.0f, -0.1f);
-          for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
-          }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.9, 0.5));
-          g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${(0.0).toFixed(1)}`);
-          sweepB.GetTransform(transformB, output.t);
-          for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
-          }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.7, 0.9));
-          g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${output.t.toFixed(3)}`);
-          sweepB.GetTransform(transformB, 1.0);
-          for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
-          }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.9, 0.5, 0.5));
-          g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${(1.0).toFixed(1)}`);
-          // #if 0
-          for (let t = 0.0; t < 1.0; t += 0.1) {
-              sweepB.GetTransform(transformB, t);
-              for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-                  vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
-              }
-              g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.5, 0.5));
-              g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${t.toFixed(1)}`);
-          }
-          // #endif
-      }
-      static Create() {
-          return new TimeOfImpact();
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class Tumbler extends Test {
-      constructor() {
-          super();
-          this.m_count = 0;
-          const ground = this.m_world.CreateBody(new b2.BodyDef());
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.allowSleep = false;
-              bd.position.Set(0.0, 10.0);
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 10.0, new b2.Vec2(10.0, 0.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(0.5, 10.0, new b2.Vec2(-10.0, 0.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(10.0, 0.5, new b2.Vec2(0.0, 10.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(10.0, 0.5, new b2.Vec2(0.0, -10.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              const jd = new b2.RevoluteJointDef();
-              jd.bodyA = ground;
-              jd.bodyB = body;
-              jd.localAnchorA.Set(0.0, 10.0);
-              jd.localAnchorB.Set(0.0, 0.0);
-              jd.referenceAngle = 0.0;
-              jd.motorSpeed = 0.05 * b2.pi;
-              jd.maxMotorTorque = 1e8;
-              jd.enableMotor = true;
-              this.m_joint = this.m_world.CreateJoint(jd);
-          }
-          this.m_count = 0;
-      }
-      Step(settings) {
-          super.Step(settings);
-          if (this.m_count < Tumbler.e_count) {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(0.0, 10.0);
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.125, 0.125);
-              body.CreateFixture(shape, 1.0);
-              ++this.m_count;
-          }
-      }
-      static Create() {
-          return new Tumbler();
-      }
-  }
-  Tumbler.e_count = 800;
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class VaryingFriction extends Test {
-      constructor() {
-          super();
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(13.0, 0.25);
-              const bd = new b2.BodyDef();
-              bd.position.Set(-4.0, 22.0);
-              bd.angle = -0.25;
-              const ground = this.m_world.CreateBody(bd);
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.25, 1.0);
-              const bd = new b2.BodyDef();
-              bd.position.Set(10.5, 19.0);
-              const ground = this.m_world.CreateBody(bd);
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(13.0, 0.25);
-              const bd = new b2.BodyDef();
-              bd.position.Set(4.0, 14.0);
-              bd.angle = 0.25;
-              const ground = this.m_world.CreateBody(bd);
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.25, 1.0);
-              const bd = new b2.BodyDef();
-              bd.position.Set(-10.5, 11.0);
-              const ground = this.m_world.CreateBody(bd);
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(13.0, 0.25);
-              const bd = new b2.BodyDef();
-              bd.position.Set(-4.0, 6.0);
-              bd.angle = -0.25;
-              const ground = this.m_world.CreateBody(bd);
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 0.5);
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.density = 25.0;
-              const friction = [0.75, 0.5, 0.35, 0.1, 0.0];
-              for (let i = 0; i < 5; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(-15.0 + 4.0 * i, 28.0);
-                  const body = this.m_world.CreateBody(bd);
-                  fd.friction = friction[i];
-                  body.CreateFixture(fd);
-              }
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-      }
-      static Create() {
-          return new VaryingFriction();
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  // Note: even with a restitution of 1.0, there is some energy change
-  // due to position correction.
-  class VaryingRestitution extends Test {
-      constructor() {
-          super();
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_radius = 1.0;
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.density = 1.0;
-              const restitution = [0.0, 0.1, 0.3, 0.5, 0.75, 0.9, 1.0];
-              for (let i = 0; i < 7; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(-10.0 + 3.0 * i, 20.0);
-                  const body = this.m_world.CreateBody(bd);
-                  fd.restitution = restitution[i];
-                  body.CreateFixture(fd);
-              }
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-      }
-      static Create() {
-          return new VaryingRestitution();
-      }
-  }
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class VerticalStack extends Test {
-      constructor() {
-          super();
-          this.m_bullet = null;
-          this.m_bodies = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
-          this.m_indices = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(20.0, 0.0), new b2.Vec2(20.0, 20.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          const xs = [0.0, -10.0, -5.0, 5.0, 10.0];
-          for (let j = 0; j < VerticalStack.e_columnCount; ++j) {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 0.5);
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.density = 1.0;
-              fd.friction = 0.3;
-              for (let i = 0; i < VerticalStack.e_rowCount; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  const n = j * VerticalStack.e_rowCount + i;
-                  // DEBUG: b2.Assert(n < VerticalStack.e_rowCount * VerticalStack.e_columnCount);
-                  this.m_indices[n] = n;
-                  bd.userData = this.m_indices[n];
-                  const x = 0.0;
-                  //const x = b2.RandomRange(-0.02, 0.02);
-                  //const x = i % 2 === 0 ? -0.01 : 0.01;
-                  bd.position.Set(xs[j] + x, 0.55 + 1.1 * i);
-                  const body = this.m_world.CreateBody(bd);
-                  this.m_bodies[n] = body;
-                  body.CreateFixture(fd);
-              }
-          }
-      }
-      Keyboard(key) {
-          switch (key) {
-              case ",":
-                  if (this.m_bullet) {
-                      this.m_world.DestroyBody(this.m_bullet);
-                      this.m_bullet = null;
-                  }
-                  {
-                      const shape = new b2.CircleShape();
-                      shape.m_radius = 0.25;
-                      const fd = new b2.FixtureDef();
-                      fd.shape = shape;
-                      fd.density = 20.0;
-                      fd.restitution = 0.05;
-                      const bd = new b2.BodyDef();
-                      bd.type = b2.BodyType.b2_dynamicBody;
-                      bd.bullet = true;
-                      bd.position.Set(-31.0, 5.0);
-                      this.m_bullet = this.m_world.CreateBody(bd);
-                      this.m_bullet.CreateFixture(fd);
-                      this.m_bullet.SetLinearVelocity(new b2.Vec2(400.0, 0.0));
-                  }
-                  break;
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "Press: (,) to launch a bullet.");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          // testbed.g_debugDraw.DrawString(5, this.m_textLine, `Blocksolve = ${(b2.blockSolve) ? (1) : (0)}`);
-          //if (this.m_stepCount === 300)
-          //{
-          //  if (this.m_bullet !== null)
-          //  {
-          //    this.m_world.DestroyBody(this.m_bullet);
-          //    this.m_bullet = null;
-          //  }
-          //  {
-          //    const shape = new b2.CircleShape();
-          //    shape.m_radius = 0.25;
-          //    const fd = new b2.FixtureDef();
-          //    fd.shape = shape;
-          //    fd.density = 20.0;
-          //    fd.restitution = 0.05;
-          //    const bd = new b2.BodyDef();
-          //    bd.type = b2.BodyType.b2_dynamicBody;
-          //    bd.bullet = true;
-          //    bd.position.Set(-31.0, 5.0);
-          //    this.m_bullet = this.m_world.CreateBody(bd);
-          //    this.m_bullet.CreateFixture(fd);
-          //    this.m_bullet.SetLinearVelocity(new b2.Vec2(400.0, 0.0));
-          //  }
-          //}
-      }
-      static Create() {
-          return new VerticalStack();
-      }
-  }
-  VerticalStack.e_columnCount = 1;
-  VerticalStack.e_rowCount = 15;
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class Web extends Test {
-      constructor() {
-          super();
-          this.m_bodies = new Array(4);
-          this.m_joints = new Array(8);
-          let ground = null;
-          {
-              const bd = new b2.BodyDef();
-              ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              ground.CreateFixture(shape, 0.0);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 0.5);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(-5.0, 5.0);
-              const body0 = this.m_bodies[0] = this.m_world.CreateBody(bd);
-              body0.CreateFixture(shape, 5.0);
-              bd.position.Set(5.0, 5.0);
-              const body1 = this.m_bodies[1] = this.m_world.CreateBody(bd);
-              body1.CreateFixture(shape, 5.0);
-              bd.position.Set(5.0, 15.0);
-              const body2 = this.m_bodies[2] = this.m_world.CreateBody(bd);
-              body2.CreateFixture(shape, 5.0);
-              bd.position.Set(-5.0, 15.0);
-              const body3 = this.m_bodies[3] = this.m_world.CreateBody(bd);
-              body3.CreateFixture(shape, 5.0);
-              const jd = new b2.DistanceJointDef();
-              let p1, p2, d;
-              const frequencyHz = 2.0;
-              const dampingRatio = 0.0;
-              jd.bodyA = ground;
-              jd.bodyB = body0;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(-10.0, 0.0);
-              jd.localAnchorB.Set(-0.5, -0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[0] = this.m_world.CreateJoint(jd);
-              jd.bodyA = ground;
-              jd.bodyB = body1;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(10.0, 0.0);
-              jd.localAnchorB.Set(0.5, -0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[1] = this.m_world.CreateJoint(jd);
-              jd.bodyA = ground;
-              jd.bodyB = body2;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(10.0, 20.0);
-              jd.localAnchorB.Set(0.5, 0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[2] = this.m_world.CreateJoint(jd);
-              jd.bodyA = ground;
-              jd.bodyB = body3;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(-10.0, 20.0);
-              jd.localAnchorB.Set(-0.5, 0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[3] = this.m_world.CreateJoint(jd);
-              jd.bodyA = body0;
-              jd.bodyB = body1;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(0.5, 0.0);
-              jd.localAnchorB.Set(-0.5, 0.0);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[4] = this.m_world.CreateJoint(jd);
-              jd.bodyA = body1;
-              jd.bodyB = body2;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(0.0, 0.5);
-              jd.localAnchorB.Set(0.0, -0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[5] = this.m_world.CreateJoint(jd);
-              jd.bodyA = body2;
-              jd.bodyB = body3;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(-0.5, 0.0);
-              jd.localAnchorB.Set(0.5, 0.0);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[6] = this.m_world.CreateJoint(jd);
-              jd.bodyA = body3;
-              jd.bodyB = body0;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-              jd.localAnchorA.Set(0.0, -0.5);
-              jd.localAnchorB.Set(0.0, 0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
-              jd.length = d.Length();
-              this.m_joints[7] = this.m_world.CreateJoint(jd);
-          }
-      }
-      JointDestroyed(joint) {
-          for (let i = 0; i < 8; ++i) {
-              if (this.m_joints[i] === joint) {
-                  this.m_joints[i] = null;
-                  break;
-              }
-          }
-      }
-      Keyboard(key) {
-          switch (key) {
-              case "b":
-                  for (let i = 0; i < 4; ++i) {
-                      const body = this.m_bodies[i];
-                      if (body) {
-                          this.m_world.DestroyBody(body);
-                          this.m_bodies[i] = null;
-                          break;
-                      }
-                  }
-                  break;
-              case "j":
-                  for (let i = 0; i < 8; ++i) {
-                      const joint = this.m_joints[i];
-                      if (joint) {
-                          this.m_world.DestroyJoint(joint);
-                          this.m_joints[i] = null;
-                          break;
-                      }
-                  }
-                  break;
-          }
-      }
-      Step(settings) {
-          super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "This demonstrates a soft distance joint.");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.DrawString(5, this.m_textLine, "Press: (b) to delete a body, (j) to delete a joint");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-      }
-      static Create() {
-          return new Web();
-      }
-  }
+  const testIndex$F = RegisterTest("Joints", "Revolute", Revolute.Create);
 
   // MIT License
   ///
@@ -8442,6 +7061,7 @@
           return new Rope();
       }
   }
+  const testIndex$G = RegisterTest("Rope", "Bending", Rope.Create);
   // class Rope : public Test
   // {
   // public:
@@ -8729,8 +7349,1332 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  class SensorTest extends Test {
+      constructor() {
+          super();
+          this.m_bodies = new Array(SensorTest.e_count);
+          this.m_touching = new Array(SensorTest.e_count);
+          for (let i = 0; i < SensorTest.e_count; ++i) {
+              this.m_touching[i] = new Array(1);
+          }
+          const bd = new b2.BodyDef();
+          const ground = this.m_world.CreateBody(bd);
+          {
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          /*
+          {
+            const sd = new b2.FixtureDef();
+            sd.SetAsBox(10.0, 2.0, new b2.Vec2(0.0, 20.0), 0.0);
+            sd.isSensor = true;
+            this.m_sensor = ground.CreateFixture(sd);
+          }
+          */
+          {
+              const shape = new b2.CircleShape();
+              shape.m_radius = 5.0;
+              shape.m_p.Set(0.0, 10.0);
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.isSensor = true;
+              this.m_sensor = ground.CreateFixture(fd);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_radius = 1.0;
+              for (let i = 0; i < SensorTest.e_count; ++i) {
+                  //const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(-10.0 + 3.0 * i, 20.0);
+                  bd.userData = this.m_touching[i];
+                  this.m_touching[i][0] = false;
+                  this.m_bodies[i] = this.m_world.CreateBody(bd);
+                  this.m_bodies[i].CreateFixture(shape, 1.0);
+              }
+          }
+      }
+      BeginContact(contact) {
+          const fixtureA = contact.GetFixtureA();
+          const fixtureB = contact.GetFixtureB();
+          if (fixtureA === this.m_sensor) {
+              const userData = fixtureB.GetBody().GetUserData();
+              if (userData) {
+                  const touching = userData;
+                  touching[0] = true;
+              }
+          }
+          if (fixtureB === this.m_sensor) {
+              const userData = fixtureA.GetBody().GetUserData();
+              if (userData) {
+                  const touching = userData;
+                  touching[0] = true;
+              }
+          }
+      }
+      EndContact(contact) {
+          const fixtureA = contact.GetFixtureA();
+          const fixtureB = contact.GetFixtureB();
+          if (fixtureA === this.m_sensor) {
+              const userData = fixtureB.GetBody().GetUserData();
+              if (userData) {
+                  const touching = userData;
+                  touching[0] = false;
+              }
+          }
+          if (fixtureB === this.m_sensor) {
+              const userData = fixtureA.GetBody().GetUserData();
+              if (userData) {
+                  const touching = userData;
+                  touching[0] = false;
+              }
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          // Traverse the contact results. Apply a force on shapes
+          // that overlap the sensor.
+          for (let i = 0; i < SensorTest.e_count; ++i) {
+              if (!this.m_touching[i][0]) {
+                  continue;
+              }
+              const body = this.m_bodies[i];
+              const ground = this.m_sensor.GetBody();
+              const circle = this.m_sensor.GetShape();
+              const center = ground.GetWorldPoint(circle.m_p, new b2.Vec2());
+              const position = body.GetPosition();
+              const d = b2.Vec2.SubVV(center, position, new b2.Vec2());
+              if (d.LengthSquared() < b2.epsilon_sq) {
+                  continue;
+              }
+              d.Normalize();
+              const F = b2.Vec2.MulSV(100.0, d, new b2.Vec2());
+              body.ApplyForce(F, position);
+          }
+      }
+      static Create() {
+          return new SensorTest();
+      }
+  }
+  SensorTest.e_count = 7;
+  const testIndex$H = RegisterTest("Collision", "Sensors", SensorTest.Create);
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class ShapeCast extends Test {
+      constructor() {
+          super();
+          this.m_vAs = [];
+          this.m_countA = 0;
+          this.m_radiusA = 0;
+          this.m_vBs = [];
+          this.m_countB = 0;
+          this.m_radiusB = 0;
+          // #if 1
+          this.m_vAs[0] = new b2.Vec2(-0.5, 1.0);
+          this.m_vAs[1] = new b2.Vec2(0.5, 1.0);
+          this.m_vAs[2] = new b2.Vec2(0.0, 0.0);
+          this.m_countA = 3;
+          this.m_radiusA = b2.polygonRadius;
+          this.m_vBs[0] = new b2.Vec2(-0.5, -0.5);
+          this.m_vBs[1] = new b2.Vec2(0.5, -0.5);
+          this.m_vBs[2] = new b2.Vec2(0.5, 0.5);
+          this.m_vBs[3] = new b2.Vec2(-0.5, 0.5);
+          this.m_countB = 4;
+          this.m_radiusB = b2.polygonRadius;
+          // #else
+          // this.m_vAs[0] = new b2.Vec2(0.0, 0.0);
+          // this.m_countA = 1;
+          // this.m_radiusA = 0.5;
+          // this.m_vBs[0] = new b2.Vec2(0.0, 0.0);
+          // this.m_countB = 1;
+          // this.m_radiusB = 0.5;
+          // #endif
+      }
+      Step(settings) {
+          super.Step(settings);
+          const transformA = new b2.Transform();
+          transformA.p.Set(0.0, 0.25);
+          transformA.q.SetIdentity();
+          const transformB = new b2.Transform();
+          transformB.SetIdentity();
+          const input = new b2.ShapeCastInput();
+          input.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
+          input.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
+          input.transformA.Copy(transformA);
+          input.transformB.Copy(transformB);
+          input.translationB.Set(8.0, 0.0);
+          const output = new b2.ShapeCastOutput();
+          const hit = b2.ShapeCast(output, input);
+          const transformB2 = new b2.Transform();
+          transformB2.q.Copy(transformB.q);
+          // transformB2.p = transformB.p + output.lambda * input.translationB;
+          transformB2.p.Copy(transformB.p).SelfMulAdd(output.lambda, input.translationB);
+          const distanceInput = new b2.DistanceInput();
+          distanceInput.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
+          distanceInput.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
+          distanceInput.transformA.Copy(transformA);
+          distanceInput.transformB.Copy(transformB2);
+          distanceInput.useRadii = false;
+          const simplexCache = new b2.SimplexCache();
+          simplexCache.count = 0;
+          const distanceOutput = new b2.DistanceOutput();
+          b2.Distance(distanceOutput, simplexCache, distanceInput);
+          g_debugDraw.DrawString(5, this.m_textLine, `hit = ${hit ? "true" : "false"}, iters = ${output.iterations}, lambda = ${output.lambda}, distance = ${distanceOutput.distance.toFixed(5)}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          g_debugDraw.PushTransform(transformA);
+          // testbed.g_debugDraw.DrawCircle(this.m_vAs[0], this.m_radiusA, new b2.Color(0.9, 0.9, 0.9));
+          g_debugDraw.DrawPolygon(this.m_vAs, this.m_countA, new b2.Color(0.9, 0.9, 0.9));
+          g_debugDraw.PopTransform(transformA);
+          g_debugDraw.PushTransform(transformB);
+          // testbed.g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.9, 0.5));
+          g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.9, 0.5));
+          g_debugDraw.PopTransform(transformB);
+          g_debugDraw.PushTransform(transformB2);
+          // testbed.g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.7, 0.9));
+          g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.7, 0.9));
+          g_debugDraw.PopTransform(transformB2);
+          if (hit) {
+              const p1 = output.point;
+              g_debugDraw.DrawPoint(p1, 10.0, new b2.Color(0.9, 0.3, 0.3));
+              // b2Vec2 p2 = p1 + output.normal;
+              const p2 = b2.Vec2.AddVV(p1, output.normal, new b2.Vec2());
+              g_debugDraw.DrawSegment(p1, p2, new b2.Color(0.9, 0.3, 0.3));
+          }
+      }
+      static Create() {
+          return new ShapeCast();
+      }
+  }
+  ShapeCast.e_vertexCount = 8;
+  const testIndex$I = RegisterTest("Collision", "Shape Cast", ShapeCast.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class ShapeEditing extends Test {
+      constructor() {
+          super();
+          this.m_fixture2 = null;
+          this.m_sensor = false;
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          const bd = new b2.BodyDef();
+          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.position.Set(0.0, 10.0);
+          this.m_body = this.m_world.CreateBody(bd);
+          const shape = new b2.PolygonShape();
+          shape.SetAsBox(4.0, 4.0, new b2.Vec2(0.0, 0.0), 0.0);
+          this.m_fixture1 = this.m_body.CreateFixture(shape, 10.0);
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "c":
+                  if (this.m_fixture2 === null) {
+                      const shape = new b2.CircleShape();
+                      shape.m_radius = 3.0;
+                      shape.m_p.Set(0.5, -4.0);
+                      this.m_fixture2 = this.m_body.CreateFixture(shape, 10.0);
+                      this.m_body.SetAwake(true);
+                  }
+                  break;
+              case "d":
+                  if (this.m_fixture2 !== null) {
+                      this.m_body.DestroyFixture(this.m_fixture2);
+                      this.m_fixture2 = null;
+                      this.m_body.SetAwake(true);
+                  }
+                  break;
+              case "s":
+                  if (this.m_fixture2 !== null) {
+                      this.m_sensor = !this.m_sensor;
+                      this.m_fixture2.SetSensor(this.m_sensor);
+                  }
+                  break;
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          g_debugDraw.DrawString(5, this.m_textLine, "Press: (c) create a shape, (d) destroy a shape.");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          g_debugDraw.DrawString(5, this.m_textLine, `sensor = ${(this.m_sensor) ? (1) : (0)}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+      }
+      static Create() {
+          return new ShapeEditing();
+      }
+  }
+  const testIndex$J = RegisterTest("Examples", "Shape Editing", ShapeEditing.Create);
+
+  /*
+  Test case for collision/jerking issue.
+  */
+  class Skier extends Test {
+      constructor() {
+          super();
+          const ground = this.m_world.CreateBody();
+          const PlatformWidth = 8.0;
+          /*
+          First angle is from the horizontal and should be negative for a downward slope.
+          Second angle is relative to the preceding slope, and should be positive, creating a kind of
+          loose 'Z'-shape from the 3 edges.
+          If A1 = -10, then A2 <= ~1.5 will result in the collision glitch.
+          If A1 = -30, then A2 <= ~10.0 will result in the glitch.
+          */
+          const Angle1Degrees = -30.0;
+          const Angle2Degrees = 10.0;
+          /*
+          The larger the value of SlopeLength, the less likely the glitch will show up.
+          */
+          const SlopeLength = 2.0;
+          const SurfaceFriction = 0.2;
+          // Convert to radians
+          const Slope1Incline = -Angle1Degrees * b2.pi / 180.0;
+          const Slope2Incline = Slope1Incline - Angle2Degrees * b2.pi / 180.0;
+          //
+          this.m_platform_width = PlatformWidth;
+          // Horizontal platform
+          const v1 = new b2.Vec2(-PlatformWidth, 0.0);
+          const v2 = new b2.Vec2(0.0, 0.0);
+          const v3 = new b2.Vec2(SlopeLength * Math.cos(Slope1Incline), -SlopeLength * Math.sin(Slope1Incline));
+          const v4 = new b2.Vec2(v3.x + SlopeLength * Math.cos(Slope2Incline), v3.y - SlopeLength * Math.sin(Slope2Incline));
+          const v5 = new b2.Vec2(v4.x, v4.y - 1.0);
+          const vertices = [v5, v4, v3, v2, v1];
+          const shape = new b2.ChainShape();
+          shape.CreateLoop(vertices);
+          const fd = new b2.FixtureDef();
+          fd.shape = shape;
+          fd.density = 0.0;
+          fd.friction = SurfaceFriction;
+          ground.CreateFixture(fd);
+          {
+              // const BodyWidth = 1.0;
+              const BodyHeight = 2.5;
+              const SkiLength = 3.0;
+              /*
+              Larger values for this seem to alleviate the issue to some extent.
+              */
+              const SkiThickness = 0.3;
+              const SkiFriction = 0.0;
+              const SkiRestitution = 0.15;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const initial_y = BodyHeight / 2 + SkiThickness;
+              bd.position.Set(-this.m_platform_width / 2, initial_y);
+              const skier = this.m_world.CreateBody(bd);
+              const ski = new b2.PolygonShape();
+              const verts = [];
+              verts.push(new b2.Vec2(-SkiLength / 2 - SkiThickness, -BodyHeight / 2));
+              verts.push(new b2.Vec2(-SkiLength / 2, -BodyHeight / 2 - SkiThickness));
+              verts.push(new b2.Vec2(SkiLength / 2, -BodyHeight / 2 - SkiThickness));
+              verts.push(new b2.Vec2(SkiLength / 2 + SkiThickness, -BodyHeight / 2));
+              ski.Set(verts);
+              const fd = new b2.FixtureDef();
+              fd.density = 1.0;
+              fd.friction = SkiFriction;
+              fd.restitution = SkiRestitution;
+              fd.shape = ski;
+              skier.CreateFixture(fd);
+              skier.SetLinearVelocity(new b2.Vec2(0.5, 0.0));
+              this.m_skier = skier;
+          }
+          g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
+          g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
+          g_camera.m_zoom = 0.4;
+          this.m_fixed_camera = true;
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "c":
+                  this.m_fixed_camera = !this.m_fixed_camera;
+                  if (this.m_fixed_camera) {
+                      g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
+                  }
+                  break;
+          }
+      }
+      Step(settings) {
+          g_debugDraw.DrawString(5, this.m_textLine, "Keys: c = Camera fixed/tracking");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          if (!this.m_fixed_camera) {
+              g_camera.m_center.Copy(this.m_skier.GetPosition());
+          }
+          super.Step(settings);
+      }
+      static Create() {
+          return new Skier();
+      }
+  }
+  const testIndex$K = RegisterTest("Bugs", "Skier", Skier.Create);
+
+  /*
+   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class BasicSliderCrank extends Test {
+      constructor() {
+          super();
+          /*b2.Body*/
+          let ground = null;
+          {
+              /*b2.BodyDef*/
+              const bd = new b2.BodyDef();
+              bd.position.Set(0.0, 17.0);
+              ground = this.m_world.CreateBody(bd);
+          }
+          {
+              /*b2.Body*/
+              let prevBody = ground;
+              // Define crank.
+              {
+                  /*b2.PolygonShape*/
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(4.0, 1.0);
+                  /*b2.BodyDef*/
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(-8.0, 20.0);
+                  /*b2.Body*/
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+                  /*b2.RevoluteJointDef*/
+                  const rjd = new b2.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2.Vec2(-12.0, 20.0));
+                  this.m_world.CreateJoint(rjd);
+                  prevBody = body;
+              }
+              // Define connecting rod
+              {
+                  /*b2.PolygonShape*/
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(8.0, 1.0);
+                  /*b2.BodyDef*/
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(4.0, 20.0);
+                  /*b2.Body*/
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+                  /*b2.RevoluteJointDef*/
+                  const rjd = new b2.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2.Vec2(-4.0, 20.0));
+                  this.m_world.CreateJoint(rjd);
+                  prevBody = body;
+              }
+              // Define piston
+              {
+                  /*b2.PolygonShape*/
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(3.0, 3.0);
+                  /*b2.BodyDef*/
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.fixedRotation = true;
+                  bd.position.Set(12.0, 20.0);
+                  /*b2.Body*/
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+                  /*b2.RevoluteJointDef*/
+                  const rjd = new b2.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2.Vec2(12.0, 20.0));
+                  this.m_world.CreateJoint(rjd);
+                  /*b2.PrismaticJointDef*/
+                  const pjd = new b2.PrismaticJointDef();
+                  pjd.Initialize(ground, body, new b2.Vec2(12.0, 17.0), new b2.Vec2(1.0, 0.0));
+                  this.m_world.CreateJoint(pjd);
+              }
+          }
+      }
+      static Create() {
+          return new BasicSliderCrank();
+      }
+  }
+  const testIndex$L = RegisterTest("Examples", "Slider Crank 1", BasicSliderCrank.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class SliderCrank extends Test {
+      constructor() {
+          super();
+          let ground = null;
+          {
+              const bd = new b2.BodyDef();
+              ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              let prevBody = ground;
+              // Define crank.
+              {
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(0.5, 2.0);
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(0.0, 7.0);
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+                  const rjd = new b2.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 5.0));
+                  rjd.motorSpeed = 1.0 * b2.pi;
+                  rjd.maxMotorTorque = 10000.0;
+                  rjd.enableMotor = true;
+                  this.m_joint1 = this.m_world.CreateJoint(rjd);
+                  prevBody = body;
+              }
+              // Define follower.
+              {
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(0.5, 4.0);
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(0.0, 13.0);
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+                  const rjd = new b2.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 9.0));
+                  rjd.enableMotor = false;
+                  this.m_world.CreateJoint(rjd);
+                  prevBody = body;
+              }
+              // Define piston
+              {
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(1.5, 1.5);
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.fixedRotation = true;
+                  bd.position.Set(0.0, 17.0);
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+                  const rjd = new b2.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 17.0));
+                  this.m_world.CreateJoint(rjd);
+                  const pjd = new b2.PrismaticJointDef();
+                  pjd.Initialize(ground, body, new b2.Vec2(0.0, 17.0), new b2.Vec2(0.0, 1.0));
+                  pjd.maxMotorForce = 1000.0;
+                  pjd.enableMotor = true;
+                  this.m_joint2 = this.m_world.CreateJoint(pjd);
+              }
+              // Create a payload
+              {
+                  const shape = new b2.PolygonShape();
+                  shape.SetAsBox(1.5, 1.5);
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(0.0, 23.0);
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(shape, 2.0);
+              }
+          }
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "f":
+                  this.m_joint2.EnableMotor(!this.m_joint2.IsMotorEnabled());
+                  this.m_joint2.GetBodyB().SetAwake(true);
+                  break;
+              case "m":
+                  this.m_joint1.EnableMotor(!this.m_joint1.IsMotorEnabled());
+                  this.m_joint1.GetBodyB().SetAwake(true);
+                  break;
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          g_debugDraw.DrawString(5, this.m_textLine, "Keys: (f) toggle friction, (m) toggle motor");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          const torque = this.m_joint1.GetMotorTorque(settings.m_hertz);
+          g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque.toFixed(0)}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+      }
+      static Create() {
+          return new SliderCrank();
+      }
+  }
+  SliderCrank.e_count = 30;
+  const testIndex$M = RegisterTest("Examples", "Slider Crank 2", SliderCrank.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  // Inspired by a contribution by roman_m
+  // Dimensions scooped from APE (http://www.cove.org/ape/index.htm)
+  class TheoJansen extends Test {
+      constructor() {
+          super();
+          this.m_offset = new b2.Vec2();
+          this.m_motorOn = false;
+          this.m_motorSpeed = 0;
+          this.Construct();
+      }
+      CreateLeg(s, wheelAnchor) {
+          const p1 = new b2.Vec2(5.4 * s, -6.1);
+          const p2 = new b2.Vec2(7.2 * s, -1.2);
+          const p3 = new b2.Vec2(4.3 * s, -1.9);
+          const p4 = new b2.Vec2(3.1 * s, 0.8);
+          const p5 = new b2.Vec2(6.0 * s, 1.5);
+          const p6 = new b2.Vec2(2.5 * s, 3.7);
+          const fd1 = new b2.FixtureDef();
+          const fd2 = new b2.FixtureDef();
+          fd1.filter.groupIndex = -1;
+          fd2.filter.groupIndex = -1;
+          fd1.density = 1.0;
+          fd2.density = 1.0;
+          const poly1 = new b2.PolygonShape();
+          const poly2 = new b2.PolygonShape();
+          if (s > 0.0) {
+              const vertices = new Array();
+              vertices[0] = p1;
+              vertices[1] = p2;
+              vertices[2] = p3;
+              poly1.Set(vertices);
+              vertices[0] = b2.Vec2_zero;
+              vertices[1] = b2.Vec2.SubVV(p5, p4, new b2.Vec2());
+              vertices[2] = b2.Vec2.SubVV(p6, p4, new b2.Vec2());
+              poly2.Set(vertices);
+          }
+          else {
+              const vertices = new Array();
+              vertices[0] = p1;
+              vertices[1] = p3;
+              vertices[2] = p2;
+              poly1.Set(vertices);
+              vertices[0] = b2.Vec2_zero;
+              vertices[1] = b2.Vec2.SubVV(p6, p4, new b2.Vec2());
+              vertices[2] = b2.Vec2.SubVV(p5, p4, new b2.Vec2());
+              poly2.Set(vertices);
+          }
+          fd1.shape = poly1;
+          fd2.shape = poly2;
+          const bd1 = new b2.BodyDef();
+          const bd2 = new b2.BodyDef();
+          bd1.type = b2.BodyType.b2_dynamicBody;
+          bd2.type = b2.BodyType.b2_dynamicBody;
+          bd1.position.Copy(this.m_offset);
+          bd2.position.Copy(b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
+          bd1.angularDamping = 10.0;
+          bd2.angularDamping = 10.0;
+          const body1 = this.m_world.CreateBody(bd1);
+          const body2 = this.m_world.CreateBody(bd2);
+          body1.CreateFixture(fd1);
+          body2.CreateFixture(fd2);
+          {
+              const jd = new b2.DistanceJointDef();
+              // Using a soft distance constraint can reduce some jitter.
+              // It also makes the structure seem a bit more fluid by
+              // acting like a suspension system.
+              const dampingRatio = 0.5;
+              const frequencyHz = 10.0;
+              jd.Initialize(body1, body2, b2.Vec2.AddVV(p2, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(p5, this.m_offset, new b2.Vec2()));
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              this.m_world.CreateJoint(jd);
+              jd.Initialize(body1, body2, b2.Vec2.AddVV(p3, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              this.m_world.CreateJoint(jd);
+              jd.Initialize(body1, this.m_wheel, b2.Vec2.AddVV(p3, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(wheelAnchor, this.m_offset, new b2.Vec2()));
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              this.m_world.CreateJoint(jd);
+              jd.Initialize(body2, this.m_wheel, b2.Vec2.AddVV(p6, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(wheelAnchor, this.m_offset, new b2.Vec2()));
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              this.m_world.CreateJoint(jd);
+          }
+          {
+              const jd = new b2.RevoluteJointDef();
+              jd.Initialize(body2, this.m_chassis, b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
+              this.m_world.CreateJoint(jd);
+          }
+      }
+      Construct() {
+          this.m_offset.Set(0.0, 8.0);
+          this.m_motorSpeed = 2.0;
+          this.m_motorOn = true;
+          const pivot = new b2.Vec2(0.0, 0.8);
+          // Ground
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(50.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(-50.0, 10.0));
+              ground.CreateFixture(shape, 0.0);
+              shape.SetTwoSided(new b2.Vec2(50.0, 0.0), new b2.Vec2(50.0, 10.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          // Balls
+          for (let i = 0; i < 40; ++i) {
+              const shape = new b2.CircleShape();
+              shape.m_radius = 0.25;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Set(-40.0 + 2.0 * i, 0.5);
+              const body = this.m_world.CreateBody(bd);
+              body.CreateFixture(shape, 1.0);
+          }
+          // Chassis
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(2.5, 1.0);
+              const sd = new b2.FixtureDef();
+              sd.density = 1.0;
+              sd.shape = shape;
+              sd.filter.groupIndex = -1;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Copy(pivot).SelfAdd(this.m_offset);
+              this.m_chassis = this.m_world.CreateBody(bd);
+              this.m_chassis.CreateFixture(sd);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_radius = 1.6;
+              const sd = new b2.FixtureDef();
+              sd.density = 1.0;
+              sd.shape = shape;
+              sd.filter.groupIndex = -1;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Copy(pivot).SelfAdd(this.m_offset);
+              this.m_wheel = this.m_world.CreateBody(bd);
+              this.m_wheel.CreateFixture(sd);
+          }
+          {
+              const jd = new b2.RevoluteJointDef();
+              jd.Initialize(this.m_wheel, this.m_chassis, b2.Vec2.AddVV(pivot, this.m_offset, new b2.Vec2()));
+              jd.collideConnected = false;
+              jd.motorSpeed = this.m_motorSpeed;
+              jd.maxMotorTorque = 400.0;
+              jd.enableMotor = this.m_motorOn;
+              this.m_motorJoint = this.m_world.CreateJoint(jd);
+          }
+          const wheelAnchor = b2.Vec2.AddVV(pivot, new b2.Vec2(0.0, -0.8), new b2.Vec2());
+          this.CreateLeg(-1.0, wheelAnchor);
+          this.CreateLeg(1.0, wheelAnchor);
+          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), 120.0 * b2.pi / 180.0);
+          this.CreateLeg(-1.0, wheelAnchor);
+          this.CreateLeg(1.0, wheelAnchor);
+          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), -120.0 * b2.pi / 180.0);
+          this.CreateLeg(-1.0, wheelAnchor);
+          this.CreateLeg(1.0, wheelAnchor);
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "a":
+                  this.m_motorJoint.SetMotorSpeed(-this.m_motorSpeed);
+                  break;
+              case "s":
+                  this.m_motorJoint.SetMotorSpeed(0.0);
+                  break;
+              case "d":
+                  this.m_motorJoint.SetMotorSpeed(this.m_motorSpeed);
+                  break;
+              case "m":
+                  this.m_motorJoint.EnableMotor(!this.m_motorJoint.IsMotorEnabled());
+                  break;
+          }
+      }
+      Step(settings) {
+          g_debugDraw.DrawString(5, this.m_textLine, "Keys: left = a, brake = s, right = d, toggle motor = m");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          super.Step(settings);
+      }
+      static Create() {
+          return new TheoJansen();
+      }
+  }
+  const testIndex$N = RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /**
+   * This stress tests the dynamic tree broad-phase. This also
+   * shows that tile based collision is _not_ smooth due to Box2D
+   * not knowing about adjacency.
+   */
+  class Tiles extends Test {
+      constructor() {
+          super();
+          this.m_fixtureCount = 0;
+          this.m_createTime = 0.0;
+          this.m_fixtureCount = 0;
+          /*b2.Timer*/
+          const timer = new b2.Timer();
+          {
+              /*float32*/
+              const a = 0.5;
+              /*b2.BodyDef*/
+              const bd = new b2.BodyDef();
+              bd.position.y = -a;
+              /*b2.Body*/
+              const ground = this.m_world.CreateBody(bd);
+              {
+                  /*int32*/
+                  const N = 200;
+                  /*int32*/
+                  const M = 10;
+                  /*b2.Vec2*/
+                  const position = new b2.Vec2();
+                  position.y = 0.0;
+                  for ( /*int32*/let j = 0; j < M; ++j) {
+                      position.x = -N * a;
+                      for ( /*int32*/let i = 0; i < N; ++i) {
+                          /*b2.PolygonShape*/
+                          const shape = new b2.PolygonShape();
+                          shape.SetAsBox(a, a, position, 0.0);
+                          ground.CreateFixture(shape, 0.0);
+                          ++this.m_fixtureCount;
+                          position.x += 2.0 * a;
+                      }
+                      position.y -= 2.0 * a;
+                  }
+              }
+              //    else
+              //    {
+              //      /*int32*/ const N = 200;
+              //      /*int32*/ const M = 10;
+              //      /*b2.Vec2*/ const position = new b2.Vec2();
+              //      position.x = -N * a;
+              //      for (/*int32*/ let i = 0; i < N; ++i)
+              //      {
+              //        position.y = 0.0;
+              //        for (/*int32*/ let j = 0; j < M; ++j)
+              //        {
+              //          /*b2.PolygonShape*/ const shape = new b2.PolygonShape();
+              //          shape.SetAsBox(a, a, position, 0.0);
+              //          ground.CreateFixture(shape, 0.0);
+              //          position.y -= 2.0 * a;
+              //        }
+              //        position.x += 2.0 * a;
+              //      }
+              //    }
+          }
+          {
+              /*float32*/
+              const a = 0.5;
+              /*b2.PolygonShape*/
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(a, a);
+              /*b2.Vec2*/
+              const x = new b2.Vec2(-7.0, 0.75);
+              /*b2.Vec2*/
+              const y = new b2.Vec2();
+              /*b2.Vec2*/
+              const deltaX = new b2.Vec2(0.5625, 1.25);
+              /*b2.Vec2*/
+              const deltaY = new b2.Vec2(1.125, 0.0);
+              for ( /*int32*/let i = 0; i < Tiles.e_count; ++i) {
+                  y.Copy(x);
+                  for ( /*int32*/let j = i; j < Tiles.e_count; ++j) {
+                      /*b2.BodyDef*/
+                      const bd = new b2.BodyDef();
+                      bd.type = b2.BodyType.b2_dynamicBody;
+                      bd.position.Copy(y);
+                      //if (i === 0 && j === 0)
+                      //{
+                      //  bd.allowSleep = false;
+                      //}
+                      //else
+                      //{
+                      //  bd.allowSleep = true;
+                      //}
+                      /*b2.Body*/
+                      const body = this.m_world.CreateBody(bd);
+                      body.CreateFixture(shape, 5.0);
+                      ++this.m_fixtureCount;
+                      y.SelfAdd(deltaY);
+                  }
+                  x.SelfAdd(deltaX);
+              }
+          }
+          this.m_createTime = timer.GetMilliseconds();
+      }
+      Step(settings) {
+          /*const b2.ContactManager*/
+          const cm = this.m_world.GetContactManager();
+          /*int32*/
+          const height = cm.m_broadPhase.GetTreeHeight();
+          /*int32*/
+          const leafCount = cm.m_broadPhase.GetProxyCount();
+          /*int32*/
+          const minimumNodeCount = 2 * leafCount - 1;
+          /*float32*/
+          const minimumHeight = Math.ceil(Math.log(minimumNodeCount) / Math.log(2.0));
+          g_debugDraw.DrawString(5, this.m_textLine, `dynamic tree height = ${height}, min = ${minimumHeight}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          super.Step(settings);
+          g_debugDraw.DrawString(5, this.m_textLine, `create time = ${this.m_createTime.toFixed(2)} ms, fixture count = ${this.m_fixtureCount}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          //b2.DynamicTree* tree = this.m_world.this.m_contactManager.m_broadPhase.m_tree;
+          //if (this.m_stepCount === 400)
+          //{
+          //  tree.RebuildBottomUp();
+          //}
+      }
+      static Create() {
+          return new Tiles();
+      }
+  }
+  Tiles.e_count = 20;
+  const testIndex$O = RegisterTest("Benchmark", "Tiles", Tiles.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class TimeOfImpact extends Test {
+      constructor() {
+          super();
+          this.m_shapeA = new b2.PolygonShape();
+          this.m_shapeB = new b2.PolygonShape();
+          this.m_shapeA.SetAsBox(25.0, 5.0);
+          this.m_shapeB.SetAsBox(2.5, 2.5);
+      }
+      Step(settings) {
+          super.Step(settings);
+          const sweepA = new b2.Sweep();
+          sweepA.c0.Set(0.0, 20.0 + 8.0 * Math.cos(Date.now() / 1000)); // (24.0, -60.0);
+          sweepA.a0 = 2.95;
+          sweepA.c.Copy(sweepA.c0);
+          sweepA.a = sweepA.a0;
+          sweepA.localCenter.SetZero();
+          const sweepB = new b2.Sweep();
+          sweepB.c0.Set(20.0, 40.0); // (53.474274, -50.252514);
+          sweepB.a0 = 0.1; // 513.36676; // - 162.0 * b2.pi;
+          sweepB.c.Set(-20.0, 0.0); // (54.595478, -51.083473);
+          sweepB.a = 3.1; // 513.62781; //  - 162.0 * b2.pi;
+          sweepB.localCenter.SetZero();
+          //sweepB.a0 -= 300.0 * b2.pi;
+          //sweepB.a -= 300.0 * b2.pi;
+          const input = new b2.TOIInput();
+          input.proxyA.SetShape(this.m_shapeA, 0);
+          input.proxyB.SetShape(this.m_shapeB, 0);
+          input.sweepA.Copy(sweepA);
+          input.sweepB.Copy(sweepB);
+          input.tMax = 1.0;
+          const output = new b2.TOIOutput();
+          b2.TimeOfImpact(output, input);
+          g_debugDraw.DrawString(5, this.m_textLine, `toi = ${output.t.toFixed(3)}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          g_debugDraw.DrawString(5, this.m_textLine, `max toi iters = ${b2.toiMaxIters}, max root iters = ${b2.toiMaxRootIters}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          const vertices = [];
+          const transformA = new b2.Transform();
+          sweepA.GetTransform(transformA, 0.0);
+          for (let i = 0; i < this.m_shapeA.m_count; ++i) {
+              vertices[i] = b2.Transform.MulXV(transformA, this.m_shapeA.m_vertices[i], new b2.Vec2());
+          }
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeA.m_count, new b2.Color(0.9, 0.9, 0.9));
+          const transformB = new b2.Transform();
+          sweepB.GetTransform(transformB, 0.0);
+          //b2.Vec2 localPoint(2.0f, -0.1f);
+          for (let i = 0; i < this.m_shapeB.m_count; ++i) {
+              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+          }
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.9, 0.5));
+          g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${(0.0).toFixed(1)}`);
+          sweepB.GetTransform(transformB, output.t);
+          for (let i = 0; i < this.m_shapeB.m_count; ++i) {
+              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+          }
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.7, 0.9));
+          g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${output.t.toFixed(3)}`);
+          sweepB.GetTransform(transformB, 1.0);
+          for (let i = 0; i < this.m_shapeB.m_count; ++i) {
+              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+          }
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.9, 0.5, 0.5));
+          g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${(1.0).toFixed(1)}`);
+          // #if 0
+          for (let t = 0.0; t < 1.0; t += 0.1) {
+              sweepB.GetTransform(transformB, t);
+              for (let i = 0; i < this.m_shapeB.m_count; ++i) {
+                  vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+              }
+              g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.5, 0.5));
+              g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${t.toFixed(1)}`);
+          }
+          // #endif
+      }
+      static Create() {
+          return new TimeOfImpact();
+      }
+  }
+  const testIndex$P = RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class Tumbler extends Test {
+      constructor() {
+          super();
+          this.m_count = 0;
+          const ground = this.m_world.CreateBody(new b2.BodyDef());
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.allowSleep = false;
+              bd.position.Set(0.0, 10.0);
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.5, 10.0, new b2.Vec2(10.0, 0.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              shape.SetAsBox(0.5, 10.0, new b2.Vec2(-10.0, 0.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              shape.SetAsBox(10.0, 0.5, new b2.Vec2(0.0, 10.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              shape.SetAsBox(10.0, 0.5, new b2.Vec2(0.0, -10.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              const jd = new b2.RevoluteJointDef();
+              jd.bodyA = ground;
+              jd.bodyB = body;
+              jd.localAnchorA.Set(0.0, 10.0);
+              jd.localAnchorB.Set(0.0, 0.0);
+              jd.referenceAngle = 0.0;
+              jd.motorSpeed = 0.05 * b2.pi;
+              jd.maxMotorTorque = 1e8;
+              jd.enableMotor = true;
+              this.m_joint = this.m_world.CreateJoint(jd);
+          }
+          this.m_count = 0;
+      }
+      Step(settings) {
+          super.Step(settings);
+          if (this.m_count < Tumbler.e_count) {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Set(0.0, 10.0);
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.125, 0.125);
+              body.CreateFixture(shape, 1.0);
+              ++this.m_count;
+          }
+      }
+      static Create() {
+          return new Tumbler();
+      }
+  }
+  Tumbler.e_count = 800;
+  const testIndex$Q = RegisterTest("Benchmark", "Tumbler", Tumbler.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class Web extends Test {
+      constructor() {
+          super();
+          this.m_bodies = new Array(4);
+          this.m_joints = new Array(8);
+          let ground = null;
+          {
+              const bd = new b2.BodyDef();
+              ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.5, 0.5);
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Set(-5.0, 5.0);
+              const body0 = this.m_bodies[0] = this.m_world.CreateBody(bd);
+              body0.CreateFixture(shape, 5.0);
+              bd.position.Set(5.0, 5.0);
+              const body1 = this.m_bodies[1] = this.m_world.CreateBody(bd);
+              body1.CreateFixture(shape, 5.0);
+              bd.position.Set(5.0, 15.0);
+              const body2 = this.m_bodies[2] = this.m_world.CreateBody(bd);
+              body2.CreateFixture(shape, 5.0);
+              bd.position.Set(-5.0, 15.0);
+              const body3 = this.m_bodies[3] = this.m_world.CreateBody(bd);
+              body3.CreateFixture(shape, 5.0);
+              const jd = new b2.DistanceJointDef();
+              let p1, p2, d;
+              const frequencyHz = 2.0;
+              const dampingRatio = 0.0;
+              jd.bodyA = ground;
+              jd.bodyB = body0;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(-10.0, 0.0);
+              jd.localAnchorB.Set(-0.5, -0.5);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[0] = this.m_world.CreateJoint(jd);
+              jd.bodyA = ground;
+              jd.bodyB = body1;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(10.0, 0.0);
+              jd.localAnchorB.Set(0.5, -0.5);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[1] = this.m_world.CreateJoint(jd);
+              jd.bodyA = ground;
+              jd.bodyB = body2;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(10.0, 20.0);
+              jd.localAnchorB.Set(0.5, 0.5);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[2] = this.m_world.CreateJoint(jd);
+              jd.bodyA = ground;
+              jd.bodyB = body3;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(-10.0, 20.0);
+              jd.localAnchorB.Set(-0.5, 0.5);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[3] = this.m_world.CreateJoint(jd);
+              jd.bodyA = body0;
+              jd.bodyB = body1;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(0.5, 0.0);
+              jd.localAnchorB.Set(-0.5, 0.0);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[4] = this.m_world.CreateJoint(jd);
+              jd.bodyA = body1;
+              jd.bodyB = body2;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(0.0, 0.5);
+              jd.localAnchorB.Set(0.0, -0.5);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[5] = this.m_world.CreateJoint(jd);
+              jd.bodyA = body2;
+              jd.bodyB = body3;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(-0.5, 0.0);
+              jd.localAnchorB.Set(0.5, 0.0);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[6] = this.m_world.CreateJoint(jd);
+              jd.bodyA = body3;
+              jd.bodyB = body0;
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.localAnchorA.Set(0.0, -0.5);
+              jd.localAnchorB.Set(0.0, 0.5);
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
+              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              jd.length = d.Length();
+              this.m_joints[7] = this.m_world.CreateJoint(jd);
+          }
+      }
+      JointDestroyed(joint) {
+          for (let i = 0; i < 8; ++i) {
+              if (this.m_joints[i] === joint) {
+                  this.m_joints[i] = null;
+                  break;
+              }
+          }
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "b":
+                  for (let i = 0; i < 4; ++i) {
+                      const body = this.m_bodies[i];
+                      if (body) {
+                          this.m_world.DestroyBody(body);
+                          this.m_bodies[i] = null;
+                          break;
+                      }
+                  }
+                  break;
+              case "j":
+                  for (let i = 0; i < 8; ++i) {
+                      const joint = this.m_joints[i];
+                      if (joint) {
+                          this.m_world.DestroyJoint(joint);
+                          this.m_joints[i] = null;
+                          break;
+                      }
+                  }
+                  break;
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          g_debugDraw.DrawString(5, this.m_textLine, "This demonstrates a soft distance joint.");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          g_debugDraw.DrawString(5, this.m_textLine, "Press: (b) to delete a body, (j) to delete a joint");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+      }
+      static Create() {
+          return new Web();
+      }
+  }
+  const testIndex$R = RegisterTest("Examples", "Web", Web.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
   // Adapted from MotorJoint.h
-  class MotorJoint2 extends Test {
+  class WheelJoint extends Test {
       constructor() {
           super();
           let ground;
@@ -8785,9 +8729,127 @@
           super.Step(settings);
       }
       static Create() {
-          return new MotorJoint2();
+          return new WheelJoint();
       }
   }
+  const testIndex$S = RegisterTest("Joints", "Wheel", WheelJoint.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class RopeJoint extends Test {
+      constructor() {
+          super();
+          this.m_ropeDef = new b2.RopeJointDef();
+          this.m_rope = null;
+          /*b2.Body*/
+          let ground = null;
+          {
+              /*b2.BodyDef*/
+              const bd = new b2.BodyDef();
+              ground = this.m_world.CreateBody(bd);
+              /*b2.EdgeShape*/
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              /*b2.PolygonShape*/
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.5, 0.125);
+              /*b2.FixtureDef*/
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.density = 20.0;
+              fd.friction = 0.2;
+              fd.filter.categoryBits = 0x0001;
+              fd.filter.maskBits = 0xFFFF & ~0x0002;
+              /*b2.RevoluteJointDef*/
+              const jd = new b2.RevoluteJointDef();
+              jd.collideConnected = false;
+              /*const int32*/
+              const N = 10;
+              /*const float32*/
+              const y = 15.0;
+              this.m_ropeDef.localAnchorA.Set(0.0, y);
+              /*b2.Body*/
+              let prevBody = ground;
+              for ( /*int32*/let i = 0; i < N; ++i) {
+                  /*b2.BodyDef*/
+                  const bd = new b2.BodyDef();
+                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.position.Set(0.5 + 1.0 * i, y);
+                  if (i === N - 1) {
+                      shape.SetAsBox(1.5, 1.5);
+                      fd.density = 100.0;
+                      fd.filter.categoryBits = 0x0002;
+                      bd.position.Set(1.0 * i, y);
+                      bd.angularDamping = 0.4;
+                  }
+                  /*b2.Body*/
+                  const body = this.m_world.CreateBody(bd);
+                  body.CreateFixture(fd);
+                  /*b2.Vec2*/
+                  const anchor = new b2.Vec2(i, y);
+                  jd.Initialize(prevBody, body, anchor);
+                  this.m_world.CreateJoint(jd);
+                  prevBody = body;
+              }
+              this.m_ropeDef.localAnchorB.SetZero();
+              /*float32*/
+              const extraLength = 0.01;
+              this.m_ropeDef.maxLength = N - 1.0 + extraLength;
+              this.m_ropeDef.bodyB = prevBody;
+          }
+          {
+              this.m_ropeDef.bodyA = ground;
+              this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+          }
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "j":
+                  if (this.m_rope) {
+                      this.m_world.DestroyJoint(this.m_rope);
+                      this.m_rope = null;
+                  }
+                  else {
+                      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+                  }
+                  break;
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the rope joint.");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          if (this.m_rope) {
+              g_debugDraw.DrawString(5, this.m_textLine, "Rope ON");
+          }
+          else {
+              g_debugDraw.DrawString(5, this.m_textLine, "Rope OFF");
+          }
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+      }
+      static Create() {
+          return new RopeJoint();
+      }
+  }
+  const testIndex$T = RegisterTest("Examples", "Wrecking Ball", RopeJoint.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8856,6 +8918,179 @@
           return new BlobTest();
       }
   }
+  const testIndex$U = RegisterTest("Extras", "Blob Test", BlobTest.Create);
+
+  class DominoTower extends Test {
+      constructor() {
+          super();
+          const DOMINO_WIDTH = .2;
+          const DOMINO_FRICTION = 0.1;
+          const DOMINO_HEIGHT = 1.0;
+          const BASE_COUNT = 25;
+          /**
+           * The density of the dominos under construction. Varies for
+           * different parts of the tower.
+           */
+          let dominoDensity;
+          function makeDomino(x, y, horizontal) {
+              const sd = new b2.PolygonShape();
+              sd.SetAsBox(0.5 * DOMINO_WIDTH, 0.5 * DOMINO_HEIGHT);
+              const fd = new b2.FixtureDef();
+              fd.shape = sd;
+              fd.density = dominoDensity;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              fd.friction = DOMINO_FRICTION;
+              fd.restitution = 0.65;
+              bd.position.Set(x, y);
+              bd.angle = horizontal ? (Math.PI / 2.0) : 0;
+              const myBody = world.CreateBody(bd);
+              myBody.CreateFixture(fd);
+          }
+          const gravity = new b2.Vec2(0, -10);
+          //world = new b2.World(gravity);
+          const world = this.m_world;
+          world.SetGravity(gravity);
+          // Create the floor
+          {
+              const sd = new b2.PolygonShape();
+              sd.SetAsBox(50, 10);
+              const bd = new b2.BodyDef();
+              bd.position.Set(0, -10);
+              const body = world.CreateBody(bd);
+              body.CreateFixture(sd, 0);
+          }
+          {
+              dominoDensity = 10;
+              // Make bullet
+              const sd = new b2.PolygonShape();
+              sd.SetAsBox(.7, .7);
+              const fd = new b2.FixtureDef();
+              fd.density = 35.0;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              fd.shape = sd;
+              fd.friction = 0.0;
+              fd.restitution = 0.85;
+              bd.bullet = true;
+              bd.position.Set(30.0, 5.00);
+              let b = world.CreateBody(bd);
+              b.CreateFixture(fd);
+              b.SetLinearVelocity(new b2.Vec2(-25.0, -25.0));
+              b.SetAngularVelocity(6.7);
+              fd.density = 25.0;
+              bd.position.Set(-30.0, 25.0);
+              b = world.CreateBody(bd);
+              b.CreateFixture(fd);
+              b.SetLinearVelocity(new b2.Vec2(35.0, -10.0));
+              b.SetAngularVelocity(-8.3);
+          }
+          {
+              let currX;
+              // Make base
+              for (let i = 0; i < BASE_COUNT; ++i) {
+                  currX = i * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * BASE_COUNT / 2);
+                  makeDomino(currX, DOMINO_HEIGHT / 2.0, false);
+                  makeDomino(currX, DOMINO_HEIGHT + DOMINO_WIDTH / 2.0, true);
+              }
+              currX = BASE_COUNT * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * BASE_COUNT / 2);
+              // Make 'I's
+              for (let j = 1; j < BASE_COUNT; ++j) {
+                  if (j > 3) {
+                      dominoDensity *= .8;
+                  }
+                  // The y at the center of the I structure.
+                  const currY = DOMINO_HEIGHT * 0.5 + (DOMINO_HEIGHT + 2 * DOMINO_WIDTH) * .99 * j;
+                  for (let i = 0; i < BASE_COUNT - j; ++i) {
+                      currX = i * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * (BASE_COUNT - j) / 2);
+                      dominoDensity *= 2.5;
+                      if (i === 0) {
+                          makeDomino(currX - (1.25 * DOMINO_HEIGHT) + .5 * DOMINO_WIDTH, currY - DOMINO_WIDTH, false);
+                      }
+                      if (i === BASE_COUNT - j - 1) {
+                          makeDomino(currX + (1.25 * DOMINO_HEIGHT) - .5 * DOMINO_WIDTH, currY - DOMINO_WIDTH, false);
+                      }
+                      dominoDensity /= 2.5;
+                      makeDomino(currX, currY, false);
+                      makeDomino(currX, currY + .5 * (DOMINO_WIDTH + DOMINO_HEIGHT), true);
+                      makeDomino(currX, currY - .5 * (DOMINO_WIDTH + DOMINO_HEIGHT), true);
+                  }
+              }
+          }
+      }
+      static Create() {
+          return new DominoTower();
+      }
+  }
+  const testIndex$V = RegisterTest("Extras", "Domino Tower", DominoTower.Create);
+
+  class PyramidTopple extends Test {
+      constructor() {
+          super();
+          const WIDTH = 4;
+          const HEIGHT = 30;
+          const add_domino = (world, pos, flipped) => {
+              const mass = 1;
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.position.Copy(pos);
+              const body = world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              if (flipped) {
+                  shape.SetAsBox(0.5 * HEIGHT, 0.5 * WIDTH);
+              }
+              else {
+                  shape.SetAsBox(0.5 * WIDTH, 0.5 * HEIGHT);
+              }
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.density = mass / (WIDTH * HEIGHT);
+              fd.friction = 0.6;
+              fd.restitution = 0.0;
+              body.CreateFixture(fd);
+          };
+          const world = this.m_world;
+          ///settings.positionIterations = 30; // cpSpaceSetIterations(space, 30);
+          ///world.SetGravity(new b2.Vec2(0, -300)); // cpSpaceSetGravity(space, cpv(0, -300));
+          ///b2.timeToSleep = 0.5; // cpSpaceSetSleepTimeThreshold(space, 0.5f);
+          ///b2.linearSlop = 0.5; // cpSpaceSetCollisionSlop(space, 0.5f);
+          // Add a floor.
+          const bd = new b2.BodyDef();
+          const body = world.CreateBody(bd);
+          const shape = new b2.EdgeShape();
+          shape.SetTwoSided(new b2.Vec2(-600, -240), new b2.Vec2(600, -240));
+          const fd = new b2.FixtureDef();
+          fd.shape = shape;
+          fd.friction = 1.0;
+          fd.restitution = 1.0;
+          body.CreateFixture(fd);
+          // Add the dominoes.
+          const n = 12;
+          for (let i = 0; i < n; i++) {
+              for (let j = 0; j < (n - i); j++) {
+                  const offset = new b2.Vec2((j - (n - 1 - i) * 0.5) * 1.5 * HEIGHT, (i + 0.5) * (HEIGHT + 2 * WIDTH) - WIDTH - 240);
+                  add_domino(world, offset, false);
+                  add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0, (HEIGHT + WIDTH) / 2), new b2.Vec2()), true);
+                  if (j === 0) {
+                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0.5 * (WIDTH - HEIGHT), HEIGHT + WIDTH), new b2.Vec2()), false);
+                  }
+                  if (j !== n - i - 1) {
+                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(HEIGHT * 0.75, (HEIGHT + 3 * WIDTH) / 2), new b2.Vec2()), true);
+                  }
+                  else {
+                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0.5 * (HEIGHT - WIDTH), HEIGHT + WIDTH), new b2.Vec2()), false);
+                  }
+              }
+          }
+      }
+      GetDefaultViewZoom() {
+          return 10.0;
+      }
+      static Create() {
+          return new PyramidTopple();
+      }
+  }
+  const testIndex$W = RegisterTest("Extras", "Pyramid Topple", PyramidTopple.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8937,6 +9172,7 @@
           return new TestCCD();
       }
   }
+  const testIndex$X = RegisterTest("Extras", "Test CCD", TestCCD.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9158,6 +9394,7 @@
           return new TestRagdoll();
       }
   }
+  const testIndex$Y = RegisterTest("Extras", "Ragdoll", TestRagdoll.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9242,176 +9479,7 @@
           return new TestStack();
       }
   }
-
-  class PyramidTopple extends Test {
-      constructor() {
-          super();
-          const WIDTH = 4;
-          const HEIGHT = 30;
-          const add_domino = (world, pos, flipped) => {
-              const mass = 1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Copy(pos);
-              const body = world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              if (flipped) {
-                  shape.SetAsBox(0.5 * HEIGHT, 0.5 * WIDTH);
-              }
-              else {
-                  shape.SetAsBox(0.5 * WIDTH, 0.5 * HEIGHT);
-              }
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.density = mass / (WIDTH * HEIGHT);
-              fd.friction = 0.6;
-              fd.restitution = 0.0;
-              body.CreateFixture(fd);
-          };
-          const world = this.m_world;
-          ///settings.positionIterations = 30; // cpSpaceSetIterations(space, 30);
-          ///world.SetGravity(new b2.Vec2(0, -300)); // cpSpaceSetGravity(space, cpv(0, -300));
-          ///b2.timeToSleep = 0.5; // cpSpaceSetSleepTimeThreshold(space, 0.5f);
-          ///b2.linearSlop = 0.5; // cpSpaceSetCollisionSlop(space, 0.5f);
-          // Add a floor.
-          const bd = new b2.BodyDef();
-          const body = world.CreateBody(bd);
-          const shape = new b2.EdgeShape();
-          shape.SetTwoSided(new b2.Vec2(-600, -240), new b2.Vec2(600, -240));
-          const fd = new b2.FixtureDef();
-          fd.shape = shape;
-          fd.friction = 1.0;
-          fd.restitution = 1.0;
-          body.CreateFixture(fd);
-          // Add the dominoes.
-          const n = 12;
-          for (let i = 0; i < n; i++) {
-              for (let j = 0; j < (n - i); j++) {
-                  const offset = new b2.Vec2((j - (n - 1 - i) * 0.5) * 1.5 * HEIGHT, (i + 0.5) * (HEIGHT + 2 * WIDTH) - WIDTH - 240);
-                  add_domino(world, offset, false);
-                  add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0, (HEIGHT + WIDTH) / 2), new b2.Vec2()), true);
-                  if (j === 0) {
-                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0.5 * (WIDTH - HEIGHT), HEIGHT + WIDTH), new b2.Vec2()), false);
-                  }
-                  if (j !== n - i - 1) {
-                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(HEIGHT * 0.75, (HEIGHT + 3 * WIDTH) / 2), new b2.Vec2()), true);
-                  }
-                  else {
-                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0.5 * (HEIGHT - WIDTH), HEIGHT + WIDTH), new b2.Vec2()), false);
-                  }
-              }
-          }
-      }
-      GetDefaultViewZoom() {
-          return 10.0;
-      }
-      static Create() {
-          return new PyramidTopple();
-      }
-  }
-
-  class DominoTower extends Test {
-      constructor() {
-          super();
-          const DOMINO_WIDTH = .2;
-          const DOMINO_FRICTION = 0.1;
-          const DOMINO_HEIGHT = 1.0;
-          const BASE_COUNT = 25;
-          /**
-           * The density of the dominos under construction. Varies for
-           * different parts of the tower.
-           */
-          let dominoDensity;
-          function makeDomino(x, y, horizontal) {
-              const sd = new b2.PolygonShape();
-              sd.SetAsBox(0.5 * DOMINO_WIDTH, 0.5 * DOMINO_HEIGHT);
-              const fd = new b2.FixtureDef();
-              fd.shape = sd;
-              fd.density = dominoDensity;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              fd.friction = DOMINO_FRICTION;
-              fd.restitution = 0.65;
-              bd.position.Set(x, y);
-              bd.angle = horizontal ? (Math.PI / 2.0) : 0;
-              const myBody = world.CreateBody(bd);
-              myBody.CreateFixture(fd);
-          }
-          const gravity = new b2.Vec2(0, -10);
-          //world = new b2.World(gravity);
-          const world = this.m_world;
-          world.SetGravity(gravity);
-          // Create the floor
-          {
-              const sd = new b2.PolygonShape();
-              sd.SetAsBox(50, 10);
-              const bd = new b2.BodyDef();
-              bd.position.Set(0, -10);
-              const body = world.CreateBody(bd);
-              body.CreateFixture(sd, 0);
-          }
-          {
-              dominoDensity = 10;
-              // Make bullet
-              const sd = new b2.PolygonShape();
-              sd.SetAsBox(.7, .7);
-              const fd = new b2.FixtureDef();
-              fd.density = 35.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              fd.shape = sd;
-              fd.friction = 0.0;
-              fd.restitution = 0.85;
-              bd.bullet = true;
-              bd.position.Set(30.0, 5.00);
-              let b = world.CreateBody(bd);
-              b.CreateFixture(fd);
-              b.SetLinearVelocity(new b2.Vec2(-25.0, -25.0));
-              b.SetAngularVelocity(6.7);
-              fd.density = 25.0;
-              bd.position.Set(-30.0, 25.0);
-              b = world.CreateBody(bd);
-              b.CreateFixture(fd);
-              b.SetLinearVelocity(new b2.Vec2(35.0, -10.0));
-              b.SetAngularVelocity(-8.3);
-          }
-          {
-              let currX;
-              // Make base
-              for (let i = 0; i < BASE_COUNT; ++i) {
-                  currX = i * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * BASE_COUNT / 2);
-                  makeDomino(currX, DOMINO_HEIGHT / 2.0, false);
-                  makeDomino(currX, DOMINO_HEIGHT + DOMINO_WIDTH / 2.0, true);
-              }
-              currX = BASE_COUNT * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * BASE_COUNT / 2);
-              // Make 'I's
-              for (let j = 1; j < BASE_COUNT; ++j) {
-                  if (j > 3) {
-                      dominoDensity *= .8;
-                  }
-                  // The y at the center of the I structure.
-                  const currY = DOMINO_HEIGHT * 0.5 + (DOMINO_HEIGHT + 2 * DOMINO_WIDTH) * .99 * j;
-                  for (let i = 0; i < BASE_COUNT - j; ++i) {
-                      currX = i * 1.5 * DOMINO_HEIGHT - (1.5 * DOMINO_HEIGHT * (BASE_COUNT - j) / 2);
-                      dominoDensity *= 2.5;
-                      if (i === 0) {
-                          makeDomino(currX - (1.25 * DOMINO_HEIGHT) + .5 * DOMINO_WIDTH, currY - DOMINO_WIDTH, false);
-                      }
-                      if (i === BASE_COUNT - j - 1) {
-                          makeDomino(currX + (1.25 * DOMINO_HEIGHT) - .5 * DOMINO_WIDTH, currY - DOMINO_WIDTH, false);
-                      }
-                      dominoDensity /= 2.5;
-                      makeDomino(currX, currY, false);
-                      makeDomino(currX, currY + .5 * (DOMINO_WIDTH + DOMINO_HEIGHT), true);
-                      makeDomino(currX, currY - .5 * (DOMINO_WIDTH + DOMINO_HEIGHT), true);
-                  }
-              }
-          }
-      }
-      static Create() {
-          return new DominoTower();
-      }
-  }
+  const testIndex$Z = RegisterTest("Extras", "Test Stack", TestStack.Create);
 
   /*
    * Author: Chris Campbell - www.iforce2d.net
@@ -9783,6 +9851,292 @@
           return new TopdownCar();
       }
   }
+  const testIndex$_ = RegisterTest("Extras", "Topdown Car", TopdownCar.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  class Segway extends Test {
+      constructor() {
+          super();
+          this.targetPosition = 10;
+          this.targetPositionInterval = 0;
+          this.posAvg = 0;
+          this.angleController = new PIDController();
+          this.positionController = new PIDController();
+          this.m_world.SetGravity({ x: 0, y: -30 });
+          this.angleController.gainP = 1000;
+          this.angleController.gainI = 0;
+          this.angleController.gainD = 250;
+          this.positionController.gainP = 0.5;
+          this.positionController.gainI = 0;
+          this.positionController.gainD = 1.5;
+          const bd = new b2.BodyDef();
+          const fd = new b2.FixtureDef();
+          // pendulumBody = new p2.Body({
+          //     mass: 1,
+          //     position: [0, 2 + 0.5 * PENDULUM_LENGTH]
+          // });
+          // pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
+          // world.addBody(pendulumBody);
+          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.position.x = 0;
+          bd.position.y = 2 + 0.5 * Segway.PENDULUM_LENGTH;
+          this.pendulumBody = this.m_world.CreateBody(bd);
+          const pendulumShape = new b2.PolygonShape();
+          pendulumShape.SetAsBox(0.5, 0.5 * Segway.PENDULUM_LENGTH);
+          fd.shape = pendulumShape;
+          fd.density = 1 / (1 * Segway.PENDULUM_LENGTH); // TODO: specify mass
+          // fd.mass = 1;
+          this.pendulumBody.CreateFixture(fd);
+          // wheelBody = new p2.Body({
+          //     mass: 1,
+          //     position: [0,1]
+          // });
+          // wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
+          // world.addBody(wheelBody);
+          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.position.x = 0;
+          bd.position.y = 1;
+          this.wheelBody = this.m_world.CreateBody(bd);
+          const wheelShape = new b2.CircleShape();
+          wheelShape.m_radius = 0.6;
+          fd.shape = wheelShape;
+          fd.density = 1 / (Math.PI * 0.6 * 0.6); // TODO: specify mass
+          // fd.mass = 1;
+          fd.friction = 10;
+          this.wheelBody.CreateFixture(fd);
+          // var wheelJoint = new p2.RevoluteConstraint(wheelBody, pendulumBody, {
+          //     localPivotA: [0, 0],
+          //     localPivotB: [0, -0.5 * PENDULUM_LENGTH],
+          //     collideConnected: false
+          // });
+          // world.addConstraint(wheelJoint);
+          // wheelJoint.motorEnabled = true;
+          // var m = 40;
+          // wheelJoint.motorEquation.maxForce = m;
+          // wheelJoint.motorEquation.minForce = -m;
+          const jd = new b2.RevoluteJointDef();
+          jd.Initialize(this.wheelBody, this.pendulumBody, { x: 0, y: 0 });
+          jd.localAnchorA.Set(0, 0);
+          jd.localAnchorB.Set(0, -0.5 * Segway.PENDULUM_LENGTH);
+          jd.collideConnected = false;
+          jd.enableMotor = true;
+          jd.maxMotorTorque = 40;
+          this.wheelJoint = this.m_world.CreateJoint(jd);
+          // Create ground
+          // var groundShape = new p2.Plane();
+          // var groundBody = new p2.Body({
+          //     position:[0,0],
+          // });
+          // groundBody.addShape(groundShape);
+          // world.addBody(groundBody);
+          bd.type = b2.BodyType.b2_staticBody;
+          bd.position.x = 0;
+          bd.position.y = 0;
+          this.groundBody = this.m_world.CreateBody(bd);
+          const groundShape = new b2.EdgeShape();
+          groundShape.SetTwoSided({ x: -100, y: 0 }, { x: 100, y: 0 });
+          fd.shape = groundShape;
+          fd.friction = 10;
+          this.groundBody.CreateFixture(fd);
+      }
+      Step(settings) {
+          let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
+          if (settings.m_pause && !settings.m_singleStep) {
+              dt = 0.0;
+          }
+          super.Step(settings);
+          this.targetPositionInterval += dt;
+          if (this.targetPositionInterval >= 8) {
+              this.targetPositionInterval = 0;
+              this.targetPosition = this.targetPosition === 10 ? -10 : 10;
+          }
+          let targetAngle = 0;
+          {
+              const alpha = 0.4;
+              // posAvg = (1 - alpha) * posAvg + alpha * pendulumBody.position[0];
+              this.posAvg = (1 - alpha) * this.posAvg + alpha * this.pendulumBody.GetPosition().x;
+              this.positionController.currentError = this.targetPosition - this.posAvg;
+              // positionController.step(world.lastTimeStep);
+              this.positionController.step(dt);
+              let targetLinAccel = this.positionController.output;
+              // targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
+              targetLinAccel = b2.Clamp(targetLinAccel, -10, 10);
+              // targetAngle = targetLinAccel / world.gravity[1];
+              targetAngle = targetLinAccel / this.m_world.GetGravity().y;
+              // targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
+              targetAngle = b2.Clamp(targetAngle, b2.DegToRad(-15), b2.DegToRad(15));
+          }
+          // var currentAngle = pendulumBody.angle;
+          let currentAngle = this.pendulumBody.GetAngle();
+          currentAngle = normalizeAngle(currentAngle);
+          this.angleController.currentError = targetAngle - currentAngle;
+          // angleController.step(world.lastTimeStep);
+          this.angleController.step(dt);
+          let targetSpeed = this.angleController.output;
+          // give up if speed required is really high
+          if (Math.abs(targetSpeed) > 1000) {
+              targetSpeed = 0;
+          }
+          // this is the only output
+          // var targetAngularVelocity = -targetSpeed / (2 * Math.PI * wheelBody.shapes[0].radius); // wheel circumference = 2*pi*r
+          const targetAngularVelocity = targetSpeed / (2 * Math.PI * 0.6); // wheel circumference = 2*pi*r
+          // wheelJoint.motorSpeed = targetAngularVelocity;
+          this.wheelJoint.SetMotorSpeed(targetAngularVelocity);
+      }
+      static Create() {
+          return new Segway();
+      }
+  }
+  Segway.PENDULUM_LENGTH = 10;
+  /*
+    Simple PID controller for single float variable
+    http://en.wikipedia.org/wiki/PID_controller#Pseudocode
+  */
+  class PIDController {
+      constructor() {
+          this.gainP = 1;
+          this.gainI = 1;
+          this.gainD = 1;
+          this.currentError = 0;
+          this.previousError = 0;
+          this.integral = 0;
+          this.output = 0;
+      }
+      step(dt) {
+          this.integral = dt * (this.integral + this.currentError);
+          const derivative = (1 / dt) * (this.currentError - this.previousError);
+          this.output = this.gainP * this.currentError + this.gainI * this.integral + this.gainD * derivative;
+          this.previousError = this.currentError;
+      }
+  }
+  // var DEGTORAD = 0.0174532925199432957;
+  // var RADTODEG = 57.295779513082320876;
+  // var PENDULUM_LENGTH = 10;
+  // var targetPosition = 0;
+  // var targetPositionInterval = setInterval(changeTargetPos, 8000);
+  // function changeTargetPos(){
+  //     targetPosition = targetPosition===0 ? 10 : 0;
+  // }
+  // changeTargetPos();
+  // var posAvg = 0;
+  // var angleController = new PIDController();
+  // angleController.gainP = 1000;
+  // angleController.gainI = 0;
+  // angleController.gainD = 250;
+  // var positionController = new PIDController();
+  // positionController.gainP = 0.5;
+  // positionController.gainI = 0;
+  // positionController.gainD = 1.5;
+  // // Create demo application
+  // var app = new p2.WebGLRenderer(function(){
+  //     var world = new p2.World({
+  //         gravity : [0,-30]
+  //     });
+  //     this.setWorld(world);
+  //     world.defaultContactMaterial.friction = 10;
+  //     pendulumBody = new p2.Body({
+  //         mass: 1,
+  //         position: [0, 2 + 0.5 * PENDULUM_LENGTH]
+  //     });
+  //     pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
+  //     world.addBody(pendulumBody);
+  //     wheelBody = new p2.Body({
+  //         mass: 1,
+  //         position: [0,1]
+  //     });
+  //     wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
+  //     world.addBody(wheelBody);
+  //     var wheelJoint = new p2.RevoluteConstraint(wheelBody, pendulumBody, {
+  //         localPivotA: [0, 0],
+  //         localPivotB: [0, -0.5 * PENDULUM_LENGTH],
+  //         collideConnected: false
+  //     });
+  //     world.addConstraint(wheelJoint);
+  //     wheelJoint.motorEnabled = true;
+  //     var m = 40;
+  //     wheelJoint.motorEquation.maxForce = m;
+  //     wheelJoint.motorEquation.minForce = -m;
+  //     // Create ground
+  //     var groundShape = new p2.Plane();
+  //     var groundBody = new p2.Body({
+  //         position:[0,0],
+  //     });
+  //     groundBody.addShape(groundShape);
+  //     world.addBody(groundBody);
+  //     world.on('postStep', function(){
+  //         var targetAngle = 0;
+  //         if ( true ) {
+  //             var alpha = 0.4;
+  //             posAvg = (1 - alpha) * posAvg + alpha * pendulumBody.position[0];
+  //             positionController.currentError = targetPosition - posAvg;
+  //             positionController.step(world.lastTimeStep);
+  //             var targetLinAccel = positionController.output;
+  //             targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
+  //             targetAngle = targetLinAccel / world.gravity[1];
+  //             targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
+  //         }
+  //         var currentAngle = pendulumBody.angle;
+  //         currentAngle = normalizeAngle(currentAngle);
+  //         angleController.currentError = ( targetAngle - currentAngle );
+  //         angleController.step(world.lastTimeStep);
+  //         var targetSpeed = angleController.output;
+  //         // give up if speed required is really high
+  //         if ( Math.abs(targetSpeed) > 1000 )
+  //             targetSpeed = 0;
+  //         // this is the only output
+  //         var targetAngularVelocity = -targetSpeed / (2 * Math.PI * wheelBody.shapes[0].radius); // wheel circumference = 2*pi*r
+  //         wheelJoint.motorSpeed = targetAngularVelocity;
+  //     });
+  //     app.frame(3,5,16,16);
+  // });
+  // /*
+  //     Simple PID controller for single float variable
+  //     http://en.wikipedia.org/wiki/PID_controller#Pseudocode
+  // */
+  // function PIDController(){
+  //     this.gainP = 1;
+  //     this.gainI = 1;
+  //     this.gainD = 1;
+  //     this.currentError = 0;
+  //     this.previousError = 0;
+  //     this.integral = 0;
+  //     this.output = 0;
+  // }
+  // PIDController.prototype.step = function(dt) {
+  //     this.integral = dt * (this.integral + this.currentError);
+  //     var derivative = (1 / dt) * (this.currentError - this.previousError);
+  //     this.output = this.gainP * this.currentError + this.gainI * this.integral + this.gainD * derivative;
+  //     this.previousError = this.currentError;
+  // };
+  // function clamp(num, min, max) {
+  //     return Math.min(Math.max(num, min), max);
+  // };
+  function normalizeAngle(angle) {
+      while (angle > b2.DegToRad(180)) {
+          angle -= b2.DegToRad(360);
+      }
+      while (angle < b2.DegToRad(-180)) {
+          angle += b2.DegToRad(360);
+      }
+      return angle;
+  }
+  const testIndex$$ = RegisterTest("Extras", "Segway", Segway.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9968,9 +10322,10 @@
           return new BuoyancyTest();
       }
   }
+  const testIndex$10 = RegisterTest("Extras", "Buoyancy Test", BuoyancyTest.Create);
 
   /*
-   * Copyright (c) 2013 Google, Inc.
+   * Copyright (c) 2014 Google, Inc.
    *
    * This software is provided 'as-is', without any express or implied
    * warranty.  In no event will the authors be held liable for any damages
@@ -9986,783 +10341,172 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
-  // /**
-  //  * The following parameters are not static const members of the
-  //  * Sandbox class with values assigned inline as it can result in
-  //  * link errors when using gcc.
-  //  */
-  // SandboxParams = {};
-  class SandboxParams {
-  }
   /**
-   * Total possible pump squares
+   * Test the behavior of particles falling onto a concave
+   * ambiguous Body contact fixture junction.
    */
-  SandboxParams.k_maxPumps = 5;
-  /**
-   * Total possible emitters
-   */
-  SandboxParams.k_maxEmitters = 5;
-  /**
-   * Number of seconds to push one direction or the other on the
-   * pumps
-   */
-  SandboxParams.k_flipTime = 6;
-  /**
-   * Radius of a tile
-   */
-  SandboxParams.k_tileRadius = 2;
-  /**
-   * Diameter of a tile
-   */
-  SandboxParams.k_tileDiameter = 4;
-  /**
-   * Pump radius; slightly smaller than a tile
-   */
-  SandboxParams.k_pumpRadius = 2.0 - 0.05;
-  SandboxParams.k_playfieldLeftEdge = -20;
-  SandboxParams.k_playfieldRightEdge = 20;
-  SandboxParams.k_playfieldBottomEdge = 40;
-  /**
-   * The world size in the TILE
-   */
-  SandboxParams.k_tileWidth = 10;
-  SandboxParams.k_tileHeight = 11;
-  /**
-   * Particles/second
-   */
-  SandboxParams.k_defaultEmitterRate = 30;
-  /**
-   * Fit cleanly inside one block
-   */
-  SandboxParams.k_defaultEmitterSize = 3;
-  /**
-   * How fast particles coming out of the particles should drop
-   */
-  SandboxParams.k_particleExitSpeedY = -9.8;
-  /**
-   * How hard the pumps can push
-   */
-  SandboxParams.k_pumpForce = 600;
-  /**
-   * Number of *special* particles.
-   */
-  SandboxParams.k_numberOfSpecialParticles = 256;
-  /**
-   * Class which tracks a set of particles and applies a special
-   * effect to them.
-   */
-  class SpecialParticleTracker extends b2.DestructionListener {
-      /**
-       * Register this class as a destruction listener so that it's
-       * possible to keep track of special particles.
-       */
-      constructor(world, system) {
-          super();
-          /**
-           * Set of particle handles used to track special particles.
-           */
-          this.m_particles = [];
-          /**
-           * Current offset into this.m_colorOscillationPeriod.
-           */
-          this.m_colorOscillationTime = 0.0;
-          /**
-           * Color oscillation period in seconds.
-           */
-          this.m_colorOscillationPeriod = 2.0;
-          // DEBUG: b2.Assert(world !== null);
-          // DEBUG: b2.Assert(system !== null);
-          this.m_world = world;
-          this.m_particleSystem = system;
-          this.m_world.SetDestructionListener(this);
-      }
-      __dtor__() {
-          this.m_world.SetDestructionListener(null);
-      }
-      /**
-       * Add as many of the specified particles to the set of special
-       * particles.
-       */
-      Add(particleIndices, numberOfParticles) {
-          // DEBUG: b2.Assert(this.m_particleSystem !== null);
-          for (let i = 0; i < numberOfParticles && this.m_particles.length < SandboxParams.k_numberOfSpecialParticles; ++i) {
-              const particleIndex = particleIndices[i];
-              this.m_particleSystem.SetParticleFlags(particleIndex, this.m_particleSystem.GetFlagsBuffer()[particleIndex] | b2.ParticleFlag.b2_destructionListenerParticle);
-              this.m_particles.push(this.m_particleSystem.GetParticleHandleFromIndex(particleIndex));
-          }
-      }
-      /**
-       * Apply effects to special particles.
-       */
-      Step(dt) {
-          function fmod(a, b) {
-              return (a - (Math.floor(a / b) * b));
-          }
-          // Oscillate the shade of color over this.m_colorOscillationPeriod seconds.
-          this.m_colorOscillationTime = fmod(this.m_colorOscillationTime + dt, this.m_colorOscillationPeriod);
-          const colorCoeff = 2.0 * Math.abs((this.m_colorOscillationTime / this.m_colorOscillationPeriod) - 0.5);
-          const color = new b2.Color().SetByteRGBA(128 + (128.0 * (1.0 - colorCoeff)), 128 + (256.0 * Math.abs(0.5 - colorCoeff)), 128 + (128.0 * colorCoeff), 255);
-          // Update the color of all special particles.
-          for (let i = 0; i < this.m_particles.length; ++i) {
-              this.m_particleSystem.GetColorBuffer()[this.m_particles[i].GetIndex()].Copy(color);
-          }
-      }
-      SayGoodbyeJoint(joint) { }
-      SayGoodbyeFixture(fixture) { }
-      SayGoodbyeParticleGroup(group) { }
-      /**
-       * When a particle is about to be destroyed, remove it from the
-       * list of special particles as the handle will become invalid.
-       */
-      SayGoodbyeParticle(particleSystem, index) {
-          if (particleSystem !== this.m_particleSystem) {
-              return;
-          }
-          // NOTE: user data could be used as an alternative method to look up
-          // the local handle pointer from the index.
-          // DEBUG: const length = this.m_particles.length;
-          this.m_particles = this.m_particles.filter((value) => {
-              return value.GetIndex() !== index;
-          });
-          // DEBUG: b2.Assert((length - this.m_particles.length) === 1);
-      }
-  }
-  /**
-   * Sandbox test creates a maze of faucets, pumps, ramps,
-   * circles, and blocks based on a string constant.  Please
-   * modify and play with this string to make new mazes, and also
-   * add new maze elements!
-   */
-  class Sandbox extends Test {
+  class AntiPointy extends Test {
       constructor() {
           super();
-          /**
-           * Count of faucets in the world
-           */
-          this.m_faucetEmitterIndex = 0;
-          /**
-           * Count of pumps in the world
-           */
-          this.m_pumpIndex = 0;
-          /**
-           * How long have we been pushing the pumps?
-           */
-          this.m_pumpTimer = 0.0;
-          /**
-           * Particle creation flags
-           */
-          this.m_particleFlags = 0;
-          /**
-           * Pump force
-           */
-          this.m_pumpForce = new b2.Vec2();
-          /**
-           * Pumps and emitters
-           */
-          this.m_pumps = [];
-          this.m_emitters = [];
-          // We need some ground for the pumps to slide against
-          const bd = new b2.BodyDef();
-          const ground = this.m_world.CreateBody(bd);
-          // Reset our pointers
-          for (let i = 0; i < SandboxParams.k_maxEmitters; i++) {
-              this.m_emitters[i] = null;
-          }
-          for (let i = 0; i < SandboxParams.k_maxPumps; i++) {
-              this.m_pumps[i] = null;
-          }
-          this.m_world.SetGravity(new b2.Vec2(0.0, -20));
-          // Create physical box, no top
-          {
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-40, -10),
-                      new b2.Vec2(40, -10),
-                      new b2.Vec2(40, 0),
-                      new b2.Vec2(-40, 0),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge - 20, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge, 50),
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge - 20, 50),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge + 20, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge + 20, 50),
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge, 50),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-          }
-          this.m_particleSystem.SetRadius(0.25);
-          this.m_specialTracker = new SpecialParticleTracker(this.m_world, this.m_particleSystem);
-          this.m_pumpTimer = 0;
-          this.SetupMaze();
-          // Create killfield shape and transform
-          this.m_killFieldShape = new b2.PolygonShape();
-          this.m_killFieldShape.SetAsBox(SandboxParams.k_playfieldRightEdge - SandboxParams.k_playfieldLeftEdge, 1);
-          // Put this at the bottom of the world
-          this.m_killFieldTransform = new b2.Transform();
-          const loc = new b2.Vec2(-20, 1);
-          this.m_killFieldTransform.SetPositionAngle(loc, 0);
-          // Setup particle parameters.
-          Test.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
-          this.m_particleFlags = Test.GetParticleParameterValue();
-          Test.SetRestartOnParticleParameterChange(false);
-      }
-      __dtor__() {
-          // deallocate our emitters
-          for (let i = 0; i < this.m_faucetEmitterIndex; i++) {
-              ///  delete this.m_emitters[i];
-              this.m_emitters[i] = null;
-          }
-      }
-      // Create a maze of blocks, ramps, pumps, and faucets.
-      // The maze is defined in a string; feel free to modify it.
-      // Items in the maze include:
-      //   # = a block
-      //   / = a right-to-left ramp triangle
-      //   A = a left-to-right ramp triangle (can't be \ or string formatting
-      //       would be weird)
-      //   r, g, b = colored faucets pointing down
-      //   p = a pump block that rocks back and forth.  You can drag them
-      //       yourself with your finger.
-      //   C = a loose circle
-      //   K = an ignored placeholder for a killfield to remove particles;
-      //       entire bottom row is a killfield.
-      SetupMaze() {
-          const maze = "# r#g #r##" +
-              "  /#  #  #" +
-              " ###     p" +
-              "A  #  /###" +
-              "## # /#  C" +
-              "  /# #   #" +
-              " ### # / #" +
-              " ## p /#  " +
-              " #  ####  " +
-              "A        /" +
-              "#####KK###";
-          // DEBUG: b2.Assert(maze.length === SandboxParams.k_tileWidth * SandboxParams.k_tileHeight);
-          this.m_faucetEmitterIndex = 0;
-          this.m_pumpIndex = 0;
-          // Set up some standard shapes/vertices we'll use later.
-          const boxShape = new b2.PolygonShape();
-          boxShape.SetAsBox(SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
-          ///  b2Vec2 triangle[3];
-          const triangle = b2.Vec2.MakeArray(3);
-          triangle[0].Set(-SandboxParams.k_tileRadius, -SandboxParams.k_tileRadius);
-          triangle[1].Set(SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
-          triangle[2].Set(SandboxParams.k_tileRadius, -SandboxParams.k_tileRadius);
-          const rightTriangleShape = new b2.PolygonShape();
-          rightTriangleShape.Set(triangle, 3);
-          triangle[1].Set(-SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
-          const leftTriangleShape = new b2.PolygonShape();
-          leftTriangleShape.Set(triangle, 3);
-          // Make these just a touch smaller than a tile
-          const circleShape = new b2.CircleShape();
-          circleShape.m_radius = SandboxParams.k_tileRadius * 0.7;
-          const red = new b2.Color().SetByteRGBA(255, 128, 128, 255);
-          const green = new b2.Color().SetByteRGBA(128, 255, 128, 255);
-          const blue = new b2.Color().SetByteRGBA(128, 128, 255, 255);
-          this.m_pumpForce.Set(SandboxParams.k_pumpForce, 0);
-          for (let i = 0; i < SandboxParams.k_tileWidth; i++) {
-              for (let j = 0; j < SandboxParams.k_tileHeight; j++) {
-                  const item = maze[j * SandboxParams.k_tileWidth + i];
-                  // Calculate center of this square
-                  const center = new b2.Vec2(SandboxParams.k_playfieldLeftEdge + SandboxParams.k_tileRadius * 2 * i + SandboxParams.k_tileRadius, SandboxParams.k_playfieldBottomEdge - SandboxParams.k_tileRadius * 2 * j +
-                      SandboxParams.k_tileRadius);
-                  // Let's add some items
-                  switch (item) {
-                      case "#":
-                          // Block
-                          this.CreateBody(center, boxShape, b2.BodyType.b2_staticBody);
-                          break;
-                      case "A":
-                          // Left-to-right ramp
-                          this.CreateBody(center, leftTriangleShape, b2.BodyType.b2_staticBody);
-                          break;
-                      case "/":
-                          // Right-to-left ramp
-                          this.CreateBody(center, rightTriangleShape, b2.BodyType.b2_staticBody);
-                          break;
-                      case "C":
-                          // A circle to play with
-                          this.CreateBody(center, circleShape, b2.BodyType.b2_dynamicBody);
-                          break;
-                      case "p":
-                          this.AddPump(center);
-                          break;
-                      case "b":
-                          // Blue emitter
-                          this.AddFaucetEmitter(center, blue);
-                          break;
-                      case "r":
-                          // Red emitter
-                          this.AddFaucetEmitter(center, red);
-                          break;
-                      case "g":
-                          // Green emitter
-                          this.AddFaucetEmitter(center, green);
-                          break;
-                  }
-              }
-          }
-      }
-      CreateBody(center, shape, type) {
-          const def = new b2.BodyDef();
-          def.position.Copy(center);
-          def.type = type;
-          const body = this.m_world.CreateBody(def);
-          body.CreateFixture(shape, 10.0);
-      }
-      // Inititalizes a pump and its prismatic joint, and adds it to the world
-      AddPump(center) {
-          // Don't make too many pumps
-          // DEBUG: b2.Assert(this.m_pumpIndex < SandboxParams.k_maxPumps);
-          const shape = new b2.PolygonShape();
-          shape.SetAsBox(SandboxParams.k_pumpRadius, SandboxParams.k_pumpRadius);
-          const def = new b2.BodyDef();
-          def.position.Copy(center);
-          def.type = b2.BodyType.b2_dynamicBody;
-          def.angle = 0;
-          const body = this.m_world.CreateBody(def);
-          body.CreateFixture(shape, 5.0);
-          // Create a prismatic joint and connect to the ground, and have it
-          // slide along the x axis.
-          const prismaticJointDef = new b2.PrismaticJointDef();
-          prismaticJointDef.bodyA = this.m_groundBody;
-          prismaticJointDef.bodyB = body;
-          prismaticJointDef.collideConnected = false;
-          prismaticJointDef.localAxisA.Set(1, 0);
-          prismaticJointDef.localAnchorA.Copy(center);
-          this.m_world.CreateJoint(prismaticJointDef);
-          this.m_pumps[this.m_pumpIndex] = body;
-          this.m_pumpIndex++;
-      }
-      // Initializes and adds a faucet emitter
-      AddFaucetEmitter(center, color) {
-          // Don't make too many emitters
-          // DEBUG: b2.Assert(this.m_faucetEmitterIndex < SandboxParams.k_maxPumps);
-          const startingVelocity = new b2.Vec2(0, SandboxParams.k_particleExitSpeedY);
-          const emitter = new RadialEmitter();
-          emitter.SetParticleSystem(this.m_particleSystem);
-          emitter.SetPosition(center);
-          emitter.SetVelocity(startingVelocity);
-          emitter.SetSize(new b2.Vec2(SandboxParams.k_defaultEmitterSize, 0.0));
-          emitter.SetEmitRate(SandboxParams.k_defaultEmitterRate);
-          emitter.SetColor(color);
-          this.m_emitters[this.m_faucetEmitterIndex] = emitter;
-          this.m_faucetEmitterIndex++;
-      }
-      JointDestroyed(joint) {
-          super.JointDestroyed(joint);
-      }
-      ParticleGroupDestroyed(group) {
-          super.ParticleGroupDestroyed(group);
-      }
-      BeginContact(contact) {
-          super.BeginContact(contact);
-      }
-      EndContact(contact) {
-          super.EndContact(contact);
-      }
-      PreSolve(contact, oldManifold) {
-          super.PreSolve(contact, oldManifold);
-      }
-      PostSolve(contact, impulse) {
-          super.PostSolve(contact, impulse);
-      }
-      /**
-       * Allows you to set particle flags on devices with keyboards
-       */
-      Keyboard(key) {
-          super.Keyboard(key);
-          let toggle = 0;
-          switch (key) {
-              case "a":
-                  this.m_particleFlags = 0;
-                  break;
-              case "q":
-                  toggle = b2.ParticleFlag.b2_powderParticle;
-                  break;
-              case "t":
-                  toggle = b2.ParticleFlag.b2_tensileParticle;
-                  break;
-              case "v":
-                  toggle = b2.ParticleFlag.b2_viscousParticle;
-                  break;
-              case "w":
-                  toggle = b2.ParticleFlag.b2_wallParticle;
-                  break;
-          }
-          if (toggle) {
-              if (this.m_particleFlags & toggle) {
-                  this.m_particleFlags = this.m_particleFlags & ~toggle;
-              }
-              else {
-                  this.m_particleFlags = this.m_particleFlags | toggle;
-              }
-          }
-          Test.SetParticleParameterValue(this.m_particleFlags);
-      }
-      KeyboardUp(key) {
-          super.KeyboardUp(key);
-      }
-      MouseDown(p) {
-          super.MouseDown(p);
-      }
-      MouseUp(p) {
-          super.MouseUp(p);
-      }
-      MouseMove(p) {
-          super.MouseMove(p);
-      }
-      /**
-       * Per-frame step updater overridden from Test
-       */
-      Step(settings) {
-          let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
-          if (settings.m_pause && !settings.m_singleStep) {
-              dt = 0.0;
-          }
-          super.Step(settings);
-          this.m_particleFlags = Test.GetParticleParameterValue();
-          // Step all the emitters
-          for (let i = 0; i < this.m_faucetEmitterIndex; i++) {
-              const particleIndices = [];
-              const emitter = this.m_emitters[i];
-              if (emitter) {
-                  emitter.SetParticleFlags(this.m_particleFlags);
-                  const particlesCreated = emitter.Step(dt, particleIndices, SandboxParams.k_numberOfSpecialParticles);
-                  this.m_specialTracker.Add(particleIndices, particlesCreated);
-              }
-          }
-          // Step the special tracker.
-          this.m_specialTracker.Step(dt);
-          // Do killfield work--kill every particle near the bottom of the screen
-          this.m_particleSystem.DestroyParticlesInShape(this.m_killFieldShape, this.m_killFieldTransform);
-          // Move the pumps
-          for (let i = 0; i < this.m_pumpIndex; i++) {
-              const pump = this.m_pumps[i];
-              if (pump) {
-                  // Pumps can and will clog up if the pile of particles they're
-                  // trying to push is too heavy. Increase k_pumpForce to make
-                  // stronger pumps.
-                  pump.ApplyForceToCenter(this.m_pumpForce, true);
-              }
-              this.m_pumpTimer += dt;
-              // Reset pump to go back right again
-              if (this.m_pumpTimer > SandboxParams.k_flipTime) {
-                  this.m_pumpTimer -= SandboxParams.k_flipTime;
-                  this.m_pumpForce.x *= -1;
-              }
-          }
-          g_debugDraw.DrawString(5, this.m_textLine, "Keys: (a) zero out (water), (q) powder");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.DrawString(5, this.m_textLine, "      (t) tensile, (v) viscous");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
-      }
-      GetDefaultViewZoom() {
-          return super.GetDefaultViewZoom();
-      }
-      static Create() {
-          return new Sandbox();
-      }
-  }
-  Sandbox.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "tensile powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous tensile powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile viscous water"),
-  ];
-  Sandbox.k_paramDef = [
-      new ParticleParameterDefinition(Sandbox.k_paramValues),
-  ];
-  Sandbox.k_paramDefCount = Sandbox.k_paramDef.length;
-  // #endif
-
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class ParticleVFX {
-      constructor(particleSystem, origin, size, speed, lifetime, particleFlags) {
-          this.m_initialLifetime = 0.0;
-          this.m_remainingLifetime = 0.0;
-          this.m_halfLifetime = 0.0;
-          this.m_origColor = new b2.Color();
-          // Create a circle to house the particles of size size
-          const shape = new b2.CircleShape();
-          shape.m_p.Copy(origin);
-          shape.m_radius = size;
-          // Create particle def of random color.
-          const pd = new b2.ParticleGroupDef();
-          pd.flags = particleFlags;
-          pd.shape = shape;
-          // this.m_origColor.Set(
-          //   Math.random(),
-          //   Math.random(),
-          //   Math.random(),
-          //   1.0);
-          function hue2rgb(p, q, t) {
-              if (t < 0) {
-                  t += 1;
-              }
-              if (t > 1) {
-                  t -= 1;
-              }
-              if (t < 1 / 6) {
-                  return p + (q - p) * 6 * t;
-              }
-              if (t < 1 / 2) {
-                  return q;
-              }
-              if (t < 2 / 3) {
-                  return p + (q - p) * (2 / 3 - t) * 6;
-              }
-              return p;
-          }
-          function hslToRgb(h, s, l, a = 1) {
-              let r, g, b;
-              if (s === 0) {
-                  r = g = b = l; // achromatic
-              }
-              else {
-                  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                  const p = 2 * l - q;
-                  r = hue2rgb(p, q, h + 1 / 3);
-                  g = hue2rgb(p, q, h);
-                  b = hue2rgb(p, q, h - 1 / 3);
-              }
-              return { r, g, b, a };
-          }
-          this.m_origColor.Copy(hslToRgb(Math.random(), 1, 0.5));
-          pd.color.Copy(this.m_origColor);
-          this.m_particleSystem = particleSystem;
-          // Create a circle full of particles
-          this.m_pg = this.m_particleSystem.CreateParticleGroup(pd);
-          this.m_initialLifetime = this.m_remainingLifetime = lifetime;
-          this.m_halfLifetime = this.m_initialLifetime * 0.5;
-          // Set particle initial velocity based on how far away it is from
-          // origin, exploding outwards.
-          const bufferIndex = this.m_pg.GetBufferIndex();
-          const pos = this.m_particleSystem.GetPositionBuffer();
-          const vel = this.m_particleSystem.GetVelocityBuffer();
-          for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
-              ///  vel[i] = pos[i] - origin;
-              b2.Vec2.SubVV(pos[i], origin, vel[i]);
-              ///  vel[i] *= speed;
-              b2.Vec2.MulVS(vel[i], speed, vel[i]);
-          }
-      }
-      Drop() {
-          this.m_pg.DestroyParticles(false);
-          // this.m_pg = null;
-      }
-      ColorCoeff() {
-          if (this.m_remainingLifetime >= this.m_halfLifetime) {
-              return 1.0;
-          }
-          return 1.0 - ((this.m_halfLifetime - this.m_remainingLifetime) / this.m_halfLifetime);
-      }
-      Step(dt) {
-          if (dt > 0 && this.m_remainingLifetime > 0.0) {
-              this.m_remainingLifetime = Math.max(this.m_remainingLifetime - dt, 0.0);
-              const coeff = this.ColorCoeff();
-              const colors = this.m_particleSystem.GetColorBuffer();
-              const bufferIndex = this.m_pg.GetBufferIndex();
-              // Set particle colors all at once.
-              for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
-                  const c = colors[i];
-                  // c *= coeff;
-                  // c.SelfMul(coeff);
-                  // c.a = this.m_origColor.a;
-                  c.a *= coeff;
-              }
-          }
-      }
-      IsDone() {
-          return this.m_remainingLifetime <= 0.0;
-      }
-  }
-  class Sparky extends Test {
-      constructor() {
-          super();
-          this.m_VFXIndex = 0;
-          this.m_VFX = [];
-          this.m_contact = false;
-          this.m_contactPoint = new b2.Vec2();
-          // Set up array of sparks trackers.
-          this.m_VFXIndex = 0;
-          for (let i = 0; i < Sparky.c_maxVFX; i++) {
-              this.m_VFX[i] = null;
-          }
-          this.CreateWalls();
-          this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-          // Create a list of circles that will spark.
-          for (let i = 0; i < Sparky.c_maxCircles; i++) {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(3.0 * RandomFloat(), Sparky.SHAPE_HEIGHT_OFFSET + Sparky.SHAPE_OFFSET * i);
-              shape.m_radius = 2;
-              const f = body.CreateFixture(shape, 0.5);
-              // Tag this as a sparkable body.
-              f.SetUserData({
-                  spark: true,
-              });
-          }
-          Test.SetRestartOnParticleParameterChange(false);
-          Test.SetParticleParameterValue(b2.ParticleFlag.b2_powderParticle);
-      }
-      BeginContact(contact) {
-          super.BeginContact(contact);
-          // Check to see if these are two circles hitting one another.
-          const userA = contact.GetFixtureA().GetUserData();
-          const userB = contact.GetFixtureB().GetUserData();
-          if ((userA && userA.spark) ||
-              (userB && userB.spark)) {
-              const worldManifold = new b2.WorldManifold();
-              contact.GetWorldManifold(worldManifold);
-              // Note that we overwrite any contact; if there are two collisions
-              // on the same frame, only the last one showers sparks.
-              // Two collisions are rare, and this also guarantees we will not
-              // run out of places to store ParticleVFX explosions.
-              this.m_contactPoint.Copy(worldManifold.points[0]);
-              this.m_contact = true;
-          }
-      }
-      Step(settings) {
-          const particleFlags = Test.GetParticleParameterValue();
-          let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
-          if (settings.m_pause && !settings.m_singleStep) {
-              dt = 0.0;
-          }
-          super.Step(settings);
-          // If there was a contacts...
-          if (this.m_contact) {
-              // ...explode!
-              this.AddVFX(this.m_contactPoint, particleFlags);
-              this.m_contact = false;
-          }
-          // Step particle explosions.
-          for (let i = 0; i < Sparky.c_maxVFX; i++) {
-              const vfx = this.m_VFX[i];
-              if (vfx === null) {
-                  continue;
-              }
-              vfx.Step(dt);
-              if (vfx.IsDone()) {
-                  /// delete vfx;
-                  vfx.Drop();
-                  this.m_VFX[i] = null;
-              }
-          }
-      }
-      AddVFX(p, particleFlags) {
-          const vfx = this.m_VFX[this.m_VFXIndex];
-          if (vfx !== null) {
-              /// delete vfx;
-              vfx.Drop();
-              this.m_VFX[this.m_VFXIndex] = null;
-          }
-          this.m_VFX[this.m_VFXIndex] = new ParticleVFX(this.m_particleSystem, p, RandomFloat(1.0, 2.0), RandomFloat(10.0, 20.0), RandomFloat(0.5, 1.0), particleFlags);
-          if (++this.m_VFXIndex >= Sparky.c_maxVFX) {
-              this.m_VFXIndex = 0;
-          }
-      }
-      CreateWalls() {
-          // Create the walls of the world.
+          this.m_particlesToCreate = 300;
           {
               const bd = new b2.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              {
+              // Construct a valley out of many polygons to ensure there's no
+              // issue with particles falling directly on an ambiguous set of
+              // fixture corners.
+              const step = 1.0;
+              for (let i = -10.0; i < 10.0; i += step) {
                   const shape = new b2.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, -10),
-                      new b2.Vec2(40, -10),
-                      new b2.Vec2(40, 0),
-                      new b2.Vec2(-40, 0),
+                      new b2.Vec2(i, -10.0),
+                      new b2.Vec2(i + step, -10.0),
+                      new b2.Vec2(0.0, 15.0),
                   ];
-                  shape.Set(vertices, 4);
+                  shape.Set(vertices, 3);
                   ground.CreateFixture(shape, 0.0);
               }
-              {
+              for (let i = -10.0; i < 35.0; i += step) {
                   const shape = new b2.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, 40),
-                      new b2.Vec2(40, 40),
-                      new b2.Vec2(40, 50),
-                      new b2.Vec2(-40, 50),
+                      new b2.Vec2(-10.0, i),
+                      new b2.Vec2(-10.0, i + step),
+                      new b2.Vec2(0.0, 15.0),
                   ];
-                  shape.Set(vertices, 4);
+                  shape.Set(vertices, 3);
+                  ground.CreateFixture(shape, 0.0);
+                  const vertices2 = [
+                      new b2.Vec2(10.0, i),
+                      new b2.Vec2(10.0, i + step),
+                      new b2.Vec2(0.0, 15.0),
+                  ];
+                  shape.Set(vertices2, 3);
                   ground.CreateFixture(shape, 0.0);
               }
+          }
+          // Cap the number of generated particles or we'll fill forever
+          this.m_particlesToCreate = 300;
+          this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
+          const particleType = Test.GetParticleParameterValue();
+          if (particleType === b2.ParticleFlag.b2_waterParticle) {
+              this.m_particleSystem.SetDamping(0.2);
+          }
+      }
+      Step(settings) {
+          super.Step(settings);
+          if (this.m_particlesToCreate <= 0) {
+              return;
+          }
+          --this.m_particlesToCreate;
+          const flags = Test.GetParticleParameterValue();
+          const pd = new b2.ParticleDef();
+          pd.position.Set(0.0, 40.0);
+          pd.velocity.Set(0.0, -1.0);
+          pd.flags = flags;
+          if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
+              const count = this.m_particleSystem.GetParticleCount();
+              pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
+              pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
+          }
+          this.m_particleSystem.CreateParticle(pd);
+      }
+      static Create() {
+          return new AntiPointy();
+      }
+  }
+  const testIndex$11 = RegisterTest("Particles", "AntiPointy", AntiPointy.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2014 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class CornerCase extends Test {
+      constructor() {
+          super();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              // Construct a pathological corner intersection out of many
+              // polygons to ensure there's no issue with particle oscillation
+              // from many fixture contact impulses at the corner
+              // left edge
               {
                   const shape = new b2.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, -10),
-                      new b2.Vec2(-20, -10),
-                      new b2.Vec2(-20, 50),
-                      new b2.Vec2(-40, 50),
+                      new b2.Vec2(-20.0, 30.0),
+                      new b2.Vec2(-20.0, 0.0),
+                      new b2.Vec2(-25.0, 0.0),
+                      new b2.Vec2(-25.0, 30.0),
                   ];
-                  shape.Set(vertices, 4);
+                  shape.Set(vertices);
                   ground.CreateFixture(shape, 0.0);
               }
+              const yrange = 30.0, ystep = yrange / 10.0, xrange = 20.0, xstep = xrange / 2.0;
               {
                   const shape = new b2.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(20, -10),
-                      new b2.Vec2(40, -10),
-                      new b2.Vec2(40, 50),
-                      new b2.Vec2(20, 50),
+                      new b2.Vec2(-25.0, 0.0),
+                      new b2.Vec2(20.0, 15.0),
+                      new b2.Vec2(25.0, 0.0),
                   ];
-                  shape.Set(vertices, 4);
+                  shape.Set(vertices);
                   ground.CreateFixture(shape, 0.0);
+              }
+              for (let x = -xrange; x < xrange; x += xstep) {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-25.0, 0.0),
+                      new b2.Vec2(x, 15.0),
+                      new b2.Vec2(x + xstep, 15.0),
+                  ];
+                  shape.Set(vertices);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              for (let y = 0.0; y < yrange; y += ystep) {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(25.0, y),
+                      new b2.Vec2(25.0, y + ystep),
+                      new b2.Vec2(20.0, 15.0),
+                  ];
+                  shape.Set(vertices);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(1.0);
+          const particleType = Test.GetParticleParameterValue();
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 35);
+              shape.m_radius = 12;
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = particleType;
+              pd.shape = shape;
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
               }
           }
       }
       static Create() {
-          return new Sparky();
+          return new CornerCase();
       }
   }
-  Sparky.c_maxCircles = 3; ///6;
-  Sparky.c_maxVFX = 20; ///50;
-  Sparky.SHAPE_HEIGHT_OFFSET = 7;
-  Sparky.SHAPE_OFFSET = 4.5;
+  const testIndex$12 = RegisterTest("Particles", "Corner Case", CornerCase.Create);
   // #endif
 
   /*
@@ -10819,593 +10563,7 @@
           return new DamBreak();
       }
   }
-  // #endif
-
-  /*
-   * Copyright (c) 2013 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class LiquidTimer extends Test {
-      constructor() {
-          super();
-          // Setup particle parameters.
-          Test.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.ChainShape();
-              const vertices = [
-                  new b2.Vec2(-2, 0),
-                  new b2.Vec2(2, 0),
-                  new b2.Vec2(2, 4),
-                  new b2.Vec2(-2, 4),
-              ];
-              shape.CreateLoop(vertices, 4);
-              ground.CreateFixture(shape, 0.0);
-          }
-          this.m_particleSystem.SetRadius(0.025);
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(2, 0.4, new b2.Vec2(0, 3.6), 0);
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = Test.GetParticleParameterValue();
-              pd.shape = shape;
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-2, 3.2), new b2.Vec2(-1.2, 3.2));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(2, 3.2));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.2, 3.2), new b2.Vec2(-1.2, 2.8));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(-1.1, 2.8));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.6, 2.4), new b2.Vec2(0.8, 2));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(1.6, 1.6), new b2.Vec2(-0.8, 1.2));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.2, 0.8), new b2.Vec2(-1.2, 0));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-0.4, 0.8), new b2.Vec2(-0.4, 0));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(0.4, 0.8), new b2.Vec2(0.4, 0));
-              body.CreateFixture(shape, 0.1);
-          }
-          {
-              const bd = new b2.BodyDef();
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(1.2, 0.8), new b2.Vec2(1.2, 0));
-              body.CreateFixture(shape, 0.1);
-          }
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new LiquidTimer();
-      }
-  }
-  LiquidTimer.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "tensile + viscous"),
-  ];
-  LiquidTimer.k_paramDef = [
-      new ParticleParameterDefinition(LiquidTimer.k_paramValues),
-      new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
-  ];
-  LiquidTimer.k_paramDefCount = LiquidTimer.k_paramDef.length;
-  // #endif
-
-  /*
-   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class WaveMachine extends Test {
-      constructor() {
-          super();
-          this.m_time = 0;
-          let ground = null;
-          {
-              const bd = new b2.BodyDef();
-              ground = this.m_world.CreateBody(bd);
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.allowSleep = false;
-              bd.position.Set(0.0, 1.0);
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.05, 1.0, new b2.Vec2(2.0, 0.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(0.05, 1.0, new b2.Vec2(-2.0, 0.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(2.0, 0.05, new b2.Vec2(0.0, 1.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(2.0, 0.05, new b2.Vec2(0.0, -1.0), 0.0);
-              body.CreateFixture(shape, 5.0);
-              const jd = new b2.RevoluteJointDef();
-              jd.bodyA = ground;
-              jd.bodyB = body;
-              jd.localAnchorA.Set(0.0, 1.0);
-              jd.localAnchorB.Set(0.0, 0.0);
-              jd.referenceAngle = 0.0;
-              jd.motorSpeed = 0.05 * b2.pi;
-              jd.maxMotorTorque = 1e7;
-              jd.enableMotor = true;
-              this.m_joint = this.m_world.CreateJoint(jd);
-          }
-          this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
-          const particleType = Test.GetParticleParameterValue();
-          this.m_particleSystem.SetDamping(0.2);
-          {
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = particleType;
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.9, 0.9, new b2.Vec2(0.0, 1.0), 0.0);
-              pd.shape = shape;
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-          this.m_time = 0;
-      }
-      Step(settings) {
-          super.Step(settings);
-          if (settings.m_hertz > 0) {
-              this.m_time += 1 / settings.m_hertz;
-          }
-          this.m_joint.SetMotorSpeed(0.05 * Math.cos(this.m_time) * b2.pi);
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new WaveMachine();
-      }
-  }
-  // #endif
-
-  /*
-   * Copyright (c) 2013 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class Particles extends Test {
-      constructor() {
-          super();
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 3),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 3),
-                      new b2.Vec2(2, 2),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-          }
-          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-          const particleType = Test.GetParticleParameterValue();
-          this.m_particleSystem.SetDamping(0.2);
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 3);
-              shape.m_radius = 2;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = particleType;
-              pd.shape = shape;
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 8);
-              shape.m_radius = 0.5;
-              body.CreateFixture(shape, 0.5);
-          }
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new Particles();
-      }
-  }
-  // #endif
-
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class ParticleLifetimeRandomizer extends EmittedParticleCallback {
-      constructor(minLifetime, maxLifetime) {
-          super();
-          this.m_minLifetime = 0.0;
-          this.m_maxLifetime = 0.0;
-          this.m_minLifetime = minLifetime;
-          this.m_maxLifetime = maxLifetime;
-      }
-      /**
-       * Called for each created particle.
-       */
-      ParticleCreated(system, particleIndex) {
-          system.SetParticleLifetime(particleIndex, Math.random() * (this.m_maxLifetime - this.m_minLifetime) + this.m_minLifetime);
-      }
-  }
-  /**
-   * Faucet test creates a container from boxes and continually
-   * spawning particles with finite lifetimes that pour into the
-   * box.
-   */
-  class Faucet extends Test {
-      constructor() {
-          super(); // base class constructor
-          /**
-           * Used to cycle through particle colors.
-           */
-          this.m_particleColorOffset = 0.0;
-          this.m_emitter = new RadialEmitter();
-          this.m_lifetimeRandomizer = new ParticleLifetimeRandomizer(Faucet.k_particleLifetimeMin, Faucet.k_particleLifetimeMax);
-          // Configure particle system parameters.
-          this.m_particleSystem.SetRadius(0.035);
-          this.m_particleSystem.SetMaxParticleCount(Faucet.k_maxParticleCount);
-          this.m_particleSystem.SetDestructionByAge(true);
-          let ground;
-          {
-              const bd = new b2.BodyDef();
-              ground = this.m_world.CreateBody(bd);
-          }
-          // Create the container / trough style sink.
-          {
-              const shape = new b2.PolygonShape();
-              const height = Faucet.k_containerHeight + Faucet.k_containerThickness;
-              shape.SetAsBox(Faucet.k_containerWidth - Faucet.k_containerThickness, Faucet.k_containerThickness, new b2.Vec2(0.0, 0.0), 0.0);
-              ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(Faucet.k_containerThickness, height, new b2.Vec2(-Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
-              ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(Faucet.k_containerThickness, height, new b2.Vec2(Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
-              ground.CreateFixture(shape, 0.0);
-          }
-          // Create ground under the container to catch overflow.
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(Faucet.k_containerWidth * 5.0, Faucet.k_containerThickness, new b2.Vec2(0.0, Faucet.k_containerThickness * -2.0), 0.0);
-              ground.CreateFixture(shape, 0.0);
-          }
-          // Create the faucet spout.
-          {
-              const shape = new b2.PolygonShape();
-              const particleDiameter = this.m_particleSystem.GetRadius() * 2.0;
-              const faucetLength = Faucet.k_faucetLength * particleDiameter;
-              // Dimensions of the faucet in world units.
-              const length = faucetLength * Faucet.k_spoutLength;
-              const width = Faucet.k_containerWidth * Faucet.k_faucetWidth *
-                  Faucet.k_spoutWidth;
-              // Height from the bottom of the container.
-              const height = (Faucet.k_containerHeight * Faucet.k_faucetHeight) +
-                  (length * 0.5);
-              shape.SetAsBox(particleDiameter, length, new b2.Vec2(-width, height), 0.0);
-              ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(particleDiameter, length, new b2.Vec2(width, height), 0.0);
-              ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(width - particleDiameter, particleDiameter, new b2.Vec2(0.0, height + length -
-                  particleDiameter), 0.0);
-              ground.CreateFixture(shape, 0.0);
-          }
-          // Initialize the particle emitter.
-          {
-              const faucetLength = this.m_particleSystem.GetRadius() * 2.0 * Faucet.k_faucetLength;
-              this.m_emitter.SetParticleSystem(this.m_particleSystem);
-              this.m_emitter.SetCallback(this.m_lifetimeRandomizer);
-              this.m_emitter.SetPosition(new b2.Vec2(Faucet.k_containerWidth * Faucet.k_faucetWidth, Faucet.k_containerHeight * Faucet.k_faucetHeight + (faucetLength * 0.5)));
-              this.m_emitter.SetVelocity(new b2.Vec2(0.0, 0.0));
-              this.m_emitter.SetSize(new b2.Vec2(0.0, faucetLength));
-              this.m_emitter.SetColor(new b2.Color(1, 1, 1, 1));
-              this.m_emitter.SetEmitRate(120.0);
-              this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
-          }
-          // Don't restart the test when changing particle types.
-          Test.SetRestartOnParticleParameterChange(false);
-          // Limit the set of particle types.
-          Test.SetParticleParameters(Faucet.k_paramDef, Faucet.k_paramDefCount);
-      }
-      Step(settings) {
-          let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
-          if (settings.m_pause && !settings.m_singleStep) {
-              dt = 0.0;
-          }
-          super.Step(settings);
-          this.m_particleColorOffset += dt;
-          // Keep m_particleColorOffset in the range 0.0f..k_ParticleColorsCount.
-          if (this.m_particleColorOffset >= Test.k_ParticleColorsCount) {
-              this.m_particleColorOffset -= Test.k_ParticleColorsCount;
-          }
-          // Propagate the currently selected particle flags.
-          this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
-          // If this is a color mixing particle, add some color.
-          ///  b2Color color(1, 1, 1, 1);
-          if (this.m_emitter.GetParticleFlags() & b2.ParticleFlag.b2_colorMixingParticle) {
-              // Each second, select a different color.
-              this.m_emitter.SetColor(Test.k_ParticleColors[Math.floor(this.m_particleColorOffset) % Test.k_ParticleColorsCount]);
-          }
-          else {
-              this.m_emitter.SetColor(new b2.Color(1, 1, 1, 1));
-          }
-          // Create the particles.
-          this.m_emitter.Step(dt);
-          const k_keys = [
-              "Keys: (w) water, (q) powder",
-              "      (t) tensile, (v) viscous",
-              "      (c) color mixing, (s) static pressure",
-              "      (+) increase flow, (-) decrease flow",
-          ];
-          for (let i = 0; i < k_keys.length; ++i) {
-              g_debugDraw.DrawString(5, this.m_textLine, k_keys[i]);
-              this.m_textLine += DRAW_STRING_NEW_LINE;
-          }
-      }
-      Keyboard(key) {
-          let parameter = 0;
-          switch (key) {
-              case "w":
-                  parameter = b2.ParticleFlag.b2_waterParticle;
-                  break;
-              case "q":
-                  parameter = b2.ParticleFlag.b2_powderParticle;
-                  break;
-              case "t":
-                  parameter = b2.ParticleFlag.b2_tensileParticle;
-                  break;
-              case "v":
-                  parameter = b2.ParticleFlag.b2_viscousParticle;
-                  break;
-              case "c":
-                  parameter = b2.ParticleFlag.b2_colorMixingParticle;
-                  break;
-              case "s":
-                  parameter = b2.ParticleFlag.b2_staticPressureParticle;
-                  break;
-              case "=":
-                  ///if (this.m_shift)
-                  {
-                      let emitRate = this.m_emitter.GetEmitRate();
-                      emitRate *= Faucet.k_emitRateChangeFactor;
-                      emitRate = b2.Max(emitRate, Faucet.k_emitRateMin);
-                      this.m_emitter.SetEmitRate(emitRate);
-                  }
-                  break;
-              case "-":
-                  ///if (!this.shift)
-                  {
-                      let emitRate = this.m_emitter.GetEmitRate();
-                      emitRate *= 1.0 / Faucet.k_emitRateChangeFactor;
-                      emitRate = b2.Min(emitRate, Faucet.k_emitRateMax);
-                      this.m_emitter.SetEmitRate(emitRate);
-                  }
-                  break;
-              default:
-                  // Nothing.
-                  return;
-          }
-          Test.SetParticleParameterValue(parameter);
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      /**
-       * Create the faucet test.
-       */
-      static Create() {
-          return new Faucet();
-      }
-  }
-  /**
-   * Minimum lifetime of particles in seconds.
-   */
-  Faucet.k_particleLifetimeMin = 30.0;
-  /**
-   * Maximum lifetime of particles in seconds.
-   */
-  Faucet.k_particleLifetimeMax = 50.0;
-  /**
-   * Height of the container.
-   */
-  Faucet.k_containerHeight = 0.2;
-  /**
-   * Width of the container.
-   */
-  Faucet.k_containerWidth = 1.0;
-  /**
-   * Thickness of the container's walls and bottom.
-   */
-  Faucet.k_containerThickness = 0.05;
-  /**
-   * Width of the faucet relative to the container width.
-   */
-  Faucet.k_faucetWidth = 0.1;
-  /**
-   * Height of the faucet relative to the base as a fraction of
-   * the container height.
-   */
-  Faucet.k_faucetHeight = 15.0;
-  /**
-   * Length of the faucet as a fraction of the particle diameter.
-   */
-  Faucet.k_faucetLength = 2.0;
-  /**
-   * Spout height as a fraction of the faucet length.  This should
-   * be greater than 1.0f).
-   */
-  Faucet.k_spoutLength = 2.0;
-  /**
-   * Spout width as a fraction of the *faucet* width.  This should
-   * be greater than 1.0).
-   */
-  Faucet.k_spoutWidth = 1.1;
-  /**
-   * Maximum number of particles in the system.
-   */
-  Faucet.k_maxParticleCount = 1000;
-  /**
-   * Factor that is used to increase / decrease the emit rate.
-   * This should be greater than 1.0.
-   */
-  Faucet.k_emitRateChangeFactor = 1.05;
-  /**
-   * Minimum emit rate of the faucet in particles per second.
-   */
-  Faucet.k_emitRateMin = 1.0;
-  /**
-   * Maximum emit rate of the faucet in particles per second.
-   */
-  Faucet.k_emitRateMax = 240.0;
-  /**
-   * Selection of particle types for this test.
-   */
-  Faucet.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
-  ];
-  Faucet.k_paramDef = [
-      new ParticleParameterDefinition(Faucet.k_paramValues),
-  ];
-  Faucet.k_paramDefCount = Faucet.k_paramDef.length;
+  const testIndex$13 = RegisterTest("Particles", "Dam Break", DamBreak.Create);
   // #endif
 
   /*
@@ -11705,272 +10863,7 @@
       new ParticleParameterDefinition(DrawingParticles.k_paramValues),
   ];
   DrawingParticles.k_paramDefCount = DrawingParticles.k_paramDef.length;
-  // #endif
-
-  /*
-   * Copyright (c) 2013 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class Soup extends Test {
-      constructor() {
-          super();
-          // Disable the selection of wall and barrier particles for this test.
-          this.InitializeParticleParameters(b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_barrierParticle);
-          {
-              const bd = new b2.BodyDef();
-              this.m_ground = this.m_world.CreateBody(bd);
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
-                  ];
-                  shape.Set(vertices, 4);
-                  this.m_ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 3),
-                  ];
-                  shape.Set(vertices, 4);
-                  this.m_ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 3),
-                      new b2.Vec2(2, 2),
-                  ];
-                  shape.Set(vertices, 4);
-                  this.m_ground.CreateFixture(shape, 0.0);
-              }
-          }
-          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(2, 1, new b2.Vec2(0, 1), 0);
-              const pd = new b2.ParticleGroupDef();
-              pd.shape = shape;
-              pd.flags = Test.GetParticleParameterValue();
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 0.5);
-              shape.m_radius = 0.1;
-              body.CreateFixture(shape, 0.1);
-              this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.1, 0.1, new b2.Vec2(-1, 0.5), 0);
-              body.CreateFixture(shape, 0.1);
-              this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.1, 0.1, new b2.Vec2(1, 0.5), 0.5);
-              body.CreateFixture(shape, 0.1);
-              this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(0, 2), new b2.Vec2(0.1, 2.1));
-              body.CreateFixture(shape, 1);
-              ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
-              const massData = new b2.MassData();
-              massData.mass = 0.1;
-              massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
-              massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
-              massData.I = 0.0;
-              body.SetMassData(massData);
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(0.3, 2.0), new b2.Vec2(0.4, 2.1));
-              body.CreateFixture(shape, 1);
-              ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
-              const massData = new b2.MassData();
-              massData.mass = 0.1;
-              massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
-              massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
-              massData.I = 0.0;
-              body.SetMassData(massData);
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-0.3, 2.1), new b2.Vec2(-0.2, 2.0));
-              body.CreateFixture(shape, 1);
-              ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
-              const massData = new b2.MassData();
-              massData.mass = 0.1;
-              massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
-              massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
-              massData.I = 0.0;
-              body.SetMassData(massData);
-          }
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new Soup();
-      }
-  }
-  // #endif
-
-  /*
-   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class ParticlesSurfaceTension extends Test {
-      constructor() {
-          super(); // base class constructor
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 2),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 2),
-                      new b2.Vec2(2, 2),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-          }
-          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 2);
-              shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
-              pd.shape = shape;
-              pd.color.Set(1, 0, 0, 1);
-              this.m_particleSystem.CreateParticleGroup(pd);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(-1, 2);
-              shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
-              pd.shape = shape;
-              pd.color.Set(0, 1, 0, 1);
-              this.m_particleSystem.CreateParticleGroup(pd);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              const vertices = [
-                  new b2.Vec2(0, 3),
-                  new b2.Vec2(2, 3),
-                  new b2.Vec2(2, 3.5),
-                  new b2.Vec2(0, 3.5),
-              ];
-              shape.Set(vertices, 4);
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
-              pd.shape = shape;
-              pd.color.Set(0, 0, 1, 1);
-              this.m_particleSystem.CreateParticleGroup(pd);
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 8);
-              shape.m_radius = 0.5;
-              body.CreateFixture(shape, 0.5);
-          }
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new ParticlesSurfaceTension();
-      }
-  }
+  const testIndex$14 = RegisterTest("Particles", "Drawing Particles", DrawingParticles.Create);
   // #endif
 
   /*
@@ -12083,122 +10976,65 @@
           return new ElasticParticles();
       }
   }
+  const testIndex$15 = RegisterTest("Particles", "Elastic Particles", ElasticParticles.Create);
   // #endif
 
-  /*
-   * Copyright (c) 2013 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class RigidParticles extends Test {
+  // #if B2_ENABLE_PARTICLE
+  class EyeCandy extends Test {
       constructor() {
           super();
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 2),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 2),
-                      new b2.Vec2(2, 2),
-                  ];
-                  shape.Set(vertices, 4);
-                  ground.CreateFixture(shape, 0.0);
-              }
-          }
-          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 3);
-              shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
-              pd.shape = shape;
-              pd.color.SetByteRGBA(255, 0, 0, 255);
-              this.m_particleSystem.CreateParticleGroup(pd);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(-1, 3);
-              shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
-              pd.shape = shape;
-              pd.color.SetByteRGBA(0, 255, 0, 255);
-              this.m_particleSystem.CreateParticleGroup(pd);
-          }
-          {
-              const shape = new b2.PolygonShape();
-              //const vertices = [
-              //  new b2.Vec2(0, 3),
-              //  new b2.Vec2(2, 3),
-              //  new b2.Vec2(2, 3.5),
-              //  new b2.Vec2(0, 3.5)
-              //];
-              //shape.Set(vertices, 4);
-              shape.SetAsBox(1, 0.5);
-              const pd = new b2.ParticleGroupDef();
-              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
-              pd.position.Set(1, 4);
-              pd.angle = -0.5;
-              pd.angularVelocity = 2.0;
-              pd.shape = shape;
-              pd.color.SetByteRGBA(0, 0, 255, 255);
-              this.m_particleSystem.CreateParticleGroup(pd);
-          }
-          {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 8);
-              shape.m_radius = 0.5;
-              body.CreateFixture(shape, 0.5);
-          }
+          this.m_particleSystem.SetDamping(0.2);
+          this.m_particleSystem.SetRadius(0.3 * 2);
+          this.m_particleSystem.SetGravityScale(0.4);
+          this.m_particleSystem.SetDensity(1.2);
+          const bdg = new b2.BodyDef();
+          const ground = this.m_world.CreateBody(bdg);
+          const bd = new b2.BodyDef();
+          bd.type = b2.BodyType.b2_staticBody; //b2.BodyType.b2_dynamicBody;
+          bd.allowSleep = false;
+          bd.position.Set(0.0, 0.0);
+          const body = this.m_world.CreateBody(bd);
+          const shape = new b2.PolygonShape();
+          shape.SetAsBox(0.5, 10.0, new b2.Vec2(20.0, 0.0), 0.0);
+          body.CreateFixture(shape, 5.0);
+          shape.SetAsBox(0.5, 10.0, new b2.Vec2(-20.0, 0.0), 0.0);
+          body.CreateFixture(shape, 5.0);
+          shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, 10.0), Math.PI / 2.0);
+          body.CreateFixture(shape, 5.0);
+          shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, -10.0), Math.PI / 2.0);
+          body.CreateFixture(shape, 5.0);
+          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.position.Set(0.0, 0.0);
+          this.m_mover = this.m_world.CreateBody(bd);
+          shape.SetAsBox(1.0, 5.0, new b2.Vec2(0.0, 2.0), 0.0);
+          this.m_mover.CreateFixture(shape, 5.0);
+          const jd = new b2.RevoluteJointDef();
+          jd.bodyA = ground;
+          jd.bodyB = this.m_mover;
+          jd.localAnchorA.Set(0.0, 0.0);
+          jd.localAnchorB.Set(0.0, 5.0);
+          jd.referenceAngle = 0.0;
+          jd.motorSpeed = 0;
+          jd.maxMotorTorque = 1e7;
+          jd.enableMotor = true;
+          this.m_joint = this.m_world.CreateJoint(jd);
+          const pd = new b2.ParticleGroupDef();
+          pd.flags = b2.ParticleFlag.b2_waterParticle;
+          const shape2 = new b2.PolygonShape();
+          shape2.SetAsBox(9.0, 9.0, new b2.Vec2(0.0, 0.0), 0.0);
+          pd.shape = shape2;
+          this.m_particleSystem.CreateParticleGroup(pd);
       }
-      GetDefaultViewZoom() {
-          return 0.1;
+      Step(settings) {
+          const time = new Date().getTime();
+          this.m_joint.SetMotorSpeed(0.7 * Math.cos(time / 1000));
+          super.Step(settings);
       }
       static Create() {
-          return new RigidParticles();
+          return new EyeCandy();
       }
   }
+  const testIndex$16 = RegisterTest("Particles", "Eye Candy", EyeCandy.Create);
   // #endif
 
   /*
@@ -12218,60 +11054,97 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
-  class MultipleParticleSystems extends Test {
-      constructor() {
+  class ParticleLifetimeRandomizer extends EmittedParticleCallback {
+      constructor(minLifetime, maxLifetime) {
           super();
-          this.m_emitters = [
-              new RadialEmitter(),
-              new RadialEmitter(),
-          ];
-          // Configure the default particle system's parameters.
-          this.m_particleSystem.SetRadius(0.05);
-          this.m_particleSystem.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
+          this.m_minLifetime = 0.0;
+          this.m_maxLifetime = 0.0;
+          this.m_minLifetime = minLifetime;
+          this.m_maxLifetime = maxLifetime;
+      }
+      /**
+       * Called for each created particle.
+       */
+      ParticleCreated(system, particleIndex) {
+          system.SetParticleLifetime(particleIndex, Math.random() * (this.m_maxLifetime - this.m_minLifetime) + this.m_minLifetime);
+      }
+  }
+  /**
+   * Faucet test creates a container from boxes and continually
+   * spawning particles with finite lifetimes that pour into the
+   * box.
+   */
+  class Faucet extends Test {
+      constructor() {
+          super(); // base class constructor
+          /**
+           * Used to cycle through particle colors.
+           */
+          this.m_particleColorOffset = 0.0;
+          this.m_emitter = new RadialEmitter();
+          this.m_lifetimeRandomizer = new ParticleLifetimeRandomizer(Faucet.k_particleLifetimeMin, Faucet.k_particleLifetimeMax);
+          // Configure particle system parameters.
+          this.m_particleSystem.SetRadius(0.035);
+          this.m_particleSystem.SetMaxParticleCount(Faucet.k_maxParticleCount);
           this.m_particleSystem.SetDestructionByAge(true);
-          // Create a secondary particle system.
-          const particleSystemDef = new b2.ParticleSystemDef();
-          particleSystemDef.radius = this.m_particleSystem.GetRadius();
-          particleSystemDef.destroyByAge = true;
-          this.m_particleSystem2 = this.m_world.CreateParticleSystem(particleSystemDef);
-          this.m_particleSystem2.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
-          // Don't restart the test when changing particle types.
-          Test.SetRestartOnParticleParameterChange(false);
-          // Create the ground.
+          let ground;
           {
               const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
+              ground = this.m_world.CreateBody(bd);
+          }
+          // Create the container / trough style sink.
+          {
               const shape = new b2.PolygonShape();
-              shape.SetAsBox(5.0, 0.1);
+              const height = Faucet.k_containerHeight + Faucet.k_containerThickness;
+              shape.SetAsBox(Faucet.k_containerWidth - Faucet.k_containerThickness, Faucet.k_containerThickness, new b2.Vec2(0.0, 0.0), 0.0);
+              ground.CreateFixture(shape, 0.0);
+              shape.SetAsBox(Faucet.k_containerThickness, height, new b2.Vec2(-Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
+              ground.CreateFixture(shape, 0.0);
+              shape.SetAsBox(Faucet.k_containerThickness, height, new b2.Vec2(Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
               ground.CreateFixture(shape, 0.0);
           }
-          // Create a dynamic body to push around.
+          // Create ground under the container to catch overflow.
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const body = this.m_world.CreateBody(bd);
               const shape = new b2.PolygonShape();
-              const center = new b2.Vec2(0.0, 1.2);
-              shape.SetAsBox(MultipleParticleSystems.k_dynamicBoxSize.x, MultipleParticleSystems.k_dynamicBoxSize.y, center, 0.0);
-              body.CreateFixture(shape, 0.0);
-              ///  b2MassData massData = { MultipleParticleSystems.k_boxMass, center, 0.0 };
-              const massData = new b2.MassData();
-              massData.mass = MultipleParticleSystems.k_boxMass;
-              massData.center.Copy(center);
-              massData.I = 0.0;
-              body.SetMassData(massData);
+              shape.SetAsBox(Faucet.k_containerWidth * 5.0, Faucet.k_containerThickness, new b2.Vec2(0.0, Faucet.k_containerThickness * -2.0), 0.0);
+              ground.CreateFixture(shape, 0.0);
           }
-          // Initialize the emitters.
-          for (let i = 0; i < this.m_emitters.length; ++i) {
-              const mirrorAlongY = i & 1 ? -1.0 : 1.0;
-              const emitter = this.m_emitters[i];
-              emitter.SetPosition(new b2.Vec2(MultipleParticleSystems.k_emitterPosition.x * mirrorAlongY, MultipleParticleSystems.k_emitterPosition.y));
-              emitter.SetSize(MultipleParticleSystems.k_emitterSize);
-              emitter.SetVelocity(new b2.Vec2(MultipleParticleSystems.k_emitterVelocity.x * mirrorAlongY, MultipleParticleSystems.k_emitterVelocity.y));
-              emitter.SetEmitRate(MultipleParticleSystems.k_emitRate);
-              emitter.SetColor(i & 1 ? MultipleParticleSystems.k_rightEmitterColor : MultipleParticleSystems.k_leftEmitterColor);
-              emitter.SetParticleSystem(i & 1 ? this.m_particleSystem2 : this.m_particleSystem);
+          // Create the faucet spout.
+          {
+              const shape = new b2.PolygonShape();
+              const particleDiameter = this.m_particleSystem.GetRadius() * 2.0;
+              const faucetLength = Faucet.k_faucetLength * particleDiameter;
+              // Dimensions of the faucet in world units.
+              const length = faucetLength * Faucet.k_spoutLength;
+              const width = Faucet.k_containerWidth * Faucet.k_faucetWidth *
+                  Faucet.k_spoutWidth;
+              // Height from the bottom of the container.
+              const height = (Faucet.k_containerHeight * Faucet.k_faucetHeight) +
+                  (length * 0.5);
+              shape.SetAsBox(particleDiameter, length, new b2.Vec2(-width, height), 0.0);
+              ground.CreateFixture(shape, 0.0);
+              shape.SetAsBox(particleDiameter, length, new b2.Vec2(width, height), 0.0);
+              ground.CreateFixture(shape, 0.0);
+              shape.SetAsBox(width - particleDiameter, particleDiameter, new b2.Vec2(0.0, height + length -
+                  particleDiameter), 0.0);
+              ground.CreateFixture(shape, 0.0);
           }
+          // Initialize the particle emitter.
+          {
+              const faucetLength = this.m_particleSystem.GetRadius() * 2.0 * Faucet.k_faucetLength;
+              this.m_emitter.SetParticleSystem(this.m_particleSystem);
+              this.m_emitter.SetCallback(this.m_lifetimeRandomizer);
+              this.m_emitter.SetPosition(new b2.Vec2(Faucet.k_containerWidth * Faucet.k_faucetWidth, Faucet.k_containerHeight * Faucet.k_faucetHeight + (faucetLength * 0.5)));
+              this.m_emitter.SetVelocity(new b2.Vec2(0.0, 0.0));
+              this.m_emitter.SetSize(new b2.Vec2(0.0, faucetLength));
+              this.m_emitter.SetColor(new b2.Color(1, 1, 1, 1));
+              this.m_emitter.SetEmitRate(120.0);
+              this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
+          }
+          // Don't restart the test when changing particle types.
+          Test.SetRestartOnParticleParameterChange(false);
+          // Limit the set of particle types.
+          Test.SetParticleParameters(Faucet.k_paramDef, Faucet.k_paramDefCount);
       }
       Step(settings) {
           let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
@@ -12279,293 +11152,167 @@
               dt = 0.0;
           }
           super.Step(settings);
-          for (let i = 0; i < this.m_emitters.length; ++i) {
-              this.m_emitters[i].Step(dt);
+          this.m_particleColorOffset += dt;
+          // Keep m_particleColorOffset in the range 0.0f..k_ParticleColorsCount.
+          if (this.m_particleColorOffset >= Test.k_ParticleColorsCount) {
+              this.m_particleColorOffset -= Test.k_ParticleColorsCount;
           }
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new MultipleParticleSystems();
-      }
-  }
-  /**
-   * Maximum number of particles per system.
-   */
-  MultipleParticleSystems.k_maxParticleCount = 500;
-  /**
-   * Size of the box which is pushed around by particles.
-   */
-  MultipleParticleSystems.k_dynamicBoxSize = new b2.Vec2(0.5, 0.5);
-  /**
-   * Mass of the box.
-   */
-  MultipleParticleSystems.k_boxMass = 1.0;
-  /**
-   * Emit rate of the emitters in particles per second.
-   */
-  MultipleParticleSystems.k_emitRate = 100.0;
-  /**
-   * Location of the left emitter (the position of the right one
-   * is mirrored along the y-axis).
-   */
-  MultipleParticleSystems.k_emitterPosition = new b2.Vec2(-5.0, 4.0);
-  /**
-   * Starting velocity of particles from the left emitter (the
-   * velocity of particles from the right emitter are mirrored
-   * along the y-axis).
-   */
-  MultipleParticleSystems.k_emitterVelocity = new b2.Vec2(7.0, -4.0);
-  /**
-   * Size of particle emitters.
-   */
-  MultipleParticleSystems.k_emitterSize = new b2.Vec2(1.0, 1.0);
-  /**
-   * Color of the left emitter's particles.
-   */
-  MultipleParticleSystems.k_leftEmitterColor = new b2.Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
-  /**
-   * Color of the right emitter's particles.
-   */
-  MultipleParticleSystems.k_rightEmitterColor = new b2.Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
-  // #endif
-
-  /*
-   * Copyright (c) 2013 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class Impulse extends Test {
-      constructor() {
-          super();
-          this.m_useLinearImpulse = false;
-          // Create the containing box.
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              const box = [
-                  new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
-                  new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
-                  new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
-                  new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
-              ];
-              const shape = new b2.ChainShape();
-              shape.CreateLoop(box, box.length);
-              ground.CreateFixture(shape, 0.0);
+          // Propagate the currently selected particle flags.
+          this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
+          // If this is a color mixing particle, add some color.
+          ///  b2Color color(1, 1, 1, 1);
+          if (this.m_emitter.GetParticleFlags() & b2.ParticleFlag.b2_colorMixingParticle) {
+              // Each second, select a different color.
+              this.m_emitter.SetColor(Test.k_ParticleColors[Math.floor(this.m_particleColorOffset) % Test.k_ParticleColorsCount]);
           }
-          this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
-          this.m_particleSystem.SetDamping(0.2);
+          else {
+              this.m_emitter.SetColor(new b2.Color(1, 1, 1, 1));
+          }
           // Create the particles.
-          {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.8, 1.0, new b2.Vec2(0.0, 1.01), 0);
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = Test.GetParticleParameterValue();
-              pd.shape = shape;
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-      }
-      MouseUp(p) {
-          super.MouseUp(p);
-          // Apply an impulse to the particles.
-          const isInsideBox = Impulse.kBoxLeft <= p.x && p.x <= Impulse.kBoxRight &&
-              Impulse.kBoxBottom <= p.y && p.y <= Impulse.kBoxTop;
-          if (isInsideBox) {
-              const kBoxCenter = new b2.Vec2(0.5 * (Impulse.kBoxLeft + Impulse.kBoxRight), 0.5 * (Impulse.kBoxBottom + Impulse.kBoxTop));
-              const direction = b2.Vec2.SubVV(p, kBoxCenter, new b2.Vec2());
-              direction.Normalize();
-              this.ApplyImpulseOrForce(direction);
+          this.m_emitter.Step(dt);
+          const k_keys = [
+              "Keys: (w) water, (q) powder",
+              "      (t) tensile, (v) viscous",
+              "      (c) color mixing, (s) static pressure",
+              "      (+) increase flow, (-) decrease flow",
+          ];
+          for (let i = 0; i < k_keys.length; ++i) {
+              g_debugDraw.DrawString(5, this.m_textLine, k_keys[i]);
+              this.m_textLine += DRAW_STRING_NEW_LINE;
           }
       }
       Keyboard(key) {
-          super.Keyboard(key);
+          let parameter = 0;
           switch (key) {
-              case "l":
-                  this.m_useLinearImpulse = true;
+              case "w":
+                  parameter = b2.ParticleFlag.b2_waterParticle;
                   break;
-              case "f":
-                  this.m_useLinearImpulse = false;
+              case "q":
+                  parameter = b2.ParticleFlag.b2_powderParticle;
                   break;
-          }
-      }
-      ApplyImpulseOrForce(direction) {
-          const particleSystem = this.m_world.GetParticleSystemList();
-          if (!particleSystem) {
-              throw new Error();
-          }
-          const particleGroup = particleSystem.GetParticleGroupList();
-          if (!particleGroup) {
-              throw new Error();
-          }
-          const numParticles = particleGroup.GetParticleCount();
-          if (this.m_useLinearImpulse) {
-              const kImpulseMagnitude = 0.005;
-              ///  const b2Vec2 impulse = kImpulseMagnitude * direction * (float32)numParticles;
-              const impulse = b2.Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new b2.Vec2());
-              particleGroup.ApplyLinearImpulse(impulse);
-          }
-          else {
-              const kForceMagnitude = 1.0;
-              ///  const b2Vec2 force = kForceMagnitude * direction * (float32)numParticles;
-              const force = b2.Vec2.MulSV(kForceMagnitude * numParticles, direction, new b2.Vec2());
-              particleGroup.ApplyForce(force);
-          }
-      }
-      GetDefaultViewZoom() {
-          return 0.1;
-      }
-      static Create() {
-          return new Impulse();
-      }
-  }
-  Impulse.kBoxLeft = -2;
-  Impulse.kBoxRight = 2;
-  Impulse.kBoxBottom = 0;
-  Impulse.kBoxTop = 4;
-  // #endif
-
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class SoupStirrer extends Soup {
-      constructor() {
-          super();
-          this.m_joint = null;
-          this.m_oscillationOffset = 0.0;
-          this.m_particleSystem.SetDamping(1.0);
-          // Shape of the stirrer.
-          const shape = new b2.CircleShape();
-          shape.m_p.Set(0, 0.7);
-          shape.m_radius = 0.4;
-          // Create the stirrer.
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
-          this.m_stirrer = this.m_world.CreateBody(bd);
-          this.m_stirrer.CreateFixture(shape, 1.0);
-          // Destroy all particles under the stirrer.
-          const xf = new b2.Transform();
-          xf.SetIdentity();
-          this.m_particleSystem.DestroyParticlesInShape(shape, xf);
-          // By default attach the body to a joint to restrict movement.
-          this.CreateJoint();
-      }
-      CreateJoint() {
-          // DEBUG: b2.Assert(!this.m_joint);
-          // Create a prismatic joint and connect to the ground, and have it
-          // slide along the x axis.
-          // Disconnect the body from this joint to have more fun.
-          const prismaticJointDef = new b2.PrismaticJointDef();
-          prismaticJointDef.bodyA = this.m_groundBody;
-          prismaticJointDef.bodyB = this.m_stirrer;
-          prismaticJointDef.collideConnected = true;
-          prismaticJointDef.localAxisA.Set(1, 0);
-          prismaticJointDef.localAnchorA.Copy(this.m_stirrer.GetPosition());
-          this.m_joint = this.m_world.CreateJoint(prismaticJointDef);
-      }
-      /**
-       * Enable the joint if it's disabled, disable it if it's
-       * enabled.
-       */
-      ToggleJoint() {
-          if (this.m_joint) {
-              this.m_world.DestroyJoint(this.m_joint);
-              this.m_joint = null;
-          }
-          else {
-              this.CreateJoint();
-          }
-      }
-      /**
-       * Press "t" to enable / disable the joint restricting the
-       * stirrer's movement.
-       */
-      Keyboard(key) {
-          switch (key) {
               case "t":
-                  this.ToggleJoint();
+                  parameter = b2.ParticleFlag.b2_tensileParticle;
+                  break;
+              case "v":
+                  parameter = b2.ParticleFlag.b2_viscousParticle;
+                  break;
+              case "c":
+                  parameter = b2.ParticleFlag.b2_colorMixingParticle;
+                  break;
+              case "s":
+                  parameter = b2.ParticleFlag.b2_staticPressureParticle;
+                  break;
+              case "=":
+                  ///if (this.m_shift)
+                  {
+                      let emitRate = this.m_emitter.GetEmitRate();
+                      emitRate *= Faucet.k_emitRateChangeFactor;
+                      emitRate = b2.Max(emitRate, Faucet.k_emitRateMin);
+                      this.m_emitter.SetEmitRate(emitRate);
+                  }
+                  break;
+              case "-":
+                  ///if (!this.shift)
+                  {
+                      let emitRate = this.m_emitter.GetEmitRate();
+                      emitRate *= 1.0 / Faucet.k_emitRateChangeFactor;
+                      emitRate = b2.Min(emitRate, Faucet.k_emitRateMax);
+                      this.m_emitter.SetEmitRate(emitRate);
+                  }
                   break;
               default:
-                  super.Keyboard(key);
-                  break;
+                  // Nothing.
+                  return;
           }
+          Test.SetParticleParameterValue(parameter);
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
       }
       /**
-       * Click the soup to toggle between enabling / disabling the
-       * joint.
+       * Create the faucet test.
        */
-      MouseUp(p) {
-          super.MouseUp(p);
-          if (this.InSoup(p)) {
-              this.ToggleJoint();
-          }
-      }
-      /**
-       * Determine whether a point is in the soup.
-       */
-      InSoup(pos) {
-          // The soup dimensions are from the container initialization in the
-          // Soup test.
-          return pos.y > -1.0 && pos.y < 2.0 && pos.x > -3.0 && pos.x < 3.0;
-      }
-      /**
-       * Apply a force to the stirrer.
-       */
-      Step(settings) {
-          // Magnitude of the force applied to the body.
-          const k_forceMagnitude = 10.0;
-          // How often the force vector rotates.
-          const k_forceOscillationPerSecond = 0.2;
-          const k_forceOscillationPeriod = 1.0 / k_forceOscillationPerSecond;
-          // Maximum speed of the body.
-          const k_maxSpeed = 2.0;
-          this.m_oscillationOffset += (1.0 / settings.m_hertz);
-          if (this.m_oscillationOffset > k_forceOscillationPeriod) {
-              this.m_oscillationOffset -= k_forceOscillationPeriod;
-          }
-          // Calculate the force vector.
-          const forceAngle = this.m_oscillationOffset * k_forceOscillationPerSecond * 2.0 * b2.pi;
-          const forceVector = new b2.Vec2(Math.sin(forceAngle), Math.cos(forceAngle)).SelfMul(k_forceMagnitude);
-          // Only apply force to the body when it's within the soup.
-          if (this.InSoup(this.m_stirrer.GetPosition()) &&
-              this.m_stirrer.GetLinearVelocity().Length() < k_maxSpeed) {
-              this.m_stirrer.ApplyForceToCenter(forceVector, true);
-          }
-          super.Step(settings);
-      }
       static Create() {
-          return new SoupStirrer();
+          return new Faucet();
       }
   }
+  /**
+   * Minimum lifetime of particles in seconds.
+   */
+  Faucet.k_particleLifetimeMin = 30.0;
+  /**
+   * Maximum lifetime of particles in seconds.
+   */
+  Faucet.k_particleLifetimeMax = 50.0;
+  /**
+   * Height of the container.
+   */
+  Faucet.k_containerHeight = 0.2;
+  /**
+   * Width of the container.
+   */
+  Faucet.k_containerWidth = 1.0;
+  /**
+   * Thickness of the container's walls and bottom.
+   */
+  Faucet.k_containerThickness = 0.05;
+  /**
+   * Width of the faucet relative to the container width.
+   */
+  Faucet.k_faucetWidth = 0.1;
+  /**
+   * Height of the faucet relative to the base as a fraction of
+   * the container height.
+   */
+  Faucet.k_faucetHeight = 15.0;
+  /**
+   * Length of the faucet as a fraction of the particle diameter.
+   */
+  Faucet.k_faucetLength = 2.0;
+  /**
+   * Spout height as a fraction of the faucet length.  This should
+   * be greater than 1.0f).
+   */
+  Faucet.k_spoutLength = 2.0;
+  /**
+   * Spout width as a fraction of the *faucet* width.  This should
+   * be greater than 1.0).
+   */
+  Faucet.k_spoutWidth = 1.1;
+  /**
+   * Maximum number of particles in the system.
+   */
+  Faucet.k_maxParticleCount = 1000;
+  /**
+   * Factor that is used to increase / decrease the emit rate.
+   * This should be greater than 1.0.
+   */
+  Faucet.k_emitRateChangeFactor = 1.05;
+  /**
+   * Minimum emit rate of the faucet in particles per second.
+   */
+  Faucet.k_emitRateMin = 1.0;
+  /**
+   * Maximum emit rate of the faucet in particles per second.
+   */
+  Faucet.k_emitRateMax = 240.0;
+  /**
+   * Selection of particle types for this test.
+   */
+  Faucet.k_paramValues = [
+      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
+  ];
+  Faucet.k_paramDef = [
+      new ParticleParameterDefinition(Faucet.k_paramValues),
+  ];
+  Faucet.k_paramDefCount = Faucet.k_paramDef.length;
+  const testIndex$17 = RegisterTest("Particles", "Faucet", Faucet.Create);
   // #endif
 
   /*
@@ -13425,6 +12172,253 @@
           }
       }
   }
+  const testIndex$18 = RegisterTest("Particles", "Fracker", Fracker.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2013 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class Impulse extends Test {
+      constructor() {
+          super();
+          this.m_useLinearImpulse = false;
+          // Create the containing box.
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const box = [
+                  new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
+                  new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
+                  new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
+                  new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
+              ];
+              const shape = new b2.ChainShape();
+              shape.CreateLoop(box, box.length);
+              ground.CreateFixture(shape, 0.0);
+          }
+          this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
+          this.m_particleSystem.SetDamping(0.2);
+          // Create the particles.
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.8, 1.0, new b2.Vec2(0.0, 1.01), 0);
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = Test.GetParticleParameterValue();
+              pd.shape = shape;
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
+              }
+          }
+      }
+      MouseUp(p) {
+          super.MouseUp(p);
+          // Apply an impulse to the particles.
+          const isInsideBox = Impulse.kBoxLeft <= p.x && p.x <= Impulse.kBoxRight &&
+              Impulse.kBoxBottom <= p.y && p.y <= Impulse.kBoxTop;
+          if (isInsideBox) {
+              const kBoxCenter = new b2.Vec2(0.5 * (Impulse.kBoxLeft + Impulse.kBoxRight), 0.5 * (Impulse.kBoxBottom + Impulse.kBoxTop));
+              const direction = b2.Vec2.SubVV(p, kBoxCenter, new b2.Vec2());
+              direction.Normalize();
+              this.ApplyImpulseOrForce(direction);
+          }
+      }
+      Keyboard(key) {
+          super.Keyboard(key);
+          switch (key) {
+              case "l":
+                  this.m_useLinearImpulse = true;
+                  break;
+              case "f":
+                  this.m_useLinearImpulse = false;
+                  break;
+          }
+      }
+      ApplyImpulseOrForce(direction) {
+          const particleSystem = this.m_world.GetParticleSystemList();
+          if (!particleSystem) {
+              throw new Error();
+          }
+          const particleGroup = particleSystem.GetParticleGroupList();
+          if (!particleGroup) {
+              throw new Error();
+          }
+          const numParticles = particleGroup.GetParticleCount();
+          if (this.m_useLinearImpulse) {
+              const kImpulseMagnitude = 0.005;
+              ///  const b2Vec2 impulse = kImpulseMagnitude * direction * (float32)numParticles;
+              const impulse = b2.Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new b2.Vec2());
+              particleGroup.ApplyLinearImpulse(impulse);
+          }
+          else {
+              const kForceMagnitude = 1.0;
+              ///  const b2Vec2 force = kForceMagnitude * direction * (float32)numParticles;
+              const force = b2.Vec2.MulSV(kForceMagnitude * numParticles, direction, new b2.Vec2());
+              particleGroup.ApplyForce(force);
+          }
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new Impulse();
+      }
+  }
+  Impulse.kBoxLeft = -2;
+  Impulse.kBoxRight = 2;
+  Impulse.kBoxBottom = 0;
+  Impulse.kBoxTop = 4;
+  const testIndex$19 = RegisterTest("Particles", "Impulse", Impulse.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2013 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class LiquidTimer extends Test {
+      constructor() {
+          super();
+          // Setup particle parameters.
+          Test.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              const shape = new b2.ChainShape();
+              const vertices = [
+                  new b2.Vec2(-2, 0),
+                  new b2.Vec2(2, 0),
+                  new b2.Vec2(2, 4),
+                  new b2.Vec2(-2, 4),
+              ];
+              shape.CreateLoop(vertices, 4);
+              ground.CreateFixture(shape, 0.0);
+          }
+          this.m_particleSystem.SetRadius(0.025);
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(2, 0.4, new b2.Vec2(0, 3.6), 0);
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = Test.GetParticleParameterValue();
+              pd.shape = shape;
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
+              }
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-2, 3.2), new b2.Vec2(-1.2, 3.2));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(2, 3.2));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-1.2, 3.2), new b2.Vec2(-1.2, 2.8));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(-1.1, 2.8));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-1.6, 2.4), new b2.Vec2(0.8, 2));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(1.6, 1.6), new b2.Vec2(-0.8, 1.2));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-1.2, 0.8), new b2.Vec2(-1.2, 0));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-0.4, 0.8), new b2.Vec2(-0.4, 0));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(0.4, 0.8), new b2.Vec2(0.4, 0));
+              body.CreateFixture(shape, 0.1);
+          }
+          {
+              const bd = new b2.BodyDef();
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(1.2, 0.8), new b2.Vec2(1.2, 0));
+              body.CreateFixture(shape, 0.1);
+          }
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new LiquidTimer();
+      }
+  }
+  LiquidTimer.k_paramValues = [
+      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "tensile + viscous"),
+  ];
+  LiquidTimer.k_paramDef = [
+      new ParticleParameterDefinition(LiquidTimer.k_paramValues),
+      new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
+  ];
+  LiquidTimer.k_paramDefCount = LiquidTimer.k_paramDef.length;
+  const testIndex$1a = RegisterTest("Particles", "Liquid Timer", LiquidTimer.Create);
   // #endif
 
   /*
@@ -13689,6 +12683,7 @@
   Maxwell.k_temperatureMin = 0.4;
   Maxwell.k_temperatureMax = 10.0;
   Maxwell.k_temperatureDefault = 5.0;
+  const testIndex$1b = RegisterTest("Particles", "Maxwell", Maxwell.Create);
   // #endif
 
   /*
@@ -13708,319 +12703,118 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
-  class Ramp extends Test {
+  class MultipleParticleSystems extends Test {
       constructor() {
           super();
+          this.m_emitters = [
+              new RadialEmitter(),
+              new RadialEmitter(),
+          ];
+          // Configure the default particle system's parameters.
+          this.m_particleSystem.SetRadius(0.05);
+          this.m_particleSystem.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
+          this.m_particleSystem.SetDestructionByAge(true);
+          // Create a secondary particle system.
+          const particleSystemDef = new b2.ParticleSystemDef();
+          particleSystemDef.radius = this.m_particleSystem.GetRadius();
+          particleSystemDef.destroyByAge = true;
+          this.m_particleSystem2 = this.m_world.CreateParticleSystem(particleSystemDef);
+          this.m_particleSystem2.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
+          // Don't restart the test when changing particle types.
+          Test.SetRestartOnParticleParameterChange(false);
+          // Create the ground.
           {
               const bd = new b2.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              // Construct a ramp out of many polygons to ensure there's no
-              // issue with particles moving across vertices
-              const xstep = 5.0, ystep = 5.0;
-              for (let y = 30.0; y > 0.0; y -= ystep) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-25.0, y),
-                      new b2.Vec2(-25.0, y - ystep),
-                      new b2.Vec2(0.0, 15.0),
-                  ];
-                  shape.Set(vertices, 3);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              for (let x = -25.0; x < 25.0; x += xstep) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(x, 0.0),
-                      new b2.Vec2(x + xstep, 0.0),
-                      new b2.Vec2(0.0, 15.0),
-                  ];
-                  shape.Set(vertices, 3);
-                  ground.CreateFixture(shape, 0.0);
-              }
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(5.0, 0.1);
+              ground.CreateFixture(shape, 0.0);
           }
-          this.m_particleSystem.SetRadius(0.25);
-          const particleType = Test.GetParticleParameterValue();
-          if (particleType === b2.ParticleFlag.b2_waterParticle) {
-              this.m_particleSystem.SetDamping(0.2);
-          }
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(-20, 33);
-              shape.m_radius = 3;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = particleType;
-              pd.shape = shape;
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-      }
-      static Create() {
-          return new Ramp();
-      }
-  }
-  // #endif
-
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  /**
-   * Test behavior when particles fall on a convex ambigious Body
-   * contact fixture junction.
-   */
-  class Pointy extends Test {
-      constructor() {
-          super();
-          this.m_killfieldShape = new b2.PolygonShape();
-          this.m_killfieldTransform = new b2.Transform();
+          // Create a dynamic body to push around.
           {
               const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              // Construct a triangle out of many polygons to ensure there's no
-              // issue with particles falling directly on an ambiguous corner
-              const xstep = 1.0;
-              for (let x = -10.0; x < 10.0; x += xstep) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(x, -10.0),
-                      new b2.Vec2(x + xstep, -10.0),
-                      new b2.Vec2(0.0, 25.0),
-                  ];
-                  shape.Set(vertices, 3);
-                  ground.CreateFixture(shape, 0.0);
-              }
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              const center = new b2.Vec2(0.0, 1.2);
+              shape.SetAsBox(MultipleParticleSystems.k_dynamicBoxSize.x, MultipleParticleSystems.k_dynamicBoxSize.y, center, 0.0);
+              body.CreateFixture(shape, 0.0);
+              ///  b2MassData massData = { MultipleParticleSystems.k_boxMass, center, 0.0 };
+              const massData = new b2.MassData();
+              massData.mass = MultipleParticleSystems.k_boxMass;
+              massData.center.Copy(center);
+              massData.I = 0.0;
+              body.SetMassData(massData);
           }
-          this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-          const particleType = Test.GetParticleParameterValue();
-          if (particleType === b2.ParticleFlag.b2_waterParticle) {
-              this.m_particleSystem.SetDamping(0.2);
-          }
-          // Create killfield shape and transform
-          this.m_killfieldShape = new b2.PolygonShape();
-          this.m_killfieldShape.SetAsBox(50.0, 1.0);
-          // Put this at the bottom of the world
-          this.m_killfieldTransform = new b2.Transform();
-          const loc = new b2.Vec2(-25, 1);
-          this.m_killfieldTransform.SetPositionAngle(loc, 0);
-      }
-      Step(settings) {
-          super.Step(settings);
-          const flags = Test.GetParticleParameterValue();
-          const pd = new b2.ParticleDef();
-          pd.position.Set(0.0, 33.0);
-          pd.velocity.Set(0.0, -1.0);
-          pd.flags = flags;
-          if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
-              const count = this.m_particleSystem.GetParticleCount();
-              pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
-              pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
-          }
-          this.m_particleSystem.CreateParticle(pd);
-          // kill every particle near the bottom of the screen
-          this.m_particleSystem.DestroyParticlesInShape(this.m_killfieldShape, this.m_killfieldTransform);
-      }
-      static Create() {
-          return new Pointy();
-      }
-  }
-  // #endif
-
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  /**
-   * Test the behavior of particles falling onto a concave
-   * ambiguous Body contact fixture junction.
-   */
-  class AntiPointy extends Test {
-      constructor() {
-          super();
-          this.m_particlesToCreate = 300;
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              // Construct a valley out of many polygons to ensure there's no
-              // issue with particles falling directly on an ambiguous set of
-              // fixture corners.
-              const step = 1.0;
-              for (let i = -10.0; i < 10.0; i += step) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(i, -10.0),
-                      new b2.Vec2(i + step, -10.0),
-                      new b2.Vec2(0.0, 15.0),
-                  ];
-                  shape.Set(vertices, 3);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              for (let i = -10.0; i < 35.0; i += step) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-10.0, i),
-                      new b2.Vec2(-10.0, i + step),
-                      new b2.Vec2(0.0, 15.0),
-                  ];
-                  shape.Set(vertices, 3);
-                  ground.CreateFixture(shape, 0.0);
-                  const vertices2 = [
-                      new b2.Vec2(10.0, i),
-                      new b2.Vec2(10.0, i + step),
-                      new b2.Vec2(0.0, 15.0),
-                  ];
-                  shape.Set(vertices2, 3);
-                  ground.CreateFixture(shape, 0.0);
-              }
-          }
-          // Cap the number of generated particles or we'll fill forever
-          this.m_particlesToCreate = 300;
-          this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
-          const particleType = Test.GetParticleParameterValue();
-          if (particleType === b2.ParticleFlag.b2_waterParticle) {
-              this.m_particleSystem.SetDamping(0.2);
+          // Initialize the emitters.
+          for (let i = 0; i < this.m_emitters.length; ++i) {
+              const mirrorAlongY = i & 1 ? -1.0 : 1.0;
+              const emitter = this.m_emitters[i];
+              emitter.SetPosition(new b2.Vec2(MultipleParticleSystems.k_emitterPosition.x * mirrorAlongY, MultipleParticleSystems.k_emitterPosition.y));
+              emitter.SetSize(MultipleParticleSystems.k_emitterSize);
+              emitter.SetVelocity(new b2.Vec2(MultipleParticleSystems.k_emitterVelocity.x * mirrorAlongY, MultipleParticleSystems.k_emitterVelocity.y));
+              emitter.SetEmitRate(MultipleParticleSystems.k_emitRate);
+              emitter.SetColor(i & 1 ? MultipleParticleSystems.k_rightEmitterColor : MultipleParticleSystems.k_leftEmitterColor);
+              emitter.SetParticleSystem(i & 1 ? this.m_particleSystem2 : this.m_particleSystem);
           }
       }
       Step(settings) {
+          let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
+          if (settings.m_pause && !settings.m_singleStep) {
+              dt = 0.0;
+          }
           super.Step(settings);
-          if (this.m_particlesToCreate <= 0) {
-              return;
+          for (let i = 0; i < this.m_emitters.length; ++i) {
+              this.m_emitters[i].Step(dt);
           }
-          --this.m_particlesToCreate;
-          const flags = Test.GetParticleParameterValue();
-          const pd = new b2.ParticleDef();
-          pd.position.Set(0.0, 40.0);
-          pd.velocity.Set(0.0, -1.0);
-          pd.flags = flags;
-          if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
-              const count = this.m_particleSystem.GetParticleCount();
-              pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
-              pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
-          }
-          this.m_particleSystem.CreateParticle(pd);
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
       }
       static Create() {
-          return new AntiPointy();
+          return new MultipleParticleSystems();
       }
   }
-  // #endif
-
-  /*
-   * Copyright (c) 2014 Google, Inc.
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
+  /**
+   * Maximum number of particles per system.
    */
-  class CornerCase extends Test {
-      constructor() {
-          super();
-          {
-              const bd = new b2.BodyDef();
-              const ground = this.m_world.CreateBody(bd);
-              // Construct a pathological corner intersection out of many
-              // polygons to ensure there's no issue with particle oscillation
-              // from many fixture contact impulses at the corner
-              // left edge
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-20.0, 30.0),
-                      new b2.Vec2(-20.0, 0.0),
-                      new b2.Vec2(-25.0, 0.0),
-                      new b2.Vec2(-25.0, 30.0),
-                  ];
-                  shape.Set(vertices);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              const yrange = 30.0, ystep = yrange / 10.0, xrange = 20.0, xstep = xrange / 2.0;
-              {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-25.0, 0.0),
-                      new b2.Vec2(20.0, 15.0),
-                      new b2.Vec2(25.0, 0.0),
-                  ];
-                  shape.Set(vertices);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              for (let x = -xrange; x < xrange; x += xstep) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(-25.0, 0.0),
-                      new b2.Vec2(x, 15.0),
-                      new b2.Vec2(x + xstep, 15.0),
-                  ];
-                  shape.Set(vertices);
-                  ground.CreateFixture(shape, 0.0);
-              }
-              for (let y = 0.0; y < yrange; y += ystep) {
-                  const shape = new b2.PolygonShape();
-                  const vertices = [
-                      new b2.Vec2(25.0, y),
-                      new b2.Vec2(25.0, y + ystep),
-                      new b2.Vec2(20.0, 15.0),
-                  ];
-                  shape.Set(vertices);
-                  ground.CreateFixture(shape, 0.0);
-              }
-          }
-          this.m_particleSystem.SetRadius(1.0);
-          const particleType = Test.GetParticleParameterValue();
-          {
-              const shape = new b2.CircleShape();
-              shape.m_p.Set(0, 35);
-              shape.m_radius = 12;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = particleType;
-              pd.shape = shape;
-              const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
-                  this.ColorParticleGroup(group, 0);
-              }
-          }
-      }
-      static Create() {
-          return new CornerCase();
-      }
-  }
+  MultipleParticleSystems.k_maxParticleCount = 500;
+  /**
+   * Size of the box which is pushed around by particles.
+   */
+  MultipleParticleSystems.k_dynamicBoxSize = new b2.Vec2(0.5, 0.5);
+  /**
+   * Mass of the box.
+   */
+  MultipleParticleSystems.k_boxMass = 1.0;
+  /**
+   * Emit rate of the emitters in particles per second.
+   */
+  MultipleParticleSystems.k_emitRate = 100.0;
+  /**
+   * Location of the left emitter (the position of the right one
+   * is mirrored along the y-axis).
+   */
+  MultipleParticleSystems.k_emitterPosition = new b2.Vec2(-5.0, 4.0);
+  /**
+   * Starting velocity of particles from the left emitter (the
+   * velocity of particles from the right emitter are mirrored
+   * along the y-axis).
+   */
+  MultipleParticleSystems.k_emitterVelocity = new b2.Vec2(7.0, -4.0);
+  /**
+   * Size of particle emitters.
+   */
+  MultipleParticleSystems.k_emitterSize = new b2.Vec2(1.0, 1.0);
+  /**
+   * Color of the left emitter's particles.
+   */
+  MultipleParticleSystems.k_leftEmitterColor = new b2.Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
+  /**
+   * Color of the right emitter's particles.
+   */
+  MultipleParticleSystems.k_rightEmitterColor = new b2.Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
+  const testIndex$1c = RegisterTest("Particles", "Multiple Systems", MultipleParticleSystems.Create);
   // #endif
 
   /*
@@ -14180,63 +12974,1296 @@
   ParticleCollisionFilter.kOffset = 20.0;
   ParticleCollisionFilter.kParticlesContainerSize = ParticleCollisionFilter.kOffset + 0.5;
   ParticleCollisionFilter.kSpeedup = 8.0;
+  const testIndex$1d = RegisterTest("Particles", "Collision Filter", ParticleCollisionFilter.Create);
   // #endif
 
-  // #if B2_ENABLE_PARTICLE
-  class EyeCandy extends Test {
+  /*
+   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class ParticlesSurfaceTension extends Test {
+      constructor() {
+          super(); // base class constructor
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -1),
+                      new b2.Vec2(4, -1),
+                      new b2.Vec2(4, 0),
+                      new b2.Vec2(-4, 0),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -0.1),
+                      new b2.Vec2(-2, -0.1),
+                      new b2.Vec2(-2, 2),
+                      new b2.Vec2(-4, 2),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(2, -0.1),
+                      new b2.Vec2(4, -0.1),
+                      new b2.Vec2(4, 2),
+                      new b2.Vec2(2, 2),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 2);
+              shape.m_radius = 0.5;
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
+              pd.shape = shape;
+              pd.color.Set(1, 0, 0, 1);
+              this.m_particleSystem.CreateParticleGroup(pd);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(-1, 2);
+              shape.m_radius = 0.5;
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
+              pd.shape = shape;
+              pd.color.Set(0, 1, 0, 1);
+              this.m_particleSystem.CreateParticleGroup(pd);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              const vertices = [
+                  new b2.Vec2(0, 3),
+                  new b2.Vec2(2, 3),
+                  new b2.Vec2(2, 3.5),
+                  new b2.Vec2(0, 3.5),
+              ];
+              shape.Set(vertices, 4);
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
+              pd.shape = shape;
+              pd.color.Set(0, 0, 1, 1);
+              this.m_particleSystem.CreateParticleGroup(pd);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 8);
+              shape.m_radius = 0.5;
+              body.CreateFixture(shape, 0.5);
+          }
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new ParticlesSurfaceTension();
+      }
+  }
+  const testIndex$1e = RegisterTest("Particles", "Surface Tension", ParticlesSurfaceTension.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2013 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class Particles extends Test {
       constructor() {
           super();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -1),
+                      new b2.Vec2(4, -1),
+                      new b2.Vec2(4, 0),
+                      new b2.Vec2(-4, 0),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -0.1),
+                      new b2.Vec2(-2, -0.1),
+                      new b2.Vec2(-2, 2),
+                      new b2.Vec2(-4, 3),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(2, -0.1),
+                      new b2.Vec2(4, -0.1),
+                      new b2.Vec2(4, 3),
+                      new b2.Vec2(2, 2),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
+          const particleType = Test.GetParticleParameterValue();
           this.m_particleSystem.SetDamping(0.2);
-          this.m_particleSystem.SetRadius(0.3 * 2);
-          this.m_particleSystem.SetGravityScale(0.4);
-          this.m_particleSystem.SetDensity(1.2);
-          const bdg = new b2.BodyDef();
-          const ground = this.m_world.CreateBody(bdg);
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_staticBody; //b2.BodyType.b2_dynamicBody;
-          bd.allowSleep = false;
-          bd.position.Set(0.0, 0.0);
-          const body = this.m_world.CreateBody(bd);
-          const shape = new b2.PolygonShape();
-          shape.SetAsBox(0.5, 10.0, new b2.Vec2(20.0, 0.0), 0.0);
-          body.CreateFixture(shape, 5.0);
-          shape.SetAsBox(0.5, 10.0, new b2.Vec2(-20.0, 0.0), 0.0);
-          body.CreateFixture(shape, 5.0);
-          shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, 10.0), Math.PI / 2.0);
-          body.CreateFixture(shape, 5.0);
-          shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, -10.0), Math.PI / 2.0);
-          body.CreateFixture(shape, 5.0);
-          bd.type = b2.BodyType.b2_dynamicBody;
-          bd.position.Set(0.0, 0.0);
-          this.m_mover = this.m_world.CreateBody(bd);
-          shape.SetAsBox(1.0, 5.0, new b2.Vec2(0.0, 2.0), 0.0);
-          this.m_mover.CreateFixture(shape, 5.0);
-          const jd = new b2.RevoluteJointDef();
-          jd.bodyA = ground;
-          jd.bodyB = this.m_mover;
-          jd.localAnchorA.Set(0.0, 0.0);
-          jd.localAnchorB.Set(0.0, 5.0);
-          jd.referenceAngle = 0.0;
-          jd.motorSpeed = 0;
-          jd.maxMotorTorque = 1e7;
-          jd.enableMotor = true;
-          this.m_joint = this.m_world.CreateJoint(jd);
-          const pd = new b2.ParticleGroupDef();
-          pd.flags = b2.ParticleFlag.b2_waterParticle;
-          const shape2 = new b2.PolygonShape();
-          shape2.SetAsBox(9.0, 9.0, new b2.Vec2(0.0, 0.0), 0.0);
-          pd.shape = shape2;
-          this.m_particleSystem.CreateParticleGroup(pd);
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 3);
+              shape.m_radius = 2;
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = particleType;
+              pd.shape = shape;
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
+              }
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 8);
+              shape.m_radius = 0.5;
+              body.CreateFixture(shape, 0.5);
+          }
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new Particles();
+      }
+  }
+  const testIndex$1f = RegisterTest("Particles", "Particles", Particles.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2014 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  /**
+   * Test behavior when particles fall on a convex ambigious Body
+   * contact fixture junction.
+   */
+  class Pointy extends Test {
+      constructor() {
+          super();
+          this.m_killfieldShape = new b2.PolygonShape();
+          this.m_killfieldTransform = new b2.Transform();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              // Construct a triangle out of many polygons to ensure there's no
+              // issue with particles falling directly on an ambiguous corner
+              const xstep = 1.0;
+              for (let x = -10.0; x < 10.0; x += xstep) {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(x, -10.0),
+                      new b2.Vec2(x + xstep, -10.0),
+                      new b2.Vec2(0.0, 25.0),
+                  ];
+                  shape.Set(vertices, 3);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
+          const particleType = Test.GetParticleParameterValue();
+          if (particleType === b2.ParticleFlag.b2_waterParticle) {
+              this.m_particleSystem.SetDamping(0.2);
+          }
+          // Create killfield shape and transform
+          this.m_killfieldShape = new b2.PolygonShape();
+          this.m_killfieldShape.SetAsBox(50.0, 1.0);
+          // Put this at the bottom of the world
+          this.m_killfieldTransform = new b2.Transform();
+          const loc = new b2.Vec2(-25, 1);
+          this.m_killfieldTransform.SetPositionAngle(loc, 0);
       }
       Step(settings) {
-          const time = new Date().getTime();
-          this.m_joint.SetMotorSpeed(0.7 * Math.cos(time / 1000));
+          super.Step(settings);
+          const flags = Test.GetParticleParameterValue();
+          const pd = new b2.ParticleDef();
+          pd.position.Set(0.0, 33.0);
+          pd.velocity.Set(0.0, -1.0);
+          pd.flags = flags;
+          if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
+              const count = this.m_particleSystem.GetParticleCount();
+              pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
+              pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
+          }
+          this.m_particleSystem.CreateParticle(pd);
+          // kill every particle near the bottom of the screen
+          this.m_particleSystem.DestroyParticlesInShape(this.m_killfieldShape, this.m_killfieldTransform);
+      }
+      static Create() {
+          return new Pointy();
+      }
+  }
+  const testIndex$1g = RegisterTest("Particles", "Pointy", Pointy.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2014 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class Ramp extends Test {
+      constructor() {
+          super();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              // Construct a ramp out of many polygons to ensure there's no
+              // issue with particles moving across vertices
+              const xstep = 5.0, ystep = 5.0;
+              for (let y = 30.0; y > 0.0; y -= ystep) {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-25.0, y),
+                      new b2.Vec2(-25.0, y - ystep),
+                      new b2.Vec2(0.0, 15.0),
+                  ];
+                  shape.Set(vertices, 3);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              for (let x = -25.0; x < 25.0; x += xstep) {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(x, 0.0),
+                      new b2.Vec2(x + xstep, 0.0),
+                      new b2.Vec2(0.0, 15.0),
+                  ];
+                  shape.Set(vertices, 3);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.25);
+          const particleType = Test.GetParticleParameterValue();
+          if (particleType === b2.ParticleFlag.b2_waterParticle) {
+              this.m_particleSystem.SetDamping(0.2);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(-20, 33);
+              shape.m_radius = 3;
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = particleType;
+              pd.shape = shape;
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
+              }
+          }
+      }
+      static Create() {
+          return new Ramp();
+      }
+  }
+  const testIndex$1h = RegisterTest("Particles", "Ramp", Ramp.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2013 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class RigidParticles extends Test {
+      constructor() {
+          super();
+          {
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -1),
+                      new b2.Vec2(4, -1),
+                      new b2.Vec2(4, 0),
+                      new b2.Vec2(-4, 0),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -0.1),
+                      new b2.Vec2(-2, -0.1),
+                      new b2.Vec2(-2, 2),
+                      new b2.Vec2(-4, 2),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(2, -0.1),
+                      new b2.Vec2(4, -0.1),
+                      new b2.Vec2(4, 2),
+                      new b2.Vec2(2, 2),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 3);
+              shape.m_radius = 0.5;
+              const pd = new b2.ParticleGroupDef();
+              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+              pd.shape = shape;
+              pd.color.SetByteRGBA(255, 0, 0, 255);
+              this.m_particleSystem.CreateParticleGroup(pd);
+          }
+          {
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(-1, 3);
+              shape.m_radius = 0.5;
+              const pd = new b2.ParticleGroupDef();
+              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+              pd.shape = shape;
+              pd.color.SetByteRGBA(0, 255, 0, 255);
+              this.m_particleSystem.CreateParticleGroup(pd);
+          }
+          {
+              const shape = new b2.PolygonShape();
+              //const vertices = [
+              //  new b2.Vec2(0, 3),
+              //  new b2.Vec2(2, 3),
+              //  new b2.Vec2(2, 3.5),
+              //  new b2.Vec2(0, 3.5)
+              //];
+              //shape.Set(vertices, 4);
+              shape.SetAsBox(1, 0.5);
+              const pd = new b2.ParticleGroupDef();
+              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+              pd.position.Set(1, 4);
+              pd.angle = -0.5;
+              pd.angularVelocity = 2.0;
+              pd.shape = shape;
+              pd.color.SetByteRGBA(0, 0, 255, 255);
+              this.m_particleSystem.CreateParticleGroup(pd);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 8);
+              shape.m_radius = 0.5;
+              body.CreateFixture(shape, 0.5);
+          }
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new RigidParticles();
+      }
+  }
+  const testIndex$1i = RegisterTest("Particles", "Rigid Particles", RigidParticles.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2013 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  // /**
+  //  * The following parameters are not static const members of the
+  //  * Sandbox class with values assigned inline as it can result in
+  //  * link errors when using gcc.
+  //  */
+  // SandboxParams = {};
+  class SandboxParams {
+  }
+  /**
+   * Total possible pump squares
+   */
+  SandboxParams.k_maxPumps = 5;
+  /**
+   * Total possible emitters
+   */
+  SandboxParams.k_maxEmitters = 5;
+  /**
+   * Number of seconds to push one direction or the other on the
+   * pumps
+   */
+  SandboxParams.k_flipTime = 6;
+  /**
+   * Radius of a tile
+   */
+  SandboxParams.k_tileRadius = 2;
+  /**
+   * Diameter of a tile
+   */
+  SandboxParams.k_tileDiameter = 4;
+  /**
+   * Pump radius; slightly smaller than a tile
+   */
+  SandboxParams.k_pumpRadius = 2.0 - 0.05;
+  SandboxParams.k_playfieldLeftEdge = -20;
+  SandboxParams.k_playfieldRightEdge = 20;
+  SandboxParams.k_playfieldBottomEdge = 40;
+  /**
+   * The world size in the TILE
+   */
+  SandboxParams.k_tileWidth = 10;
+  SandboxParams.k_tileHeight = 11;
+  /**
+   * Particles/second
+   */
+  SandboxParams.k_defaultEmitterRate = 30;
+  /**
+   * Fit cleanly inside one block
+   */
+  SandboxParams.k_defaultEmitterSize = 3;
+  /**
+   * How fast particles coming out of the particles should drop
+   */
+  SandboxParams.k_particleExitSpeedY = -9.8;
+  /**
+   * How hard the pumps can push
+   */
+  SandboxParams.k_pumpForce = 600;
+  /**
+   * Number of *special* particles.
+   */
+  SandboxParams.k_numberOfSpecialParticles = 256;
+  /**
+   * Class which tracks a set of particles and applies a special
+   * effect to them.
+   */
+  class SpecialParticleTracker extends b2.DestructionListener {
+      /**
+       * Register this class as a destruction listener so that it's
+       * possible to keep track of special particles.
+       */
+      constructor(world, system) {
+          super();
+          /**
+           * Set of particle handles used to track special particles.
+           */
+          this.m_particles = [];
+          /**
+           * Current offset into this.m_colorOscillationPeriod.
+           */
+          this.m_colorOscillationTime = 0.0;
+          /**
+           * Color oscillation period in seconds.
+           */
+          this.m_colorOscillationPeriod = 2.0;
+          // DEBUG: b2.Assert(world !== null);
+          // DEBUG: b2.Assert(system !== null);
+          this.m_world = world;
+          this.m_particleSystem = system;
+          this.m_world.SetDestructionListener(this);
+      }
+      __dtor__() {
+          this.m_world.SetDestructionListener(null);
+      }
+      /**
+       * Add as many of the specified particles to the set of special
+       * particles.
+       */
+      Add(particleIndices, numberOfParticles) {
+          // DEBUG: b2.Assert(this.m_particleSystem !== null);
+          for (let i = 0; i < numberOfParticles && this.m_particles.length < SandboxParams.k_numberOfSpecialParticles; ++i) {
+              const particleIndex = particleIndices[i];
+              this.m_particleSystem.SetParticleFlags(particleIndex, this.m_particleSystem.GetFlagsBuffer()[particleIndex] | b2.ParticleFlag.b2_destructionListenerParticle);
+              this.m_particles.push(this.m_particleSystem.GetParticleHandleFromIndex(particleIndex));
+          }
+      }
+      /**
+       * Apply effects to special particles.
+       */
+      Step(dt) {
+          function fmod(a, b) {
+              return (a - (Math.floor(a / b) * b));
+          }
+          // Oscillate the shade of color over this.m_colorOscillationPeriod seconds.
+          this.m_colorOscillationTime = fmod(this.m_colorOscillationTime + dt, this.m_colorOscillationPeriod);
+          const colorCoeff = 2.0 * Math.abs((this.m_colorOscillationTime / this.m_colorOscillationPeriod) - 0.5);
+          const color = new b2.Color().SetByteRGBA(128 + (128.0 * (1.0 - colorCoeff)), 128 + (256.0 * Math.abs(0.5 - colorCoeff)), 128 + (128.0 * colorCoeff), 255);
+          // Update the color of all special particles.
+          for (let i = 0; i < this.m_particles.length; ++i) {
+              this.m_particleSystem.GetColorBuffer()[this.m_particles[i].GetIndex()].Copy(color);
+          }
+      }
+      SayGoodbyeJoint(joint) { }
+      SayGoodbyeFixture(fixture) { }
+      SayGoodbyeParticleGroup(group) { }
+      /**
+       * When a particle is about to be destroyed, remove it from the
+       * list of special particles as the handle will become invalid.
+       */
+      SayGoodbyeParticle(particleSystem, index) {
+          if (particleSystem !== this.m_particleSystem) {
+              return;
+          }
+          // NOTE: user data could be used as an alternative method to look up
+          // the local handle pointer from the index.
+          // DEBUG: const length = this.m_particles.length;
+          this.m_particles = this.m_particles.filter((value) => {
+              return value.GetIndex() !== index;
+          });
+          // DEBUG: b2.Assert((length - this.m_particles.length) === 1);
+      }
+  }
+  /**
+   * Sandbox test creates a maze of faucets, pumps, ramps,
+   * circles, and blocks based on a string constant.  Please
+   * modify and play with this string to make new mazes, and also
+   * add new maze elements!
+   */
+  class Sandbox extends Test {
+      constructor() {
+          super();
+          /**
+           * Count of faucets in the world
+           */
+          this.m_faucetEmitterIndex = 0;
+          /**
+           * Count of pumps in the world
+           */
+          this.m_pumpIndex = 0;
+          /**
+           * How long have we been pushing the pumps?
+           */
+          this.m_pumpTimer = 0.0;
+          /**
+           * Particle creation flags
+           */
+          this.m_particleFlags = 0;
+          /**
+           * Pump force
+           */
+          this.m_pumpForce = new b2.Vec2();
+          /**
+           * Pumps and emitters
+           */
+          this.m_pumps = [];
+          this.m_emitters = [];
+          // We need some ground for the pumps to slide against
+          const bd = new b2.BodyDef();
+          const ground = this.m_world.CreateBody(bd);
+          // Reset our pointers
+          for (let i = 0; i < SandboxParams.k_maxEmitters; i++) {
+              this.m_emitters[i] = null;
+          }
+          for (let i = 0; i < SandboxParams.k_maxPumps; i++) {
+              this.m_pumps[i] = null;
+          }
+          this.m_world.SetGravity(new b2.Vec2(0.0, -20));
+          // Create physical box, no top
+          {
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-40, -10),
+                      new b2.Vec2(40, -10),
+                      new b2.Vec2(40, 0),
+                      new b2.Vec2(-40, 0),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge - 20, -1),
+                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge, -1),
+                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge, 50),
+                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge - 20, 50),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(SandboxParams.k_playfieldRightEdge, -1),
+                      new b2.Vec2(SandboxParams.k_playfieldRightEdge + 20, -1),
+                      new b2.Vec2(SandboxParams.k_playfieldRightEdge + 20, 50),
+                      new b2.Vec2(SandboxParams.k_playfieldRightEdge, 50),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.25);
+          this.m_specialTracker = new SpecialParticleTracker(this.m_world, this.m_particleSystem);
+          this.m_pumpTimer = 0;
+          this.SetupMaze();
+          // Create killfield shape and transform
+          this.m_killFieldShape = new b2.PolygonShape();
+          this.m_killFieldShape.SetAsBox(SandboxParams.k_playfieldRightEdge - SandboxParams.k_playfieldLeftEdge, 1);
+          // Put this at the bottom of the world
+          this.m_killFieldTransform = new b2.Transform();
+          const loc = new b2.Vec2(-20, 1);
+          this.m_killFieldTransform.SetPositionAngle(loc, 0);
+          // Setup particle parameters.
+          Test.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
+          this.m_particleFlags = Test.GetParticleParameterValue();
+          Test.SetRestartOnParticleParameterChange(false);
+      }
+      __dtor__() {
+          // deallocate our emitters
+          for (let i = 0; i < this.m_faucetEmitterIndex; i++) {
+              ///  delete this.m_emitters[i];
+              this.m_emitters[i] = null;
+          }
+      }
+      // Create a maze of blocks, ramps, pumps, and faucets.
+      // The maze is defined in a string; feel free to modify it.
+      // Items in the maze include:
+      //   # = a block
+      //   / = a right-to-left ramp triangle
+      //   A = a left-to-right ramp triangle (can't be \ or string formatting
+      //       would be weird)
+      //   r, g, b = colored faucets pointing down
+      //   p = a pump block that rocks back and forth.  You can drag them
+      //       yourself with your finger.
+      //   C = a loose circle
+      //   K = an ignored placeholder for a killfield to remove particles;
+      //       entire bottom row is a killfield.
+      SetupMaze() {
+          const maze = "# r#g #r##" +
+              "  /#  #  #" +
+              " ###     p" +
+              "A  #  /###" +
+              "## # /#  C" +
+              "  /# #   #" +
+              " ### # / #" +
+              " ## p /#  " +
+              " #  ####  " +
+              "A        /" +
+              "#####KK###";
+          // DEBUG: b2.Assert(maze.length === SandboxParams.k_tileWidth * SandboxParams.k_tileHeight);
+          this.m_faucetEmitterIndex = 0;
+          this.m_pumpIndex = 0;
+          // Set up some standard shapes/vertices we'll use later.
+          const boxShape = new b2.PolygonShape();
+          boxShape.SetAsBox(SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
+          ///  b2Vec2 triangle[3];
+          const triangle = b2.Vec2.MakeArray(3);
+          triangle[0].Set(-SandboxParams.k_tileRadius, -SandboxParams.k_tileRadius);
+          triangle[1].Set(SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
+          triangle[2].Set(SandboxParams.k_tileRadius, -SandboxParams.k_tileRadius);
+          const rightTriangleShape = new b2.PolygonShape();
+          rightTriangleShape.Set(triangle, 3);
+          triangle[1].Set(-SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
+          const leftTriangleShape = new b2.PolygonShape();
+          leftTriangleShape.Set(triangle, 3);
+          // Make these just a touch smaller than a tile
+          const circleShape = new b2.CircleShape();
+          circleShape.m_radius = SandboxParams.k_tileRadius * 0.7;
+          const red = new b2.Color().SetByteRGBA(255, 128, 128, 255);
+          const green = new b2.Color().SetByteRGBA(128, 255, 128, 255);
+          const blue = new b2.Color().SetByteRGBA(128, 128, 255, 255);
+          this.m_pumpForce.Set(SandboxParams.k_pumpForce, 0);
+          for (let i = 0; i < SandboxParams.k_tileWidth; i++) {
+              for (let j = 0; j < SandboxParams.k_tileHeight; j++) {
+                  const item = maze[j * SandboxParams.k_tileWidth + i];
+                  // Calculate center of this square
+                  const center = new b2.Vec2(SandboxParams.k_playfieldLeftEdge + SandboxParams.k_tileRadius * 2 * i + SandboxParams.k_tileRadius, SandboxParams.k_playfieldBottomEdge - SandboxParams.k_tileRadius * 2 * j +
+                      SandboxParams.k_tileRadius);
+                  // Let's add some items
+                  switch (item) {
+                      case "#":
+                          // Block
+                          this.CreateBody(center, boxShape, b2.BodyType.b2_staticBody);
+                          break;
+                      case "A":
+                          // Left-to-right ramp
+                          this.CreateBody(center, leftTriangleShape, b2.BodyType.b2_staticBody);
+                          break;
+                      case "/":
+                          // Right-to-left ramp
+                          this.CreateBody(center, rightTriangleShape, b2.BodyType.b2_staticBody);
+                          break;
+                      case "C":
+                          // A circle to play with
+                          this.CreateBody(center, circleShape, b2.BodyType.b2_dynamicBody);
+                          break;
+                      case "p":
+                          this.AddPump(center);
+                          break;
+                      case "b":
+                          // Blue emitter
+                          this.AddFaucetEmitter(center, blue);
+                          break;
+                      case "r":
+                          // Red emitter
+                          this.AddFaucetEmitter(center, red);
+                          break;
+                      case "g":
+                          // Green emitter
+                          this.AddFaucetEmitter(center, green);
+                          break;
+                  }
+              }
+          }
+      }
+      CreateBody(center, shape, type) {
+          const def = new b2.BodyDef();
+          def.position.Copy(center);
+          def.type = type;
+          const body = this.m_world.CreateBody(def);
+          body.CreateFixture(shape, 10.0);
+      }
+      // Inititalizes a pump and its prismatic joint, and adds it to the world
+      AddPump(center) {
+          // Don't make too many pumps
+          // DEBUG: b2.Assert(this.m_pumpIndex < SandboxParams.k_maxPumps);
+          const shape = new b2.PolygonShape();
+          shape.SetAsBox(SandboxParams.k_pumpRadius, SandboxParams.k_pumpRadius);
+          const def = new b2.BodyDef();
+          def.position.Copy(center);
+          def.type = b2.BodyType.b2_dynamicBody;
+          def.angle = 0;
+          const body = this.m_world.CreateBody(def);
+          body.CreateFixture(shape, 5.0);
+          // Create a prismatic joint and connect to the ground, and have it
+          // slide along the x axis.
+          const prismaticJointDef = new b2.PrismaticJointDef();
+          prismaticJointDef.bodyA = this.m_groundBody;
+          prismaticJointDef.bodyB = body;
+          prismaticJointDef.collideConnected = false;
+          prismaticJointDef.localAxisA.Set(1, 0);
+          prismaticJointDef.localAnchorA.Copy(center);
+          this.m_world.CreateJoint(prismaticJointDef);
+          this.m_pumps[this.m_pumpIndex] = body;
+          this.m_pumpIndex++;
+      }
+      // Initializes and adds a faucet emitter
+      AddFaucetEmitter(center, color) {
+          // Don't make too many emitters
+          // DEBUG: b2.Assert(this.m_faucetEmitterIndex < SandboxParams.k_maxPumps);
+          const startingVelocity = new b2.Vec2(0, SandboxParams.k_particleExitSpeedY);
+          const emitter = new RadialEmitter();
+          emitter.SetParticleSystem(this.m_particleSystem);
+          emitter.SetPosition(center);
+          emitter.SetVelocity(startingVelocity);
+          emitter.SetSize(new b2.Vec2(SandboxParams.k_defaultEmitterSize, 0.0));
+          emitter.SetEmitRate(SandboxParams.k_defaultEmitterRate);
+          emitter.SetColor(color);
+          this.m_emitters[this.m_faucetEmitterIndex] = emitter;
+          this.m_faucetEmitterIndex++;
+      }
+      JointDestroyed(joint) {
+          super.JointDestroyed(joint);
+      }
+      ParticleGroupDestroyed(group) {
+          super.ParticleGroupDestroyed(group);
+      }
+      BeginContact(contact) {
+          super.BeginContact(contact);
+      }
+      EndContact(contact) {
+          super.EndContact(contact);
+      }
+      PreSolve(contact, oldManifold) {
+          super.PreSolve(contact, oldManifold);
+      }
+      PostSolve(contact, impulse) {
+          super.PostSolve(contact, impulse);
+      }
+      /**
+       * Allows you to set particle flags on devices with keyboards
+       */
+      Keyboard(key) {
+          super.Keyboard(key);
+          let toggle = 0;
+          switch (key) {
+              case "a":
+                  this.m_particleFlags = 0;
+                  break;
+              case "q":
+                  toggle = b2.ParticleFlag.b2_powderParticle;
+                  break;
+              case "t":
+                  toggle = b2.ParticleFlag.b2_tensileParticle;
+                  break;
+              case "v":
+                  toggle = b2.ParticleFlag.b2_viscousParticle;
+                  break;
+              case "w":
+                  toggle = b2.ParticleFlag.b2_wallParticle;
+                  break;
+          }
+          if (toggle) {
+              if (this.m_particleFlags & toggle) {
+                  this.m_particleFlags = this.m_particleFlags & ~toggle;
+              }
+              else {
+                  this.m_particleFlags = this.m_particleFlags | toggle;
+              }
+          }
+          Test.SetParticleParameterValue(this.m_particleFlags);
+      }
+      KeyboardUp(key) {
+          super.KeyboardUp(key);
+      }
+      MouseDown(p) {
+          super.MouseDown(p);
+      }
+      MouseUp(p) {
+          super.MouseUp(p);
+      }
+      MouseMove(p) {
+          super.MouseMove(p);
+      }
+      /**
+       * Per-frame step updater overridden from Test
+       */
+      Step(settings) {
+          let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
+          if (settings.m_pause && !settings.m_singleStep) {
+              dt = 0.0;
+          }
+          super.Step(settings);
+          this.m_particleFlags = Test.GetParticleParameterValue();
+          // Step all the emitters
+          for (let i = 0; i < this.m_faucetEmitterIndex; i++) {
+              const particleIndices = [];
+              const emitter = this.m_emitters[i];
+              if (emitter) {
+                  emitter.SetParticleFlags(this.m_particleFlags);
+                  const particlesCreated = emitter.Step(dt, particleIndices, SandboxParams.k_numberOfSpecialParticles);
+                  this.m_specialTracker.Add(particleIndices, particlesCreated);
+              }
+          }
+          // Step the special tracker.
+          this.m_specialTracker.Step(dt);
+          // Do killfield work--kill every particle near the bottom of the screen
+          this.m_particleSystem.DestroyParticlesInShape(this.m_killFieldShape, this.m_killFieldTransform);
+          // Move the pumps
+          for (let i = 0; i < this.m_pumpIndex; i++) {
+              const pump = this.m_pumps[i];
+              if (pump) {
+                  // Pumps can and will clog up if the pile of particles they're
+                  // trying to push is too heavy. Increase k_pumpForce to make
+                  // stronger pumps.
+                  pump.ApplyForceToCenter(this.m_pumpForce, true);
+              }
+              this.m_pumpTimer += dt;
+              // Reset pump to go back right again
+              if (this.m_pumpTimer > SandboxParams.k_flipTime) {
+                  this.m_pumpTimer -= SandboxParams.k_flipTime;
+                  this.m_pumpForce.x *= -1;
+              }
+          }
+          g_debugDraw.DrawString(5, this.m_textLine, "Keys: (a) zero out (water), (q) powder");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          g_debugDraw.DrawString(5, this.m_textLine, "      (t) tensile, (v) viscous");
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+      }
+      GetDefaultViewZoom() {
+          return super.GetDefaultViewZoom();
+      }
+      static Create() {
+          return new Sandbox();
+      }
+  }
+  Sandbox.k_paramValues = [
+      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "tensile powder"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous powder"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous tensile powder"),
+      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile viscous water"),
+  ];
+  Sandbox.k_paramDef = [
+      new ParticleParameterDefinition(Sandbox.k_paramValues),
+  ];
+  Sandbox.k_paramDefCount = Sandbox.k_paramDef.length;
+  const testIndex$1j = RegisterTest("Particles", "Sandbox", Sandbox.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2013 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class Soup extends Test {
+      constructor() {
+          super();
+          // Disable the selection of wall and barrier particles for this test.
+          this.InitializeParticleParameters(b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_barrierParticle);
+          {
+              const bd = new b2.BodyDef();
+              this.m_ground = this.m_world.CreateBody(bd);
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -1),
+                      new b2.Vec2(4, -1),
+                      new b2.Vec2(4, 0),
+                      new b2.Vec2(-4, 0),
+                  ];
+                  shape.Set(vertices, 4);
+                  this.m_ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-4, -0.1),
+                      new b2.Vec2(-2, -0.1),
+                      new b2.Vec2(-2, 2),
+                      new b2.Vec2(-4, 3),
+                  ];
+                  shape.Set(vertices, 4);
+                  this.m_ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(2, -0.1),
+                      new b2.Vec2(4, -0.1),
+                      new b2.Vec2(4, 3),
+                      new b2.Vec2(2, 2),
+                  ];
+                  shape.Set(vertices, 4);
+                  this.m_ground.CreateFixture(shape, 0.0);
+              }
+          }
+          this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
+          {
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(2, 1, new b2.Vec2(0, 1), 0);
+              const pd = new b2.ParticleGroupDef();
+              pd.shape = shape;
+              pd.flags = Test.GetParticleParameterValue();
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
+              }
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(0, 0.5);
+              shape.m_radius = 0.1;
+              body.CreateFixture(shape, 0.1);
+              this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.1, 0.1, new b2.Vec2(-1, 0.5), 0);
+              body.CreateFixture(shape, 0.1);
+              this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.1, 0.1, new b2.Vec2(1, 0.5), 0.5);
+              body.CreateFixture(shape, 0.1);
+              this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(0, 2), new b2.Vec2(0.1, 2.1));
+              body.CreateFixture(shape, 1);
+              ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
+              const massData = new b2.MassData();
+              massData.mass = 0.1;
+              massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
+              massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
+              massData.I = 0.0;
+              body.SetMassData(massData);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(0.3, 2.0), new b2.Vec2(0.4, 2.1));
+              body.CreateFixture(shape, 1);
+              ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
+              const massData = new b2.MassData();
+              massData.mass = 0.1;
+              massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
+              massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
+              massData.I = 0.0;
+              body.SetMassData(massData);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-0.3, 2.1), new b2.Vec2(-0.2, 2.0));
+              body.CreateFixture(shape, 1);
+              ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
+              const massData = new b2.MassData();
+              massData.mass = 0.1;
+              massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
+              massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
+              massData.I = 0.0;
+              body.SetMassData(massData);
+          }
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new Soup();
+      }
+  }
+  const testIndex$1k = RegisterTest("Particles", "Soup", Soup.Create);
+  // #endif
+
+  /*
+   * Copyright (c) 2014 Google, Inc.
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class SoupStirrer extends Soup {
+      constructor() {
+          super();
+          this.m_joint = null;
+          this.m_oscillationOffset = 0.0;
+          this.m_particleSystem.SetDamping(1.0);
+          // Shape of the stirrer.
+          const shape = new b2.CircleShape();
+          shape.m_p.Set(0, 0.7);
+          shape.m_radius = 0.4;
+          // Create the stirrer.
+          const bd = new b2.BodyDef();
+          bd.type = b2.BodyType.b2_dynamicBody;
+          this.m_stirrer = this.m_world.CreateBody(bd);
+          this.m_stirrer.CreateFixture(shape, 1.0);
+          // Destroy all particles under the stirrer.
+          const xf = new b2.Transform();
+          xf.SetIdentity();
+          this.m_particleSystem.DestroyParticlesInShape(shape, xf);
+          // By default attach the body to a joint to restrict movement.
+          this.CreateJoint();
+      }
+      CreateJoint() {
+          // DEBUG: b2.Assert(!this.m_joint);
+          // Create a prismatic joint and connect to the ground, and have it
+          // slide along the x axis.
+          // Disconnect the body from this joint to have more fun.
+          const prismaticJointDef = new b2.PrismaticJointDef();
+          prismaticJointDef.bodyA = this.m_groundBody;
+          prismaticJointDef.bodyB = this.m_stirrer;
+          prismaticJointDef.collideConnected = true;
+          prismaticJointDef.localAxisA.Set(1, 0);
+          prismaticJointDef.localAnchorA.Copy(this.m_stirrer.GetPosition());
+          this.m_joint = this.m_world.CreateJoint(prismaticJointDef);
+      }
+      /**
+       * Enable the joint if it's disabled, disable it if it's
+       * enabled.
+       */
+      ToggleJoint() {
+          if (this.m_joint) {
+              this.m_world.DestroyJoint(this.m_joint);
+              this.m_joint = null;
+          }
+          else {
+              this.CreateJoint();
+          }
+      }
+      /**
+       * Press "t" to enable / disable the joint restricting the
+       * stirrer's movement.
+       */
+      Keyboard(key) {
+          switch (key) {
+              case "t":
+                  this.ToggleJoint();
+                  break;
+              default:
+                  super.Keyboard(key);
+                  break;
+          }
+      }
+      /**
+       * Click the soup to toggle between enabling / disabling the
+       * joint.
+       */
+      MouseUp(p) {
+          super.MouseUp(p);
+          if (this.InSoup(p)) {
+              this.ToggleJoint();
+          }
+      }
+      /**
+       * Determine whether a point is in the soup.
+       */
+      InSoup(pos) {
+          // The soup dimensions are from the container initialization in the
+          // Soup test.
+          return pos.y > -1.0 && pos.y < 2.0 && pos.x > -3.0 && pos.x < 3.0;
+      }
+      /**
+       * Apply a force to the stirrer.
+       */
+      Step(settings) {
+          // Magnitude of the force applied to the body.
+          const k_forceMagnitude = 10.0;
+          // How often the force vector rotates.
+          const k_forceOscillationPerSecond = 0.2;
+          const k_forceOscillationPeriod = 1.0 / k_forceOscillationPerSecond;
+          // Maximum speed of the body.
+          const k_maxSpeed = 2.0;
+          this.m_oscillationOffset += (1.0 / settings.m_hertz);
+          if (this.m_oscillationOffset > k_forceOscillationPeriod) {
+              this.m_oscillationOffset -= k_forceOscillationPeriod;
+          }
+          // Calculate the force vector.
+          const forceAngle = this.m_oscillationOffset * k_forceOscillationPerSecond * 2.0 * b2.pi;
+          const forceVector = new b2.Vec2(Math.sin(forceAngle), Math.cos(forceAngle)).SelfMul(k_forceMagnitude);
+          // Only apply force to the body when it's within the soup.
+          if (this.InSoup(this.m_stirrer.GetPosition()) &&
+              this.m_stirrer.GetLinearVelocity().Length() < k_maxSpeed) {
+              this.m_stirrer.ApplyForceToCenter(forceVector, true);
+          }
           super.Step(settings);
       }
       static Create() {
-          return new EyeCandy();
+          return new SoupStirrer();
       }
   }
+  const testIndex$1l = RegisterTest("Particles", "Soup Stirrer", SoupStirrer.Create);
   // #endif
 
   /*
@@ -14256,387 +14283,339 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  class Segway extends Test {
+  class ParticleVFX {
+      constructor(particleSystem, origin, size, speed, lifetime, particleFlags) {
+          this.m_initialLifetime = 0.0;
+          this.m_remainingLifetime = 0.0;
+          this.m_halfLifetime = 0.0;
+          this.m_origColor = new b2.Color();
+          // Create a circle to house the particles of size size
+          const shape = new b2.CircleShape();
+          shape.m_p.Copy(origin);
+          shape.m_radius = size;
+          // Create particle def of random color.
+          const pd = new b2.ParticleGroupDef();
+          pd.flags = particleFlags;
+          pd.shape = shape;
+          // this.m_origColor.Set(
+          //   Math.random(),
+          //   Math.random(),
+          //   Math.random(),
+          //   1.0);
+          function hue2rgb(p, q, t) {
+              if (t < 0) {
+                  t += 1;
+              }
+              if (t > 1) {
+                  t -= 1;
+              }
+              if (t < 1 / 6) {
+                  return p + (q - p) * 6 * t;
+              }
+              if (t < 1 / 2) {
+                  return q;
+              }
+              if (t < 2 / 3) {
+                  return p + (q - p) * (2 / 3 - t) * 6;
+              }
+              return p;
+          }
+          function hslToRgb(h, s, l, a = 1) {
+              let r, g, b;
+              if (s === 0) {
+                  r = g = b = l; // achromatic
+              }
+              else {
+                  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                  const p = 2 * l - q;
+                  r = hue2rgb(p, q, h + 1 / 3);
+                  g = hue2rgb(p, q, h);
+                  b = hue2rgb(p, q, h - 1 / 3);
+              }
+              return { r, g, b, a };
+          }
+          this.m_origColor.Copy(hslToRgb(Math.random(), 1, 0.5));
+          pd.color.Copy(this.m_origColor);
+          this.m_particleSystem = particleSystem;
+          // Create a circle full of particles
+          this.m_pg = this.m_particleSystem.CreateParticleGroup(pd);
+          this.m_initialLifetime = this.m_remainingLifetime = lifetime;
+          this.m_halfLifetime = this.m_initialLifetime * 0.5;
+          // Set particle initial velocity based on how far away it is from
+          // origin, exploding outwards.
+          const bufferIndex = this.m_pg.GetBufferIndex();
+          const pos = this.m_particleSystem.GetPositionBuffer();
+          const vel = this.m_particleSystem.GetVelocityBuffer();
+          for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
+              ///  vel[i] = pos[i] - origin;
+              b2.Vec2.SubVV(pos[i], origin, vel[i]);
+              ///  vel[i] *= speed;
+              b2.Vec2.MulVS(vel[i], speed, vel[i]);
+          }
+      }
+      Drop() {
+          this.m_pg.DestroyParticles(false);
+          // this.m_pg = null;
+      }
+      ColorCoeff() {
+          if (this.m_remainingLifetime >= this.m_halfLifetime) {
+              return 1.0;
+          }
+          return 1.0 - ((this.m_halfLifetime - this.m_remainingLifetime) / this.m_halfLifetime);
+      }
+      Step(dt) {
+          if (dt > 0 && this.m_remainingLifetime > 0.0) {
+              this.m_remainingLifetime = Math.max(this.m_remainingLifetime - dt, 0.0);
+              const coeff = this.ColorCoeff();
+              const colors = this.m_particleSystem.GetColorBuffer();
+              const bufferIndex = this.m_pg.GetBufferIndex();
+              // Set particle colors all at once.
+              for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
+                  const c = colors[i];
+                  // c *= coeff;
+                  // c.SelfMul(coeff);
+                  // c.a = this.m_origColor.a;
+                  c.a *= coeff;
+              }
+          }
+      }
+      IsDone() {
+          return this.m_remainingLifetime <= 0.0;
+      }
+  }
+  class Sparky extends Test {
       constructor() {
           super();
-          this.targetPosition = 10;
-          this.targetPositionInterval = 0;
-          this.posAvg = 0;
-          this.angleController = new PIDController();
-          this.positionController = new PIDController();
-          this.m_world.SetGravity({ x: 0, y: -30 });
-          this.angleController.gainP = 1000;
-          this.angleController.gainI = 0;
-          this.angleController.gainD = 250;
-          this.positionController.gainP = 0.5;
-          this.positionController.gainI = 0;
-          this.positionController.gainD = 1.5;
-          const bd = new b2.BodyDef();
-          const fd = new b2.FixtureDef();
-          // pendulumBody = new p2.Body({
-          //     mass: 1,
-          //     position: [0, 2 + 0.5 * PENDULUM_LENGTH]
-          // });
-          // pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
-          // world.addBody(pendulumBody);
-          bd.type = b2.BodyType.b2_dynamicBody;
-          bd.position.x = 0;
-          bd.position.y = 2 + 0.5 * Segway.PENDULUM_LENGTH;
-          this.pendulumBody = this.m_world.CreateBody(bd);
-          const pendulumShape = new b2.PolygonShape();
-          pendulumShape.SetAsBox(0.5, 0.5 * Segway.PENDULUM_LENGTH);
-          fd.shape = pendulumShape;
-          fd.density = 1 / (1 * Segway.PENDULUM_LENGTH); // TODO: specify mass
-          // fd.mass = 1;
-          this.pendulumBody.CreateFixture(fd);
-          // wheelBody = new p2.Body({
-          //     mass: 1,
-          //     position: [0,1]
-          // });
-          // wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
-          // world.addBody(wheelBody);
-          bd.type = b2.BodyType.b2_dynamicBody;
-          bd.position.x = 0;
-          bd.position.y = 1;
-          this.wheelBody = this.m_world.CreateBody(bd);
-          const wheelShape = new b2.CircleShape();
-          wheelShape.m_radius = 0.6;
-          fd.shape = wheelShape;
-          fd.density = 1 / (Math.PI * 0.6 * 0.6); // TODO: specify mass
-          // fd.mass = 1;
-          fd.friction = 10;
-          this.wheelBody.CreateFixture(fd);
-          // var wheelJoint = new p2.RevoluteConstraint(wheelBody, pendulumBody, {
-          //     localPivotA: [0, 0],
-          //     localPivotB: [0, -0.5 * PENDULUM_LENGTH],
-          //     collideConnected: false
-          // });
-          // world.addConstraint(wheelJoint);
-          // wheelJoint.motorEnabled = true;
-          // var m = 40;
-          // wheelJoint.motorEquation.maxForce = m;
-          // wheelJoint.motorEquation.minForce = -m;
-          const jd = new b2.RevoluteJointDef();
-          jd.Initialize(this.wheelBody, this.pendulumBody, { x: 0, y: 0 });
-          jd.localAnchorA.Set(0, 0);
-          jd.localAnchorB.Set(0, -0.5 * Segway.PENDULUM_LENGTH);
-          jd.collideConnected = false;
-          jd.enableMotor = true;
-          jd.maxMotorTorque = 40;
-          this.wheelJoint = this.m_world.CreateJoint(jd);
-          // Create ground
-          // var groundShape = new p2.Plane();
-          // var groundBody = new p2.Body({
-          //     position:[0,0],
-          // });
-          // groundBody.addShape(groundShape);
-          // world.addBody(groundBody);
-          bd.type = b2.BodyType.b2_staticBody;
-          bd.position.x = 0;
-          bd.position.y = 0;
-          this.groundBody = this.m_world.CreateBody(bd);
-          const groundShape = new b2.EdgeShape();
-          groundShape.SetTwoSided({ x: -100, y: 0 }, { x: 100, y: 0 });
-          fd.shape = groundShape;
-          fd.friction = 10;
-          this.groundBody.CreateFixture(fd);
+          this.m_VFXIndex = 0;
+          this.m_VFX = [];
+          this.m_contact = false;
+          this.m_contactPoint = new b2.Vec2();
+          // Set up array of sparks trackers.
+          this.m_VFXIndex = 0;
+          for (let i = 0; i < Sparky.c_maxVFX; i++) {
+              this.m_VFX[i] = null;
+          }
+          this.CreateWalls();
+          this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
+          // Create a list of circles that will spark.
+          for (let i = 0; i < Sparky.c_maxCircles; i++) {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_p.Set(3.0 * RandomFloat(), Sparky.SHAPE_HEIGHT_OFFSET + Sparky.SHAPE_OFFSET * i);
+              shape.m_radius = 2;
+              const f = body.CreateFixture(shape, 0.5);
+              // Tag this as a sparkable body.
+              f.SetUserData({
+                  spark: true,
+              });
+          }
+          Test.SetRestartOnParticleParameterChange(false);
+          Test.SetParticleParameterValue(b2.ParticleFlag.b2_powderParticle);
+      }
+      BeginContact(contact) {
+          super.BeginContact(contact);
+          // Check to see if these are two circles hitting one another.
+          const userA = contact.GetFixtureA().GetUserData();
+          const userB = contact.GetFixtureB().GetUserData();
+          if ((userA && userA.spark) ||
+              (userB && userB.spark)) {
+              const worldManifold = new b2.WorldManifold();
+              contact.GetWorldManifold(worldManifold);
+              // Note that we overwrite any contact; if there are two collisions
+              // on the same frame, only the last one showers sparks.
+              // Two collisions are rare, and this also guarantees we will not
+              // run out of places to store ParticleVFX explosions.
+              this.m_contactPoint.Copy(worldManifold.points[0]);
+              this.m_contact = true;
+          }
       }
       Step(settings) {
+          const particleFlags = Test.GetParticleParameterValue();
           let dt = settings.m_hertz > 0.0 ? 1.0 / settings.m_hertz : 0.0;
           if (settings.m_pause && !settings.m_singleStep) {
               dt = 0.0;
           }
           super.Step(settings);
-          this.targetPositionInterval += dt;
-          if (this.targetPositionInterval >= 8) {
-              this.targetPositionInterval = 0;
-              this.targetPosition = this.targetPosition === 10 ? -10 : 10;
+          // If there was a contacts...
+          if (this.m_contact) {
+              // ...explode!
+              this.AddVFX(this.m_contactPoint, particleFlags);
+              this.m_contact = false;
           }
-          let targetAngle = 0;
+          // Step particle explosions.
+          for (let i = 0; i < Sparky.c_maxVFX; i++) {
+              const vfx = this.m_VFX[i];
+              if (vfx === null) {
+                  continue;
+              }
+              vfx.Step(dt);
+              if (vfx.IsDone()) {
+                  /// delete vfx;
+                  vfx.Drop();
+                  this.m_VFX[i] = null;
+              }
+          }
+      }
+      AddVFX(p, particleFlags) {
+          const vfx = this.m_VFX[this.m_VFXIndex];
+          if (vfx !== null) {
+              /// delete vfx;
+              vfx.Drop();
+              this.m_VFX[this.m_VFXIndex] = null;
+          }
+          this.m_VFX[this.m_VFXIndex] = new ParticleVFX(this.m_particleSystem, p, RandomFloat(1.0, 2.0), RandomFloat(10.0, 20.0), RandomFloat(0.5, 1.0), particleFlags);
+          if (++this.m_VFXIndex >= Sparky.c_maxVFX) {
+              this.m_VFXIndex = 0;
+          }
+      }
+      CreateWalls() {
+          // Create the walls of the world.
           {
-              const alpha = 0.4;
-              // posAvg = (1 - alpha) * posAvg + alpha * pendulumBody.position[0];
-              this.posAvg = (1 - alpha) * this.posAvg + alpha * this.pendulumBody.GetPosition().x;
-              this.positionController.currentError = this.targetPosition - this.posAvg;
-              // positionController.step(world.lastTimeStep);
-              this.positionController.step(dt);
-              let targetLinAccel = this.positionController.output;
-              // targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
-              targetLinAccel = b2.Clamp(targetLinAccel, -10, 10);
-              // targetAngle = targetLinAccel / world.gravity[1];
-              targetAngle = targetLinAccel / this.m_world.GetGravity().y;
-              // targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
-              targetAngle = b2.Clamp(targetAngle, b2.DegToRad(-15), b2.DegToRad(15));
+              const bd = new b2.BodyDef();
+              const ground = this.m_world.CreateBody(bd);
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-40, -10),
+                      new b2.Vec2(40, -10),
+                      new b2.Vec2(40, 0),
+                      new b2.Vec2(-40, 0),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-40, 40),
+                      new b2.Vec2(40, 40),
+                      new b2.Vec2(40, 50),
+                      new b2.Vec2(-40, 50),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(-40, -10),
+                      new b2.Vec2(-20, -10),
+                      new b2.Vec2(-20, 50),
+                      new b2.Vec2(-40, 50),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
+              {
+                  const shape = new b2.PolygonShape();
+                  const vertices = [
+                      new b2.Vec2(20, -10),
+                      new b2.Vec2(40, -10),
+                      new b2.Vec2(40, 50),
+                      new b2.Vec2(20, 50),
+                  ];
+                  shape.Set(vertices, 4);
+                  ground.CreateFixture(shape, 0.0);
+              }
           }
-          // var currentAngle = pendulumBody.angle;
-          let currentAngle = this.pendulumBody.GetAngle();
-          currentAngle = normalizeAngle(currentAngle);
-          this.angleController.currentError = targetAngle - currentAngle;
-          // angleController.step(world.lastTimeStep);
-          this.angleController.step(dt);
-          let targetSpeed = this.angleController.output;
-          // give up if speed required is really high
-          if (Math.abs(targetSpeed) > 1000) {
-              targetSpeed = 0;
-          }
-          // this is the only output
-          // var targetAngularVelocity = -targetSpeed / (2 * Math.PI * wheelBody.shapes[0].radius); // wheel circumference = 2*pi*r
-          const targetAngularVelocity = targetSpeed / (2 * Math.PI * 0.6); // wheel circumference = 2*pi*r
-          // wheelJoint.motorSpeed = targetAngularVelocity;
-          this.wheelJoint.SetMotorSpeed(targetAngularVelocity);
       }
       static Create() {
-          return new Segway();
+          return new Sparky();
       }
   }
-  Segway.PENDULUM_LENGTH = 10;
-  /*
-    Simple PID controller for single float variable
-    http://en.wikipedia.org/wiki/PID_controller#Pseudocode
-  */
-  class PIDController {
-      constructor() {
-          this.gainP = 1;
-          this.gainI = 1;
-          this.gainD = 1;
-          this.currentError = 0;
-          this.previousError = 0;
-          this.integral = 0;
-          this.output = 0;
-      }
-      step(dt) {
-          this.integral = dt * (this.integral + this.currentError);
-          const derivative = (1 / dt) * (this.currentError - this.previousError);
-          this.output = this.gainP * this.currentError + this.gainI * this.integral + this.gainD * derivative;
-          this.previousError = this.currentError;
-      }
-  }
-  // var DEGTORAD = 0.0174532925199432957;
-  // var RADTODEG = 57.295779513082320876;
-  // var PENDULUM_LENGTH = 10;
-  // var targetPosition = 0;
-  // var targetPositionInterval = setInterval(changeTargetPos, 8000);
-  // function changeTargetPos(){
-  //     targetPosition = targetPosition===0 ? 10 : 0;
-  // }
-  // changeTargetPos();
-  // var posAvg = 0;
-  // var angleController = new PIDController();
-  // angleController.gainP = 1000;
-  // angleController.gainI = 0;
-  // angleController.gainD = 250;
-  // var positionController = new PIDController();
-  // positionController.gainP = 0.5;
-  // positionController.gainI = 0;
-  // positionController.gainD = 1.5;
-  // // Create demo application
-  // var app = new p2.WebGLRenderer(function(){
-  //     var world = new p2.World({
-  //         gravity : [0,-30]
-  //     });
-  //     this.setWorld(world);
-  //     world.defaultContactMaterial.friction = 10;
-  //     pendulumBody = new p2.Body({
-  //         mass: 1,
-  //         position: [0, 2 + 0.5 * PENDULUM_LENGTH]
-  //     });
-  //     pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
-  //     world.addBody(pendulumBody);
-  //     wheelBody = new p2.Body({
-  //         mass: 1,
-  //         position: [0,1]
-  //     });
-  //     wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
-  //     world.addBody(wheelBody);
-  //     var wheelJoint = new p2.RevoluteConstraint(wheelBody, pendulumBody, {
-  //         localPivotA: [0, 0],
-  //         localPivotB: [0, -0.5 * PENDULUM_LENGTH],
-  //         collideConnected: false
-  //     });
-  //     world.addConstraint(wheelJoint);
-  //     wheelJoint.motorEnabled = true;
-  //     var m = 40;
-  //     wheelJoint.motorEquation.maxForce = m;
-  //     wheelJoint.motorEquation.minForce = -m;
-  //     // Create ground
-  //     var groundShape = new p2.Plane();
-  //     var groundBody = new p2.Body({
-  //         position:[0,0],
-  //     });
-  //     groundBody.addShape(groundShape);
-  //     world.addBody(groundBody);
-  //     world.on('postStep', function(){
-  //         var targetAngle = 0;
-  //         if ( true ) {
-  //             var alpha = 0.4;
-  //             posAvg = (1 - alpha) * posAvg + alpha * pendulumBody.position[0];
-  //             positionController.currentError = targetPosition - posAvg;
-  //             positionController.step(world.lastTimeStep);
-  //             var targetLinAccel = positionController.output;
-  //             targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
-  //             targetAngle = targetLinAccel / world.gravity[1];
-  //             targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
-  //         }
-  //         var currentAngle = pendulumBody.angle;
-  //         currentAngle = normalizeAngle(currentAngle);
-  //         angleController.currentError = ( targetAngle - currentAngle );
-  //         angleController.step(world.lastTimeStep);
-  //         var targetSpeed = angleController.output;
-  //         // give up if speed required is really high
-  //         if ( Math.abs(targetSpeed) > 1000 )
-  //             targetSpeed = 0;
-  //         // this is the only output
-  //         var targetAngularVelocity = -targetSpeed / (2 * Math.PI * wheelBody.shapes[0].radius); // wheel circumference = 2*pi*r
-  //         wheelJoint.motorSpeed = targetAngularVelocity;
-  //     });
-  //     app.frame(3,5,16,16);
-  // });
-  // /*
-  //     Simple PID controller for single float variable
-  //     http://en.wikipedia.org/wiki/PID_controller#Pseudocode
-  // */
-  // function PIDController(){
-  //     this.gainP = 1;
-  //     this.gainI = 1;
-  //     this.gainD = 1;
-  //     this.currentError = 0;
-  //     this.previousError = 0;
-  //     this.integral = 0;
-  //     this.output = 0;
-  // }
-  // PIDController.prototype.step = function(dt) {
-  //     this.integral = dt * (this.integral + this.currentError);
-  //     var derivative = (1 / dt) * (this.currentError - this.previousError);
-  //     this.output = this.gainP * this.currentError + this.gainI * this.integral + this.gainD * derivative;
-  //     this.previousError = this.currentError;
-  // };
-  // function clamp(num, min, max) {
-  //     return Math.min(Math.max(num, min), max);
-  // };
-  function normalizeAngle(angle) {
-      while (angle > b2.DegToRad(180)) {
-          angle -= b2.DegToRad(360);
-      }
-      while (angle < b2.DegToRad(-180)) {
-          angle += b2.DegToRad(360);
-      }
-      return angle;
-  }
+  Sparky.c_maxCircles = 3; ///6;
+  Sparky.c_maxVFX = 20; ///50;
+  Sparky.SHAPE_HEIGHT_OFFSET = 7;
+  Sparky.SHAPE_OFFSET = 4.5;
+  const testIndex$1m = RegisterTest("Particles", "Sparky", Sparky.Create);
+  // #endif
 
   /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  const g_testEntries = [
-      // #if B2_ENABLE_PARTICLE
-      new TestEntry("Sparky", Sparky.Create),
-      // #endif
-      new TestEntry("Shape Cast", ShapeCast.Create),
-      new TestEntry("Time of Impact", TimeOfImpact.Create),
-      new TestEntry("Character Collision", CharacterCollision.Create),
-      new TestEntry("Tiles", Tiles.Create),
-      new TestEntry("Heavy on Light", HeavyOnLight.Create),
-      new TestEntry("Heavy on Light Two", HeavyOnLightTwo.Create),
-      new TestEntry("Vertical Stack", VerticalStack.Create),
-      new TestEntry("Basic Slider Crank", BasicSliderCrank.Create),
-      new TestEntry("Slider Crank", SliderCrank.Create),
-      new TestEntry("Sphere Stack", SphereStack.Create),
-      new TestEntry("Convex Hull", ConvexHull.Create),
-      new TestEntry("Tumbler", Tumbler.Create),
-      new TestEntry("Ray-Cast", RayCast.Create),
-      new TestEntry("Dump Shell", DumpShell.Create),
-      new TestEntry("Apply Force", ApplyForce.Create),
-      new TestEntry("Continuous Test", ContinuousTest.Create),
-      new TestEntry("Motor Joint", MotorJoint.Create),
-      new TestEntry("One-Sided Platform", OneSidedPlatform.Create),
-      new TestEntry("Mobile", Mobile.Create),
-      new TestEntry("MobileBalanced", MobileBalanced.Create),
-      new TestEntry("Conveyor Belt", ConveyorBelt.Create),
-      new TestEntry("Gears", Gears.Create),
-      new TestEntry("Varying Restitution", VaryingRestitution.Create),
-      new TestEntry("Cantilever", Cantilever.Create),
-      new TestEntry("Edge Test", EdgeTest.Create),
-      new TestEntry("Body Types", BodyTypes.Create),
-      new TestEntry("Shape Editing", ShapeEditing.Create),
-      new TestEntry("Car", Car.Create),
-      new TestEntry("Prismatic", Prismatic.Create),
-      new TestEntry("Revolute", Revolute.Create),
-      new TestEntry("Pulleys", Pulleys.Create),
-      new TestEntry("Polygon Shapes", PolyShapes.Create),
-      new TestEntry("Web", Web.Create),
-      new TestEntry("RopeJoint", RopeJoint.Create),
-      new TestEntry("Pinball", Pinball.Create),
-      new TestEntry("Bullet Test", BulletTest.Create),
-      new TestEntry("Confined", Confined.Create),
-      new TestEntry("Pyramid", Pyramid.Create),
-      new TestEntry("Theo Jansen's Walker", TheoJansen.Create),
-      new TestEntry("Edge Shapes", EdgeShapes.Create),
-      new TestEntry("PolyCollision", PolyCollision.Create),
-      new TestEntry("Bridge", Bridge.Create),
-      new TestEntry("Breakable", Breakable.Create),
-      new TestEntry("Chain", Chain.Create),
-      new TestEntry("Collision Filtering", CollisionFiltering.Create),
-      new TestEntry("Collision Processing", CollisionProcessing.Create),
-      new TestEntry("Compound Shapes", CompoundShapes.Create),
-      new TestEntry("Distance Test", DistanceTest.Create),
-      new TestEntry("Dominos", Dominos.Create),
-      new TestEntry("Dynamic Tree", DynamicTreeTest.Create),
-      new TestEntry("Sensor Test", SensorTest.Create),
-      new TestEntry("Varying Friction", VaryingFriction.Create),
-      new TestEntry("Add Pair Stress Test", AddPair.Create),
-      new TestEntry("Skier", Skier.Create),
-      new TestEntry("Rope", Rope.Create),
-      new TestEntry("Motor Joint (Bug #487)", MotorJoint2.Create),
-      new TestEntry("Blob Test", BlobTest.Create),
-      new TestEntry("Continuous Collision", TestCCD.Create),
-      new TestEntry("Ragdolls", TestRagdoll.Create),
-      new TestEntry("Stacked Boxes", TestStack.Create),
-      new TestEntry("Pyramid Topple", PyramidTopple.Create),
-      new TestEntry("Domino Tower", DominoTower.Create),
-      new TestEntry("TopDown Car", TopdownCar.Create),
-      // #if B2_ENABLE_CONTROLLER
-      new TestEntry("Buoyancy Test", BuoyancyTest.Create),
-      // #endif
-      // #if B2_ENABLE_PARTICLE
-      new TestEntry("Sandbox", Sandbox.Create),
-      // new TestEntry("Sparky", Sparky.Create),
-      new TestEntry("DamBreak", DamBreak.Create),
-      new TestEntry("Liquid Timer", LiquidTimer.Create),
-      new TestEntry("Wave Machine", WaveMachine.Create),
-      new TestEntry("Particles", Particles.Create),
-      new TestEntry("Faucet", Faucet.Create),
-      new TestEntry("Particle Drawing", DrawingParticles.Create),
-      new TestEntry("Soup", Soup.Create),
-      new TestEntry("Surface Tension", ParticlesSurfaceTension.Create),
-      new TestEntry("Elastic Particles", ElasticParticles.Create),
-      new TestEntry("Rigid Particles", RigidParticles.Create),
-      new TestEntry("Multiple Systems", MultipleParticleSystems.Create),
-      new TestEntry("Impulse", Impulse.Create),
-      new TestEntry("Soup Stirrer", SoupStirrer.Create),
-      new TestEntry("Fracker", Fracker.Create),
-      new TestEntry("Maxwell", Maxwell.Create),
-      new TestEntry("Ramp", Ramp.Create),
-      new TestEntry("Pointy", Pointy.Create),
-      new TestEntry("AntiPointy", AntiPointy.Create),
-      new TestEntry("Corner Case", CornerCase.Create),
-      new TestEntry("Particle Collisions", ParticleCollisionFilter.Create),
-      new TestEntry("Eye Candy", EyeCandy.Create),
-      // #endif
-      new TestEntry("Segway", Segway.Create),
-  ];
+   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+   *
+   * This software is provided 'as-is', without any express or implied
+   * warranty.  In no event will the authors be held liable for any damages
+   * arising from the use of this software.
+   * Permission is granted to anyone to use this software for any purpose,
+   * including commercial applications, and to alter it and redistribute it
+   * freely, subject to the following restrictions:
+   * 1. The origin of this software must not be misrepresented; you must not
+   * claim that you wrote the original software. If you use this software
+   * in a product, an acknowledgment in the product documentation would be
+   * appreciated but is not required.
+   * 2. Altered source versions must be plainly marked as such, and must not be
+   * misrepresented as being the original software.
+   * 3. This notice may not be removed or altered from any source distribution.
+   */
+  class WaveMachine extends Test {
+      constructor() {
+          super();
+          this.m_time = 0;
+          let ground = null;
+          {
+              const bd = new b2.BodyDef();
+              ground = this.m_world.CreateBody(bd);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.allowSleep = false;
+              bd.position.Set(0.0, 1.0);
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.05, 1.0, new b2.Vec2(2.0, 0.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              shape.SetAsBox(0.05, 1.0, new b2.Vec2(-2.0, 0.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              shape.SetAsBox(2.0, 0.05, new b2.Vec2(0.0, 1.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              shape.SetAsBox(2.0, 0.05, new b2.Vec2(0.0, -1.0), 0.0);
+              body.CreateFixture(shape, 5.0);
+              const jd = new b2.RevoluteJointDef();
+              jd.bodyA = ground;
+              jd.bodyB = body;
+              jd.localAnchorA.Set(0.0, 1.0);
+              jd.localAnchorB.Set(0.0, 0.0);
+              jd.referenceAngle = 0.0;
+              jd.motorSpeed = 0.05 * b2.pi;
+              jd.maxMotorTorque = 1e7;
+              jd.enableMotor = true;
+              this.m_joint = this.m_world.CreateJoint(jd);
+          }
+          this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
+          const particleType = Test.GetParticleParameterValue();
+          this.m_particleSystem.SetDamping(0.2);
+          {
+              const pd = new b2.ParticleGroupDef();
+              pd.flags = particleType;
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.9, 0.9, new b2.Vec2(0.0, 1.0), 0.0);
+              pd.shape = shape;
+              const group = this.m_particleSystem.CreateParticleGroup(pd);
+              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+                  this.ColorParticleGroup(group, 0);
+              }
+          }
+          this.m_time = 0;
+      }
+      Step(settings) {
+          super.Step(settings);
+          if (settings.m_hertz > 0) {
+              this.m_time += 1 / settings.m_hertz;
+          }
+          this.m_joint.SetMotorSpeed(0.05 * Math.cos(this.m_time) * b2.pi);
+      }
+      GetDefaultViewZoom() {
+          return 0.1;
+      }
+      static Create() {
+          return new WaveMachine();
+      }
+  }
+  const testIndex$1n = RegisterTest("Particles", "Wave Machine", WaveMachine.Create);
+  // #endif
 
   class Main {
       constructor(time) {
@@ -14724,19 +14703,26 @@
           controls_div.appendChild(document.createTextNode("Tests"));
           controls_div.appendChild(document.createElement("br"));
           const test_select = document.createElement("select");
+          const test_options = [];
           for (let i = 0; i < g_testEntries.length; ++i) {
               const option = document.createElement("option");
-              option.text = g_testEntries[i].name;
+              option.text = `${g_testEntries[i].category}:${g_testEntries[i].name}`;
               option.value = i.toString();
+              test_options.push(option);
+          }
+          test_options.sort((a, b) => a.text.localeCompare(b.text));
+          for (let i = 0; i < test_options.length; ++i) {
+              const option = test_options[i];
               test_select.add(option);
           }
-          test_select.selectedIndex = this.m_settings.m_testIndex;
+          test_select.selectedIndex = this.m_settings.m_testIndex = 76;
           test_select.addEventListener("change", (e) => {
               this.m_settings.m_testIndex = test_select.selectedIndex;
               this.LoadTest();
           });
           controls_div.appendChild(test_select);
           this.m_test_select = test_select;
+          this.m_test_options = test_options;
           controls_div.appendChild(document.createElement("br"));
           controls_div.appendChild(document.createElement("hr"));
           // simulation number inputs
@@ -15069,7 +15055,7 @@
       }
       DecrementTest() {
           if (this.m_settings.m_testIndex <= 0) {
-              this.m_settings.m_testIndex = g_testEntries.length;
+              this.m_settings.m_testIndex = this.m_test_options.length;
           }
           this.m_settings.m_testIndex--;
           this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
@@ -15077,7 +15063,7 @@
       }
       IncrementTest() {
           this.m_settings.m_testIndex++;
-          if (this.m_settings.m_testIndex >= g_testEntries.length) {
+          if (this.m_settings.m_testIndex >= this.m_test_options.length) {
               this.m_settings.m_testIndex = 0;
           }
           this.m_test_select.selectedIndex = this.m_settings.m_testIndex;
@@ -15096,7 +15082,7 @@
               this.m_test.RestoreParticleParameters();
           }
           // #endif
-          this.m_test = g_testEntries[this.m_settings.m_testIndex].createFcn();
+          this.m_test = g_testEntries[parseInt(this.m_test_options[this.m_settings.m_testIndex].value)].createFcn();
           if (!restartTest) {
               this.HomeCamera();
           }
@@ -15158,7 +15144,7 @@
                   Test.particleParameter.Changed(restartTest);
                   // #endif
                   // #if B2_ENABLE_PARTICLE
-                  let msg = g_testEntries[this.m_settings.m_testIndex].name;
+                  let msg = this.m_test_options[this.m_settings.m_testIndex].text;
                   if (Test.fullscreenUI.GetParticleParameterSelectionEnabled()) {
                       msg += " : ";
                       msg += Test.particleParameter.GetName();
@@ -15167,7 +15153,7 @@
                       this.m_test.DrawTitle(msg);
                   }
                   // #else
-                  // if (this.m_test) { this.m_test.DrawTitle(g_testEntries[this.m_settings.m_testIndex].name); }
+                  // if (this.m_test) { this.m_test.DrawTitle(this.m_test_options[this.m_settings.m_testIndex].text); }
                   // #endif
                   // ctx.strokeStyle = "yellow";
                   // ctx.strokeRect(mouse_world.x - 0.5, mouse_world.y - 0.5, 1.0, 1.0);
@@ -15182,6 +15168,7 @@
           }
       }
   }
+  // #endif
 
   exports.Camera = Camera;
   exports.ContactPoint = ContactPoint;
@@ -15196,11 +15183,13 @@
   exports.ParticleParameterValue = ParticleParameterValue;
   exports.RadialEmitter = RadialEmitter;
   exports.RandomFloat = RandomFloat;
+  exports.RegisterTest = RegisterTest;
   exports.Settings = Settings;
   exports.Test = Test;
   exports.TestEntry = TestEntry;
   exports.g_camera = g_camera;
   exports.g_debugDraw = g_debugDraw;
+  exports.g_testEntries = g_testEntries;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

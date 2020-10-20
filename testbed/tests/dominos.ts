@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Dominos extends testbed.Test {
   constructor() {
@@ -210,3 +210,5 @@ export class Dominos extends testbed.Test {
     return new Dominos();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Dominos", Dominos.Create);

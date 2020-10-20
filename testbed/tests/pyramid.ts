@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Pyramid extends testbed.Test {
   public static readonly e_count = 20;
@@ -76,3 +76,5 @@ export class Pyramid extends testbed.Test {
     return new Pyramid();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Stacking", "Pyramid", Pyramid.Create);

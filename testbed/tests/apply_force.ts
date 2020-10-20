@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class ApplyForce extends testbed.Test {
   public m_body: b2.Body;
@@ -225,3 +225,5 @@ export class ApplyForce extends testbed.Test {
     return new ApplyForce();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Forces", "Apply Force", ApplyForce.Create);

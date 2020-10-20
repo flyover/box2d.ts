@@ -15,9 +15,9 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["@box2d", "../testbed.js"], function (exports_1, context_1) {
+System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, Cantilever;
+    var b2, testbed, Cantilever, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -168,6 +168,7 @@ System.register(["@box2d", "../testbed.js"], function (exports_1, context_1) {
             };
             exports_1("Cantilever", Cantilever);
             Cantilever.e_count = 8;
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Joints", "Cantilever", Cantilever.Create));
         }
     };
 });

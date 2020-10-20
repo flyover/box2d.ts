@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Tumbler extends testbed.Test {
   public static readonly e_count = 800;
@@ -83,3 +83,5 @@ export class Tumbler extends testbed.Test {
     return new Tumbler();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Benchmark", "Tumbler", Tumbler.Create);

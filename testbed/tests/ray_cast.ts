@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 class RayCastClosestCallback extends b2.RayCastCallback {
   public m_hit: boolean = false;
@@ -409,3 +409,5 @@ export class RayCast extends testbed.Test {
     return new RayCast();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Collision", "Ray Cast", RayCast.Create);

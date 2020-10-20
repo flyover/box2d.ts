@@ -39,7 +39,7 @@ export class Settings {
   // #if B2_ENABLE_PARTICLE
   public m_drawParticles: boolean = true;
   // #endif
-  public m_drawJoints: boolean = false;
+  public m_drawJoints: boolean = true;
   public m_drawAABBs: boolean = false;
   public m_drawContactPoints: boolean = false;
   public m_drawContactNormals: boolean = false;
@@ -76,7 +76,7 @@ export class Settings {
     // #if B2_ENABLE_PARTICLE
     this.m_drawParticles = true;
     // #endif
-    this.m_drawJoints = false;
+    this.m_drawJoints = true;
     this.m_drawAABBs = false;
     this.m_drawContactPoints = false;
     this.m_drawContactNormals = false;

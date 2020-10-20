@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class ConveyorBelt extends testbed.Test {
   public m_platform: b2.Fixture;
@@ -91,3 +91,5 @@ export class ConveyorBelt extends testbed.Test {
     return new ConveyorBelt();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Conveyor Belt", ConveyorBelt.Create);

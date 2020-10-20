@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class MotorJoint extends testbed.Test {
   public m_joint: b2.MotorJoint;
@@ -105,3 +105,5 @@ export class MotorJoint extends testbed.Test {
     return new MotorJoint();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Joints", "Motor Joint", MotorJoint.Create);

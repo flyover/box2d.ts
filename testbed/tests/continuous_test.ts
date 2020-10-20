@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class ContinuousTest extends testbed.Test {
   public m_body: b2.Body;
@@ -141,3 +141,5 @@ export class ContinuousTest extends testbed.Test {
     return new ContinuousTest();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Continuous", "Continuous Test", ContinuousTest.Create);

@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Breakable extends testbed.Test {
   public static readonly e_count = 7;
@@ -148,3 +148,5 @@ export class Breakable extends testbed.Test {
     return new Breakable();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Breakable", Breakable.Create);

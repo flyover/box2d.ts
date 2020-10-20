@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class CharacterCollision extends testbed.Test {
   public m_character: b2.Body;
@@ -248,3 +248,5 @@ export class CharacterCollision extends testbed.Test {
     return new CharacterCollision();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Character Collision", CharacterCollision.Create);

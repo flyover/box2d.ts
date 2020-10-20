@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class Mobile extends testbed.Test {
   public static readonly e_depth = 4;
@@ -91,3 +91,5 @@ export class Mobile extends testbed.Test {
     return new Mobile();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);

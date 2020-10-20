@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class ShapeCast extends testbed.Test {
   public static e_vertexCount = 8;
@@ -127,3 +127,5 @@ export class ShapeCast extends testbed.Test {
     return new ShapeCast();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Collision", "Shape Cast", ShapeCast.Create);

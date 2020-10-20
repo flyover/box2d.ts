@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 const TEST_BAD_BODY: boolean = false;
 
@@ -85,3 +85,5 @@ export class Chain extends testbed.Test {
     return new Chain();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Joints", "Chain", Chain.Create);

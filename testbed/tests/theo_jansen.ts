@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 // Inspired by a contribution by roman_m
 // Dimensions scooped from APE (http://www.cove.org/ape/index.htm)
@@ -254,3 +254,5 @@ export class TheoJansen extends testbed.Test {
     return new TheoJansen();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);

@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class EdgeShapesCallback extends b2.RayCastCallback {
   public m_fixture: b2.Fixture | null = null;
@@ -218,3 +218,5 @@ export class EdgeShapes extends testbed.Test {
     return new EdgeShapes();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);

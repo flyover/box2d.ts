@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class BodyTypes extends testbed.Test {
   public m_attachment: b2.Body;
@@ -160,3 +160,5 @@ export class BodyTypes extends testbed.Test {
     return new BodyTypes();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Body Types", BodyTypes.Create);

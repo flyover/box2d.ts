@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 // This is a fun demo that shows off the wheel joint
 export class Car extends testbed.Test {
@@ -269,3 +269,5 @@ export class Car extends testbed.Test {
     return new Car();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Car", Car.Create);

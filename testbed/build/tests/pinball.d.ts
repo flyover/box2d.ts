@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 /**
  * This tests bullet collision and provides an example of a
  * gameplay scenario. This also uses a loop shape.
@@ -15,3 +15,4 @@ export declare class Pinball extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

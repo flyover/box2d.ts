@@ -1,4 +1,4 @@
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class CollisionFiltering extends testbed.Test {
     static readonly k_smallGroup = 1;
     static readonly k_largeGroup = -1;
@@ -12,3 +12,4 @@ export declare class CollisionFiltering extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

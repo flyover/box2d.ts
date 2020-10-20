@@ -1,6 +1,6 @@
 System.register(["@box2d", "./draw.js", "./fullscreen_ui.js", "./particle_parameter.js"], function (exports_1, context_1) {
     "use strict";
-    var b2, draw_js_1, fullscreen_ui_js_1, particle_parameter_js_1, DRAW_STRING_NEW_LINE, TestEntry, DestructionListener, ContactPoint, QueryCallback2, Test;
+    var b2, draw_js_1, fullscreen_ui_js_1, particle_parameter_js_1, DRAW_STRING_NEW_LINE, TestEntry, g_testEntries, DestructionListener, ContactPoint, QueryCallback2, Test;
     var __moduleName = context_1 && context_1.id;
     function RandomFloat(lo = -1, hi = 1) {
         let r = Math.random();
@@ -8,6 +8,10 @@ System.register(["@box2d", "./draw.js", "./fullscreen_ui.js", "./particle_parame
         return r;
     }
     exports_1("RandomFloat", RandomFloat);
+    function RegisterTest(category, name, fcn) {
+        return g_testEntries.push(new TestEntry(category, name, fcn));
+    }
+    exports_1("RegisterTest", RegisterTest);
     return {
         setters: [
             function (b2_1) {
@@ -27,13 +31,16 @@ System.register(["@box2d", "./draw.js", "./fullscreen_ui.js", "./particle_parame
             // #endif
             exports_1("DRAW_STRING_NEW_LINE", DRAW_STRING_NEW_LINE = 16);
             TestEntry = class TestEntry {
-                constructor(name, createFcn) {
+                constructor(category, name, createFcn) {
+                    this.category = "";
                     this.name = "unknown";
+                    this.category = category;
                     this.name = name;
                     this.createFcn = createFcn;
                 }
             };
             exports_1("TestEntry", TestEntry);
+            exports_1("g_testEntries", g_testEntries = []);
             DestructionListener = class DestructionListener extends b2.DestructionListener {
                 constructor(test) {
                     super();

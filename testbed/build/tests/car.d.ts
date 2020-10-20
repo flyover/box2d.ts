@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class Car extends testbed.Test {
     m_car: b2.Body;
     m_wheel1: b2.Body;
@@ -12,3 +12,4 @@ export declare class Car extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

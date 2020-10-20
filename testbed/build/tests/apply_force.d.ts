@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class ApplyForce extends testbed.Test {
     m_body: b2.Body;
     constructor();
@@ -7,3 +7,4 @@ export declare class ApplyForce extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

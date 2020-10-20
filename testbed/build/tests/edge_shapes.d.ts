@@ -1,5 +1,5 @@
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 export declare class EdgeShapesCallback extends b2.RayCastCallback {
     m_fixture: b2.Fixture | null;
     m_point: b2.Vec2;
@@ -20,3 +20,4 @@ export declare class EdgeShapes extends testbed.Test {
     Step(settings: testbed.Settings): void;
     static Create(): testbed.Test;
 }
+export declare const testIndex: number;

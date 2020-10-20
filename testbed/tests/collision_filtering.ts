@@ -17,7 +17,7 @@
 */
 
 import * as b2 from "@box2d";
-import * as testbed from "../testbed.js";
+import * as testbed from "@testbed";
 
 export class CollisionFiltering extends testbed.Test {
   public static readonly k_smallGroup = 1;
@@ -166,3 +166,5 @@ export class CollisionFiltering extends testbed.Test {
     return new CollisionFiltering();
   }
 }
+
+export const testIndex: number = testbed.RegisterTest("Examples", "Collision Filtering", CollisionFiltering.Create);
