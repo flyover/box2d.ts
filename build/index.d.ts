@@ -175,6 +175,8 @@ export { /*class*/ b2ContactVelocityConstraint as ContactVelocityConstraint } fr
 export { /*class*/ b2PositionSolverManifold as PositionSolverManifold } from "./dynamics/b2_contact_solver.js";
 export { /*class*/ b2VelocityConstraintPoint as VelocityConstraintPoint } from "./dynamics/b2_contact_solver.js";
 export { /*let*/ g_blockSolve as blockSolve } from "./dynamics/b2_contact_solver.js";
+export { /*function*/ get_g_blockSolve as get_g_blockSolve } from "./dynamics/b2_contact_solver.js";
+export { /*function*/ set_g_blockSolve as set_g_blockSolve } from "./dynamics/b2_contact_solver.js";
 export { /*abstract class*/ b2Contact as Contact } from "./dynamics/b2_contact.js";
 export { /*class*/ b2ContactEdge as ContactEdge } from "./dynamics/b2_contact.js";
 export { /*function*/ b2MixFriction as MixFriction } from "./dynamics/b2_contact.js";

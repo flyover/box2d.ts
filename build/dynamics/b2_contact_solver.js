@@ -19,6 +19,10 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
     "use strict";
     var b2_settings_js_1, b2_math_js_1, b2_collision_js_1, b2_collision_js_2, b2_time_step_js_1, g_blockSolve, b2VelocityConstraintPoint, b2ContactVelocityConstraint, b2ContactPositionConstraint, b2ContactSolverDef, b2PositionSolverManifold, b2ContactSolver;
     var __moduleName = context_1 && context_1.id;
+    function get_g_blockSolve() { return g_blockSolve; }
+    exports_1("get_g_blockSolve", get_g_blockSolve);
+    function set_g_blockSolve(value) { exports_1("g_blockSolve", g_blockSolve = value); }
+    exports_1("set_g_blockSolve", set_g_blockSolve);
     return {
         setters: [
             function (b2_settings_js_1_1) {

@@ -1,23 +1,7 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, PolyCollision, testIndex;
+    var b2, testbed, PolygonCollision, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,7 +13,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            PolyCollision = class PolyCollision extends testbed.Test {
+            PolygonCollision = class PolygonCollision extends testbed.Test {
                 constructor() {
                     super();
                     this.m_polygonA = new b2.PolygonShape();
@@ -73,7 +57,6 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
                 }
                 Step(settings) {
-                    // super.Step(settings);
                     const manifold = new b2.Manifold();
                     b2.CollidePolygons(manifold, this.m_polygonA, this.m_transformA, this.m_polygonB, this.m_transformB);
                     const worldManifold = new b2.WorldManifold();
@@ -95,13 +78,14 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     for (let i = 0; i < manifold.pointCount; ++i) {
                         testbed.g_debugDraw.DrawPoint(worldManifold.points[i], 4.0, new b2.Color(0.9, 0.3, 0.3));
                     }
+                    super.Step(settings);
                 }
                 static Create() {
-                    return new PolyCollision();
+                    return new PolygonCollision();
                 }
             };
-            exports_1("PolyCollision", PolyCollision);
-            exports_1("testIndex", testIndex = testbed.RegisterTest("Geometry", "Polygon Collision", PolyCollision.Create));
+            exports_1("PolygonCollision", PolygonCollision);
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Geometry", "Polygon Collision", PolygonCollision.Create));
         }
     };
 });

@@ -561,6 +561,12 @@ System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./com
                 exports_1({
                     "blockSolve": b2_contact_solver_js_1_1["g_blockSolve"]
                 });
+                exports_1({
+                    "get_g_blockSolve": b2_contact_solver_js_1_1["get_g_blockSolve"]
+                });
+                exports_1({
+                    "set_g_blockSolve": b2_contact_solver_js_1_1["set_g_blockSolve"]
+                });
             },
             function (b2_contact_js_1_1) {
                 exports_1({

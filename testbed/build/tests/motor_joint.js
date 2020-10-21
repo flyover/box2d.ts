@@ -1,20 +1,4 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
     var b2, testbed, MotorJoint, testIndex;
@@ -29,6 +13,9 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
+            /// This test shows how to use a motor joint. A motor joint
+            /// can be used to animate a dynamic body. With finite motor forces
+            /// the body can be blocked by collision with other bodies.
             MotorJoint = class MotorJoint extends testbed.Test {
                 constructor() {
                     super();
@@ -49,7 +36,6 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         const bd = new b2.BodyDef();
                         bd.type = b2.BodyType.b2_dynamicBody;
                         bd.position.Set(0.0, 8.0);
-                        /*b2Body*/
                         const body = this.m_world.CreateBody(bd);
                         const shape = new b2.PolygonShape();
                         shape.SetAsBox(2.0, 0.5);
@@ -78,11 +64,9 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     if (this.m_go && settings.m_hertz > 0.0) {
                         this.m_time += 1.0 / settings.m_hertz;
                     }
-                    /*b2Vec2*/
                     const linearOffset = new b2.Vec2();
                     linearOffset.x = 6.0 * b2.Sin(2.0 * this.m_time);
                     linearOffset.y = 8.0 + 4.0 * b2.Sin(1.0 * this.m_time);
-                    /*float32*/
                     const angularOffset = 4.0 * this.m_time;
                     this.m_joint.SetLinearOffset(linearOffset);
                     this.m_joint.SetAngularOffset(angularOffset);

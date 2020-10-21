@@ -1,6 +1,6 @@
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
-export declare class PolyCollision extends testbed.Test {
+export declare class PolygonCollision extends testbed.Test {
     m_polygonA: b2.PolygonShape;
     m_polygonB: b2.PolygonShape;
     m_transformA: b2.Transform;

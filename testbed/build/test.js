@@ -1,3 +1,4 @@
+// MIT License
 System.register(["@box2d", "./draw.js", "./fullscreen_ui.js", "./particle_parameter.js"], function (exports_1, context_1) {
     "use strict";
     var b2, draw_js_1, fullscreen_ui_js_1, particle_parameter_js_1, DRAW_STRING_NEW_LINE, TestEntry, g_testEntries, DestructionListener, ContactPoint, QueryCallback2, Test;

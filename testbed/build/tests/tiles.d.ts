@@ -1,9 +1,4 @@
 import * as testbed from "@testbed";
-/**
- * This stress tests the dynamic tree broad-phase. This also
- * shows that tile based collision is _not_ smooth due to Box2D
- * not knowing about adjacency.
- */
 export declare class Tiles extends testbed.Test {
     static readonly e_count = 20;
     m_fixtureCount: number;

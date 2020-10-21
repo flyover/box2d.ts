@@ -33,6 +33,8 @@ import { b2TimeStep, b2Position, b2Velocity } from "./b2_time_step.js";
 // #define B2_DEBUG_SOLVER 0
 
 export let g_blockSolve: boolean = false;
+export function get_g_blockSolve(): boolean { return g_blockSolve; }
+export function set_g_blockSolve(value: boolean): void { g_blockSolve = value; }
 
 export class b2VelocityConstraintPoint {
   public readonly rA: b2Vec2 = new b2Vec2();

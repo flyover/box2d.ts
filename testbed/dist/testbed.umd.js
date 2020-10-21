@@ -86,23 +86,7 @@
       Load() { }
   }
 
-  /*
-  * Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Camera {
       constructor() {
           this.m_center = new b2.Vec2(0, 20);
@@ -885,6 +869,7 @@
   ];
   // #endif
 
+  // MIT License
   // #endif
   const DRAW_STRING_NEW_LINE = 16;
   function RandomFloat(lo = -1, hi = 1) {
@@ -1460,29 +1445,12 @@
   ];
   Test.k_ParticleColorsCount = Test.k_ParticleColors.length;
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class AddPair extends Test {
       constructor() {
           super();
           this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
           {
-              // const a = 0.1;
               const shape = new b2.CircleShape();
               shape.m_p.SetZero();
               shape.m_radius = 0.1;
@@ -1519,39 +1487,21 @@
   }
   const testIndex = RegisterTest("Benchmark", "Add Pair", AddPair.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This test shows how to apply forces and torques to a body.
+  // It also shows how to use the friction joint that can be useful
+  // for overhead games.
   class ApplyForce extends Test {
       constructor() {
           super();
           this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
-          /*float32*/
           const k_restitution = 0.4;
-          /*b2.Body*/
           let ground = null;
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.position.Set(0.0, 20.0);
               ground = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
               const shape = new b2.EdgeShape();
-              /*b2.FixtureDef*/
               const sd = new b2.FixtureDef();
               sd.shape = shape;
               sd.density = 0.0;
@@ -1570,37 +1520,29 @@
               ground.CreateFixture(sd);
           }
           {
-              /*b2.Transform*/
               const xf1 = new b2.Transform();
               xf1.q.SetAngle(0.3524 * b2.pi);
               xf1.p.Copy(b2.Rot.MulRV(xf1.q, new b2.Vec2(1.0, 0.0), new b2.Vec2()));
-              /*b2.Vec2[]*/
               const vertices = new Array();
               vertices[0] = b2.Transform.MulXV(xf1, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
               vertices[1] = b2.Transform.MulXV(xf1, new b2.Vec2(1.0, 0.0), new b2.Vec2());
               vertices[2] = b2.Transform.MulXV(xf1, new b2.Vec2(0.0, 0.5), new b2.Vec2());
-              /*b2.PolygonShape*/
               const poly1 = new b2.PolygonShape();
               poly1.Set(vertices, 3);
-              /*b2.FixtureDef*/
               const sd1 = new b2.FixtureDef();
               sd1.shape = poly1;
               sd1.density = 2.0;
-              /*b2.Transform*/
               const xf2 = new b2.Transform();
               xf2.q.SetAngle(-0.3524 * b2.pi);
               xf2.p.Copy(b2.Rot.MulRV(xf2.q, new b2.Vec2(-1.0, 0.0), new b2.Vec2()));
               vertices[0] = b2.Transform.MulXV(xf2, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
               vertices[1] = b2.Transform.MulXV(xf2, new b2.Vec2(1.0, 0.0), new b2.Vec2());
               vertices[2] = b2.Transform.MulXV(xf2, new b2.Vec2(0.0, 0.5), new b2.Vec2());
-              /*b2.PolygonShape*/
               const poly2 = new b2.PolygonShape();
               poly2.Set(vertices, 3);
-              /*b2.FixtureDef*/
               const sd2 = new b2.FixtureDef();
               sd2.shape = poly2;
               sd2.density = 2.0;
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 3.0);
@@ -1616,7 +1558,6 @@
               // set the max torque for a friction joint
               // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
               const radius = b2.Sqrt(2.0 * I / mass);
-              // b2FrictionJointDef jd;
               const jd = new b2.FrictionJointDef();
               jd.bodyA = ground;
               jd.bodyB = this.m_body;
@@ -1628,32 +1569,23 @@
               this.m_world.CreateJoint(jd);
           }
           {
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               fd.friction = 0.3;
-              for ( /*int*/let i = 0; i < 10; ++i) {
-                  /*b2.BodyDef*/
+              for (let i = 0; i < 10; ++i) {
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 7.0 + 1.54 * i);
-                  /*b2.Body*/
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
-                  /*float32*/
                   const gravity = 10.0;
-                  /*float32*/
                   const I = body.GetInertia();
-                  /*float32*/
                   const mass = body.GetMass();
                   // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
-                  /*float32*/
                   const radius = b2.Sqrt(2.0 * I / mass);
-                  /*b2.FrictionJointDef*/
                   const jd = new b2.FrictionJointDef();
                   jd.localAnchorA.SetZero();
                   jd.localAnchorB.SetZero();
@@ -1670,29 +1602,25 @@
           switch (key) {
               case "w":
                   {
-                      /*b2.Vec2*/
                       const f = this.m_body.GetWorldVector(new b2.Vec2(0.0, -50.0), new b2.Vec2());
-                      /*b2.Vec2*/
                       const p = this.m_body.GetWorldPoint(new b2.Vec2(0.0, 3.0), new b2.Vec2());
-                      this.m_body.ApplyForce(f, p);
+                      this.m_body.ApplyForce(f, p, true);
                   }
                   break;
               case "a":
                   {
-                      this.m_body.ApplyTorque(10.0);
+                      this.m_body.ApplyTorque(10.0, true);
                   }
                   break;
               case "d":
                   {
-                      this.m_body.ApplyTorque(-10.0);
+                      this.m_body.ApplyTorque(-10.0, true);
                   }
                   break;
           }
           super.Keyboard(key);
       }
       Step(settings) {
-          // g_debugDraw.DrawString(5, m_textLine, "Forward (W), Turn (A) and (D)");
-          // m_textLine += m_textIncrement;
           g_debugDraw.DrawString(5, this.m_textLine, `Forward (W), Turn (A) and (D)`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           super.Step(settings);
@@ -1703,72 +1631,46 @@
   }
   const testIndex$1 = RegisterTest("Forces", "Apply Force", ApplyForce.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class BodyTypes extends Test {
       constructor() {
           super();
           this.m_speed = 0;
-          /*b2.BodyDef*/
           const bd = new b2.BodyDef();
           const ground = this.m_world.CreateBody(bd);
-          /*b2.EdgeShape*/
           const shape = new b2.EdgeShape();
           shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
-          /*b2.FixtureDef*/
           const fd = new b2.FixtureDef();
           fd.shape = shape;
           ground.CreateFixture(fd);
           // Define attachment
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 3.0);
               this.m_attachment = this.m_world.CreateBody(bd);
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.5, 2.0);
               this.m_attachment.CreateFixture(shape, 2.0);
           }
           // Define platform
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(-4.0, 5.0);
               this.m_platform = this.m_world.CreateBody(bd);
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.5, 4.0, new b2.Vec2(4.0, 0.0), 0.5 * b2.pi);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               fd.friction = 0.6;
               fd.density = 2.0;
               this.m_platform.CreateFixture(fd);
-              /*b2.RevoluteJointDef*/
               const rjd = new b2.RevoluteJointDef();
               rjd.Initialize(this.m_attachment, this.m_platform, new b2.Vec2(0.0, 5.0));
               rjd.maxMotorTorque = 50.0;
               rjd.enableMotor = true;
               this.m_world.CreateJoint(rjd);
-              /*b2.PrismaticJointDef*/
               const pjd = new b2.PrismaticJointDef();
               pjd.Initialize(ground, this.m_platform, new b2.Vec2(0.0, 5.0), new b2.Vec2(1.0, 0.0));
               pjd.maxMotorForce = 1000.0;
@@ -1781,16 +1683,12 @@
           }
           // Create a payload
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 8.0);
-              /*b2.Body*/
               const body = this.m_world.CreateBody(bd);
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.75, 0.75);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               fd.friction = 0.6;
@@ -1816,9 +1714,7 @@
       Step(settings) {
           // Drive the kinematic body.
           if (this.m_platform.GetType() === b2.BodyType.b2_kinematicBody) {
-              /*b2.Vec2*/
               const p = this.m_platform.GetTransform().p;
-              /*b2.Vec2*/
               const v = this.m_platform.GetLinearVelocity();
               if ((p.x < -10.0 && v.x < 0.0) ||
                   (p.x > 10.0 && v.x > 0.0)) {
@@ -1835,29 +1731,13 @@
   }
   const testIndex$2 = RegisterTest("Examples", "Body Types", BodyTypes.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class VerticalStack extends Test {
+  // MIT License
+  class BoxStack extends Test {
       constructor() {
           super();
           this.m_bullet = null;
-          this.m_bodies = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
-          this.m_indices = new Array(VerticalStack.e_rowCount * VerticalStack.e_columnCount);
+          this.m_bodies = new Array(BoxStack.e_rowCount * BoxStack.e_columnCount);
+          this.m_indices = new Array(BoxStack.e_rowCount * BoxStack.e_columnCount);
           {
               const bd = new b2.BodyDef();
               const ground = this.m_world.CreateBody(bd);
@@ -1868,18 +1748,18 @@
               ground.CreateFixture(shape, 0.0);
           }
           const xs = [0.0, -10.0, -5.0, 5.0, 10.0];
-          for (let j = 0; j < VerticalStack.e_columnCount; ++j) {
+          for (let j = 0; j < BoxStack.e_columnCount; ++j) {
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               fd.friction = 0.3;
-              for (let i = 0; i < VerticalStack.e_rowCount; ++i) {
+              for (let i = 0; i < BoxStack.e_rowCount; ++i) {
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
-                  const n = j * VerticalStack.e_rowCount + i;
-                  // DEBUG: b2.Assert(n < VerticalStack.e_rowCount * VerticalStack.e_columnCount);
+                  const n = j * BoxStack.e_rowCount + i;
+                  // DEBUG: b2.Assert(n < BoxStack.e_rowCount * BoxStack.e_columnCount);
                   this.m_indices[n] = n;
                   bd.userData = this.m_indices[n];
                   const x = 0.0;
@@ -1915,6 +1795,9 @@
                       this.m_bullet.SetLinearVelocity(new b2.Vec2(400.0, 0.0));
                   }
                   break;
+              case "b":
+                  b2.set_g_blockSolve(!b2.get_g_blockSolve());
+                  break;
           }
       }
       Step(settings) {
@@ -1947,30 +1830,15 @@
           //}
       }
       static Create() {
-          return new VerticalStack();
+          return new BoxStack();
       }
   }
-  VerticalStack.e_columnCount = 1;
-  VerticalStack.e_rowCount = 15;
-  const testIndex$3 = RegisterTest("Stacking", "Boxes", VerticalStack.Create);
+  BoxStack.e_columnCount = 1;
+  BoxStack.e_rowCount = 15;
+  const testIndex$3 = RegisterTest("Stacking", "Boxes", BoxStack.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This is used to test sensor shapes.
   class Breakable extends Test {
       constructor() {
           super();
@@ -1984,18 +1852,14 @@
           this.m_break = false;
           // Ground body
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
-              /*b2.Body*/
               const ground = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Breakable dynamic body
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 40.0);
@@ -2015,9 +1879,7 @@
               return;
           }
           // Should the body break?
-          /*int*/
           const count = contact.GetManifold().pointCount;
-          /*float32*/
           let maxImpulse = 0.0;
           for (let i = 0; i < count; ++i) {
               maxImpulse = b2.Max(maxImpulse, impulse.normalImpulses[i]);
@@ -2039,23 +1901,17 @@
           const center = body1.GetWorldCenter();
           body1.DestroyFixture(this.m_piece2);
           this.m_piece2 = null;
-          /*b2.BodyDef*/
           const bd = new b2.BodyDef();
           bd.type = b2.BodyType.b2_dynamicBody;
           bd.position.Copy(body1.GetPosition());
           bd.angle = body1.GetAngle();
-          /*b2.Body*/
           const body2 = this.m_world.CreateBody(bd);
           this.m_piece2 = body2.CreateFixture(this.m_shape2, 1.0);
           // Compute consistent velocities for new bodies based on
           // cached velocity.
-          /*b2.Vec2*/
           const center1 = body1.GetWorldCenter();
-          /*b2.Vec2*/
           const center2 = body2.GetWorldCenter();
-          /*b2.Vec2*/
           const velocity1 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center1, center, b2.Vec2.s_t0), new b2.Vec2());
-          /*b2.Vec2*/
           const velocity2 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center2, center, b2.Vec2.s_t0), new b2.Vec2());
           body1.SetAngularVelocity(this.m_angularVelocity);
           body1.SetLinearVelocity(velocity1);
@@ -2082,23 +1938,7 @@
   Breakable.e_count = 7;
   const testIndex$4 = RegisterTest("Examples", "Breakable", Breakable.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Bridge extends Test {
       constructor() {
           super();
@@ -2176,48 +2016,26 @@
   Bridge.e_count = 30;
   const testIndex$5 = RegisterTest("Joints", "Bridge", Bridge.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class BulletTest extends Test {
       constructor() {
           super();
           this.m_x = 0;
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.position.Set(0.0, 0.0);
-              /*b2.Body*/
               const body = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
               const edge = new b2.EdgeShape();
               edge.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(10.0, 0.0));
               body.CreateFixture(edge, 0.0);
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.2, 1.0, new b2.Vec2(0.5, 1.0), 0.0);
               body.CreateFixture(shape, 0.0);
           }
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 4.0);
-              /*b2.PolygonShape*/
               const box = new b2.PolygonShape();
               box.SetAsBox(2.0, 0.1);
               this.m_body = this.m_world.CreateBody(bd);
@@ -2279,23 +2097,11 @@
   }
   const testIndex$6 = RegisterTest("Continuous", "Bullet Test", BulletTest.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // It is difficult to make a cantilever made of links completely rigid with weld joints.
+  // You will have to use a high number of iterations to make them stiff.
+  // So why not go ahead and use soft weld joints? They behave like a revolute
+  // joint with a rotational spring.
   class Cantilever extends Test {
       constructor() {
           super();
@@ -2436,23 +2242,7 @@
   Cantilever.e_count = 8;
   const testIndex$7 = RegisterTest("Joints", "Cantilever", Cantilever.Create);
 
-  /*
-  * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   // This is a fun demo that shows off the wheel joint
   class Car extends Test {
       constructor() {
@@ -2650,23 +2440,7 @@
   }
   const testIndex$8 = RegisterTest("Examples", "Car", Car.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Chain extends Test {
       constructor() {
           super();
@@ -2712,23 +2486,10 @@
   Chain.e_count = 30;
   const testIndex$9 = RegisterTest("Joints", "Chain", Chain.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  /// This is a test of typical character collision scenarios. This does not
+  /// show how you should implement a character in your application.
+  /// Instead this is used to test smooth collision on edge chains.
   class CharacterCollision extends Test {
       constructor() {
           super();
@@ -2759,13 +2520,11 @@
               const bd = new b2.BodyDef();
               bd.angle = 0.25 * b2.pi;
               const ground = this.m_world.CreateBody(bd);
-              /*b2.Vec2[]*/
               const vs = b2.Vec2.MakeArray(4);
               vs[0].Set(5.0, 7.0);
               vs[1].Set(6.0, 8.0);
               vs[2].Set(7.0, 8.0);
               vs[3].Set(8.0, 7.0);
-              /*b2.ChainShape*/
               const shape = new b2.ChainShape();
               shape.CreateLoop(vs, 4);
               ground.CreateFixture(shape, 0.0);
@@ -2788,13 +2547,11 @@
           {
               const bd = new b2.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              /*b2.Vec2[]*/
               const vs = b2.Vec2.MakeArray(4);
               vs[0].Set(-1.0, 3.0);
               vs[1].Set(1.0, 3.0);
               vs[2].Set(1.0, 5.0);
               vs[3].Set(-1.0, 5.0);
-              /*b2.ChainShape*/
               const shape = new b2.ChainShape();
               shape.CreateLoop(vs, 4);
               ground.CreateFixture(shape, 0.0);
@@ -2804,7 +2561,6 @@
               const bd = new b2.BodyDef();
               bd.position.Set(-10.0, 4.0);
               const ground = this.m_world.CreateBody(bd);
-              /*b2.Vec2[]*/
               const vs = b2.Vec2.MakeArray(10);
               vs[0].Set(0.0, 0.0);
               vs[1].Set(6.0, 0.0);
@@ -2816,7 +2572,6 @@
               vs[7].Set(-4.0, 3.0);
               vs[8].Set(-6.0, 2.0);
               vs[9].Set(-6.0, 0.0);
-              /*b2.ChainShape*/
               const shape = new b2.ChainShape();
               shape.CreateLoop(vs, 10);
               ground.CreateFixture(shape, 0.0);
@@ -2922,24 +2677,8 @@
   }
   const testIndex$a = RegisterTest("Examples", "Character Collision", CharacterCollision.Create);
 
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class SphereStack extends Test {
+  // MIT License
+  class CircleStack extends Test {
       constructor() {
           super();
           this.m_bodies = [];
@@ -2953,7 +2692,7 @@
           {
               const shape = new b2.CircleShape();
               shape.m_radius = 1.0;
-              for (let i = 0; i < SphereStack.e_count; ++i) {
+              for (let i = 0; i < CircleStack.e_count; ++i) {
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 4.0 + 3.0 * i);
@@ -2965,40 +2704,30 @@
       }
       Step(settings) {
           super.Step(settings);
-          // for (let i: number = 0; i < SphereStack.e_count; ++i)
+          // for (let i: number = 0; i < CircleStack.e_count; ++i)
           // {
           //   printf("%g ", this.m_bodies[i].GetWorldCenter().y);
           // }
-          // for (let i: number = 0; i < SphereStack.e_count; ++i)
+          // for (let i: number = 0; i < CircleStack.e_count; ++i)
           // {
           //   printf("%g ", this.m_bodies[i].GetLinearVelocity().y);
           // }
           // printf("\n");
       }
       static Create() {
-          return new SphereStack();
+          return new CircleStack();
       }
   }
-  SphereStack.e_count = 10;
-  const testIndex$b = RegisterTest("Stacking", "Circles", SphereStack.Create);
+  CircleStack.e_count = 10;
+  const testIndex$b = RegisterTest("Stacking", "Circles", CircleStack.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This is a test of collision filtering.
+  // There is a triangle, a box, and a circle.
+  // There are 6 shapes. 3 large and 3 small.
+  // The 3 small ones always collide.
+  // The 3 large ones never collide.
+  // The boxes don't collide with triangles (except if both are small).
   class CollisionFiltering extends Test {
       constructor() {
           super();
@@ -3118,23 +2847,9 @@
   CollisionFiltering.k_circleMask = 0xFFFF;
   const testIndex$c = RegisterTest("Examples", "Collision Filtering", CollisionFiltering.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This test shows collision processing and tests
+  // deferred body destruction.
   class CollisionProcessing extends Test {
       constructor() {
           super();
@@ -3255,23 +2970,7 @@
   }
   const testIndex$d = RegisterTest("Examples", "Collision Processing", CollisionProcessing.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class CompoundShapes extends Test {
       constructor() {
           super();
@@ -3370,23 +3069,7 @@
   }
   const testIndex$e = RegisterTest("Examples", "Compound Shapes", CompoundShapes.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Confined extends Test {
       constructor() {
           super();
@@ -3481,23 +3164,7 @@
   Confined.e_rowCount = 0;
   const testIndex$f = RegisterTest("Solver", "Confined", Confined.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class ContinuousTest extends Test {
       constructor() {
           super();
@@ -3602,23 +3269,7 @@
   }
   const testIndex$g = RegisterTest("Continuous", "Continuous Test", ContinuousTest.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class ConvexHull extends Test {
       constructor() {
           super();
@@ -3674,30 +3325,13 @@
   ConvexHull.e_count = 10;
   const testIndex$h = RegisterTest("Geometry", "Convex Hull", ConvexHull.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class ConveyorBelt extends Test {
       constructor() {
           super();
           // Ground
           {
               const bd = new b2.BodyDef();
-              /*b2Body*/
               const ground = this.m_world.CreateBody(bd);
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
@@ -3707,7 +3341,6 @@
           {
               const bd = new b2.BodyDef();
               bd.position.Set(-5.0, 5.0);
-              /*b2Body*/
               const body = this.m_world.CreateBody(bd);
               const shape = new b2.PolygonShape();
               shape.SetAsBox(10.0, 0.5);
@@ -3717,11 +3350,10 @@
               this.m_platform = body.CreateFixture(fd);
           }
           // Boxes
-          for ( /*int*/let i = 0; i < 5; ++i) {
+          for (let i = 0; i < 5; ++i) {
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(-10.0 + 2.0 * i, 7.0);
-              /*b2Body*/
               const body = this.m_world.CreateBody(bd);
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
@@ -3730,9 +3362,7 @@
       }
       PreSolve(contact, oldManifold) {
           super.PreSolve(contact, oldManifold);
-          /*b2Fixture*/
           const fixtureA = contact.GetFixtureA();
-          /*b2Fixture*/
           const fixtureB = contact.GetFixtureB();
           if (fixtureA === this.m_platform) {
               contact.SetTangentSpeed(5.0);
@@ -3750,23 +3380,8 @@
   }
   const testIndex$i = RegisterTest("Examples", "Conveyor Belt", ConveyorBelt.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This tests distance joints, body destruction, and joint destruction.
   class DistanceJoint extends Test {
       constructor() {
           super();
@@ -3815,23 +3430,7 @@
   }
   const testIndex$j = RegisterTest("Joints", "DistanceJoint", DistanceJoint.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class DistanceTest extends Test {
       constructor() {
           super();
@@ -3917,23 +3516,7 @@
   }
   const testIndex$k = RegisterTest("Geometry", "Distance Test", DistanceTest.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Dominos extends Test {
       constructor() {
           super();
@@ -4089,36 +3672,17 @@
   }
   const testIndex$l = RegisterTest("Examples", "Dominos", Dominos.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This test holds worlds dumped using b2World::Dump.
   class DumpShell extends Test {
       constructor() {
           super();
           // dump begin
-          /*b2.Vec2*/
           const g = new b2.Vec2(0.000000000000000, 0.000000000000000);
           this.m_world.SetGravity(g);
-          /*b2.Body*/
           const bodies = new Array(4);
-          /*b2.Joint*/
           const joints = new Array(2);
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_staticBody;
               bd.position.Set(0.000000000000000, 0.000000000000000);
@@ -4135,7 +3699,6 @@
               bd.gravityScale = 1.000000000000000;
               bodies[0] = this.m_world.CreateBody(bd);
               {
-                  /*b2.FixtureDef*/
                   const fd = new b2.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
@@ -4144,20 +3707,16 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  /*b2.EdgeShape*/
                   const shape = new b2.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex2.Set(44.521739959716797, 0.000000000000000);
                   shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-                  // shape.m_hasVertex0 = false;
-                  // shape.m_hasVertex3 = false;
                   fd.shape = shape;
                   bodies[0].CreateFixture(fd);
               }
               {
-                  /*b2.FixtureDef*/
                   const fd = new b2.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
@@ -4166,20 +3725,16 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  /*b2.EdgeShape*/
                   const shape = new b2.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
                   shape.m_vertex2.Set(44.521739959716797, 16.695652008056641);
                   shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-                  // shape.m_hasVertex0 = false;
-                  // shape.m_hasVertex3 = false;
                   fd.shape = shape;
                   bodies[0].CreateFixture(fd);
               }
               {
-                  /*b2.FixtureDef*/
                   const fd = new b2.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
@@ -4188,20 +3743,16 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  /*b2.EdgeShape*/
                   const shape = new b2.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
                   shape.m_vertex2.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-                  // shape.m_hasVertex0 = false;
-                  // shape.m_hasVertex3 = false;
                   fd.shape = shape;
                   bodies[0].CreateFixture(fd);
               }
               {
-                  /*b2.FixtureDef*/
                   const fd = new b2.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
@@ -4210,21 +3761,17 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  /*b2.EdgeShape*/
                   const shape = new b2.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(44.521739959716797, 16.695652008056641);
                   shape.m_vertex2.Set(44.521739959716797, 0.000000000000000);
                   shape.m_vertex3.Set(0.000000000000000, 0.000000000000000);
-                  // shape.m_hasVertex0 = false;
-                  // shape.m_hasVertex3 = false;
                   fd.shape = shape;
                   bodies[0].CreateFixture(fd);
               }
           }
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.847826063632965, 2.500000000000000);
@@ -4241,7 +3788,6 @@
               bd.gravityScale = 1.000000000000000;
               bodies[1] = this.m_world.CreateBody(bd);
               {
-                  /*b2.FixtureDef*/
                   const fd = new b2.FixtureDef();
                   fd.friction = 1.000000000000000;
                   fd.restitution = 0.500000000000000;
@@ -4250,9 +3796,7 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  /*b2.PolygonShape*/
                   const shape = new b2.PolygonShape();
-                  /*b2.Vec2[]*/
                   const vs = b2.Vec2.MakeArray(8);
                   vs[0].Set(6.907599925994873, 0.327199995517731);
                   vs[1].Set(-0.322800010442734, 0.282599985599518);
@@ -4264,7 +3808,6 @@
               }
           }
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(13.043478012084959, 2.500000000000000);
@@ -4281,7 +3824,6 @@
               bd.gravityScale = 1.000000000000000;
               bodies[2] = this.m_world.CreateBody(bd);
               {
-                  /*b2.FixtureDef*/
                   const fd = new b2.FixtureDef();
                   fd.friction = 1.000000000000000;
                   fd.restitution = 0.500000000000000;
@@ -4290,9 +3832,7 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  /*b2.PolygonShape*/
                   const shape = new b2.PolygonShape();
-                  /*b2.Vec2[]*/
                   const vs = b2.Vec2.MakeArray(8);
                   vs[0].Set(0.200000002980232, -0.300000011920929);
                   vs[1].Set(0.200000002980232, 0.200000002980232);
@@ -4304,7 +3844,6 @@
               }
           }
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_staticBody;
               bd.position.Set(0.000000000000000, 0.000000000000000);
@@ -4322,7 +3861,6 @@
               bodies[3] = this.m_world.CreateBody(bd);
           }
           {
-              /*b2.RevoluteJointDef*/
               const jd = new b2.RevoluteJointDef();
               jd.bodyA = bodies[1];
               jd.bodyB = bodies[0];
@@ -4339,7 +3877,6 @@
               joints[0] = this.m_world.CreateJoint(jd);
           }
           {
-              /*b2.PrismaticJointDef*/
               const jd = new b2.PrismaticJointDef();
               jd.bodyA = bodies[1];
               jd.bodyB = bodies[2];
@@ -4367,23 +3904,7 @@
   }
   const testIndex$m = RegisterTest("Bugs", "Dump Loader", DumpShell.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class DynamicTreeTest extends Test {
       constructor() {
           super();
@@ -4626,23 +4147,7 @@
   }
   const testIndex$n = RegisterTest("Collision", "Dynamic Tree", DynamicTreeTest.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class EdgeShapesCallback extends b2.RayCastCallback {
       constructor() {
           super(...arguments);
@@ -4812,23 +4317,7 @@
   EdgeShapes.e_maxBodies = 256;
   const testIndex$o = RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class EdgeTest extends Test {
       constructor() {
           super();
@@ -4969,53 +4458,57 @@
               this.m_world.DestroyBody(this.m_body2);
               this.m_body2 = null;
           }
-          // {
-          // 	b2BodyDef bd;
-          // 	bd.type = b2_dynamicBody;
-          // 	bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset1;
-          // 	bd.allowSleep = false;
-          // 	this.m_body1 = this.m_world.CreateBody(bd);
-          // 	b2CircleShape shape;
-          // 	shape.this.m_radius = 0.5f;
-          // 	this.m_body1.CreateFixture(shape, 1.0);
-          // }
-          // {
-          // 	b2BodyDef bd;
-          // 	bd.type = b2_dynamicBody;
-          // 	bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset2;
-          // 	bd.allowSleep = false;
-          // 	this.m_body2 = this.m_world.CreateBody(bd);
-          // 	b2CircleShape shape;
-          // 	shape.this.m_radius = 0.5f;
-          // 	this.m_body2.CreateFixture(shape, 1.0);
-          // }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              // bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset1;
+              bd.position.x = -0.5 + this.m_offset1.x;
+              bd.position.y = 0.6 + this.m_offset1.y;
+              bd.allowSleep = false;
+              this.m_body1 = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_radius = 0.5;
+              this.m_body1.CreateFixture(shape, 1.0);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              // bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset2;
+              bd.position.x = -0.5 + this.m_offset2.x;
+              bd.position.y = 0.6 + this.m_offset2.y;
+              bd.allowSleep = false;
+              this.m_body2 = this.m_world.CreateBody(bd);
+              const shape = new b2.CircleShape();
+              shape.m_radius = 0.5;
+              this.m_body2.CreateFixture(shape, 1.0);
+          }
       }
       UpdateUI() {
-          // 	ImGui::SetNextWindowPos(ImVec2(10.0, 100.0));
-          // 	ImGui::SetNextWindowSize(ImVec2(200.0, 100.0));
-          // 	ImGui::Begin("Custom Controls", null, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-          // 	if (ImGui::RadioButton("Boxes", m_boxes == true))
-          // 	{
-          // 		CreateBoxes();
-          // 		m_boxes = true;
-          // 	}
-          // 	if (ImGui::RadioButton("Circles", m_boxes == false))
-          // 	{
-          // 		CreateCircles();
-          // 		m_boxes = false;
-          // 	}
-          // 	ImGui::End();
+          // ImGui::SetNextWindowPos(ImVec2(10.0, 100.0));
+          // ImGui::SetNextWindowSize(ImVec2(200.0, 100.0));
+          // ImGui::Begin("Custom Controls", null, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+          // if (ImGui::RadioButton("Boxes", m_boxes == true))
+          // {
+          //   CreateBoxes();
+          //   m_boxes = true;
+          // }
+          // if (ImGui::RadioButton("Circles", m_boxes == false))
+          // {
+          //   CreateCircles();
+          //   m_boxes = false;
+          // }
+          // ImGui::End();
       }
       Step(settings) {
           // if (glfwGetKey(g_mainWindow, GLFW_KEY_A) == GLFW_PRESS)
           // {
-          // 	this.m_body1.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
-          // 	this.m_body2.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+          //   this.m_body1.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+          //   this.m_body2.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
           // }
           // if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_PRESS)
           // {
-          // 	this.m_body1.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
-          // 	this.m_body2.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+          //   this.m_body1.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+          //   this.m_body2.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
           // }
           super.Step(settings);
       }
@@ -5030,6 +4523,12 @@
                   (_c = this.m_body1) === null || _c === void 0 ? void 0 : _c.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
                   (_d = this.m_body2) === null || _d === void 0 ? void 0 : _d.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
                   break;
+              case "b":
+                  this.CreateBoxes();
+                  break;
+              case "c":
+                  this.CreateCircles();
+                  break;
           }
       }
       static Create() {
@@ -5038,24 +4537,8 @@
   }
   const testIndex$p = RegisterTest("Geometry", "Edge Test", EdgeTest.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class VaryingFriction extends Test {
+  // MIT License
+  class Friction extends Test {
       constructor() {
           super();
           {
@@ -5129,29 +4612,13 @@
           super.Step(settings);
       }
       static Create() {
-          return new VaryingFriction();
+          return new Friction();
       }
   }
-  const testIndex$q = RegisterTest("Forces", "Friction", VaryingFriction.Create);
+  const testIndex$q = RegisterTest("Forces", "Friction", Friction.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class Gears extends Test {
+  // MIT License
+  class GearJoint extends Test {
       constructor() {
           super();
           let ground = null;
@@ -5271,48 +4738,26 @@
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
-          return new Gears();
+          return new GearJoint();
       }
   }
-  const testIndex$r = RegisterTest("Joints", "Gear", Gears.Create);
+  const testIndex$r = RegisterTest("Joints", "Gear", GearJoint.Create);
 
-  /*
-   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class HeavyOnLight extends Test {
+  // MIT License
+  class Heavy1 extends Test {
       constructor() {
           super();
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
-              /*b2.Body*/
               const ground = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
-          /*b2.BodyDef*/
           const bd = new b2.BodyDef();
           bd.type = b2.BodyType.b2_dynamicBody;
           bd.position.Set(0.0, 0.5);
-          /*b2.Body*/
           let body = this.m_world.CreateBody(bd);
-          /*b2.CircleShape*/
           const shape = new b2.CircleShape();
           shape.m_radius = 0.5;
           body.CreateFixture(shape, 10.0);
@@ -5322,49 +4767,27 @@
           body.CreateFixture(shape, 10.0);
       }
       static Create() {
-          return new HeavyOnLight();
+          return new Heavy1();
       }
   }
-  const testIndex$s = RegisterTest("Solver", "Heavy 1", HeavyOnLight.Create);
+  const testIndex$s = RegisterTest("Solver", "Heavy 1", Heavy1.Create);
 
-  /*
-   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class HeavyOnLightTwo extends Test {
+  // MIT License
+  class Heavy2 extends Test {
       constructor() {
           super();
           this.m_heavy = null;
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
-              /*b2.Body*/
               const ground = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
-          /*b2.BodyDef*/
           const bd = new b2.BodyDef();
           bd.type = b2.BodyType.b2_dynamicBody;
           bd.position.Set(0.0, 2.5);
-          /*b2.Body*/
           let body = this.m_world.CreateBody(bd);
-          /*b2.CircleShape*/
           const shape = new b2.CircleShape();
           shape.m_radius = 0.5;
           body.CreateFixture(shape, 10.0);
@@ -5378,12 +4801,10 @@
               this.m_heavy = null;
           }
           else {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 9.0);
               this.m_heavy = this.m_world.CreateBody(bd);
-              /*b2.CircleShape*/
               const shape = new b2.CircleShape();
               shape.m_radius = 5.0;
               this.m_heavy.CreateFixture(shape, 10.0);
@@ -5397,39 +4818,23 @@
           }
       }
       static Create() {
-          return new HeavyOnLightTwo();
+          return new Heavy2();
       }
   }
-  const testIndex$t = RegisterTest("Solver", "Heavy 2", HeavyOnLightTwo.Create);
+  const testIndex$t = RegisterTest("Solver", "Heavy 2", Heavy2.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class MobileBalanced extends Test {
       constructor() {
           super();
           // Create ground body.
-          const /*b2BodyDef*/ bodyDef = new b2.BodyDef();
+          const bodyDef = new b2.BodyDef();
           bodyDef.position.Set(0.0, 20.0);
           const ground = this.m_world.CreateBody(bodyDef);
-          const /*float32*/ a = 0.5;
-          const /*b2Vec2*/ h = new b2.Vec2(0.0, a);
-          const /*b2Body*/ root = this.AddNode(ground, b2.Vec2_zero, 0, 3.0, a);
-          const /*b2RevoluteJointDef*/ jointDef = new b2.RevoluteJointDef();
+          const a = 0.5;
+          const h = new b2.Vec2(0.0, a);
+          const root = this.AddNode(ground, b2.Vec2_zero, 0, 3.0, a);
+          const jointDef = new b2.RevoluteJointDef();
           jointDef.bodyA = ground;
           jointDef.bodyB = root;
           jointDef.localAnchorA.SetZero();
@@ -5437,15 +4842,15 @@
           this.m_world.CreateJoint(jointDef);
       }
       AddNode(parent, localAnchor, depth, offset, a) {
-          const /*float32*/ density = 20.0;
-          const /*b2Vec2*/ h = new b2.Vec2(0.0, a);
+          const density = 20.0;
+          const h = new b2.Vec2(0.0, a);
           //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
-          const /*b2Vec2*/ p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
-          const /*b2BodyDef*/ bodyDef = new b2.BodyDef();
+          const p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
+          const bodyDef = new b2.BodyDef();
           bodyDef.type = b2.BodyType.b2_dynamicBody;
           bodyDef.position.Copy(p);
-          const /*b2Body*/ body = this.m_world.CreateBody(bodyDef);
-          const /*b2PolygonShape*/ shape = new b2.PolygonShape();
+          const body = this.m_world.CreateBody(bodyDef);
+          const shape = new b2.PolygonShape();
           shape.SetAsBox(0.25 * a, a);
           body.CreateFixture(shape, density);
           if (depth === MobileBalanced.e_depth) {
@@ -5453,11 +4858,11 @@
           }
           shape.SetAsBox(offset, 0.25 * a, new b2.Vec2(0, -a), 0.0);
           body.CreateFixture(shape, density);
-          const /*b2Vec2*/ a1 = new b2.Vec2(offset, -a);
-          const /*b2Vec2*/ a2 = new b2.Vec2(-offset, -a);
-          const /*b2Body*/ body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
-          const /*b2Body*/ body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
-          const /*b2RevoluteJointDef*/ jointDef = new b2.RevoluteJointDef();
+          const a1 = new b2.Vec2(offset, -a);
+          const a2 = new b2.Vec2(-offset, -a);
+          const body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
+          const body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
+          const jointDef = new b2.RevoluteJointDef();
           jointDef.bodyA = body;
           jointDef.localAnchorB.Copy(h);
           jointDef.localAnchorA.Copy(a1);
@@ -5478,23 +4883,7 @@
   MobileBalanced.e_depth = 4;
   const testIndex$u = RegisterTest("Solver", "Mobile Balanced", MobileBalanced.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Mobile extends Test {
       constructor() {
           super();
@@ -5513,25 +4902,25 @@
           this.m_world.CreateJoint(jointDef);
       }
       AddNode(parent, localAnchor, depth, offset, a) {
-          const /*float32*/ density = 20.0;
-          const /*b2Vec2*/ h = new b2.Vec2(0.0, a);
+          const density = 20.0;
+          const h = new b2.Vec2(0.0, a);
           //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
-          const /*b2Vec2*/ p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
-          const /*b2BodyDef*/ bodyDef = new b2.BodyDef();
+          const p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
+          const bodyDef = new b2.BodyDef();
           bodyDef.type = b2.BodyType.b2_dynamicBody;
           bodyDef.position.Copy(p);
-          const /*b2Body*/ body = this.m_world.CreateBody(bodyDef);
-          const /*b2PolygonShape*/ shape = new b2.PolygonShape();
+          const body = this.m_world.CreateBody(bodyDef);
+          const shape = new b2.PolygonShape();
           shape.SetAsBox(0.25 * a, a);
           body.CreateFixture(shape, density);
           if (depth === Mobile.e_depth) {
               return body;
           }
-          const /*b2Vec2*/ a1 = new b2.Vec2(offset, -a);
-          const /*b2Vec2*/ a2 = new b2.Vec2(-offset, -a);
-          const /*b2Body*/ body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
-          const /*b2Body*/ body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
-          const /*b2RevoluteJointDef*/ jointDef = new b2.RevoluteJointDef();
+          const a1 = new b2.Vec2(offset, -a);
+          const a2 = new b2.Vec2(-offset, -a);
+          const body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
+          const body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
+          const jointDef = new b2.RevoluteJointDef();
           jointDef.bodyA = body;
           jointDef.localAnchorB.Copy(h);
           jointDef.localAnchorA.Copy(a1);
@@ -5552,23 +4941,10 @@
   Mobile.e_depth = 4;
   const testIndex$v = RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  /// This test shows how to use a motor joint. A motor joint
+  /// can be used to animate a dynamic body. With finite motor forces
+  /// the body can be blocked by collision with other bodies.
   class MotorJoint extends Test {
       constructor() {
           super();
@@ -5589,7 +4965,6 @@
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 8.0);
-              /*b2Body*/
               const body = this.m_world.CreateBody(bd);
               const shape = new b2.PolygonShape();
               shape.SetAsBox(2.0, 0.5);
@@ -5618,11 +4993,9 @@
           if (this.m_go && settings.m_hertz > 0.0) {
               this.m_time += 1.0 / settings.m_hertz;
           }
-          /*b2Vec2*/
           const linearOffset = new b2.Vec2();
           linearOffset.x = 6.0 * b2.Sin(2.0 * this.m_time);
           linearOffset.y = 8.0 + 4.0 * b2.Sin(1.0 * this.m_time);
-          /*float32*/
           const angularOffset = 4.0 * this.m_time;
           this.m_joint.SetLinearOffset(linearOffset);
           this.m_joint.SetAngularOffset(angularOffset);
@@ -5637,49 +5010,26 @@
   }
   const testIndex$w = RegisterTest("Joints", "Motor Joint", MotorJoint.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  /**
-   * This tests bullet collision and provides an example of a
-   * gameplay scenario. This also uses a loop shape.
-   */
+  // MIT License
+  /// This tests bullet collision and provides an example of a gameplay scenario.
+  /// This also uses a loop shape.
   class Pinball extends Test {
       constructor() {
           super();
           this.m_button = false;
           // Ground body
-          /*b2.Body*/
           let ground = null;
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              /*b2.Vec2*/
               const vs = b2.Vec2.MakeArray(5);
               vs[0].Set(-8.0, 6.0);
               vs[1].Set(-8.0, 20.0);
               vs[2].Set(8.0, 20.0);
               vs[3].Set(8.0, 6.0);
               vs[4].Set(0.0, -2.0);
-              /*b2.ChainShape*/
               const loop = new b2.ChainShape();
               loop.CreateLoop(vs, 5);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = loop;
               fd.density = 0.0;
@@ -5687,27 +5037,20 @@
           }
           // Flippers
           {
-              /*b2.Vec2*/
               const p1 = new b2.Vec2(-2.0, 0.0), p2 = new b2.Vec2(2.0, 0.0);
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.position.Copy(p1);
-              /*b2.Body*/
               const leftFlipper = this.m_world.CreateBody(bd);
               bd.position.Copy(p2);
-              /*b2.Body*/
               const rightFlipper = this.m_world.CreateBody(bd);
-              /*b2.PolygonShape*/
               const box = new b2.PolygonShape();
               box.SetAsBox(1.75, 0.1);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = box;
               fd.density = 1.0;
               leftFlipper.CreateFixture(fd);
               rightFlipper.CreateFixture(fd);
-              /*b2.RevoluteJointDef*/
               const jd = new b2.RevoluteJointDef();
               jd.bodyA = ground;
               jd.localAnchorB.SetZero();
@@ -5729,16 +5072,13 @@
           }
           // Circle character
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.position.Set(1.0, 15.0);
               bd.type = b2.BodyType.b2_dynamicBody;
               bd.bullet = true;
               this.m_ball = this.m_world.CreateBody(bd);
-              /*b2.CircleShape*/
               const shape = new b2.CircleShape();
               shape.m_radius = 0.2;
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
@@ -5779,30 +5119,14 @@
   }
   const testIndex$x = RegisterTest("Examples", "Pinball", Pinball.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class OneSidedPlatform extends Test {
+  // MIT License
+  class Platformer extends Test {
       constructor() {
           super();
           this.m_radius = 0.0;
           this.m_top = 0.0;
           this.m_bottom = 0.0;
-          this.m_state = OneSidedPlatform_State.e_unknown;
+          this.m_state = Platformer_State.e_unknown;
           // Ground
           {
               const bd = new b2.BodyDef();
@@ -5833,7 +5157,7 @@
               shape.m_radius = this.m_radius;
               this.m_character = body.CreateFixture(shape, 20.0);
               body.SetLinearVelocity(new b2.Vec2(0.0, -50.0));
-              this.m_state = OneSidedPlatform_State.e_unknown;
+              this.m_state = Platformer_State.e_unknown;
           }
       }
       PreSolve(contact, oldManifold) {
@@ -5853,37 +5177,24 @@
       }
       Step(settings) {
           super.Step(settings);
+          const v = this.m_character.GetBody().GetLinearVelocity();
+          g_debugDraw.DrawString(5, this.m_textLine, `Character Linear Velocity: ${v.y}`);
+          this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
-          return new OneSidedPlatform();
+          return new Platformer();
       }
   }
-  var OneSidedPlatform_State;
-  (function (OneSidedPlatform_State) {
-      OneSidedPlatform_State[OneSidedPlatform_State["e_unknown"] = 0] = "e_unknown";
-      OneSidedPlatform_State[OneSidedPlatform_State["e_above"] = 1] = "e_above";
-      OneSidedPlatform_State[OneSidedPlatform_State["e_below"] = 2] = "e_below";
-  })(OneSidedPlatform_State || (OneSidedPlatform_State = {}));
-  const testIndex$y = RegisterTest("Examples", "Platformer", OneSidedPlatform.Create);
+  var Platformer_State;
+  (function (Platformer_State) {
+      Platformer_State[Platformer_State["e_unknown"] = 0] = "e_unknown";
+      Platformer_State[Platformer_State["e_above"] = 1] = "e_above";
+      Platformer_State[Platformer_State["e_below"] = 2] = "e_below";
+  })(Platformer_State || (Platformer_State = {}));
+  const testIndex$y = RegisterTest("Examples", "Platformer", Platformer.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class PolyCollision extends Test {
+  // MIT License
+  class PolygonCollision extends Test {
       constructor() {
           super();
           this.m_polygonA = new b2.PolygonShape();
@@ -5927,7 +5238,6 @@
           this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
       }
       Step(settings) {
-          // super.Step(settings);
           const manifold = new b2.Manifold();
           b2.CollidePolygons(manifold, this.m_polygonA, this.m_transformA, this.m_polygonB, this.m_transformB);
           const worldManifold = new b2.WorldManifold();
@@ -5949,46 +5259,31 @@
           for (let i = 0; i < manifold.pointCount; ++i) {
               g_debugDraw.DrawPoint(worldManifold.points[i], 4.0, new b2.Color(0.9, 0.3, 0.3));
           }
+          super.Step(settings);
       }
       static Create() {
-          return new PolyCollision();
+          return new PolygonCollision();
       }
   }
-  const testIndex$z = RegisterTest("Geometry", "Polygon Collision", PolyCollision.Create);
+  const testIndex$z = RegisterTest("Geometry", "Polygon Collision", PolygonCollision.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  /**
-   * This callback is called by b2.World::QueryAABB. We find
-   * all the fixtures that overlap an AABB. Of those, we use
-   * b2TestOverlap to determine which fixtures overlap a circle.
-   * Up to 4 overlapped fixtures will be highlighted with a yellow
-   * border.
-   */
-  class PolyShapesCallback extends b2.QueryCallback {
+  // MIT License
+  /// This tests stacking. It also shows how to use b2World::Query
+  /// and b2TestOverlap.
+  /// This callback is called by b2World::QueryAABB. We find all the fixtures
+  /// that overlap an AABB. Of those, we use b2TestOverlap to determine which fixtures
+  /// overlap a circle. Up to 4 overlapped fixtures will be highlighted with a yellow border.
+  class PolygonShapesCallback extends b2.QueryCallback {
       constructor() {
           super(...arguments);
           this.m_circle = new b2.CircleShape();
           this.m_transform = new b2.Transform();
           this.m_count = 0;
       }
+      /// Called for each fixture found in the query AABB.
+      /// @return false to terminate the query.
       ReportFixture(fixture) {
-          if (this.m_count === PolyShapesCallback.e_maxCount) {
+          if (this.m_count === PolygonShapesCallback.e_maxCount) {
               return false;
           }
           const body = fixture.GetBody();
@@ -6003,12 +5298,12 @@
           return true;
       }
   }
-  PolyShapesCallback.e_maxCount = 4;
-  class PolyShapes extends Test {
+  PolygonShapesCallback.e_maxCount = 4;
+  class PolygonShapes extends Test {
       constructor() {
           super();
           this.m_bodyIndex = 0;
-          this.m_bodies = b2.MakeArray(PolyShapes.e_maxBodies, () => null);
+          this.m_bodies = b2.MakeArray(PolygonShapes.e_maxBodies, () => null);
           this.m_polygons = b2.MakeArray(4, () => new b2.PolygonShape());
           this.m_circle = new b2.CircleShape();
           // Ground body
@@ -6054,7 +5349,7 @@
           {
               this.m_circle.m_radius = 0.5;
           }
-          for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
+          for (let i = 0; i < PolygonShapes.e_maxBodies; ++i) {
               this.m_bodies[i] = null;
           }
       }
@@ -6086,10 +5381,10 @@
               fd.friction = 0.3;
               this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
           }
-          this.m_bodyIndex = (this.m_bodyIndex + 1) % PolyShapes.e_maxBodies;
+          this.m_bodyIndex = (this.m_bodyIndex + 1) % PolygonShapes.e_maxBodies;
       }
       DestroyBody() {
-          for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
+          for (let i = 0; i < PolygonShapes.e_maxBodies; ++i) {
               if (this.m_bodies[i] !== null) {
                   this.m_world.DestroyBody(this.m_bodies[i]);
                   this.m_bodies[i] = null;
@@ -6107,7 +5402,7 @@
                   this.CreateBody(key.charCodeAt(0) - "1".charCodeAt(0));
                   break;
               case "a":
-                  for (let i = 0; i < PolyShapes.e_maxBodies; i += 2) {
+                  for (let i = 0; i < PolygonShapes.e_maxBodies; i += 2) {
                       if (this.m_bodies[i] !== null) {
                           const enabled = this.m_bodies[i].IsEnabled();
                           this.m_bodies[i].SetEnabled(!enabled);
@@ -6121,7 +5416,7 @@
       }
       Step(settings) {
           super.Step(settings);
-          const callback = new PolyShapesCallback();
+          const callback = new PolygonShapesCallback();
           callback.m_circle.m_radius = 2.0;
           callback.m_circle.m_p.Set(0.0, 1.1);
           callback.m_transform.SetIdentity();
@@ -6130,7 +5425,7 @@
           this.m_world.QueryAABB(callback, aabb);
           const color = new b2.Color(0.4, 0.7, 0.8);
           g_debugDraw.DrawCircle(callback.m_circle.m_p, callback.m_circle.m_radius, color);
-          g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolyShapesCallback.e_maxCount} overlaps detected`);
+          g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolygonShapesCallback.e_maxCount} overlaps detected`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           g_debugDraw.DrawString(5, this.m_textLine, "Press 'a' to enable/disable some bodies");
           this.m_textLine += DRAW_STRING_NEW_LINE;
@@ -6138,29 +5433,14 @@
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
-          return new PolyShapes();
+          return new PolygonShapes();
       }
   }
-  PolyShapes.e_maxBodies = 256;
-  const testIndex$A = RegisterTest("Geometry", "Polygon Shapes", PolyShapes.Create);
+  PolygonShapes.e_maxBodies = 256;
+  const testIndex$A = RegisterTest("Geometry", "Polygon Shapes", PolygonShapes.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // Test the prismatic joint with limits and motor options.
   class Prismatic extends Test {
       constructor() {
           super();
@@ -6221,24 +5501,8 @@
   }
   const testIndex$B = RegisterTest("Joints", "Prismatic", Prismatic.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class Pulleys extends Test {
+  // MIT License
+  class PulleyJoint extends Test {
       constructor() {
           super();
           const y = 16.0;
@@ -6249,7 +5513,6 @@
           {
               const bd = new b2.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              /*b2.CircleShape*/
               const circle = new b2.CircleShape();
               circle.m_radius = 2.0;
               circle.m_p.Set(-10.0, y + b + L);
@@ -6286,28 +5549,12 @@
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
-          return new Pulleys();
+          return new PulleyJoint();
       }
   }
-  const testIndex$C = RegisterTest("Joints", "Pulley", Pulleys.Create);
+  const testIndex$C = RegisterTest("Joints", "Pulley", PulleyJoint.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Pyramid extends Test {
       constructor() {
           super();
@@ -6354,23 +5601,11 @@
   Pyramid.e_count = 20;
   const testIndex$D = RegisterTest("Stacking", "Pyramid", Pyramid.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // This test demonstrates how to use the world ray-cast feature.
+  // NOTE: we are intentionally filtering one of the polygons, therefore
+  // the ray will always miss one type of polygon.
+  // This callback finds the closest hit. Polygon 0 is filtered.
   class RayCastClosestCallback extends b2.RayCastCallback {
       constructor() {
           super();
@@ -6399,7 +5634,7 @@
       }
   }
   // This callback finds any hit. Polygon 0 is filtered. For this type of query we are usually
-  // just checking for obstruction, so the actual fixture and hit point are irrelevant.
+  // just checking for obstruction, so the actual fixture and hit point are irrelevant. 
   class RayCastAnyCallback extends b2.RayCastCallback {
       constructor() {
           super();
@@ -6717,26 +5952,10 @@
   RayCast.e_maxBodies = 256;
   const testIndex$E = RegisterTest("Collision", "Ray Cast", RayCast.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   // Note: even with a restitution of 1.0, there is some energy change
   // due to position correction.
-  class VaryingRestitution extends Test {
+  class Restitution extends Test {
       constructor() {
           super();
           {
@@ -6767,28 +5986,12 @@
           super.Step(settings);
       }
       static Create() {
-          return new VaryingRestitution();
+          return new Restitution();
       }
   }
-  const testIndex$F = RegisterTest("Forces", "Restitution", VaryingRestitution.Create);
+  const testIndex$F = RegisterTest("Forces", "Restitution", Restitution.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Revolute extends Test {
       constructor() {
           super();
@@ -6798,7 +6001,6 @@
               ground = this.m_world.CreateBody(bd);
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               //fd.filter.categoryBits = 2;
@@ -6827,27 +6029,23 @@
               this.m_joint = this.m_world.CreateJoint(rjd);
           }
           {
-              /*b2.CircleShape*/
               const circle_shape = new b2.CircleShape();
               circle_shape.m_radius = 3.0;
               const circle_bd = new b2.BodyDef();
               circle_bd.type = b2.BodyType.b2_dynamicBody;
               circle_bd.position.Set(5.0, 30.0);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.density = 5.0;
               fd.filter.maskBits = 1;
               fd.shape = circle_shape;
               this.m_ball = this.m_world.CreateBody(circle_bd);
               this.m_ball.CreateFixture(fd);
-              /*b2.PolygonShape*/
               const polygon_shape = new b2.PolygonShape();
               polygon_shape.SetAsBox(10.0, 0.2, new b2.Vec2(-10.0, 0.0), 0.0);
               const polygon_bd = new b2.BodyDef();
               polygon_bd.position.Set(20.0, 10.0);
               polygon_bd.type = b2.BodyType.b2_dynamicBody;
               polygon_bd.bullet = true;
-              /*b2.Body*/
               const polygon_body = this.m_world.CreateBody(polygon_bd);
               polygon_body.CreateFixture(polygon_shape, 2.0);
               const rjd = new b2.RevoluteJointDef();
@@ -6856,26 +6054,6 @@
               rjd.upperAngle = 0.0 * b2.pi;
               rjd.enableLimit = true;
               this.m_world.CreateJoint(rjd);
-          }
-          // Tests mass computation of a small object far from the origin
-          {
-              const bodyDef = new b2.BodyDef();
-              bodyDef.type = b2.BodyType.b2_dynamicBody;
-              /*b2.Body*/
-              const body = this.m_world.CreateBody(bodyDef);
-              /*b2.PolygonShape*/
-              const polyShape = new b2.PolygonShape();
-              /*b2.Vec2*/
-              const verts = b2.Vec2.MakeArray(3);
-              verts[0].Set(17.63, 36.31);
-              verts[1].Set(17.52, 36.69);
-              verts[2].Set(17.19, 36.36);
-              polyShape.Set(verts, 3);
-              /*b2.FixtureDef*/
-              const polyFixtureDef = new b2.FixtureDef();
-              polyFixtureDef.shape = polyShape;
-              polyFixtureDef.density = 1;
-              body.CreateFixture(polyFixtureDef); //assertion hits inside here
           }
       }
       Keyboard(key) {
@@ -7408,29 +6586,14 @@
   //   }
   // }
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class SensorTest extends Test {
+  // MIT License
+  // This shows how to use sensor shapes. Sensors don't have collision, but report overlap events.
+  class Sensors extends Test {
       constructor() {
           super();
-          this.m_bodies = new Array(SensorTest.e_count);
-          this.m_touching = new Array(SensorTest.e_count);
-          for (let i = 0; i < SensorTest.e_count; ++i) {
+          this.m_bodies = new Array(Sensors.e_count);
+          this.m_touching = new Array(Sensors.e_count);
+          for (let i = 0; i < Sensors.e_count; ++i) {
               this.m_touching[i] = new Array(1);
           }
           const bd = new b2.BodyDef();
@@ -7460,7 +6623,7 @@
           {
               const shape = new b2.CircleShape();
               shape.m_radius = 1.0;
-              for (let i = 0; i < SensorTest.e_count; ++i) {
+              for (let i = 0; i < Sensors.e_count; ++i) {
                   //const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(-10.0 + 3.0 * i, 20.0);
@@ -7511,7 +6674,7 @@
           super.Step(settings);
           // Traverse the contact results. Apply a force on shapes
           // that overlap the sensor.
-          for (let i = 0; i < SensorTest.e_count; ++i) {
+          for (let i = 0; i < Sensors.e_count; ++i) {
               if (!this.m_touching[i][0]) {
                   continue;
               }
@@ -7530,29 +6693,13 @@
           }
       }
       static Create() {
-          return new SensorTest();
+          return new Sensors();
       }
   }
-  SensorTest.e_count = 7;
-  const testIndex$I = RegisterTest("Collision", "Sensors", SensorTest.Create);
+  Sensors.e_count = 7;
+  const testIndex$I = RegisterTest("Collision", "Sensors", Sensors.Create);
 
-  /*
-  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class ShapeCast extends Test {
       constructor() {
           super();
@@ -7641,23 +6788,7 @@
   ShapeCast.e_vertexCount = 8;
   const testIndex$J = RegisterTest("Collision", "Shape Cast", ShapeCast.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class ShapeEditing extends Test {
       constructor() {
           super();
@@ -7818,50 +6949,27 @@
   }
   const testIndex$L = RegisterTest("Bugs", "Skier", Skier.Create);
 
-  /*
-   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
-   *
-   * This software is provided 'as-is', without any express or implied
-   * warranty.  In no event will the authors be held liable for any damages
-   * arising from the use of this software.
-   * Permission is granted to anyone to use this software for any purpose,
-   * including commercial applications, and to alter it and redistribute it
-   * freely, subject to the following restrictions:
-   * 1. The origin of this software must not be misrepresented; you must not
-   * claim that you wrote the original software. If you use this software
-   * in a product, an acknowledgment in the product documentation would be
-   * appreciated but is not required.
-   * 2. Altered source versions must be plainly marked as such, and must not be
-   * misrepresented as being the original software.
-   * 3. This notice may not be removed or altered from any source distribution.
-   */
-  class BasicSliderCrank extends Test {
+  // MIT License
+  class SliderCrank1 extends Test {
       constructor() {
           super();
-          /*b2.Body*/
           let ground = null;
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.position.Set(0.0, 17.0);
               ground = this.m_world.CreateBody(bd);
           }
           {
-              /*b2.Body*/
               let prevBody = ground;
               // Define crank.
               {
-                  /*b2.PolygonShape*/
                   const shape = new b2.PolygonShape();
                   shape.SetAsBox(4.0, 1.0);
-                  /*b2.BodyDef*/
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(-8.0, 20.0);
-                  /*b2.Body*/
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  /*b2.RevoluteJointDef*/
                   const rjd = new b2.RevoluteJointDef();
                   rjd.Initialize(prevBody, body, new b2.Vec2(-12.0, 20.0));
                   this.m_world.CreateJoint(rjd);
@@ -7869,17 +6977,13 @@
               }
               // Define connecting rod
               {
-                  /*b2.PolygonShape*/
                   const shape = new b2.PolygonShape();
                   shape.SetAsBox(8.0, 1.0);
-                  /*b2.BodyDef*/
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(4.0, 20.0);
-                  /*b2.Body*/
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  /*b2.RevoluteJointDef*/
                   const rjd = new b2.RevoluteJointDef();
                   rjd.Initialize(prevBody, body, new b2.Vec2(-4.0, 20.0));
                   this.m_world.CreateJoint(rjd);
@@ -7887,22 +6991,17 @@
               }
               // Define piston
               {
-                  /*b2.PolygonShape*/
                   const shape = new b2.PolygonShape();
                   shape.SetAsBox(3.0, 3.0);
-                  /*b2.BodyDef*/
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.fixedRotation = true;
                   bd.position.Set(12.0, 20.0);
-                  /*b2.Body*/
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  /*b2.RevoluteJointDef*/
                   const rjd = new b2.RevoluteJointDef();
                   rjd.Initialize(prevBody, body, new b2.Vec2(12.0, 20.0));
                   this.m_world.CreateJoint(rjd);
-                  /*b2.PrismaticJointDef*/
                   const pjd = new b2.PrismaticJointDef();
                   pjd.Initialize(ground, body, new b2.Vec2(12.0, 17.0), new b2.Vec2(1.0, 0.0));
                   this.m_world.CreateJoint(pjd);
@@ -7910,29 +7009,14 @@
           }
       }
       static Create() {
-          return new BasicSliderCrank();
+          return new SliderCrank1();
       }
   }
-  const testIndex$M = RegisterTest("Examples", "Slider Crank 1", BasicSliderCrank.Create);
+  const testIndex$M = RegisterTest("Examples", "Slider Crank 1", SliderCrank1.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  class SliderCrank extends Test {
+  // MIT License
+  // A motor driven slider crank with joint friction.
+  class SliderCrank2 extends Test {
       constructor() {
           super();
           let ground = null;
@@ -8029,31 +7113,13 @@
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
-          return new SliderCrank();
+          return new SliderCrank2();
       }
   }
-  SliderCrank.e_count = 30;
-  const testIndex$N = RegisterTest("Examples", "Slider Crank 2", SliderCrank.Create);
+  SliderCrank2.e_count = 30;
+  const testIndex$N = RegisterTest("Examples", "Slider Crank 2", SliderCrank2.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  // Inspired by a contribution by roman_m
-  // Dimensions scooped from APE (http://www.cove.org/ape/index.htm)
+  // MIT License
   class TheoJansen extends Test {
       constructor() {
           super();
@@ -8239,56 +7305,29 @@
   }
   const testIndex$O = RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
-  /**
-   * This stress tests the dynamic tree broad-phase. This also
-   * shows that tile based collision is _not_ smooth due to Box2D
-   * not knowing about adjacency.
-   */
+  // MIT License
+  /// This stress tests the dynamic tree broad-phase. This also shows that tile
+  /// based collision is _not_ smooth due to Box2D not knowing about adjacency.
   class Tiles extends Test {
       constructor() {
           super();
           this.m_fixtureCount = 0;
           this.m_createTime = 0.0;
           this.m_fixtureCount = 0;
-          /*b2.Timer*/
           const timer = new b2.Timer();
           {
-              /*float32*/
               const a = 0.5;
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               bd.position.y = -a;
-              /*b2.Body*/
               const ground = this.m_world.CreateBody(bd);
               {
-                  /*int32*/
                   const N = 200;
-                  /*int32*/
                   const M = 10;
-                  /*b2.Vec2*/
                   const position = new b2.Vec2();
                   position.y = 0.0;
-                  for ( /*int32*/let j = 0; j < M; ++j) {
+                  for (let j = 0; j < M; ++j) {
                       position.x = -N * a;
-                      for ( /*int32*/let i = 0; i < N; ++i) {
-                          /*b2.PolygonShape*/
+                      for (let i = 0; i < N; ++i) {
                           const shape = new b2.PolygonShape();
                           shape.SetAsBox(a, a, position, 0.0);
                           ground.CreateFixture(shape, 0.0);
@@ -8300,16 +7339,16 @@
               }
               //    else
               //    {
-              //      /*int32*/ const N = 200;
-              //      /*int32*/ const M = 10;
-              //      /*b2.Vec2*/ const position = new b2.Vec2();
+              //     const N = 200;
+              //     const M = 10;
+              //      const position = new b2.Vec2();
               //      position.x = -N * a;
-              //      for (/*int32*/ let i = 0; i < N; ++i)
+              //      for (let i = 0; i < N; ++i)
               //      {
               //        position.y = 0.0;
-              //        for (/*int32*/ let j = 0; j < M; ++j)
+              //        for (let j = 0; j < M; ++j)
               //        {
-              //          /*b2.PolygonShape*/ const shape = new b2.PolygonShape();
+              //          const shape = new b2.PolygonShape();
               //          shape.SetAsBox(a, a, position, 0.0);
               //          ground.CreateFixture(shape, 0.0);
               //          position.y -= 2.0 * a;
@@ -8319,23 +7358,16 @@
               //    }
           }
           {
-              /*float32*/
               const a = 0.5;
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(a, a);
-              /*b2.Vec2*/
               const x = new b2.Vec2(-7.0, 0.75);
-              /*b2.Vec2*/
               const y = new b2.Vec2();
-              /*b2.Vec2*/
               const deltaX = new b2.Vec2(0.5625, 1.25);
-              /*b2.Vec2*/
               const deltaY = new b2.Vec2(1.125, 0.0);
-              for ( /*int32*/let i = 0; i < Tiles.e_count; ++i) {
+              for (let i = 0; i < Tiles.e_count; ++i) {
                   y.Copy(x);
-                  for ( /*int32*/let j = i; j < Tiles.e_count; ++j) {
-                      /*b2.BodyDef*/
+                  for (let j = i; j < Tiles.e_count; ++j) {
                       const bd = new b2.BodyDef();
                       bd.type = b2.BodyType.b2_dynamicBody;
                       bd.position.Copy(y);
@@ -8347,7 +7379,6 @@
                       //{
                       //  bd.allowSleep = true;
                       //}
-                      /*b2.Body*/
                       const body = this.m_world.CreateBody(bd);
                       body.CreateFixture(shape, 5.0);
                       ++this.m_fixtureCount;
@@ -8359,15 +7390,10 @@
           this.m_createTime = timer.GetMilliseconds();
       }
       Step(settings) {
-          /*const b2.ContactManager*/
           const cm = this.m_world.GetContactManager();
-          /*int32*/
           const height = cm.m_broadPhase.GetTreeHeight();
-          /*int32*/
           const leafCount = cm.m_broadPhase.GetProxyCount();
-          /*int32*/
           const minimumNodeCount = 2 * leafCount - 1;
-          /*float32*/
           const minimumHeight = Math.ceil(Math.log(minimumNodeCount) / Math.log(2.0));
           g_debugDraw.DrawString(5, this.m_textLine, `dynamic tree height = ${height}, min = ${minimumHeight}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
@@ -8387,23 +7413,7 @@
   Tiles.e_count = 20;
   const testIndex$P = RegisterTest("Benchmark", "Tiles", Tiles.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class TimeOfImpact extends Test {
       constructor() {
           super();
@@ -8484,23 +7494,7 @@
   }
   const testIndex$Q = RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
   class Tumbler extends Test {
       constructor() {
           super();
@@ -8554,23 +7548,8 @@
   Tumbler.e_count = 800;
   const testIndex$R = RegisterTest("Benchmark", "Tumbler", Tumbler.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // Test distance joints, body destruction, and joint destruction.
   class Web extends Test {
       constructor() {
           super();
@@ -8721,8 +7700,6 @@
       }
       Step(settings) {
           super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "This demonstrates a soft distance joint.");
-          this.m_textLine += DRAW_STRING_NEW_LINE;
           g_debugDraw.DrawString(5, this.m_textLine, "Press: (b) to delete a body, (j) to delete a joint");
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
@@ -8732,100 +7709,58 @@
   }
   const testIndex$S = RegisterTest("Examples", "Web", Web.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  // Test the wheel joint with motor, spring, and limit options.
   class WheelJoint extends Test {
       constructor() {
           super();
-          // b2Body* ground = NULL;
+          this.m_enableLimit = false;
+          this.m_enableMotor = false;
+          this.m_motorSpeed = 0.0;
           let ground = null;
           {
-              // b2BodyDef bd;
               const bd = new b2.BodyDef();
-              // ground = m_world->CreateBody(&bd);
               ground = this.m_world.CreateBody(bd);
-              // b2EdgeShape shape;
               const shape = new b2.EdgeShape();
-              // shape.SetTwoSided(b2Vec2(-40.0f, 0.0f), b2Vec2(40.0f, 0.0f));
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              // ground->CreateFixture(&shape, 0.0f);
               ground.CreateFixture(shape, 0.0);
           }
-          // m_enableLimit = true;
-          // m_enableMotor = false;
-          // m_motorSpeed = 10.0f;
+          this.m_enableLimit = true;
+          this.m_enableMotor = false;
+          this.m_motorSpeed = 10.0;
           {
-              // b2CircleShape shape;
               const shape = new b2.CircleShape();
-              // shape.m_radius = 2.0f;
               shape.m_radius = 2.0;
-              // b2BodyDef bd;
               const bd = new b2.BodyDef();
-              // bd.type = b2_dynamicBody;
               bd.type = b2.dynamicBody;
-              // bd.position.Set(0.0f, 10.0f);
               bd.position.Set(0.0, 10.0);
-              // bd.allowSleep = false;
               bd.allowSleep = false;
-              // b2Body* body = m_world->CreateBody(&bd);
               const body = this.m_world.CreateBody(bd);
-              // body->CreateFixture(&shape, 5.0f);
               body.CreateFixture(shape, 5.0);
-              // b2WheelJointDef jd;
               const jd = new b2.WheelJointDef();
               // Horizontal
-              // jd.Initialize(ground, body, bd.position, b2Vec2(0.0f, 1.0f));
               jd.Initialize(ground, body, bd.position, new b2.Vec2(0.0, 1.0));
-              // jd.motorSpeed = m_motorSpeed;
-              jd.motorSpeed = 10.0;
-              // jd.maxMotorTorque = 10000.0f;
+              jd.motorSpeed = this.m_motorSpeed;
               jd.maxMotorTorque = 10000.0;
-              // jd.enableMotor = m_enableMotor;
-              jd.enableMotor = true;
-              // jd.lowerTranslation = -3.0f;
+              jd.enableMotor = this.m_enableMotor;
               jd.lowerTranslation = -3.0;
-              // jd.upperTranslation = 3.0f;
               jd.upperTranslation = 3.0;
-              // jd.enableLimit = m_enableLimit;
-              jd.enableLimit = true;
-              // float hertz = 1.0f;
+              jd.enableLimit = this.m_enableLimit;
               const hertz = 1.0;
-              // float dampingRatio = 0.7f;
               const dampingRatio = 0.7;
-              // b2LinearStiffness(jd.stiffness, jd.damping, hertz, dampingRatio, ground, body);
               b2.LinearStiffness(jd, hertz, dampingRatio, ground, body);
-              // m_joint = (b2WheelJoint*)m_world->CreateJoint(&jd);
               this.m_joint = this.m_world.CreateJoint(jd);
           }
       }
       Step(settings) {
           super.Step(settings);
-          // float torque = m_joint->GetMotorTorque(settings.m_hertz);
           const torque = this.m_joint.GetMotorTorque(settings.m_hertz);
           // g_debugDraw.DrawString(5, m_textLine, "Motor Torque = %4.0f", torque);
           g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque.toFixed(0)}`);
-          // m_textLine += m_textIncrement;
           this.m_textLine += DRAW_STRING_NEW_LINE;
-          // b2Vec2 F = m_joint->GetReactionForce(settings.m_hertz);
           const F = this.m_joint.GetReactionForce(settings.m_hertz, WheelJoint.Step_s_F);
           // g_debugDraw.DrawString(5, m_textLine, "Reaction Force = (%4.1f, %4.1f)", F.x, F.y);
           g_debugDraw.DrawString(5, this.m_textLine, `Reaction Force = (${F.x.toFixed(1)}, ${F.y.toFixed(1)})`);
-          // m_textLine += m_textIncrement;
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
@@ -8835,62 +7770,44 @@
   WheelJoint.Step_s_F = new b2.Vec2();
   const testIndex$T = RegisterTest("Joints", "Wheel", WheelJoint.Create);
 
-  /*
-  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-  *
-  * This software is provided 'as-is', without any express or implied
-  * warranty.  In no event will the authors be held liable for any damages
-  * arising from the use of this software.
-  * Permission is granted to anyone to use this software for any purpose,
-  * including commercial applications, and to alter it and redistribute it
-  * freely, subject to the following restrictions:
-  * 1. The origin of this software must not be misrepresented; you must not
-  * claim that you wrote the original software. If you use this software
-  * in a product, an acknowledgment in the product documentation would be
-  * appreciated but is not required.
-  * 2. Altered source versions must be plainly marked as such, and must not be
-  * misrepresented as being the original software.
-  * 3. This notice may not be removed or altered from any source distribution.
-  */
+  // MIT License
+  /// This test shows how a distance joint can be used to stabilize a chain of
+  /// bodies with a heavy payload. Notice that the distance joint just prevents
+  /// excessive stretching and has no other effect.
+  /// By disabling the distance joint you can see that the Box2D solver has trouble
+  /// supporting heavy bodies with light bodies. Try playing around with the
+  /// densities, time step, and iterations to see how they affect stability.
+  /// This test also shows how to use contact filtering. Filtering is configured
+  /// so that the payload does not collide with the chain.
   class WreckingBall extends Test {
       constructor() {
           super();
           this.m_distanceJointDef = new b2.DistanceJointDef();
           this.m_distanceJoint = null;
-          /*b2.Body*/
           let ground = null;
           {
-              /*b2.BodyDef*/
               const bd = new b2.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              /*b2.EdgeShape*/
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              /*b2.PolygonShape*/
               const shape = new b2.PolygonShape();
               shape.SetAsBox(0.5, 0.125);
-              /*b2.FixtureDef*/
               const fd = new b2.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               fd.friction = 0.2;
               fd.filter.categoryBits = 0x0001;
               fd.filter.maskBits = 0xFFFF & ~0x0002;
-              /*b2.RevoluteJointDef*/
               const jd = new b2.RevoluteJointDef();
               jd.collideConnected = false;
-              /*const int32*/
               const N = 10;
-              /*const float32*/
               const y = 15.0;
               this.m_distanceJointDef.localAnchorA.Set(0.0, y);
-              /*b2.Body*/
               let prevBody = ground;
-              for ( /*int32*/let i = 0; i < N; ++i) {
-                  /*b2.BodyDef*/
+              for (let i = 0; i < N; ++i) {
                   const bd = new b2.BodyDef();
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(0.5 + 1.0 * i, y);
@@ -8898,7 +7815,6 @@
                       bd.position.Set(1.0 * i, y);
                       bd.angularDamping = 0.4;
                   }
-                  /*b2.Body*/
                   const body = this.m_world.CreateBody(bd);
                   if (i === N - 1) {
                       const circleShape = new b2.CircleShape();
@@ -8912,14 +7828,12 @@
                   else {
                       body.CreateFixture(fd);
                   }
-                  /*b2.Vec2*/
                   const anchor = new b2.Vec2(i, y);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
               }
               this.m_distanceJointDef.localAnchorB.SetZero();
-              /*float32*/
               const extraLength = 0.01;
               this.m_distanceJointDef.minLength = 0.0;
               this.m_distanceJointDef.maxLength = N - 1.0 + extraLength;
@@ -14727,6 +13641,7 @@
   const testIndex$1o = RegisterTest("Particles", "Wave Machine", WaveMachine.Create);
   // #endif
 
+  // MIT License
   class Main {
       constructor(time) {
           this.m_time_last = 0;

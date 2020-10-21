@@ -1,6 +1,6 @@
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
-export declare class Gears extends testbed.Test {
+export declare class GearJoint extends testbed.Test {
     m_joint1: b2.RevoluteJoint;
     m_joint2: b2.RevoluteJoint;
     m_joint3: b2.PrismaticJoint;

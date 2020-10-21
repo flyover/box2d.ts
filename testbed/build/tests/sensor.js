@@ -1,23 +1,7 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, SensorTest, testIndex;
+    var b2, testbed, Sensors, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,12 +13,13 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            SensorTest = class SensorTest extends testbed.Test {
+            // This shows how to use sensor shapes. Sensors don't have collision, but report overlap events.
+            Sensors = class Sensors extends testbed.Test {
                 constructor() {
                     super();
-                    this.m_bodies = new Array(SensorTest.e_count);
-                    this.m_touching = new Array(SensorTest.e_count);
-                    for (let i = 0; i < SensorTest.e_count; ++i) {
+                    this.m_bodies = new Array(Sensors.e_count);
+                    this.m_touching = new Array(Sensors.e_count);
+                    for (let i = 0; i < Sensors.e_count; ++i) {
                         this.m_touching[i] = new Array(1);
                     }
                     const bd = new b2.BodyDef();
@@ -64,7 +49,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     {
                         const shape = new b2.CircleShape();
                         shape.m_radius = 1.0;
-                        for (let i = 0; i < SensorTest.e_count; ++i) {
+                        for (let i = 0; i < Sensors.e_count; ++i) {
                             //const bd = new b2.BodyDef();
                             bd.type = b2.BodyType.b2_dynamicBody;
                             bd.position.Set(-10.0 + 3.0 * i, 20.0);
@@ -115,7 +100,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     super.Step(settings);
                     // Traverse the contact results. Apply a force on shapes
                     // that overlap the sensor.
-                    for (let i = 0; i < SensorTest.e_count; ++i) {
+                    for (let i = 0; i < Sensors.e_count; ++i) {
                         if (!this.m_touching[i][0]) {
                             continue;
                         }
@@ -134,12 +119,12 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     }
                 }
                 static Create() {
-                    return new SensorTest();
+                    return new Sensors();
                 }
             };
-            exports_1("SensorTest", SensorTest);
-            SensorTest.e_count = 7;
-            exports_1("testIndex", testIndex = testbed.RegisterTest("Collision", "Sensors", SensorTest.Create));
+            exports_1("Sensors", Sensors);
+            Sensors.e_count = 7;
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Collision", "Sensors", Sensors.Create));
         }
     };
 });

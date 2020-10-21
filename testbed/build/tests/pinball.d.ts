@@ -1,9 +1,5 @@
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
-/**
- * This tests bullet collision and provides an example of a
- * gameplay scenario. This also uses a loop shape.
- */
 export declare class Pinball extends testbed.Test {
     m_leftJoint: b2.RevoluteJoint;
     m_rightJoint: b2.RevoluteJoint;

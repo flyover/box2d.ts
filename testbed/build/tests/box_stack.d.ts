@@ -1,6 +1,6 @@
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
-export declare class VerticalStack extends testbed.Test {
+export declare class BoxStack extends testbed.Test {
     static readonly e_columnCount = 1;
     static readonly e_rowCount = 15;
     m_bullet: b2.Body | null;

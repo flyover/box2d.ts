@@ -1,23 +1,7 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, PolyShapesCallback, PolyShapes, testIndex;
+    var b2, testbed, PolygonShapesCallback, PolygonShapes, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,22 +13,22 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            /**
-             * This callback is called by b2.World::QueryAABB. We find
-             * all the fixtures that overlap an AABB. Of those, we use
-             * b2TestOverlap to determine which fixtures overlap a circle.
-             * Up to 4 overlapped fixtures will be highlighted with a yellow
-             * border.
-             */
-            PolyShapesCallback = class PolyShapesCallback extends b2.QueryCallback {
+            /// This tests stacking. It also shows how to use b2World::Query
+            /// and b2TestOverlap.
+            /// This callback is called by b2World::QueryAABB. We find all the fixtures
+            /// that overlap an AABB. Of those, we use b2TestOverlap to determine which fixtures
+            /// overlap a circle. Up to 4 overlapped fixtures will be highlighted with a yellow border.
+            PolygonShapesCallback = class PolygonShapesCallback extends b2.QueryCallback {
                 constructor() {
                     super(...arguments);
                     this.m_circle = new b2.CircleShape();
                     this.m_transform = new b2.Transform();
                     this.m_count = 0;
                 }
+                /// Called for each fixture found in the query AABB.
+                /// @return false to terminate the query.
                 ReportFixture(fixture) {
-                    if (this.m_count === PolyShapesCallback.e_maxCount) {
+                    if (this.m_count === PolygonShapesCallback.e_maxCount) {
                         return false;
                     }
                     const body = fixture.GetBody();
@@ -59,13 +43,13 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     return true;
                 }
             };
-            exports_1("PolyShapesCallback", PolyShapesCallback);
-            PolyShapesCallback.e_maxCount = 4;
-            PolyShapes = class PolyShapes extends testbed.Test {
+            exports_1("PolygonShapesCallback", PolygonShapesCallback);
+            PolygonShapesCallback.e_maxCount = 4;
+            PolygonShapes = class PolygonShapes extends testbed.Test {
                 constructor() {
                     super();
                     this.m_bodyIndex = 0;
-                    this.m_bodies = b2.MakeArray(PolyShapes.e_maxBodies, () => null);
+                    this.m_bodies = b2.MakeArray(PolygonShapes.e_maxBodies, () => null);
                     this.m_polygons = b2.MakeArray(4, () => new b2.PolygonShape());
                     this.m_circle = new b2.CircleShape();
                     // Ground body
@@ -111,7 +95,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     {
                         this.m_circle.m_radius = 0.5;
                     }
-                    for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
+                    for (let i = 0; i < PolygonShapes.e_maxBodies; ++i) {
                         this.m_bodies[i] = null;
                     }
                 }
@@ -143,10 +127,10 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         fd.friction = 0.3;
                         this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
                     }
-                    this.m_bodyIndex = (this.m_bodyIndex + 1) % PolyShapes.e_maxBodies;
+                    this.m_bodyIndex = (this.m_bodyIndex + 1) % PolygonShapes.e_maxBodies;
                 }
                 DestroyBody() {
-                    for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
+                    for (let i = 0; i < PolygonShapes.e_maxBodies; ++i) {
                         if (this.m_bodies[i] !== null) {
                             this.m_world.DestroyBody(this.m_bodies[i]);
                             this.m_bodies[i] = null;
@@ -164,7 +148,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                             this.CreateBody(key.charCodeAt(0) - "1".charCodeAt(0));
                             break;
                         case "a":
-                            for (let i = 0; i < PolyShapes.e_maxBodies; i += 2) {
+                            for (let i = 0; i < PolygonShapes.e_maxBodies; i += 2) {
                                 if (this.m_bodies[i] !== null) {
                                     const enabled = this.m_bodies[i].IsEnabled();
                                     this.m_bodies[i].SetEnabled(!enabled);
@@ -178,7 +162,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                 }
                 Step(settings) {
                     super.Step(settings);
-                    const callback = new PolyShapesCallback();
+                    const callback = new PolygonShapesCallback();
                     callback.m_circle.m_radius = 2.0;
                     callback.m_circle.m_p.Set(0.0, 1.1);
                     callback.m_transform.SetIdentity();
@@ -187,7 +171,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     this.m_world.QueryAABB(callback, aabb);
                     const color = new b2.Color(0.4, 0.7, 0.8);
                     testbed.g_debugDraw.DrawCircle(callback.m_circle.m_p, callback.m_circle.m_radius, color);
-                    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolyShapesCallback.e_maxCount} overlaps detected`);
+                    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolygonShapesCallback.e_maxCount} overlaps detected`);
                     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
                     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 'a' to enable/disable some bodies");
                     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
@@ -195,12 +179,12 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
                 }
                 static Create() {
-                    return new PolyShapes();
+                    return new PolygonShapes();
                 }
             };
-            exports_1("PolyShapes", PolyShapes);
-            PolyShapes.e_maxBodies = 256;
-            exports_1("testIndex", testIndex = testbed.RegisterTest("Geometry", "Polygon Shapes", PolyShapes.Create));
+            exports_1("PolygonShapes", PolygonShapes);
+            PolygonShapes.e_maxBodies = 256;
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Geometry", "Polygon Shapes", PolygonShapes.Create));
         }
     };
 });

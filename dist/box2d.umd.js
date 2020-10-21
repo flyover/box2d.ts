@@ -9274,7 +9274,9 @@
   */
   // Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
   // #define B2_DEBUG_SOLVER 0
-  let g_blockSolve = false;
+  exports.blockSolve = false;
+  function get_g_blockSolve() { return exports.blockSolve; }
+  function set_g_blockSolve(value) { exports.blockSolve = value; }
   class b2VelocityConstraintPoint {
       constructor() {
           this.rA = new b2Vec2();
@@ -9555,7 +9557,7 @@
                   }
               }
               // If we have two points, then prepare the block solver.
-              if (vc.pointCount === 2 && g_blockSolve) {
+              if (vc.pointCount === 2 && exports.blockSolve) {
                   const vcp1 = vc.points[0];
                   const vcp2 = vc.points[1];
                   const rn1A = b2Vec2.CrossVV(vcp1.rA, vc.normal);
@@ -9679,7 +9681,7 @@
                   wB += iB * b2Vec2.CrossVV(vcp.rB, P);
               }
               // Solve normal constraints
-              if (vc.pointCount === 1 || g_blockSolve === false) {
+              if (vc.pointCount === 1 || exports.blockSolve === false) {
                   for (let j = 0; j < pointCount; ++j) {
                       const vcp = vc.points[j];
                       // Relative velocity at contact
@@ -22391,12 +22393,12 @@
   exports.angularSlop = b2_angularSlop;
   exports.barrierCollisionTime = b2_barrierCollisionTime;
   exports.baumgarte = b2_baumgarte;
-  exports.blockSolve = g_blockSolve;
   exports.branch = b2_branch;
   exports.commit = b2_commit;
   exports.dynamicBody = dynamicBody;
   exports.epsilon = b2_epsilon;
   exports.epsilon_sq = b2_epsilon_sq;
+  exports.get_g_blockSolve = get_g_blockSolve;
   exports.gjk_reset = b2_gjk_reset;
   exports.invalidParticleIndex = b2_invalidParticleIndex;
   exports.kinematicBody = kinematicBody;
@@ -22424,6 +22426,7 @@
   exports.particleStride = b2_particleStride;
   exports.pi = b2_pi;
   exports.polygonRadius = b2_polygonRadius;
+  exports.set_g_blockSolve = set_g_blockSolve;
   exports.staticBody = staticBody;
   exports.timeToSleep = b2_timeToSleep;
   exports.toiBaumgarte = b2_toiBaumgarte;

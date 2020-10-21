@@ -1,6 +1,6 @@
 import * as testbed from "@testbed";
-export declare class BasicSliderCrank extends testbed.Test {
+export declare class SliderCrank1 extends testbed.Test {
     constructor();
-    static Create(): BasicSliderCrank;
+    static Create(): SliderCrank1;
 }
 export declare const testIndex: number;

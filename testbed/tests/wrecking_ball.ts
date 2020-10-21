@@ -1,24 +1,36 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
+
+// Copyright (c) 2019 Erin Catto
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
 
+/// This test shows how a distance joint can be used to stabilize a chain of
+/// bodies with a heavy payload. Notice that the distance joint just prevents
+/// excessive stretching and has no other effect.
+/// By disabling the distance joint you can see that the Box2D solver has trouble
+/// supporting heavy bodies with light bodies. Try playing around with the
+/// densities, time step, and iterations to see how they affect stability.
+/// This test also shows how to use contact filtering. Filtering is configured
+/// so that the payload does not collide with the chain.
 export class WreckingBall extends testbed.Test {
   public m_distanceJointDef = new b2.DistanceJointDef();
   public m_distanceJoint: b2.DistanceJoint | null = null;
@@ -26,25 +38,20 @@ export class WreckingBall extends testbed.Test {
   constructor() {
     super();
 
-    /*b2.Body*/
     let ground = null;
     {
-      /*b2.BodyDef*/
       const bd = new b2.BodyDef();
       ground = this.m_world.CreateBody(bd);
 
-      /*b2.EdgeShape*/
       const shape = new b2.EdgeShape();
       shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
     }
 
     {
-      /*b2.PolygonShape*/
       const shape = new b2.PolygonShape();
       shape.SetAsBox(0.5, 0.125);
 
-      /*b2.FixtureDef*/
       const fd = new b2.FixtureDef();
       fd.shape = shape;
       fd.density = 20.0;
@@ -52,20 +59,15 @@ export class WreckingBall extends testbed.Test {
       fd.filter.categoryBits = 0x0001;
       fd.filter.maskBits = 0xFFFF & ~0x0002;
 
-      /*b2.RevoluteJointDef*/
       const jd = new b2.RevoluteJointDef();
       jd.collideConnected = false;
 
-      /*const int32*/
       const N = 10;
-      /*const float32*/
       const y = 15.0;
       this.m_distanceJointDef.localAnchorA.Set(0.0, y);
 
-      /*b2.Body*/
       let prevBody = ground;
-      for ( /*int32*/ let i = 0; i < N; ++i) {
-        /*b2.BodyDef*/
+      for (let i = 0; i < N; ++i) {
         const bd = new b2.BodyDef();
         bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.5 + 1.0 * i, y);
@@ -74,7 +76,6 @@ export class WreckingBall extends testbed.Test {
           bd.angularDamping = 0.4;
         }
 
-        /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
 
         if (i === N - 1) {
@@ -90,7 +91,6 @@ export class WreckingBall extends testbed.Test {
           body.CreateFixture(fd);
         }
 
-        /*b2.Vec2*/
         const anchor = new b2.Vec2(i, y);
         jd.Initialize(prevBody, body, anchor);
         this.m_world.CreateJoint(jd);
@@ -100,7 +100,6 @@ export class WreckingBall extends testbed.Test {
 
       this.m_distanceJointDef.localAnchorB.SetZero();
 
-      /*float32*/
       const extraLength = 0.01;
       this.m_distanceJointDef.minLength = 0.0;
       this.m_distanceJointDef.maxLength = N - 1.0 + extraLength;

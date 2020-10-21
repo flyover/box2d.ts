@@ -1,40 +1,45 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
+
+// Copyright (c) 2019 Erin Catto
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
 
-/**
- * This callback is called by b2.World::QueryAABB. We find
- * all the fixtures that overlap an AABB. Of those, we use
- * b2TestOverlap to determine which fixtures overlap a circle.
- * Up to 4 overlapped fixtures will be highlighted with a yellow
- * border.
- */
-export class PolyShapesCallback extends b2.QueryCallback {
+/// This tests stacking. It also shows how to use b2World::Query
+/// and b2TestOverlap.
+
+/// This callback is called by b2World::QueryAABB. We find all the fixtures
+/// that overlap an AABB. Of those, we use b2TestOverlap to determine which fixtures
+/// overlap a circle. Up to 4 overlapped fixtures will be highlighted with a yellow border.
+export class PolygonShapesCallback extends b2.QueryCallback {
   public static readonly e_maxCount = 4;
 
   public m_circle = new b2.CircleShape();
   public m_transform = new b2.Transform();
   public m_count = 0;
 
+  /// Called for each fixture found in the query AABB.
+  /// @return false to terminate the query.
   public ReportFixture(fixture: b2.Fixture) {
-    if (this.m_count === PolyShapesCallback.e_maxCount) {
+    if (this.m_count === PolygonShapesCallback.e_maxCount) {
       return false;
     }
 
@@ -54,11 +59,11 @@ export class PolyShapesCallback extends b2.QueryCallback {
   }
 }
 
-export class PolyShapes extends testbed.Test {
+export class PolygonShapes extends testbed.Test {
   public static readonly e_maxBodies = 256;
 
   public m_bodyIndex = 0;
-  public m_bodies: Array<b2.Body | null> = b2.MakeArray(PolyShapes.e_maxBodies, () => null);
+  public m_bodies: Array<b2.Body | null> = b2.MakeArray(PolygonShapes.e_maxBodies, () => null);
   public m_polygons = b2.MakeArray(4, () => new b2.PolygonShape());
   public m_circle = new b2.CircleShape();
 
@@ -117,7 +122,7 @@ export class PolyShapes extends testbed.Test {
       this.m_circle.m_radius = 0.5;
     }
 
-    for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
+    for (let i = 0; i < PolygonShapes.e_maxBodies; ++i) {
       this.m_bodies[i] = null;
     }
   }
@@ -156,11 +161,11 @@ export class PolyShapes extends testbed.Test {
       this.m_bodies[this.m_bodyIndex]!.CreateFixture(fd);
     }
 
-    this.m_bodyIndex = (this.m_bodyIndex + 1) % PolyShapes.e_maxBodies;
+    this.m_bodyIndex = (this.m_bodyIndex + 1) % PolygonShapes.e_maxBodies;
   }
 
   public DestroyBody() {
-    for (let i = 0; i < PolyShapes.e_maxBodies; ++i) {
+    for (let i = 0; i < PolygonShapes.e_maxBodies; ++i) {
       if (this.m_bodies[i] !== null) {
         this.m_world.DestroyBody(this.m_bodies[i]!);
         this.m_bodies[i] = null;
@@ -180,7 +185,7 @@ export class PolyShapes extends testbed.Test {
         break;
 
       case "a":
-        for (let i = 0; i < PolyShapes.e_maxBodies; i += 2) {
+        for (let i = 0; i < PolygonShapes.e_maxBodies; i += 2) {
           if (this.m_bodies[i] !== null) {
             const enabled = this.m_bodies[i]!.IsEnabled();
             this.m_bodies[i]!.SetEnabled(!enabled);
@@ -197,7 +202,7 @@ export class PolyShapes extends testbed.Test {
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
 
-    const callback = new PolyShapesCallback();
+    const callback = new PolygonShapesCallback();
     callback.m_circle.m_radius = 2.0;
     callback.m_circle.m_p.Set(0.0, 1.1);
     callback.m_transform.SetIdentity();
@@ -210,7 +215,7 @@ export class PolyShapes extends testbed.Test {
     const color = new b2.Color(0.4, 0.7, 0.8);
     testbed.g_debugDraw.DrawCircle(callback.m_circle.m_p, callback.m_circle.m_radius, color);
 
-    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolyShapesCallback.e_maxCount} overlaps detected`);
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolygonShapesCallback.e_maxCount} overlaps detected`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press 'a' to enable/disable some bodies");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
@@ -219,8 +224,8 @@ export class PolyShapes extends testbed.Test {
   }
 
   public static Create(): testbed.Test {
-    return new PolyShapes();
+    return new PolygonShapes();
   }
 }
 
-export const testIndex: number = testbed.RegisterTest("Geometry", "Polygon Shapes", PolyShapes.Create);
+export const testIndex: number = testbed.RegisterTest("Geometry", "Polygon Shapes", PolygonShapes.Create);

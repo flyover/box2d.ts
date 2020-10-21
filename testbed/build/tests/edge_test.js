@@ -1,20 +1,4 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
     var b2, testbed, EdgeTest, testIndex;
@@ -169,53 +153,57 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         this.m_world.DestroyBody(this.m_body2);
                         this.m_body2 = null;
                     }
-                    // {
-                    // 	b2BodyDef bd;
-                    // 	bd.type = b2_dynamicBody;
-                    // 	bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset1;
-                    // 	bd.allowSleep = false;
-                    // 	this.m_body1 = this.m_world.CreateBody(bd);
-                    // 	b2CircleShape shape;
-                    // 	shape.this.m_radius = 0.5f;
-                    // 	this.m_body1.CreateFixture(shape, 1.0);
-                    // }
-                    // {
-                    // 	b2BodyDef bd;
-                    // 	bd.type = b2_dynamicBody;
-                    // 	bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset2;
-                    // 	bd.allowSleep = false;
-                    // 	this.m_body2 = this.m_world.CreateBody(bd);
-                    // 	b2CircleShape shape;
-                    // 	shape.this.m_radius = 0.5f;
-                    // 	this.m_body2.CreateFixture(shape, 1.0);
-                    // }
+                    {
+                        const bd = new b2.BodyDef();
+                        bd.type = b2.BodyType.b2_dynamicBody;
+                        // bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset1;
+                        bd.position.x = -0.5 + this.m_offset1.x;
+                        bd.position.y = 0.6 + this.m_offset1.y;
+                        bd.allowSleep = false;
+                        this.m_body1 = this.m_world.CreateBody(bd);
+                        const shape = new b2.CircleShape();
+                        shape.m_radius = 0.5;
+                        this.m_body1.CreateFixture(shape, 1.0);
+                    }
+                    {
+                        const bd = new b2.BodyDef();
+                        bd.type = b2.BodyType.b2_dynamicBody;
+                        // bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset2;
+                        bd.position.x = -0.5 + this.m_offset2.x;
+                        bd.position.y = 0.6 + this.m_offset2.y;
+                        bd.allowSleep = false;
+                        this.m_body2 = this.m_world.CreateBody(bd);
+                        const shape = new b2.CircleShape();
+                        shape.m_radius = 0.5;
+                        this.m_body2.CreateFixture(shape, 1.0);
+                    }
                 }
                 UpdateUI() {
-                    // 	ImGui::SetNextWindowPos(ImVec2(10.0, 100.0));
-                    // 	ImGui::SetNextWindowSize(ImVec2(200.0, 100.0));
-                    // 	ImGui::Begin("Custom Controls", null, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-                    // 	if (ImGui::RadioButton("Boxes", m_boxes == true))
-                    // 	{
-                    // 		CreateBoxes();
-                    // 		m_boxes = true;
-                    // 	}
-                    // 	if (ImGui::RadioButton("Circles", m_boxes == false))
-                    // 	{
-                    // 		CreateCircles();
-                    // 		m_boxes = false;
-                    // 	}
-                    // 	ImGui::End();
+                    // ImGui::SetNextWindowPos(ImVec2(10.0, 100.0));
+                    // ImGui::SetNextWindowSize(ImVec2(200.0, 100.0));
+                    // ImGui::Begin("Custom Controls", null, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+                    // if (ImGui::RadioButton("Boxes", m_boxes == true))
+                    // {
+                    //   CreateBoxes();
+                    //   m_boxes = true;
+                    // }
+                    // if (ImGui::RadioButton("Circles", m_boxes == false))
+                    // {
+                    //   CreateCircles();
+                    //   m_boxes = false;
+                    // }
+                    // ImGui::End();
                 }
                 Step(settings) {
                     // if (glfwGetKey(g_mainWindow, GLFW_KEY_A) == GLFW_PRESS)
                     // {
-                    // 	this.m_body1.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
-                    // 	this.m_body2.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+                    //   this.m_body1.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+                    //   this.m_body2.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
                     // }
                     // if (glfwGetKey(g_mainWindow, GLFW_KEY_D) == GLFW_PRESS)
                     // {
-                    // 	this.m_body1.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
-                    // 	this.m_body2.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+                    //   this.m_body1.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+                    //   this.m_body2.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
                     // }
                     super.Step(settings);
                 }
@@ -229,6 +217,12 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         case "d":
                             (_c = this.m_body1) === null || _c === void 0 ? void 0 : _c.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
                             (_d = this.m_body2) === null || _d === void 0 ? void 0 : _d.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+                            break;
+                        case "b":
+                            this.CreateBoxes();
+                            break;
+                        case "c":
+                            this.CreateCircles();
                             break;
                     }
                 }

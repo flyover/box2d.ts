@@ -1,24 +1,29 @@
-/*
-* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
+
+// Copyright (c) 2019 Erin Catto
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
 
+// This is used to test sensor shapes.
 export class Breakable extends testbed.Test {
   public static readonly e_count = 7;
 
@@ -37,12 +42,9 @@ export class Breakable extends testbed.Test {
 
     // Ground body
     {
-      /*b2.BodyDef*/
       const bd = new b2.BodyDef();
-      /*b2.Body*/
       const ground = this.m_world.CreateBody(bd);
 
-      /*b2.EdgeShape*/
       const shape = new b2.EdgeShape();
       shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
       ground.CreateFixture(shape, 0.0);
@@ -50,7 +52,6 @@ export class Breakable extends testbed.Test {
 
     // Breakable dynamic body
     {
-      /*b2.BodyDef*/
       const bd = new b2.BodyDef();
       bd.type = b2.BodyType.b2_dynamicBody;
       bd.position.Set(0.0, 40.0);
@@ -74,10 +75,8 @@ export class Breakable extends testbed.Test {
     }
 
     // Should the body break?
-    /*int*/
     const count = contact.GetManifold().pointCount;
 
-    /*float32*/
     let maxImpulse = 0.0;
     for (let i = 0; i < count; ++i) {
       maxImpulse = b2.Max(maxImpulse, impulse.normalImpulses[i]);
@@ -99,26 +98,20 @@ export class Breakable extends testbed.Test {
     body1.DestroyFixture(this.m_piece2);
     this.m_piece2 = null;
 
-    /*b2.BodyDef*/
     const bd = new b2.BodyDef();
     bd.type = b2.BodyType.b2_dynamicBody;
     bd.position.Copy(body1.GetPosition());
     bd.angle = body1.GetAngle();
 
-    /*b2.Body*/
     const body2 = this.m_world.CreateBody(bd);
     this.m_piece2 = body2.CreateFixture(this.m_shape2, 1.0);
 
     // Compute consistent velocities for new bodies based on
     // cached velocity.
-    /*b2.Vec2*/
     const center1 = body1.GetWorldCenter();
-    /*b2.Vec2*/
     const center2 = body2.GetWorldCenter();
 
-    /*b2.Vec2*/
     const velocity1 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center1, center, b2.Vec2.s_t0), new b2.Vec2());
-    /*b2.Vec2*/
     const velocity2 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center2, center, b2.Vec2.s_t0), new b2.Vec2());
 
     body1.SetAngularVelocity(this.m_angularVelocity);
