@@ -382,7 +382,7 @@
   const b2_aabbMultiplier = 4;
   /// A small length used as a collision and constraint tolerance. Usually it is
   /// chosen to be numerically significant, but visually insignificant.
-  const b2_linearSlop = 0.008; // 0.005;
+  const b2_linearSlop = 0.005;
   /// A small angle used as a collision and constraint tolerance. Usually it is
   /// chosen to be numerically significant, but visually insignificant.
   const b2_angularSlop = 2 / 180 * b2_pi;

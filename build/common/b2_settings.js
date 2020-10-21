@@ -104,7 +104,7 @@ System.register([], function (exports_1, context_1) {
             exports_1("b2_aabbMultiplier", b2_aabbMultiplier = 4);
             /// A small length used as a collision and constraint tolerance. Usually it is
             /// chosen to be numerically significant, but visually insignificant.
-            exports_1("b2_linearSlop", b2_linearSlop = 0.008); // 0.005;
+            exports_1("b2_linearSlop", b2_linearSlop = 0.005);
             /// A small angle used as a collision and constraint tolerance. Usually it is
             /// chosen to be numerically significant, but visually insignificant.
             exports_1("b2_angularSlop", b2_angularSlop = 2 / 180 * b2_pi);

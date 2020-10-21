@@ -1,24 +1,27 @@
-/*
-* Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
-*
-* This software is provided 'as-is', without any express or implied
-* warranty.  In no event will the authors be held liable for any damages
-* arising from the use of this software.
-* Permission is granted to anyone to use this software for any purpose,
-* including commercial applications, and to alter it and redistribute it
-* freely, subject to the following restrictions:
-* 1. The origin of this software must not be misrepresented; you must not
-* claim that you wrote the original software. If you use this software
-* in a product, an acknowledgment in the product documentation would be
-* appreciated but is not required.
-* 2. Altered source versions must be plainly marked as such, and must not be
-* misrepresented as being the original software.
-* 3. This notice may not be removed or altered from any source distribution.
-*/
+// MIT License
 System.register(["@box2d"], function (exports_1, context_1) {
     "use strict";
     var b2;
     var __moduleName = context_1 && context_1.id;
+    // Copyright (c) 2019 Erin Catto
+    // Permission is hereby granted, free of charge, to any person obtaining a copy
+    // of this software and associated documentation files (the "Software"), to deal
+    // in the Software without restriction, including without limitation the rights
+    // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    // copies of the Software, and to permit persons to whom the Software is
+    // furnished to do so, subject to the following conditions:
+    // The above copyright notice and this permission notice shall be included in all
+    // copies or substantial portions of the Software.
+    // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    // SOFTWARE.
+    function CHECK(c, msg) { if (!c) {
+        throw new Error(msg);
+    } }
     // This is a simple example of building and running a simulation
     // using Box2D. Here we create a large ground box and a small dynamic
     // box.
@@ -65,20 +68,25 @@ System.register(["@box2d"], function (exports_1, context_1) {
         const timeStep = 1 / 60;
         const velocityIterations = 6;
         const positionIterations = 2;
+        let position = body.GetPosition();
+        let angle = body.GetAngle();
         // This is our little game loop.
         for (let i = 0; i < 60; ++i) {
             // Instruct the world to perform a single step of simulation.
             // It is generally best to keep the time step and iterations fixed.
             world.Step(timeStep, velocityIterations, positionIterations);
             // Now print the position and angle of the body.
-            const position = body.GetPosition();
-            const angle = body.GetAngle();
+            position = body.GetPosition();
+            angle = body.GetAngle();
             console.log(position.x.toFixed(2), position.y.toFixed(2), angle.toFixed(2));
         }
         // When the world destructor is called, all bodies and joints are freed. This can
         // create orphaned pointers, so be careful about your world management.
         body.DestroyFixture(fixture);
         world.DestroyBody(body);
+        CHECK(b2.Abs(position.x) < 0.01);
+        CHECK(b2.Abs(position.y - 1.01) < 0.01);
+        CHECK(b2.Abs(angle) < 0.01);
         return 0;
     }
     exports_1("main", main);
