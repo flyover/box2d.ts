@@ -77,7 +77,6 @@ export * from "./dynamics/b2_mouse_joint.js";
 export * from "./dynamics/b2_prismatic_joint.js";
 export * from "./dynamics/b2_pulley_joint.js";
 export * from "./dynamics/b2_revolute_joint.js";
-export * from "./dynamics/b2_rope_joint.js";
 export * from "./dynamics/b2_weld_joint.js";
 export * from "./dynamics/b2_wheel_joint.js";
 

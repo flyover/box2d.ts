@@ -3,8 +3,8 @@ import { b2Joint, b2JointDef, b2IJointDef } from "./b2_joint.js";
 import { b2SolverData } from "./b2_time_step.js";
 import { b2Body } from "./b2_body.js";
 export interface b2IFrictionJointDef extends b2IJointDef {
-    localAnchorA: XY;
-    localAnchorB: XY;
+    localAnchorA?: XY;
+    localAnchorB?: XY;
     maxForce?: number;
     maxTorque?: number;
 }

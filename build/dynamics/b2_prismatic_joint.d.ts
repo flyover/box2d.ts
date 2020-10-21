@@ -113,9 +113,12 @@ export declare class b2PrismaticJoint extends b2Joint {
     private static Draw_s_pB;
     private static Draw_s_axis;
     private static Draw_s_c1;
+    private static Draw_s_c2;
+    private static Draw_s_c3;
     private static Draw_s_c4;
     private static Draw_s_c5;
     private static Draw_s_lower;
     private static Draw_s_upper;
+    private static Draw_s_perp;
     Draw(draw: b2Draw): void;
 }

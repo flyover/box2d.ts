@@ -15,9 +15,9 @@
 * misrepresented as being the original software.
 * 3. This notice may not be removed or altered from any source distribution.
 */
-System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/b2_timer.js", "../common/b2_draw.js", "../collision/b2_collision.js", "../collision/b2_time_of_impact.js", "../collision/b2_shape.js", "./b2_joint.js", "./b2_area_joint.js", "./b2_distance_joint.js", "./b2_friction_joint.js", "./b2_gear_joint.js", "./b2_motor_joint.js", "./b2_mouse_joint.js", "./b2_prismatic_joint.js", "./b2_pulley_joint.js", "./b2_revolute_joint.js", "./b2_rope_joint.js", "./b2_weld_joint.js", "./b2_wheel_joint.js", "./b2_body.js", "./b2_contact_manager.js", "./b2_island.js", "./b2_time_step.js", "./b2_world_callbacks.js", "../particle/b2_particle.js", "../particle/b2_particle_system.js"], function (exports_1, context_1) {
+System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/b2_timer.js", "../common/b2_draw.js", "../collision/b2_collision.js", "../collision/b2_time_of_impact.js", "../collision/b2_shape.js", "./b2_joint.js", "./b2_area_joint.js", "./b2_distance_joint.js", "./b2_friction_joint.js", "./b2_gear_joint.js", "./b2_motor_joint.js", "./b2_mouse_joint.js", "./b2_prismatic_joint.js", "./b2_pulley_joint.js", "./b2_revolute_joint.js", "./b2_weld_joint.js", "./b2_wheel_joint.js", "./b2_body.js", "./b2_contact_manager.js", "./b2_island.js", "./b2_time_step.js", "./b2_world_callbacks.js", "../particle/b2_particle.js", "../particle/b2_particle_system.js"], function (exports_1, context_1) {
     "use strict";
-    var b2_settings_js_1, b2_math_js_1, b2_timer_js_1, b2_draw_js_1, b2_collision_js_1, b2_time_of_impact_js_1, b2_shape_js_1, b2_joint_js_1, b2_area_joint_js_1, b2_distance_joint_js_1, b2_friction_joint_js_1, b2_gear_joint_js_1, b2_motor_joint_js_1, b2_mouse_joint_js_1, b2_prismatic_joint_js_1, b2_pulley_joint_js_1, b2_revolute_joint_js_1, b2_rope_joint_js_1, b2_weld_joint_js_1, b2_wheel_joint_js_1, b2_body_js_1, b2_contact_manager_js_1, b2_island_js_1, b2_time_step_js_1, b2_world_callbacks_js_1, b2_world_callbacks_js_2, b2_settings_js_2, b2_particle_js_1, b2_particle_system_js_1, b2World;
+    var b2_settings_js_1, b2_math_js_1, b2_timer_js_1, b2_draw_js_1, b2_collision_js_1, b2_time_of_impact_js_1, b2_shape_js_1, b2_joint_js_1, b2_area_joint_js_1, b2_distance_joint_js_1, b2_friction_joint_js_1, b2_gear_joint_js_1, b2_motor_joint_js_1, b2_mouse_joint_js_1, b2_prismatic_joint_js_1, b2_pulley_joint_js_1, b2_revolute_joint_js_1, b2_weld_joint_js_1, b2_wheel_joint_js_1, b2_body_js_1, b2_contact_manager_js_1, b2_island_js_1, b2_time_step_js_1, b2_world_callbacks_js_1, b2_world_callbacks_js_2, b2_settings_js_2, b2_particle_js_1, b2_particle_system_js_1, b2World;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -72,9 +72,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
             },
             function (b2_revolute_joint_js_1_1) {
                 b2_revolute_joint_js_1 = b2_revolute_joint_js_1_1;
-            },
-            function (b2_rope_joint_js_1_1) {
-                b2_rope_joint_js_1 = b2_rope_joint_js_1_1;
             },
             function (b2_weld_joint_js_1_1) {
                 b2_weld_joint_js_1 = b2_weld_joint_js_1_1;
@@ -262,7 +259,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                         case b2_joint_js_1.b2JointType.e_wheelJoint: return new b2_wheel_joint_js_1.b2WheelJoint(def);
                         case b2_joint_js_1.b2JointType.e_weldJoint: return new b2_weld_joint_js_1.b2WeldJoint(def);
                         case b2_joint_js_1.b2JointType.e_frictionJoint: return new b2_friction_joint_js_1.b2FrictionJoint(def);
-                        case b2_joint_js_1.b2JointType.e_ropeJoint: return new b2_rope_joint_js_1.b2RopeJoint(def);
                         case b2_joint_js_1.b2JointType.e_motorJoint: return new b2_motor_joint_js_1.b2MotorJoint(def);
                         case b2_joint_js_1.b2JointType.e_areaJoint: return new b2_area_joint_js_1.b2AreaJoint(def);
                     }

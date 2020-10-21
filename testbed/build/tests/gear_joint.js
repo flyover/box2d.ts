@@ -132,6 +132,21 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                 }
                 Step(settings) {
                     super.Step(settings);
+                    // float ratio, value;
+                    let ratio;
+                    let value;
+                    ratio = this.m_joint4.GetRatio();
+                    value = this.m_joint1.GetJointAngle() + ratio * this.m_joint2.GetJointAngle();
+                    // g_debugDraw.DrawString(5, m_textLine, "theta1 + %4.2f * theta2 = %4.2f", (float) ratio, (float) value);
+                    testbed.g_debugDraw.DrawString(5, this.m_textLine, `theta1 + ${ratio.toFixed(2)} * theta2 = ${value.toFixed(2)}`);
+                    // m_textLine += m_textIncrement;
+                    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+                    ratio = this.m_joint5.GetRatio();
+                    value = this.m_joint2.GetJointAngle() + ratio * this.m_joint3.GetJointTranslation();
+                    // g_debugDraw.DrawString(5, m_textLine, "theta2 + %4.2f * delta = %4.2f", (float) ratio, (float) value);
+                    testbed.g_debugDraw.DrawString(5, this.m_textLine, `theta2 + ${ratio.toFixed(2)} * delta = ${value.toFixed(2)}`);
+                    // m_textLine += m_textIncrement;
+                    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
                 }
                 static Create() {
                     return new Gears();

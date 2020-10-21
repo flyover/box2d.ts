@@ -17,7 +17,7 @@
 */
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, Prismatic, testIndex;
+    var b2, testbed, DistanceJoint, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,7 +29,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            Prismatic = class Prismatic extends testbed.Test {
+            DistanceJoint = class DistanceJoint extends testbed.Test {
                 constructor() {
                     super();
                     let ground = null;
@@ -41,55 +41,54 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         ground.CreateFixture(shape, 0.0);
                     }
                     {
-                        const shape = new b2.PolygonShape();
-                        shape.SetAsBox(1.0, 1.0);
                         const bd = new b2.BodyDef();
                         bd.type = b2.BodyType.b2_dynamicBody;
-                        bd.position.Set(0.0, 10.0);
-                        bd.angle = 0.5 * b2.pi;
-                        bd.allowSleep = false;
+                        bd.angularDamping = 0.1;
+                        bd.position.Set(0.0, 5.0);
                         const body = this.m_world.CreateBody(bd);
+                        const shape = new b2.PolygonShape();
+                        shape.SetAsBox(0.5, 0.5);
                         body.CreateFixture(shape, 5.0);
-                        const pjd = new b2.PrismaticJointDef();
-                        // Horizontal
-                        pjd.Initialize(ground, body, bd.position, new b2.Vec2(1.0, 0.0));
-                        pjd.motorSpeed = 10.0;
-                        pjd.maxMotorForce = 10000.0;
-                        pjd.enableMotor = true;
-                        pjd.lowerTranslation = -10.0;
-                        pjd.upperTranslation = 10.0;
-                        pjd.enableLimit = true;
-                        this.m_joint = this.m_world.CreateJoint(pjd);
+                        this.m_hertz = 1.0;
+                        this.m_dampingRatio = 0.7;
+                        const jd = new b2.DistanceJointDef();
+                        jd.Initialize(ground, body, new b2.Vec2(0.0, 15.0), bd.position);
+                        jd.collideConnected = true;
+                        this.m_length = jd.length;
+                        this.m_minLength = jd.minLength = jd.length - 3;
+                        this.m_maxLength = jd.maxLength = jd.length + 3;
+                        b2.LinearStiffness(jd, this.m_hertz, this.m_dampingRatio, jd.bodyA, jd.bodyB);
+                        this.m_joint = this.m_world.CreateJoint(jd);
                     }
                 }
                 Keyboard(key) {
                     switch (key) {
                         case "l":
-                            this.m_joint.EnableLimit(!this.m_joint.IsLimitEnabled());
+                            // this.m_joint.EnableLimit(!this.m_joint.IsLimitEnabled());
                             break;
                         case "m":
-                            this.m_joint.EnableMotor(!this.m_joint.IsMotorEnabled());
+                            // this.m_joint.EnableMotor(!this.m_joint.IsMotorEnabled());
                             break;
                         case "s":
-                            this.m_joint.SetMotorSpeed(-this.m_joint.GetMotorSpeed());
+                            // this.m_joint.SetMotorSpeed(-this.m_joint.GetMotorSpeed());
                             break;
                     }
                 }
                 Step(settings) {
                     super.Step(settings);
-                    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (l) limits, (m) motors, (s) speed");
-                    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-                    const force = this.m_joint.GetMotorForce(settings.m_hertz);
-                    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(0)}`);
-                    this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+                    // testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (l) limits, (m) motors, (s) speed");
+                    // this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+                    // const force = this.m_joint.GetMotorForce(settings.m_hertz);
+                    // testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(0)}`);
+                    // this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
                 }
                 static Create() {
-                    return new Prismatic();
+                    return new DistanceJoint();
                 }
             };
-            exports_1("Prismatic", Prismatic);
-            exports_1("testIndex", testIndex = testbed.RegisterTest("Joints", "Prismatic", Prismatic.Create));
+            exports_1("DistanceJoint", DistanceJoint);
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Joints", "DistanceJoint", DistanceJoint.Create));
         }
     };
 });
-//# sourceMappingURL=prismatic_joint.js.map
+//# sourceMappingURL=distance_joint.js.map

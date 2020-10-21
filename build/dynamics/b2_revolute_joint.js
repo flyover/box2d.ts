@@ -434,36 +434,41 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     log("  jd.maxMotorTorque = %.15f;\n", this.m_maxMotorTorque);
                     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
                 }
-                // private static Draw_s_color = new b2Color(0.5, 0.8, 0.8);
                 Draw(draw) {
                     const xfA = this.m_bodyA.GetTransform();
                     const xfB = this.m_bodyB.GetTransform();
                     const pA = b2_math_js_1.b2Transform.MulXV(xfA, this.m_localAnchorA, b2RevoluteJoint.Draw_s_pA);
                     const pB = b2_math_js_1.b2Transform.MulXV(xfB, this.m_localAnchorB, b2RevoluteJoint.Draw_s_pB);
                     const c1 = b2RevoluteJoint.Draw_s_c1; // b2Color c1(0.7f, 0.7f, 0.7f);
-                    // const c2 = b2RevoluteJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
-                    // const c3 = b2RevoluteJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
+                    const c2 = b2RevoluteJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
+                    const c3 = b2RevoluteJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
                     const c4 = b2RevoluteJoint.Draw_s_c4; // b2Color c4(0.3f, 0.3f, 0.9f);
                     const c5 = b2RevoluteJoint.Draw_s_c5; // b2Color c5(0.4f, 0.4f, 0.4f);
                     draw.DrawPoint(pA, 5.0, c4);
                     draw.DrawPoint(pB, 5.0, c5);
-                    // const aA: number = this.m_bodyA.GetAngle();
-                    // const aB: number = this.m_bodyB.GetAngle();
-                    // const angle: number = aB - aA - this.m_referenceAngle;
+                    const aA = this.m_bodyA.GetAngle();
+                    const aB = this.m_bodyB.GetAngle();
+                    const angle = aB - aA - this.m_referenceAngle;
                     const L = 0.5;
                     // b2Vec2 r = L * b2Vec2(Math.cos(angle), Math.sin(angle));
+                    const r = b2RevoluteJoint.Draw_s_r.Set(L * Math.cos(angle), L * Math.sin(angle));
                     // draw.DrawSegment(pB, pB + r, c1);
+                    draw.DrawSegment(pB, b2_math_js_1.b2Vec2.AddVV(pB, r, b2_math_js_1.b2Vec2.s_t0), c1);
                     draw.DrawCircle(pB, L, c1);
                     if (this.m_enableLimit) {
                         // b2Vec2 rlo = L * b2Vec2(Math.cos(m_lowerAngle), Math.sin(m_lowerAngle));
+                        const rlo = b2RevoluteJoint.Draw_s_rlo.Set(L * Math.cos(this.m_lowerAngle), L * Math.sin(this.m_lowerAngle));
                         // b2Vec2 rhi = L * b2Vec2(Math.cos(m_upperAngle), Math.sin(m_upperAngle));
+                        const rhi = b2RevoluteJoint.Draw_s_rhi.Set(L * Math.cos(this.m_upperAngle), L * Math.sin(this.m_upperAngle));
                         // draw.DrawSegment(pB, pB + rlo, c2);
+                        draw.DrawSegment(pB, b2_math_js_1.b2Vec2.AddVV(pB, rlo, b2_math_js_1.b2Vec2.s_t0), c2);
                         // draw.DrawSegment(pB, pB + rhi, c3);
+                        draw.DrawSegment(pB, b2_math_js_1.b2Vec2.AddVV(pB, rhi, b2_math_js_1.b2Vec2.s_t0), c3);
                     }
-                    // const color = b2RevoluteJoint.Draw_s_color; // b2Color color(0.5f, 0.8f, 0.8f);
-                    // draw.DrawSegment(xfA.p, pA, color);
-                    // draw.DrawSegment(pA, pB, color);
-                    // draw.DrawSegment(xfB.p, pB, color);
+                    const color = b2RevoluteJoint.Draw_s_color_; // b2Color color(0.5f, 0.8f, 0.8f);
+                    draw.DrawSegment(xfA.p, pA, color);
+                    draw.DrawSegment(pA, pB, color);
+                    draw.DrawSegment(xfB.p, pB, color);
                 }
             };
             exports_1("b2RevoluteJoint", b2RevoluteJoint);
@@ -479,10 +484,14 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
             b2RevoluteJoint.Draw_s_pA = new b2_math_js_1.b2Vec2();
             b2RevoluteJoint.Draw_s_pB = new b2_math_js_1.b2Vec2();
             b2RevoluteJoint.Draw_s_c1 = new b2_draw_js_1.b2Color(0.7, 0.7, 0.7);
-            // private static Draw_s_c2 = new b2Color(0.3, 0.9, 0.3);
-            // private static Draw_s_c3 = new b2Color(0.9, 0.3, 0.3);
+            b2RevoluteJoint.Draw_s_c2 = new b2_draw_js_1.b2Color(0.3, 0.9, 0.3);
+            b2RevoluteJoint.Draw_s_c3 = new b2_draw_js_1.b2Color(0.9, 0.3, 0.3);
             b2RevoluteJoint.Draw_s_c4 = new b2_draw_js_1.b2Color(0.3, 0.3, 0.9);
             b2RevoluteJoint.Draw_s_c5 = new b2_draw_js_1.b2Color(0.4, 0.4, 0.4);
+            b2RevoluteJoint.Draw_s_color_ = new b2_draw_js_1.b2Color(0.5, 0.8, 0.8);
+            b2RevoluteJoint.Draw_s_r = new b2_math_js_1.b2Vec2();
+            b2RevoluteJoint.Draw_s_rlo = new b2_math_js_1.b2Vec2();
+            b2RevoluteJoint.Draw_s_rhi = new b2_math_js_1.b2Vec2();
         }
     };
 });

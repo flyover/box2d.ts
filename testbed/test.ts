@@ -258,7 +258,7 @@ export class Test extends b2.ContactListener {
       md.bodyB = body;
       md.target.Copy(p);
       md.maxForce = 1000 * body.GetMass();
-      this.m_mouseJoint = this.m_world.CreateJoint(md) as b2.MouseJoint;
+      this.m_mouseJoint = this.m_world.CreateJoint(md);
       body.SetAwake(true);
     }
   }

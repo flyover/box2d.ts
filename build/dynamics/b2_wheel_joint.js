@@ -671,22 +671,30 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     const pA = b2_math_js_1.b2Transform.MulXV(xfA, this.m_localAnchorA, b2WheelJoint.Draw_s_pA);
                     const pB = b2_math_js_1.b2Transform.MulXV(xfB, this.m_localAnchorB, b2WheelJoint.Draw_s_pB);
                     // b2Vec2 axis = b2Mul(xfA.q, m_localXAxisA);
+                    const axis = b2_math_js_1.b2Rot.MulRV(xfA.q, this.m_localXAxisA, b2WheelJoint.Draw_s_axis);
                     const c1 = b2WheelJoint.Draw_s_c1; // b2Color c1(0.7f, 0.7f, 0.7f);
-                    // const c2 = b2WheelJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
-                    // const c3 = b2WheelJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
+                    const c2 = b2WheelJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
+                    const c3 = b2WheelJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
                     const c4 = b2WheelJoint.Draw_s_c4; // b2Color c4(0.3f, 0.3f, 0.9f);
                     const c5 = b2WheelJoint.Draw_s_c5; // b2Color c5(0.4f, 0.4f, 0.4f);
                     draw.DrawSegment(pA, pB, c5);
                     if (this.m_enableLimit) {
                         // b2Vec2 lower = pA + m_lowerTranslation * axis;
+                        const lower = b2_math_js_1.b2Vec2.AddVMulSV(pA, this.m_lowerTranslation, axis, b2WheelJoint.Draw_s_lower);
                         // b2Vec2 upper = pA + m_upperTranslation * axis;
+                        const upper = b2_math_js_1.b2Vec2.AddVMulSV(pA, this.m_upperTranslation, axis, b2WheelJoint.Draw_s_upper);
                         // b2Vec2 perp = b2Mul(xfA.q, m_localYAxisA);
+                        const perp = b2_math_js_1.b2Rot.MulRV(xfA.q, this.m_localYAxisA, b2WheelJoint.Draw_s_perp);
                         // draw.DrawSegment(lower, upper, c1);
+                        draw.DrawSegment(lower, upper, c1);
                         // draw.DrawSegment(lower - 0.5f * perp, lower + 0.5f * perp, c2);
+                        draw.DrawSegment(b2_math_js_1.b2Vec2.AddVMulSV(lower, -0.5, perp, b2_math_js_1.b2Vec2.s_t0), b2_math_js_1.b2Vec2.AddVMulSV(lower, 0.5, perp, b2_math_js_1.b2Vec2.s_t1), c2);
                         // draw.DrawSegment(upper - 0.5f * perp, upper + 0.5f * perp, c3);
+                        draw.DrawSegment(b2_math_js_1.b2Vec2.AddVMulSV(upper, -0.5, perp, b2_math_js_1.b2Vec2.s_t0), b2_math_js_1.b2Vec2.AddVMulSV(upper, 0.5, perp, b2_math_js_1.b2Vec2.s_t1), c3);
                     }
                     else {
                         // draw.DrawSegment(pA - 1.0f * axis, pA + 1.0f * axis, c1);
+                        draw.DrawSegment(b2_math_js_1.b2Vec2.AddVMulSV(pA, -1.0, axis, b2_math_js_1.b2Vec2.s_t0), b2_math_js_1.b2Vec2.AddVMulSV(pA, 1.0, axis, b2_math_js_1.b2Vec2.s_t1), c1);
                     }
                     draw.DrawPoint(pA, 5.0, c1);
                     draw.DrawPoint(pB, 5.0, c4);
@@ -701,11 +709,15 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
             ///
             b2WheelJoint.Draw_s_pA = new b2_math_js_1.b2Vec2();
             b2WheelJoint.Draw_s_pB = new b2_math_js_1.b2Vec2();
+            b2WheelJoint.Draw_s_axis = new b2_math_js_1.b2Vec2();
             b2WheelJoint.Draw_s_c1 = new b2_draw_js_1.b2Color(0.7, 0.7, 0.7);
-            // private static Draw_s_c2 = new b2Color(0.3, 0.9, 0.3);
-            // private static Draw_s_c3 = new b2Color(0.9, 0.3, 0.3);
+            b2WheelJoint.Draw_s_c2 = new b2_draw_js_1.b2Color(0.3, 0.9, 0.3);
+            b2WheelJoint.Draw_s_c3 = new b2_draw_js_1.b2Color(0.9, 0.3, 0.3);
             b2WheelJoint.Draw_s_c4 = new b2_draw_js_1.b2Color(0.3, 0.3, 0.9);
             b2WheelJoint.Draw_s_c5 = new b2_draw_js_1.b2Color(0.4, 0.4, 0.4);
+            b2WheelJoint.Draw_s_lower = new b2_math_js_1.b2Vec2();
+            b2WheelJoint.Draw_s_upper = new b2_math_js_1.b2Vec2();
+            b2WheelJoint.Draw_s_perp = new b2_math_js_1.b2Vec2();
         }
     };
 });

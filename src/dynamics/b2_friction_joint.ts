@@ -23,9 +23,9 @@ import { b2SolverData } from "./b2_time_step.js";
 import { b2Body } from "./b2_body.js";
 
 export interface b2IFrictionJointDef extends b2IJointDef {
-  localAnchorA: XY;
+  localAnchorA?: XY;
 
-  localAnchorB: XY;
+  localAnchorB?: XY;
 
   maxForce?: number;
 
@@ -87,8 +87,8 @@ export class b2FrictionJoint extends b2Joint {
   constructor(def: b2IFrictionJointDef) {
     super(def);
 
-    this.m_localAnchorA.Copy(def.localAnchorA);
-    this.m_localAnchorB.Copy(def.localAnchorB);
+    this.m_localAnchorA.Copy(b2Maybe(def.localAnchorA, b2Vec2.ZERO));
+    this.m_localAnchorB.Copy(b2Maybe(def.localAnchorB, b2Vec2.ZERO));
 
     this.m_linearImpulse.SetZero();
     this.m_maxForce = b2Maybe(def.maxForce, 0);

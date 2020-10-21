@@ -121,7 +121,7 @@ export class Main {
       const option: HTMLOptionElement = test_options[i];
       test_select.add(option);
     }
-    test_select.selectedIndex = this.m_settings.m_testIndex = 76;
+    test_select.selectedIndex = this.m_settings.m_testIndex = 77;
     test_select.addEventListener("change", (e: Event): void => {
       this.m_settings.m_testIndex = test_select.selectedIndex;
       this.LoadTest();
@@ -638,6 +638,7 @@ import "./tests/confined.js";
 import "./tests/continuous_test.js";
 import "./tests/convex_hull.js";
 import "./tests/conveyor_belt.js";
+import "./tests/distance_joint.js";
 import "./tests/distance_test.js";
 import "./tests/dominos.js";
 import "./tests/dump_loader.js";

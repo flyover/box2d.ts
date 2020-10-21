@@ -13,7 +13,6 @@ import { b2MouseJoint, b2IMouseJointDef } from "./b2_mouse_joint.js";
 import { b2PrismaticJoint, b2IPrismaticJointDef } from "./b2_prismatic_joint.js";
 import { b2PulleyJoint, b2IPulleyJointDef } from "./b2_pulley_joint.js";
 import { b2RevoluteJoint, b2IRevoluteJointDef } from "./b2_revolute_joint.js";
-import { b2RopeJoint, b2IRopeJointDef } from "./b2_rope_joint.js";
 import { b2WeldJoint, b2IWeldJointDef } from "./b2_weld_joint.js";
 import { b2WheelJoint, b2IWheelJointDef } from "./b2_wheel_joint.js";
 import { b2Body, b2IBodyDef } from "./b2_body.js";
@@ -70,7 +69,6 @@ export declare class b2World {
     CreateJoint(def: b2IPrismaticJointDef): b2PrismaticJoint;
     CreateJoint(def: b2IPulleyJointDef): b2PulleyJoint;
     CreateJoint(def: b2IRevoluteJointDef): b2RevoluteJoint;
-    CreateJoint(def: b2IRopeJointDef): b2RopeJoint;
     CreateJoint(def: b2IWeldJointDef): b2WeldJoint;
     CreateJoint(def: b2IWheelJointDef): b2WheelJoint;
     DestroyJoint(j: b2Joint): void;

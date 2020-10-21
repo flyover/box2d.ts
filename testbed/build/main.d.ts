@@ -67,6 +67,7 @@ import "./tests/confined.js";
 import "./tests/continuous_test.js";
 import "./tests/convex_hull.js";
 import "./tests/conveyor_belt.js";
+import "./tests/distance_joint.js";
 import "./tests/distance_test.js";
 import "./tests/dominos.js";
 import "./tests/dump_loader.js";

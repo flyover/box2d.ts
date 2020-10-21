@@ -784,13 +784,13 @@ export class b2PrismaticJoint extends b2Joint {
   private static Draw_s_pB = new b2Vec2();
   private static Draw_s_axis = new b2Vec2();
   private static Draw_s_c1 = new b2Color(0.7, 0.7, 0.7);
-  // private static Draw_s_c2 = new b2Color(0.3, 0.9, 0.3);
-  // private static Draw_s_c3 = new b2Color(0.9, 0.3, 0.3);
+  private static Draw_s_c2 = new b2Color(0.3, 0.9, 0.3);
+  private static Draw_s_c3 = new b2Color(0.9, 0.3, 0.3);
   private static Draw_s_c4 = new b2Color(0.3, 0.3, 0.9);
   private static Draw_s_c5 = new b2Color(0.4, 0.4, 0.4);
   private static Draw_s_lower = new b2Vec2();
   private static Draw_s_upper = new b2Vec2();
-  // private static Draw_s_perp = new b2Vec2();
+  private static Draw_s_perp = new b2Vec2();
   public Draw(draw: b2Draw): void {
     const xfA: Readonly<b2Transform> = this.m_bodyA.GetTransform();
     const xfB: Readonly<b2Transform> = this.m_bodyB.GetTransform();
@@ -801,8 +801,8 @@ export class b2PrismaticJoint extends b2Joint {
     const axis: b2Vec2 = b2Rot.MulRV(xfA.q, this.m_localXAxisA, b2PrismaticJoint.Draw_s_axis);
 
     const c1 = b2PrismaticJoint.Draw_s_c1; // b2Color c1(0.7f, 0.7f, 0.7f);
-    // const c2 = b2PrismaticJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
-    // const c3 = b2PrismaticJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
+    const c2 = b2PrismaticJoint.Draw_s_c2; // b2Color c2(0.3f, 0.9f, 0.3f);
+    const c3 = b2PrismaticJoint.Draw_s_c3; // b2Color c3(0.9f, 0.3f, 0.3f);
     const c4 = b2PrismaticJoint.Draw_s_c4; // b2Color c4(0.3f, 0.3f, 0.9f);
     const c5 = b2PrismaticJoint.Draw_s_c5; // b2Color c5(0.4f, 0.4f, 0.4f);
 
@@ -810,16 +810,19 @@ export class b2PrismaticJoint extends b2Joint {
 
     if (this.m_enableLimit) {
       // b2Vec2 lower = pA + m_lowerTranslation * axis;
-      const lower = b2PrismaticJoint.Draw_s_lower.Copy(pA).SelfAdd(b2Vec2.MulSV(this.m_lowerTranslation, axis, b2Vec2.s_t0));
+      const lower = b2Vec2.AddVMulSV(pA, this.m_lowerTranslation, axis, b2PrismaticJoint.Draw_s_lower);
       // b2Vec2 upper = pA + m_upperTranslation * axis;
-      const upper = b2PrismaticJoint.Draw_s_upper.Copy(pA).SelfAdd(b2Vec2.MulSV(this.m_upperTranslation, axis, b2Vec2.s_t0));
+      const upper = b2Vec2.AddVMulSV(pA, this.m_upperTranslation, axis, b2PrismaticJoint.Draw_s_upper);
       // b2Vec2 perp = b2Mul(xfA.q, m_localYAxisA);
-      // const perp = b2Rot.MulRV(xfA.q, this.m_localYAxisA, b2PrismaticJoint.Draw_s_perp);
+      const perp = b2Rot.MulRV(xfA.q, this.m_localYAxisA, b2PrismaticJoint.Draw_s_perp);
       draw.DrawSegment(lower, upper, c1);
       // draw.DrawSegment(lower - 0.5 * perp, lower + 0.5 * perp, c2);
+      draw.DrawSegment(b2Vec2.AddVMulSV(lower, -0.5, perp, b2Vec2.s_t0), b2Vec2.AddVMulSV(lower, 0.5, perp, b2Vec2.s_t1), c2);
       // draw.DrawSegment(upper - 0.5 * perp, upper + 0.5 * perp, c3);
+      draw.DrawSegment(b2Vec2.AddVMulSV(upper, -0.5, perp, b2Vec2.s_t0), b2Vec2.AddVMulSV(upper, 0.5, perp, b2Vec2.s_t1), c3);
     } else {
       // draw.DrawSegment(pA - 1.0 * axis, pA + 1.0 * axis, c1);
+      draw.DrawSegment(b2Vec2.AddVMulSV(pA, -1.0, axis, b2Vec2.s_t0), b2Vec2.AddVMulSV(pA, 1.0, axis, b2Vec2.s_t1), c1);
     }
 
     draw.DrawPoint(pA, 5.0, c1);

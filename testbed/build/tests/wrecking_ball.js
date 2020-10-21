@@ -17,7 +17,7 @@
 */
 System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
     "use strict";
-    var b2, testbed, RopeJoint, testIndex;
+    var b2, testbed, WreckingBall, testIndex;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,11 +29,11 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            RopeJoint = class RopeJoint extends testbed.Test {
+            WreckingBall = class WreckingBall extends testbed.Test {
                 constructor() {
                     super();
-                    this.m_ropeDef = new b2.RopeJointDef();
-                    this.m_rope = null;
+                    this.m_distanceJointDef = new b2.DistanceJointDef();
+                    this.m_distanceJoint = null;
                     /*b2.Body*/
                     let ground = null;
                     {
@@ -63,7 +63,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         const N = 10;
                         /*const float32*/
                         const y = 15.0;
-                        this.m_ropeDef.localAnchorA.Set(0.0, y);
+                        this.m_distanceJointDef.localAnchorA.Set(0.0, y);
                         /*b2.Body*/
                         let prevBody = ground;
                         for ( /*int32*/let i = 0; i < N; ++i) {
@@ -72,63 +72,72 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                             bd.type = b2.BodyType.b2_dynamicBody;
                             bd.position.Set(0.5 + 1.0 * i, y);
                             if (i === N - 1) {
-                                shape.SetAsBox(1.5, 1.5);
-                                fd.density = 100.0;
-                                fd.filter.categoryBits = 0x0002;
                                 bd.position.Set(1.0 * i, y);
                                 bd.angularDamping = 0.4;
                             }
                             /*b2.Body*/
                             const body = this.m_world.CreateBody(bd);
-                            body.CreateFixture(fd);
+                            if (i === N - 1) {
+                                const circleShape = new b2.CircleShape();
+                                circleShape.m_radius = 1.5;
+                                const sfd = new b2.FixtureDef();
+                                sfd.shape = circleShape;
+                                sfd.density = 100.0;
+                                sfd.filter.categoryBits = 0x0002;
+                                body.CreateFixture(sfd);
+                            }
+                            else {
+                                body.CreateFixture(fd);
+                            }
                             /*b2.Vec2*/
                             const anchor = new b2.Vec2(i, y);
                             jd.Initialize(prevBody, body, anchor);
                             this.m_world.CreateJoint(jd);
                             prevBody = body;
                         }
-                        this.m_ropeDef.localAnchorB.SetZero();
+                        this.m_distanceJointDef.localAnchorB.SetZero();
                         /*float32*/
                         const extraLength = 0.01;
-                        this.m_ropeDef.maxLength = N - 1.0 + extraLength;
-                        this.m_ropeDef.bodyB = prevBody;
+                        this.m_distanceJointDef.minLength = 0.0;
+                        this.m_distanceJointDef.maxLength = N - 1.0 + extraLength;
+                        this.m_distanceJointDef.bodyB = prevBody;
                     }
                     {
-                        this.m_ropeDef.bodyA = ground;
-                        this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+                        this.m_distanceJointDef.bodyA = ground;
+                        this.m_distanceJoint = this.m_world.CreateJoint(this.m_distanceJointDef);
                     }
                 }
                 Keyboard(key) {
                     switch (key) {
                         case "j":
-                            if (this.m_rope) {
-                                this.m_world.DestroyJoint(this.m_rope);
-                                this.m_rope = null;
+                            if (this.m_distanceJoint) {
+                                this.m_world.DestroyJoint(this.m_distanceJoint);
+                                this.m_distanceJoint = null;
                             }
                             else {
-                                this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+                                this.m_distanceJoint = this.m_world.CreateJoint(this.m_distanceJointDef);
                             }
                             break;
                     }
                 }
                 Step(settings) {
                     super.Step(settings);
-                    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the rope joint.");
+                    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the distance joint.");
                     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-                    if (this.m_rope) {
-                        testbed.g_debugDraw.DrawString(5, this.m_textLine, "Rope ON");
+                    if (this.m_distanceJoint) {
+                        testbed.g_debugDraw.DrawString(5, this.m_textLine, "Distance Joint ON");
                     }
                     else {
-                        testbed.g_debugDraw.DrawString(5, this.m_textLine, "Rope OFF");
+                        testbed.g_debugDraw.DrawString(5, this.m_textLine, "Distance Joint OFF");
                     }
                     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
                 }
                 static Create() {
-                    return new RopeJoint();
+                    return new WreckingBall();
                 }
             };
-            exports_1("RopeJoint", RopeJoint);
-            exports_1("testIndex", testIndex = testbed.RegisterTest("Examples", "Wrecking Ball", RopeJoint.Create));
+            exports_1("WreckingBall", WreckingBall);
+            exports_1("testIndex", testIndex = testbed.RegisterTest("Examples", "Wrecking Ball", WreckingBall.Create));
         }
     };
 });

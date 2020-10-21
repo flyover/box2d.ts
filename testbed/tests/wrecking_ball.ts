@@ -19,9 +19,9 @@
 import * as b2 from "@box2d";
 import * as testbed from "@testbed";
 
-export class RopeJoint extends testbed.Test {
-  public m_ropeDef = new b2.RopeJointDef();
-  public m_rope: b2.RopeJoint | null = null;
+export class WreckingBall extends testbed.Test {
+  public m_distanceJointDef = new b2.DistanceJointDef();
+  public m_distanceJoint: b2.DistanceJoint | null = null;
 
   constructor() {
     super();
@@ -60,7 +60,7 @@ export class RopeJoint extends testbed.Test {
       const N = 10;
       /*const float32*/
       const y = 15.0;
-      this.m_ropeDef.localAnchorA.Set(0.0, y);
+      this.m_distanceJointDef.localAnchorA.Set(0.0, y);
 
       /*b2.Body*/
       let prevBody = ground;
@@ -70,9 +70,6 @@ export class RopeJoint extends testbed.Test {
         bd.type = b2.BodyType.b2_dynamicBody;
         bd.position.Set(0.5 + 1.0 * i, y);
         if (i === N - 1) {
-          shape.SetAsBox(1.5, 1.5);
-          fd.density = 100.0;
-          fd.filter.categoryBits = 0x0002;
           bd.position.Set(1.0 * i, y);
           bd.angularDamping = 0.4;
         }
@@ -80,7 +77,18 @@ export class RopeJoint extends testbed.Test {
         /*b2.Body*/
         const body = this.m_world.CreateBody(bd);
 
-        body.CreateFixture(fd);
+        if (i === N - 1) {
+          const circleShape: b2.CircleShape = new b2.CircleShape();
+          circleShape.m_radius = 1.5;
+          const sfd: b2.FixtureDef = new b2.FixtureDef();
+          sfd.shape = circleShape;
+          sfd.density = 100.0;
+          sfd.filter.categoryBits = 0x0002;
+          body.CreateFixture(sfd);
+        }
+        else {
+          body.CreateFixture(fd);
+        }
 
         /*b2.Vec2*/
         const anchor = new b2.Vec2(i, y);
@@ -90,28 +98,29 @@ export class RopeJoint extends testbed.Test {
         prevBody = body;
       }
 
-      this.m_ropeDef.localAnchorB.SetZero();
+      this.m_distanceJointDef.localAnchorB.SetZero();
 
       /*float32*/
       const extraLength = 0.01;
-      this.m_ropeDef.maxLength = N - 1.0 + extraLength;
-      this.m_ropeDef.bodyB = prevBody;
+      this.m_distanceJointDef.minLength = 0.0;
+      this.m_distanceJointDef.maxLength = N - 1.0 + extraLength;
+      this.m_distanceJointDef.bodyB = prevBody;
     }
 
     {
-      this.m_ropeDef.bodyA = ground;
-      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as b2.RopeJoint;
+      this.m_distanceJointDef.bodyA = ground;
+      this.m_distanceJoint = this.m_world.CreateJoint(this.m_distanceJointDef);
     }
   }
 
   public Keyboard(key: string) {
     switch (key) {
       case "j":
-        if (this.m_rope) {
-          this.m_world.DestroyJoint(this.m_rope);
-          this.m_rope = null;
+        if (this.m_distanceJoint) {
+          this.m_world.DestroyJoint(this.m_distanceJoint);
+          this.m_distanceJoint = null;
         } else {
-          this.m_rope = this.m_world.CreateJoint(this.m_ropeDef) as b2.RopeJoint;
+          this.m_distanceJoint = this.m_world.CreateJoint(this.m_distanceJointDef);
         }
         break;
     }
@@ -119,19 +128,19 @@ export class RopeJoint extends testbed.Test {
 
   public Step(settings: testbed.Settings): void {
     super.Step(settings);
-    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the rope joint.");
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the distance joint.");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
-    if (this.m_rope) {
-      testbed.g_debugDraw.DrawString(5, this.m_textLine, "Rope ON");
+    if (this.m_distanceJoint) {
+      testbed.g_debugDraw.DrawString(5, this.m_textLine, "Distance Joint ON");
     } else {
-      testbed.g_debugDraw.DrawString(5, this.m_textLine, "Rope OFF");
+      testbed.g_debugDraw.DrawString(5, this.m_textLine, "Distance Joint OFF");
     }
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }
 
   public static Create(): testbed.Test {
-    return new RopeJoint();
+    return new WreckingBall();
   }
 }
 
-export const testIndex: number = testbed.RegisterTest("Examples", "Wrecking Ball", RopeJoint.Create);
+export const testIndex: number = testbed.RegisterTest("Examples", "Wrecking Ball", WreckingBall.Create);

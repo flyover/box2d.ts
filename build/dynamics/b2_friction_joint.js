@@ -77,8 +77,8 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     this.m_lalcA = new b2_math_js_1.b2Vec2();
                     this.m_lalcB = new b2_math_js_1.b2Vec2();
                     this.m_K = new b2_math_js_1.b2Mat22();
-                    this.m_localAnchorA.Copy(def.localAnchorA);
-                    this.m_localAnchorB.Copy(def.localAnchorB);
+                    this.m_localAnchorA.Copy(b2_settings_js_1.b2Maybe(def.localAnchorA, b2_math_js_1.b2Vec2.ZERO));
+                    this.m_localAnchorB.Copy(b2_settings_js_1.b2Maybe(def.localAnchorB, b2_math_js_1.b2Vec2.ZERO));
                     this.m_linearImpulse.SetZero();
                     this.m_maxForce = b2_settings_js_1.b2Maybe(def.maxForce, 0);
                     this.m_maxTorque = b2_settings_js_1.b2Maybe(def.maxTorque, 0);

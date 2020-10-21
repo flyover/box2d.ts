@@ -225,9 +225,6 @@ export { /*const*/ b2_minPulleyLength as minPulleyLength } from "./dynamics/b2_p
 export { /*interface*/ b2IRevoluteJointDef as IRevoluteJointDef } from "./dynamics/b2_revolute_joint.js";
 export { /*class*/ b2RevoluteJointDef as RevoluteJointDef } from "./dynamics/b2_revolute_joint.js";
 export { /*class*/ b2RevoluteJoint as RevoluteJoint } from "./dynamics/b2_revolute_joint.js";
-export { /*interface*/ b2IRopeJointDef as IRopeJointDef } from "./dynamics/b2_rope_joint.js";
-export { /*class*/ b2RopeJointDef as RopeJointDef } from "./dynamics/b2_rope_joint.js";
-export { /*class*/ b2RopeJoint as RopeJoint } from "./dynamics/b2_rope_joint.js";
 export { /*class*/ b2Position as Position } from "./dynamics/b2_time_step.js";
 export { /*class*/ b2Profile as Profile } from "./dynamics/b2_time_step.js";
 export { /*class*/ b2SolverData as SolverData } from "./dynamics/b2_time_step.js";

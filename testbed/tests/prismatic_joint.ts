@@ -38,11 +38,11 @@ export class Prismatic extends testbed.Test {
 
     {
       const shape = new b2.PolygonShape();
-      shape.SetAsBox(2.0, 0.5);
+      shape.SetAsBox(1.0, 1.0);
 
       const bd = new b2.BodyDef();
       bd.type = b2.BodyType.b2_dynamicBody;
-      bd.position.Set(-10.0, 10.0);
+      bd.position.Set(0.0, 10.0);
       bd.angle = 0.5 * b2.pi;
       bd.allowSleep = false;
       const body = this.m_world.CreateBody(bd);
@@ -50,19 +50,14 @@ export class Prismatic extends testbed.Test {
 
       const pjd = new b2.PrismaticJointDef();
 
-      // Bouncy limit
-      const axis = new b2.Vec2(2.0, 1.0);
-      axis.Normalize();
-      pjd.Initialize(ground, body, new b2.Vec2(0.0, 0.0), axis);
-
-      // Non-bouncy limit
-      //pjd.Initialize(ground, body, new b2.Vec2(-10.0, 10.0), new b2.Vec2(1.0, 0.0));
+      // Horizontal
+			pjd.Initialize(ground, body, bd.position, new b2.Vec2(1.0, 0.0));
 
       pjd.motorSpeed = 10.0;
       pjd.maxMotorForce = 10000.0;
       pjd.enableMotor = true;
-      pjd.lowerTranslation = 0.0;
-      pjd.upperTranslation = 20.0;
+      pjd.lowerTranslation = -10.0;
+      pjd.upperTranslation = 10.0;
       pjd.enableLimit = true;
 
       this.m_joint = this.m_world.CreateJoint(pjd);
@@ -90,7 +85,7 @@ export class Prismatic extends testbed.Test {
     testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (l) limits, (m) motors, (s) speed");
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
     const force = this.m_joint.GetMotorForce(settings.m_hertz);
-    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(4)}`);
+    testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(0)}`);
     this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
   }
 

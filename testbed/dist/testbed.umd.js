@@ -3767,6 +3767,71 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  class DistanceJoint extends Test {
+      constructor() {
+          super();
+          let ground = null;
+          {
+              const bd = new b2.BodyDef();
+              ground = this.m_world.CreateBody(bd);
+              const shape = new b2.EdgeShape();
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              ground.CreateFixture(shape, 0.0);
+          }
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.angularDamping = 0.1;
+              bd.position.Set(0.0, 5.0);
+              const body = this.m_world.CreateBody(bd);
+              const shape = new b2.PolygonShape();
+              shape.SetAsBox(0.5, 0.5);
+              body.CreateFixture(shape, 5.0);
+              this.m_hertz = 1.0;
+              this.m_dampingRatio = 0.7;
+              const jd = new b2.DistanceJointDef();
+              jd.Initialize(ground, body, new b2.Vec2(0.0, 15.0), bd.position);
+              jd.collideConnected = true;
+              this.m_length = jd.length;
+              this.m_minLength = jd.minLength = jd.length - 3;
+              this.m_maxLength = jd.maxLength = jd.length + 3;
+              b2.LinearStiffness(jd, this.m_hertz, this.m_dampingRatio, jd.bodyA, jd.bodyB);
+              this.m_joint = this.m_world.CreateJoint(jd);
+          }
+      }
+      Keyboard(key) {
+      }
+      Step(settings) {
+          super.Step(settings);
+          // testbed.g_debugDraw.DrawString(5, this.m_textLine, "Keys: (l) limits, (m) motors, (s) speed");
+          // this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+          // const force = this.m_joint.GetMotorForce(settings.m_hertz);
+          // testbed.g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(0)}`);
+          // this.m_textLine += testbed.DRAW_STRING_NEW_LINE;
+      }
+      static Create() {
+          return new DistanceJoint();
+      }
+  }
+  const testIndex$j = RegisterTest("Joints", "DistanceJoint", DistanceJoint.Create);
+
+  /*
+  * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
   class DistanceTest extends Test {
       constructor() {
           super();
@@ -3850,7 +3915,7 @@
           return new DistanceTest();
       }
   }
-  const testIndex$j = RegisterTest("Geometry", "Distance Test", DistanceTest.Create);
+  const testIndex$k = RegisterTest("Geometry", "Distance Test", DistanceTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4022,7 +4087,7 @@
           return new Dominos();
       }
   }
-  const testIndex$k = RegisterTest("Examples", "Dominos", Dominos.Create);
+  const testIndex$l = RegisterTest("Examples", "Dominos", Dominos.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4300,7 +4365,7 @@
           return new DumpShell();
       }
   }
-  const testIndex$l = RegisterTest("Bugs", "Dump Loader", DumpShell.Create);
+  const testIndex$m = RegisterTest("Bugs", "Dump Loader", DumpShell.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4559,7 +4624,7 @@
           this.proxyId = null;
       }
   }
-  const testIndex$m = RegisterTest("Collision", "Dynamic Tree", DynamicTreeTest.Create);
+  const testIndex$n = RegisterTest("Collision", "Dynamic Tree", DynamicTreeTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4745,7 +4810,7 @@
       }
   }
   EdgeShapes.e_maxBodies = 256;
-  const testIndex$n = RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);
+  const testIndex$o = RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -4971,7 +5036,7 @@
           return new EdgeTest();
       }
   }
-  const testIndex$o = RegisterTest("Geometry", "Edge Test", EdgeTest.Create);
+  const testIndex$p = RegisterTest("Geometry", "Edge Test", EdgeTest.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5067,7 +5132,7 @@
           return new VaryingFriction();
       }
   }
-  const testIndex$p = RegisterTest("Forces", "Friction", VaryingFriction.Create);
+  const testIndex$q = RegisterTest("Forces", "Friction", VaryingFriction.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5189,12 +5254,27 @@
       }
       Step(settings) {
           super.Step(settings);
+          // float ratio, value;
+          let ratio;
+          let value;
+          ratio = this.m_joint4.GetRatio();
+          value = this.m_joint1.GetJointAngle() + ratio * this.m_joint2.GetJointAngle();
+          // g_debugDraw.DrawString(5, m_textLine, "theta1 + %4.2f * theta2 = %4.2f", (float) ratio, (float) value);
+          g_debugDraw.DrawString(5, this.m_textLine, `theta1 + ${ratio.toFixed(2)} * theta2 = ${value.toFixed(2)}`);
+          // m_textLine += m_textIncrement;
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          ratio = this.m_joint5.GetRatio();
+          value = this.m_joint2.GetJointAngle() + ratio * this.m_joint3.GetJointTranslation();
+          // g_debugDraw.DrawString(5, m_textLine, "theta2 + %4.2f * delta = %4.2f", (float) ratio, (float) value);
+          g_debugDraw.DrawString(5, this.m_textLine, `theta2 + ${ratio.toFixed(2)} * delta = ${value.toFixed(2)}`);
+          // m_textLine += m_textIncrement;
+          this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
           return new Gears();
       }
   }
-  const testIndex$q = RegisterTest("Joints", "Gear", Gears.Create);
+  const testIndex$r = RegisterTest("Joints", "Gear", Gears.Create);
 
   /*
    * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -5245,7 +5325,7 @@
           return new HeavyOnLight();
       }
   }
-  const testIndex$r = RegisterTest("Solver", "Heavy 1", HeavyOnLight.Create);
+  const testIndex$s = RegisterTest("Solver", "Heavy 1", HeavyOnLight.Create);
 
   /*
    * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -5320,7 +5400,7 @@
           return new HeavyOnLightTwo();
       }
   }
-  const testIndex$s = RegisterTest("Solver", "Heavy 2", HeavyOnLightTwo.Create);
+  const testIndex$t = RegisterTest("Solver", "Heavy 2", HeavyOnLightTwo.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5396,7 +5476,7 @@
       }
   }
   MobileBalanced.e_depth = 4;
-  const testIndex$t = RegisterTest("Solver", "Mobile Balanced", MobileBalanced.Create);
+  const testIndex$u = RegisterTest("Solver", "Mobile Balanced", MobileBalanced.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5470,7 +5550,7 @@
       }
   }
   Mobile.e_depth = 4;
-  const testIndex$u = RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);
+  const testIndex$v = RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5555,7 +5635,7 @@
           return new MotorJoint();
       }
   }
-  const testIndex$v = RegisterTest("Joints", "Motor Joint", MotorJoint.Create);
+  const testIndex$w = RegisterTest("Joints", "Motor Joint", MotorJoint.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5697,7 +5777,7 @@
           return new Pinball();
       }
   }
-  const testIndex$w = RegisterTest("Examples", "Pinball", Pinball.Create);
+  const testIndex$x = RegisterTest("Examples", "Pinball", Pinball.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5784,7 +5864,7 @@
       OneSidedPlatform_State[OneSidedPlatform_State["e_above"] = 1] = "e_above";
       OneSidedPlatform_State[OneSidedPlatform_State["e_below"] = 2] = "e_below";
   })(OneSidedPlatform_State || (OneSidedPlatform_State = {}));
-  const testIndex$x = RegisterTest("Examples", "Platformer", OneSidedPlatform.Create);
+  const testIndex$y = RegisterTest("Examples", "Platformer", OneSidedPlatform.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -5874,7 +5954,7 @@
           return new PolyCollision();
       }
   }
-  const testIndex$y = RegisterTest("Geometry", "Polygon Collision", PolyCollision.Create);
+  const testIndex$z = RegisterTest("Geometry", "Polygon Collision", PolyCollision.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6062,7 +6142,7 @@
       }
   }
   PolyShapes.e_maxBodies = 256;
-  const testIndex$z = RegisterTest("Geometry", "Polygon Shapes", PolyShapes.Create);
+  const testIndex$A = RegisterTest("Geometry", "Polygon Shapes", PolyShapes.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6094,26 +6174,22 @@
           }
           {
               const shape = new b2.PolygonShape();
-              shape.SetAsBox(2.0, 0.5);
+              shape.SetAsBox(1.0, 1.0);
               const bd = new b2.BodyDef();
               bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(-10.0, 10.0);
+              bd.position.Set(0.0, 10.0);
               bd.angle = 0.5 * b2.pi;
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(shape, 5.0);
               const pjd = new b2.PrismaticJointDef();
-              // Bouncy limit
-              const axis = new b2.Vec2(2.0, 1.0);
-              axis.Normalize();
-              pjd.Initialize(ground, body, new b2.Vec2(0.0, 0.0), axis);
-              // Non-bouncy limit
-              //pjd.Initialize(ground, body, new b2.Vec2(-10.0, 10.0), new b2.Vec2(1.0, 0.0));
+              // Horizontal
+              pjd.Initialize(ground, body, bd.position, new b2.Vec2(1.0, 0.0));
               pjd.motorSpeed = 10.0;
               pjd.maxMotorForce = 10000.0;
               pjd.enableMotor = true;
-              pjd.lowerTranslation = 0.0;
-              pjd.upperTranslation = 20.0;
+              pjd.lowerTranslation = -10.0;
+              pjd.upperTranslation = 10.0;
               pjd.enableLimit = true;
               this.m_joint = this.m_world.CreateJoint(pjd);
           }
@@ -6136,14 +6212,14 @@
           g_debugDraw.DrawString(5, this.m_textLine, "Keys: (l) limits, (m) motors, (s) speed");
           this.m_textLine += DRAW_STRING_NEW_LINE;
           const force = this.m_joint.GetMotorForce(settings.m_hertz);
-          g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(4)}`);
+          g_debugDraw.DrawString(5, this.m_textLine, `Motor Force = ${force.toFixed(0)}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
           return new Prismatic();
       }
   }
-  const testIndex$A = RegisterTest("Joints", "Prismatic", Prismatic.Create);
+  const testIndex$B = RegisterTest("Joints", "Prismatic", Prismatic.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6213,7 +6289,7 @@
           return new Pulleys();
       }
   }
-  const testIndex$B = RegisterTest("Joints", "Pulley", Pulleys.Create);
+  const testIndex$C = RegisterTest("Joints", "Pulley", Pulleys.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6276,7 +6352,7 @@
       }
   }
   Pyramid.e_count = 20;
-  const testIndex$C = RegisterTest("Stacking", "Pyramid", Pyramid.Create);
+  const testIndex$D = RegisterTest("Stacking", "Pyramid", Pyramid.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6639,7 +6715,7 @@
       }
   }
   RayCast.e_maxBodies = 256;
-  const testIndex$D = RegisterTest("Collision", "Ray Cast", RayCast.Create);
+  const testIndex$E = RegisterTest("Collision", "Ray Cast", RayCast.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6694,7 +6770,7 @@
           return new VaryingRestitution();
       }
   }
-  const testIndex$E = RegisterTest("Forces", "Restitution", VaryingRestitution.Create);
+  const testIndex$F = RegisterTest("Forces", "Restitution", VaryingRestitution.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -6827,7 +6903,7 @@
           return new Revolute();
       }
   }
-  const testIndex$F = RegisterTest("Joints", "Revolute", Revolute.Create);
+  const testIndex$G = RegisterTest("Joints", "Revolute", Revolute.Create);
 
   // MIT License
   ///
@@ -7061,7 +7137,7 @@
           return new Rope();
       }
   }
-  const testIndex$G = RegisterTest("Rope", "Bending", Rope.Create);
+  const testIndex$H = RegisterTest("Rope", "Bending", Rope.Create);
   // class Rope : public Test
   // {
   // public:
@@ -7458,7 +7534,7 @@
       }
   }
   SensorTest.e_count = 7;
-  const testIndex$H = RegisterTest("Collision", "Sensors", SensorTest.Create);
+  const testIndex$I = RegisterTest("Collision", "Sensors", SensorTest.Create);
 
   /*
   * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -7563,7 +7639,7 @@
       }
   }
   ShapeCast.e_vertexCount = 8;
-  const testIndex$I = RegisterTest("Collision", "Shape Cast", ShapeCast.Create);
+  const testIndex$J = RegisterTest("Collision", "Shape Cast", ShapeCast.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -7639,7 +7715,7 @@
           return new ShapeEditing();
       }
   }
-  const testIndex$J = RegisterTest("Examples", "Shape Editing", ShapeEditing.Create);
+  const testIndex$K = RegisterTest("Examples", "Shape Editing", ShapeEditing.Create);
 
   /*
   Test case for collision/jerking issue.
@@ -7740,7 +7816,7 @@
           return new Skier();
       }
   }
-  const testIndex$K = RegisterTest("Bugs", "Skier", Skier.Create);
+  const testIndex$L = RegisterTest("Bugs", "Skier", Skier.Create);
 
   /*
    * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
@@ -7837,7 +7913,7 @@
           return new BasicSliderCrank();
       }
   }
-  const testIndex$L = RegisterTest("Examples", "Slider Crank 1", BasicSliderCrank.Create);
+  const testIndex$M = RegisterTest("Examples", "Slider Crank 1", BasicSliderCrank.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -7957,7 +8033,7 @@
       }
   }
   SliderCrank.e_count = 30;
-  const testIndex$M = RegisterTest("Examples", "Slider Crank 2", SliderCrank.Create);
+  const testIndex$N = RegisterTest("Examples", "Slider Crank 2", SliderCrank.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8161,7 +8237,7 @@
           return new TheoJansen();
       }
   }
-  const testIndex$N = RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);
+  const testIndex$O = RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8309,7 +8385,7 @@
       }
   }
   Tiles.e_count = 20;
-  const testIndex$O = RegisterTest("Benchmark", "Tiles", Tiles.Create);
+  const testIndex$P = RegisterTest("Benchmark", "Tiles", Tiles.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8406,7 +8482,7 @@
           return new TimeOfImpact();
       }
   }
-  const testIndex$P = RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);
+  const testIndex$Q = RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8476,7 +8552,7 @@
       }
   }
   Tumbler.e_count = 800;
-  const testIndex$Q = RegisterTest("Benchmark", "Tumbler", Tumbler.Create);
+  const testIndex$R = RegisterTest("Benchmark", "Tumbler", Tumbler.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8654,7 +8730,7 @@
           return new Web();
       }
   }
-  const testIndex$R = RegisterTest("Examples", "Web", Web.Create);
+  const testIndex$S = RegisterTest("Examples", "Web", Web.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8673,66 +8749,91 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  // Adapted from MotorJoint.h
   class WheelJoint extends Test {
       constructor() {
           super();
-          let ground;
+          // b2Body* ground = NULL;
+          let ground = null;
           {
+              // b2BodyDef bd;
               const bd = new b2.BodyDef();
+              // ground = m_world->CreateBody(&bd);
               ground = this.m_world.CreateBody(bd);
+              // b2EdgeShape shape;
               const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              ground.CreateFixture(fd);
+              // shape.SetTwoSided(b2Vec2(-40.0f, 0.0f), b2Vec2(40.0f, 0.0f));
+              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              // ground->CreateFixture(&shape, 0.0f);
+              ground.CreateFixture(shape, 0.0);
           }
-          // b2Body * body1 = NULL;
-          let body1;
+          // m_enableLimit = true;
+          // m_enableMotor = false;
+          // m_motorSpeed = 10.0f;
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(0.0, 4.0);
-              body1 = this.m_world.CreateBody(bd);
+              // b2CircleShape shape;
               const shape = new b2.CircleShape();
-              shape.m_radius = 1.0;
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.friction = 0.6;
-              fd.density = 2.0;
-              body1.CreateFixture(fd);
-          }
-          // b2Body * body2 = NULL;
-          let body2;
-          {
+              // shape.m_radius = 2.0f;
+              shape.m_radius = 2.0;
+              // b2BodyDef bd;
               const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(4.0, 8.0);
-              body2 = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
-              shape.m_radius = 1.0;
-              const fd = new b2.FixtureDef();
-              fd.shape = shape;
-              fd.friction = 0.6;
-              fd.density = 2.0;
-              body2.CreateFixture(fd);
-          }
-          {
-              const mjd = new b2.MotorJointDef();
-              mjd.Initialize(body1, body2);
-              mjd.maxForce = 1000.0;
-              mjd.maxTorque = 1000.0;
-              this.m_joint = this.m_world.CreateJoint(mjd);
+              // bd.type = b2_dynamicBody;
+              bd.type = b2.dynamicBody;
+              // bd.position.Set(0.0f, 10.0f);
+              bd.position.Set(0.0, 10.0);
+              // bd.allowSleep = false;
+              bd.allowSleep = false;
+              // b2Body* body = m_world->CreateBody(&bd);
+              const body = this.m_world.CreateBody(bd);
+              // body->CreateFixture(&shape, 5.0f);
+              body.CreateFixture(shape, 5.0);
+              // b2WheelJointDef jd;
+              const jd = new b2.WheelJointDef();
+              // Horizontal
+              // jd.Initialize(ground, body, bd.position, b2Vec2(0.0f, 1.0f));
+              jd.Initialize(ground, body, bd.position, new b2.Vec2(0.0, 1.0));
+              // jd.motorSpeed = m_motorSpeed;
+              jd.motorSpeed = 10.0;
+              // jd.maxMotorTorque = 10000.0f;
+              jd.maxMotorTorque = 10000.0;
+              // jd.enableMotor = m_enableMotor;
+              jd.enableMotor = true;
+              // jd.lowerTranslation = -3.0f;
+              jd.lowerTranslation = -3.0;
+              // jd.upperTranslation = 3.0f;
+              jd.upperTranslation = 3.0;
+              // jd.enableLimit = m_enableLimit;
+              jd.enableLimit = true;
+              // float hertz = 1.0f;
+              const hertz = 1.0;
+              // float dampingRatio = 0.7f;
+              const dampingRatio = 0.7;
+              // b2LinearStiffness(jd.stiffness, jd.damping, hertz, dampingRatio, ground, body);
+              b2.LinearStiffness(jd, hertz, dampingRatio, ground, body);
+              // m_joint = (b2WheelJoint*)m_world->CreateJoint(&jd);
+              this.m_joint = this.m_world.CreateJoint(jd);
           }
       }
       Step(settings) {
           super.Step(settings);
+          // float torque = m_joint->GetMotorTorque(settings.m_hertz);
+          const torque = this.m_joint.GetMotorTorque(settings.m_hertz);
+          // g_debugDraw.DrawString(5, m_textLine, "Motor Torque = %4.0f", torque);
+          g_debugDraw.DrawString(5, this.m_textLine, `Motor Torque = ${torque.toFixed(0)}`);
+          // m_textLine += m_textIncrement;
+          this.m_textLine += DRAW_STRING_NEW_LINE;
+          // b2Vec2 F = m_joint->GetReactionForce(settings.m_hertz);
+          const F = this.m_joint.GetReactionForce(settings.m_hertz, WheelJoint.Step_s_F);
+          // g_debugDraw.DrawString(5, m_textLine, "Reaction Force = (%4.1f, %4.1f)", F.x, F.y);
+          g_debugDraw.DrawString(5, this.m_textLine, `Reaction Force = (${F.x.toFixed(1)}, ${F.y.toFixed(1)})`);
+          // m_textLine += m_textIncrement;
+          this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
           return new WheelJoint();
       }
   }
-  const testIndex$S = RegisterTest("Joints", "Wheel", WheelJoint.Create);
+  WheelJoint.Step_s_F = new b2.Vec2();
+  const testIndex$T = RegisterTest("Joints", "Wheel", WheelJoint.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8751,11 +8852,11 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
-  class RopeJoint extends Test {
+  class WreckingBall extends Test {
       constructor() {
           super();
-          this.m_ropeDef = new b2.RopeJointDef();
-          this.m_rope = null;
+          this.m_distanceJointDef = new b2.DistanceJointDef();
+          this.m_distanceJoint = null;
           /*b2.Body*/
           let ground = null;
           {
@@ -8785,7 +8886,7 @@
               const N = 10;
               /*const float32*/
               const y = 15.0;
-              this.m_ropeDef.localAnchorA.Set(0.0, y);
+              this.m_distanceJointDef.localAnchorA.Set(0.0, y);
               /*b2.Body*/
               let prevBody = ground;
               for ( /*int32*/let i = 0; i < N; ++i) {
@@ -8794,62 +8895,71 @@
                   bd.type = b2.BodyType.b2_dynamicBody;
                   bd.position.Set(0.5 + 1.0 * i, y);
                   if (i === N - 1) {
-                      shape.SetAsBox(1.5, 1.5);
-                      fd.density = 100.0;
-                      fd.filter.categoryBits = 0x0002;
                       bd.position.Set(1.0 * i, y);
                       bd.angularDamping = 0.4;
                   }
                   /*b2.Body*/
                   const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(fd);
+                  if (i === N - 1) {
+                      const circleShape = new b2.CircleShape();
+                      circleShape.m_radius = 1.5;
+                      const sfd = new b2.FixtureDef();
+                      sfd.shape = circleShape;
+                      sfd.density = 100.0;
+                      sfd.filter.categoryBits = 0x0002;
+                      body.CreateFixture(sfd);
+                  }
+                  else {
+                      body.CreateFixture(fd);
+                  }
                   /*b2.Vec2*/
                   const anchor = new b2.Vec2(i, y);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
               }
-              this.m_ropeDef.localAnchorB.SetZero();
+              this.m_distanceJointDef.localAnchorB.SetZero();
               /*float32*/
               const extraLength = 0.01;
-              this.m_ropeDef.maxLength = N - 1.0 + extraLength;
-              this.m_ropeDef.bodyB = prevBody;
+              this.m_distanceJointDef.minLength = 0.0;
+              this.m_distanceJointDef.maxLength = N - 1.0 + extraLength;
+              this.m_distanceJointDef.bodyB = prevBody;
           }
           {
-              this.m_ropeDef.bodyA = ground;
-              this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+              this.m_distanceJointDef.bodyA = ground;
+              this.m_distanceJoint = this.m_world.CreateJoint(this.m_distanceJointDef);
           }
       }
       Keyboard(key) {
           switch (key) {
               case "j":
-                  if (this.m_rope) {
-                      this.m_world.DestroyJoint(this.m_rope);
-                      this.m_rope = null;
+                  if (this.m_distanceJoint) {
+                      this.m_world.DestroyJoint(this.m_distanceJoint);
+                      this.m_distanceJoint = null;
                   }
                   else {
-                      this.m_rope = this.m_world.CreateJoint(this.m_ropeDef);
+                      this.m_distanceJoint = this.m_world.CreateJoint(this.m_distanceJointDef);
                   }
                   break;
           }
       }
       Step(settings) {
           super.Step(settings);
-          g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the rope joint.");
+          g_debugDraw.DrawString(5, this.m_textLine, "Press (j) to toggle the distance joint.");
           this.m_textLine += DRAW_STRING_NEW_LINE;
-          if (this.m_rope) {
-              g_debugDraw.DrawString(5, this.m_textLine, "Rope ON");
+          if (this.m_distanceJoint) {
+              g_debugDraw.DrawString(5, this.m_textLine, "Distance Joint ON");
           }
           else {
-              g_debugDraw.DrawString(5, this.m_textLine, "Rope OFF");
+              g_debugDraw.DrawString(5, this.m_textLine, "Distance Joint OFF");
           }
           this.m_textLine += DRAW_STRING_NEW_LINE;
       }
       static Create() {
-          return new RopeJoint();
+          return new WreckingBall();
       }
   }
-  const testIndex$T = RegisterTest("Examples", "Wrecking Ball", RopeJoint.Create);
+  const testIndex$U = RegisterTest("Examples", "Wrecking Ball", WreckingBall.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8918,7 +9028,7 @@
           return new BlobTest();
       }
   }
-  const testIndex$U = RegisterTest("Extras", "Blob Test", BlobTest.Create);
+  const testIndex$V = RegisterTest("Extras", "Blob Test", BlobTest.Create);
 
   class DominoTower extends Test {
       constructor() {
@@ -9022,7 +9132,7 @@
           return new DominoTower();
       }
   }
-  const testIndex$V = RegisterTest("Extras", "Domino Tower", DominoTower.Create);
+  const testIndex$W = RegisterTest("Extras", "Domino Tower", DominoTower.Create);
 
   class PyramidTopple extends Test {
       constructor() {
@@ -9090,7 +9200,7 @@
           return new PyramidTopple();
       }
   }
-  const testIndex$W = RegisterTest("Extras", "Pyramid Topple", PyramidTopple.Create);
+  const testIndex$X = RegisterTest("Extras", "Pyramid Topple", PyramidTopple.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9172,7 +9282,7 @@
           return new TestCCD();
       }
   }
-  const testIndex$X = RegisterTest("Extras", "Test CCD", TestCCD.Create);
+  const testIndex$Y = RegisterTest("Extras", "Test CCD", TestCCD.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9394,7 +9504,7 @@
           return new TestRagdoll();
       }
   }
-  const testIndex$Y = RegisterTest("Extras", "Ragdoll", TestRagdoll.Create);
+  const testIndex$Z = RegisterTest("Extras", "Ragdoll", TestRagdoll.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9479,7 +9589,7 @@
           return new TestStack();
       }
   }
-  const testIndex$Z = RegisterTest("Extras", "Test Stack", TestStack.Create);
+  const testIndex$_ = RegisterTest("Extras", "Test Stack", TestStack.Create);
 
   /*
    * Author: Chris Campbell - www.iforce2d.net
@@ -9851,7 +9961,7 @@
           return new TopdownCar();
       }
   }
-  const testIndex$_ = RegisterTest("Extras", "Topdown Car", TopdownCar.Create);
+  const testIndex$$ = RegisterTest("Extras", "Topdown Car", TopdownCar.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -10136,7 +10246,7 @@
       }
       return angle;
   }
-  const testIndex$$ = RegisterTest("Extras", "Segway", Segway.Create);
+  const testIndex$10 = RegisterTest("Extras", "Segway", Segway.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -10322,7 +10432,7 @@
           return new BuoyancyTest();
       }
   }
-  const testIndex$10 = RegisterTest("Extras", "Buoyancy Test", BuoyancyTest.Create);
+  const testIndex$11 = RegisterTest("Extras", "Buoyancy Test", BuoyancyTest.Create);
 
   /*
    * Copyright (c) 2014 Google, Inc.
@@ -10414,7 +10524,7 @@
           return new AntiPointy();
       }
   }
-  const testIndex$11 = RegisterTest("Particles", "AntiPointy", AntiPointy.Create);
+  const testIndex$12 = RegisterTest("Particles", "AntiPointy", AntiPointy.Create);
   // #endif
 
   /*
@@ -10506,7 +10616,7 @@
           return new CornerCase();
       }
   }
-  const testIndex$12 = RegisterTest("Particles", "Corner Case", CornerCase.Create);
+  const testIndex$13 = RegisterTest("Particles", "Corner Case", CornerCase.Create);
   // #endif
 
   /*
@@ -10563,7 +10673,7 @@
           return new DamBreak();
       }
   }
-  const testIndex$13 = RegisterTest("Particles", "Dam Break", DamBreak.Create);
+  const testIndex$14 = RegisterTest("Particles", "Dam Break", DamBreak.Create);
   // #endif
 
   /*
@@ -10863,7 +10973,7 @@
       new ParticleParameterDefinition(DrawingParticles.k_paramValues),
   ];
   DrawingParticles.k_paramDefCount = DrawingParticles.k_paramDef.length;
-  const testIndex$14 = RegisterTest("Particles", "Drawing Particles", DrawingParticles.Create);
+  const testIndex$15 = RegisterTest("Particles", "Drawing Particles", DrawingParticles.Create);
   // #endif
 
   /*
@@ -10976,7 +11086,7 @@
           return new ElasticParticles();
       }
   }
-  const testIndex$15 = RegisterTest("Particles", "Elastic Particles", ElasticParticles.Create);
+  const testIndex$16 = RegisterTest("Particles", "Elastic Particles", ElasticParticles.Create);
   // #endif
 
   // #if B2_ENABLE_PARTICLE
@@ -11034,7 +11144,7 @@
           return new EyeCandy();
       }
   }
-  const testIndex$16 = RegisterTest("Particles", "Eye Candy", EyeCandy.Create);
+  const testIndex$17 = RegisterTest("Particles", "Eye Candy", EyeCandy.Create);
   // #endif
 
   /*
@@ -11312,7 +11422,7 @@
       new ParticleParameterDefinition(Faucet.k_paramValues),
   ];
   Faucet.k_paramDefCount = Faucet.k_paramDef.length;
-  const testIndex$17 = RegisterTest("Particles", "Faucet", Faucet.Create);
+  const testIndex$18 = RegisterTest("Particles", "Faucet", Faucet.Create);
   // #endif
 
   /*
@@ -12172,7 +12282,7 @@
           }
       }
   }
-  const testIndex$18 = RegisterTest("Particles", "Fracker", Fracker.Create);
+  const testIndex$19 = RegisterTest("Particles", "Fracker", Fracker.Create);
   // #endif
 
   /*
@@ -12282,7 +12392,7 @@
   Impulse.kBoxRight = 2;
   Impulse.kBoxBottom = 0;
   Impulse.kBoxTop = 4;
-  const testIndex$19 = RegisterTest("Particles", "Impulse", Impulse.Create);
+  const testIndex$1a = RegisterTest("Particles", "Impulse", Impulse.Create);
   // #endif
 
   /*
@@ -12418,7 +12528,7 @@
       new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
   ];
   LiquidTimer.k_paramDefCount = LiquidTimer.k_paramDef.length;
-  const testIndex$1a = RegisterTest("Particles", "Liquid Timer", LiquidTimer.Create);
+  const testIndex$1b = RegisterTest("Particles", "Liquid Timer", LiquidTimer.Create);
   // #endif
 
   /*
@@ -12683,7 +12793,7 @@
   Maxwell.k_temperatureMin = 0.4;
   Maxwell.k_temperatureMax = 10.0;
   Maxwell.k_temperatureDefault = 5.0;
-  const testIndex$1b = RegisterTest("Particles", "Maxwell", Maxwell.Create);
+  const testIndex$1c = RegisterTest("Particles", "Maxwell", Maxwell.Create);
   // #endif
 
   /*
@@ -12814,7 +12924,7 @@
    * Color of the right emitter's particles.
    */
   MultipleParticleSystems.k_rightEmitterColor = new b2.Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
-  const testIndex$1c = RegisterTest("Particles", "Multiple Systems", MultipleParticleSystems.Create);
+  const testIndex$1d = RegisterTest("Particles", "Multiple Systems", MultipleParticleSystems.Create);
   // #endif
 
   /*
@@ -12974,7 +13084,7 @@
   ParticleCollisionFilter.kOffset = 20.0;
   ParticleCollisionFilter.kParticlesContainerSize = ParticleCollisionFilter.kOffset + 0.5;
   ParticleCollisionFilter.kSpeedup = 8.0;
-  const testIndex$1d = RegisterTest("Particles", "Collision Filter", ParticleCollisionFilter.Create);
+  const testIndex$1e = RegisterTest("Particles", "Collision Filter", ParticleCollisionFilter.Create);
   // #endif
 
   /*
@@ -13087,7 +13197,7 @@
           return new ParticlesSurfaceTension();
       }
   }
-  const testIndex$1e = RegisterTest("Particles", "Surface Tension", ParticlesSurfaceTension.Create);
+  const testIndex$1f = RegisterTest("Particles", "Surface Tension", ParticlesSurfaceTension.Create);
   // #endif
 
   /*
@@ -13179,7 +13289,7 @@
           return new Particles();
       }
   }
-  const testIndex$1f = RegisterTest("Particles", "Particles", Particles.Create);
+  const testIndex$1g = RegisterTest("Particles", "Particles", Particles.Create);
   // #endif
 
   /*
@@ -13258,7 +13368,7 @@
           return new Pointy();
       }
   }
-  const testIndex$1g = RegisterTest("Particles", "Pointy", Pointy.Create);
+  const testIndex$1h = RegisterTest("Particles", "Pointy", Pointy.Create);
   // #endif
 
   /*
@@ -13330,7 +13440,7 @@
           return new Ramp();
       }
   }
-  const testIndex$1h = RegisterTest("Particles", "Ramp", Ramp.Create);
+  const testIndex$1i = RegisterTest("Particles", "Ramp", Ramp.Create);
   // #endif
 
   /*
@@ -13447,7 +13557,7 @@
           return new RigidParticles();
       }
   }
-  const testIndex$1i = RegisterTest("Particles", "Rigid Particles", RigidParticles.Create);
+  const testIndex$1j = RegisterTest("Particles", "Rigid Particles", RigidParticles.Create);
   // #endif
 
   /*
@@ -13979,7 +14089,7 @@
       new ParticleParameterDefinition(Sandbox.k_paramValues),
   ];
   Sandbox.k_paramDefCount = Sandbox.k_paramDef.length;
-  const testIndex$1j = RegisterTest("Particles", "Sandbox", Sandbox.Create);
+  const testIndex$1k = RegisterTest("Particles", "Sandbox", Sandbox.Create);
   // #endif
 
   /*
@@ -14134,7 +14244,7 @@
           return new Soup();
       }
   }
-  const testIndex$1k = RegisterTest("Particles", "Soup", Soup.Create);
+  const testIndex$1l = RegisterTest("Particles", "Soup", Soup.Create);
   // #endif
 
   /*
@@ -14263,7 +14373,7 @@
           return new SoupStirrer();
       }
   }
-  const testIndex$1l = RegisterTest("Particles", "Soup Stirrer", SoupStirrer.Create);
+  const testIndex$1m = RegisterTest("Particles", "Soup Stirrer", SoupStirrer.Create);
   // #endif
 
   /*
@@ -14529,7 +14639,7 @@
   Sparky.c_maxVFX = 20; ///50;
   Sparky.SHAPE_HEIGHT_OFFSET = 7;
   Sparky.SHAPE_OFFSET = 4.5;
-  const testIndex$1m = RegisterTest("Particles", "Sparky", Sparky.Create);
+  const testIndex$1n = RegisterTest("Particles", "Sparky", Sparky.Create);
   // #endif
 
   /*
@@ -14614,7 +14724,7 @@
           return new WaveMachine();
       }
   }
-  const testIndex$1n = RegisterTest("Particles", "Wave Machine", WaveMachine.Create);
+  const testIndex$1o = RegisterTest("Particles", "Wave Machine", WaveMachine.Create);
   // #endif
 
   class Main {
@@ -14715,7 +14825,7 @@
               const option = test_options[i];
               test_select.add(option);
           }
-          test_select.selectedIndex = this.m_settings.m_testIndex = 76;
+          test_select.selectedIndex = this.m_settings.m_testIndex = 77;
           test_select.addEventListener("change", (e) => {
               this.m_settings.m_testIndex = test_select.selectedIndex;
               this.LoadTest();
