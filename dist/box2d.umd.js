@@ -2829,19 +2829,12 @@
       }
       /// Does this aabb contain the provided AABB.
       Contains(aabb) {
-          if (this.lowerBound.x <= aabb.lowerBound.x) {
-              return false;
-          }
-          if (this.lowerBound.y <= aabb.lowerBound.y) {
-              return false;
-          }
-          if (aabb.upperBound.x <= this.upperBound.x) {
-              return false;
-          }
-          if (aabb.upperBound.y <= this.upperBound.y) {
-              return false;
-          }
-          return true;
+          let result = true;
+          result = result && this.lowerBound.x <= aabb.lowerBound.x;
+          result = result && this.lowerBound.y <= aabb.lowerBound.y;
+          result = result && aabb.upperBound.x <= this.upperBound.x;
+          result = result && aabb.upperBound.y <= this.upperBound.y;
+          return result;
       }
       // From Real-time Collision Detection, p179.
       RayCast(output, input) {
