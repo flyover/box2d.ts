@@ -72,7 +72,7 @@ export class GearJoint extends testbed.Test {
       body3.CreateFixture(circle2, 5.0);
 
       const jd1 = new b2.RevoluteJointDef();
-      jd1.Initialize(body2, body1, bd1.position);
+      jd1.Initialize(body1, body2, bd1.position);
       const joint1: b2.RevoluteJoint = this.m_world.CreateJoint(jd1);
 
       const jd2 = new b2.RevoluteJointDef();

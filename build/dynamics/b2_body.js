@@ -304,7 +304,8 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     for (let f = this.m_fixtureList; f; f = f.m_next) {
                         f.SynchronizeProxies(this.m_xf, this.m_xf);
                     }
-                    this.m_world.m_contactManager.FindNewContacts();
+                    // Check for new contacts the next step
+                    this.m_world.m_newContacts = true;
                 }
                 SetTransform(xf) {
                     this.SetTransformVec(xf.p, xf.GetAngle());

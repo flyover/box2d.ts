@@ -426,7 +426,8 @@ export class b2Body {
       f.SynchronizeProxies(this.m_xf, this.m_xf);
     }
 
-    this.m_world.m_contactManager.FindNewContacts();
+    // Check for new contacts the next step
+    this.m_world.m_newContacts = true;
   }
 
   public SetTransform(xf: b2Transform): void {

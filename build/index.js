@@ -1,6 +1,6 @@
 System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./common/b2_growable_stack.js", "./common/b2_math.js", "./common/b2_settings.js", "./common/b2_stack_allocator.js", "./common/b2_timer.js", "./collision/b2_broad_phase.js", "./collision/b2_chain_shape.js", "./collision/b2_circle_shape.js", "./collision/b2_collide_circle.js", "./collision/b2_collide_edge.js", "./collision/b2_collide_polygon.js", "./collision/b2_collision.js", "./collision/b2_distance.js", "./collision/b2_dynamic_tree.js", "./collision/b2_edge_shape.js", "./collision/b2_polygon_shape.js", "./collision/b2_shape.js", "./collision/b2_time_of_impact.js", "./dynamics/b2_area_joint.js", "./dynamics/b2_body.js", "./dynamics/b2_chain_circle_contact.js", "./dynamics/b2_chain_polygon_contact.js", "./dynamics/b2_circle_contact.js", "./dynamics/b2_contact_factory.js", "./dynamics/b2_contact_manager.js", "./dynamics/b2_contact_solver.js", "./dynamics/b2_contact.js", "./dynamics/b2_distance_joint.js", "./dynamics/b2_edge_circle_contact.js", "./dynamics/b2_edge_polygon_contact.js", "./dynamics/b2_fixture.js", "./dynamics/b2_friction_joint.js", "./dynamics/b2_gear_joint.js", "./dynamics/b2_island.js", "./dynamics/b2_joint.js", "./dynamics/b2_motor_joint.js", "./dynamics/b2_mouse_joint.js", "./dynamics/b2_polygon_circle_contact.js", "./dynamics/b2_polygon_contact.js", "./dynamics/b2_prismatic_joint.js", "./dynamics/b2_pulley_joint.js", "./dynamics/b2_revolute_joint.js", "./dynamics/b2_time_step.js", "./dynamics/b2_weld_joint.js", "./dynamics/b2_wheel_joint.js", "./dynamics/b2_world_callbacks.js", "./dynamics/b2_world.js", "./rope/b2_rope.js", "./controllers/b2_buoyancy_controller.js", "./controllers/b2_constant_accel_controller.js", "./controllers/b2_constant_force_controller.js", "./controllers/b2_controller.js", "./controllers/b2_gravity_controller.js", "./controllers/b2_tensor_damping_controller.js", "./particle/b2_particle_group.js", "./particle/b2_particle_system.js", "./particle/b2_particle.js", "./particle/b2_stack_queue.js", "./particle/b2_voronoi_diagram.js"], function (exports_1, context_1) {
     "use strict";
-    var b2_body_js_1, staticBody, kinematicBody, dynamicBody;
+    var b2_body_js_1, staticBody, kinematicBody, dynamicBody, b2_rope_js_1, springAngleBendingModel, pbdAngleBendingModel, xpbdAngleBendingModel, pbdDistanceBendingModel, pbdHeightBendingModel, pbdTriangleBendingModel, b2_rope_js_2, pbdStretchingModel, xpbdStretchingModel;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -161,6 +161,9 @@ System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./com
                     "invalidParticleIndex": b2_settings_js_1_1["b2_invalidParticleIndex"]
                 });
                 exports_1({
+                    "lengthUnitsPerMeter": b2_settings_js_1_1["b2_lengthUnitsPerMeter"]
+                });
+                exports_1({
                     "linearSleepTolerance": b2_settings_js_1_1["b2_linearSleepTolerance"]
                 });
                 exports_1({
@@ -234,9 +237,6 @@ System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./com
                 });
                 exports_1({
                     "toiBaumgarte": b2_settings_js_1_1["b2_toiBaumgarte"]
-                });
-                exports_1({
-                    "velocityThreshold": b2_settings_js_1_1["b2_velocityThreshold"]
                 });
                 exports_1({
                     "version": b2_settings_js_1_1["b2_version"]
@@ -581,6 +581,9 @@ System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./com
                 exports_1({
                     "MixRestitution": b2_contact_js_1_1["b2MixRestitution"]
                 });
+                exports_1({
+                    "MixRestitutionThreshold": b2_contact_js_1_1["b2MixRestitutionThreshold"]
+                });
             },
             function (b2_distance_joint_js_1_1) {
                 exports_1({
@@ -769,22 +772,24 @@ System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./com
                     "World": b2_world_js_1_1["b2World"]
                 });
             },
-            function (b2_rope_js_1_1) {
+            function (b2_rope_js_3_1) {
                 exports_1({
-                    "RopeDef": b2_rope_js_1_1["b2RopeDef"]
+                    "RopeDef": b2_rope_js_3_1["b2RopeDef"]
                 });
                 exports_1({
-                    "Rope": b2_rope_js_1_1["b2Rope"]
+                    "Rope": b2_rope_js_3_1["b2Rope"]
                 });
                 exports_1({
-                    "RopeTuning": b2_rope_js_1_1["b2RopeTuning"]
+                    "RopeTuning": b2_rope_js_3_1["b2RopeTuning"]
                 });
                 exports_1({
-                    "BendingModel": b2_rope_js_1_1["b2BendingModel"]
+                    "BendingModel": b2_rope_js_3_1["b2BendingModel"]
                 });
+                b2_rope_js_1 = b2_rope_js_3_1;
                 exports_1({
-                    "StretchingModel": b2_rope_js_1_1["b2StretchingModel"]
+                    "StretchingModel": b2_rope_js_3_1["b2StretchingModel"]
                 });
+                b2_rope_js_2 = b2_rope_js_3_1;
             },
             function (b2_buoyancy_controller_js_1_1) {
                 exports_1({
@@ -939,6 +944,14 @@ System.register(["./common/b2_block_allocator.js", "./common/b2_draw.js", "./com
             exports_1("staticBody", staticBody = b2_body_js_1.b2BodyType.b2_staticBody);
             exports_1("kinematicBody", kinematicBody = b2_body_js_1.b2BodyType.b2_kinematicBody);
             exports_1("dynamicBody", dynamicBody = b2_body_js_1.b2BodyType.b2_dynamicBody);
+            exports_1("springAngleBendingModel", springAngleBendingModel = b2_rope_js_1.b2BendingModel.b2_springAngleBendingModel);
+            exports_1("pbdAngleBendingModel", pbdAngleBendingModel = b2_rope_js_1.b2BendingModel.b2_pbdAngleBendingModel);
+            exports_1("xpbdAngleBendingModel", xpbdAngleBendingModel = b2_rope_js_1.b2BendingModel.b2_xpbdAngleBendingModel);
+            exports_1("pbdDistanceBendingModel", pbdDistanceBendingModel = b2_rope_js_1.b2BendingModel.b2_pbdDistanceBendingModel);
+            exports_1("pbdHeightBendingModel", pbdHeightBendingModel = b2_rope_js_1.b2BendingModel.b2_pbdHeightBendingModel);
+            exports_1("pbdTriangleBendingModel", pbdTriangleBendingModel = b2_rope_js_1.b2BendingModel.b2_pbdTriangleBendingModel);
+            exports_1("pbdStretchingModel", pbdStretchingModel = b2_rope_js_2.b2StretchingModel.b2_pbdStretchingModel);
+            exports_1("xpbdStretchingModel", xpbdStretchingModel = b2_rope_js_2.b2StretchingModel.b2_xpbdStretchingModel);
         }
     };
 });

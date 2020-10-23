@@ -6,6 +6,7 @@ import { b2Shape } from "../collision/b2_shape.js";
 import { b2ContactListener } from "./b2_world_callbacks.js";
 export declare function b2MixFriction(friction1: number, friction2: number): number;
 export declare function b2MixRestitution(restitution1: number, restitution2: number): number;
+export declare function b2MixRestitutionThreshold(threshold1: number, threshold2: number): number;
 export declare class b2ContactEdge {
     private _other;
     get other(): b2Body;
@@ -36,6 +37,7 @@ export declare abstract class b2Contact<A extends b2Shape = b2Shape, B extends b
     m_toi: number;
     m_friction: number;
     m_restitution: number;
+    m_restitutionThreshold: number;
     m_tangentSpeed: number;
     m_oldManifold: b2Manifold;
     GetManifold(): b2Manifold;
@@ -58,6 +60,9 @@ export declare abstract class b2Contact<A extends b2Shape = b2Shape, B extends b
     SetRestitution(restitution: number): void;
     GetRestitution(): number;
     ResetRestitution(): void;
+    SetRestitutionThreshold(threshold: number): void;
+    GetRestitutionThreshold(): number;
+    ResetRestitutionThreshold(): void;
     SetTangentSpeed(speed: number): void;
     GetTangentSpeed(): number;
     Reset(fixtureA: b2Fixture, indexA: number, fixtureB: b2Fixture, indexB: number): void;

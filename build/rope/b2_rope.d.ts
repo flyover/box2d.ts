@@ -9,7 +9,8 @@ export declare enum b2BendingModel {
     b2_pbdAngleBendingModel = 1,
     b2_xpbdAngleBendingModel = 2,
     b2_pbdDistanceBendingModel = 3,
-    b2_pbdHeightBendingModel = 4
+    b2_pbdHeightBendingModel = 4,
+    b2_pbdTriangleBendingModel = 5
 }
 export declare class b2RopeTuning {
     stretchingModel: b2StretchingModel;
@@ -59,5 +60,6 @@ export declare class b2Rope {
     private SolveBend_XPBD_Angle;
     private SolveBend_PBD_Distance;
     private SolveBend_PBD_Height;
+    private SolveBend_PBD_Triangle;
     private ApplyBendForces;
 }

@@ -145,6 +145,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     djd.localAnchorB.Set(0.0, -1.0);
                     const d = b2.Vec2.SubVV(djd.bodyB.GetWorldPoint(djd.localAnchorB, new b2.Vec2()), djd.bodyA.GetWorldPoint(djd.localAnchorA, new b2.Vec2()), new b2.Vec2());
                     djd.length = d.Length();
+                    b2.LinearStiffness(djd, 1.0, 1.0, djd.bodyA, djd.bodyB);
                     this.m_world.CreateJoint(djd);
                     {
                         const radius = 0.2;

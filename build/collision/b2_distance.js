@@ -187,8 +187,8 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js"], function (
         const k_maxIters = 20;
         // int32 iter = 0;
         let iter = 0;
-        // while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance)
-        while (iter < k_maxIters && b2_math_js_1.b2Abs(v.Length() - sigma) > tolerance) {
+        // while (iter < k_maxIters && v.Length() - sigma > tolerance)
+        while (iter < k_maxIters && v.Length() - sigma > tolerance) {
             // DEBUG: b2Assert(simplex.m_count < 3);
             output.iterations += 1;
             // Support in direction -v (A - B)
@@ -257,6 +257,10 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js"], function (
             simplex.GetClosestPoint(v);
             // Iteration count is equated to the number of support point calls.
             ++iter;
+        }
+        if (iter === 0) {
+            // Initial overlap
+            return false;
         }
         // Prepare output.
         const pointA = b2ShapeCast_s_pointA;

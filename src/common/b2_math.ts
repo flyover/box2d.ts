@@ -1240,10 +1240,11 @@ export class b2Sweep {
     return this;
   }
 
+  // https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
   public GetTransform(xf: b2Transform, beta: number): b2Transform {
-    xf.p.x = this.c0.x + beta * (this.c.x - this.c0.x);
-    xf.p.y = this.c0.y + beta * (this.c.y - this.c0.y);
-    const angle: number = this.a0 + beta * (this.a - this.a0);
+    xf.p.x = (1.0 - beta) * this.c0.x + beta * this.c.x;
+    xf.p.y = (1.0 - beta) * this.c0.y + beta * this.c.y;
+    const angle: number = (1.0 - beta) * this.a0 + beta * this.a;
     xf.q.SetAngle(angle);
 
     xf.p.SelfSub(b2Rot.MulRV(xf.q, this.localCenter, b2Vec2.s_t0));

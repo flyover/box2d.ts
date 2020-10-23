@@ -31,6 +31,11 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
         return restitution1 > restitution2 ? restitution1 : restitution2;
     }
     exports_1("b2MixRestitution", b2MixRestitution);
+    /// Restitution mixing law. This picks the lowest value.
+    function b2MixRestitutionThreshold(threshold1, threshold2) {
+        return threshold1 < threshold2 ? threshold1 : threshold2;
+    }
+    exports_1("b2MixRestitutionThreshold", b2MixRestitutionThreshold);
     return {
         setters: [
             function (b2_settings_js_1_1) {
@@ -93,6 +98,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.m_toi = 0;
                     this.m_friction = 0;
                     this.m_restitution = 0;
+                    this.m_restitutionThreshold = 0;
                     this.m_tangentSpeed = 0;
                     this.m_oldManifold = new b2_collision_js_1.b2Manifold(); // TODO: readonly
                 }
@@ -157,6 +163,19 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                 ResetRestitution() {
                     this.m_restitution = b2MixRestitution(this.m_fixtureA.m_restitution, this.m_fixtureB.m_restitution);
                 }
+                /// Override the default restitution velocity threshold mixture. You can call this in b2ContactListener::PreSolve.
+                /// The value persists until you set or reset.
+                SetRestitutionThreshold(threshold) {
+                    this.m_restitutionThreshold = threshold;
+                }
+                /// Get the restitution threshold.
+                GetRestitutionThreshold() {
+                    return this.m_restitutionThreshold;
+                }
+                /// Reset the restitution threshold to the default value.
+                ResetRestitutionThreshold() {
+                    this.m_restitutionThreshold = b2MixRestitutionThreshold(this.m_fixtureA.m_restitutionThreshold, this.m_fixtureB.m_restitutionThreshold);
+                }
                 SetTangentSpeed(speed) {
                     this.m_tangentSpeed = speed;
                 }
@@ -182,6 +201,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.m_toiCount = 0;
                     this.m_friction = b2MixFriction(this.m_fixtureA.m_friction, this.m_fixtureB.m_friction);
                     this.m_restitution = b2MixRestitution(this.m_fixtureA.m_restitution, this.m_fixtureB.m_restitution);
+                    this.m_restitutionThreshold = b2MixRestitutionThreshold(this.m_fixtureA.m_restitutionThreshold, this.m_fixtureB.m_restitutionThreshold);
                 }
                 Update(listener) {
                     const tManifold = this.m_oldManifold;

@@ -1056,13 +1056,16 @@
               return true; // Continue the query.
           });
           if (hit_fixture) {
+              const frequencyHz = 5.0;
+              const dampingRatio = 0.7;
               const body = hit_fixture.GetBody();
-              const md = new b2.MouseJointDef();
-              md.bodyA = this.m_groundBody;
-              md.bodyB = body;
-              md.target.Copy(p);
-              md.maxForce = 1000 * body.GetMass();
-              this.m_mouseJoint = this.m_world.CreateJoint(md);
+              const jd = new b2.MouseJointDef();
+              jd.bodyA = this.m_groundBody;
+              jd.bodyB = body;
+              jd.target.Copy(p);
+              jd.maxForce = 1000 * body.GetMass();
+              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              this.m_mouseJoint = this.m_world.CreateJoint(jd);
               body.SetAwake(true);
           }
       }
@@ -2981,84 +2984,136 @@
               shape.SetTwoSided(new b2.Vec2(50.0, 0.0), new b2.Vec2(-50.0, 0.0));
               body.CreateFixture(shape, 0.0);
           }
+          // Table 1
           {
-              const circle1 = new b2.CircleShape();
-              circle1.m_radius = 0.5;
-              circle1.m_p.Set(-0.5, 0.5);
-              const circle2 = new b2.CircleShape();
-              circle2.m_radius = 0.5;
-              circle2.m_p.Set(0.5, 0.5);
-              for (let i = 0; i < 10; ++i) {
-                  const x = b2.RandomRange(-0.1, 0.1);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(x + 5.0, 1.05 + 2.5 * i);
-                  bd.angle = b2.RandomRange(-b2.pi, b2.pi);
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(circle1, 2.0);
-                  body.CreateFixture(circle2, 0.0);
-              }
-          }
-          {
-              const polygon1 = new b2.PolygonShape();
-              polygon1.SetAsBox(0.25, 0.5);
-              const polygon2 = new b2.PolygonShape();
-              polygon2.SetAsBox(0.25, 0.5, new b2.Vec2(0.0, -0.5), 0.5 * b2.pi);
-              for (let i = 0; i < 10; ++i) {
-                  const x = b2.RandomRange(-0.1, 0.1);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(x - 5.0, 1.05 + 2.5 * i);
-                  bd.angle = b2.RandomRange(-b2.pi, b2.pi);
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(polygon1, 2.0);
-                  body.CreateFixture(polygon2, 2.0);
-              }
-          }
-          {
-              const xf1 = new b2.Transform();
-              xf1.q.SetAngle(0.3524 * b2.pi);
-              xf1.p.Copy(b2.Rot.MulRV(xf1.q, new b2.Vec2(1.0, 0.0), new b2.Vec2()));
-              const vertices = new Array();
-              const triangle1 = new b2.PolygonShape();
-              vertices[0] = b2.Transform.MulXV(xf1, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
-              vertices[1] = b2.Transform.MulXV(xf1, new b2.Vec2(1.0, 0.0), new b2.Vec2());
-              vertices[2] = b2.Transform.MulXV(xf1, new b2.Vec2(0.0, 0.5), new b2.Vec2());
-              triangle1.Set(vertices, 3);
-              const xf2 = new b2.Transform();
-              xf2.q.SetAngle(-0.3524 * b2.pi);
-              xf2.p.Copy(b2.Rot.MulRV(xf2.q, new b2.Vec2(-1.0, 0.0), new b2.Vec2()));
-              const triangle2 = new b2.PolygonShape();
-              vertices[0] = b2.Transform.MulXV(xf2, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
-              vertices[1] = b2.Transform.MulXV(xf2, new b2.Vec2(1.0, 0.0), new b2.Vec2());
-              vertices[2] = b2.Transform.MulXV(xf2, new b2.Vec2(0.0, 0.5), new b2.Vec2());
-              triangle2.Set(vertices, 3);
-              for (let i = 0; i < 10; ++i) {
-                  const x = b2.RandomRange(-0.1, 0.1);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(x, 2.05 + 2.5 * i);
-                  bd.angle = 0;
-                  const body = this.m_world.CreateBody(bd);
-                  body.CreateFixture(triangle1, 2.0);
-                  body.CreateFixture(triangle2, 2.0);
-              }
-          }
-          {
-              const bottom = new b2.PolygonShape();
-              bottom.SetAsBox(1.5, 0.15);
-              const left = new b2.PolygonShape();
-              left.SetAsBox(0.15, 2.7, new b2.Vec2(-1.45, 2.35), 0.2);
-              const right = new b2.PolygonShape();
-              right.SetAsBox(0.15, 2.7, new b2.Vec2(1.45, 2.35), -0.2);
               const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              bd.position.Set(0.0, 2.0);
-              const body = this.m_world.CreateBody(bd);
-              body.CreateFixture(bottom, 4.0);
-              body.CreateFixture(left, 4.0);
-              body.CreateFixture(right, 4.0);
+              bd.type = b2.dynamicBody;
+              bd.position.Set(-15.0, 1.0);
+              this.m_table1 = this.m_world.CreateBody(bd);
+              const top = new b2.PolygonShape();
+              top.SetAsBox(3.0, 0.5, new b2.Vec2(0.0, 3.5), 0.0);
+              const leftLeg = new b2.PolygonShape();
+              leftLeg.SetAsBox(0.5, 1.5, new b2.Vec2(-2.5, 1.5), 0.0);
+              const rightLeg = new b2.PolygonShape();
+              rightLeg.SetAsBox(0.5, 1.5, new b2.Vec2(2.5, 1.5), 0.0);
+              this.m_table1.CreateFixture(top, 2.0);
+              this.m_table1.CreateFixture(leftLeg, 2.0);
+              this.m_table1.CreateFixture(rightLeg, 2.0);
           }
+          // Table 2
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Set(-5.0, 1.0);
+              this.m_table2 = this.m_world.CreateBody(bd);
+              const top = new b2.PolygonShape();
+              top.SetAsBox(3.0, 0.5, new b2.Vec2(0.0, 3.5), 0.0);
+              const leftLeg = new b2.PolygonShape();
+              leftLeg.SetAsBox(0.5, 2.0, new b2.Vec2(-2.5, 2.0), 0.0);
+              const rightLeg = new b2.PolygonShape();
+              rightLeg.SetAsBox(0.5, 2.0, new b2.Vec2(2.5, 2.0), 0.0);
+              this.m_table2.CreateFixture(top, 2.0);
+              this.m_table2.CreateFixture(leftLeg, 2.0);
+              this.m_table2.CreateFixture(rightLeg, 2.0);
+          }
+          // Spaceship 1
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Set(5.0, 1.0);
+              this.m_ship1 = this.m_world.CreateBody(bd);
+              const vertices = b2.Vec2.MakeArray(3);
+              const left = new b2.PolygonShape();
+              vertices[0].Set(-2.0, 0.0);
+              vertices[1].Set(0.0, 4.0 / 3.0);
+              vertices[2].Set(0.0, 4.0);
+              left.Set(vertices, 3);
+              const right = new b2.PolygonShape();
+              vertices[0].Set(2.0, 0.0);
+              vertices[1].Set(0.0, 4.0 / 3.0);
+              vertices[2].Set(0.0, 4.0);
+              right.Set(vertices, 3);
+              this.m_ship1.CreateFixture(left, 2.0);
+              this.m_ship1.CreateFixture(right, 2.0);
+          }
+          // Spaceship 2
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Set(15.0, 1.0);
+              this.m_ship2 = this.m_world.CreateBody(bd);
+              const vertices = b2.Vec2.MakeArray(3);
+              const left = new b2.PolygonShape();
+              vertices[0].Set(-2.0, 0.0);
+              vertices[1].Set(1.0, 2.0);
+              vertices[2].Set(0.0, 4.0);
+              left.Set(vertices, 3);
+              const right = new b2.PolygonShape();
+              vertices[0].Set(2.0, 0.0);
+              vertices[1].Set(-1.0, 2.0);
+              vertices[2].Set(0.0, 4.0);
+              right.Set(vertices, 3);
+              this.m_ship2.CreateFixture(left, 2.0);
+              this.m_ship2.CreateFixture(right, 2.0);
+          }
+      }
+      Spawn() {
+          // Table 1 obstruction
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Copy(this.m_table1.GetPosition());
+              bd.angle = this.m_table1.GetAngle();
+              const body = this.m_world.CreateBody(bd);
+              const box = new b2.PolygonShape();
+              box.SetAsBox(4.0, 0.1, new b2.Vec2(0.0, 3.0), 0.0);
+              body.CreateFixture(box, 2.0);
+          }
+          // Table 2 obstruction
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Copy(this.m_table2.GetPosition());
+              bd.angle = this.m_table2.GetAngle();
+              const body = this.m_world.CreateBody(bd);
+              const box = new b2.PolygonShape();
+              box.SetAsBox(4.0, 0.1, new b2.Vec2(0.0, 3.0), 0.0);
+              body.CreateFixture(box, 2.0);
+          }
+          // Ship 1 obstruction
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Copy(this.m_ship1.GetPosition());
+              bd.angle = this.m_ship1.GetAngle();
+              bd.gravityScale = 0.0;
+              const body = this.m_world.CreateBody(bd);
+              const circle = new b2.CircleShape();
+              circle.m_radius = 0.5;
+              circle.m_p.Set(0.0, 2.0);
+              body.CreateFixture(circle, 2.0);
+          }
+          // Ship 2 obstruction
+          {
+              const bd = new b2.BodyDef();
+              bd.type = b2.dynamicBody;
+              bd.position.Copy(this.m_ship2.GetPosition());
+              bd.angle = this.m_ship2.GetAngle();
+              bd.gravityScale = 0.0;
+              const body = this.m_world.CreateBody(bd);
+              const circle = new b2.CircleShape();
+              circle.m_radius = 0.5;
+              circle.m_p.Set(0.0, 2.0);
+              body.CreateFixture(circle, 2.0);
+          }
+      }
+      Keyboard(key) {
+          switch (key) {
+              case "s":
+                  this.Spawn();
+                  break;
+          }
+          super.Keyboard(key);
       }
       Step(settings) {
           super.Step(settings);
@@ -3649,6 +3704,7 @@
           djd.localAnchorB.Set(0.0, -1.0);
           const d = b2.Vec2.SubVV(djd.bodyB.GetWorldPoint(djd.localAnchorB, new b2.Vec2()), djd.bodyA.GetWorldPoint(djd.localAnchorA, new b2.Vec2()), new b2.Vec2());
           djd.length = d.Length();
+          b2.LinearStiffness(djd, 1.0, 1.0, djd.bodyA, djd.bodyB);
           this.m_world.CreateJoint(djd);
           {
               const radius = 0.2;
@@ -4652,7 +4708,7 @@
               const body3 = this.m_world.CreateBody(bd3);
               body3.CreateFixture(circle2, 5.0);
               const jd1 = new b2.RevoluteJointDef();
-              jd1.Initialize(body2, body1, bd1.position);
+              jd1.Initialize(body1, body2, bd1.position);
               const joint1 = this.m_world.CreateJoint(jd1);
               const jd2 = new b2.RevoluteJointDef();
               jd2.Initialize(body2, body3, bd3.position);
@@ -5958,11 +6014,15 @@
   class Restitution extends Test {
       constructor() {
           super();
+          const threshold = 10.0;
           {
               const bd = new b2.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               const shape = new b2.EdgeShape();
               shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const fd = new b2.FixtureDef();
+              fd.shape = shape;
+              fd.restitutionThreshold = threshold;
               ground.CreateFixture(shape, 0.0);
           }
           {
@@ -5978,6 +6038,7 @@
                   bd.position.Set(-10.0 + 3.0 * i, 20.0);
                   const body = this.m_world.CreateBody(bd);
                   fd.restitution = restitution[i];
+                  fd.restitutionThreshold = threshold;
                   body.CreateFixture(fd);
               }
           }
@@ -6105,7 +6166,7 @@
           // 	ImGui::Separator();
           //       ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
           // 	const ImGuiComboFlags comboFlags = 0;
-          // 	const char* bendModels[] = { "Spring", "PBD Ang", "XPBD Ang", "PBD Dist", "PBD Height" };
+          // 	const char* bendModels[] = { "Spring", "PBD Ang", "XPBD Ang", "PBD Dist", "PBD Height", "PBD Triangle" };
           // 	const char* stretchModels[] = { "PBD", "XPBD" };
           // 	ImGui::Text("Rope 1");
           // 	static int bendModel1 = this.m_tuning1.bendingModel;
@@ -6230,21 +6291,21 @@
           this.m_tuning1.bendHertz = 30.0;
           this.m_tuning1.bendDamping = 4.0;
           this.m_tuning1.bendStiffness = 1.0;
-          this.m_tuning1.bendingModel = b2.BendingModel.b2_xpbdAngleBendingModel;
+          this.m_tuning1.bendingModel = b2.pbdTriangleBendingModel;
           this.m_tuning1.isometric = true;
           this.m_tuning1.stretchHertz = 30.0;
           this.m_tuning1.stretchDamping = 4.0;
           this.m_tuning1.stretchStiffness = 1.0;
-          this.m_tuning1.stretchingModel = b2.StretchingModel.b2_xpbdStretchingModel;
+          this.m_tuning1.stretchingModel = b2.pbdStretchingModel;
           this.m_tuning2.bendHertz = 30.0;
           this.m_tuning2.bendDamping = 0.7;
           this.m_tuning2.bendStiffness = 1.0;
-          this.m_tuning2.bendingModel = b2.BendingModel.b2_pbdHeightBendingModel;
+          this.m_tuning2.bendingModel = b2.pbdHeightBendingModel;
           this.m_tuning2.isometric = true;
           this.m_tuning2.stretchHertz = 30.0;
           this.m_tuning2.stretchDamping = 1.0;
           this.m_tuning2.stretchStiffness = 1.0;
-          this.m_tuning2.stretchingModel = b2.StretchingModel.b2_pbdStretchingModel;
+          this.m_tuning2.stretchingModel = b2.pbdStretchingModel;
           this.m_position1.Set(-5.0, 15.0);
           this.m_position2.Set(5.0, 15.0);
           const def = new b2.RopeDef();
@@ -6703,56 +6764,78 @@
   class ShapeCast extends Test {
       constructor() {
           super();
-          this.m_vAs = [];
+          this.m_vAs = b2.Vec2.MakeArray(b2.maxPolygonVertices);
           this.m_countA = 0;
           this.m_radiusA = 0;
-          this.m_vBs = [];
+          this.m_vBs = b2.Vec2.MakeArray(b2.maxPolygonVertices);
           this.m_countB = 0;
           this.m_radiusB = 0;
+          this.m_transformA = new b2.Transform();
+          this.m_transformB = new b2.Transform();
+          this.m_translationB = new b2.Vec2();
           // #if 1
-          this.m_vAs[0] = new b2.Vec2(-0.5, 1.0);
-          this.m_vAs[1] = new b2.Vec2(0.5, 1.0);
-          this.m_vAs[2] = new b2.Vec2(0.0, 0.0);
+          this.m_vAs[0].Set(-0.5, 1.0);
+          this.m_vAs[1].Set(0.5, 1.0);
+          this.m_vAs[2].Set(0.0, 0.0);
           this.m_countA = 3;
           this.m_radiusA = b2.polygonRadius;
-          this.m_vBs[0] = new b2.Vec2(-0.5, -0.5);
-          this.m_vBs[1] = new b2.Vec2(0.5, -0.5);
-          this.m_vBs[2] = new b2.Vec2(0.5, 0.5);
-          this.m_vBs[3] = new b2.Vec2(-0.5, 0.5);
+          this.m_vBs[0].Set(-0.5, -0.5);
+          this.m_vBs[1].Set(0.5, -0.5);
+          this.m_vBs[2].Set(0.5, 0.5);
+          this.m_vBs[3].Set(-0.5, 0.5);
           this.m_countB = 4;
           this.m_radiusB = b2.polygonRadius;
-          // #else
-          // this.m_vAs[0] = new b2.Vec2(0.0, 0.0);
+          this.m_transformA.p.Set(0.0, 0.25);
+          this.m_transformA.q.SetIdentity();
+          this.m_transformB.p.Set(-4.0, 0.0);
+          this.m_transformB.q.SetIdentity();
+          this.m_translationB.Set(8.0, 0.0);
+          // #elif 0
+          // this.m_vAs[0].Set(0.0, 0.0);
           // this.m_countA = 1;
           // this.m_radiusA = 0.5;
-          // this.m_vBs[0] = new b2.Vec2(0.0, 0.0);
+          // this.m_vBs[0].Set(0.0, 0.0);
           // this.m_countB = 1;
           // this.m_radiusB = 0.5;
+          // this.m_transformA.p.Set(0.0, 0.25);
+          // this.m_transformA.q.SetIdentity();
+          // this.m_transformB.p.Set(-4.0, 0.0);
+          // this.m_transformB.q.SetIdentity();
+          // this.m_translationB.Set(8.0, 0.0);
+          // #else
+          // this.m_vAs[0].Set(0.0, 0.0);
+          // this.m_vAs[1].Set(2.0, 0.0);
+          // this.m_countA = 2;
+          // this.m_radiusA = b2.polygonRadius;
+          // this.m_vBs[0].Set(0.0, 0.0);
+          // this.m_countB = 1;
+          // this.m_radiusB = 0.25;
+          // // Initial overlap
+          // this.m_transformA.p.Set(0.0, 0.0);
+          // this.m_transformA.q.SetIdentity();
+          // this.m_transformB.p.Set(-0.244360745, 0.05999358);
+          // this.m_transformB.q.SetIdentity();
+          // this.m_translationB.Set(0.0, 0.0399999991);
           // #endif
       }
       Step(settings) {
           super.Step(settings);
-          const transformA = new b2.Transform();
-          transformA.p.Set(0.0, 0.25);
-          transformA.q.SetIdentity();
-          const transformB = new b2.Transform();
-          transformB.SetIdentity();
           const input = new b2.ShapeCastInput();
           input.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
           input.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
-          input.transformA.Copy(transformA);
-          input.transformB.Copy(transformB);
-          input.translationB.Set(8.0, 0.0);
+          input.transformA.Copy(this.m_transformA);
+          input.transformB.Copy(this.m_transformB);
+          input.translationB.Copy(this.m_translationB);
           const output = new b2.ShapeCastOutput();
           const hit = b2.ShapeCast(output, input);
           const transformB2 = new b2.Transform();
-          transformB2.q.Copy(transformB.q);
+          transformB2.q.Copy(this.m_transformB.q);
           // transformB2.p = transformB.p + output.lambda * input.translationB;
-          transformB2.p.Copy(transformB.p).SelfMulAdd(output.lambda, input.translationB);
+          transformB2.p.Copy(this.m_transformB.p).SelfMulAdd(output.lambda, input.translationB);
           const distanceInput = new b2.DistanceInput();
           distanceInput.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
           distanceInput.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
-          distanceInput.transformA.Copy(transformA);
+          distanceInput.transformA.Copy(this.m_transformA);
           distanceInput.transformB.Copy(transformB2);
           distanceInput.useRadii = false;
           const simplexCache = new b2.SimplexCache();
@@ -6761,17 +6844,29 @@
           b2.Distance(distanceOutput, simplexCache, distanceInput);
           g_debugDraw.DrawString(5, this.m_textLine, `hit = ${hit ? "true" : "false"}, iters = ${output.iterations}, lambda = ${output.lambda}, distance = ${distanceOutput.distance.toFixed(5)}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.PushTransform(transformA);
-          // testbed.g_debugDraw.DrawCircle(this.m_vAs[0], this.m_radiusA, new b2.Color(0.9, 0.9, 0.9));
-          g_debugDraw.DrawPolygon(this.m_vAs, this.m_countA, new b2.Color(0.9, 0.9, 0.9));
-          g_debugDraw.PopTransform(transformA);
-          g_debugDraw.PushTransform(transformB);
-          // testbed.g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.9, 0.5));
-          g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.9, 0.5));
-          g_debugDraw.PopTransform(transformB);
+          g_debugDraw.PushTransform(this.m_transformA);
+          if (this.m_countA === 1) {
+              g_debugDraw.DrawCircle(this.m_vAs[0], this.m_radiusA, new b2.Color(0.9, 0.9, 0.9));
+          }
+          else {
+              g_debugDraw.DrawPolygon(this.m_vAs, this.m_countA, new b2.Color(0.9, 0.9, 0.9));
+          }
+          g_debugDraw.PopTransform(this.m_transformA);
+          g_debugDraw.PushTransform(this.m_transformB);
+          if (this.m_countB === 1) {
+              g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.9, 0.5));
+          }
+          else {
+              g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.9, 0.5));
+          }
+          g_debugDraw.PopTransform(this.m_transformB);
           g_debugDraw.PushTransform(transformB2);
-          // testbed.g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.7, 0.9));
-          g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.7, 0.9));
+          if (this.m_countB === 1) {
+              g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.7, 0.9));
+          }
+          else {
+              g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.7, 0.9));
+          }
           g_debugDraw.PopTransform(transformB2);
           if (hit) {
               const p1 = output.point;

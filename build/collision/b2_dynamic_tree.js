@@ -81,7 +81,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                     // int32 public m_nodeCount;
                     // int32 public m_nodeCapacity;
                     this.m_freeList = null;
-                    this.m_path = 0;
                     this.m_insertionCount = 0;
                     this.m_stack = new b2_growable_stack_js_1.b2GrowableStack(256);
                 }

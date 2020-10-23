@@ -18,11 +18,15 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
             Restitution = class Restitution extends testbed.Test {
                 constructor() {
                     super();
+                    const threshold = 10.0;
                     {
                         const bd = new b2.BodyDef();
                         const ground = this.m_world.CreateBody(bd);
                         const shape = new b2.EdgeShape();
                         shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+                        const fd = new b2.FixtureDef();
+                        fd.shape = shape;
+                        fd.restitutionThreshold = threshold;
                         ground.CreateFixture(shape, 0.0);
                     }
                     {
@@ -38,6 +42,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                             bd.position.Set(-10.0 + 3.0 * i, 20.0);
                             const body = this.m_world.CreateBody(bd);
                             fd.restitution = restitution[i];
+                            fd.restitutionThreshold = threshold;
                             body.CreateFixture(fd);
                         }
                     }

@@ -667,9 +667,8 @@ export class b2WheelJoint extends b2Joint {
   }
 
   public GetReactionForce<T extends XY>(inv_dt: number, out: T): T {
-    // return inv_dt * (m_impulse * m_ay + m_springImpulse * m_ax);
-    out.x = inv_dt * (this.m_impulse * this.m_ay.x + this.m_springImpulse * this.m_ax.x);
-    out.y = inv_dt * (this.m_impulse * this.m_ay.y + this.m_springImpulse * this.m_ax.y);
+    out.x = inv_dt * (this.m_impulse * this.m_ay.x + (this.m_springImpulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_ax.x);
+    out.y = inv_dt * (this.m_impulse * this.m_ay.y + (this.m_springImpulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_ax.y);
     return out;
   }
 

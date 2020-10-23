@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings.js";
-import { b2Maybe } from "../common/b2_settings.js";
+import { b2Maybe, b2_lengthUnitsPerMeter } from "../common/b2_settings.js";
 import { b2Vec2, b2Transform, XY } from "../common/b2_math.js";
 import { b2AABB, b2RayCastInput, b2RayCastOutput } from "../collision/b2_collision.js";
 import { b2TreeNode } from "../collision/b2_dynamic_tree.js";
@@ -84,6 +84,10 @@ export interface b2IFixtureDef {
   /// The restitution (elasticity) usually in the range [0,1].
   restitution?: number;
 
+  /// Restitution velocity threshold, usually in m/s. Collisions above this
+  /// speed have restitution applied (will bounce).
+  restitutionThreshold?: number;
+
   /// The density, usually in kg/m^2.
   density?: number;
 
@@ -111,6 +115,10 @@ export class b2FixtureDef implements b2IFixtureDef {
   /// The restitution (elasticity) usually in the range [0,1].
   public restitution: number = 0;
 
+  /// Restitution velocity threshold, usually in m/s. Collisions above this
+  /// speed have restitution applied (will bounce).
+  public restitutionThreshold: number = 1.0 * b2_lengthUnitsPerMeter;
+
   /// The density, usually in kg/m^2.
   public density: number = 0;
 
@@ -133,7 +141,7 @@ export class b2FixtureProxy {
     this.childIndex = childIndex;
     this.fixture.m_shape.ComputeAABB(this.aabb, this.fixture.m_body.GetTransform(), childIndex);
     this.treeNode = this.fixture.m_body.m_world.m_contactManager.m_broadPhase.CreateProxy(this.aabb, this);
-}
+  }
   public Reset(): void {
     this.fixture.m_body.m_world.m_contactManager.m_broadPhase.DestroyProxy(this.treeNode);
   }
@@ -176,6 +184,7 @@ export class b2Fixture {
 
   public m_friction: number = 0;
   public m_restitution: number = 0;
+  public m_restitutionThreshold: number = 1.0 * b2_lengthUnitsPerMeter;
 
   public readonly m_proxies: b2FixtureProxy[] = [];
   public get m_proxyCount(): number { return this.m_proxies.length; }
@@ -190,8 +199,9 @@ export class b2Fixture {
     this.m_body = body;
     this.m_shape = def.shape.Clone();
     this.m_userData = b2Maybe(def.userData, null);
-    this.m_friction = b2Maybe(def.friction,  0.2);
+    this.m_friction = b2Maybe(def.friction, 0.2);
     this.m_restitution = b2Maybe(def.restitution, 0);
+    this.m_restitutionThreshold = b2Maybe(def.restitutionThreshold, 0);
     this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
     this.m_isSensor = b2Maybe(def.isSensor, false);
     this.m_density = b2Maybe(def.density, 0);
@@ -347,6 +357,17 @@ export class b2Fixture {
     this.m_restitution = restitution;
   }
 
+	/// Get the restitution velocity threshold.
+	public GetRestitutionThreshold(): number {
+    return this.m_restitutionThreshold;
+  }
+
+	/// Set the restitution threshold. This will _not_ change the restitution threshold of
+	/// existing contacts.
+	public SetRestitutionThreshold(threshold: number): void {
+    this.m_restitutionThreshold = threshold;
+  }
+
   /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
   /// If you need a more accurate AABB, compute it using the shape and
   /// the body transform.
@@ -360,6 +381,7 @@ export class b2Fixture {
     log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
     log("    fd.friction = %.15f;\n", this.m_friction);
     log("    fd.restitution = %.15f;\n", this.m_restitution);
+    log("    fd.restitutionThreshold = %.15f;\n", this.m_restitutionThreshold);
     log("    fd.density = %.15f;\n", this.m_density);
     log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
     log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);

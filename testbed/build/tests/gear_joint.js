@@ -47,7 +47,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         const body3 = this.m_world.CreateBody(bd3);
                         body3.CreateFixture(circle2, 5.0);
                         const jd1 = new b2.RevoluteJointDef();
-                        jd1.Initialize(body2, body1, bd1.position);
+                        jd1.Initialize(body1, body2, bd1.position);
                         const joint1 = this.m_world.CreateJoint(jd1);
                         const jd2 = new b2.RevoluteJointDef();
                         jd2.Initialize(body2, body3, bd3.position);

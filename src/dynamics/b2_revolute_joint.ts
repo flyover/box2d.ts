@@ -339,7 +339,6 @@ export class b2RevoluteJoint extends b2Joint {
     const fixedRotation: boolean = (this.m_invIA + this.m_invIB === 0);
 
     // Solve angular limit constraint.
-    // let active: boolean = false;
     if (this.m_enableLimit && !fixedRotation) {
       const angle: number = aB - aA - this.m_referenceAngle;
       let C: number = 0.0;
@@ -427,7 +426,7 @@ export class b2RevoluteJoint extends b2Joint {
   }
 
   public GetReactionTorque(inv_dt: number): number {
-    return inv_dt * (this.m_lowerImpulse + this.m_upperImpulse);
+    return inv_dt * (this.m_lowerImpulse - this.m_upperImpulse);
   }
 
   public GetLocalAnchorA(): Readonly<b2Vec2> { return this.m_localAnchorA; }

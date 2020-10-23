@@ -130,6 +130,9 @@ export class b2GearJoint extends b2Joint {
     this.m_bodyC = this.m_joint1.GetBodyA();
     this.m_bodyA = this.m_joint1.GetBodyB();
 
+    // Body B on joint1 must be dynamic
+    // b2Assert(this.m_bodyA.m_type === b2_dynamicBody);
+
     // Get geometry of joint1
     const xfA: b2Transform = this.m_bodyA.m_xf;
     const aA: number = this.m_bodyA.m_sweep.a;
@@ -167,6 +170,9 @@ export class b2GearJoint extends b2Joint {
 
     this.m_bodyD = this.m_joint2.GetBodyA();
     this.m_bodyB = this.m_joint2.GetBodyB();
+
+    // Body B on joint2 must be dynamic
+    // b2Assert(this.m_bodyB.m_type === b2_dynamicBody);
 
     // Get geometry of joint2
     const xfB: b2Transform = this.m_bodyB.m_xf;

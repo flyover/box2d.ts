@@ -73,6 +73,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.invIB = 0;
                     this.friction = 0;
                     this.restitution = 0;
+                    this.threshold = 0;
                     this.tangentSpeed = 0;
                     this.pointCount = 0;
                     this.contactIndex = 0;
@@ -220,6 +221,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                         const vc = this.m_velocityConstraints[i];
                         vc.friction = contact.m_friction;
                         vc.restitution = contact.m_restitution;
+                        vc.threshold = contact.m_restitutionThreshold;
                         vc.tangentSpeed = contact.m_tangentSpeed;
                         vc.indexA = bodyA.m_islandIndex;
                         vc.indexB = bodyB.m_islandIndex;
@@ -323,7 +325,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                             vcp.velocityBias = 0;
                             // float32 vRel = b2Dot(vc->normal, vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA));
                             const vRel = b2_math_js_1.b2Vec2.DotVV(vc.normal, b2_math_js_1.b2Vec2.SubVV(b2_math_js_1.b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2_math_js_1.b2Vec2.s_t0), b2_math_js_1.b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2_math_js_1.b2Vec2.s_t1), b2_math_js_1.b2Vec2.s_t0));
-                            if (vRel < (-b2_settings_js_1.b2_velocityThreshold)) {
+                            if (vRel < -vc.threshold) {
                                 vcp.velocityBias += (-vc.restitution * vRel);
                             }
                         }

@@ -274,13 +274,18 @@ export class Test extends b2.ContactListener {
     });
 
     if (hit_fixture) {
+      const frequencyHz = 5.0;
+      const dampingRatio = 0.7;
+
       const body = hit_fixture.GetBody();
-      const md: b2.MouseJointDef = new b2.MouseJointDef();
-      md.bodyA = this.m_groundBody;
-      md.bodyB = body;
-      md.target.Copy(p);
-      md.maxForce = 1000 * body.GetMass();
-      this.m_mouseJoint = this.m_world.CreateJoint(md);
+      const jd: b2.MouseJointDef = new b2.MouseJointDef();
+      jd.bodyA = this.m_groundBody;
+      jd.bodyB = body;
+      jd.target.Copy(p);
+      jd.maxForce = 1000 * body.GetMass();
+      b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+
+      this.m_mouseJoint = this.m_world.CreateJoint(jd);
       body.SetAwake(true);
     }
   }

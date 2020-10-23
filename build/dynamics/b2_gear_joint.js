@@ -100,6 +100,8 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     // TODO_ERIN there might be some problem with the joint edges in b2Joint.
                     this.m_bodyC = this.m_joint1.GetBodyA();
                     this.m_bodyA = this.m_joint1.GetBodyB();
+                    // Body B on joint1 must be dynamic
+                    // b2Assert(this.m_bodyA.m_type === b2_dynamicBody);
                     // Get geometry of joint1
                     const xfA = this.m_bodyA.m_xf;
                     const aA = this.m_bodyA.m_sweep.a;
@@ -128,6 +130,8 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     }
                     this.m_bodyD = this.m_joint2.GetBodyA();
                     this.m_bodyB = this.m_joint2.GetBodyB();
+                    // Body B on joint2 must be dynamic
+                    // b2Assert(this.m_bodyB.m_type === b2_dynamicBody);
                     // Get geometry of joint2
                     const xfB = this.m_bodyB.m_xf;
                     const aB = this.m_bodyB.m_sweep.a;

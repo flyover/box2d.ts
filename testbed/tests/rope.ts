@@ -54,24 +54,24 @@ export class Rope extends testbed.Test {
     this.m_tuning1.bendHertz = 30.0;
     this.m_tuning1.bendDamping = 4.0;
     this.m_tuning1.bendStiffness = 1.0;
-    this.m_tuning1.bendingModel = b2.BendingModel.b2_xpbdAngleBendingModel;
+    this.m_tuning1.bendingModel = b2.pbdTriangleBendingModel;
     this.m_tuning1.isometric = true;
 
     this.m_tuning1.stretchHertz = 30.0;
     this.m_tuning1.stretchDamping = 4.0;
     this.m_tuning1.stretchStiffness = 1.0;
-    this.m_tuning1.stretchingModel = b2.StretchingModel.b2_xpbdStretchingModel;
+    this.m_tuning1.stretchingModel = b2.pbdStretchingModel;
 
     this.m_tuning2.bendHertz = 30.0;
     this.m_tuning2.bendDamping = 0.7;
     this.m_tuning2.bendStiffness = 1.0;
-    this.m_tuning2.bendingModel = b2.BendingModel.b2_pbdHeightBendingModel;
+    this.m_tuning2.bendingModel = b2.pbdHeightBendingModel;
     this.m_tuning2.isometric = true;
 
     this.m_tuning2.stretchHertz = 30.0;
     this.m_tuning2.stretchDamping = 1.0;
     this.m_tuning2.stretchStiffness = 1.0;
-    this.m_tuning2.stretchingModel = b2.StretchingModel.b2_pbdStretchingModel;
+    this.m_tuning2.stretchingModel = b2.pbdStretchingModel;
 
     this.m_position1.Set(-5.0, 15.0);
     this.m_position2.Set(5.0, 15.0);
@@ -109,7 +109,7 @@ export class Rope extends testbed.Test {
   //       ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.5f);
 
   // 	const ImGuiComboFlags comboFlags = 0;
-  // 	const char* bendModels[] = { "Spring", "PBD Ang", "XPBD Ang", "PBD Dist", "PBD Height" };
+  // 	const char* bendModels[] = { "Spring", "PBD Ang", "XPBD Ang", "PBD Dist", "PBD Height", "PBD Triangle" };
   // 	const char* stretchModels[] = { "PBD", "XPBD" };
 
   // 	ImGui::Text("Rope 1");

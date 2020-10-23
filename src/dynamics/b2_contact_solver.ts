@@ -17,7 +17,7 @@
 */
 
 // DEBUG: import { b2Assert } from "../common/b2_settings.js";
-import { b2_linearSlop, b2_maxManifoldPoints, b2_velocityThreshold, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../common/b2_settings.js";
+import { b2_linearSlop, b2_maxManifoldPoints, b2_maxLinearCorrection, b2_baumgarte, b2_toiBaumgarte, b2MakeArray } from "../common/b2_settings.js";
 import { b2Min, b2Max, b2Clamp, b2Vec2, b2Mat22, b2Rot, b2Transform } from "../common/b2_math.js";
 import { b2Manifold } from "../collision/b2_collision.js";
 import { b2ManifoldPoint } from "../collision/b2_collision.js";
@@ -64,6 +64,7 @@ export class b2ContactVelocityConstraint {
   public invIB: number = 0;
   public friction: number = 0;
   public restitution: number = 0;
+  public threshold: number = 0;
   public tangentSpeed: number = 0;
   public pointCount: number = 0;
   public contactIndex: number = 0;
@@ -223,6 +224,7 @@ export class b2ContactSolver {
       const vc: b2ContactVelocityConstraint = this.m_velocityConstraints[i];
       vc.friction = contact.m_friction;
       vc.restitution = contact.m_restitution;
+      vc.threshold = contact.m_restitutionThreshold;
       vc.tangentSpeed = contact.m_tangentSpeed;
       vc.indexA = bodyA.m_islandIndex;
       vc.indexB = bodyB.m_islandIndex;
@@ -361,7 +363,7 @@ export class b2ContactSolver {
             b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0),
             b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1),
             b2Vec2.s_t0));
-        if (vRel < (-b2_velocityThreshold)) {
+        if (vRel < -vc.threshold) {
           vcp.velocityBias += (-vc.restitution * vRel);
         }
       }

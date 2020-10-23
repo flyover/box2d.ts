@@ -29,6 +29,7 @@ export declare class b2ContactVelocityConstraint {
     invIB: number;
     friction: number;
     restitution: number;
+    threshold: number;
     tangentSpeed: number;
     pointCount: number;
     contactIndex: number;

@@ -1079,10 +1079,11 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
                     this.alpha0 = other.alpha0;
                     return this;
                 }
+                // https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
                 GetTransform(xf, beta) {
-                    xf.p.x = this.c0.x + beta * (this.c.x - this.c0.x);
-                    xf.p.y = this.c0.y + beta * (this.c.y - this.c0.y);
-                    const angle = this.a0 + beta * (this.a - this.a0);
+                    xf.p.x = (1.0 - beta) * this.c0.x + beta * this.c.x;
+                    xf.p.y = (1.0 - beta) * this.c0.y + beta * this.c.y;
+                    const angle = (1.0 - beta) * this.a0 + beta * this.a;
                     xf.q.SetAngle(angle);
                     xf.p.SelfSub(b2Rot.MulRV(xf.q, this.localCenter, b2Vec2.s_t0));
                     return xf;

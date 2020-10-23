@@ -269,7 +269,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     let positionError = 0;
                     const fixedRotation = (this.m_invIA + this.m_invIB === 0);
                     // Solve angular limit constraint.
-                    // let active: boolean = false;
                     if (this.m_enableLimit && !fixedRotation) {
                         const angle = aB - aA - this.m_referenceAngle;
                         let C = 0.0;
@@ -340,7 +339,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_joint
                     return out;
                 }
                 GetReactionTorque(inv_dt) {
-                    return inv_dt * (this.m_lowerImpulse + this.m_upperImpulse);
+                    return inv_dt * (this.m_lowerImpulse - this.m_upperImpulse);
                 }
                 GetLocalAnchorA() { return this.m_localAnchorA; }
                 GetLocalAnchorB() { return this.m_localAnchorB; }

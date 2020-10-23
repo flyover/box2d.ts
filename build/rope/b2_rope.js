@@ -27,6 +27,7 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js", "../common/b2_s
                 b2BendingModel[b2BendingModel["b2_xpbdAngleBendingModel"] = 2] = "b2_xpbdAngleBendingModel";
                 b2BendingModel[b2BendingModel["b2_pbdDistanceBendingModel"] = 3] = "b2_pbdDistanceBendingModel";
                 b2BendingModel[b2BendingModel["b2_pbdHeightBendingModel"] = 4] = "b2_pbdHeightBendingModel";
+                b2BendingModel[b2BendingModel["b2_pbdTriangleBendingModel"] = 5] = "b2_pbdTriangleBendingModel";
             })(b2BendingModel || (b2BendingModel = {}));
             exports_1("b2BendingModel", b2BendingModel);
             ///
@@ -323,6 +324,9 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js", "../common/b2_s
                         }
                         else if (this.m_tuning.bendingModel === b2BendingModel.b2_pbdHeightBendingModel) {
                             this.SolveBend_PBD_Height();
+                        }
+                        else if (this.m_tuning.bendingModel === b2BendingModel.b2_pbdTriangleBendingModel) {
+                            this.SolveBend_PBD_Triangle();
                         }
                         if (this.m_tuning.stretchingModel === b2StretchingModel.b2_pbdStretchingModel) {
                             this.SolveStretch_PBD();
@@ -642,6 +646,39 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js", "../common/b2_s
                         this.m_ps[c.i1].Copy(p1);
                         this.m_ps[c.i2].Copy(p2);
                         this.m_ps[c.i3].Copy(p3);
+                    }
+                }
+                // M. Kelager: A Triangle Bending Constraint Model for PBD
+                SolveBend_PBD_Triangle() {
+                    const stiffness = this.m_tuning.bendStiffness;
+                    for (let i = 0; i < this.m_bendCount; ++i) {
+                        const c = this.m_bendConstraints[i];
+                        const b0 = this.m_ps[c.i1].Clone();
+                        const v = this.m_ps[c.i2].Clone();
+                        const b1 = this.m_ps[c.i3].Clone();
+                        const wb0 = c.invMass1;
+                        const wv = c.invMass2;
+                        const wb1 = c.invMass3;
+                        const W = wb0 + wb1 + 2.0 * wv;
+                        const invW = stiffness / W;
+                        const d = new b2_math_js_1.b2Vec2();
+                        d.x = v.x - (1.0 / 3.0) * (b0.x + v.x + b1.x);
+                        d.y = v.y - (1.0 / 3.0) * (b0.y + v.y + b1.y);
+                        const db0 = new b2_math_js_1.b2Vec2();
+                        db0.x = 2.0 * wb0 * invW * d.x;
+                        db0.y = 2.0 * wb0 * invW * d.y;
+                        const dv = new b2_math_js_1.b2Vec2();
+                        dv.x = -4.0 * wv * invW * d.x;
+                        dv.y = -4.0 * wv * invW * d.y;
+                        const db1 = new b2_math_js_1.b2Vec2();
+                        db1.x = 2.0 * wb1 * invW * d.x;
+                        db1.y = 2.0 * wb1 * invW * d.y;
+                        b0.SelfAdd(db0);
+                        v.SelfAdd(dv);
+                        b1.SelfAdd(db1);
+                        this.m_ps[c.i1].Copy(b0);
+                        this.m_ps[c.i2].Copy(v);
+                        this.m_ps[c.i3].Copy(b1);
                     }
                 }
                 ApplyBendForces(dt) {

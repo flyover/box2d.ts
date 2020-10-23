@@ -21,6 +21,7 @@ export interface b2IFixtureDef {
     userData?: any;
     friction?: number;
     restitution?: number;
+    restitutionThreshold?: number;
     density?: number;
     isSensor?: boolean;
     filter?: b2IFilter;
@@ -30,6 +31,7 @@ export declare class b2FixtureDef implements b2IFixtureDef {
     userData: any;
     friction: number;
     restitution: number;
+    restitutionThreshold: number;
     density: number;
     isSensor: boolean;
     readonly filter: b2Filter;
@@ -54,6 +56,7 @@ export declare class b2Fixture {
     readonly m_shape: b2Shape;
     m_friction: number;
     m_restitution: number;
+    m_restitutionThreshold: number;
     readonly m_proxies: b2FixtureProxy[];
     get m_proxyCount(): number;
     readonly m_filter: b2Filter;
@@ -82,6 +85,8 @@ export declare class b2Fixture {
     SetFriction(friction: number): void;
     GetRestitution(): number;
     SetRestitution(restitution: number): void;
+    GetRestitutionThreshold(): number;
+    SetRestitutionThreshold(threshold: number): void;
     GetAABB(childIndex: number): Readonly<b2AABB>;
     Dump(log: (format: string, ...args: any[]) => void, bodyIndex: number): void;
     CreateProxies(): void;

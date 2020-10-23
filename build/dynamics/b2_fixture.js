@@ -71,6 +71,9 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.friction = 0.2;
                     /// The restitution (elasticity) usually in the range [0,1].
                     this.restitution = 0;
+                    /// Restitution velocity threshold, usually in m/s. Collisions above this
+                    /// speed have restitution applied (will bounce).
+                    this.restitutionThreshold = 1.0 * b2_settings_js_1.b2_lengthUnitsPerMeter;
                     /// The density, usually in kg/m^2.
                     this.density = 0;
                     /// A sensor shape collects contact information but never generates a collision
@@ -130,6 +133,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.m_next = null;
                     this.m_friction = 0;
                     this.m_restitution = 0;
+                    this.m_restitutionThreshold = 1.0 * b2_settings_js_1.b2_lengthUnitsPerMeter;
                     this.m_proxies = [];
                     this.m_filter = new b2Filter();
                     this.m_isSensor = false;
@@ -139,6 +143,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.m_userData = b2_settings_js_1.b2Maybe(def.userData, null);
                     this.m_friction = b2_settings_js_1.b2Maybe(def.friction, 0.2);
                     this.m_restitution = b2_settings_js_1.b2Maybe(def.restitution, 0);
+                    this.m_restitutionThreshold = b2_settings_js_1.b2Maybe(def.restitutionThreshold, 0);
                     this.m_filter.Copy(b2_settings_js_1.b2Maybe(def.filter, b2Filter.DEFAULT));
                     this.m_isSensor = b2_settings_js_1.b2Maybe(def.isSensor, false);
                     this.m_density = b2_settings_js_1.b2Maybe(def.density, 0);
@@ -267,6 +272,15 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                 SetRestitution(restitution) {
                     this.m_restitution = restitution;
                 }
+                /// Get the restitution velocity threshold.
+                GetRestitutionThreshold() {
+                    return this.m_restitutionThreshold;
+                }
+                /// Set the restitution threshold. This will _not_ change the restitution threshold of
+                /// existing contacts.
+                SetRestitutionThreshold(threshold) {
+                    this.m_restitutionThreshold = threshold;
+                }
                 /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
                 /// If you need a more accurate AABB, compute it using the shape and
                 /// the body transform.
@@ -279,6 +293,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
                     log("    fd.friction = %.15f;\n", this.m_friction);
                     log("    fd.restitution = %.15f;\n", this.m_restitution);
+                    log("    fd.restitutionThreshold = %.15f;\n", this.m_restitutionThreshold);
                     log("    fd.density = %.15f;\n", this.m_density);
                     log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
                     log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);

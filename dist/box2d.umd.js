@@ -349,6 +349,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // import { b2_lengthUnitsPerMeter } from "./b2_settings.js";
   function b2Assert(condition, ...args) {
       if (!condition) {
           // debugger;
@@ -359,30 +360,34 @@
       return value !== undefined ? value : def;
   }
   const b2_maxFloat = 1E+37; // FLT_MAX instead of Number.MAX_VALUE;
-  const b2_epsilon = 1E-5; // FLT_EPSILON instead of Number.MIN_VALUE;
+  const b2_epsilon = 1E-5; // FLT_EPSILON instead of Number.EPSILON;
   const b2_epsilon_sq = (b2_epsilon * b2_epsilon);
   const b2_pi = 3.14159265359; // Math.PI;
   /// @file
   /// Global tuning constants based on meters-kilograms-seconds (MKS) units.
   ///
+  // Tunable Constants
+  /// You can use this to change the length scale used by your game.
+  /// For example for inches you could use 39.4.
+  const b2_lengthUnitsPerMeter = 1.0;
+  /// The maximum number of vertices on a convex polygon. You cannot increase
+  /// this too much because b2BlockAllocator has a maximum object size.
+  const b2_maxPolygonVertices = 8;
   // Collision
   /// The maximum number of contact points between two convex shapes. Do
   /// not change this value.
   const b2_maxManifoldPoints = 2;
-  /// The maximum number of vertices on a convex polygon. You cannot increase
-  /// this too much because b2BlockAllocator has a maximum object size.
-  const b2_maxPolygonVertices = 8;
   /// This is used to fatten AABBs in the dynamic tree. This allows proxies
   /// to move by a small amount without triggering a tree adjustment.
   /// This is in meters.
-  const b2_aabbExtension = 0.1;
+  const b2_aabbExtension = 0.1 * b2_lengthUnitsPerMeter;
   /// This is used to fatten AABBs in the dynamic tree. This is used to predict
   /// the future position based on the current displacement.
   /// This is a dimensionless multiplier.
   const b2_aabbMultiplier = 4;
   /// A small length used as a collision and constraint tolerance. Usually it is
   /// chosen to be numerically significant, but visually insignificant.
-  const b2_linearSlop = 0.005;
+  const b2_linearSlop = 0.005 * b2_lengthUnitsPerMeter;
   /// A small angle used as a collision and constraint tolerance. Usually it is
   /// chosen to be numerically significant, but visually insignificant.
   const b2_angularSlop = 2 / 180 * b2_pi;
@@ -395,18 +400,15 @@
   // Dynamics
   /// Maximum number of contacts to be handled to solve a TOI impact.
   const b2_maxTOIContacts = 32;
-  /// A velocity threshold for elastic collisions. Any collision with a relative linear
-  /// velocity below this threshold will be treated as inelastic.
-  const b2_velocityThreshold = 1;
   /// The maximum linear position correction used when solving constraints. This helps to
   /// prevent overshoot.
-  const b2_maxLinearCorrection = 0.2;
+  const b2_maxLinearCorrection = 0.2 * b2_lengthUnitsPerMeter;
   /// The maximum angular position correction used when solving constraints. This helps to
   /// prevent overshoot.
   const b2_maxAngularCorrection = 8 / 180 * b2_pi;
   /// The maximum linear velocity of a body. This limit is very large and is used
   /// to prevent numerical problems. You shouldn't need to adjust this.
-  const b2_maxTranslation = 2;
+  const b2_maxTranslation = 2 * b2_lengthUnitsPerMeter;
   const b2_maxTranslationSquared = b2_maxTranslation * b2_maxTranslation;
   /// The maximum angular velocity of a body. This limit is very large and is used
   /// to prevent numerical problems. You shouldn't need to adjust this.
@@ -431,7 +433,7 @@
   /// The upper limit for force between particles.
   const b2_maxParticleForce = 0.5;
   /// The maximum distance between particles in a triad, multiplied by the particle diameter.
-  const b2_maxTriadDistance = 2.0;
+  const b2_maxTriadDistance = 2.0 * b2_lengthUnitsPerMeter;
   const b2_maxTriadDistanceSquared = (b2_maxTriadDistance * b2_maxTriadDistance);
   /// The initial size of particle data buffers.
   const b2_minParticleSystemBufferCapacity = 256;
@@ -442,21 +444,9 @@
   /// The time that a body must be still before it will go to sleep.
   const b2_timeToSleep = 0.5;
   /// A body cannot sleep if its linear velocity is above this tolerance.
-  const b2_linearSleepTolerance = 0.01;
+  const b2_linearSleepTolerance = 0.01 * b2_lengthUnitsPerMeter;
   /// A body cannot sleep if its angular velocity is above this tolerance.
   const b2_angularSleepTolerance = 2 / 180 * b2_pi;
-  // Memory Allocation
-  /// Implement this function to use your own memory allocator.
-  function b2Alloc(size) {
-      return null;
-  }
-  /// If you implement b2Alloc, you should also implement this function.
-  function b2Free(mem) {
-  }
-  /// Logging function.
-  function b2Log(message, ...args) {
-      // console.log(message, ...args);
-  }
   // FILE* b2_dumpFile = nullptr;
   // void b2OpenDump(const char* fileName)
   // {
@@ -495,9 +485,9 @@
       }
   }
   /// Current version.
-  const b2_version = new b2Version(2, 4, 0);
+  const b2_version = new b2Version(2, 4, 1);
   const b2_branch = "master";
-  const b2_commit = "4d7757feedc9dd36f64393ae08acfd3b9600ac17";
+  const b2_commit = "9ebbbcd960ad424e03e5de6e66a40764c16f51bc";
   function b2ParseInt(v) {
       return parseInt(v, 10);
   }
@@ -524,6 +514,46 @@
           a[i] = init;
       }
       return a;
+  }
+
+  /*
+  * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
+  *
+  * This software is provided 'as-is', without any express or implied
+  * warranty.  In no event will the authors be held liable for any damages
+  * arising from the use of this software.
+  * Permission is granted to anyone to use this software for any purpose,
+  * including commercial applications, and to alter it and redistribute it
+  * freely, subject to the following restrictions:
+  * 1. The origin of this software must not be misrepresented; you must not
+  * claim that you wrote the original software. If you use this software
+  * in a product, an acknowledgment in the product documentation would be
+  * appreciated but is not required.
+  * 2. Altered source versions must be plainly marked as such, and must not be
+  * misrepresented as being the original software.
+  * 3. This notice may not be removed or altered from any source distribution.
+  */
+  /// @file
+  /// Settings that can be overriden for your application
+  ///
+  // Tunable Constants
+  /// You can use this to change the length scale used by your game.
+  /// For example for inches you could use 39.4.
+  // export const b2_lengthUnitsPerMeter: number = 1.0;
+  /// The maximum number of vertices on a convex polygon. You cannot increase
+  /// this too much because b2BlockAllocator has a maximum object size.
+  // export const b2_maxPolygonVertices: number = 8;
+  // Memory Allocation
+  /// Implement this function to use your own memory allocator.
+  function b2Alloc(size) {
+      return null;
+  }
+  /// If you implement b2Alloc, you should also implement this function.
+  function b2Free(mem) {
+  }
+  /// Logging function.
+  function b2Log(message, ...args) {
+      // console.log(message, ...args);
   }
 
   /*
@@ -1624,10 +1654,11 @@
           this.alpha0 = other.alpha0;
           return this;
       }
+      // https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
       GetTransform(xf, beta) {
-          xf.p.x = this.c0.x + beta * (this.c.x - this.c0.x);
-          xf.p.y = this.c0.y + beta * (this.c.y - this.c0.y);
-          const angle = this.a0 + beta * (this.a - this.a0);
+          xf.p.x = (1.0 - beta) * this.c0.x + beta * this.c.x;
+          xf.p.y = (1.0 - beta) * this.c0.y + beta * this.c.y;
+          const angle = (1.0 - beta) * this.a0 + beta * this.a;
           xf.q.SetAngle(angle);
           xf.p.SelfSub(b2Rot.MulRV(xf.q, this.localCenter, b2Vec2.s_t0));
           return xf;
@@ -2350,8 +2381,8 @@
       const k_maxIters = 20;
       // int32 iter = 0;
       let iter = 0;
-      // while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance)
-      while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance) {
+      // while (iter < k_maxIters && v.Length() - sigma > tolerance)
+      while (iter < k_maxIters && v.Length() - sigma > tolerance) {
           // DEBUG: b2Assert(simplex.m_count < 3);
           output.iterations += 1;
           // Support in direction -v (A - B)
@@ -2419,6 +2450,10 @@
           simplex.GetClosestPoint(v);
           // Iteration count is equated to the number of support point calls.
           ++iter;
+      }
+      if (iter === 0) {
+          // Initial overlap
+          return false;
       }
       // Prepare output.
       const pointA = b2ShapeCast_s_pointA;
@@ -3070,7 +3105,6 @@
           // int32 public m_nodeCount;
           // int32 public m_nodeCapacity;
           this.m_freeList = null;
-          this.m_path = 0;
           this.m_insertionCount = 0;
           this.m_stack = new b2GrowableStack(256);
       }
@@ -7106,6 +7140,9 @@
           this.friction = 0.2;
           /// The restitution (elasticity) usually in the range [0,1].
           this.restitution = 0;
+          /// Restitution velocity threshold, usually in m/s. Collisions above this
+          /// speed have restitution applied (will bounce).
+          this.restitutionThreshold = 1.0 * b2_lengthUnitsPerMeter;
           /// The density, usually in kg/m^2.
           this.density = 0;
           /// A sensor shape collects contact information but never generates a collision
@@ -7163,6 +7200,7 @@
           this.m_next = null;
           this.m_friction = 0;
           this.m_restitution = 0;
+          this.m_restitutionThreshold = 1.0 * b2_lengthUnitsPerMeter;
           this.m_proxies = [];
           this.m_filter = new b2Filter();
           this.m_isSensor = false;
@@ -7172,6 +7210,7 @@
           this.m_userData = b2Maybe(def.userData, null);
           this.m_friction = b2Maybe(def.friction, 0.2);
           this.m_restitution = b2Maybe(def.restitution, 0);
+          this.m_restitutionThreshold = b2Maybe(def.restitutionThreshold, 0);
           this.m_filter.Copy(b2Maybe(def.filter, b2Filter.DEFAULT));
           this.m_isSensor = b2Maybe(def.isSensor, false);
           this.m_density = b2Maybe(def.density, 0);
@@ -7300,6 +7339,15 @@
       SetRestitution(restitution) {
           this.m_restitution = restitution;
       }
+      /// Get the restitution velocity threshold.
+      GetRestitutionThreshold() {
+          return this.m_restitutionThreshold;
+      }
+      /// Set the restitution threshold. This will _not_ change the restitution threshold of
+      /// existing contacts.
+      SetRestitutionThreshold(threshold) {
+          this.m_restitutionThreshold = threshold;
+      }
       /// Get the fixture's AABB. This AABB may be enlarge and/or stale.
       /// If you need a more accurate AABB, compute it using the shape and
       /// the body transform.
@@ -7312,6 +7360,7 @@
           log("    const fd: b2FixtureDef = new b2FixtureDef();\n");
           log("    fd.friction = %.15f;\n", this.m_friction);
           log("    fd.restitution = %.15f;\n", this.m_restitution);
+          log("    fd.restitutionThreshold = %.15f;\n", this.m_restitutionThreshold);
           log("    fd.density = %.15f;\n", this.m_density);
           log("    fd.isSensor = %s;\n", (this.m_isSensor) ? ("true") : ("false"));
           log("    fd.filter.categoryBits = %d;\n", this.m_filter.categoryBits);
@@ -7631,7 +7680,8 @@
           for (let f = this.m_fixtureList; f; f = f.m_next) {
               f.SynchronizeProxies(this.m_xf, this.m_xf);
           }
-          this.m_world.m_contactManager.FindNewContacts();
+          // Check for new contacts the next step
+          this.m_world.m_newContacts = true;
       }
       SetTransform(xf) {
           this.SetTransformVec(xf.p, xf.GetAngle());
@@ -8297,6 +8347,10 @@
   function b2MixRestitution(restitution1, restitution2) {
       return restitution1 > restitution2 ? restitution1 : restitution2;
   }
+  /// Restitution mixing law. This picks the lowest value.
+  function b2MixRestitutionThreshold(threshold1, threshold2) {
+      return threshold1 < threshold2 ? threshold1 : threshold2;
+  }
   class b2ContactEdge {
       constructor(contact) {
           this._other = null; ///< provides quick access to the other body attached.
@@ -8341,6 +8395,7 @@
           this.m_toi = 0;
           this.m_friction = 0;
           this.m_restitution = 0;
+          this.m_restitutionThreshold = 0;
           this.m_tangentSpeed = 0;
           this.m_oldManifold = new b2Manifold(); // TODO: readonly
       }
@@ -8405,6 +8460,19 @@
       ResetRestitution() {
           this.m_restitution = b2MixRestitution(this.m_fixtureA.m_restitution, this.m_fixtureB.m_restitution);
       }
+      /// Override the default restitution velocity threshold mixture. You can call this in b2ContactListener::PreSolve.
+      /// The value persists until you set or reset.
+      SetRestitutionThreshold(threshold) {
+          this.m_restitutionThreshold = threshold;
+      }
+      /// Get the restitution threshold.
+      GetRestitutionThreshold() {
+          return this.m_restitutionThreshold;
+      }
+      /// Reset the restitution threshold to the default value.
+      ResetRestitutionThreshold() {
+          this.m_restitutionThreshold = b2MixRestitutionThreshold(this.m_fixtureA.m_restitutionThreshold, this.m_fixtureB.m_restitutionThreshold);
+      }
       SetTangentSpeed(speed) {
           this.m_tangentSpeed = speed;
       }
@@ -8430,6 +8498,7 @@
           this.m_toiCount = 0;
           this.m_friction = b2MixFriction(this.m_fixtureA.m_friction, this.m_fixtureB.m_friction);
           this.m_restitution = b2MixRestitution(this.m_fixtureA.m_restitution, this.m_fixtureB.m_restitution);
+          this.m_restitutionThreshold = b2MixRestitutionThreshold(this.m_fixtureA.m_restitutionThreshold, this.m_fixtureB.m_restitutionThreshold);
       }
       Update(listener) {
           const tManifold = this.m_oldManifold;
@@ -9299,6 +9368,7 @@
           this.invIB = 0;
           this.friction = 0;
           this.restitution = 0;
+          this.threshold = 0;
           this.tangentSpeed = 0;
           this.pointCount = 0;
           this.contactIndex = 0;
@@ -9442,6 +9512,7 @@
               const vc = this.m_velocityConstraints[i];
               vc.friction = contact.m_friction;
               vc.restitution = contact.m_restitution;
+              vc.threshold = contact.m_restitutionThreshold;
               vc.tangentSpeed = contact.m_tangentSpeed;
               vc.indexA = bodyA.m_islandIndex;
               vc.indexB = bodyB.m_islandIndex;
@@ -9545,7 +9616,7 @@
                   vcp.velocityBias = 0;
                   // float32 vRel = b2Dot(vc->normal, vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA));
                   const vRel = b2Vec2.DotVV(vc.normal, b2Vec2.SubVV(b2Vec2.AddVCrossSV(vB, wB, vcp.rB, b2Vec2.s_t0), b2Vec2.AddVCrossSV(vA, wA, vcp.rA, b2Vec2.s_t1), b2Vec2.s_t0));
-                  if (vRel < (-b2_velocityThreshold)) {
+                  if (vRel < -vc.threshold) {
                       vcp.velocityBias += (-vc.restitution * vRel);
                   }
               }
@@ -10448,6 +10519,8 @@
           // TODO_ERIN there might be some problem with the joint edges in b2Joint.
           this.m_bodyC = this.m_joint1.GetBodyA();
           this.m_bodyA = this.m_joint1.GetBodyB();
+          // Body B on joint1 must be dynamic
+          // b2Assert(this.m_bodyA.m_type === b2_dynamicBody);
           // Get geometry of joint1
           const xfA = this.m_bodyA.m_xf;
           const aA = this.m_bodyA.m_sweep.a;
@@ -10476,6 +10549,8 @@
           }
           this.m_bodyD = this.m_joint2.GetBodyA();
           this.m_bodyB = this.m_joint2.GetBodyB();
+          // Body B on joint2 must be dynamic
+          // b2Assert(this.m_bodyB.m_type === b2_dynamicBody);
           // Get geometry of joint2
           const xfB = this.m_bodyB.m_xf;
           const aB = this.m_bodyB.m_sweep.a;
@@ -12236,9 +12311,8 @@
           return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
       }
       GetReactionForce(inv_dt, out) {
-          // return inv_dt * (m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis);
-          out.x = inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_lowerImpulse + this.m_upperImpulse) * this.m_axis.x);
-          out.y = inv_dt * (this.m_impulse.x * this.m_perp.y + (this.m_motorImpulse + this.m_lowerImpulse + this.m_upperImpulse) * this.m_axis.y);
+          out.x = inv_dt * (this.m_impulse.x * this.m_perp.x + (this.m_motorImpulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_axis.x);
+          out.y = inv_dt * (this.m_impulse.y * this.m_perp.y + (this.m_motorImpulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_axis.y);
           return out;
       }
       GetReactionTorque(inv_dt) {
@@ -13014,7 +13088,6 @@
           let positionError = 0;
           const fixedRotation = (this.m_invIA + this.m_invIB === 0);
           // Solve angular limit constraint.
-          // let active: boolean = false;
           if (this.m_enableLimit && !fixedRotation) {
               const angle = aB - aA - this.m_referenceAngle;
               let C = 0.0;
@@ -13085,7 +13158,7 @@
           return out;
       }
       GetReactionTorque(inv_dt) {
-          return inv_dt * (this.m_lowerImpulse + this.m_upperImpulse);
+          return inv_dt * (this.m_lowerImpulse - this.m_upperImpulse);
       }
       GetLocalAnchorA() { return this.m_localAnchorA; }
       GetLocalAnchorB() { return this.m_localAnchorB; }
@@ -14052,9 +14125,8 @@
           return this.m_bodyB.GetWorldPoint(this.m_localAnchorB, out);
       }
       GetReactionForce(inv_dt, out) {
-          // return inv_dt * (m_impulse * m_ay + m_springImpulse * m_ax);
-          out.x = inv_dt * (this.m_impulse * this.m_ay.x + this.m_springImpulse * this.m_ax.x);
-          out.y = inv_dt * (this.m_impulse * this.m_ay.y + this.m_springImpulse * this.m_ax.y);
+          out.x = inv_dt * (this.m_impulse * this.m_ay.x + (this.m_springImpulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_ax.x);
+          out.y = inv_dt * (this.m_impulse * this.m_ay.y + (this.m_springImpulse + this.m_lowerImpulse - this.m_upperImpulse) * this.m_ax.y);
           return out;
       }
       GetReactionTorque(inv_dt) {
@@ -20955,6 +21027,7 @@
       b2BendingModel[b2BendingModel["b2_xpbdAngleBendingModel"] = 2] = "b2_xpbdAngleBendingModel";
       b2BendingModel[b2BendingModel["b2_pbdDistanceBendingModel"] = 3] = "b2_pbdDistanceBendingModel";
       b2BendingModel[b2BendingModel["b2_pbdHeightBendingModel"] = 4] = "b2_pbdHeightBendingModel";
+      b2BendingModel[b2BendingModel["b2_pbdTriangleBendingModel"] = 5] = "b2_pbdTriangleBendingModel";
   })(exports.BendingModel || (exports.BendingModel = {}));
   ///
   class b2RopeTuning {
@@ -21248,6 +21321,9 @@
               }
               else if (this.m_tuning.bendingModel === exports.BendingModel.b2_pbdHeightBendingModel) {
                   this.SolveBend_PBD_Height();
+              }
+              else if (this.m_tuning.bendingModel === exports.BendingModel.b2_pbdTriangleBendingModel) {
+                  this.SolveBend_PBD_Triangle();
               }
               if (this.m_tuning.stretchingModel === exports.StretchingModel.b2_pbdStretchingModel) {
                   this.SolveStretch_PBD();
@@ -21567,6 +21643,39 @@
               this.m_ps[c.i1].Copy(p1);
               this.m_ps[c.i2].Copy(p2);
               this.m_ps[c.i3].Copy(p3);
+          }
+      }
+      // M. Kelager: A Triangle Bending Constraint Model for PBD
+      SolveBend_PBD_Triangle() {
+          const stiffness = this.m_tuning.bendStiffness;
+          for (let i = 0; i < this.m_bendCount; ++i) {
+              const c = this.m_bendConstraints[i];
+              const b0 = this.m_ps[c.i1].Clone();
+              const v = this.m_ps[c.i2].Clone();
+              const b1 = this.m_ps[c.i3].Clone();
+              const wb0 = c.invMass1;
+              const wv = c.invMass2;
+              const wb1 = c.invMass3;
+              const W = wb0 + wb1 + 2.0 * wv;
+              const invW = stiffness / W;
+              const d = new b2Vec2();
+              d.x = v.x - (1.0 / 3.0) * (b0.x + v.x + b1.x);
+              d.y = v.y - (1.0 / 3.0) * (b0.y + v.y + b1.y);
+              const db0 = new b2Vec2();
+              db0.x = 2.0 * wb0 * invW * d.x;
+              db0.y = 2.0 * wb0 * invW * d.y;
+              const dv = new b2Vec2();
+              dv.x = -4.0 * wv * invW * d.x;
+              dv.y = -4.0 * wv * invW * d.y;
+              const db1 = new b2Vec2();
+              db1.x = 2.0 * wb1 * invW * d.x;
+              db1.y = 2.0 * wb1 * invW * d.y;
+              b0.SelfAdd(db0);
+              v.SelfAdd(dv);
+              b1.SelfAdd(db1);
+              this.m_ps[c.i1].Copy(b0);
+              this.m_ps[c.i2].Copy(v);
+              this.m_ps[c.i3].Copy(b1);
           }
       }
       ApplyBendForces(dt) {
@@ -22178,6 +22287,14 @@
   const staticBody = exports.BodyType.b2_staticBody;
   const kinematicBody = exports.BodyType.b2_kinematicBody;
   const dynamicBody = exports.BodyType.b2_dynamicBody;
+  const springAngleBendingModel = exports.BendingModel.b2_springAngleBendingModel;
+  const pbdAngleBendingModel = exports.BendingModel.b2_pbdAngleBendingModel;
+  const xpbdAngleBendingModel = exports.BendingModel.b2_xpbdAngleBendingModel;
+  const pbdDistanceBendingModel = exports.BendingModel.b2_pbdDistanceBendingModel;
+  const pbdHeightBendingModel = exports.BendingModel.b2_pbdHeightBendingModel;
+  const pbdTriangleBendingModel = exports.BendingModel.b2_pbdTriangleBendingModel;
+  const pbdStretchingModel = exports.StretchingModel.b2_pbdStretchingModel;
+  const xpbdStretchingModel = exports.StretchingModel.b2_xpbdStretchingModel;
 
   exports.AABB = b2AABB;
   exports.Abs = b2Abs;
@@ -22279,6 +22396,7 @@
   exports.Min = b2Min;
   exports.MixFriction = b2MixFriction;
   exports.MixRestitution = b2MixRestitution;
+  exports.MixRestitutionThreshold = b2MixRestitutionThreshold;
   exports.MotorJoint = b2MotorJoint;
   exports.MotorJointDef = b2MotorJointDef;
   exports.MouseJoint = b2MouseJoint;
@@ -22395,6 +22513,7 @@
   exports.gjk_reset = b2_gjk_reset;
   exports.invalidParticleIndex = b2_invalidParticleIndex;
   exports.kinematicBody = kinematicBody;
+  exports.lengthUnitsPerMeter = b2_lengthUnitsPerMeter;
   exports.linearSleepTolerance = b2_linearSleepTolerance;
   exports.linearSlop = b2_linearSlop;
   exports.maxAngularCorrection = b2_maxAngularCorrection;
@@ -22417,16 +22536,23 @@
   exports.minParticleWeight = b2_minParticleWeight;
   exports.minPulleyLength = b2_minPulleyLength;
   exports.particleStride = b2_particleStride;
+  exports.pbdAngleBendingModel = pbdAngleBendingModel;
+  exports.pbdDistanceBendingModel = pbdDistanceBendingModel;
+  exports.pbdHeightBendingModel = pbdHeightBendingModel;
+  exports.pbdStretchingModel = pbdStretchingModel;
+  exports.pbdTriangleBendingModel = pbdTriangleBendingModel;
   exports.pi = b2_pi;
   exports.polygonRadius = b2_polygonRadius;
   exports.set_g_blockSolve = set_g_blockSolve;
+  exports.springAngleBendingModel = springAngleBendingModel;
   exports.staticBody = staticBody;
   exports.timeToSleep = b2_timeToSleep;
   exports.toiBaumgarte = b2_toiBaumgarte;
   exports.toi_reset = b2_toi_reset;
   exports.two_pi = b2_two_pi;
-  exports.velocityThreshold = b2_velocityThreshold;
   exports.version = b2_version;
+  exports.xpbdAngleBendingModel = xpbdAngleBendingModel;
+  exports.xpbdStretchingModel = xpbdStretchingModel;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

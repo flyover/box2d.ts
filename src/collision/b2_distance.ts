@@ -18,7 +18,7 @@
 
 // DEBUG: import { b2Assert } from "../common/b2_settings.js";
 import { b2_epsilon, b2_epsilon_sq, b2_polygonRadius, b2_linearSlop } from "../common/b2_settings.js";
-import { b2Max, b2Vec2, b2Rot, b2Transform, b2Abs } from "../common/b2_math.js";
+import { b2Max, b2Vec2, b2Rot, b2Transform } from "../common/b2_math.js";
 import { b2Shape } from "./b2_shape.js";
 
 /// A distance proxy is used by the GJK algorithm.
@@ -100,8 +100,8 @@ export class b2DistanceProxy {
 export class b2SimplexCache {
   public metric: number = 0;
   public count: number = 0;
-  public readonly indexA: [number, number, number] = [ 0, 0, 0 ];
-  public readonly indexB: [number, number, number] = [ 0, 0, 0 ];
+  public readonly indexA: [number, number, number] = [0, 0, 0];
+  public readonly indexB: [number, number, number] = [0, 0, 0];
 
   public Reset(): b2SimplexCache {
     this.metric = 0;
@@ -144,19 +144,19 @@ export class b2DistanceOutput {
 
 /// Input parameters for b2ShapeCast
 export class b2ShapeCastInput {
-	public readonly proxyA: b2DistanceProxy = new b2DistanceProxy();
-	public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
-	public readonly transformA: b2Transform = new b2Transform();
-	public readonly transformB: b2Transform = new b2Transform();
-	public readonly translationB: b2Vec2 = new b2Vec2();
+  public readonly proxyA: b2DistanceProxy = new b2DistanceProxy();
+  public readonly proxyB: b2DistanceProxy = new b2DistanceProxy();
+  public readonly transformA: b2Transform = new b2Transform();
+  public readonly transformB: b2Transform = new b2Transform();
+  public readonly translationB: b2Vec2 = new b2Vec2();
 }
 
 /// Output results for b2ShapeCast
 export class b2ShapeCastOutput {
-	public readonly point: b2Vec2 = new b2Vec2();
-	public readonly normal: b2Vec2 = new b2Vec2();
-	public lambda: number = 0.0;
-	public iterations: number = 0;
+  public readonly point: b2Vec2 = new b2Vec2();
+  public readonly normal: b2Vec2 = new b2Vec2();
+  public lambda: number = 0.0;
+  public iterations: number = 0;
 }
 
 export let b2_gjkCalls: number = 0;
@@ -256,10 +256,10 @@ export class b2Simplex {
 
   public GetSearchDirection(out: b2Vec2): b2Vec2 {
     switch (this.m_count) {
-    case 1:
-      return b2Vec2.NegV(this.m_v1.w, out);
+      case 1:
+        return b2Vec2.NegV(this.m_v1.w, out);
 
-    case 2: {
+      case 2: {
         const e12: b2Vec2 = b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, out);
         const sgn: number = b2Vec2.CrossVV(e12, b2Vec2.NegV(this.m_v1.w, b2Vec2.s_t0));
         if (sgn > 0) {
@@ -271,82 +271,82 @@ export class b2Simplex {
         }
       }
 
-    default:
-      // DEBUG: b2Assert(false);
-      return out.SetZero();
+      default:
+        // DEBUG: b2Assert(false);
+        return out.SetZero();
     }
   }
 
   public GetClosestPoint(out: b2Vec2): b2Vec2 {
     switch (this.m_count) {
-    case 0:
-      // DEBUG: b2Assert(false);
-      return out.SetZero();
+      case 0:
+        // DEBUG: b2Assert(false);
+        return out.SetZero();
 
-    case 1:
-      return out.Copy(this.m_v1.w);
+      case 1:
+        return out.Copy(this.m_v1.w);
 
-    case 2:
-      return out.Set(
-        this.m_v1.a * this.m_v1.w.x + this.m_v2.a * this.m_v2.w.x,
-        this.m_v1.a * this.m_v1.w.y + this.m_v2.a * this.m_v2.w.y);
+      case 2:
+        return out.Set(
+          this.m_v1.a * this.m_v1.w.x + this.m_v2.a * this.m_v2.w.x,
+          this.m_v1.a * this.m_v1.w.y + this.m_v2.a * this.m_v2.w.y);
 
-    case 3:
-      return out.SetZero();
+      case 3:
+        return out.SetZero();
 
-    default:
-      // DEBUG: b2Assert(false);
-      return out.SetZero();
+      default:
+        // DEBUG: b2Assert(false);
+        return out.SetZero();
     }
   }
 
   public GetWitnessPoints(pA: b2Vec2, pB: b2Vec2): void {
     switch (this.m_count) {
-    case 0:
-      // DEBUG: b2Assert(false);
-      break;
+      case 0:
+        // DEBUG: b2Assert(false);
+        break;
 
-    case 1:
-      pA.Copy(this.m_v1.wA);
-      pB.Copy(this.m_v1.wB);
-      break;
+      case 1:
+        pA.Copy(this.m_v1.wA);
+        pB.Copy(this.m_v1.wB);
+        break;
 
-    case 2:
-      pA.x = this.m_v1.a * this.m_v1.wA.x + this.m_v2.a * this.m_v2.wA.x;
-      pA.y = this.m_v1.a * this.m_v1.wA.y + this.m_v2.a * this.m_v2.wA.y;
-      pB.x = this.m_v1.a * this.m_v1.wB.x + this.m_v2.a * this.m_v2.wB.x;
-      pB.y = this.m_v1.a * this.m_v1.wB.y + this.m_v2.a * this.m_v2.wB.y;
-      break;
+      case 2:
+        pA.x = this.m_v1.a * this.m_v1.wA.x + this.m_v2.a * this.m_v2.wA.x;
+        pA.y = this.m_v1.a * this.m_v1.wA.y + this.m_v2.a * this.m_v2.wA.y;
+        pB.x = this.m_v1.a * this.m_v1.wB.x + this.m_v2.a * this.m_v2.wB.x;
+        pB.y = this.m_v1.a * this.m_v1.wB.y + this.m_v2.a * this.m_v2.wB.y;
+        break;
 
-    case 3:
-      pB.x = pA.x = this.m_v1.a * this.m_v1.wA.x + this.m_v2.a * this.m_v2.wA.x + this.m_v3.a * this.m_v3.wA.x;
-      pB.y = pA.y = this.m_v1.a * this.m_v1.wA.y + this.m_v2.a * this.m_v2.wA.y + this.m_v3.a * this.m_v3.wA.y;
-      break;
+      case 3:
+        pB.x = pA.x = this.m_v1.a * this.m_v1.wA.x + this.m_v2.a * this.m_v2.wA.x + this.m_v3.a * this.m_v3.wA.x;
+        pB.y = pA.y = this.m_v1.a * this.m_v1.wA.y + this.m_v2.a * this.m_v2.wA.y + this.m_v3.a * this.m_v3.wA.y;
+        break;
 
-    default:
-      // DEBUG: b2Assert(false);
-      break;
+      default:
+        // DEBUG: b2Assert(false);
+        break;
     }
   }
 
   public GetMetric(): number {
     switch (this.m_count) {
-    case 0:
-      // DEBUG: b2Assert(false);
-      return 0;
+      case 0:
+        // DEBUG: b2Assert(false);
+        return 0;
 
-    case 1:
-      return 0;
+      case 1:
+        return 0;
 
-    case 2:
-      return b2Vec2.DistanceVV(this.m_v1.w, this.m_v2.w);
+      case 2:
+        return b2Vec2.DistanceVV(this.m_v1.w, this.m_v2.w);
 
-    case 3:
-      return b2Vec2.CrossVV(b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Vec2.s_t0), b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Vec2.s_t1));
+      case 3:
+        return b2Vec2.CrossVV(b2Vec2.SubVV(this.m_v2.w, this.m_v1.w, b2Vec2.s_t0), b2Vec2.SubVV(this.m_v3.w, this.m_v1.w, b2Vec2.s_t1));
 
-    default:
-      // DEBUG: b2Assert(false);
-      return 0;
+      default:
+        // DEBUG: b2Assert(false);
+        return 0;
     }
   }
 
@@ -488,8 +488,8 @@ export class b2Simplex {
 }
 
 const b2Distance_s_simplex: b2Simplex = new b2Simplex();
-const b2Distance_s_saveA: [number, number, number] = [ 0, 0, 0 ];
-const b2Distance_s_saveB: [number, number, number] = [ 0, 0, 0 ];
+const b2Distance_s_saveA: [number, number, number] = [0, 0, 0];
+const b2Distance_s_saveB: [number, number, number] = [0, 0, 0];
 const b2Distance_s_p: b2Vec2 = new b2Vec2();
 const b2Distance_s_d: b2Vec2 = new b2Vec2();
 const b2Distance_s_normal: b2Vec2 = new b2Vec2();
@@ -529,20 +529,20 @@ export function b2Distance(output: b2DistanceOutput, cache: b2SimplexCache, inpu
     }
 
     switch (simplex.m_count) {
-    case 1:
-      break;
+      case 1:
+        break;
 
-    case 2:
-      simplex.Solve2();
-      break;
+      case 2:
+        simplex.Solve2();
+        break;
 
-    case 3:
-      simplex.Solve3();
-      break;
+      case 3:
+        simplex.Solve3();
+        break;
 
-    default:
-      // DEBUG: b2Assert(false);
-      break;
+      default:
+        // DEBUG: b2Assert(false);
+        break;
     }
 
     // If we have 3 points, then the origin is in the corresponding triangle.
@@ -703,8 +703,8 @@ export function b2ShapeCast(output: b2ShapeCastOutput, input: b2ShapeCastInput):
   const k_maxIters = 20;
   // int32 iter = 0;
   let iter = 0;
-  // while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance)
-  while (iter < k_maxIters && b2Abs(v.Length() - sigma) > tolerance) {
+  // while (iter < k_maxIters && v.Length() - sigma > tolerance)
+  while (iter < k_maxIters && v.Length() - sigma > tolerance) {
     // DEBUG: b2Assert(simplex.m_count < 3);
 
     output.iterations += 1;
@@ -760,18 +760,18 @@ export function b2ShapeCast(output: b2ShapeCastOutput, input: b2ShapeCastInput):
     simplex.m_count += 1;
 
     switch (simplex.m_count) {
-    case 1:
-      break;
+      case 1:
+        break;
 
-    case 2:
-      simplex.Solve2();
-      break;
+      case 2:
+        simplex.Solve2();
+        break;
 
-    case 3:
-      simplex.Solve3();
-      break;
+      case 3:
+        simplex.Solve3();
+        break;
 
-    default:
+      default:
       // DEBUG: b2Assert(false);
     }
 
@@ -787,6 +787,11 @@ export function b2ShapeCast(output: b2ShapeCastOutput, input: b2ShapeCastInput):
 
     // Iteration count is equated to the number of support point calls.
     ++iter;
+  }
+
+  if (iter === 0) {
+    // Initial overlap
+    return false;
   }
 
   // Prepare output.

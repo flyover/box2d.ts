@@ -19,7 +19,6 @@ export declare class b2TreeNode<T> {
 export declare class b2DynamicTree<T> {
     m_root: b2TreeNode<T> | null;
     m_freeList: b2TreeNode<T> | null;
-    m_path: number;
     m_insertionCount: number;
     readonly m_stack: b2GrowableStack<b2TreeNode<T> | null>;
     static readonly s_r: b2Vec2;

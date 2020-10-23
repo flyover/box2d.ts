@@ -69,8 +69,6 @@ export class b2DynamicTree<T> {
 
   public m_freeList: b2TreeNode<T> | null = null;
 
-  public m_path: number = 0;
-
   public m_insertionCount: number = 0;
 
   public readonly m_stack = new b2GrowableStack<b2TreeNode<T> | null>(256);
