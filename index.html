@@ -4,19 +4,16 @@
     <title>Box2D</title>
     <script src="https://unpkg.com/systemjs@6.7.0/dist/system.js"></script>
     <script type="text/javascript">
-
-    function boot(args) {
+    window.addEventListener('load', function(event) {
+      const args = window.location.search.substring(1).split('&').filter(v => !!v); // args from window location
+      console.log(args);
+      System.import("./build/index.js").then(function(b2) {
+        console.log(b2.version);
+      }).catch(console.error);
       System.import("./build/box2d.js").then(function(box2d) {
         console.log(box2d.b2_version);
       }).catch(console.error);
-    }
-
-    window.addEventListener('load', function(event) {
-      const args = window.location.search.substring(1).split('&'); // args from window location
-      console.log(args);
-      boot(args);
     });
-
     </script>
   </head>
 </html>
