@@ -7,7 +7,8 @@ export default {
     globals: { "@box2d": "b2" },
     file: "./dist/testbed.umd.js",
     name: "testbed",
-    format: "umd"
+    format: "umd",
+    sourcemap: true
   },
   plugins: [
     typescript({ clean: true, tsconfigOverride: { compilerOptions: { target: "ES2015", module: "ES2015", declaration: false } } }),

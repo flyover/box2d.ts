@@ -5,7 +5,8 @@ export default {
   output: {
     file: "./dist/box2d.umd.js",
     name: "b2",
-    format: "umd"
+    format: "umd",
+    sourcemap: true
   },
   plugins: [
     typescript({ clean: true, tsconfigOverride: { compilerOptions: { target: "ES2015", module: "ES2015", declaration: false } } }),

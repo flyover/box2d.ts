@@ -22557,3 +22557,4 @@
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
+//# sourceMappingURL=box2d.umd.js.map
