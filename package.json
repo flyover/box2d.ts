@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "A TypeScript port of Box2D",
   "main": "./dist/box2d.umd.js",
-  "types": "./src/box2d.ts",
+  "types": "./build/index.d.ts",
   "scripts": {
     "clean": "npm run clean-box2d",
     "build": "npm run build-box2d",
@@ -16,6 +16,8 @@
     "clean-box2d": "rm -rf build",
     "build-box2d": "tsc",
     "watch-box2d": "tsc --watch",
+    "build-box2d-module": "tsc --module ES2015 --outDir build/esm",
+    "watch-box2d-module": "tsc --module ES2015 --outDir build/esm --watch",
     "dist-box2d": "rollup -c",
     "clean-unit-test": "rm -rf unit-test/build",
     "build-unit-test": "tsc -p unit-test",
