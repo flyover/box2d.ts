@@ -113,6 +113,7 @@ export class b2MotorJoint extends b2Joint {
     super(def);
 
     this.m_linearOffset.Copy(b2Maybe(def.linearOffset, b2Vec2.ZERO));
+    this.m_angularOffset = b2Maybe(def.angularOffset,0);
     this.m_linearImpulse.SetZero();
     this.m_maxForce = b2Maybe(def.maxForce, 0);
     this.m_maxTorque = b2Maybe(def.maxTorque, 0);
