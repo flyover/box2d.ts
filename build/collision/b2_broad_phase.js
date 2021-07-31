@@ -202,8 +202,11 @@ System.register(["./b2_dynamic_tree.js"], function (exports_1, context_1) {
                     ++this.m_moveCount;
                 }
                 UnBufferMove(proxy) {
-                    const i = this.m_moveBuffer.indexOf(proxy);
-                    this.m_moveBuffer[i] = null;
+                    for (let i = 0; i < this.m_moveCount; ++i) {
+                        if (this.m_moveBuffer[i] === proxy) {
+                            this.m_moveBuffer[i] = null;
+                        }
+                    }
                 }
             };
             exports_1("b2BroadPhase", b2BroadPhase);

@@ -297,6 +297,7 @@
           return b2Color.MakeStyleString(this.r, this.g, this.b, alpha);
       }
   }
+  exports.DrawFlags = void 0;
   (function (b2DrawFlags) {
       b2DrawFlags[b2DrawFlags["e_none"] = 0] = "e_none";
       b2DrawFlags[b2DrawFlags["e_shapeBit"] = 1] = "e_shapeBit";
@@ -2488,6 +2489,10 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  /// @file
+  /// Structures and functions used for computing contact points, distance
+  /// queries, and TOI queries.
+  exports.ContactFeatureType = void 0;
   (function (b2ContactFeatureType) {
       b2ContactFeatureType[b2ContactFeatureType["e_vertex"] = 0] = "e_vertex";
       b2ContactFeatureType[b2ContactFeatureType["e_face"] = 1] = "e_face";
@@ -2600,6 +2605,7 @@
           return this;
       }
   }
+  exports.ManifoldType = void 0;
   (function (b2ManifoldType) {
       b2ManifoldType[b2ManifoldType["e_unknown"] = -1] = "e_unknown";
       b2ManifoldType[b2ManifoldType["e_circles"] = 0] = "e_circles";
@@ -2716,6 +2722,8 @@
   b2WorldManifold.Initialize_s_cB = new b2Vec2();
   b2WorldManifold.Initialize_s_planePoint = new b2Vec2();
   b2WorldManifold.Initialize_s_clipPoint = new b2Vec2();
+  /// This is used for determining the state of contact points.
+  exports.PointState = void 0;
   (function (b2PointState) {
       b2PointState[b2PointState["b2_nullState"] = 0] = "b2_nullState";
       b2PointState[b2PointState["b2_addState"] = 1] = "b2_addState";
@@ -3985,8 +3993,11 @@
           ++this.m_moveCount;
       }
       UnBufferMove(proxy) {
-          const i = this.m_moveBuffer.indexOf(proxy);
-          this.m_moveBuffer[i] = null;
+          for (let i = 0; i < this.m_moveCount; ++i) {
+              if (this.m_moveBuffer[i] === proxy) {
+                  this.m_moveBuffer[i] = null;
+              }
+          }
       }
   }
 
@@ -4018,6 +4029,7 @@
           this.I = 0;
       }
   }
+  exports.ShapeType = void 0;
   (function (b2ShapeType) {
       b2ShapeType[b2ShapeType["e_unknown"] = -1] = "e_unknown";
       b2ShapeType[b2ShapeType["e_circleShape"] = 0] = "e_circleShape";
@@ -5910,6 +5922,8 @@
           this.tMax = 0; // defines sweep interval [0, tMax]
       }
   }
+  /// Output parameters for b2TimeOfImpact.
+  exports.TOIOutputState = void 0;
   (function (b2TOIOutputState) {
       b2TOIOutputState[b2TOIOutputState["e_unknown"] = 0] = "e_unknown";
       b2TOIOutputState[b2TOIOutputState["e_failed"] = 1] = "e_failed";
@@ -5923,6 +5937,7 @@
           this.t = 0;
       }
   }
+  exports.SeparationFunctionType = void 0;
   (function (b2SeparationFunctionType) {
       b2SeparationFunctionType[b2SeparationFunctionType["e_unknown"] = -1] = "e_unknown";
       b2SeparationFunctionType[b2SeparationFunctionType["e_points"] = 0] = "e_points";
@@ -6292,6 +6307,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  exports.JointType = void 0;
   (function (b2JointType) {
       b2JointType[b2JointType["e_unknownJoint"] = 0] = "e_unknownJoint";
       b2JointType[b2JointType["e_revoluteJoint"] = 1] = "e_revoluteJoint";
@@ -7418,6 +7434,12 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // #endif
+  /// The body type.
+  /// static: zero mass, zero velocity, may be manually moved
+  /// kinematic: zero mass, non-zero velocity set by user, moved by solver
+  /// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
+  exports.BodyType = void 0;
   (function (b2BodyType) {
       b2BodyType[b2BodyType["b2_unknown"] = -1] = "b2_unknown";
       b2BodyType[b2BodyType["b2_staticBody"] = 0] = "b2_staticBody";
@@ -14342,6 +14364,10 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  /**
+   * The particle type. Can be combined with the | operator.
+   */
+  exports.ParticleFlag = void 0;
   (function (b2ParticleFlag) {
       /// Water particle.
       b2ParticleFlag[b2ParticleFlag["b2_waterParticle"] = 0] = "b2_waterParticle";
@@ -14434,6 +14460,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  exports.ParticleGroupFlag = void 0;
   (function (b2ParticleGroupFlag) {
       /// Prevents overlapping or leaking.
       b2ParticleGroupFlag[b2ParticleGroupFlag["b2_solidParticleGroup"] = 1] = "b2_solidParticleGroup";
@@ -21017,10 +21044,12 @@
   b2World.SolveTOI_s_toi_output = new b2TOIOutput();
 
   // MIT License
+  exports.StretchingModel = void 0;
   (function (b2StretchingModel) {
       b2StretchingModel[b2StretchingModel["b2_pbdStretchingModel"] = 0] = "b2_pbdStretchingModel";
       b2StretchingModel[b2StretchingModel["b2_xpbdStretchingModel"] = 1] = "b2_xpbdStretchingModel";
   })(exports.StretchingModel || (exports.StretchingModel = {}));
+  exports.BendingModel = void 0;
   (function (b2BendingModel) {
       b2BendingModel[b2BendingModel["b2_springAngleBendingModel"] = 0] = "b2_springAngleBendingModel";
       b2BendingModel[b2BendingModel["b2_pbdAngleBendingModel"] = 1] = "b2_pbdAngleBendingModel";
