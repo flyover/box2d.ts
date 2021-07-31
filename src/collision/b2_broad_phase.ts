@@ -31,8 +31,7 @@ export class b2BroadPhase<T> {
   public readonly m_tree: b2DynamicTree<T> = new b2DynamicTree<T>();
   public m_proxyCount: number = 0;
   // public m_moveCapacity: number = 16;
-  public m_moveCount: number = 0;
-  public readonly m_moveBuffer: Array<b2TreeNode<T> | null> = [];
+  public readonly m_moveBuffer = new Set<b2TreeNode<T>>();
   // public m_pairCapacity: number = 16;
   public m_pairCount: number = 0;
   public readonly m_pairBuffer: Array<b2Pair<T>> = [];
@@ -96,11 +95,7 @@ export class b2BroadPhase<T> {
     this.m_pairCount = 0;
 
     // Perform tree queries for all moving proxies.
-    for (let i: number = 0; i < this.m_moveCount; ++i) {
-      const queryProxy: b2TreeNode<T> | null = this.m_moveBuffer[i];
-      if (queryProxy === null) {
-        continue;
-      }
+    for(let queryProxy of this.m_moveBuffer) {
 
       // This is called from b2.DynamicTree::Query when we are gathering pairs.
       // boolean b2BroadPhase::QueryCallback(int32 proxyId);
@@ -159,17 +154,12 @@ export class b2BroadPhase<T> {
   }
 
     // Clear move flags
-    for (let i = 0; i < this.m_moveCount; ++i) {
-      const proxy: b2TreeNode<T> | null = this.m_moveBuffer[i];
-      if (proxy === null) {
-        continue;
-      }
-
+    for (let proxy of this.m_moveBuffer) {
       proxy.moved = false; // this.m_tree.ClearMoved(proxy);
     }
 
     // Reset move buffer
-    this.m_moveCount = 0;
+    this.m_moveBuffer.clear()
   }
 
   /// Query an AABB for overlapping proxies. The callback class
@@ -216,12 +206,10 @@ export class b2BroadPhase<T> {
   }
 
   public BufferMove(proxy: b2TreeNode<T>): void {
-    this.m_moveBuffer[this.m_moveCount] = proxy;
-    ++this.m_moveCount;
+    this.m_moveBuffer.add(proxy)
   }
 
   public UnBufferMove(proxy: b2TreeNode<T>): void {
-    const i: number = this.m_moveBuffer.indexOf(proxy);
-    this.m_moveBuffer[i] = null;
+    this.m_moveBuffer.delete(proxy)
   }
 }
