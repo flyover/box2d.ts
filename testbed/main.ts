@@ -310,8 +310,8 @@ export class Main {
     const element: b2.Vec2 = new b2.Vec2(e.clientX, e.clientY);
     const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
 
-    switch (e.which) {
-    case 1: // left mouse button
+    switch (e.button) {
+    case 0: // left mouse button
       this.m_lMouseDown = true;
       if (this.m_shift) {
         if (this.m_test) { this.m_test.ShiftMouseDown(world); }
@@ -319,7 +319,7 @@ export class Main {
         if (this.m_test) { this.m_test.MouseDown(world); }
       }
       break;
-    case 3: // right mouse button
+    case 2: // right mouse button
       this.m_rMouseDown = true;
       const projection: b2.Vec2 = g_camera.ConvertElementToProjection(element, new b2.Vec2());
       this.m_projection0.Copy(projection);
@@ -332,12 +332,12 @@ export class Main {
     const element: b2.Vec2 = new b2.Vec2(e.clientX, e.clientY);
     const world: b2.Vec2 = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
 
-    switch (e.which) {
-    case 1: // left mouse button
+    switch (e.button) {
+    case 0: // left mouse button
       this.m_lMouseDown = false;
       if (this.m_test) { this.m_test.MouseUp(world); }
       break;
-    case 3: // right mouse button
+    case 2: // right mouse button
       this.m_rMouseDown = false;
       break;
     }

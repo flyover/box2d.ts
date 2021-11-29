@@ -13997,8 +13997,8 @@
       HandleMouseDown(e) {
           const element = new b2__namespace.Vec2(e.clientX, e.clientY);
           const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
-          switch (e.which) {
-              case 1: // left mouse button
+          switch (e.button) {
+              case 0: // left mouse button
                   this.m_lMouseDown = true;
                   if (this.m_shift) {
                       if (this.m_test) {
@@ -14011,7 +14011,7 @@
                       }
                   }
                   break;
-              case 3: // right mouse button
+              case 2: // right mouse button
                   this.m_rMouseDown = true;
                   const projection = g_camera.ConvertElementToProjection(element, new b2__namespace.Vec2());
                   this.m_projection0.Copy(projection);
@@ -14022,14 +14022,14 @@
       HandleMouseUp(e) {
           const element = new b2__namespace.Vec2(e.clientX, e.clientY);
           const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
-          switch (e.which) {
-              case 1: // left mouse button
+          switch (e.button) {
+              case 0: // left mouse button
                   this.m_lMouseDown = false;
                   if (this.m_test) {
                       this.m_test.MouseUp(world);
                   }
                   break;
-              case 3: // right mouse button
+              case 2: // right mouse button
                   this.m_rMouseDown = false;
                   break;
           }

@@ -438,8 +438,8 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/a
                 HandleMouseDown(e) {
                     const element = new b2.Vec2(e.clientX, e.clientY);
                     const world = draw_js_1.g_camera.ConvertScreenToWorld(element, new b2.Vec2());
-                    switch (e.which) {
-                        case 1: // left mouse button
+                    switch (e.button) {
+                        case 0: // left mouse button
                             this.m_lMouseDown = true;
                             if (this.m_shift) {
                                 if (this.m_test) {
@@ -452,7 +452,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/a
                                 }
                             }
                             break;
-                        case 3: // right mouse button
+                        case 2: // right mouse button
                             this.m_rMouseDown = true;
                             const projection = draw_js_1.g_camera.ConvertElementToProjection(element, new b2.Vec2());
                             this.m_projection0.Copy(projection);
@@ -463,14 +463,14 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/a
                 HandleMouseUp(e) {
                     const element = new b2.Vec2(e.clientX, e.clientY);
                     const world = draw_js_1.g_camera.ConvertScreenToWorld(element, new b2.Vec2());
-                    switch (e.which) {
-                        case 1: // left mouse button
+                    switch (e.button) {
+                        case 0: // left mouse button
                             this.m_lMouseDown = false;
                             if (this.m_test) {
                                 this.m_test.MouseUp(world);
                             }
                             break;
-                        case 3: // right mouse button
+                        case 2: // right mouse button
                             this.m_rMouseDown = false;
                             break;
                     }
