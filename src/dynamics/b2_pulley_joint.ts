@@ -399,7 +399,7 @@ export class b2PulleyJoint extends b2Joint {
     return b2Vec2.DistanceVV(p, s);
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void) {
+  public override Dump(log: (format: string, ...args: any[]) => void) {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
@@ -417,7 +417,7 @@ export class b2PulleyJoint extends b2Joint {
     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 
-  public ShiftOrigin(newOrigin: b2Vec2) {
+  public override ShiftOrigin(newOrigin: b2Vec2) {
     this.m_groundAnchorA.SelfSub(newOrigin);
     this.m_groundAnchorB.SelfSub(newOrigin);
   }

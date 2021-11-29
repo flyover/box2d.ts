@@ -349,7 +349,7 @@ export class b2MotorJoint extends b2Joint {
     return true;
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void) {
+  public override Dump(log: (format: string, ...args: any[]) => void) {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 

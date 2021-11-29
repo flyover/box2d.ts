@@ -405,7 +405,7 @@ export class b2WeldJoint extends b2Joint {
   public SetDamping(damping: number) { this.m_damping = damping; }
   public GetDamping() { return this.m_damping; }
 
-  public Dump(log: (format: string, ...args: any[]) => void) {
+  public override Dump(log: (format: string, ...args: any[]) => void) {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 

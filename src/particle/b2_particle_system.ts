@@ -250,11 +250,11 @@ export class b2FixtureParticleQueryCallback extends b2QueryCallback {
     super();
     this.m_system = system;
   }
-  public ShouldQueryParticleSystem(system: b2ParticleSystem): boolean {
+  public override ShouldQueryParticleSystem(system: b2ParticleSystem): boolean {
     // Skip reporting particles.
     return false;
   }
-  public ReportFixture(fixture: b2Fixture): boolean {
+  public override ReportFixture(fixture: b2Fixture): boolean {
     if (fixture.IsSensor()) {
       return true;
     }
@@ -270,7 +270,7 @@ export class b2FixtureParticleQueryCallback extends b2QueryCallback {
     }
     return true;
   }
-  public ReportParticle(system: b2ParticleSystem, index: number): boolean {
+  public override ReportParticle(system: b2ParticleSystem, index: number): boolean {
     return false;
   }
   public ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, index: number): void {
@@ -4879,11 +4879,11 @@ export class b2ParticleSystem_DestroyParticlesInShapeCallback extends b2QueryCal
     this.m_destroyed = 0;
   }
 
-  public ReportFixture(fixture: b2Fixture): boolean {
+  public override ReportFixture(fixture: b2Fixture): boolean {
     return false;
   }
 
-  public ReportParticle(particleSystem: b2ParticleSystem, index: number): boolean {
+  public override ReportParticle(particleSystem: b2ParticleSystem, index: number): boolean {
     if (particleSystem !== this.m_system) {
       return false;
     }
@@ -4911,7 +4911,7 @@ export class b2ParticleSystem_JoinParticleGroupsFilter extends b2ParticleSystem_
   /**
    * An additional condition for creating a pair.
    */
-  public ShouldCreatePair(a: number, b: number): boolean {
+  public override ShouldCreatePair(a: number, b: number): boolean {
     return (a < this.m_threshold && this.m_threshold <= b) ||
       (b < this.m_threshold && this.m_threshold <= a);
   }
@@ -4919,7 +4919,7 @@ export class b2ParticleSystem_JoinParticleGroupsFilter extends b2ParticleSystem_
   /**
    * An additional condition for creating a triad.
    */
-  public ShouldCreateTriad(a: number, b: number, c: number): boolean {
+  public override ShouldCreateTriad(a: number, b: number, c: number): boolean {
     return (a < this.m_threshold || b < this.m_threshold || c < this.m_threshold) &&
       (this.m_threshold <= a || this.m_threshold <= b || this.m_threshold <= c);
   }
@@ -5019,7 +5019,7 @@ export class b2ParticleSystem_ReactiveFilter extends b2ParticleSystem_Connection
     super();
     this.m_flagsBuffer = flagsBuffer;
   }
-  public IsNecessary(index: number): boolean {
+  public override IsNecessary(index: number): boolean {
     return (this.m_flagsBuffer.data[index] & b2ParticleFlag.b2_reactiveParticle) !== 0;
   }
 }
@@ -5044,7 +5044,7 @@ export class b2ParticleSystem_UpdateBodyContactsCallback extends b2FixturePartic
     return true;
   }
 
-  public ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void {
+  public override ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void {
     const s_n = b2ParticleSystem_UpdateBodyContactsCallback.ReportFixtureAndParticle_s_n;
     const s_rp = b2ParticleSystem_UpdateBodyContactsCallback.ReportFixtureAndParticle_s_rp;
     const ap = this.m_system.m_positionBuffer.data[a];
@@ -5088,7 +5088,7 @@ export class b2ParticleSystem_SolveCollisionCallback extends b2FixtureParticleQu
     this.m_step = step;
   }
 
-  public ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void {
+  public override ReportFixtureAndParticle(fixture: b2Fixture, childIndex: number, a: number): void {
     const s_p1 = b2ParticleSystem_SolveCollisionCallback.ReportFixtureAndParticle_s_p1;
     const s_output = b2ParticleSystem_SolveCollisionCallback.ReportFixtureAndParticle_s_output;
     const s_input = b2ParticleSystem_SolveCollisionCallback.ReportFixtureAndParticle_s_input;
@@ -5155,7 +5155,7 @@ export class b2ParticleSystem_SolveCollisionCallback extends b2FixtureParticleQu
   public static readonly ReportFixtureAndParticle_s_v = new b2Vec2();
   public static readonly ReportFixtureAndParticle_s_f = new b2Vec2();
 
-  public ReportParticle(system: b2ParticleSystem, index: number): boolean {
+  public override ReportParticle(system: b2ParticleSystem, index: number): boolean {
     return false;
   }
 }

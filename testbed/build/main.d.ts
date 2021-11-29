@@ -36,7 +36,7 @@ export declare class Main {
     HandleTouchMove(e: TouchEvent): void;
     HandleTouchStart(e: TouchEvent): void;
     HandleTouchEnd(e: TouchEvent): void;
-    HandleMouseWheel(e: MouseWheelEvent): void;
+    HandleWheel(e: WheelEvent): void;
     HandleKeyDown(e: KeyboardEvent): void;
     HandleKeyUp(e: KeyboardEvent): void;
     UpdateTest(time_elapsed: number): void;

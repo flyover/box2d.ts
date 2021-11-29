@@ -129,7 +129,7 @@ export class b2ChainShape extends b2Shape {
     return new b2ChainShape().Copy(this);
   }
 
-  public Copy(other: b2ChainShape): b2ChainShape {
+  public override Copy(other: b2ChainShape): b2ChainShape {
     super.Copy(other);
 
     // DEBUG: b2Assert(other instanceof b2ChainShape);

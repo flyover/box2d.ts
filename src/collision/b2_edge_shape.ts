@@ -67,7 +67,7 @@ export class b2EdgeShape extends b2Shape {
     return new b2EdgeShape().Copy(this);
   }
 
-  public Copy(other: b2EdgeShape): b2EdgeShape {
+  public override Copy(other: b2EdgeShape): b2EdgeShape {
     super.Copy(other);
 
     // DEBUG: b2Assert(other instanceof b2EdgeShape);

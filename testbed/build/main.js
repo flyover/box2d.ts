@@ -390,7 +390,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/a
                     canvas_div.addEventListener("mousemove", (e) => { this.HandleMouseMove(e); });
                     canvas_div.addEventListener("mousedown", (e) => { this.HandleMouseDown(e); });
                     canvas_div.addEventListener("mouseup", (e) => { this.HandleMouseUp(e); });
-                    canvas_div.addEventListener("mousewheel", (e) => { this.HandleMouseWheel(e); });
+                    canvas_div.addEventListener("wheel", (e) => { this.HandleWheel(e); });
                     canvas_div.addEventListener("touchmove", (e) => { this.HandleTouchMove(e); });
                     canvas_div.addEventListener("touchstart", (e) => { this.HandleTouchStart(e); });
                     canvas_div.addEventListener("touchend", (e) => { this.HandleTouchEnd(e); });
@@ -497,7 +497,7 @@ System.register(["@box2d", "./settings.js", "./test.js", "./draw.js", "./tests/a
                     }
                     e.preventDefault();
                 }
-                HandleMouseWheel(e) {
+                HandleWheel(e) {
                     if (e.deltaY > 0) {
                         this.ZoomCamera(1 / 1.1);
                     }

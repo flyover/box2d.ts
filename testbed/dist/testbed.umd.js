@@ -2,7 +2,27 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@box2d')) :
   typeof define === 'function' && define.amd ? define(['exports', '@box2d'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.testbed = {}, global.b2));
-}(this, (function (exports, b2) { 'use strict';
+})(this, (function (exports, b2) { 'use strict';
+
+  function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+      Object.keys(e).forEach(function (k) {
+        if (k !== 'default') {
+          var d = Object.getOwnPropertyDescriptor(e, k);
+          Object.defineProperty(n, k, d.get ? d : {
+            enumerable: true,
+            get: function () { return e[k]; }
+          });
+        }
+      });
+    }
+    n["default"] = e;
+    return Object.freeze(n);
+  }
+
+  var b2__namespace = /*#__PURE__*/_interopNamespace(b2);
 
   // MIT License
   class Settings {
@@ -17,7 +37,7 @@
           // Particle iterations are needed for numerical stability in particle
           // simulations with small particles and relatively high gravity.
           // b2CalculateParticleIterations helps to determine the number.
-          this.m_particleIterations = b2.CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
+          this.m_particleIterations = b2__namespace.CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
           // #endif
           this.m_drawShapes = true;
           // #if B2_ENABLE_PARTICLE
@@ -54,7 +74,7 @@
           // Particle iterations are needed for numerical stability in particle
           // simulations with small particles and relatively high gravity.
           // b2CalculateParticleIterations helps to determine the number.
-          this.m_particleIterations = b2.CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
+          this.m_particleIterations = b2__namespace.CalculateParticleIterations(10, 0.04, 1 / this.m_hertz);
           // #endif
           this.m_drawShapes = true;
           // #if B2_ENABLE_PARTICLE
@@ -89,7 +109,7 @@
   // MIT License
   class Camera {
       constructor() {
-          this.m_center = new b2.Vec2(0, 20);
+          this.m_center = new b2__namespace.Vec2(0, 20);
           ///public readonly m_roll: b2.Rot = new b2.Rot(b2.DegToRad(0));
           this.m_extent = 25;
           this.m_zoom = 1;
@@ -116,28 +136,28 @@
       }
       ConvertProjectionToViewport(projection, out) {
           const viewport = out.Copy(projection);
-          b2.Vec2.MulSV(1 / this.m_zoom, viewport, viewport);
+          b2__namespace.Vec2.MulSV(1 / this.m_zoom, viewport, viewport);
           ///b2.Vec2.MulSV(this.m_extent, viewport, viewport);
-          b2.Vec2.MulSV(0.5 * this.m_height / this.m_extent, projection, projection);
+          b2__namespace.Vec2.MulSV(0.5 * this.m_height / this.m_extent, projection, projection);
           return viewport;
       }
       ConvertViewportToProjection(viewport, out) {
           const projection = out.Copy(viewport);
           ///b2.Vec2.MulSV(1 / this.m_extent, projection, projection);
-          b2.Vec2.MulSV(2 * this.m_extent / this.m_height, projection, projection);
-          b2.Vec2.MulSV(this.m_zoom, projection, projection);
+          b2__namespace.Vec2.MulSV(2 * this.m_extent / this.m_height, projection, projection);
+          b2__namespace.Vec2.MulSV(this.m_zoom, projection, projection);
           return projection;
       }
       ConvertWorldToProjection(world, out) {
           const projection = out.Copy(world);
-          b2.Vec2.SubVV(projection, this.m_center, projection);
+          b2__namespace.Vec2.SubVV(projection, this.m_center, projection);
           ///b2.Rot.MulTRV(this.m_roll, projection, projection);
           return projection;
       }
       ConvertProjectionToWorld(projection, out) {
           const world = out.Copy(projection);
           ///b2.Rot.MulRV(this.m_roll, world, world);
-          b2.Vec2.AddVV(this.m_center, world, world);
+          b2__namespace.Vec2.AddVV(this.m_center, world, world);
           return world;
       }
       ConvertElementToWorld(element, out) {
@@ -157,7 +177,7 @@
   }
   // This class implements debug drawing callbacks that are invoked
   // inside b2World::Step.
-  class DebugDraw extends b2.Draw {
+  class DebugDraw extends b2__namespace.Draw {
       constructor() {
           super();
           this.m_ctx = null;
@@ -208,7 +228,7 @@
           const ctx = this.m_ctx;
           if (ctx) {
               ctx.beginPath();
-              ctx.arc(center.x, center.y, radius, 0, b2.pi * 2, true);
+              ctx.arc(center.x, center.y, radius, 0, b2__namespace.pi * 2, true);
               ctx.strokeStyle = color.MakeStyleString(1);
               ctx.stroke();
           }
@@ -219,7 +239,7 @@
               const cx = center.x;
               const cy = center.y;
               ctx.beginPath();
-              ctx.arc(cx, cy, radius, 0, b2.pi * 2, true);
+              ctx.arc(cx, cy, radius, 0, b2__namespace.pi * 2, true);
               ctx.moveTo(cx, cy);
               ctx.lineTo((cx + axis.x * radius), (cy + axis.y * radius));
               ctx.fillStyle = color.MakeStyleString(0.5);
@@ -239,7 +259,7 @@
                       ctx.fillStyle = color.MakeStyleString();
                       // ctx.fillRect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
                       ctx.beginPath();
-                      ctx.arc(center.x, center.y, radius, 0, b2.pi * 2, true);
+                      ctx.arc(center.x, center.y, radius, 0, b2__namespace.pi * 2, true);
                       ctx.fill();
                   }
               }
@@ -250,7 +270,7 @@
                       const center = centers[i];
                       // ctx.rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
                       ctx.beginPath();
-                      ctx.arc(center.x, center.y, radius, 0, b2.pi * 2, true);
+                      ctx.arc(center.x, center.y, radius, 0, b2__namespace.pi * 2, true);
                       ctx.fill();
                   }
                   // ctx.fill();
@@ -275,12 +295,12 @@
               ctx.beginPath();
               ctx.moveTo(0, 0);
               ctx.lineTo(1, 0);
-              ctx.strokeStyle = b2.Color.RED.MakeStyleString(1);
+              ctx.strokeStyle = b2__namespace.Color.RED.MakeStyleString(1);
               ctx.stroke();
               ctx.beginPath();
               ctx.moveTo(0, 0);
               ctx.lineTo(0, 1);
-              ctx.strokeStyle = b2.Color.GREEN.MakeStyleString(1);
+              ctx.strokeStyle = b2__namespace.Color.GREEN.MakeStyleString(1);
               ctx.stroke();
               this.PopTransform(xf);
           }
@@ -313,17 +333,17 @@
               const p = DebugDraw.DrawStringWorld_s_p.Set(x, y);
               // world -> viewport
               const vt = g_camera.m_center;
-              b2.Vec2.SubVV(p, vt, p);
+              b2__namespace.Vec2.SubVV(p, vt, p);
               ///const vr = g_camera.m_roll;
               ///b2.Rot.MulTRV(vr, p, p);
               const vs = g_camera.m_zoom;
-              b2.Vec2.MulSV(1 / vs, p, p);
+              b2__namespace.Vec2.MulSV(1 / vs, p, p);
               // viewport -> canvas
               const cs = 0.5 * g_camera.m_height / g_camera.m_extent;
-              b2.Vec2.MulSV(cs, p, p);
+              b2__namespace.Vec2.MulSV(cs, p, p);
               p.y *= -1;
               const cc = DebugDraw.DrawStringWorld_s_cc.Set(0.5 * ctx.canvas.width, 0.5 * ctx.canvas.height);
-              b2.Vec2.AddVV(p, cc, p);
+              b2__namespace.Vec2.AddVV(p, cc, p);
               ctx.save();
               ctx.setTransform(1, 0, 0, 1, 0, 0);
               ctx.font = "15px DroidSans";
@@ -345,10 +365,10 @@
           }
       }
   }
-  DebugDraw.DrawString_s_color = new b2.Color(0.9, 0.6, 0.6);
-  DebugDraw.DrawStringWorld_s_p = new b2.Vec2();
-  DebugDraw.DrawStringWorld_s_cc = new b2.Vec2();
-  DebugDraw.DrawStringWorld_s_color = new b2.Color(0.5, 0.9, 0.5);
+  DebugDraw.DrawString_s_color = new b2__namespace.Color(0.9, 0.6, 0.6);
+  DebugDraw.DrawStringWorld_s_p = new b2__namespace.Vec2();
+  DebugDraw.DrawStringWorld_s_cc = new b2__namespace.Vec2();
+  DebugDraw.DrawStringWorld_s_color = new b2__namespace.Color(0.5, 0.9, 0.5);
   const g_debugDraw = new DebugDraw();
   const g_camera = new Camera();
 
@@ -441,11 +461,11 @@
           /**
            * Center of particle emitter
            */
-          this.m_origin = new b2.Vec2();
+          this.m_origin = new b2__namespace.Vec2();
           /**
            * Launch direction.
            */
-          this.m_startingVelocity = new b2.Vec2();
+          this.m_startingVelocity = new b2__namespace.Vec2();
           /**
            * Speed particles are emitted
            */
@@ -453,7 +473,7 @@
           /**
            * Half width / height of particle emitter
            */
-          this.m_halfSize = new b2.Vec2();
+          this.m_halfSize = new b2__namespace.Vec2();
           /**
            * Particles per second
            */
@@ -461,7 +481,7 @@
           /**
            * Initial color of particle emitted.
            */
-          this.m_color = new b2.Color();
+          this.m_color = new b2__namespace.Color();
           /**
            * Number particles to emit on the next frame
            */
@@ -469,7 +489,7 @@
           /**
            * Flags for created particles, see b2ParticleFlag.
            */
-          this.m_flags = b2.ParticleFlag.b2_waterParticle;
+          this.m_flags = b2__namespace.ParticleFlag.b2_waterParticle;
           /**
            * Group to put newly created particles in.
            */
@@ -605,11 +625,11 @@
        */
       SetGroup(group) {
           if (this.m_group) {
-              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() & ~b2.ParticleGroupFlag.b2_particleGroupCanBeEmpty);
+              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() & ~b2__namespace.ParticleGroupFlag.b2_particleGroupCanBeEmpty);
           }
           this.m_group = group;
           if (this.m_group) {
-              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() | b2.ParticleGroupFlag.b2_particleGroupCanBeEmpty);
+              this.m_group.SetGroupFlags(this.m_group.GetGroupFlags() | b2__namespace.ParticleGroupFlag.b2_particleGroupCanBeEmpty);
           }
       }
       /**
@@ -632,7 +652,7 @@
           let numberOfParticlesCreated = 0;
           // How many (fractional) particles should we have emitted this frame?
           this.m_emitRemainder += this.m_emitRate * dt;
-          const pd = new b2.ParticleDef();
+          const pd = new b2__namespace.ParticleDef();
           pd.color.Copy(this.m_color);
           pd.flags = this.m_flags;
           pd.group = this.m_group;
@@ -641,10 +661,10 @@
           while (this.m_emitRemainder > 1.0) {
               this.m_emitRemainder -= 1.0;
               // Randomly pick a position within the emitter's radius.
-              const angle = RadialEmitter.Random() * 2.0 * b2.pi;
+              const angle = RadialEmitter.Random() * 2.0 * b2__namespace.pi;
               // Distance from the center of the circle.
               const distance = RadialEmitter.Random();
-              const positionOnUnitCircle = new b2.Vec2(Math.sin(angle), Math.cos(angle));
+              const positionOnUnitCircle = new b2__namespace.Vec2(Math.sin(angle), Math.cos(angle));
               // Initial position.
               pd.position.Set(this.m_origin.x + positionOnUnitCircle.x * distance * this.m_halfSize.x, this.m_origin.y + positionOnUnitCircle.y * distance * this.m_halfSize.y);
               // Send it flying
@@ -684,6 +704,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  exports.ParticleParameterOptions = void 0;
   (function (ParticleParameterOptions) {
       ParticleParameterOptions[ParticleParameterOptions["OptionStrictContacts"] = 1] = "OptionStrictContacts";
       ParticleParameterOptions[ParticleParameterOptions["OptionDrawShapes"] = 2] = "OptionDrawShapes";
@@ -851,18 +872,18 @@
   }
   ParticleParameter.k_DefaultOptions = exports.ParticleParameterOptions.OptionDrawShapes | exports.ParticleParameterOptions.OptionDrawParticles;
   ParticleParameter.k_particleTypes = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_springParticle, ParticleParameter.k_DefaultOptions, "spring"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_elasticParticle, ParticleParameter.k_DefaultOptions, "elastic"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "wall"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "barrier"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionDrawAABBs, "water (bounding boxes)"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_springParticle, ParticleParameter.k_DefaultOptions, "spring"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_elasticParticle, ParticleParameter.k_DefaultOptions, "elastic"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "wall"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_barrierParticle | b2__namespace.ParticleFlag.b2_wallParticle, ParticleParameter.k_DefaultOptions, "barrier"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionDrawAABBs, "water (bounding boxes)"),
   ];
   ParticleParameter.k_defaultDefinition = [
       new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
@@ -890,7 +911,7 @@
   function RegisterTest(category, name, fcn) {
       return g_testEntries.push(new TestEntry(category, name, fcn));
   }
-  class DestructionListener extends b2.DestructionListener {
+  class DestructionListener extends b2__namespace.DestructionListener {
       constructor(test) {
           super();
           this.test = test;
@@ -911,16 +932,16 @@
   }
   class ContactPoint {
       constructor() {
-          this.normal = new b2.Vec2();
-          this.position = new b2.Vec2();
-          this.state = b2.PointState.b2_nullState;
+          this.normal = new b2__namespace.Vec2();
+          this.position = new b2__namespace.Vec2();
+          this.state = b2__namespace.PointState.b2_nullState;
           this.normalImpulse = 0;
           this.tangentImpulse = 0;
           this.separation = 0;
       }
   }
   // #if B2_ENABLE_PARTICLE
-  class QueryCallback2 extends b2.QueryCallback {
+  class QueryCallback2 extends b2__namespace.QueryCallback {
       constructor(particleSystem, shape, velocity) {
           super();
           this.m_particleSystem = particleSystem;
@@ -934,7 +955,7 @@
           if (particleSystem !== this.m_particleSystem) {
               return false;
           }
-          const xf = b2.Transform.IDENTITY;
+          const xf = b2__namespace.Transform.IDENTITY;
           const p = this.m_particleSystem.GetPositionBuffer()[index];
           if (this.m_shape.TestPoint(xf, p)) {
               const v = this.m_particleSystem.GetVelocityBuffer()[index];
@@ -944,7 +965,7 @@
       }
   }
   // #endif
-  class Test extends b2.ContactListener {
+  class Test extends b2__namespace.ContactListener {
       // #endif
       constructor() {
           super();
@@ -952,27 +973,27 @@
           this.m_bomb = null;
           this.m_textLine = 30;
           this.m_mouseJoint = null;
-          this.m_points = b2.MakeArray(Test.k_maxContactPoints, (i) => new ContactPoint());
+          this.m_points = b2__namespace.MakeArray(Test.k_maxContactPoints, (i) => new ContactPoint());
           this.m_pointCount = 0;
-          this.m_bombSpawnPoint = new b2.Vec2();
+          this.m_bombSpawnPoint = new b2__namespace.Vec2();
           this.m_bombSpawning = false;
-          this.m_mouseWorld = new b2.Vec2();
+          this.m_mouseWorld = new b2__namespace.Vec2();
           // #if B2_ENABLE_PARTICLE
           this.m_mouseTracing = false;
-          this.m_mouseTracerPosition = new b2.Vec2();
-          this.m_mouseTracerVelocity = new b2.Vec2();
+          this.m_mouseTracerPosition = new b2__namespace.Vec2();
+          this.m_mouseTracerVelocity = new b2__namespace.Vec2();
           // #endif
           this.m_stepCount = 0;
-          this.m_maxProfile = new b2.Profile();
-          this.m_totalProfile = new b2.Profile();
+          this.m_maxProfile = new b2__namespace.Profile();
+          this.m_totalProfile = new b2__namespace.Profile();
           // #if B2_ENABLE_PARTICLE
           this.m_particleParameters = null;
           this.m_particleParameterDef = null;
           // #if B2_ENABLE_PARTICLE
-          const particleSystemDef = new b2.ParticleSystemDef();
+          const particleSystemDef = new b2__namespace.ParticleSystemDef();
           // #endif
-          const gravity = new b2.Vec2(0, -10);
-          this.m_world = new b2.World(gravity);
+          const gravity = new b2__namespace.Vec2(0, -10);
+          this.m_world = new b2__namespace.World(gravity);
           // #if B2_ENABLE_PARTICLE
           this.m_particleSystem = this.m_world.CreateParticleSystem(particleSystemDef);
           // #endif
@@ -987,7 +1008,7 @@
           this.m_particleSystem.SetGravityScale(0.4);
           this.m_particleSystem.SetDensity(1.2);
           // #endif
-          const bodyDef = new b2.BodyDef();
+          const bodyDef = new b2__namespace.BodyDef();
           this.m_groundBody = this.m_world.CreateBody(bodyDef);
       }
       JointDestroyed(joint) { }
@@ -1005,7 +1026,7 @@
           const fixtureB = contact.GetFixtureB();
           const state1 = Test.PreSolve_s_state1;
           const state2 = Test.PreSolve_s_state2;
-          b2.GetPointStates(state1, state2, oldManifold, manifold);
+          b2__namespace.GetPointStates(state1, state2, oldManifold, manifold);
           const worldManifold = Test.PreSolve_s_worldManifold;
           contact.GetWorldManifold(worldManifold);
           for (let i = 0; i < manifold.pointCount && this.m_pointCount < Test.k_maxContactPoints; ++i) {
@@ -1046,7 +1067,7 @@
           // Query the world for overlapping shapes.
           this.m_world.QueryPointAABB(p, (fixture) => {
               const body = fixture.GetBody();
-              if (body.GetType() === b2.BodyType.b2_dynamicBody) {
+              if (body.GetType() === b2__namespace.BodyType.b2_dynamicBody) {
                   const inside = fixture.TestPoint(p);
                   if (inside) {
                       hit_fixture = fixture;
@@ -1059,12 +1080,12 @@
               const frequencyHz = 5.0;
               const dampingRatio = 0.7;
               const body = hit_fixture.GetBody();
-              const jd = new b2.MouseJointDef();
+              const jd = new b2__namespace.MouseJointDef();
               jd.bodyA = this.m_groundBody;
               jd.bodyB = body;
               jd.target.Copy(p);
               jd.maxForce = 1000 * body.GetMass();
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               this.m_mouseJoint = this.m_world.CreateJoint(jd);
               body.SetAwake(true);
           }
@@ -1078,7 +1099,7 @@
               return;
           }
           const multiplier = 30;
-          const vel = b2.Vec2.SubVV(this.m_bombSpawnPoint, p, new b2.Vec2());
+          const vel = b2__namespace.Vec2.SubVV(this.m_bombSpawnPoint, p, new b2__namespace.Vec2());
           vel.SelfMul(multiplier);
           this.LaunchBombAt(this.m_bombSpawnPoint, vel);
           this.m_bombSpawning = false;
@@ -1109,8 +1130,8 @@
           }
       }
       LaunchBomb() {
-          const p = new b2.Vec2(b2.RandomRange(-15, 15), 30);
-          const v = b2.Vec2.MulSV(-5, p, new b2.Vec2());
+          const p = new b2__namespace.Vec2(b2__namespace.RandomRange(-15, 15), 30);
+          const v = b2__namespace.Vec2.MulSV(-5, p, new b2__namespace.Vec2());
           this.LaunchBombAt(p, v);
       }
       LaunchBombAt(position, velocity) {
@@ -1118,15 +1139,15 @@
               this.m_world.DestroyBody(this.m_bomb);
               this.m_bomb = null;
           }
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Copy(position);
           bd.bullet = true;
           this.m_bomb = this.m_world.CreateBody(bd);
           this.m_bomb.SetLinearVelocity(velocity);
-          const circle = new b2.CircleShape();
+          const circle = new b2__namespace.CircleShape();
           circle.m_radius = 0.3;
-          const fd = new b2.FixtureDef();
+          const fd = new b2__namespace.FixtureDef();
           fd.shape = circle;
           fd.density = 20;
           fd.restitution = 0;
@@ -1149,27 +1170,27 @@
               g_debugDraw.DrawString(5, this.m_textLine, "****PAUSED****");
               this.m_textLine += DRAW_STRING_NEW_LINE;
           }
-          let flags = b2.DrawFlags.e_none;
+          let flags = b2__namespace.DrawFlags.e_none;
           if (settings.m_drawShapes) {
-              flags |= b2.DrawFlags.e_shapeBit;
+              flags |= b2__namespace.DrawFlags.e_shapeBit;
           }
           // #if B2_ENABLE_PARTICLE
           if (settings.m_drawParticles) {
-              flags |= b2.DrawFlags.e_particleBit;
+              flags |= b2__namespace.DrawFlags.e_particleBit;
           }
           // #endif
           if (settings.m_drawJoints) {
-              flags |= b2.DrawFlags.e_jointBit;
+              flags |= b2__namespace.DrawFlags.e_jointBit;
           }
           if (settings.m_drawAABBs) {
-              flags |= b2.DrawFlags.e_aabbBit;
+              flags |= b2__namespace.DrawFlags.e_aabbBit;
           }
           if (settings.m_drawCOMs) {
-              flags |= b2.DrawFlags.e_centerOfMassBit;
+              flags |= b2__namespace.DrawFlags.e_centerOfMassBit;
           }
           // #if B2_ENABLE_CONTROLLER
           if (settings.m_drawControllers) {
-              flags |= b2.DrawFlags.e_controllerBit;
+              flags |= b2__namespace.DrawFlags.e_controllerBit;
           }
           // #endif
           g_debugDraw.SetFlags(flags);
@@ -1214,14 +1235,14 @@
           // Track maximum profile times
           {
               const p = this.m_world.GetProfile();
-              this.m_maxProfile.step = b2.Max(this.m_maxProfile.step, p.step);
-              this.m_maxProfile.collide = b2.Max(this.m_maxProfile.collide, p.collide);
-              this.m_maxProfile.solve = b2.Max(this.m_maxProfile.solve, p.solve);
-              this.m_maxProfile.solveInit = b2.Max(this.m_maxProfile.solveInit, p.solveInit);
-              this.m_maxProfile.solveVelocity = b2.Max(this.m_maxProfile.solveVelocity, p.solveVelocity);
-              this.m_maxProfile.solvePosition = b2.Max(this.m_maxProfile.solvePosition, p.solvePosition);
-              this.m_maxProfile.solveTOI = b2.Max(this.m_maxProfile.solveTOI, p.solveTOI);
-              this.m_maxProfile.broadphase = b2.Max(this.m_maxProfile.broadphase, p.broadphase);
+              this.m_maxProfile.step = b2__namespace.Max(this.m_maxProfile.step, p.step);
+              this.m_maxProfile.collide = b2__namespace.Max(this.m_maxProfile.collide, p.collide);
+              this.m_maxProfile.solve = b2__namespace.Max(this.m_maxProfile.solve, p.solve);
+              this.m_maxProfile.solveInit = b2__namespace.Max(this.m_maxProfile.solveInit, p.solveInit);
+              this.m_maxProfile.solveVelocity = b2__namespace.Max(this.m_maxProfile.solveVelocity, p.solveVelocity);
+              this.m_maxProfile.solvePosition = b2__namespace.Max(this.m_maxProfile.solvePosition, p.solvePosition);
+              this.m_maxProfile.solveTOI = b2__namespace.Max(this.m_maxProfile.solveTOI, p.solveTOI);
+              this.m_maxProfile.broadphase = b2__namespace.Max(this.m_maxProfile.broadphase, p.broadphase);
               this.m_totalProfile.step += p.step;
               this.m_totalProfile.collide += p.collide;
               this.m_totalProfile.solve += p.solve;
@@ -1233,7 +1254,7 @@
           }
           if (settings.m_drawProfile) {
               const p = this.m_world.GetProfile();
-              const aveProfile = new b2.Profile();
+              const aveProfile = new b2__namespace.Profile();
               if (this.m_stepCount > 0) {
                   const scale = 1 / this.m_stepCount;
                   aveProfile.step = scale * this.m_totalProfile.step;
@@ -1266,27 +1287,27 @@
           if (this.m_mouseTracing && !this.m_mouseJoint) {
               const delay = 0.1;
               ///b2Vec2 acceleration = 2 / delay * (1 / delay * (m_mouseWorld - m_mouseTracerPosition) - m_mouseTracerVelocity);
-              const acceleration = new b2.Vec2();
+              const acceleration = new b2__namespace.Vec2();
               acceleration.x = 2 / delay * (1 / delay * (this.m_mouseWorld.x - this.m_mouseTracerPosition.x) - this.m_mouseTracerVelocity.x);
               acceleration.y = 2 / delay * (1 / delay * (this.m_mouseWorld.y - this.m_mouseTracerPosition.y) - this.m_mouseTracerVelocity.y);
               ///m_mouseTracerVelocity += timeStep * acceleration;
               this.m_mouseTracerVelocity.SelfMulAdd(timeStep, acceleration);
               ///m_mouseTracerPosition += timeStep * m_mouseTracerVelocity;
               this.m_mouseTracerPosition.SelfMulAdd(timeStep, this.m_mouseTracerVelocity);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Copy(this.m_mouseTracerPosition);
               shape.m_radius = 2 * this.GetDefaultViewZoom();
               ///QueryCallback2 callback(m_particleSystem, &shape, m_mouseTracerVelocity);
               const callback = new QueryCallback2(this.m_particleSystem, shape, this.m_mouseTracerVelocity);
-              const aabb = new b2.AABB();
-              const xf = new b2.Transform();
+              const aabb = new b2__namespace.AABB();
+              const xf = new b2__namespace.Transform();
               xf.SetIdentity();
               shape.ComputeAABB(aabb, xf, 0);
               this.m_world.QueryAABB(callback, aabb);
           }
           // #endif
           if (this.m_bombSpawning) {
-              const c = new b2.Color(0, 0, 1);
+              const c = new b2__namespace.Color(0, 0, 1);
               g_debugDraw.DrawPoint(this.m_bombSpawnPoint, 4, c);
               c.SetRGB(0.8, 0.8, 0.8);
               g_debugDraw.DrawSegment(this.m_mouseWorld, this.m_bombSpawnPoint, c);
@@ -1296,29 +1317,29 @@
               const k_axisScale = 0.3;
               for (let i = 0; i < this.m_pointCount; ++i) {
                   const point = this.m_points[i];
-                  if (point.state === b2.PointState.b2_addState) {
+                  if (point.state === b2__namespace.PointState.b2_addState) {
                       // Add
-                      g_debugDraw.DrawPoint(point.position, 10, new b2.Color(0.3, 0.95, 0.3));
+                      g_debugDraw.DrawPoint(point.position, 10, new b2__namespace.Color(0.3, 0.95, 0.3));
                   }
-                  else if (point.state === b2.PointState.b2_persistState) {
+                  else if (point.state === b2__namespace.PointState.b2_persistState) {
                       // Persist
-                      g_debugDraw.DrawPoint(point.position, 5, new b2.Color(0.3, 0.3, 0.95));
+                      g_debugDraw.DrawPoint(point.position, 5, new b2__namespace.Color(0.3, 0.3, 0.95));
                   }
                   if (settings.m_drawContactNormals) {
                       const p1 = point.position;
-                      const p2 = b2.Vec2.AddVV(p1, b2.Vec2.MulSV(k_axisScale, point.normal, b2.Vec2.s_t0), new b2.Vec2());
-                      g_debugDraw.DrawSegment(p1, p2, new b2.Color(0.9, 0.9, 0.9));
+                      const p2 = b2__namespace.Vec2.AddVV(p1, b2__namespace.Vec2.MulSV(k_axisScale, point.normal, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+                      g_debugDraw.DrawSegment(p1, p2, new b2__namespace.Color(0.9, 0.9, 0.9));
                   }
                   else if (settings.m_drawContactImpulse) {
                       const p1 = point.position;
-                      const p2 = b2.Vec2.AddVMulSV(p1, k_impulseScale * point.normalImpulse, point.normal, new b2.Vec2());
-                      g_debugDraw.DrawSegment(p1, p2, new b2.Color(0.9, 0.9, 0.3));
+                      const p2 = b2__namespace.Vec2.AddVMulSV(p1, k_impulseScale * point.normalImpulse, point.normal, new b2__namespace.Vec2());
+                      g_debugDraw.DrawSegment(p1, p2, new b2__namespace.Color(0.9, 0.9, 0.3));
                   }
                   if (settings.m_drawFrictionImpulse) {
-                      const tangent = b2.Vec2.CrossVOne(point.normal, new b2.Vec2());
+                      const tangent = b2__namespace.Vec2.CrossVOne(point.normal, new b2__namespace.Vec2());
                       const p1 = point.position;
-                      const p2 = b2.Vec2.AddVMulSV(p1, k_impulseScale * point.tangentImpulse, tangent, new b2.Vec2());
-                      g_debugDraw.DrawSegment(p1, p2, new b2.Color(0.9, 0.9, 0.3));
+                      const p2 = b2__namespace.Vec2.AddVMulSV(p1, k_impulseScale * point.tangentImpulse, tangent, new b2__namespace.Vec2());
+                      g_debugDraw.DrawSegment(p1, p2, new b2__namespace.Color(0.9, 0.9, 0.3));
                   }
               }
           }
@@ -1434,17 +1455,17 @@
   Test.k_maxContactPoints = 2048;
   Test.PreSolve_s_state1 = [ /*b2.maxManifoldPoints*/];
   Test.PreSolve_s_state2 = [ /*b2.maxManifoldPoints*/];
-  Test.PreSolve_s_worldManifold = new b2.WorldManifold();
+  Test.PreSolve_s_worldManifold = new b2__namespace.WorldManifold();
   // #if B2_ENABLE_PARTICLE
   Test.k_ParticleColors = [
-      new b2.Color().SetByteRGBA(0xff, 0x00, 0x00, 0xff),
-      new b2.Color().SetByteRGBA(0x00, 0xff, 0x00, 0xff),
-      new b2.Color().SetByteRGBA(0x00, 0x00, 0xff, 0xff),
-      new b2.Color().SetByteRGBA(0xff, 0x8c, 0x00, 0xff),
-      new b2.Color().SetByteRGBA(0x00, 0xce, 0xd1, 0xff),
-      new b2.Color().SetByteRGBA(0xff, 0x00, 0xff, 0xff),
-      new b2.Color().SetByteRGBA(0xff, 0xd7, 0x00, 0xff),
-      new b2.Color().SetByteRGBA(0x00, 0xff, 0xff, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0xff, 0x00, 0x00, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0x00, 0xff, 0x00, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0x00, 0x00, 0xff, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0xff, 0x8c, 0x00, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0x00, 0xce, 0xd1, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0xff, 0x00, 0xff, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0xff, 0xd7, 0x00, 0xff),
+      new b2__namespace.Color().SetByteRGBA(0x00, 0xff, 0xff, 0xff), // cyan
   ];
   Test.k_ParticleColorsCount = Test.k_ParticleColors.length;
 
@@ -1452,9 +1473,9 @@
   class AddPair extends Test {
       constructor() {
           super();
-          this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0.0, 0.0));
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.SetZero();
               shape.m_radius = 0.1;
               const minX = -6.0;
@@ -1462,23 +1483,23 @@
               const minY = 4.0;
               const maxY = 6.0;
               for (let i = 0; i < 400; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
-                  bd.position.Set(b2.RandomRange(minX, maxX), b2.RandomRange(minY, maxY));
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
+                  bd.position.Set(b2__namespace.RandomRange(minX, maxX), b2__namespace.RandomRange(minY, maxY));
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 0.01);
               }
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(1.5, 1.5);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-40.0, 5.0);
               bd.bullet = true;
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(shape, 1.0);
-              body.SetLinearVelocity(new b2.Vec2(10.0, 0.0));
+              body.SetLinearVelocity(new b2__namespace.Vec2(10.0, 0.0));
           }
       }
       Step(settings) {
@@ -1488,7 +1509,7 @@
           return new AddPair();
       }
   }
-  const testIndex = RegisterTest("Benchmark", "Add Pair", AddPair.Create);
+  RegisterTest("Benchmark", "Add Pair", AddPair.Create);
 
   // MIT License
   // This test shows how to apply forces and torques to a body.
@@ -1497,59 +1518,59 @@
   class ApplyForce extends Test {
       constructor() {
           super();
-          this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0.0, 0.0));
           const k_restitution = 0.4;
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(0.0, 20.0);
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              const sd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              const sd = new b2__namespace.FixtureDef();
               sd.shape = shape;
               sd.density = 0.0;
               sd.restitution = k_restitution;
               // Left vertical
-              shape.SetTwoSided(new b2.Vec2(-20.0, -20.0), new b2.Vec2(-20.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, -20.0), new b2__namespace.Vec2(-20.0, 20.0));
               ground.CreateFixture(sd);
               // Right vertical
-              shape.SetTwoSided(new b2.Vec2(20.0, -20.0), new b2.Vec2(20.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(20.0, -20.0), new b2__namespace.Vec2(20.0, 20.0));
               ground.CreateFixture(sd);
               // Top horizontal
-              shape.SetTwoSided(new b2.Vec2(-20.0, 20.0), new b2.Vec2(20.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, 20.0), new b2__namespace.Vec2(20.0, 20.0));
               ground.CreateFixture(sd);
               // Bottom horizontal
-              shape.SetTwoSided(new b2.Vec2(-20.0, -20.0), new b2.Vec2(20.0, -20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, -20.0), new b2__namespace.Vec2(20.0, -20.0));
               ground.CreateFixture(sd);
           }
           {
-              const xf1 = new b2.Transform();
-              xf1.q.SetAngle(0.3524 * b2.pi);
-              xf1.p.Copy(b2.Rot.MulRV(xf1.q, new b2.Vec2(1.0, 0.0), new b2.Vec2()));
+              const xf1 = new b2__namespace.Transform();
+              xf1.q.SetAngle(0.3524 * b2__namespace.pi);
+              xf1.p.Copy(b2__namespace.Rot.MulRV(xf1.q, new b2__namespace.Vec2(1.0, 0.0), new b2__namespace.Vec2()));
               const vertices = new Array();
-              vertices[0] = b2.Transform.MulXV(xf1, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
-              vertices[1] = b2.Transform.MulXV(xf1, new b2.Vec2(1.0, 0.0), new b2.Vec2());
-              vertices[2] = b2.Transform.MulXV(xf1, new b2.Vec2(0.0, 0.5), new b2.Vec2());
-              const poly1 = new b2.PolygonShape();
+              vertices[0] = b2__namespace.Transform.MulXV(xf1, new b2__namespace.Vec2(-1.0, 0.0), new b2__namespace.Vec2());
+              vertices[1] = b2__namespace.Transform.MulXV(xf1, new b2__namespace.Vec2(1.0, 0.0), new b2__namespace.Vec2());
+              vertices[2] = b2__namespace.Transform.MulXV(xf1, new b2__namespace.Vec2(0.0, 0.5), new b2__namespace.Vec2());
+              const poly1 = new b2__namespace.PolygonShape();
               poly1.Set(vertices, 3);
-              const sd1 = new b2.FixtureDef();
+              const sd1 = new b2__namespace.FixtureDef();
               sd1.shape = poly1;
               sd1.density = 2.0;
-              const xf2 = new b2.Transform();
-              xf2.q.SetAngle(-0.3524 * b2.pi);
-              xf2.p.Copy(b2.Rot.MulRV(xf2.q, new b2.Vec2(-1.0, 0.0), new b2.Vec2()));
-              vertices[0] = b2.Transform.MulXV(xf2, new b2.Vec2(-1.0, 0.0), new b2.Vec2());
-              vertices[1] = b2.Transform.MulXV(xf2, new b2.Vec2(1.0, 0.0), new b2.Vec2());
-              vertices[2] = b2.Transform.MulXV(xf2, new b2.Vec2(0.0, 0.5), new b2.Vec2());
-              const poly2 = new b2.PolygonShape();
+              const xf2 = new b2__namespace.Transform();
+              xf2.q.SetAngle(-0.3524 * b2__namespace.pi);
+              xf2.p.Copy(b2__namespace.Rot.MulRV(xf2.q, new b2__namespace.Vec2(-1.0, 0.0), new b2__namespace.Vec2()));
+              vertices[0] = b2__namespace.Transform.MulXV(xf2, new b2__namespace.Vec2(-1.0, 0.0), new b2__namespace.Vec2());
+              vertices[1] = b2__namespace.Transform.MulXV(xf2, new b2__namespace.Vec2(1.0, 0.0), new b2__namespace.Vec2());
+              vertices[2] = b2__namespace.Transform.MulXV(xf2, new b2__namespace.Vec2(0.0, 0.5), new b2__namespace.Vec2());
+              const poly2 = new b2__namespace.PolygonShape();
               poly2.Set(vertices, 3);
-              const sd2 = new b2.FixtureDef();
+              const sd2 = new b2__namespace.FixtureDef();
               sd2.shape = poly2;
               sd2.density = 2.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 3.0);
-              bd.angle = b2.pi;
+              bd.angle = b2__namespace.pi;
               bd.allowSleep = false;
               this.m_body = this.m_world.CreateBody(bd);
               this.m_body.CreateFixture(sd1);
@@ -1560,8 +1581,8 @@
               // Compute an effective radius that can be used to
               // set the max torque for a friction joint
               // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
-              const radius = b2.Sqrt(2.0 * I / mass);
-              const jd = new b2.FrictionJointDef();
+              const radius = b2__namespace.Sqrt(2.0 * I / mass);
+              const jd = new b2__namespace.FrictionJointDef();
               jd.bodyA = ground;
               jd.bodyB = this.m_body;
               jd.localAnchorA.SetZero();
@@ -1572,15 +1593,15 @@
               this.m_world.CreateJoint(jd);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               fd.friction = 0.3;
               for (let i = 0; i < 10; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 7.0 + 1.54 * i);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
@@ -1588,8 +1609,8 @@
                   const I = body.GetInertia();
                   const mass = body.GetMass();
                   // For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
-                  const radius = b2.Sqrt(2.0 * I / mass);
-                  const jd = new b2.FrictionJointDef();
+                  const radius = b2__namespace.Sqrt(2.0 * I / mass);
+                  const jd = new b2__namespace.FrictionJointDef();
                   jd.localAnchorA.SetZero();
                   jd.localAnchorB.SetZero();
                   jd.bodyA = ground;
@@ -1605,8 +1626,8 @@
           switch (key) {
               case "w":
                   {
-                      const f = this.m_body.GetWorldVector(new b2.Vec2(0.0, -50.0), new b2.Vec2());
-                      const p = this.m_body.GetWorldPoint(new b2.Vec2(0.0, 3.0), new b2.Vec2());
+                      const f = this.m_body.GetWorldVector(new b2__namespace.Vec2(0.0, -50.0), new b2__namespace.Vec2());
+                      const p = this.m_body.GetWorldPoint(new b2__namespace.Vec2(0.0, 3.0), new b2__namespace.Vec2());
                       this.m_body.ApplyForce(f, p, true);
                   }
                   break;
@@ -1632,50 +1653,50 @@
           return new ApplyForce();
       }
   }
-  const testIndex$1 = RegisterTest("Forces", "Apply Force", ApplyForce.Create);
+  RegisterTest("Forces", "Apply Force", ApplyForce.Create);
 
   // MIT License
   class BodyTypes extends Test {
       constructor() {
           super();
           this.m_speed = 0;
-          const bd = new b2.BodyDef();
+          const bd = new b2__namespace.BodyDef();
           const ground = this.m_world.CreateBody(bd);
-          const shape = new b2.EdgeShape();
-          shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
-          const fd = new b2.FixtureDef();
+          const shape = new b2__namespace.EdgeShape();
+          shape.SetTwoSided(new b2__namespace.Vec2(-20.0, 0.0), new b2__namespace.Vec2(20.0, 0.0));
+          const fd = new b2__namespace.FixtureDef();
           fd.shape = shape;
           ground.CreateFixture(fd);
           // Define attachment
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 3.0);
               this.m_attachment = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 2.0);
               this.m_attachment.CreateFixture(shape, 2.0);
           }
           // Define platform
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-4.0, 5.0);
               this.m_platform = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 4.0, new b2.Vec2(4.0, 0.0), 0.5 * b2.pi);
-              const fd = new b2.FixtureDef();
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.5, 4.0, new b2__namespace.Vec2(4.0, 0.0), 0.5 * b2__namespace.pi);
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.friction = 0.6;
               fd.density = 2.0;
               this.m_platform.CreateFixture(fd);
-              const rjd = new b2.RevoluteJointDef();
-              rjd.Initialize(this.m_attachment, this.m_platform, new b2.Vec2(0.0, 5.0));
+              const rjd = new b2__namespace.RevoluteJointDef();
+              rjd.Initialize(this.m_attachment, this.m_platform, new b2__namespace.Vec2(0.0, 5.0));
               rjd.maxMotorTorque = 50.0;
               rjd.enableMotor = true;
               this.m_world.CreateJoint(rjd);
-              const pjd = new b2.PrismaticJointDef();
-              pjd.Initialize(ground, this.m_platform, new b2.Vec2(0.0, 5.0), new b2.Vec2(1.0, 0.0));
+              const pjd = new b2__namespace.PrismaticJointDef();
+              pjd.Initialize(ground, this.m_platform, new b2__namespace.Vec2(0.0, 5.0), new b2__namespace.Vec2(1.0, 0.0));
               pjd.maxMotorForce = 1000.0;
               pjd.enableMotor = true;
               pjd.lowerTranslation = -10.0;
@@ -1686,13 +1707,13 @@
           }
           // Create a payload
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 8.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.75, 0.75);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.friction = 0.6;
               fd.density = 2.0;
@@ -1702,26 +1723,26 @@
       Keyboard(key) {
           switch (key) {
               case "d":
-                  this.m_platform.SetType(b2.BodyType.b2_dynamicBody);
+                  this.m_platform.SetType(b2__namespace.BodyType.b2_dynamicBody);
                   break;
               case "s":
-                  this.m_platform.SetType(b2.BodyType.b2_staticBody);
+                  this.m_platform.SetType(b2__namespace.BodyType.b2_staticBody);
                   break;
               case "k":
-                  this.m_platform.SetType(b2.BodyType.b2_kinematicBody);
-                  this.m_platform.SetLinearVelocity(new b2.Vec2(-this.m_speed, 0.0));
+                  this.m_platform.SetType(b2__namespace.BodyType.b2_kinematicBody);
+                  this.m_platform.SetLinearVelocity(new b2__namespace.Vec2(-this.m_speed, 0.0));
                   this.m_platform.SetAngularVelocity(0.0);
                   break;
           }
       }
       Step(settings) {
           // Drive the kinematic body.
-          if (this.m_platform.GetType() === b2.BodyType.b2_kinematicBody) {
+          if (this.m_platform.GetType() === b2__namespace.BodyType.b2_kinematicBody) {
               const p = this.m_platform.GetTransform().p;
               const v = this.m_platform.GetLinearVelocity();
               if ((p.x < -10.0 && v.x < 0.0) ||
                   (p.x > 10.0 && v.x > 0.0)) {
-                  this.m_platform.SetLinearVelocity(new b2.Vec2(-v.x, v.y));
+                  this.m_platform.SetLinearVelocity(new b2__namespace.Vec2(-v.x, v.y));
               }
           }
           super.Step(settings);
@@ -1732,7 +1753,7 @@
           return new BodyTypes();
       }
   }
-  const testIndex$2 = RegisterTest("Examples", "Body Types", BodyTypes.Create);
+  RegisterTest("Examples", "Body Types", BodyTypes.Create);
 
   // MIT License
   class BoxStack extends Test {
@@ -1742,25 +1763,25 @@
           this.m_bodies = new Array(BoxStack.e_rowCount * BoxStack.e_columnCount);
           this.m_indices = new Array(BoxStack.e_rowCount * BoxStack.e_columnCount);
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(20.0, 0.0), new b2.Vec2(20.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(20.0, 0.0), new b2__namespace.Vec2(20.0, 20.0));
               ground.CreateFixture(shape, 0.0);
           }
           const xs = [0.0, -10.0, -5.0, 5.0, 10.0];
           for (let j = 0; j < BoxStack.e_columnCount; ++j) {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               fd.friction = 0.3;
               for (let i = 0; i < BoxStack.e_rowCount; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   const n = j * BoxStack.e_rowCount + i;
                   // DEBUG: b2.Assert(n < BoxStack.e_rowCount * BoxStack.e_columnCount);
                   this.m_indices[n] = n;
@@ -1783,23 +1804,23 @@
                       this.m_bullet = null;
                   }
                   {
-                      const shape = new b2.CircleShape();
+                      const shape = new b2__namespace.CircleShape();
                       shape.m_radius = 0.25;
-                      const fd = new b2.FixtureDef();
+                      const fd = new b2__namespace.FixtureDef();
                       fd.shape = shape;
                       fd.density = 20.0;
                       fd.restitution = 0.05;
-                      const bd = new b2.BodyDef();
-                      bd.type = b2.BodyType.b2_dynamicBody;
+                      const bd = new b2__namespace.BodyDef();
+                      bd.type = b2__namespace.BodyType.b2_dynamicBody;
                       bd.bullet = true;
                       bd.position.Set(-31.0, 5.0);
                       this.m_bullet = this.m_world.CreateBody(bd);
                       this.m_bullet.CreateFixture(fd);
-                      this.m_bullet.SetLinearVelocity(new b2.Vec2(400.0, 0.0));
+                      this.m_bullet.SetLinearVelocity(new b2__namespace.Vec2(400.0, 0.0));
                   }
                   break;
               case "b":
-                  b2.set_g_blockSolve(!b2.get_g_blockSolve());
+                  b2__namespace.set_g_blockSolve(!b2__namespace.get_g_blockSolve());
                   break;
           }
       }
@@ -1838,41 +1859,41 @@
   }
   BoxStack.e_columnCount = 1;
   BoxStack.e_rowCount = 15;
-  const testIndex$3 = RegisterTest("Stacking", "Boxes", BoxStack.Create);
+  RegisterTest("Stacking", "Boxes", BoxStack.Create);
 
   // MIT License
   // This is used to test sensor shapes.
   class Breakable extends Test {
       constructor() {
           super();
-          this.m_velocity = new b2.Vec2();
+          this.m_velocity = new b2__namespace.Vec2();
           this.m_angularVelocity = 0;
-          this.m_shape1 = new b2.PolygonShape();
-          this.m_shape2 = new b2.PolygonShape();
+          this.m_shape1 = new b2__namespace.PolygonShape();
+          this.m_shape2 = new b2__namespace.PolygonShape();
           this.m_piece1 = null;
           this.m_piece2 = null;
           this.m_broke = false;
           this.m_break = false;
           // Ground body
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Breakable dynamic body
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 40.0);
-              bd.angle = 0.25 * b2.pi;
+              bd.angle = 0.25 * b2__namespace.pi;
               this.m_body1 = this.m_world.CreateBody(bd);
-              this.m_shape1 = new b2.PolygonShape();
-              this.m_shape1.SetAsBox(0.5, 0.5, new b2.Vec2(-0.5, 0.0), 0.0);
+              this.m_shape1 = new b2__namespace.PolygonShape();
+              this.m_shape1.SetAsBox(0.5, 0.5, new b2__namespace.Vec2(-0.5, 0.0), 0.0);
               this.m_piece1 = this.m_body1.CreateFixture(this.m_shape1, 1.0);
-              this.m_shape2 = new b2.PolygonShape();
-              this.m_shape2.SetAsBox(0.5, 0.5, new b2.Vec2(0.5, 0.0), 0.0);
+              this.m_shape2 = new b2__namespace.PolygonShape();
+              this.m_shape2.SetAsBox(0.5, 0.5, new b2__namespace.Vec2(0.5, 0.0), 0.0);
               this.m_piece2 = this.m_body1.CreateFixture(this.m_shape2, 1.0);
           }
       }
@@ -1885,7 +1906,7 @@
           const count = contact.GetManifold().pointCount;
           let maxImpulse = 0.0;
           for (let i = 0; i < count; ++i) {
-              maxImpulse = b2.Max(maxImpulse, impulse.normalImpulses[i]);
+              maxImpulse = b2__namespace.Max(maxImpulse, impulse.normalImpulses[i]);
           }
           if (maxImpulse > 40.0) {
               // Flag the body for breaking.
@@ -1904,8 +1925,8 @@
           const center = body1.GetWorldCenter();
           body1.DestroyFixture(this.m_piece2);
           this.m_piece2 = null;
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Copy(body1.GetPosition());
           bd.angle = body1.GetAngle();
           const body2 = this.m_world.CreateBody(bd);
@@ -1914,8 +1935,8 @@
           // cached velocity.
           const center1 = body1.GetWorldCenter();
           const center2 = body2.GetWorldCenter();
-          const velocity1 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center1, center, b2.Vec2.s_t0), new b2.Vec2());
-          const velocity2 = b2.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2.Vec2.SubVV(center2, center, b2.Vec2.s_t0), new b2.Vec2());
+          const velocity1 = b2__namespace.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2__namespace.Vec2.SubVV(center1, center, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+          const velocity2 = b2__namespace.Vec2.AddVCrossSV(this.m_velocity, this.m_angularVelocity, b2__namespace.Vec2.SubVV(center2, center, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
           body1.SetAngularVelocity(this.m_angularVelocity);
           body1.SetLinearVelocity(velocity1);
           body2.SetAngularVelocity(this.m_angularVelocity);
@@ -1939,7 +1960,7 @@
       }
   }
   Breakable.e_count = 7;
-  const testIndex$4 = RegisterTest("Examples", "Breakable", Breakable.Create);
+  RegisterTest("Examples", "Breakable", Breakable.Create);
 
   // MIT License
   class Bridge extends Test {
@@ -1947,28 +1968,28 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               fd.friction = 0.2;
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               let prevBody = ground;
               for (let i = 0; i < Bridge.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-14.5 + 1.0 * i, 5.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
-                  const anchor = new b2.Vec2(-15.0 + 1.0 * i, 5.0);
+                  const anchor = new b2__namespace.Vec2(-15.0 + 1.0 * i, 5.0);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   if (i === (Bridge.e_count >> 1)) {
@@ -1976,34 +1997,34 @@
                   }
                   prevBody = body;
               }
-              const anchor = new b2.Vec2(-15.0 + 1.0 * Bridge.e_count, 5.0);
+              const anchor = new b2__namespace.Vec2(-15.0 + 1.0 * Bridge.e_count, 5.0);
               jd.Initialize(prevBody, ground, anchor);
               this.m_world.CreateJoint(jd);
           }
           for (let i = 0; i < 2; ++i) {
               const vertices = new Array();
-              vertices[0] = new b2.Vec2(-0.5, 0.0);
-              vertices[1] = new b2.Vec2(0.5, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
-              const shape = new b2.PolygonShape();
+              vertices[0] = new b2__namespace.Vec2(-0.5, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
+              const shape = new b2__namespace.PolygonShape();
               shape.Set(vertices);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-8.0 + 8.0 * i, 12.0);
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(fd);
           }
           for (let i = 0; i < 3; ++i) {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.5;
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-6.0 + 6.0 * i, 10.0);
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(fd);
@@ -2017,7 +2038,7 @@
       }
   }
   Bridge.e_count = 30;
-  const testIndex$5 = RegisterTest("Joints", "Bridge", Bridge.Create);
+  RegisterTest("Joints", "Bridge", Bridge.Create);
 
   // MIT License
   class BulletTest extends Test {
@@ -2025,21 +2046,21 @@
           super();
           this.m_x = 0;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(0.0, 0.0);
               const body = this.m_world.CreateBody(bd);
-              const edge = new b2.EdgeShape();
-              edge.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(10.0, 0.0));
+              const edge = new b2__namespace.EdgeShape();
+              edge.SetTwoSided(new b2__namespace.Vec2(-10.0, 0.0), new b2__namespace.Vec2(10.0, 0.0));
               body.CreateFixture(edge, 0.0);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.2, 1.0, new b2.Vec2(0.5, 1.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.2, 1.0, new b2__namespace.Vec2(0.5, 1.0), 0.0);
               body.CreateFixture(shape, 0.0);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 4.0);
-              const box = new b2.PolygonShape();
+              const box = new b2__namespace.PolygonShape();
               box.SetAsBox(2.0, 0.1);
               this.m_body = this.m_world.CreateBody(bd);
               this.m_body.CreateFixture(box, 1.0);
@@ -2050,16 +2071,16 @@
               bd.bullet = true;
               this.m_bullet = this.m_world.CreateBody(bd);
               this.m_bullet.CreateFixture(box, 100.0);
-              this.m_bullet.SetLinearVelocity(new b2.Vec2(0.0, -50.0));
+              this.m_bullet.SetLinearVelocity(new b2__namespace.Vec2(0.0, -50.0));
           }
       }
       Launch() {
-          this.m_body.SetTransformVec(new b2.Vec2(0.0, 4.0), 0.0);
-          this.m_body.SetLinearVelocity(b2.Vec2_zero);
+          this.m_body.SetTransformVec(new b2__namespace.Vec2(0.0, 4.0), 0.0);
+          this.m_body.SetLinearVelocity(b2__namespace.Vec2_zero);
           this.m_body.SetAngularVelocity(0.0);
-          this.m_x = b2.RandomRange(-1.0, 1.0);
-          this.m_bullet.SetTransformVec(new b2.Vec2(this.m_x, 10.0), 0.0);
-          this.m_bullet.SetLinearVelocity(new b2.Vec2(0.0, -50.0));
+          this.m_x = b2__namespace.RandomRange(-1.0, 1.0);
+          this.m_bullet.SetTransformVec(new b2__namespace.Vec2(this.m_x, 10.0), 0.0);
+          this.m_bullet.SetLinearVelocity(new b2__namespace.Vec2(0.0, -50.0));
           this.m_bullet.SetAngularVelocity(0.0);
           //  extern int32 b2.gjkCalls, b2.gjkIters, b2.gjkMaxIters;
           //  extern int32 b2.toiCalls, b2.toiIters, b2.toiMaxIters;
@@ -2067,27 +2088,27 @@
           // b2.gjkCalls = 0;
           // b2.gjkIters = 0;
           // b2.gjkMaxIters = 0;
-          b2.gjk_reset();
+          b2__namespace.gjk_reset();
           // b2.toiCalls = 0;
           // b2.toiIters = 0;
           // b2.toiMaxIters = 0;
           // b2.toiRootIters = 0;
           // b2.toiMaxRootIters = 0;
-          b2.toi_reset();
+          b2__namespace.toi_reset();
       }
       Step(settings) {
           super.Step(settings);
-          if (b2.gjkCalls > 0) {
+          if (b2__namespace.gjkCalls > 0) {
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "gjk calls = %d, ave gjk iters = %3.1f, max gjk iters = %d",
-              g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${b2.gjkCalls.toFixed(0)}, ave gjk iters = ${(b2.gjkIters / b2.gjkCalls).toFixed(1)}, max gjk iters = ${b2.gjkMaxIters.toFixed(0)}`);
+              g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${b2__namespace.gjkCalls.toFixed(0)}, ave gjk iters = ${(b2__namespace.gjkIters / b2__namespace.gjkCalls).toFixed(1)}, max gjk iters = ${b2__namespace.gjkMaxIters.toFixed(0)}`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
           }
-          if (b2.toiCalls > 0) {
+          if (b2__namespace.toiCalls > 0) {
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "toi calls = %d, ave toi iters = %3.1f, max toi iters = %d",
-              g_debugDraw.DrawString(5, this.m_textLine, `toi calls = ${b2.toiCalls}, ave toi iters = ${(b2.toiIters / b2.toiCalls).toFixed(1)}, max toi iters = ${b2.toiMaxRootIters}`);
+              g_debugDraw.DrawString(5, this.m_textLine, `toi calls = ${b2__namespace.toiCalls}, ave toi iters = ${(b2__namespace.toiIters / b2__namespace.toiCalls).toFixed(1)}, max toi iters = ${b2__namespace.toiMaxRootIters}`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave toi root iters = %3.1f, max toi root iters = %d",
-              g_debugDraw.DrawString(5, this.m_textLine, `ave toi root iters = ${(b2.toiRootIters / b2.toiCalls).toFixed(1)}, max toi root iters = ${b2.toiMaxRootIters}`);
+              g_debugDraw.DrawString(5, this.m_textLine, `ave toi root iters = ${(b2__namespace.toiRootIters / b2__namespace.toiCalls).toFixed(1)}, max toi root iters = ${b2__namespace.toiMaxRootIters}`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
           }
           if (this.m_stepCount % 60 === 0) {
@@ -2098,7 +2119,7 @@
           return new BulletTest();
       }
   }
-  const testIndex$6 = RegisterTest("Continuous", "Bullet Test", BulletTest.Create);
+  RegisterTest("Continuous", "Bullet Test", BulletTest.Create);
 
   // MIT License
   // It is difficult to make a cantilever made of links completely rigid with weld joints.
@@ -2110,71 +2131,71 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
-              const jd = new b2.WeldJointDef();
+              const jd = new b2__namespace.WeldJointDef();
               let prevBody = ground;
               for (let i = 0; i < Cantilever.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-14.5 + 1.0 * i, 5.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
-                  const anchor = new b2.Vec2(-15.0 + 1.0 * i, 5.0);
+                  const anchor = new b2__namespace.Vec2(-15.0 + 1.0 * i, 5.0);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
               }
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(1.0, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
-              const jd = new b2.WeldJointDef();
+              const jd = new b2__namespace.WeldJointDef();
               const frequencyHz = 5.0;
               const dampingRatio = 0.7;
               let prevBody = ground;
               for (let i = 0; i < 3; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-14.0 + 2.0 * i, 15.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
-                  const anchor = new b2.Vec2(-15.0 + 2.0 * i, 15.0);
+                  const anchor = new b2__namespace.Vec2(-15.0 + 2.0 * i, 15.0);
                   jd.Initialize(prevBody, body, anchor);
-                  b2.AngularStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+                  b2__namespace.AngularStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
               }
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
-              const jd = new b2.WeldJointDef();
+              const jd = new b2__namespace.WeldJointDef();
               let prevBody = ground;
               for (let i = 0; i < Cantilever.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-4.5 + 1.0 * i, 15.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
                   if (i > 0) {
-                      const anchor = new b2.Vec2(-5.0 + 1.0 * i, 15.0);
+                      const anchor = new b2__namespace.Vec2(-5.0 + 1.0 * i, 15.0);
                       jd.Initialize(prevBody, body, anchor);
                       this.m_world.CreateJoint(jd);
                   }
@@ -2182,25 +2203,25 @@
               }
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
-              const jd = new b2.WeldJointDef();
+              const jd = new b2__namespace.WeldJointDef();
               const frequencyHz = 8.0;
               const dampingRatio = 0.7;
               let prevBody = ground;
               for (let i = 0; i < Cantilever.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(5.5 + 1.0 * i, 10.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
                   if (i > 0) {
-                      const anchor = new b2.Vec2(5.0 + 1.0 * i, 10.0);
+                      const anchor = new b2__namespace.Vec2(5.0 + 1.0 * i, 10.0);
                       jd.Initialize(prevBody, body, anchor);
-                      b2.AngularStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+                      b2__namespace.AngularStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
                       this.m_world.CreateJoint(jd);
                   }
                   prevBody = body;
@@ -2208,28 +2229,28 @@
           }
           for (let i = 0; i < 2; ++i) {
               const vertices = new Array();
-              vertices[0] = new b2.Vec2(-0.5, 0.0);
-              vertices[1] = new b2.Vec2(0.5, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
-              const shape = new b2.PolygonShape();
+              vertices[0] = new b2__namespace.Vec2(-0.5, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
+              const shape = new b2__namespace.PolygonShape();
               shape.Set(vertices);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-8.0 + 8.0 * i, 12.0);
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(fd);
           }
           for (let i = 0; i < 2; ++i) {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.5;
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-6.0 + 6.0 * i, 10.0);
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(fd);
@@ -2243,7 +2264,7 @@
       }
   }
   Cantilever.e_count = 8;
-  const testIndex$7 = RegisterTest("Joints", "Cantilever", Cantilever.Create);
+  RegisterTest("Joints", "Cantilever", Cantilever.Create);
 
   // MIT License
   // This is a fun demo that shows off the wheel joint
@@ -2254,60 +2275,60 @@
           this.m_speed = 50.0;
           let ground;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              const fd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 0.0;
               fd.friction = 0.6;
-              shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, 0.0), new b2__namespace.Vec2(20.0, 0.0));
               ground.CreateFixture(fd);
               const hs = [0.25, 1.0, 4.0, 0.0, 0.0, -1.0, -2.0, -2.0, -1.25, 0.0];
               let x = 20.0, y1 = 0.0;
               const dx = 5.0;
               for (let i = 0; i < 10; ++i) {
                   const y2 = hs[i];
-                  shape.SetTwoSided(new b2.Vec2(x, y1), new b2.Vec2(x + dx, y2));
+                  shape.SetTwoSided(new b2__namespace.Vec2(x, y1), new b2__namespace.Vec2(x + dx, y2));
                   ground.CreateFixture(fd);
                   y1 = y2;
                   x += dx;
               }
               for (let i = 0; i < 10; ++i) {
                   const y2 = hs[i];
-                  shape.SetTwoSided(new b2.Vec2(x, y1), new b2.Vec2(x + dx, y2));
+                  shape.SetTwoSided(new b2__namespace.Vec2(x, y1), new b2__namespace.Vec2(x + dx, y2));
                   ground.CreateFixture(fd);
                   y1 = y2;
                   x += dx;
               }
-              shape.SetTwoSided(new b2.Vec2(x, 0.0), new b2.Vec2(x + 40.0, 0.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(x, 0.0), new b2__namespace.Vec2(x + 40.0, 0.0));
               ground.CreateFixture(fd);
               x += 80.0;
-              shape.SetTwoSided(new b2.Vec2(x, 0.0), new b2.Vec2(x + 40.0, 0.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(x, 0.0), new b2__namespace.Vec2(x + 40.0, 0.0));
               ground.CreateFixture(fd);
               x += 40.0;
-              shape.SetTwoSided(new b2.Vec2(x, 0.0), new b2.Vec2(x + 10.0, 5.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(x, 0.0), new b2__namespace.Vec2(x + 10.0, 5.0));
               ground.CreateFixture(fd);
               x += 20.0;
-              shape.SetTwoSided(new b2.Vec2(x, 0.0), new b2.Vec2(x + 40.0, 0.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(x, 0.0), new b2__namespace.Vec2(x + 40.0, 0.0));
               ground.CreateFixture(fd);
               x += 40.0;
-              shape.SetTwoSided(new b2.Vec2(x, 0.0), new b2.Vec2(x, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(x, 0.0), new b2__namespace.Vec2(x, 20.0));
               ground.CreateFixture(fd);
           }
           // Teeter
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(140.0, 1.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const box = new b2.PolygonShape();
+              const box = new b2__namespace.PolygonShape();
               box.SetAsBox(10.0, 0.25);
               body.CreateFixture(box, 1.0);
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.Initialize(ground, body, body.GetPosition());
-              jd.lowerAngle = -8.0 * b2.pi / 180.0;
-              jd.upperAngle = 8.0 * b2.pi / 180.0;
+              jd.lowerAngle = -8.0 * b2__namespace.pi / 180.0;
+              jd.upperAngle = 8.0 * b2__namespace.pi / 180.0;
               jd.enableLimit = true;
               this.m_world.CreateJoint(jd);
               body.ApplyAngularImpulse(100.0);
@@ -2315,36 +2336,36 @@
           // Bridge
           {
               const N = 20;
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(1.0, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               fd.friction = 0.6;
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               let prevBody = ground;
               for (let i = 0; i < N; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(161.0 + 2.0 * i, -0.125);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
-                  const anchor = new b2.Vec2(160.0 + 2.0 * i, -0.125);
+                  const anchor = new b2__namespace.Vec2(160.0 + 2.0 * i, -0.125);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
               }
-              const anchor = new b2.Vec2(160.0 + 2.0 * N, -0.125);
+              const anchor = new b2__namespace.Vec2(160.0 + 2.0 * N, -0.125);
               jd.Initialize(prevBody, ground, anchor);
               this.m_world.CreateJoint(jd);
           }
           // Boxes
           {
-              const box = new b2.PolygonShape();
+              const box = new b2__namespace.PolygonShape();
               box.SetAsBox(0.5, 0.5);
               let body;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(230.0, 0.5);
               body = this.m_world.CreateBody(bd);
               body.CreateFixture(box, 0.5);
@@ -2363,8 +2384,8 @@
           }
           // Car
           {
-              const chassis = new b2.PolygonShape();
-              const vertices = b2.Vec2.MakeArray(8);
+              const chassis = new b2__namespace.PolygonShape();
+              const vertices = b2__namespace.Vec2.MakeArray(8);
               vertices[0].Set(-1.5, -0.5);
               vertices[1].Set(1.5, -0.5);
               vertices[2].Set(1.5, 0.0);
@@ -2372,14 +2393,14 @@
               vertices[4].Set(-1.15, 0.9);
               vertices[5].Set(-1.5, 0.2);
               chassis.Set(vertices, 6);
-              const circle = new b2.CircleShape();
+              const circle = new b2__namespace.CircleShape();
               circle.m_radius = 0.4;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 1.0);
               this.m_car = this.m_world.CreateBody(bd);
               this.m_car.CreateFixture(chassis, 1.0);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = circle;
               fd.density = 1.0;
               fd.friction = 0.9;
@@ -2389,13 +2410,13 @@
               bd.position.Set(1.0, 0.4);
               this.m_wheel2 = this.m_world.CreateBody(bd);
               this.m_wheel2.CreateFixture(fd);
-              const jd = new b2.WheelJointDef();
-              const axis = new b2.Vec2(0.0, 1.0);
+              const jd = new b2__namespace.WheelJointDef();
+              const axis = new b2__namespace.Vec2(0.0, 1.0);
               const mass1 = this.m_wheel1.GetMass();
               const mass2 = this.m_wheel2.GetMass();
               const hertz = 4.0;
               const dampingRatio = 0.7;
-              const omega = 2.0 * b2.pi * hertz;
+              const omega = 2.0 * b2__namespace.pi * hertz;
               jd.Initialize(this.m_car, this.m_wheel1, this.m_wheel1.GetPosition(), axis);
               jd.motorSpeed = 0.0;
               jd.maxMotorTorque = 20.0;
@@ -2441,7 +2462,7 @@
           return new Car();
       }
   }
-  const testIndex$8 = RegisterTest("Examples", "Car", Car.Create);
+  RegisterTest("Examples", "Car", Car.Create);
 
   // MIT License
   class Chain extends Test {
@@ -2449,30 +2470,30 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.6, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               fd.friction = 0.2;
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.collideConnected = false;
               const y = 25.0;
               let prevBody = ground;
               for (let i = 0; i < Chain.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.5 + i, y);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
-                  const anchor = new b2.Vec2(i, y);
+                  const anchor = new b2__namespace.Vec2(i, y);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
@@ -2487,7 +2508,7 @@
       }
   }
   Chain.e_count = 30;
-  const testIndex$9 = RegisterTest("Joints", "Chain", Chain.Create);
+  RegisterTest("Joints", "Chain", Chain.Create);
 
   // MIT License
   /// This is a test of typical character collision scenarios. This does not
@@ -2498,37 +2519,37 @@
           super();
           // Ground body
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, 0.0), new b2__namespace.Vec2(20.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Collinear edges with no adjacency information.
           // This shows the problematic case where a box shape can hit
           // an internal vertex.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-8.0, 1.0), new b2.Vec2(-6.0, 1.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-8.0, 1.0), new b2__namespace.Vec2(-6.0, 1.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(-6.0, 1.0), new b2.Vec2(-4.0, 1.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-6.0, 1.0), new b2__namespace.Vec2(-4.0, 1.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(-4.0, 1.0), new b2.Vec2(-2.0, 1.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-4.0, 1.0), new b2__namespace.Vec2(-2.0, 1.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Chain shape
           {
-              const bd = new b2.BodyDef();
-              bd.angle = 0.25 * b2.pi;
+              const bd = new b2__namespace.BodyDef();
+              bd.angle = 0.25 * b2__namespace.pi;
               const ground = this.m_world.CreateBody(bd);
-              const vs = b2.Vec2.MakeArray(4);
+              const vs = b2__namespace.Vec2.MakeArray(4);
               vs[0].Set(5.0, 7.0);
               vs[1].Set(6.0, 8.0);
               vs[2].Set(7.0, 8.0);
               vs[3].Set(8.0, 7.0);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(vs, 4);
               ground.CreateFixture(shape, 0.0);
           }
@@ -2536,35 +2557,35 @@
           // have non-smooth collision. There is no solution
           // to this problem.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(1.0, 1.0, new b2.Vec2(4.0, 3.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(1.0, 1.0, new b2__namespace.Vec2(4.0, 3.0), 0.0);
               ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(1.0, 1.0, new b2.Vec2(6.0, 3.0), 0.0);
+              shape.SetAsBox(1.0, 1.0, new b2__namespace.Vec2(6.0, 3.0), 0.0);
               ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(1.0, 1.0, new b2.Vec2(8.0, 3.0), 0.0);
+              shape.SetAsBox(1.0, 1.0, new b2__namespace.Vec2(8.0, 3.0), 0.0);
               ground.CreateFixture(shape, 0.0);
           }
           // Square made from an edge loop. Collision should be smooth.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const vs = b2.Vec2.MakeArray(4);
+              const vs = b2__namespace.Vec2.MakeArray(4);
               vs[0].Set(-1.0, 3.0);
               vs[1].Set(1.0, 3.0);
               vs[2].Set(1.0, 5.0);
               vs[3].Set(-1.0, 5.0);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(vs, 4);
               ground.CreateFixture(shape, 0.0);
           }
           // Edge loop. Collision should be smooth.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-10.0, 4.0);
               const ground = this.m_world.CreateBody(bd);
-              const vs = b2.Vec2.MakeArray(10);
+              const vs = b2__namespace.Vec2.MakeArray(10);
               vs[0].Set(0.0, 0.0);
               vs[1].Set(6.0, 0.0);
               vs[2].Set(6.0, 2.0);
@@ -2575,87 +2596,87 @@
               vs[7].Set(-4.0, 3.0);
               vs[8].Set(-6.0, 2.0);
               vs[9].Set(-6.0, 0.0);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(vs, 10);
               ground.CreateFixture(shape, 0.0);
           }
           // Square character 1
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-3.0, 8.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.fixedRotation = true;
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               body.CreateFixture(fd);
           }
           // Square character 2
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-5.0, 5.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.fixedRotation = true;
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.25, 0.25);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               body.CreateFixture(fd);
           }
           // Hexagon character
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-5.0, 8.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.fixedRotation = true;
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
               let angle = 0.0;
-              const delta = b2.pi / 3.0;
-              const vertices = b2.Vec2.MakeArray(6);
+              const delta = b2__namespace.pi / 3.0;
+              const vertices = b2__namespace.Vec2.MakeArray(6);
               for (let i = 0; i < 6; ++i) {
-                  vertices[i].Set(0.5 * b2.Cos(angle), 0.5 * b2.Sin(angle));
+                  vertices[i].Set(0.5 * b2__namespace.Cos(angle), 0.5 * b2__namespace.Sin(angle));
                   angle += delta;
               }
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.Set(vertices, 6);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               body.CreateFixture(fd);
           }
           // Circle character
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(3.0, 5.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.fixedRotation = true;
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.5;
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               body.CreateFixture(fd);
           }
           // Circle character
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-7.0, 6.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.allowSleep = false;
               this.m_character = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.25;
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               fd.friction = 1.0;
@@ -2678,7 +2699,7 @@
           return new CharacterCollision();
       }
   }
-  const testIndex$a = RegisterTest("Examples", "Character Collision", CharacterCollision.Create);
+  RegisterTest("Examples", "Character Collision", CharacterCollision.Create);
 
   // MIT License
   class CircleStack extends Test {
@@ -2686,22 +2707,22 @@
           super();
           this.m_bodies = [];
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 1.0;
               for (let i = 0; i < CircleStack.e_count; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 4.0 + 3.0 * i);
                   this.m_bodies[i] = this.m_world.CreateBody(bd);
                   this.m_bodies[i].CreateFixture(shape, 1.0);
-                  this.m_bodies[i].SetLinearVelocity(new b2.Vec2(0.0, -50.0));
+                  this.m_bodies[i].SetLinearVelocity(new b2__namespace.Vec2(0.0, -50.0));
               }
           }
       }
@@ -2722,7 +2743,7 @@
       }
   }
   CircleStack.e_count = 10;
-  const testIndex$b = RegisterTest("Stacking", "Circles", CircleStack.Create);
+  RegisterTest("Stacking", "Circles", CircleStack.Create);
 
   // MIT License
   // This is a test of collision filtering.
@@ -2736,30 +2757,30 @@
           super();
           // Ground body
           {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              const sd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
+              const sd = new b2__namespace.FixtureDef();
               sd.shape = shape;
               sd.friction = 0.3;
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(sd);
           }
           // Small triangle
           const vertices = new Array();
-          vertices[0] = new b2.Vec2(-1.0, 0.0);
-          vertices[1] = new b2.Vec2(1.0, 0.0);
-          vertices[2] = new b2.Vec2(0.0, 2.0);
-          const polygon = new b2.PolygonShape();
+          vertices[0] = new b2__namespace.Vec2(-1.0, 0.0);
+          vertices[1] = new b2__namespace.Vec2(1.0, 0.0);
+          vertices[2] = new b2__namespace.Vec2(0.0, 2.0);
+          const polygon = new b2__namespace.PolygonShape();
           polygon.Set(vertices, 3);
-          const triangleShapeDef = new b2.FixtureDef();
+          const triangleShapeDef = new b2__namespace.FixtureDef();
           triangleShapeDef.shape = polygon;
           triangleShapeDef.density = 1.0;
           triangleShapeDef.filter.groupIndex = CollisionFiltering.k_smallGroup;
           triangleShapeDef.filter.categoryBits = CollisionFiltering.k_triangleCategory;
           triangleShapeDef.filter.maskBits = CollisionFiltering.k_triangleMask;
-          const triangleBodyDef = new b2.BodyDef();
-          triangleBodyDef.type = b2.BodyType.b2_dynamicBody;
+          const triangleBodyDef = new b2__namespace.BodyDef();
+          triangleBodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           triangleBodyDef.position.Set(-5.0, 2.0);
           const body1 = this.m_world.CreateBody(triangleBodyDef);
           body1.CreateFixture(triangleShapeDef);
@@ -2774,14 +2795,14 @@
           const body2 = this.m_world.CreateBody(triangleBodyDef);
           body2.CreateFixture(triangleShapeDef);
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-5.0, 10.0);
               const body = this.m_world.CreateBody(bd);
-              const p = new b2.PolygonShape();
+              const p = new b2__namespace.PolygonShape();
               p.SetAsBox(0.5, 1.0);
               body.CreateFixture(p, 1.0);
-              const jd = new b2.PrismaticJointDef();
+              const jd = new b2__namespace.PrismaticJointDef();
               jd.bodyA = body2;
               jd.bodyB = body;
               jd.enableLimit = true;
@@ -2794,15 +2815,15 @@
           }
           // Small box
           polygon.SetAsBox(1.0, 0.5);
-          const boxShapeDef = new b2.FixtureDef();
+          const boxShapeDef = new b2__namespace.FixtureDef();
           boxShapeDef.shape = polygon;
           boxShapeDef.density = 1.0;
           boxShapeDef.restitution = 0.1;
           boxShapeDef.filter.groupIndex = CollisionFiltering.k_smallGroup;
           boxShapeDef.filter.categoryBits = CollisionFiltering.k_boxCategory;
           boxShapeDef.filter.maskBits = CollisionFiltering.k_boxMask;
-          const boxBodyDef = new b2.BodyDef();
-          boxBodyDef.type = b2.BodyType.b2_dynamicBody;
+          const boxBodyDef = new b2__namespace.BodyDef();
+          boxBodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           boxBodyDef.position.Set(0.0, 2.0);
           const body3 = this.m_world.CreateBody(boxBodyDef);
           body3.CreateFixture(boxShapeDef);
@@ -2813,16 +2834,16 @@
           const body4 = this.m_world.CreateBody(boxBodyDef);
           body4.CreateFixture(boxShapeDef);
           // Small circle
-          const circle = new b2.CircleShape();
+          const circle = new b2__namespace.CircleShape();
           circle.m_radius = 1.0;
-          const circleShapeDef = new b2.FixtureDef();
+          const circleShapeDef = new b2__namespace.FixtureDef();
           circleShapeDef.shape = circle;
           circleShapeDef.density = 1.0;
           circleShapeDef.filter.groupIndex = CollisionFiltering.k_smallGroup;
           circleShapeDef.filter.categoryBits = CollisionFiltering.k_circleCategory;
           circleShapeDef.filter.maskBits = CollisionFiltering.k_circleMask;
-          const circleBodyDef = new b2.BodyDef();
-          circleBodyDef.type = b2.BodyType.b2_dynamicBody;
+          const circleBodyDef = new b2__namespace.BodyDef();
+          circleBodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           circleBodyDef.position.Set(5.0, 2.0);
           const body5 = this.m_world.CreateBody(circleBodyDef);
           body5.CreateFixture(circleShapeDef);
@@ -2848,7 +2869,7 @@
   CollisionFiltering.k_triangleMask = 0xFFFF;
   CollisionFiltering.k_boxMask = 0xFFFF ^ CollisionFiltering.k_triangleCategory;
   CollisionFiltering.k_circleMask = 0xFFFF;
-  const testIndex$c = RegisterTest("Examples", "Collision Filtering", CollisionFiltering.Create);
+  RegisterTest("Examples", "Collision Filtering", CollisionFiltering.Create);
 
   // MIT License
   // This test shows collision processing and tests
@@ -2858,11 +2879,11 @@
           super();
           // Ground body
           {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              const sd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
+              const sd = new b2__namespace.FixtureDef();
               sd.shape = shape;
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(sd);
           }
@@ -2870,17 +2891,17 @@
           const yLo = 2.0, yHi = 35.0;
           // Small triangle
           const vertices = new Array(3);
-          vertices[0] = new b2.Vec2(-1.0, 0.0);
-          vertices[1] = new b2.Vec2(1.0, 0.0);
-          vertices[2] = new b2.Vec2(0.0, 2.0);
-          const polygon = new b2.PolygonShape();
+          vertices[0] = new b2__namespace.Vec2(-1.0, 0.0);
+          vertices[1] = new b2__namespace.Vec2(1.0, 0.0);
+          vertices[2] = new b2__namespace.Vec2(0.0, 2.0);
+          const polygon = new b2__namespace.PolygonShape();
           polygon.Set(vertices, 3);
-          const triangleShapeDef = new b2.FixtureDef();
+          const triangleShapeDef = new b2__namespace.FixtureDef();
           triangleShapeDef.shape = polygon;
           triangleShapeDef.density = 1.0;
-          const triangleBodyDef = new b2.BodyDef();
-          triangleBodyDef.type = b2.BodyType.b2_dynamicBody;
-          triangleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
+          const triangleBodyDef = new b2__namespace.BodyDef();
+          triangleBodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
+          triangleBodyDef.position.Set(b2__namespace.RandomRange(xLo, xHi), b2__namespace.RandomRange(yLo, yHi));
           const body1 = this.m_world.CreateBody(triangleBodyDef);
           body1.CreateFixture(triangleShapeDef);
           // Large triangle (recycle definitions)
@@ -2888,38 +2909,38 @@
           vertices[1].SelfMul(2.0);
           vertices[2].SelfMul(2.0);
           polygon.Set(vertices, 3);
-          triangleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
+          triangleBodyDef.position.Set(b2__namespace.RandomRange(xLo, xHi), b2__namespace.RandomRange(yLo, yHi));
           const body2 = this.m_world.CreateBody(triangleBodyDef);
           body2.CreateFixture(triangleShapeDef);
           // Small box
           polygon.SetAsBox(1.0, 0.5);
-          const boxShapeDef = new b2.FixtureDef();
+          const boxShapeDef = new b2__namespace.FixtureDef();
           boxShapeDef.shape = polygon;
           boxShapeDef.density = 1.0;
-          const boxBodyDef = new b2.BodyDef();
-          boxBodyDef.type = b2.BodyType.b2_dynamicBody;
-          boxBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
+          const boxBodyDef = new b2__namespace.BodyDef();
+          boxBodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
+          boxBodyDef.position.Set(b2__namespace.RandomRange(xLo, xHi), b2__namespace.RandomRange(yLo, yHi));
           const body3 = this.m_world.CreateBody(boxBodyDef);
           body3.CreateFixture(boxShapeDef);
           // Large box (recycle definitions)
           polygon.SetAsBox(2.0, 1.0);
-          boxBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
+          boxBodyDef.position.Set(b2__namespace.RandomRange(xLo, xHi), b2__namespace.RandomRange(yLo, yHi));
           const body4 = this.m_world.CreateBody(boxBodyDef);
           body4.CreateFixture(boxShapeDef);
           // Small circle
-          const circle = new b2.CircleShape();
+          const circle = new b2__namespace.CircleShape();
           circle.m_radius = 1.0;
-          const circleShapeDef = new b2.FixtureDef();
+          const circleShapeDef = new b2__namespace.FixtureDef();
           circleShapeDef.shape = circle;
           circleShapeDef.density = 1.0;
-          const circleBodyDef = new b2.BodyDef();
-          circleBodyDef.type = b2.BodyType.b2_dynamicBody;
-          circleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
+          const circleBodyDef = new b2__namespace.BodyDef();
+          circleBodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
+          circleBodyDef.position.Set(b2__namespace.RandomRange(xLo, xHi), b2__namespace.RandomRange(yLo, yHi));
           const body5 = this.m_world.CreateBody(circleBodyDef);
           body5.CreateFixture(circleShapeDef);
           // Large circle
           circle.m_radius *= 2.0;
-          circleBodyDef.position.Set(b2.RandomRange(xLo, xHi), b2.RandomRange(yLo, yHi));
+          circleBodyDef.position.Set(b2__namespace.RandomRange(xLo, xHi), b2__namespace.RandomRange(yLo, yHi));
           const body6 = this.m_world.CreateBody(circleBodyDef);
           body6.CreateFixture(circleShapeDef);
       }
@@ -2971,64 +2992,64 @@
           return new CollisionProcessing();
       }
   }
-  const testIndex$d = RegisterTest("Examples", "Collision Processing", CollisionProcessing.Create);
+  RegisterTest("Examples", "Collision Processing", CollisionProcessing.Create);
 
   // MIT License
   class CompoundShapes extends Test {
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(50.0, 0.0), new b2.Vec2(-50.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(50.0, 0.0), new b2__namespace.Vec2(-50.0, 0.0));
               body.CreateFixture(shape, 0.0);
           }
           // Table 1
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Set(-15.0, 1.0);
               this.m_table1 = this.m_world.CreateBody(bd);
-              const top = new b2.PolygonShape();
-              top.SetAsBox(3.0, 0.5, new b2.Vec2(0.0, 3.5), 0.0);
-              const leftLeg = new b2.PolygonShape();
-              leftLeg.SetAsBox(0.5, 1.5, new b2.Vec2(-2.5, 1.5), 0.0);
-              const rightLeg = new b2.PolygonShape();
-              rightLeg.SetAsBox(0.5, 1.5, new b2.Vec2(2.5, 1.5), 0.0);
+              const top = new b2__namespace.PolygonShape();
+              top.SetAsBox(3.0, 0.5, new b2__namespace.Vec2(0.0, 3.5), 0.0);
+              const leftLeg = new b2__namespace.PolygonShape();
+              leftLeg.SetAsBox(0.5, 1.5, new b2__namespace.Vec2(-2.5, 1.5), 0.0);
+              const rightLeg = new b2__namespace.PolygonShape();
+              rightLeg.SetAsBox(0.5, 1.5, new b2__namespace.Vec2(2.5, 1.5), 0.0);
               this.m_table1.CreateFixture(top, 2.0);
               this.m_table1.CreateFixture(leftLeg, 2.0);
               this.m_table1.CreateFixture(rightLeg, 2.0);
           }
           // Table 2
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Set(-5.0, 1.0);
               this.m_table2 = this.m_world.CreateBody(bd);
-              const top = new b2.PolygonShape();
-              top.SetAsBox(3.0, 0.5, new b2.Vec2(0.0, 3.5), 0.0);
-              const leftLeg = new b2.PolygonShape();
-              leftLeg.SetAsBox(0.5, 2.0, new b2.Vec2(-2.5, 2.0), 0.0);
-              const rightLeg = new b2.PolygonShape();
-              rightLeg.SetAsBox(0.5, 2.0, new b2.Vec2(2.5, 2.0), 0.0);
+              const top = new b2__namespace.PolygonShape();
+              top.SetAsBox(3.0, 0.5, new b2__namespace.Vec2(0.0, 3.5), 0.0);
+              const leftLeg = new b2__namespace.PolygonShape();
+              leftLeg.SetAsBox(0.5, 2.0, new b2__namespace.Vec2(-2.5, 2.0), 0.0);
+              const rightLeg = new b2__namespace.PolygonShape();
+              rightLeg.SetAsBox(0.5, 2.0, new b2__namespace.Vec2(2.5, 2.0), 0.0);
               this.m_table2.CreateFixture(top, 2.0);
               this.m_table2.CreateFixture(leftLeg, 2.0);
               this.m_table2.CreateFixture(rightLeg, 2.0);
           }
           // Spaceship 1
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Set(5.0, 1.0);
               this.m_ship1 = this.m_world.CreateBody(bd);
-              const vertices = b2.Vec2.MakeArray(3);
-              const left = new b2.PolygonShape();
+              const vertices = b2__namespace.Vec2.MakeArray(3);
+              const left = new b2__namespace.PolygonShape();
               vertices[0].Set(-2.0, 0.0);
               vertices[1].Set(0.0, 4.0 / 3.0);
               vertices[2].Set(0.0, 4.0);
               left.Set(vertices, 3);
-              const right = new b2.PolygonShape();
+              const right = new b2__namespace.PolygonShape();
               vertices[0].Set(2.0, 0.0);
               vertices[1].Set(0.0, 4.0 / 3.0);
               vertices[2].Set(0.0, 4.0);
@@ -3038,17 +3059,17 @@
           }
           // Spaceship 2
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Set(15.0, 1.0);
               this.m_ship2 = this.m_world.CreateBody(bd);
-              const vertices = b2.Vec2.MakeArray(3);
-              const left = new b2.PolygonShape();
+              const vertices = b2__namespace.Vec2.MakeArray(3);
+              const left = new b2__namespace.PolygonShape();
               vertices[0].Set(-2.0, 0.0);
               vertices[1].Set(1.0, 2.0);
               vertices[2].Set(0.0, 4.0);
               left.Set(vertices, 3);
-              const right = new b2.PolygonShape();
+              const right = new b2__namespace.PolygonShape();
               vertices[0].Set(2.0, 0.0);
               vertices[1].Set(-1.0, 2.0);
               vertices[2].Set(0.0, 4.0);
@@ -3060,48 +3081,48 @@
       Spawn() {
           // Table 1 obstruction
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Copy(this.m_table1.GetPosition());
               bd.angle = this.m_table1.GetAngle();
               const body = this.m_world.CreateBody(bd);
-              const box = new b2.PolygonShape();
-              box.SetAsBox(4.0, 0.1, new b2.Vec2(0.0, 3.0), 0.0);
+              const box = new b2__namespace.PolygonShape();
+              box.SetAsBox(4.0, 0.1, new b2__namespace.Vec2(0.0, 3.0), 0.0);
               body.CreateFixture(box, 2.0);
           }
           // Table 2 obstruction
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Copy(this.m_table2.GetPosition());
               bd.angle = this.m_table2.GetAngle();
               const body = this.m_world.CreateBody(bd);
-              const box = new b2.PolygonShape();
-              box.SetAsBox(4.0, 0.1, new b2.Vec2(0.0, 3.0), 0.0);
+              const box = new b2__namespace.PolygonShape();
+              box.SetAsBox(4.0, 0.1, new b2__namespace.Vec2(0.0, 3.0), 0.0);
               body.CreateFixture(box, 2.0);
           }
           // Ship 1 obstruction
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Copy(this.m_ship1.GetPosition());
               bd.angle = this.m_ship1.GetAngle();
               bd.gravityScale = 0.0;
               const body = this.m_world.CreateBody(bd);
-              const circle = new b2.CircleShape();
+              const circle = new b2__namespace.CircleShape();
               circle.m_radius = 0.5;
               circle.m_p.Set(0.0, 2.0);
               body.CreateFixture(circle, 2.0);
           }
           // Ship 2 obstruction
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Copy(this.m_ship2.GetPosition());
               bd.angle = this.m_ship2.GetAngle();
               bd.gravityScale = 0.0;
               const body = this.m_world.CreateBody(bd);
-              const circle = new b2.CircleShape();
+              const circle = new b2__namespace.CircleShape();
               circle.m_radius = 0.5;
               circle.m_p.Set(0.0, 2.0);
               body.CreateFixture(circle, 2.0);
@@ -3122,60 +3143,60 @@
           return new CompoundShapes();
       }
   }
-  const testIndex$e = RegisterTest("Examples", "Compound Shapes", CompoundShapes.Create);
+  RegisterTest("Examples", "Compound Shapes", CompoundShapes.Create);
 
   // MIT License
   class Confined extends Test {
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
+              const shape = new b2__namespace.EdgeShape();
               // Floor
-              shape.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(10.0, 0.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-10.0, 0.0), new b2__namespace.Vec2(10.0, 0.0));
               ground.CreateFixture(shape, 0.0);
               // Left wall
-              shape.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(-10.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-10.0, 0.0), new b2__namespace.Vec2(-10.0, 20.0));
               ground.CreateFixture(shape, 0.0);
               // Right wall
-              shape.SetTwoSided(new b2.Vec2(10.0, 0.0), new b2.Vec2(10.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(10.0, 0.0), new b2__namespace.Vec2(10.0, 20.0));
               ground.CreateFixture(shape, 0.0);
               // Roof
-              shape.SetTwoSided(new b2.Vec2(-10.0, 20.0), new b2.Vec2(10.0, 20.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-10.0, 20.0), new b2__namespace.Vec2(10.0, 20.0));
               ground.CreateFixture(shape, 0.0);
           }
           const radius = 0.5;
-          const shape = new b2.CircleShape();
+          const shape = new b2__namespace.CircleShape();
           shape.m_p.SetZero();
           shape.m_radius = radius;
-          const fd = new b2.FixtureDef();
+          const fd = new b2__namespace.FixtureDef();
           fd.shape = shape;
           fd.density = 1.0;
           fd.friction = 0.1;
           for (let j = 0; j < Confined.e_columnCount; ++j) {
               for (let i = 0; i < Confined.e_rowCount; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-10.0 + (2.1 * j + 1.0 + 0.01 * i) * radius, (2.0 * i + 1.0) * radius);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
               }
           }
-          this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0.0, 0.0));
       }
       CreateCircle() {
           const radius = 2.0;
-          const shape = new b2.CircleShape();
+          const shape = new b2__namespace.CircleShape();
           shape.m_p.SetZero();
           shape.m_radius = radius;
-          const fd = new b2.FixtureDef();
+          const fd = new b2__namespace.FixtureDef();
           fd.shape = shape;
           fd.density = 1.0;
           fd.friction = 0.0;
-          const p = new b2.Vec2(b2.Random(), 3.0 + b2.Random());
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const p = new b2__namespace.Vec2(b2__namespace.Random(), 3.0 + b2__namespace.Random());
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Copy(p);
           //bd.allowSleep = false;
           const body = this.m_world.CreateBody(bd);
@@ -3190,7 +3211,7 @@
       }
       Step(settings) {
           for (let b = this.m_world.GetBodyList(); b; b = b.m_next) {
-              if (b.GetType() !== b2.BodyType.b2_dynamicBody) {
+              if (b.GetType() !== b2__namespace.BodyType.b2_dynamicBody) {
                   continue;
               }
               if (b.IsAwake()) ;
@@ -3200,7 +3221,7 @@
           }
           super.Step(settings);
           for (let b = this.m_world.GetBodyList(); b; b = b.m_next) {
-              if (b.GetType() !== b2.BodyType.b2_dynamicBody) {
+              if (b.GetType() !== b2__namespace.BodyType.b2_dynamicBody) {
                   continue;
               }
               // const p = b.GetPosition();
@@ -3217,7 +3238,7 @@
   }
   Confined.e_columnCount = 0;
   Confined.e_rowCount = 0;
-  const testIndex$f = RegisterTest("Solver", "Confined", Confined.Create);
+  RegisterTest("Solver", "Confined", Confined.Create);
 
   // MIT License
   class ContinuousTest extends Test {
@@ -3225,28 +3246,28 @@
           super();
           this.m_angularVelocity = 0.0;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(0.0, 0.0);
               const body = this.m_world.CreateBody(bd);
-              const edge = new b2.EdgeShape();
-              edge.SetTwoSided(new b2.Vec2(-10.0, 0.0), new b2.Vec2(10.0, 0.0));
+              const edge = new b2__namespace.EdgeShape();
+              edge.SetTwoSided(new b2__namespace.Vec2(-10.0, 0.0), new b2__namespace.Vec2(10.0, 0.0));
               body.CreateFixture(edge, 0.0);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.2, 1.0, new b2.Vec2(0.5, 1.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.2, 1.0, new b2__namespace.Vec2(0.5, 1.0), 0.0);
               body.CreateFixture(shape, 0.0);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 20.0);
               //bd.angle = 0.1;
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(2.0, 0.1);
               this.m_body = this.m_world.CreateBody(bd);
               this.m_body.CreateFixture(shape, 1.0);
-              this.m_angularVelocity = b2.RandomRange(-50.0, 50.0);
+              this.m_angularVelocity = b2__namespace.RandomRange(-50.0, 50.0);
               //this.m_angularVelocity = 46.661274;
-              this.m_body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
+              this.m_body.SetLinearVelocity(new b2__namespace.Vec2(0.0, -100.0));
               this.m_body.SetAngularVelocity(this.m_angularVelocity);
           }
           /*
@@ -3270,48 +3291,48 @@
           // b2.gjkCalls = 0;
           // b2.gjkIters = 0;
           // b2.gjkMaxIters = 0;
-          b2.gjk_reset();
+          b2__namespace.gjk_reset();
           // b2.toiCalls = 0;
           // b2.toiIters = 0;
           // b2.toiRootIters = 0;
           // b2.toiMaxRootIters = 0;
           // b2.toiTime = 0.0;
           // b2.toiMaxTime = 0.0;
-          b2.toi_reset();
+          b2__namespace.toi_reset();
       }
       Launch() {
           // b2.gjkCalls = 0;
           // b2.gjkIters = 0;
           // b2.gjkMaxIters = 0;
-          b2.gjk_reset();
+          b2__namespace.gjk_reset();
           // b2.toiCalls = 0;
           // b2.toiIters = 0;
           // b2.toiRootIters = 0;
           // b2.toiMaxRootIters = 0;
           // b2.toiTime = 0.0;
           // b2.toiMaxTime = 0.0;
-          b2.toi_reset();
-          this.m_body.SetTransformVec(new b2.Vec2(0.0, 20.0), 0.0);
-          this.m_angularVelocity = b2.RandomRange(-50.0, 50.0);
-          this.m_body.SetLinearVelocity(new b2.Vec2(0.0, -100.0));
+          b2__namespace.toi_reset();
+          this.m_body.SetTransformVec(new b2__namespace.Vec2(0.0, 20.0), 0.0);
+          this.m_angularVelocity = b2__namespace.RandomRange(-50.0, 50.0);
+          this.m_body.SetLinearVelocity(new b2__namespace.Vec2(0.0, -100.0));
           this.m_body.SetAngularVelocity(this.m_angularVelocity);
       }
       Step(settings) {
           super.Step(settings);
-          if (b2.gjkCalls > 0) {
+          if (b2__namespace.gjkCalls > 0) {
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "gjk calls = %d, ave gjk iters = %3.1f, max gjk iters = %d",
-              g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${b2.gjkCalls.toFixed(0)}, ave gjk iters = ${(b2.gjkIters / b2.gjkCalls).toFixed(1)}, max gjk iters = ${b2.gjkMaxIters.toFixed(0)}`);
+              g_debugDraw.DrawString(5, this.m_textLine, `gjk calls = ${b2__namespace.gjkCalls.toFixed(0)}, ave gjk iters = ${(b2__namespace.gjkIters / b2__namespace.gjkCalls).toFixed(1)}, max gjk iters = ${b2__namespace.gjkMaxIters.toFixed(0)}`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
           }
-          if (b2.toiCalls > 0) {
+          if (b2__namespace.toiCalls > 0) {
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "toi [max] calls = %d, ave toi iters = %3.1f [%d]",
-              g_debugDraw.DrawString(5, this.m_textLine, `toi [max] calls = ${b2.toiCalls}, ave toi iters = ${(b2.toiIters / b2.toiCalls).toFixed(1)} [${b2.toiMaxRootIters}]`);
+              g_debugDraw.DrawString(5, this.m_textLine, `toi [max] calls = ${b2__namespace.toiCalls}, ave toi iters = ${(b2__namespace.toiIters / b2__namespace.toiCalls).toFixed(1)} [${b2__namespace.toiMaxRootIters}]`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi root iters = %3.1f [%d]",
-              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi root iters = ${(b2.toiRootIters / b2.toiCalls).toFixed(1)} [${b2.toiMaxRootIters.toFixed(0)}]`);
+              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi root iters = ${(b2__namespace.toiRootIters / b2__namespace.toiCalls).toFixed(1)} [${b2__namespace.toiMaxRootIters.toFixed(0)}]`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
               // testbed.g_debugDraw.DrawString(5, this.m_textLine, "ave [max] toi time = %.1f [%.1f] (microseconds)",
-              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi time = ${(1000.0 * b2.toiTime / b2.toiCalls).toFixed(1)} [${(1000.0 * b2.toiMaxTime).toFixed(1)}] (microseconds)`);
+              g_debugDraw.DrawString(5, this.m_textLine, `ave [max] toi time = ${(1000.0 * b2__namespace.toiTime / b2__namespace.toiCalls).toFixed(1)} [${(1000.0 * b2__namespace.toiMaxTime).toFixed(1)}] (microseconds)`);
               this.m_textLine += DRAW_STRING_NEW_LINE;
           }
           if (this.m_stepCount % 60 === 0) {
@@ -3322,7 +3343,7 @@
           return new ContinuousTest();
       }
   }
-  const testIndex$g = RegisterTest("Continuous", "Continuous Test", ContinuousTest.Create);
+  RegisterTest("Continuous", "Continuous Test", ContinuousTest.Create);
 
   // MIT License
   class ConvexHull extends Test {
@@ -3335,13 +3356,13 @@
       }
       Generate() {
           for (let i = 0; i < ConvexHull.e_count; ++i) {
-              let x = b2.RandomRange(-10.0, 10.0);
-              let y = b2.RandomRange(-10.0, 10.0);
+              let x = b2__namespace.RandomRange(-10.0, 10.0);
+              let y = b2__namespace.RandomRange(-10.0, 10.0);
               // Clamp onto a square to help create collinearities.
               // This will stress the convex hull algorithm.
-              x = b2.Clamp(x, -8.0, 8.0);
-              y = b2.Clamp(y, -8.0, 8.0);
-              this.m_test_points[i] = new b2.Vec2(x, y);
+              x = b2__namespace.Clamp(x, -8.0, 8.0);
+              y = b2__namespace.Clamp(y, -8.0, 8.0);
+              this.m_test_points[i] = new b2__namespace.Vec2(x, y);
           }
           this.m_count = ConvexHull.e_count;
       }
@@ -3357,13 +3378,13 @@
       }
       Step(settings) {
           super.Step(settings);
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           shape.Set(this.m_test_points, this.m_count);
           g_debugDraw.DrawString(5, this.m_textLine, "Press g to generate a new random convex hull");
           this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.DrawPolygon(shape.m_vertices, shape.m_count, new b2.Color(0.9, 0.9, 0.9));
+          g_debugDraw.DrawPolygon(shape.m_vertices, shape.m_count, new b2__namespace.Color(0.9, 0.9, 0.9));
           for (let i = 0; i < this.m_count; ++i) {
-              g_debugDraw.DrawPoint(this.m_test_points[i], 3.0, new b2.Color(0.3, 0.9, 0.3));
+              g_debugDraw.DrawPoint(this.m_test_points[i], 3.0, new b2__namespace.Color(0.3, 0.9, 0.3));
               g_debugDraw.DrawStringWorld(this.m_test_points[i].x + 0.05, this.m_test_points[i].y + 0.05, `${i}`);
           }
           if (!shape.Validate()) {
@@ -3378,7 +3399,7 @@
       }
   }
   ConvexHull.e_count = 10;
-  const testIndex$h = RegisterTest("Geometry", "Convex Hull", ConvexHull.Create);
+  RegisterTest("Geometry", "Convex Hull", ConvexHull.Create);
 
   // MIT License
   class ConveyorBelt extends Test {
@@ -3386,31 +3407,31 @@
           super();
           // Ground
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, 0.0), new b2__namespace.Vec2(20.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Platform
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-5.0, 5.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(10.0, 0.5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.friction = 0.8;
               this.m_platform = body.CreateFixture(fd);
           }
           // Boxes
           for (let i = 0; i < 5; ++i) {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-10.0 + 2.0 * i, 7.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
               body.CreateFixture(shape, 20.0);
           }
@@ -3433,7 +3454,7 @@
           return new ConveyorBelt();
       }
   }
-  const testIndex$i = RegisterTest("Examples", "Conveyor Belt", ConveyorBelt.Create);
+  RegisterTest("Examples", "Conveyor Belt", ConveyorBelt.Create);
 
   // MIT License
   // This tests distance joints, body destruction, and joint destruction.
@@ -3442,30 +3463,30 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.angularDamping = 0.1;
               bd.position.Set(0.0, 5.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
               body.CreateFixture(shape, 5.0);
               this.m_hertz = 1.0;
               this.m_dampingRatio = 0.7;
-              const jd = new b2.DistanceJointDef();
-              jd.Initialize(ground, body, new b2.Vec2(0.0, 15.0), bd.position);
+              const jd = new b2__namespace.DistanceJointDef();
+              jd.Initialize(ground, body, new b2__namespace.Vec2(0.0, 15.0), bd.position);
               jd.collideConnected = true;
               this.m_length = jd.length;
               this.m_minLength = jd.minLength = jd.length - 3;
               this.m_maxLength = jd.maxLength = jd.length + 3;
-              b2.LinearStiffness(jd, this.m_hertz, this.m_dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, this.m_hertz, this.m_dampingRatio, jd.bodyA, jd.bodyB);
               this.m_joint = this.m_world.CreateJoint(jd);
           }
       }
@@ -3483,18 +3504,18 @@
           return new DistanceJoint();
       }
   }
-  const testIndex$j = RegisterTest("Joints", "DistanceJoint", DistanceJoint.Create);
+  RegisterTest("Joints", "DistanceJoint", DistanceJoint.Create);
 
   // MIT License
   class DistanceTest extends Test {
       constructor() {
           super();
-          this.m_positionB = new b2.Vec2();
+          this.m_positionB = new b2__namespace.Vec2();
           this.m_angleB = 0;
-          this.m_transformA = new b2.Transform();
-          this.m_transformB = new b2.Transform();
-          this.m_polygonA = new b2.PolygonShape();
-          this.m_polygonB = new b2.PolygonShape();
+          this.m_transformA = new b2__namespace.Transform();
+          this.m_transformB = new b2__namespace.Transform();
+          this.m_polygonA = new b2__namespace.PolygonShape();
+          this.m_polygonB = new b2__namespace.PolygonShape();
           {
               this.m_transformA.SetIdentity();
               this.m_transformA.p.Set(0.0, -0.2);
@@ -3522,54 +3543,54 @@
                   this.m_positionB.y += 0.1;
                   break;
               case "q":
-                  this.m_angleB += 0.1 * b2.pi;
+                  this.m_angleB += 0.1 * b2__namespace.pi;
                   break;
               case "e":
-                  this.m_angleB -= 0.1 * b2.pi;
+                  this.m_angleB -= 0.1 * b2__namespace.pi;
                   break;
           }
           this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
       }
       Step(settings) {
           super.Step(settings);
-          const input = new b2.DistanceInput();
+          const input = new b2__namespace.DistanceInput();
           input.proxyA.SetShape(this.m_polygonA, 0);
           input.proxyB.SetShape(this.m_polygonB, 0);
           input.transformA.Copy(this.m_transformA);
           input.transformB.Copy(this.m_transformB);
           input.useRadii = true;
-          const cache = new b2.SimplexCache();
+          const cache = new b2__namespace.SimplexCache();
           cache.count = 0;
-          const output = new b2.DistanceOutput();
-          b2.Distance(output, cache, input);
+          const output = new b2__namespace.DistanceOutput();
+          b2__namespace.Distance(output, cache, input);
           g_debugDraw.DrawString(5, this.m_textLine, `distance = ${output.distance.toFixed(2)}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           g_debugDraw.DrawString(5, this.m_textLine, `iterations = ${output.iterations}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           {
-              const color = new b2.Color(0.9, 0.9, 0.9);
+              const color = new b2__namespace.Color(0.9, 0.9, 0.9);
               const v = [];
               for (let i = 0; i < this.m_polygonA.m_count; ++i) {
-                  v[i] = b2.Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new b2.Vec2());
+                  v[i] = b2__namespace.Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new b2__namespace.Vec2());
               }
               g_debugDraw.DrawPolygon(v, this.m_polygonA.m_count, color);
               for (let i = 0; i < this.m_polygonB.m_count; ++i) {
-                  v[i] = b2.Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new b2.Vec2());
+                  v[i] = b2__namespace.Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new b2__namespace.Vec2());
               }
               g_debugDraw.DrawPolygon(v, this.m_polygonB.m_count, color);
           }
           const x1 = output.pointA;
           const x2 = output.pointB;
-          const c1 = new b2.Color(1.0, 0.0, 0.0);
+          const c1 = new b2__namespace.Color(1.0, 0.0, 0.0);
           g_debugDraw.DrawPoint(x1, 4.0, c1);
-          const c2 = new b2.Color(1.0, 1.0, 0.0);
+          const c2 = new b2__namespace.Color(1.0, 1.0, 0.0);
           g_debugDraw.DrawPoint(x2, 4.0, c2);
       }
       static Create() {
           return new DistanceTest();
       }
   }
-  const testIndex$k = RegisterTest("Geometry", "Distance Test", DistanceTest.Create);
+  RegisterTest("Geometry", "Distance Test", DistanceTest.Create);
 
   // MIT License
   class Dominos extends Test {
@@ -3577,75 +3598,75 @@
           super();
           let b1 = null;
           {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              const bd = new b2.BodyDef();
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
+              const bd = new b2__namespace.BodyDef();
               b1 = this.m_world.CreateBody(bd);
               b1.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(6.0, 0.25);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-1.5, 10.0);
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.1, 1.0);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               fd.friction = 0.1;
               for (let i = 0; i < 10; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-6.0 + 1.0 * i, 11.25);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(fd);
               }
           }
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(7.0, 0.25, b2.Vec2_zero, 0.3);
-              const bd = new b2.BodyDef();
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(7.0, 0.25, b2__namespace.Vec2_zero, 0.3);
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(1.0, 6.0);
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           let _b2 = null;
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.25, 1.5);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-7.0, 4.0);
               _b2 = this.m_world.CreateBody(bd);
               _b2.CreateFixture(shape, 0.0);
           }
           let b3 = null;
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(6.0, 0.125);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-0.9, 1.0);
               bd.angle = -0.15;
               b3 = this.m_world.CreateBody(bd);
               b3.CreateFixture(shape, 10.0);
           }
-          const jd = new b2.RevoluteJointDef();
-          const anchor = new b2.Vec2();
+          const jd = new b2__namespace.RevoluteJointDef();
+          const anchor = new b2__namespace.Vec2();
           anchor.Set(-2.0, 1.0);
           jd.Initialize(b1, b3, anchor);
           jd.collideConnected = true;
           this.m_world.CreateJoint(jd);
           let b4 = null;
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.25, 0.25);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-10.0, 15.0);
               b4 = this.m_world.CreateBody(bd);
               b4.CreateFixture(shape, 10.0);
@@ -3655,20 +3676,20 @@
           this.m_world.CreateJoint(jd);
           let b5 = null;
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(6.5, 3.0);
               b5 = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              const fd = new b2.FixtureDef();
+              const shape = new b2__namespace.PolygonShape();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 10.0;
               fd.friction = 0.1;
-              shape.SetAsBox(1.0, 0.1, new b2.Vec2(0.0, -0.9), 0.0);
+              shape.SetAsBox(1.0, 0.1, new b2__namespace.Vec2(0.0, -0.9), 0.0);
               b5.CreateFixture(fd);
-              shape.SetAsBox(0.1, 1.0, new b2.Vec2(-0.9, 0.0), 0.0);
+              shape.SetAsBox(0.1, 1.0, new b2__namespace.Vec2(-0.9, 0.0), 0.0);
               b5.CreateFixture(fd);
-              shape.SetAsBox(0.1, 1.0, new b2.Vec2(0.9, 0.0), 0.0);
+              shape.SetAsBox(0.1, 1.0, new b2__namespace.Vec2(0.9, 0.0), 0.0);
               b5.CreateFixture(fd);
           }
           anchor.Set(6.0, 2.0);
@@ -3676,10 +3697,10 @@
           this.m_world.CreateJoint(jd);
           let b6 = null;
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(1.0, 0.1);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(6.5, 4.1);
               b6 = this.m_world.CreateBody(bd);
               b6.CreateFixture(shape, 30.0);
@@ -3689,30 +3710,30 @@
           this.m_world.CreateJoint(jd);
           let b7 = null;
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.1, 1.0);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(7.4, 1.0);
               b7 = this.m_world.CreateBody(bd);
               b7.CreateFixture(shape, 10.0);
           }
-          const djd = new b2.DistanceJointDef();
+          const djd = new b2__namespace.DistanceJointDef();
           djd.bodyA = b3;
           djd.bodyB = b7;
           djd.localAnchorA.Set(6.0, 0.0);
           djd.localAnchorB.Set(0.0, -1.0);
-          const d = b2.Vec2.SubVV(djd.bodyB.GetWorldPoint(djd.localAnchorB, new b2.Vec2()), djd.bodyA.GetWorldPoint(djd.localAnchorA, new b2.Vec2()), new b2.Vec2());
+          const d = b2__namespace.Vec2.SubVV(djd.bodyB.GetWorldPoint(djd.localAnchorB, new b2__namespace.Vec2()), djd.bodyA.GetWorldPoint(djd.localAnchorA, new b2__namespace.Vec2()), new b2__namespace.Vec2());
           djd.length = d.Length();
-          b2.LinearStiffness(djd, 1.0, 1.0, djd.bodyA, djd.bodyB);
+          b2__namespace.LinearStiffness(djd, 1.0, 1.0, djd.bodyA, djd.bodyB);
           this.m_world.CreateJoint(djd);
           {
               const radius = 0.2;
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = radius;
               for (let i = 0; i < 4; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(5.9 + 2.0 * radius * i, 2.4);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 10.0);
@@ -3726,7 +3747,7 @@
           return new Dominos();
       }
   }
-  const testIndex$l = RegisterTest("Examples", "Dominos", Dominos.Create);
+  RegisterTest("Examples", "Dominos", Dominos.Create);
 
   // MIT License
   // This test holds worlds dumped using b2World::Dump.
@@ -3734,13 +3755,13 @@
       constructor() {
           super();
           // dump begin
-          const g = new b2.Vec2(0.000000000000000, 0.000000000000000);
+          const g = new b2__namespace.Vec2(0.000000000000000, 0.000000000000000);
           this.m_world.SetGravity(g);
           const bodies = new Array(4);
           const joints = new Array(2);
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_staticBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_staticBody;
               bd.position.Set(0.000000000000000, 0.000000000000000);
               bd.angle = 0.000000000000000;
               bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -3755,7 +3776,7 @@
               bd.gravityScale = 1.000000000000000;
               bodies[0] = this.m_world.CreateBody(bd);
               {
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
                   fd.density = 0.000000000000000;
@@ -3763,7 +3784,7 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  const shape = new b2.EdgeShape();
+                  const shape = new b2__namespace.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(0.000000000000000, 0.000000000000000);
@@ -3773,7 +3794,7 @@
                   bodies[0].CreateFixture(fd);
               }
               {
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
                   fd.density = 0.000000000000000;
@@ -3781,7 +3802,7 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  const shape = new b2.EdgeShape();
+                  const shape = new b2__namespace.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
@@ -3791,7 +3812,7 @@
                   bodies[0].CreateFixture(fd);
               }
               {
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
                   fd.density = 0.000000000000000;
@@ -3799,7 +3820,7 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  const shape = new b2.EdgeShape();
+                  const shape = new b2__namespace.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(0.000000000000000, 16.695652008056641);
@@ -3809,7 +3830,7 @@
                   bodies[0].CreateFixture(fd);
               }
               {
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.friction = 10.000000000000000;
                   fd.restitution = 0.000000000000000;
                   fd.density = 0.000000000000000;
@@ -3817,7 +3838,7 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  const shape = new b2.EdgeShape();
+                  const shape = new b2__namespace.EdgeShape();
                   shape.m_radius = 0.009999999776483;
                   shape.m_vertex0.Set(0.000000000000000, 0.000000000000000);
                   shape.m_vertex1.Set(44.521739959716797, 16.695652008056641);
@@ -3828,8 +3849,8 @@
               }
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.847826063632965, 2.500000000000000);
               bd.angle = 0.000000000000000;
               bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -3844,7 +3865,7 @@
               bd.gravityScale = 1.000000000000000;
               bodies[1] = this.m_world.CreateBody(bd);
               {
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.friction = 1.000000000000000;
                   fd.restitution = 0.500000000000000;
                   fd.density = 10.000000000000000;
@@ -3852,8 +3873,8 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  const shape = new b2.PolygonShape();
-                  const vs = b2.Vec2.MakeArray(8);
+                  const shape = new b2__namespace.PolygonShape();
+                  const vs = b2__namespace.Vec2.MakeArray(8);
                   vs[0].Set(6.907599925994873, 0.327199995517731);
                   vs[1].Set(-0.322800010442734, 0.282599985599518);
                   vs[2].Set(-0.322800010442734, -0.295700013637543);
@@ -3864,8 +3885,8 @@
               }
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(13.043478012084959, 2.500000000000000);
               bd.angle = 0.000000000000000;
               bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -3880,7 +3901,7 @@
               bd.gravityScale = 1.000000000000000;
               bodies[2] = this.m_world.CreateBody(bd);
               {
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.friction = 1.000000000000000;
                   fd.restitution = 0.500000000000000;
                   fd.density = 10.000000000000000;
@@ -3888,8 +3909,8 @@
                   fd.filter.categoryBits = 1;
                   fd.filter.maskBits = 65535;
                   fd.filter.groupIndex = 0;
-                  const shape = new b2.PolygonShape();
-                  const vs = b2.Vec2.MakeArray(8);
+                  const shape = new b2__namespace.PolygonShape();
+                  const vs = b2__namespace.Vec2.MakeArray(8);
                   vs[0].Set(0.200000002980232, -0.300000011920929);
                   vs[1].Set(0.200000002980232, 0.200000002980232);
                   vs[2].Set(-6.900000095367432, 0.200000002980232);
@@ -3900,8 +3921,8 @@
               }
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_staticBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_staticBody;
               bd.position.Set(0.000000000000000, 0.000000000000000);
               bd.angle = 0.000000000000000;
               bd.linearVelocity.Set(0.000000000000000, 0.000000000000000);
@@ -3917,7 +3938,7 @@
               bodies[3] = this.m_world.CreateBody(bd);
           }
           {
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.bodyA = bodies[1];
               jd.bodyB = bodies[0];
               jd.collideConnected = false;
@@ -3933,7 +3954,7 @@
               joints[0] = this.m_world.CreateJoint(jd);
           }
           {
-              const jd = new b2.PrismaticJointDef();
+              const jd = new b2__namespace.PrismaticJointDef();
               jd.bodyA = bodies[1];
               jd.bodyB = bodies[2];
               jd.collideConnected = false;
@@ -3958,7 +3979,7 @@
           return new DumpShell();
       }
   }
-  const testIndex$m = RegisterTest("Bugs", "Dump Loader", DumpShell.Create);
+  RegisterTest("Bugs", "Dump Loader", DumpShell.Create);
 
   // MIT License
   class DynamicTreeTest extends Test {
@@ -3966,12 +3987,12 @@
           super();
           this.m_worldExtent = 0.0;
           this.m_proxyExtent = 0.0;
-          this.m_tree = new b2.DynamicTree();
-          this.m_queryAABB = new b2.AABB();
-          this.m_rayCastInput = new b2.RayCastInput();
-          this.m_rayCastOutput = new b2.RayCastOutput();
+          this.m_tree = new b2__namespace.DynamicTree();
+          this.m_queryAABB = new b2__namespace.AABB();
+          this.m_rayCastInput = new b2__namespace.RayCastInput();
+          this.m_rayCastOutput = new b2__namespace.RayCastOutput();
           this.m_rayActor = null;
-          this.m_actors = b2.MakeArray(DynamicTreeTest.e_actorCount, () => new DynamicTreeTest_Actor());
+          this.m_actors = b2__namespace.MakeArray(DynamicTreeTest.e_actorCount, () => new DynamicTreeTest_Actor());
           this.m_stepCount = 0;
           this.m_automated = false;
           this.m_worldExtent = 15.0;
@@ -3997,7 +4018,7 @@
           super.Step(settings);
           this.Reset();
           if (this.m_automated) {
-              const actionCount = b2.Max(1, DynamicTreeTest.e_actorCount >> 2);
+              const actionCount = b2__namespace.Max(1, DynamicTreeTest.e_actorCount >> 2);
               for (let i = 0; i < actionCount; ++i) {
                   this.Action();
               }
@@ -4009,7 +4030,7 @@
               if (actor.proxyId === null) {
                   continue;
               }
-              const c = new b2.Color(0.9, 0.9, 0.9);
+              const c = new b2__namespace.Color(0.9, 0.9, 0.9);
               if (actor === this.m_rayActor && actor.overlap) {
                   c.SetRGB(0.9, 0.6, 0.6);
               }
@@ -4021,17 +4042,17 @@
               }
               g_debugDraw.DrawAABB(actor.aabb, c);
           }
-          const c = new b2.Color(0.7, 0.7, 0.7);
+          const c = new b2__namespace.Color(0.7, 0.7, 0.7);
           g_debugDraw.DrawAABB(this.m_queryAABB, c);
           g_debugDraw.DrawSegment(this.m_rayCastInput.p1, this.m_rayCastInput.p2, c);
-          const c1 = new b2.Color(0.2, 0.9, 0.2);
-          const c2 = new b2.Color(0.9, 0.2, 0.2);
+          const c1 = new b2__namespace.Color(0.2, 0.9, 0.2);
+          const c2 = new b2__namespace.Color(0.9, 0.2, 0.2);
           g_debugDraw.DrawPoint(this.m_rayCastInput.p1, 6.0, c1);
           g_debugDraw.DrawPoint(this.m_rayCastInput.p2, 6.0, c2);
           if (this.m_rayActor) {
-              const cr = new b2.Color(0.2, 0.2, 0.9);
+              const cr = new b2__namespace.Color(0.2, 0.2, 0.9);
               //b2.Vec2 p = this.m_rayCastInput.p1 + this.m_rayActor.fraction * (this.m_rayCastInput.p2 - this.m_rayCastInput.p1);
-              const p = b2.Vec2.AddVV(this.m_rayCastInput.p1, b2.Vec2.MulSV(this.m_rayActor.fraction, b2.Vec2.SubVV(this.m_rayCastInput.p2, this.m_rayCastInput.p1, new b2.Vec2()), new b2.Vec2()), new b2.Vec2());
+              const p = b2__namespace.Vec2.AddVV(this.m_rayCastInput.p1, b2__namespace.Vec2.MulSV(this.m_rayActor.fraction, b2__namespace.Vec2.SubVV(this.m_rayCastInput.p2, this.m_rayCastInput.p1, new b2__namespace.Vec2()), new b2__namespace.Vec2()), new b2__namespace.Vec2());
               g_debugDraw.DrawPoint(p, 6.0, cr);
           }
           {
@@ -4058,34 +4079,34 @@
           }
       }
       GetRandomAABB(aabb) {
-          const w = new b2.Vec2();
+          const w = new b2__namespace.Vec2();
           w.Set(2.0 * this.m_proxyExtent, 2.0 * this.m_proxyExtent);
           //aabb.lowerBound.x = -this.m_proxyExtent;
           //aabb.lowerBound.y = -this.m_proxyExtent + this.m_worldExtent;
-          aabb.lowerBound.x = b2.RandomRange(-this.m_worldExtent, this.m_worldExtent);
-          aabb.lowerBound.y = b2.RandomRange(0.0, 2.0 * this.m_worldExtent);
+          aabb.lowerBound.x = b2__namespace.RandomRange(-this.m_worldExtent, this.m_worldExtent);
+          aabb.lowerBound.y = b2__namespace.RandomRange(0.0, 2.0 * this.m_worldExtent);
           aabb.upperBound.Copy(aabb.lowerBound);
           aabb.upperBound.SelfAdd(w);
       }
       MoveAABB(aabb) {
-          const d = new b2.Vec2();
-          d.x = b2.RandomRange(-0.5, 0.5);
-          d.y = b2.RandomRange(-0.5, 0.5);
+          const d = new b2__namespace.Vec2();
+          d.x = b2__namespace.RandomRange(-0.5, 0.5);
+          d.y = b2__namespace.RandomRange(-0.5, 0.5);
           //d.x = 2.0;
           //d.y = 0.0;
           aabb.lowerBound.SelfAdd(d);
           aabb.upperBound.SelfAdd(d);
           //b2.Vec2 c0 = 0.5 * (aabb.lowerBound + aabb.upperBound);
-          const c0 = b2.Vec2.MulSV(0.5, b2.Vec2.AddVV(aabb.lowerBound, aabb.upperBound, b2.Vec2.s_t0), new b2.Vec2());
-          const min = new b2.Vec2(-this.m_worldExtent, 0.0);
-          const max = new b2.Vec2(this.m_worldExtent, 2.0 * this.m_worldExtent);
-          const c = b2.Vec2.ClampV(c0, min, max, new b2.Vec2());
-          aabb.lowerBound.SelfAdd(b2.Vec2.SubVV(c, c0, new b2.Vec2()));
-          aabb.upperBound.SelfAdd(b2.Vec2.SubVV(c, c0, new b2.Vec2()));
+          const c0 = b2__namespace.Vec2.MulSV(0.5, b2__namespace.Vec2.AddVV(aabb.lowerBound, aabb.upperBound, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+          const min = new b2__namespace.Vec2(-this.m_worldExtent, 0.0);
+          const max = new b2__namespace.Vec2(this.m_worldExtent, 2.0 * this.m_worldExtent);
+          const c = b2__namespace.Vec2.ClampV(c0, min, max, new b2__namespace.Vec2());
+          aabb.lowerBound.SelfAdd(b2__namespace.Vec2.SubVV(c, c0, new b2__namespace.Vec2()));
+          aabb.upperBound.SelfAdd(b2__namespace.Vec2.SubVV(c, c0, new b2__namespace.Vec2()));
       }
       CreateProxy() {
           for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
-              const j = 0 | b2.RandomRange(0, DynamicTreeTest.e_actorCount);
+              const j = 0 | b2__namespace.RandomRange(0, DynamicTreeTest.e_actorCount);
               const actor = this.m_actors[j];
               if (actor.proxyId === null) {
                   this.GetRandomAABB(actor.aabb);
@@ -4096,7 +4117,7 @@
       }
       DestroyProxy() {
           for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
-              const j = 0 | b2.RandomRange(0, DynamicTreeTest.e_actorCount);
+              const j = 0 | b2__namespace.RandomRange(0, DynamicTreeTest.e_actorCount);
               const actor = this.m_actors[j];
               if (actor.proxyId !== null) {
                   this.m_tree.DestroyProxy(actor.proxyId);
@@ -4107,15 +4128,15 @@
       }
       MoveProxy() {
           for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
-              const j = 0 | b2.RandomRange(0, DynamicTreeTest.e_actorCount);
+              const j = 0 | b2__namespace.RandomRange(0, DynamicTreeTest.e_actorCount);
               const actor = this.m_actors[j];
               if (actor.proxyId === null) {
                   continue;
               }
-              const aabb0 = new b2.AABB();
+              const aabb0 = new b2__namespace.AABB();
               aabb0.Copy(actor.aabb);
               this.MoveAABB(actor.aabb);
-              const displacement = b2.Vec2.SubVV(actor.aabb.GetCenter(), aabb0.GetCenter(), new b2.Vec2());
+              const displacement = b2__namespace.Vec2.SubVV(actor.aabb.GetCenter(), aabb0.GetCenter(), new b2__namespace.Vec2());
               this.m_tree.MoveProxy(actor.proxyId, actor.aabb, displacement);
               return;
           }
@@ -4128,7 +4149,7 @@
           }
       }
       Action() {
-          const choice = 0 | b2.RandomRange(0, 20);
+          const choice = 0 | b2__namespace.RandomRange(0, 20);
           switch (choice) {
               case 0:
                   this.CreateProxy();
@@ -4143,7 +4164,7 @@
       Query() {
           this.m_tree.Query(this.m_queryAABB, (proxyId) => {
               const actor = proxyId.userData; // this.m_tree.GetUserData(proxyId);
-              actor.overlap = b2.TestOverlapAABB(this.m_queryAABB, actor.aabb);
+              actor.overlap = b2__namespace.TestOverlapAABB(this.m_queryAABB, actor.aabb);
               return true;
           });
           for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
@@ -4151,18 +4172,18 @@
                   continue;
               }
               // DEBUG: const overlap =
-              b2.TestOverlapAABB(this.m_queryAABB, this.m_actors[i].aabb);
+              b2__namespace.TestOverlapAABB(this.m_queryAABB, this.m_actors[i].aabb);
               // DEBUG: b2.Assert(overlap === this.m_actors[i].overlap);
           }
       }
       RayCast() {
           this.m_rayActor = null;
-          const input = new b2.RayCastInput();
+          const input = new b2__namespace.RayCastInput();
           input.Copy(this.m_rayCastInput);
           // Ray cast against the dynamic tree.
           this.m_tree.RayCast(input, (input, proxyId) => {
               const actor = proxyId.userData; // this.m_tree.GetUserData(proxyId);
-              const output = new b2.RayCastOutput();
+              const output = new b2__namespace.RayCastOutput();
               const hit = actor.aabb.RayCast(output, input);
               if (hit) {
                   this.m_rayCastOutput = output;
@@ -4172,17 +4193,15 @@
               }
               return input.maxFraction;
           });
-          // Brute force ray cast.
-          let bruteActor = null;
-          const bruteOutput = new b2.RayCastOutput();
+          const bruteOutput = new b2__namespace.RayCastOutput();
           for (let i = 0; i < DynamicTreeTest.e_actorCount; ++i) {
               if (this.m_actors[i].proxyId === null) {
                   continue;
               }
-              const output = new b2.RayCastOutput();
+              const output = new b2__namespace.RayCastOutput();
               const hit = this.m_actors[i].aabb.RayCast(output, input);
               if (hit) {
-                  bruteActor = this.m_actors[i];
+                  this.m_actors[i];
                   bruteOutput.Copy(output);
                   input.maxFraction = output.fraction;
               }
@@ -4195,21 +4214,21 @@
   DynamicTreeTest.e_actorCount = 128;
   class DynamicTreeTest_Actor {
       constructor() {
-          this.aabb = new b2.AABB();
+          this.aabb = new b2__namespace.AABB();
           this.fraction = 0.0;
           this.overlap = false;
           this.proxyId = null;
       }
   }
-  const testIndex$n = RegisterTest("Collision", "Dynamic Tree", DynamicTreeTest.Create);
+  RegisterTest("Collision", "Dynamic Tree", DynamicTreeTest.Create);
 
   // MIT License
-  class EdgeShapesCallback extends b2.RayCastCallback {
+  class EdgeShapesCallback extends b2__namespace.RayCastCallback {
       constructor() {
           super(...arguments);
           this.m_fixture = null;
-          this.m_point = new b2.Vec2();
-          this.m_normal = new b2.Vec2();
+          this.m_point = new b2__namespace.Vec2();
+          this.m_normal = new b2__namespace.Vec2();
       }
       ReportFixture(fixture, point, normal, fraction) {
           this.m_fixture = fixture;
@@ -4227,21 +4246,21 @@
           this.m_bodies = new Array(EdgeShapes.e_maxBodies);
           this.m_polygons = new Array(4);
           for (let i = 0; i < 4; ++i) {
-              this.m_polygons[i] = new b2.PolygonShape();
+              this.m_polygons[i] = new b2__namespace.PolygonShape();
           }
-          this.m_circle = new b2.CircleShape();
+          this.m_circle = new b2__namespace.CircleShape();
           this.m_angle = 0.0;
           // Ground body
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               let x1 = -20.0;
-              let y1 = 2.0 * b2.Cos(x1 / 10.0 * b2.pi);
+              let y1 = 2.0 * b2__namespace.Cos(x1 / 10.0 * b2__namespace.pi);
               for (let i = 0; i < 80; ++i) {
                   const x2 = x1 + 0.5;
-                  const y2 = 2.0 * b2.Cos(x2 / 10.0 * b2.pi);
-                  const shape = new b2.EdgeShape();
-                  shape.SetTwoSided(new b2.Vec2(x1, y1), new b2.Vec2(x2, y2));
+                  const y2 = 2.0 * b2__namespace.Cos(x2 / 10.0 * b2__namespace.pi);
+                  const shape = new b2__namespace.EdgeShape();
+                  shape.SetTwoSided(new b2__namespace.Vec2(x1, y1), new b2__namespace.Vec2(x2, y2));
                   ground.CreateFixture(shape, 0.0);
                   x1 = x2;
                   y1 = y2;
@@ -4249,31 +4268,31 @@
           }
           {
               const vertices = new Array(3);
-              vertices[0] = new b2.Vec2(-0.5, 0.0);
-              vertices[1] = new b2.Vec2(0.5, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
+              vertices[0] = new b2__namespace.Vec2(-0.5, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
               this.m_polygons[0].Set(vertices, 3);
           }
           {
               const vertices = new Array(3);
-              vertices[0] = new b2.Vec2(-0.1, 0.0);
-              vertices[1] = new b2.Vec2(0.1, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
+              vertices[0] = new b2__namespace.Vec2(-0.1, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.1, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
               this.m_polygons[1].Set(vertices, 3);
           }
           {
               const w = 1.0;
-              const b = w / (2.0 + b2.Sqrt(2.0));
-              const s = b2.Sqrt(2.0) * b;
+              const b = w / (2.0 + b2__namespace.Sqrt(2.0));
+              const s = b2__namespace.Sqrt(2.0) * b;
               const vertices = new Array(8);
-              vertices[0] = new b2.Vec2(0.5 * s, 0.0);
-              vertices[1] = new b2.Vec2(0.5 * w, b);
-              vertices[2] = new b2.Vec2(0.5 * w, b + s);
-              vertices[3] = new b2.Vec2(0.5 * s, w);
-              vertices[4] = new b2.Vec2(-0.5 * s, w);
-              vertices[5] = new b2.Vec2(-0.5 * w, b + s);
-              vertices[6] = new b2.Vec2(-0.5 * w, b);
-              vertices[7] = new b2.Vec2(-0.5 * s, 0.0);
+              vertices[0] = new b2__namespace.Vec2(0.5 * s, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5 * w, b);
+              vertices[2] = new b2__namespace.Vec2(0.5 * w, b + s);
+              vertices[3] = new b2__namespace.Vec2(0.5 * s, w);
+              vertices[4] = new b2__namespace.Vec2(-0.5 * s, w);
+              vertices[5] = new b2__namespace.Vec2(-0.5 * w, b + s);
+              vertices[6] = new b2__namespace.Vec2(-0.5 * w, b);
+              vertices[7] = new b2__namespace.Vec2(-0.5 * s, 0.0);
               this.m_polygons[2].Set(vertices, 8);
           }
           {
@@ -4292,25 +4311,25 @@
               this.m_world.DestroyBody(old_body);
               this.m_bodies[this.m_bodyIndex] = null;
           }
-          const bd = new b2.BodyDef();
-          const x = b2.RandomRange(-10.0, 10.0);
-          const y = b2.RandomRange(10.0, 20.0);
+          const bd = new b2__namespace.BodyDef();
+          const x = b2__namespace.RandomRange(-10.0, 10.0);
+          const y = b2__namespace.RandomRange(10.0, 20.0);
           bd.position.Set(x, y);
-          bd.angle = b2.RandomRange(-b2.pi, b2.pi);
-          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.angle = b2__namespace.RandomRange(-b2__namespace.pi, b2__namespace.pi);
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           if (index === 4) {
               bd.angularDamping = 0.02;
           }
           const new_body = this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
           if (index < 4) {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_polygons[index];
               fd.friction = 0.3;
               fd.density = 20.0;
               new_body.CreateFixture(fd);
           }
           else {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_circle;
               fd.friction = 0.3;
               fd.density = 20.0;
@@ -4348,22 +4367,22 @@
           g_debugDraw.DrawString(5, this.m_textLine, "Press 1-5 to drop stuff, m to change the mode");
           this.m_textLine += DRAW_STRING_NEW_LINE;
           const L = 25.0;
-          const point1 = new b2.Vec2(0.0, 10.0);
-          const d = new b2.Vec2(L * b2.Cos(this.m_angle), -L * b2.Abs(b2.Sin(this.m_angle)));
-          const point2 = b2.Vec2.AddVV(point1, d, new b2.Vec2());
+          const point1 = new b2__namespace.Vec2(0.0, 10.0);
+          const d = new b2__namespace.Vec2(L * b2__namespace.Cos(this.m_angle), -L * b2__namespace.Abs(b2__namespace.Sin(this.m_angle)));
+          const point2 = b2__namespace.Vec2.AddVV(point1, d, new b2__namespace.Vec2());
           const callback = new EdgeShapesCallback();
           this.m_world.RayCast(callback, point1, point2);
           if (callback.m_fixture) {
-              g_debugDraw.DrawPoint(callback.m_point, 5.0, new b2.Color(0.4, 0.9, 0.4));
-              g_debugDraw.DrawSegment(point1, callback.m_point, new b2.Color(0.8, 0.8, 0.8));
-              const head = b2.Vec2.AddVV(callback.m_point, b2.Vec2.MulSV(0.5, callback.m_normal, b2.Vec2.s_t0), new b2.Vec2());
-              g_debugDraw.DrawSegment(callback.m_point, head, new b2.Color(0.9, 0.9, 0.4));
+              g_debugDraw.DrawPoint(callback.m_point, 5.0, new b2__namespace.Color(0.4, 0.9, 0.4));
+              g_debugDraw.DrawSegment(point1, callback.m_point, new b2__namespace.Color(0.8, 0.8, 0.8));
+              const head = b2__namespace.Vec2.AddVV(callback.m_point, b2__namespace.Vec2.MulSV(0.5, callback.m_normal, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+              g_debugDraw.DrawSegment(callback.m_point, head, new b2__namespace.Color(0.9, 0.9, 0.4));
           }
           else {
-              g_debugDraw.DrawSegment(point1, point2, new b2.Color(0.8, 0.8, 0.8));
+              g_debugDraw.DrawSegment(point1, point2, new b2__namespace.Color(0.8, 0.8, 0.8));
           }
           if (advanceRay) {
-              this.m_angle += 0.25 * b2.pi / 180.0;
+              this.m_angle += 0.25 * b2__namespace.pi / 180.0;
           }
       }
       static Create() {
@@ -4371,28 +4390,28 @@
       }
   }
   EdgeShapes.e_maxBodies = 256;
-  const testIndex$o = RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);
+  RegisterTest("Geometry", "Edge Shapes", EdgeShapes.Create);
 
   // MIT License
   class EdgeTest extends Test {
       constructor() {
           super();
-          this.m_offset1 = new b2.Vec2();
-          this.m_offset2 = new b2.Vec2();
+          this.m_offset1 = new b2__namespace.Vec2();
+          this.m_offset2 = new b2__namespace.Vec2();
           this.m_body1 = null;
           this.m_body2 = null;
           this.m_boxes = false;
           const vertices = [
-              new b2.Vec2(10.0, -4.0),
-              new b2.Vec2(10.0, 0.0),
-              new b2.Vec2(6.0, 0.0),
-              new b2.Vec2(4.0, 2.0),
-              new b2.Vec2(2.0, 0.0),
-              new b2.Vec2(-2.0, 0.0),
-              new b2.Vec2(-6.0, 0.0),
-              new b2.Vec2(-8.0, -3.0),
-              new b2.Vec2(-10.0, 0.0),
-              new b2.Vec2(-10.0, -4.0),
+              new b2__namespace.Vec2(10.0, -4.0),
+              new b2__namespace.Vec2(10.0, 0.0),
+              new b2__namespace.Vec2(6.0, 0.0),
+              new b2__namespace.Vec2(4.0, 2.0),
+              new b2__namespace.Vec2(2.0, 0.0),
+              new b2__namespace.Vec2(-2.0, 0.0),
+              new b2__namespace.Vec2(-6.0, 0.0),
+              new b2__namespace.Vec2(-8.0, -3.0),
+              new b2__namespace.Vec2(-10.0, 0.0),
+              new b2__namespace.Vec2(-10.0, -4.0),
           ];
           this.m_offset1.Set(0.0, 8.0);
           this.m_offset2.Set(0.0, 16.0);
@@ -4407,9 +4426,9 @@
               const v8 = vertices[7].Clone().SelfAdd(this.m_offset1);
               const v9 = vertices[8].Clone().SelfAdd(this.m_offset1);
               const v10 = vertices[9].Clone().SelfAdd(this.m_offset1);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
+              const shape = new b2__namespace.EdgeShape();
               shape.SetOneSided(v10, v1, v2, v3);
               ground.CreateFixture(shape, 0.0);
               shape.SetOneSided(v1, v2, v3, v4);
@@ -4442,9 +4461,9 @@
               const v8 = vertices[7].Clone().SelfAdd(this.m_offset2);
               const v9 = vertices[8].Clone().SelfAdd(this.m_offset2);
               const v10 = vertices[9].Clone().SelfAdd(this.m_offset2);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
+              const shape = new b2__namespace.EdgeShape();
               shape.SetTwoSided(v1, v2);
               ground.CreateFixture(shape, 0.0);
               shape.SetTwoSided(v2, v3);
@@ -4481,26 +4500,26 @@
               this.m_body2 = null;
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               // bd.position = b2Vec2(8.0, 2.6) + this.m_offset1;
               bd.position.x = 8.0 + this.m_offset1.x;
               bd.position.y = 2.6 + this.m_offset1.y;
               bd.allowSleep = false;
               this.m_body1 = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 1.0);
               this.m_body1.CreateFixture(shape, 1.0);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               // bd.position = b2Vec2(8.0, 2.6f) + this.m_offset2;
               bd.position.x = 8.0 + this.m_offset2.x;
               bd.position.y = 2.6 + this.m_offset2.y;
               bd.allowSleep = false;
               this.m_body2 = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 1.0);
               this.m_body2.CreateFixture(shape, 1.0);
           }
@@ -4515,26 +4534,26 @@
               this.m_body2 = null;
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               // bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset1;
               bd.position.x = -0.5 + this.m_offset1.x;
               bd.position.y = 0.6 + this.m_offset1.y;
               bd.allowSleep = false;
               this.m_body1 = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.5;
               this.m_body1.CreateFixture(shape, 1.0);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               // bd.position = b2Vec2(-0.5f, 0.6f) + this.m_offset2;
               bd.position.x = -0.5 + this.m_offset2.x;
               bd.position.y = 0.6 + this.m_offset2.y;
               bd.allowSleep = false;
               this.m_body2 = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.5;
               this.m_body2.CreateFixture(shape, 1.0);
           }
@@ -4572,12 +4591,12 @@
           var _a, _b, _c, _d;
           switch (key) {
               case "a":
-                  (_a = this.m_body1) === null || _a === void 0 ? void 0 : _a.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
-                  (_b = this.m_body2) === null || _b === void 0 ? void 0 : _b.ApplyForceToCenter(new b2.Vec2(-10.0, 0.0), true);
+                  (_a = this.m_body1) === null || _a === void 0 ? void 0 : _a.ApplyForceToCenter(new b2__namespace.Vec2(-10.0, 0.0), true);
+                  (_b = this.m_body2) === null || _b === void 0 ? void 0 : _b.ApplyForceToCenter(new b2__namespace.Vec2(-10.0, 0.0), true);
                   break;
               case "d":
-                  (_c = this.m_body1) === null || _c === void 0 ? void 0 : _c.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
-                  (_d = this.m_body2) === null || _d === void 0 ? void 0 : _d.ApplyForceToCenter(new b2.Vec2(10.0, 0.0), true);
+                  (_c = this.m_body1) === null || _c === void 0 ? void 0 : _c.ApplyForceToCenter(new b2__namespace.Vec2(10.0, 0.0), true);
+                  (_d = this.m_body2) === null || _d === void 0 ? void 0 : _d.ApplyForceToCenter(new b2__namespace.Vec2(10.0, 0.0), true);
                   break;
               case "b":
                   this.CreateBoxes();
@@ -4591,72 +4610,72 @@
           return new EdgeTest();
       }
   }
-  const testIndex$p = RegisterTest("Geometry", "Edge Test", EdgeTest.Create);
+  RegisterTest("Geometry", "Edge Test", EdgeTest.Create);
 
   // MIT License
   class Friction extends Test {
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(13.0, 0.25);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-4.0, 22.0);
               bd.angle = -0.25;
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.25, 1.0);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(10.5, 19.0);
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(13.0, 0.25);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(4.0, 14.0);
               bd.angle = 0.25;
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.25, 1.0);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-10.5, 11.0);
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(13.0, 0.25);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(-4.0, 6.0);
               bd.angle = -0.25;
               const ground = this.m_world.CreateBody(bd);
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 25.0;
               const friction = [0.75, 0.5, 0.35, 0.1, 0.0];
               for (let i = 0; i < 5; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-15.0 + 4.0 * i, 28.0);
                   const body = this.m_world.CreateBody(bd);
                   fd.friction = friction[i];
@@ -4671,7 +4690,7 @@
           return new Friction();
       }
   }
-  const testIndex$q = RegisterTest("Forces", "Friction", Friction.Create);
+  RegisterTest("Forces", "Friction", Friction.Create);
 
   // MIT License
   class GearJoint extends Test {
@@ -4679,41 +4698,41 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(50.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-50.0, 0.0), new b2__namespace.Vec2(50.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const circle1 = new b2.CircleShape();
+              const circle1 = new b2__namespace.CircleShape();
               circle1.m_radius = 1.0;
-              const box = new b2.PolygonShape();
+              const box = new b2__namespace.PolygonShape();
               box.SetAsBox(0.5, 5.0);
-              const circle2 = new b2.CircleShape();
+              const circle2 = new b2__namespace.CircleShape();
               circle2.m_radius = 2.0;
-              const bd1 = new b2.BodyDef();
-              bd1.type = b2.BodyType.b2_staticBody;
+              const bd1 = new b2__namespace.BodyDef();
+              bd1.type = b2__namespace.BodyType.b2_staticBody;
               bd1.position.Set(10.0, 9.0);
               const body1 = this.m_world.CreateBody(bd1);
               body1.CreateFixture(circle1, 5.0);
-              const bd2 = new b2.BodyDef();
-              bd2.type = b2.BodyType.b2_dynamicBody;
+              const bd2 = new b2__namespace.BodyDef();
+              bd2.type = b2__namespace.BodyType.b2_dynamicBody;
               bd2.position.Set(10.0, 8.0);
               const body2 = this.m_world.CreateBody(bd2);
               body2.CreateFixture(box, 5.0);
-              const bd3 = new b2.BodyDef();
-              bd3.type = b2.BodyType.b2_dynamicBody;
+              const bd3 = new b2__namespace.BodyDef();
+              bd3.type = b2__namespace.BodyType.b2_dynamicBody;
               bd3.position.Set(10.0, 6.0);
               const body3 = this.m_world.CreateBody(bd3);
               body3.CreateFixture(circle2, 5.0);
-              const jd1 = new b2.RevoluteJointDef();
+              const jd1 = new b2__namespace.RevoluteJointDef();
               jd1.Initialize(body1, body2, bd1.position);
               const joint1 = this.m_world.CreateJoint(jd1);
-              const jd2 = new b2.RevoluteJointDef();
+              const jd2 = new b2__namespace.RevoluteJointDef();
               jd2.Initialize(body2, body3, bd3.position);
               const joint2 = this.m_world.CreateJoint(jd2);
-              const jd4 = new b2.GearJointDef();
+              const jd4 = new b2__namespace.GearJointDef();
               jd4.bodyA = body1;
               jd4.bodyB = body3;
               jd4.joint1 = joint1;
@@ -4722,51 +4741,51 @@
               this.m_world.CreateJoint(jd4);
           }
           {
-              const circle1 = new b2.CircleShape();
+              const circle1 = new b2__namespace.CircleShape();
               circle1.m_radius = 1.0;
-              const circle2 = new b2.CircleShape();
+              const circle2 = new b2__namespace.CircleShape();
               circle2.m_radius = 2.0;
-              const box = new b2.PolygonShape();
+              const box = new b2__namespace.PolygonShape();
               box.SetAsBox(0.5, 5.0);
-              const bd1 = new b2.BodyDef();
-              bd1.type = b2.BodyType.b2_dynamicBody;
+              const bd1 = new b2__namespace.BodyDef();
+              bd1.type = b2__namespace.BodyType.b2_dynamicBody;
               bd1.position.Set(-3.0, 12.0);
               const body1 = this.m_world.CreateBody(bd1);
               body1.CreateFixture(circle1, 5.0);
-              const jd1 = new b2.RevoluteJointDef();
+              const jd1 = new b2__namespace.RevoluteJointDef();
               jd1.bodyA = ground;
               jd1.bodyB = body1;
               ground.GetLocalPoint(bd1.position, jd1.localAnchorA);
               body1.GetLocalPoint(bd1.position, jd1.localAnchorB);
               jd1.referenceAngle = body1.GetAngle() - ground.GetAngle();
               this.m_joint1 = this.m_world.CreateJoint(jd1);
-              const bd2 = new b2.BodyDef();
-              bd2.type = b2.BodyType.b2_dynamicBody;
+              const bd2 = new b2__namespace.BodyDef();
+              bd2.type = b2__namespace.BodyType.b2_dynamicBody;
               bd2.position.Set(0.0, 12.0);
               const body2 = this.m_world.CreateBody(bd2);
               body2.CreateFixture(circle2, 5.0);
-              const jd2 = new b2.RevoluteJointDef();
+              const jd2 = new b2__namespace.RevoluteJointDef();
               jd2.Initialize(ground, body2, bd2.position);
               this.m_joint2 = this.m_world.CreateJoint(jd2);
-              const bd3 = new b2.BodyDef();
-              bd3.type = b2.BodyType.b2_dynamicBody;
+              const bd3 = new b2__namespace.BodyDef();
+              bd3.type = b2__namespace.BodyType.b2_dynamicBody;
               bd3.position.Set(2.5, 12.0);
               const body3 = this.m_world.CreateBody(bd3);
               body3.CreateFixture(box, 5.0);
-              const jd3 = new b2.PrismaticJointDef();
-              jd3.Initialize(ground, body3, bd3.position, new b2.Vec2(0.0, 1.0));
+              const jd3 = new b2__namespace.PrismaticJointDef();
+              jd3.Initialize(ground, body3, bd3.position, new b2__namespace.Vec2(0.0, 1.0));
               jd3.lowerTranslation = -5.0;
               jd3.upperTranslation = 5.0;
               jd3.enableLimit = true;
               this.m_joint3 = this.m_world.CreateJoint(jd3);
-              const jd4 = new b2.GearJointDef();
+              const jd4 = new b2__namespace.GearJointDef();
               jd4.bodyA = body1;
               jd4.bodyB = body2;
               jd4.joint1 = this.m_joint1;
               jd4.joint2 = this.m_joint2;
               jd4.ratio = circle2.m_radius / circle1.m_radius;
               this.m_joint4 = this.m_world.CreateJoint(jd4);
-              const jd5 = new b2.GearJointDef();
+              const jd5 = new b2__namespace.GearJointDef();
               jd5.bodyA = body2;
               jd5.bodyB = body3;
               jd5.joint1 = this.m_joint2;
@@ -4797,24 +4816,24 @@
           return new GearJoint();
       }
   }
-  const testIndex$r = RegisterTest("Joints", "Gear", GearJoint.Create);
+  RegisterTest("Joints", "Gear", GearJoint.Create);
 
   // MIT License
   class Heavy1 extends Test {
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Set(0.0, 0.5);
           let body = this.m_world.CreateBody(bd);
-          const shape = new b2.CircleShape();
+          const shape = new b2__namespace.CircleShape();
           shape.m_radius = 0.5;
           body.CreateFixture(shape, 10.0);
           bd.position.Set(0.0, 6.0);
@@ -4826,7 +4845,7 @@
           return new Heavy1();
       }
   }
-  const testIndex$s = RegisterTest("Solver", "Heavy 1", Heavy1.Create);
+  RegisterTest("Solver", "Heavy 1", Heavy1.Create);
 
   // MIT License
   class Heavy2 extends Test {
@@ -4834,17 +4853,17 @@
           super();
           this.m_heavy = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Set(0.0, 2.5);
           let body = this.m_world.CreateBody(bd);
-          const shape = new b2.CircleShape();
+          const shape = new b2__namespace.CircleShape();
           shape.m_radius = 0.5;
           body.CreateFixture(shape, 10.0);
           bd.position.Set(0.0, 3.5);
@@ -4857,11 +4876,11 @@
               this.m_heavy = null;
           }
           else {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 9.0);
               this.m_heavy = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 5.0;
               this.m_heavy.CreateFixture(shape, 10.0);
           }
@@ -4877,20 +4896,20 @@
           return new Heavy2();
       }
   }
-  const testIndex$t = RegisterTest("Solver", "Heavy 2", Heavy2.Create);
+  RegisterTest("Solver", "Heavy 2", Heavy2.Create);
 
   // MIT License
   class MobileBalanced extends Test {
       constructor() {
           super();
           // Create ground body.
-          const bodyDef = new b2.BodyDef();
+          const bodyDef = new b2__namespace.BodyDef();
           bodyDef.position.Set(0.0, 20.0);
           const ground = this.m_world.CreateBody(bodyDef);
           const a = 0.5;
-          const h = new b2.Vec2(0.0, a);
-          const root = this.AddNode(ground, b2.Vec2_zero, 0, 3.0, a);
-          const jointDef = new b2.RevoluteJointDef();
+          const h = new b2__namespace.Vec2(0.0, a);
+          const root = this.AddNode(ground, b2__namespace.Vec2_zero, 0, 3.0, a);
+          const jointDef = new b2__namespace.RevoluteJointDef();
           jointDef.bodyA = ground;
           jointDef.bodyB = root;
           jointDef.localAnchorA.SetZero();
@@ -4899,26 +4918,26 @@
       }
       AddNode(parent, localAnchor, depth, offset, a) {
           const density = 20.0;
-          const h = new b2.Vec2(0.0, a);
+          const h = new b2__namespace.Vec2(0.0, a);
           //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
           const p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
-          const bodyDef = new b2.BodyDef();
-          bodyDef.type = b2.BodyType.b2_dynamicBody;
+          const bodyDef = new b2__namespace.BodyDef();
+          bodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           bodyDef.position.Copy(p);
           const body = this.m_world.CreateBody(bodyDef);
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           shape.SetAsBox(0.25 * a, a);
           body.CreateFixture(shape, density);
           if (depth === MobileBalanced.e_depth) {
               return body;
           }
-          shape.SetAsBox(offset, 0.25 * a, new b2.Vec2(0, -a), 0.0);
+          shape.SetAsBox(offset, 0.25 * a, new b2__namespace.Vec2(0, -a), 0.0);
           body.CreateFixture(shape, density);
-          const a1 = new b2.Vec2(offset, -a);
-          const a2 = new b2.Vec2(-offset, -a);
+          const a1 = new b2__namespace.Vec2(offset, -a);
+          const a2 = new b2__namespace.Vec2(-offset, -a);
           const body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
           const body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
-          const jointDef = new b2.RevoluteJointDef();
+          const jointDef = new b2__namespace.RevoluteJointDef();
           jointDef.bodyA = body;
           jointDef.localAnchorB.Copy(h);
           jointDef.localAnchorA.Copy(a1);
@@ -4937,20 +4956,20 @@
       }
   }
   MobileBalanced.e_depth = 4;
-  const testIndex$u = RegisterTest("Solver", "Mobile Balanced", MobileBalanced.Create);
+  RegisterTest("Solver", "Mobile Balanced", MobileBalanced.Create);
 
   // MIT License
   class Mobile extends Test {
       constructor() {
           super();
           // Create ground body.
-          const bodyDef = new b2.BodyDef();
+          const bodyDef = new b2__namespace.BodyDef();
           bodyDef.position.Set(0.0, 20.0);
           const ground = this.m_world.CreateBody(bodyDef);
           const a = 0.5;
-          const h = new b2.Vec2(0.0, a);
-          const root = this.AddNode(ground, b2.Vec2_zero, 0, 3.0, a);
-          const jointDef = new b2.RevoluteJointDef();
+          const h = new b2__namespace.Vec2(0.0, a);
+          const root = this.AddNode(ground, b2__namespace.Vec2_zero, 0, 3.0, a);
+          const jointDef = new b2__namespace.RevoluteJointDef();
           jointDef.bodyA = ground;
           jointDef.bodyB = root;
           jointDef.localAnchorA.SetZero();
@@ -4959,24 +4978,24 @@
       }
       AddNode(parent, localAnchor, depth, offset, a) {
           const density = 20.0;
-          const h = new b2.Vec2(0.0, a);
+          const h = new b2__namespace.Vec2(0.0, a);
           //  b2Vec2 p = parent->GetPosition() + localAnchor - h;
           const p = parent.GetPosition().Clone().SelfAdd(localAnchor).SelfSub(h);
-          const bodyDef = new b2.BodyDef();
-          bodyDef.type = b2.BodyType.b2_dynamicBody;
+          const bodyDef = new b2__namespace.BodyDef();
+          bodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           bodyDef.position.Copy(p);
           const body = this.m_world.CreateBody(bodyDef);
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           shape.SetAsBox(0.25 * a, a);
           body.CreateFixture(shape, density);
           if (depth === Mobile.e_depth) {
               return body;
           }
-          const a1 = new b2.Vec2(offset, -a);
-          const a2 = new b2.Vec2(-offset, -a);
+          const a1 = new b2__namespace.Vec2(offset, -a);
+          const a2 = new b2__namespace.Vec2(-offset, -a);
           const body1 = this.AddNode(body, a1, depth + 1, 0.5 * offset, a);
           const body2 = this.AddNode(body, a2, depth + 1, 0.5 * offset, a);
-          const jointDef = new b2.RevoluteJointDef();
+          const jointDef = new b2__namespace.RevoluteJointDef();
           jointDef.bodyA = body;
           jointDef.localAnchorB.Copy(h);
           jointDef.localAnchorA.Copy(a1);
@@ -4995,7 +5014,7 @@
       }
   }
   Mobile.e_depth = 4;
-  const testIndex$v = RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);
+  RegisterTest("Solver", "Mobile Unbalanced", Mobile.Create);
 
   // MIT License
   /// This test shows how to use a motor joint. A motor joint
@@ -5008,28 +5027,28 @@
           this.m_go = false;
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-20.0, 0.0), new b2.Vec2(20.0, 0.0));
-              const fd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-20.0, 0.0), new b2__namespace.Vec2(20.0, 0.0));
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               ground.CreateFixture(fd);
           }
           // Define motorized body
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 8.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(2.0, 0.5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.friction = 0.6;
               fd.density = 2.0;
               body.CreateFixture(fd);
-              const mjd = new b2.MotorJointDef();
+              const mjd = new b2__namespace.MotorJointDef();
               mjd.Initialize(ground, body);
               mjd.maxForce = 1000.0;
               mjd.maxTorque = 1000.0;
@@ -5049,13 +5068,13 @@
           if (this.m_go && settings.m_hertz > 0.0) {
               this.m_time += 1.0 / settings.m_hertz;
           }
-          const linearOffset = new b2.Vec2();
-          linearOffset.x = 6.0 * b2.Sin(2.0 * this.m_time);
-          linearOffset.y = 8.0 + 4.0 * b2.Sin(1.0 * this.m_time);
+          const linearOffset = new b2__namespace.Vec2();
+          linearOffset.x = 6.0 * b2__namespace.Sin(2.0 * this.m_time);
+          linearOffset.y = 8.0 + 4.0 * b2__namespace.Sin(1.0 * this.m_time);
           const angularOffset = 4.0 * this.m_time;
           this.m_joint.SetLinearOffset(linearOffset);
           this.m_joint.SetAngularOffset(angularOffset);
-          g_debugDraw.DrawPoint(linearOffset, 4.0, new b2.Color(0.9, 0.9, 0.9));
+          g_debugDraw.DrawPoint(linearOffset, 4.0, new b2__namespace.Color(0.9, 0.9, 0.9));
           super.Step(settings);
           g_debugDraw.DrawString(5, this.m_textLine, "Keys: (s) pause");
           this.m_textLine += DRAW_STRING_NEW_LINE;
@@ -5064,7 +5083,7 @@
           return new MotorJoint();
       }
   }
-  const testIndex$w = RegisterTest("Joints", "Motor Joint", MotorJoint.Create);
+  RegisterTest("Joints", "Motor Joint", MotorJoint.Create);
 
   // MIT License
   /// This tests bullet collision and provides an example of a gameplay scenario.
@@ -5076,38 +5095,38 @@
           // Ground body
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const vs = b2.Vec2.MakeArray(5);
+              const vs = b2__namespace.Vec2.MakeArray(5);
               vs[0].Set(-8.0, 6.0);
               vs[1].Set(-8.0, 20.0);
               vs[2].Set(8.0, 20.0);
               vs[3].Set(8.0, 6.0);
               vs[4].Set(0.0, -2.0);
-              const loop = new b2.ChainShape();
+              const loop = new b2__namespace.ChainShape();
               loop.CreateLoop(vs, 5);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = loop;
               fd.density = 0.0;
               ground.CreateFixture(fd);
           }
           // Flippers
           {
-              const p1 = new b2.Vec2(-2.0, 0.0), p2 = new b2.Vec2(2.0, 0.0);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const p1 = new b2__namespace.Vec2(-2.0, 0.0), p2 = new b2__namespace.Vec2(2.0, 0.0);
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Copy(p1);
               const leftFlipper = this.m_world.CreateBody(bd);
               bd.position.Copy(p2);
               const rightFlipper = this.m_world.CreateBody(bd);
-              const box = new b2.PolygonShape();
+              const box = new b2__namespace.PolygonShape();
               box.SetAsBox(1.75, 0.1);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = box;
               fd.density = 1.0;
               leftFlipper.CreateFixture(fd);
               rightFlipper.CreateFixture(fd);
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.bodyA = ground;
               jd.localAnchorB.SetZero();
               jd.enableMotor = true;
@@ -5116,26 +5135,26 @@
               jd.motorSpeed = 0.0;
               jd.localAnchorA.Copy(p1);
               jd.bodyB = leftFlipper;
-              jd.lowerAngle = -30.0 * b2.pi / 180.0;
-              jd.upperAngle = 5.0 * b2.pi / 180.0;
+              jd.lowerAngle = -30.0 * b2__namespace.pi / 180.0;
+              jd.upperAngle = 5.0 * b2__namespace.pi / 180.0;
               this.m_leftJoint = this.m_world.CreateJoint(jd);
               jd.motorSpeed = 0.0;
               jd.localAnchorA.Copy(p2);
               jd.bodyB = rightFlipper;
-              jd.lowerAngle = -5.0 * b2.pi / 180.0;
-              jd.upperAngle = 30.0 * b2.pi / 180.0;
+              jd.lowerAngle = -5.0 * b2__namespace.pi / 180.0;
+              jd.upperAngle = 30.0 * b2__namespace.pi / 180.0;
               this.m_rightJoint = this.m_world.CreateJoint(jd);
           }
           // Circle character
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(1.0, 15.0);
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.bullet = true;
               this.m_ball = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.2;
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               this.m_ball.CreateFixture(fd);
@@ -5173,7 +5192,7 @@
           return new Pinball();
       }
   }
-  const testIndex$x = RegisterTest("Examples", "Pinball", Pinball.Create);
+  RegisterTest("Examples", "Pinball", Pinball.Create);
 
   // MIT License
   class Platformer extends Test {
@@ -5185,18 +5204,18 @@
           this.m_state = Platformer_State.e_unknown;
           // Ground
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Platform
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(0.0, 10.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(3.0, 0.5);
               this.m_platform = body.CreateFixture(shape, 0.0);
               this.m_bottom = 10.0 - 0.5;
@@ -5204,15 +5223,15 @@
           }
           // Actor
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 12.0);
               const body = this.m_world.CreateBody(bd);
               this.m_radius = 0.5;
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = this.m_radius;
               this.m_character = body.CreateFixture(shape, 20.0);
-              body.SetLinearVelocity(new b2.Vec2(0.0, -50.0));
+              body.SetLinearVelocity(new b2__namespace.Vec2(0.0, -50.0));
               this.m_state = Platformer_State.e_unknown;
           }
       }
@@ -5227,7 +5246,7 @@
               return;
           }
           const position = this.m_character.GetBody().GetPosition();
-          if (position.y < this.m_top + this.m_radius - 3.0 * b2.linearSlop) {
+          if (position.y < this.m_top + this.m_radius - 3.0 * b2__namespace.linearSlop) {
               contact.SetEnabled(false);
           }
       }
@@ -5247,21 +5266,21 @@
       Platformer_State[Platformer_State["e_above"] = 1] = "e_above";
       Platformer_State[Platformer_State["e_below"] = 2] = "e_below";
   })(Platformer_State || (Platformer_State = {}));
-  const testIndex$y = RegisterTest("Examples", "Platformer", Platformer.Create);
+  RegisterTest("Examples", "Platformer", Platformer.Create);
 
   // MIT License
   class PolygonCollision extends Test {
       constructor() {
           super();
-          this.m_polygonA = new b2.PolygonShape();
-          this.m_polygonB = new b2.PolygonShape();
-          this.m_transformA = new b2.Transform();
-          this.m_transformB = new b2.Transform();
-          this.m_positionB = new b2.Vec2();
+          this.m_polygonA = new b2__namespace.PolygonShape();
+          this.m_polygonB = new b2__namespace.PolygonShape();
+          this.m_transformA = new b2__namespace.Transform();
+          this.m_transformB = new b2__namespace.Transform();
+          this.m_positionB = new b2__namespace.Vec2();
           this.m_angleB = 0;
           {
               this.m_polygonA.SetAsBox(0.2, 0.4);
-              this.m_transformA.SetPositionAngle(new b2.Vec2(0.0, 0.0), 0.0);
+              this.m_transformA.SetPositionAngle(new b2__namespace.Vec2(0.0, 0.0), 0.0);
           }
           {
               this.m_polygonB.SetAsBox(0.5, 0.5);
@@ -5285,35 +5304,35 @@
                   this.m_positionB.y += 0.1;
                   break;
               case "q":
-                  this.m_angleB += 0.1 * b2.pi;
+                  this.m_angleB += 0.1 * b2__namespace.pi;
                   break;
               case "e":
-                  this.m_angleB -= 0.1 * b2.pi;
+                  this.m_angleB -= 0.1 * b2__namespace.pi;
                   break;
           }
           this.m_transformB.SetPositionAngle(this.m_positionB, this.m_angleB);
       }
       Step(settings) {
-          const manifold = new b2.Manifold();
-          b2.CollidePolygons(manifold, this.m_polygonA, this.m_transformA, this.m_polygonB, this.m_transformB);
-          const worldManifold = new b2.WorldManifold();
+          const manifold = new b2__namespace.Manifold();
+          b2__namespace.CollidePolygons(manifold, this.m_polygonA, this.m_transformA, this.m_polygonB, this.m_transformB);
+          const worldManifold = new b2__namespace.WorldManifold();
           worldManifold.Initialize(manifold, this.m_transformA, this.m_polygonA.m_radius, this.m_transformB, this.m_polygonB.m_radius);
           g_debugDraw.DrawString(5, this.m_textLine, `point count = ${manifold.pointCount}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           {
-              const color = new b2.Color(0.9, 0.9, 0.9);
+              const color = new b2__namespace.Color(0.9, 0.9, 0.9);
               const v = [];
               for (let i = 0; i < this.m_polygonA.m_count; ++i) {
-                  v[i] = b2.Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new b2.Vec2());
+                  v[i] = b2__namespace.Transform.MulXV(this.m_transformA, this.m_polygonA.m_vertices[i], new b2__namespace.Vec2());
               }
               g_debugDraw.DrawPolygon(v, this.m_polygonA.m_count, color);
               for (let i = 0; i < this.m_polygonB.m_count; ++i) {
-                  v[i] = b2.Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new b2.Vec2());
+                  v[i] = b2__namespace.Transform.MulXV(this.m_transformB, this.m_polygonB.m_vertices[i], new b2__namespace.Vec2());
               }
               g_debugDraw.DrawPolygon(v, this.m_polygonB.m_count, color);
           }
           for (let i = 0; i < manifold.pointCount; ++i) {
-              g_debugDraw.DrawPoint(worldManifold.points[i], 4.0, new b2.Color(0.9, 0.3, 0.3));
+              g_debugDraw.DrawPoint(worldManifold.points[i], 4.0, new b2__namespace.Color(0.9, 0.3, 0.3));
           }
           super.Step(settings);
       }
@@ -5321,7 +5340,7 @@
           return new PolygonCollision();
       }
   }
-  const testIndex$z = RegisterTest("Geometry", "Polygon Collision", PolygonCollision.Create);
+  RegisterTest("Geometry", "Polygon Collision", PolygonCollision.Create);
 
   // MIT License
   /// This tests stacking. It also shows how to use b2World::Query
@@ -5329,11 +5348,11 @@
   /// This callback is called by b2World::QueryAABB. We find all the fixtures
   /// that overlap an AABB. Of those, we use b2TestOverlap to determine which fixtures
   /// overlap a circle. Up to 4 overlapped fixtures will be highlighted with a yellow border.
-  class PolygonShapesCallback extends b2.QueryCallback {
+  class PolygonShapesCallback extends b2__namespace.QueryCallback {
       constructor() {
           super(...arguments);
-          this.m_circle = new b2.CircleShape();
-          this.m_transform = new b2.Transform();
+          this.m_circle = new b2__namespace.CircleShape();
+          this.m_transform = new b2__namespace.Transform();
           this.m_count = 0;
       }
       /// Called for each fixture found in the query AABB.
@@ -5344,9 +5363,9 @@
           }
           const body = fixture.GetBody();
           const shape = fixture.GetShape();
-          const overlap = b2.TestOverlapShape(shape, 0, this.m_circle, 0, body.GetTransform(), this.m_transform);
+          const overlap = b2__namespace.TestOverlapShape(shape, 0, this.m_circle, 0, body.GetTransform(), this.m_transform);
           if (overlap) {
-              const color = new b2.Color(0.95, 0.95, 0.6);
+              const color = new b2__namespace.Color(0.95, 0.95, 0.6);
               const center = body.GetWorldCenter();
               g_debugDraw.DrawPoint(center, 5.0, color);
               ++this.m_count;
@@ -5359,44 +5378,44 @@
       constructor() {
           super();
           this.m_bodyIndex = 0;
-          this.m_bodies = b2.MakeArray(PolygonShapes.e_maxBodies, () => null);
-          this.m_polygons = b2.MakeArray(4, () => new b2.PolygonShape());
-          this.m_circle = new b2.CircleShape();
+          this.m_bodies = b2__namespace.MakeArray(PolygonShapes.e_maxBodies, () => null);
+          this.m_polygons = b2__namespace.MakeArray(4, () => new b2__namespace.PolygonShape());
+          this.m_circle = new b2__namespace.CircleShape();
           // Ground body
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
               const vertices = new Array(3);
-              vertices[0] = new b2.Vec2(-0.5, 0.0);
-              vertices[1] = new b2.Vec2(0.5, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
+              vertices[0] = new b2__namespace.Vec2(-0.5, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
               this.m_polygons[0].Set(vertices, 3);
           }
           {
               const vertices = new Array(3);
-              vertices[0] = new b2.Vec2(-0.1, 0.0);
-              vertices[1] = new b2.Vec2(0.1, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
+              vertices[0] = new b2__namespace.Vec2(-0.1, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.1, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
               this.m_polygons[1].Set(vertices, 3);
           }
           {
               const w = 1.0;
-              const b = w / (2.0 + b2.Sqrt(2.0));
-              const s = b2.Sqrt(2.0) * b;
+              const b = w / (2.0 + b2__namespace.Sqrt(2.0));
+              const s = b2__namespace.Sqrt(2.0) * b;
               const vertices = new Array(8);
-              vertices[0] = new b2.Vec2(0.5 * s, 0.0);
-              vertices[1] = new b2.Vec2(0.5 * w, b);
-              vertices[2] = new b2.Vec2(0.5 * w, b + s);
-              vertices[3] = new b2.Vec2(0.5 * s, w);
-              vertices[4] = new b2.Vec2(-0.5 * s, w);
-              vertices[5] = new b2.Vec2(-0.5 * w, b + s);
-              vertices[6] = new b2.Vec2(-0.5 * w, b);
-              vertices[7] = new b2.Vec2(-0.5 * s, 0.0);
+              vertices[0] = new b2__namespace.Vec2(0.5 * s, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5 * w, b);
+              vertices[2] = new b2__namespace.Vec2(0.5 * w, b + s);
+              vertices[3] = new b2__namespace.Vec2(0.5 * s, w);
+              vertices[4] = new b2__namespace.Vec2(-0.5 * s, w);
+              vertices[5] = new b2__namespace.Vec2(-0.5 * w, b + s);
+              vertices[6] = new b2__namespace.Vec2(-0.5 * w, b);
+              vertices[7] = new b2__namespace.Vec2(-0.5 * s, 0.0);
               this.m_polygons[2].Set(vertices, 8);
           }
           {
@@ -5414,24 +5433,24 @@
               this.m_world.DestroyBody(this.m_bodies[this.m_bodyIndex]);
               this.m_bodies[this.m_bodyIndex] = null;
           }
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
-          const x = b2.RandomRange(-2.0, 2.0);
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
+          const x = b2__namespace.RandomRange(-2.0, 2.0);
           bd.position.Set(x, 10.0);
-          bd.angle = b2.RandomRange(-b2.pi, b2.pi);
+          bd.angle = b2__namespace.RandomRange(-b2__namespace.pi, b2__namespace.pi);
           if (index === 4) {
               bd.angularDamping = 0.02;
           }
           this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
           if (index < 4) {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_polygons[index];
               fd.density = 1.0;
               fd.friction = 0.3;
               this.m_bodies[this.m_bodyIndex].CreateFixture(fd);
           }
           else {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_circle;
               fd.density = 1.0;
               fd.friction = 0.3;
@@ -5476,10 +5495,10 @@
           callback.m_circle.m_radius = 2.0;
           callback.m_circle.m_p.Set(0.0, 1.1);
           callback.m_transform.SetIdentity();
-          const aabb = new b2.AABB();
+          const aabb = new b2__namespace.AABB();
           callback.m_circle.ComputeAABB(aabb, callback.m_transform, 0);
           this.m_world.QueryAABB(callback, aabb);
-          const color = new b2.Color(0.4, 0.7, 0.8);
+          const color = new b2__namespace.Color(0.4, 0.7, 0.8);
           g_debugDraw.DrawCircle(callback.m_circle.m_p, callback.m_circle.m_radius, color);
           g_debugDraw.DrawString(5, this.m_textLine, `Press 1-5 to drop stuff, maximum of ${PolygonShapesCallback.e_maxCount} overlaps detected`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
@@ -5493,7 +5512,7 @@
       }
   }
   PolygonShapes.e_maxBodies = 256;
-  const testIndex$A = RegisterTest("Geometry", "Polygon Shapes", PolygonShapes.Create);
+  RegisterTest("Geometry", "Polygon Shapes", PolygonShapes.Create);
 
   // MIT License
   // Test the prismatic joint with limits and motor options.
@@ -5502,25 +5521,25 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(1.0, 1.0);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 10.0);
-              bd.angle = 0.5 * b2.pi;
+              bd.angle = 0.5 * b2__namespace.pi;
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(shape, 5.0);
-              const pjd = new b2.PrismaticJointDef();
+              const pjd = new b2__namespace.PrismaticJointDef();
               // Horizontal
-              pjd.Initialize(ground, body, bd.position, new b2.Vec2(1.0, 0.0));
+              pjd.Initialize(ground, body, bd.position, new b2__namespace.Vec2(1.0, 0.0));
               pjd.motorSpeed = 10.0;
               pjd.maxMotorForce = 10000.0;
               pjd.enableMotor = true;
@@ -5555,7 +5574,7 @@
           return new Prismatic();
       }
   }
-  const testIndex$B = RegisterTest("Joints", "Prismatic", Prismatic.Create);
+  RegisterTest("Joints", "Prismatic", Prismatic.Create);
 
   // MIT License
   class PulleyJoint extends Test {
@@ -5567,9 +5586,9 @@
           const b = 2.0;
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const circle = new b2.CircleShape();
+              const circle = new b2__namespace.CircleShape();
               circle.m_radius = 2.0;
               circle.m_p.Set(-10.0, y + b + L);
               ground.CreateFixture(circle, 0.0);
@@ -5577,10 +5596,10 @@
               ground.CreateFixture(circle, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(a, b);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               //bd.fixedRotation = true;
               bd.position.Set(-10.0, y);
               const body1 = this.m_world.CreateBody(bd);
@@ -5588,11 +5607,11 @@
               bd.position.Set(10.0, y);
               const body2 = this.m_world.CreateBody(bd);
               body2.CreateFixture(shape, 5.0);
-              const pulleyDef = new b2.PulleyJointDef();
-              const anchor1 = new b2.Vec2(-10.0, y + b);
-              const anchor2 = new b2.Vec2(10.0, y + b);
-              const groundAnchor1 = new b2.Vec2(-10.0, y + b + L);
-              const groundAnchor2 = new b2.Vec2(10.0, y + b + L);
+              const pulleyDef = new b2__namespace.PulleyJointDef();
+              const anchor1 = new b2__namespace.Vec2(-10.0, y + b);
+              const anchor2 = new b2__namespace.Vec2(10.0, y + b);
+              const groundAnchor1 = new b2__namespace.Vec2(-10.0, y + b + L);
+              const groundAnchor2 = new b2__namespace.Vec2(10.0, y + b + L);
               pulleyDef.Initialize(body1, body2, groundAnchor1, groundAnchor2, anchor1, anchor2, 1.5);
               this.m_joint1 = this.m_world.CreateJoint(pulleyDef);
           }
@@ -5608,32 +5627,32 @@
           return new PulleyJoint();
       }
   }
-  const testIndex$C = RegisterTest("Joints", "Pulley", PulleyJoint.Create);
+  RegisterTest("Joints", "Pulley", PulleyJoint.Create);
 
   // MIT License
   class Pyramid extends Test {
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
               const a = 0.5;
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(a, a);
-              const x = new b2.Vec2(-7.0, 0.75);
-              const y = new b2.Vec2(0.0, 0.0);
-              const deltaX = new b2.Vec2(0.5625, 1.25);
-              const deltaY = new b2.Vec2(1.125, 0.0);
+              const x = new b2__namespace.Vec2(-7.0, 0.75);
+              const y = new b2__namespace.Vec2(0.0, 0.0);
+              const deltaX = new b2__namespace.Vec2(0.5625, 1.25);
+              const deltaY = new b2__namespace.Vec2(1.125, 0.0);
               for (let i = 0; i < Pyramid.e_count; ++i) {
                   y.Copy(x);
                   for (let j = i; j < Pyramid.e_count; ++j) {
-                      const bd = new b2.BodyDef();
-                      bd.type = b2.BodyType.b2_dynamicBody;
+                      const bd = new b2__namespace.BodyDef();
+                      bd.type = b2__namespace.BodyType.b2_dynamicBody;
                       bd.position.Copy(y);
                       const body = this.m_world.CreateBody(bd);
                       body.CreateFixture(shape, 5.0);
@@ -5655,19 +5674,19 @@
       }
   }
   Pyramid.e_count = 20;
-  const testIndex$D = RegisterTest("Stacking", "Pyramid", Pyramid.Create);
+  RegisterTest("Stacking", "Pyramid", Pyramid.Create);
 
   // MIT License
   // This test demonstrates how to use the world ray-cast feature.
   // NOTE: we are intentionally filtering one of the polygons, therefore
   // the ray will always miss one type of polygon.
   // This callback finds the closest hit. Polygon 0 is filtered.
-  class RayCastClosestCallback extends b2.RayCastCallback {
+  class RayCastClosestCallback extends b2__namespace.RayCastCallback {
       constructor() {
           super();
           this.m_hit = false;
-          this.m_point = new b2.Vec2();
-          this.m_normal = new b2.Vec2();
+          this.m_point = new b2__namespace.Vec2();
+          this.m_normal = new b2__namespace.Vec2();
       }
       ReportFixture(fixture, point, normal, fraction) {
           const body = fixture.GetBody();
@@ -5691,12 +5710,12 @@
   }
   // This callback finds any hit. Polygon 0 is filtered. For this type of query we are usually
   // just checking for obstruction, so the actual fixture and hit point are irrelevant. 
-  class RayCastAnyCallback extends b2.RayCastCallback {
+  class RayCastAnyCallback extends b2__namespace.RayCastCallback {
       constructor() {
           super();
           this.m_hit = false;
-          this.m_point = new b2.Vec2();
-          this.m_normal = new b2.Vec2();
+          this.m_point = new b2__namespace.Vec2();
+          this.m_normal = new b2__namespace.Vec2();
       }
       ReportFixture(fixture, point, normal, fraction) {
           const body = fixture.GetBody();
@@ -5720,11 +5739,11 @@
   // This ray cast collects multiple hits along the ray. Polygon 0 is filtered.
   // The fixtures are not necessary reported in order, so we might not capture
   // the closest fixture.
-  class RayCastMultipleCallback extends b2.RayCastCallback {
+  class RayCastMultipleCallback extends b2__namespace.RayCastCallback {
       constructor() {
           super();
-          this.m_points = b2.Vec2.MakeArray(RayCastMultipleCallback.e_maxCount);
-          this.m_normals = b2.Vec2.MakeArray(RayCastMultipleCallback.e_maxCount);
+          this.m_points = b2__namespace.Vec2.MakeArray(RayCastMultipleCallback.e_maxCount);
+          this.m_normals = b2__namespace.Vec2.MakeArray(RayCastMultipleCallback.e_maxCount);
           this.m_count = 0;
       }
       ReportFixture(fixture, point, normal, fraction) {
@@ -5764,48 +5783,48 @@
           this.m_bodyIndex = 0;
           this.m_bodies = [];
           this.m_polygons = [];
-          this.m_circle = new b2.CircleShape();
-          this.m_edge = new b2.EdgeShape();
+          this.m_circle = new b2__namespace.CircleShape();
+          this.m_edge = new b2__namespace.EdgeShape();
           this.m_angle = 0;
           this.m_mode = RayCastMode.e_closest;
           for (let i = 0; i < 4; ++i) {
-              this.m_polygons[i] = new b2.PolygonShape();
+              this.m_polygons[i] = new b2__namespace.PolygonShape();
           }
           // Ground body
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
               const vertices = [ /*3*/];
-              vertices[0] = new b2.Vec2(-0.5, 0.0);
-              vertices[1] = new b2.Vec2(0.5, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
+              vertices[0] = new b2__namespace.Vec2(-0.5, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
               this.m_polygons[0].Set(vertices, 3);
           }
           {
               const vertices = [ /*3*/];
-              vertices[0] = new b2.Vec2(-0.1, 0.0);
-              vertices[1] = new b2.Vec2(0.1, 0.0);
-              vertices[2] = new b2.Vec2(0.0, 1.5);
+              vertices[0] = new b2__namespace.Vec2(-0.1, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.1, 0.0);
+              vertices[2] = new b2__namespace.Vec2(0.0, 1.5);
               this.m_polygons[1].Set(vertices, 3);
           }
           {
               const w = 1.0;
-              const b = w / (2.0 + b2.Sqrt(2.0));
-              const s = b2.Sqrt(2.0) * b;
+              const b = w / (2.0 + b2__namespace.Sqrt(2.0));
+              const s = b2__namespace.Sqrt(2.0) * b;
               const vertices = [ /*8*/];
-              vertices[0] = new b2.Vec2(0.5 * s, 0.0);
-              vertices[1] = new b2.Vec2(0.5 * w, b);
-              vertices[2] = new b2.Vec2(0.5 * w, b + s);
-              vertices[3] = new b2.Vec2(0.5 * s, w);
-              vertices[4] = new b2.Vec2(-0.5 * s, w);
-              vertices[5] = new b2.Vec2(-0.5 * w, b + s);
-              vertices[6] = new b2.Vec2(-0.5 * w, b);
-              vertices[7] = new b2.Vec2(-0.5 * s, 0.0);
+              vertices[0] = new b2__namespace.Vec2(0.5 * s, 0.0);
+              vertices[1] = new b2__namespace.Vec2(0.5 * w, b);
+              vertices[2] = new b2__namespace.Vec2(0.5 * w, b + s);
+              vertices[3] = new b2__namespace.Vec2(0.5 * s, w);
+              vertices[4] = new b2__namespace.Vec2(-0.5 * s, w);
+              vertices[5] = new b2__namespace.Vec2(-0.5 * w, b + s);
+              vertices[6] = new b2__namespace.Vec2(-0.5 * w, b);
+              vertices[7] = new b2__namespace.Vec2(-0.5 * s, 0.0);
               this.m_polygons[2].Set(vertices, 8);
           }
           {
@@ -5815,7 +5834,7 @@
               this.m_circle.m_radius = 0.5;
           }
           {
-              this.m_edge.SetTwoSided(new b2.Vec2(-1, 0), new b2.Vec2(1, 0));
+              this.m_edge.SetTwoSided(new b2__namespace.Vec2(-1, 0), new b2__namespace.Vec2(1, 0));
           }
           this.m_bodyIndex = 0;
           for (let i = 0; i < RayCast.e_maxBodies; ++i) {
@@ -5830,11 +5849,11 @@
               this.m_world.DestroyBody(old_body);
               this.m_bodies[this.m_bodyIndex] = null;
           }
-          const bd = new b2.BodyDef();
-          const x = b2.RandomRange(-10.0, 10.0);
-          const y = b2.RandomRange(0.0, 20.0);
+          const bd = new b2__namespace.BodyDef();
+          const x = b2__namespace.RandomRange(-10.0, 10.0);
+          const y = b2__namespace.RandomRange(0.0, 20.0);
           bd.position.Set(x, y);
-          bd.angle = b2.RandomRange(-b2.pi, b2.pi);
+          bd.angle = b2__namespace.RandomRange(-b2__namespace.pi, b2__namespace.pi);
           bd.userData = {};
           bd.userData.index = index;
           if (index === 4) {
@@ -5842,19 +5861,19 @@
           }
           const new_body = this.m_bodies[this.m_bodyIndex] = this.m_world.CreateBody(bd);
           if (index < 4) {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_polygons[index];
               fd.friction = 0.3;
               new_body.CreateFixture(fd);
           }
           else if (index < 5) {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_circle;
               fd.friction = 0.3;
               new_body.CreateFixture(fd);
           }
           else {
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = this.m_edge;
               fd.friction = 0.3;
               new_body.CreateFixture(fd);
@@ -5914,50 +5933,50 @@
           }
           this.m_textLine += DRAW_STRING_NEW_LINE;
           const L = 11.0;
-          const point1 = new b2.Vec2(0.0, 10.0);
-          const d = new b2.Vec2(L * b2.Cos(this.m_angle), L * b2.Sin(this.m_angle));
-          const point2 = b2.Vec2.AddVV(point1, d, new b2.Vec2());
+          const point1 = new b2__namespace.Vec2(0.0, 10.0);
+          const d = new b2__namespace.Vec2(L * b2__namespace.Cos(this.m_angle), L * b2__namespace.Sin(this.m_angle));
+          const point2 = b2__namespace.Vec2.AddVV(point1, d, new b2__namespace.Vec2());
           if (this.m_mode === RayCastMode.e_closest) {
               const callback = new RayCastClosestCallback();
               this.m_world.RayCast(callback, point1, point2);
               if (callback.m_hit) {
-                  g_debugDraw.DrawPoint(callback.m_point, 5.0, new b2.Color(0.4, 0.9, 0.4));
-                  g_debugDraw.DrawSegment(point1, callback.m_point, new b2.Color(0.8, 0.8, 0.8));
-                  const head = b2.Vec2.AddVV(callback.m_point, b2.Vec2.MulSV(0.5, callback.m_normal, b2.Vec2.s_t0), new b2.Vec2());
-                  g_debugDraw.DrawSegment(callback.m_point, head, new b2.Color(0.9, 0.9, 0.4));
+                  g_debugDraw.DrawPoint(callback.m_point, 5.0, new b2__namespace.Color(0.4, 0.9, 0.4));
+                  g_debugDraw.DrawSegment(point1, callback.m_point, new b2__namespace.Color(0.8, 0.8, 0.8));
+                  const head = b2__namespace.Vec2.AddVV(callback.m_point, b2__namespace.Vec2.MulSV(0.5, callback.m_normal, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+                  g_debugDraw.DrawSegment(callback.m_point, head, new b2__namespace.Color(0.9, 0.9, 0.4));
               }
               else {
-                  g_debugDraw.DrawSegment(point1, point2, new b2.Color(0.8, 0.8, 0.8));
+                  g_debugDraw.DrawSegment(point1, point2, new b2__namespace.Color(0.8, 0.8, 0.8));
               }
           }
           else if (this.m_mode === RayCastMode.e_any) {
               const callback = new RayCastAnyCallback();
               this.m_world.RayCast(callback, point1, point2);
               if (callback.m_hit) {
-                  g_debugDraw.DrawPoint(callback.m_point, 5.0, new b2.Color(0.4, 0.9, 0.4));
-                  g_debugDraw.DrawSegment(point1, callback.m_point, new b2.Color(0.8, 0.8, 0.8));
-                  const head = b2.Vec2.AddVV(callback.m_point, b2.Vec2.MulSV(0.5, callback.m_normal, b2.Vec2.s_t0), new b2.Vec2());
-                  g_debugDraw.DrawSegment(callback.m_point, head, new b2.Color(0.9, 0.9, 0.4));
+                  g_debugDraw.DrawPoint(callback.m_point, 5.0, new b2__namespace.Color(0.4, 0.9, 0.4));
+                  g_debugDraw.DrawSegment(point1, callback.m_point, new b2__namespace.Color(0.8, 0.8, 0.8));
+                  const head = b2__namespace.Vec2.AddVV(callback.m_point, b2__namespace.Vec2.MulSV(0.5, callback.m_normal, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+                  g_debugDraw.DrawSegment(callback.m_point, head, new b2__namespace.Color(0.9, 0.9, 0.4));
               }
               else {
-                  g_debugDraw.DrawSegment(point1, point2, new b2.Color(0.8, 0.8, 0.8));
+                  g_debugDraw.DrawSegment(point1, point2, new b2__namespace.Color(0.8, 0.8, 0.8));
               }
           }
           else if (this.m_mode === RayCastMode.e_multiple) {
               const callback = new RayCastMultipleCallback();
               this.m_world.RayCast(callback, point1, point2);
-              g_debugDraw.DrawSegment(point1, point2, new b2.Color(0.8, 0.8, 0.8));
+              g_debugDraw.DrawSegment(point1, point2, new b2__namespace.Color(0.8, 0.8, 0.8));
               for (let i = 0; i < callback.m_count; ++i) {
                   const p = callback.m_points[i];
                   const n = callback.m_normals[i];
-                  g_debugDraw.DrawPoint(p, 5.0, new b2.Color(0.4, 0.9, 0.4));
-                  g_debugDraw.DrawSegment(point1, p, new b2.Color(0.8, 0.8, 0.8));
-                  const head = b2.Vec2.AddVV(p, b2.Vec2.MulSV(0.5, n, b2.Vec2.s_t0), new b2.Vec2());
-                  g_debugDraw.DrawSegment(p, head, new b2.Color(0.9, 0.9, 0.4));
+                  g_debugDraw.DrawPoint(p, 5.0, new b2__namespace.Color(0.4, 0.9, 0.4));
+                  g_debugDraw.DrawSegment(point1, p, new b2__namespace.Color(0.8, 0.8, 0.8));
+                  const head = b2__namespace.Vec2.AddVV(p, b2__namespace.Vec2.MulSV(0.5, n, b2__namespace.Vec2.s_t0), new b2__namespace.Vec2());
+                  g_debugDraw.DrawSegment(p, head, new b2__namespace.Color(0.9, 0.9, 0.4));
               }
           }
           if (advanceRay) {
-              this.m_angle += 0.25 * b2.pi / 180.0;
+              this.m_angle += 0.25 * b2__namespace.pi / 180.0;
           }
           /*
           #if 0
@@ -6006,7 +6025,7 @@
       }
   }
   RayCast.e_maxBodies = 256;
-  const testIndex$E = RegisterTest("Collision", "Ray Cast", RayCast.Create);
+  RegisterTest("Collision", "Ray Cast", RayCast.Create);
 
   // MIT License
   // Note: even with a restitution of 1.0, there is some energy change
@@ -6016,25 +6035,25 @@
           super();
           const threshold = 10.0;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              const fd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.restitutionThreshold = threshold;
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 1.0;
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 1.0;
               const restitution = [0.0, 0.1, 0.3, 0.5, 0.75, 0.9, 1.0];
               for (let i = 0; i < 7; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-10.0 + 3.0 * i, 20.0);
                   const body = this.m_world.CreateBody(bd);
                   fd.restitution = restitution[i];
@@ -6050,7 +6069,7 @@
           return new Restitution();
       }
   }
-  const testIndex$F = RegisterTest("Forces", "Restitution", Restitution.Create);
+  RegisterTest("Forces", "Restitution", Restitution.Create);
 
   // MIT License
   class Revolute extends Test {
@@ -6058,61 +6077,61 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
-              const fd = new b2.FixtureDef();
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               //fd.filter.categoryBits = 2;
               ground.CreateFixture(fd);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.5;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
-              const rjd = new b2.RevoluteJointDef();
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
+              const rjd = new b2__namespace.RevoluteJointDef();
               bd.position.Set(-10.0, 20.0);
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(shape, 5.0);
               const w = 100.0;
               body.SetAngularVelocity(w);
-              body.SetLinearVelocity(new b2.Vec2(-8.0 * w, 0.0));
-              rjd.Initialize(ground, body, new b2.Vec2(-10.0, 12.0));
-              rjd.motorSpeed = 1.0 * b2.pi;
+              body.SetLinearVelocity(new b2__namespace.Vec2(-8.0 * w, 0.0));
+              rjd.Initialize(ground, body, new b2__namespace.Vec2(-10.0, 12.0));
+              rjd.motorSpeed = 1.0 * b2__namespace.pi;
               rjd.maxMotorTorque = 10000.0;
               rjd.enableMotor = false;
-              rjd.lowerAngle = -0.25 * b2.pi;
-              rjd.upperAngle = 0.5 * b2.pi;
+              rjd.lowerAngle = -0.25 * b2__namespace.pi;
+              rjd.upperAngle = 0.5 * b2__namespace.pi;
               rjd.enableLimit = true;
               rjd.collideConnected = true;
               this.m_joint = this.m_world.CreateJoint(rjd);
           }
           {
-              const circle_shape = new b2.CircleShape();
+              const circle_shape = new b2__namespace.CircleShape();
               circle_shape.m_radius = 3.0;
-              const circle_bd = new b2.BodyDef();
-              circle_bd.type = b2.BodyType.b2_dynamicBody;
+              const circle_bd = new b2__namespace.BodyDef();
+              circle_bd.type = b2__namespace.BodyType.b2_dynamicBody;
               circle_bd.position.Set(5.0, 30.0);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.density = 5.0;
               fd.filter.maskBits = 1;
               fd.shape = circle_shape;
               this.m_ball = this.m_world.CreateBody(circle_bd);
               this.m_ball.CreateFixture(fd);
-              const polygon_shape = new b2.PolygonShape();
-              polygon_shape.SetAsBox(10.0, 0.2, new b2.Vec2(-10.0, 0.0), 0.0);
-              const polygon_bd = new b2.BodyDef();
+              const polygon_shape = new b2__namespace.PolygonShape();
+              polygon_shape.SetAsBox(10.0, 0.2, new b2__namespace.Vec2(-10.0, 0.0), 0.0);
+              const polygon_bd = new b2__namespace.BodyDef();
               polygon_bd.position.Set(20.0, 10.0);
-              polygon_bd.type = b2.BodyType.b2_dynamicBody;
+              polygon_bd.type = b2__namespace.BodyType.b2_dynamicBody;
               polygon_bd.bullet = true;
               const polygon_body = this.m_world.CreateBody(polygon_bd);
               polygon_body.CreateFixture(polygon_shape, 2.0);
-              const rjd = new b2.RevoluteJointDef();
-              rjd.Initialize(ground, polygon_body, new b2.Vec2(20.0, 10.0));
-              rjd.lowerAngle = -0.25 * b2.pi;
-              rjd.upperAngle = 0.0 * b2.pi;
+              const rjd = new b2__namespace.RevoluteJointDef();
+              rjd.Initialize(ground, polygon_body, new b2__namespace.Vec2(20.0, 10.0));
+              rjd.lowerAngle = -0.25 * b2__namespace.pi;
+              rjd.upperAngle = 0.0 * b2__namespace.pi;
               rjd.enableLimit = true;
               this.m_world.CreateJoint(rjd);
           }
@@ -6142,21 +6161,21 @@
           return new Revolute();
       }
   }
-  const testIndex$G = RegisterTest("Joints", "Revolute", Revolute.Create);
+  RegisterTest("Joints", "Revolute", Revolute.Create);
 
   // MIT License
   ///
   class Rope extends Test {
       constructor() {
           super();
-          this.m_rope1 = new b2.Rope();
-          this.m_rope2 = new b2.Rope();
-          this.m_tuning1 = new b2.RopeTuning();
-          this.m_tuning2 = new b2.RopeTuning();
+          this.m_rope1 = new b2__namespace.Rope();
+          this.m_rope2 = new b2__namespace.Rope();
+          this.m_tuning1 = new b2__namespace.RopeTuning();
+          this.m_tuning2 = new b2__namespace.RopeTuning();
           this.m_iterations1 = 0;
           this.m_iterations2 = 0;
-          this.m_position1 = new b2.Vec2();
-          this.m_position2 = new b2.Vec2();
+          this.m_position1 = new b2__namespace.Vec2();
+          this.m_position2 = new b2__namespace.Vec2();
           this.m_speed = 0.0;
           // void UpdateUI() override
           // {
@@ -6279,9 +6298,9 @@
           const N = 20;
           const L = 0.5;
           // b2Vec2 vertices[N];
-          const vertices = b2.Vec2.MakeArray(N);
+          const vertices = b2__namespace.Vec2.MakeArray(N);
           // float masses[N];
-          const masses = b2.MakeNumberArray(N);
+          const masses = b2__namespace.MakeNumberArray(N);
           for (let i = 0; i < N; ++i) {
               vertices[i].Set(0.0, L * (N - i));
               masses[i] = 1.0;
@@ -6291,24 +6310,24 @@
           this.m_tuning1.bendHertz = 30.0;
           this.m_tuning1.bendDamping = 4.0;
           this.m_tuning1.bendStiffness = 1.0;
-          this.m_tuning1.bendingModel = b2.pbdTriangleBendingModel;
+          this.m_tuning1.bendingModel = b2__namespace.pbdTriangleBendingModel;
           this.m_tuning1.isometric = true;
           this.m_tuning1.stretchHertz = 30.0;
           this.m_tuning1.stretchDamping = 4.0;
           this.m_tuning1.stretchStiffness = 1.0;
-          this.m_tuning1.stretchingModel = b2.pbdStretchingModel;
+          this.m_tuning1.stretchingModel = b2__namespace.pbdStretchingModel;
           this.m_tuning2.bendHertz = 30.0;
           this.m_tuning2.bendDamping = 0.7;
           this.m_tuning2.bendStiffness = 1.0;
-          this.m_tuning2.bendingModel = b2.pbdHeightBendingModel;
+          this.m_tuning2.bendingModel = b2__namespace.pbdHeightBendingModel;
           this.m_tuning2.isometric = true;
           this.m_tuning2.stretchHertz = 30.0;
           this.m_tuning2.stretchDamping = 1.0;
           this.m_tuning2.stretchStiffness = 1.0;
-          this.m_tuning2.stretchingModel = b2.pbdStretchingModel;
+          this.m_tuning2.stretchingModel = b2__namespace.pbdStretchingModel;
           this.m_position1.Set(-5.0, 15.0);
           this.m_position2.Set(5.0, 15.0);
-          const def = new b2.RopeDef();
+          const def = new b2__namespace.RopeDef();
           // def.vertices = vertices;
           vertices.forEach((value) => def.vertices.push(value));
           def.count = N;
@@ -6376,7 +6395,7 @@
           return new Rope();
       }
   }
-  const testIndex$H = RegisterTest("Rope", "Bending", Rope.Create);
+  RegisterTest("Rope", "Bending", Rope.Create);
   // class Rope : public Test
   // {
   // public:
@@ -6657,11 +6676,11 @@
           for (let i = 0; i < Sensors.e_count; ++i) {
               this.m_touching[i] = new Array(1);
           }
-          const bd = new b2.BodyDef();
+          const bd = new b2__namespace.BodyDef();
           const ground = this.m_world.CreateBody(bd);
           {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           /*
@@ -6673,20 +6692,20 @@
           }
           */
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 5.0;
               shape.m_p.Set(0.0, 10.0);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.isSensor = true;
               this.m_sensor = ground.CreateFixture(fd);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 1.0;
               for (let i = 0; i < Sensors.e_count; ++i) {
                   //const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-10.0 + 3.0 * i, 20.0);
                   bd.userData = this.m_touching[i];
                   this.m_touching[i][0] = false;
@@ -6742,14 +6761,14 @@
               const body = this.m_bodies[i];
               const ground = this.m_sensor.GetBody();
               const circle = this.m_sensor.GetShape();
-              const center = ground.GetWorldPoint(circle.m_p, new b2.Vec2());
+              const center = ground.GetWorldPoint(circle.m_p, new b2__namespace.Vec2());
               const position = body.GetPosition();
-              const d = b2.Vec2.SubVV(center, position, new b2.Vec2());
-              if (d.LengthSquared() < b2.epsilon_sq) {
+              const d = b2__namespace.Vec2.SubVV(center, position, new b2__namespace.Vec2());
+              if (d.LengthSquared() < b2__namespace.epsilon_sq) {
                   continue;
               }
               d.Normalize();
-              const F = b2.Vec2.MulSV(100.0, d, new b2.Vec2());
+              const F = b2__namespace.Vec2.MulSV(100.0, d, new b2__namespace.Vec2());
               body.ApplyForce(F, position);
           }
       }
@@ -6758,33 +6777,33 @@
       }
   }
   Sensors.e_count = 7;
-  const testIndex$I = RegisterTest("Collision", "Sensors", Sensors.Create);
+  RegisterTest("Collision", "Sensors", Sensors.Create);
 
   // MIT License
   class ShapeCast extends Test {
       constructor() {
           super();
-          this.m_vAs = b2.Vec2.MakeArray(b2.maxPolygonVertices);
+          this.m_vAs = b2__namespace.Vec2.MakeArray(b2__namespace.maxPolygonVertices);
           this.m_countA = 0;
           this.m_radiusA = 0;
-          this.m_vBs = b2.Vec2.MakeArray(b2.maxPolygonVertices);
+          this.m_vBs = b2__namespace.Vec2.MakeArray(b2__namespace.maxPolygonVertices);
           this.m_countB = 0;
           this.m_radiusB = 0;
-          this.m_transformA = new b2.Transform();
-          this.m_transformB = new b2.Transform();
-          this.m_translationB = new b2.Vec2();
+          this.m_transformA = new b2__namespace.Transform();
+          this.m_transformB = new b2__namespace.Transform();
+          this.m_translationB = new b2__namespace.Vec2();
           // #if 1
           this.m_vAs[0].Set(-0.5, 1.0);
           this.m_vAs[1].Set(0.5, 1.0);
           this.m_vAs[2].Set(0.0, 0.0);
           this.m_countA = 3;
-          this.m_radiusA = b2.polygonRadius;
+          this.m_radiusA = b2__namespace.polygonRadius;
           this.m_vBs[0].Set(-0.5, -0.5);
           this.m_vBs[1].Set(0.5, -0.5);
           this.m_vBs[2].Set(0.5, 0.5);
           this.m_vBs[3].Set(-0.5, 0.5);
           this.m_countB = 4;
-          this.m_radiusB = b2.polygonRadius;
+          this.m_radiusB = b2__namespace.polygonRadius;
           this.m_transformA.p.Set(0.0, 0.25);
           this.m_transformA.q.SetIdentity();
           this.m_transformB.p.Set(-4.0, 0.0);
@@ -6820,60 +6839,60 @@
       }
       Step(settings) {
           super.Step(settings);
-          const input = new b2.ShapeCastInput();
+          const input = new b2__namespace.ShapeCastInput();
           input.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
           input.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
           input.transformA.Copy(this.m_transformA);
           input.transformB.Copy(this.m_transformB);
           input.translationB.Copy(this.m_translationB);
-          const output = new b2.ShapeCastOutput();
-          const hit = b2.ShapeCast(output, input);
-          const transformB2 = new b2.Transform();
+          const output = new b2__namespace.ShapeCastOutput();
+          const hit = b2__namespace.ShapeCast(output, input);
+          const transformB2 = new b2__namespace.Transform();
           transformB2.q.Copy(this.m_transformB.q);
           // transformB2.p = transformB.p + output.lambda * input.translationB;
           transformB2.p.Copy(this.m_transformB.p).SelfMulAdd(output.lambda, input.translationB);
-          const distanceInput = new b2.DistanceInput();
+          const distanceInput = new b2__namespace.DistanceInput();
           distanceInput.proxyA.SetVerticesRadius(this.m_vAs, this.m_countA, this.m_radiusA);
           distanceInput.proxyB.SetVerticesRadius(this.m_vBs, this.m_countB, this.m_radiusB);
           distanceInput.transformA.Copy(this.m_transformA);
           distanceInput.transformB.Copy(transformB2);
           distanceInput.useRadii = false;
-          const simplexCache = new b2.SimplexCache();
+          const simplexCache = new b2__namespace.SimplexCache();
           simplexCache.count = 0;
-          const distanceOutput = new b2.DistanceOutput();
-          b2.Distance(distanceOutput, simplexCache, distanceInput);
+          const distanceOutput = new b2__namespace.DistanceOutput();
+          b2__namespace.Distance(distanceOutput, simplexCache, distanceInput);
           g_debugDraw.DrawString(5, this.m_textLine, `hit = ${hit ? "true" : "false"}, iters = ${output.iterations}, lambda = ${output.lambda}, distance = ${distanceOutput.distance.toFixed(5)}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           g_debugDraw.PushTransform(this.m_transformA);
           if (this.m_countA === 1) {
-              g_debugDraw.DrawCircle(this.m_vAs[0], this.m_radiusA, new b2.Color(0.9, 0.9, 0.9));
+              g_debugDraw.DrawCircle(this.m_vAs[0], this.m_radiusA, new b2__namespace.Color(0.9, 0.9, 0.9));
           }
           else {
-              g_debugDraw.DrawPolygon(this.m_vAs, this.m_countA, new b2.Color(0.9, 0.9, 0.9));
+              g_debugDraw.DrawPolygon(this.m_vAs, this.m_countA, new b2__namespace.Color(0.9, 0.9, 0.9));
           }
           g_debugDraw.PopTransform(this.m_transformA);
           g_debugDraw.PushTransform(this.m_transformB);
           if (this.m_countB === 1) {
-              g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.9, 0.5));
+              g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2__namespace.Color(0.5, 0.9, 0.5));
           }
           else {
-              g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.9, 0.5));
+              g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2__namespace.Color(0.5, 0.9, 0.5));
           }
           g_debugDraw.PopTransform(this.m_transformB);
           g_debugDraw.PushTransform(transformB2);
           if (this.m_countB === 1) {
-              g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2.Color(0.5, 0.7, 0.9));
+              g_debugDraw.DrawCircle(this.m_vBs[0], this.m_radiusB, new b2__namespace.Color(0.5, 0.7, 0.9));
           }
           else {
-              g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2.Color(0.5, 0.7, 0.9));
+              g_debugDraw.DrawPolygon(this.m_vBs, this.m_countB, new b2__namespace.Color(0.5, 0.7, 0.9));
           }
           g_debugDraw.PopTransform(transformB2);
           if (hit) {
               const p1 = output.point;
-              g_debugDraw.DrawPoint(p1, 10.0, new b2.Color(0.9, 0.3, 0.3));
+              g_debugDraw.DrawPoint(p1, 10.0, new b2__namespace.Color(0.9, 0.3, 0.3));
               // b2Vec2 p2 = p1 + output.normal;
-              const p2 = b2.Vec2.AddVV(p1, output.normal, new b2.Vec2());
-              g_debugDraw.DrawSegment(p1, p2, new b2.Color(0.9, 0.3, 0.3));
+              const p2 = b2__namespace.Vec2.AddVV(p1, output.normal, new b2__namespace.Vec2());
+              g_debugDraw.DrawSegment(p1, p2, new b2__namespace.Color(0.9, 0.3, 0.3));
           }
       }
       static Create() {
@@ -6881,7 +6900,7 @@
       }
   }
   ShapeCast.e_vertexCount = 8;
-  const testIndex$J = RegisterTest("Collision", "Shape Cast", ShapeCast.Create);
+  RegisterTest("Collision", "Shape Cast", ShapeCast.Create);
 
   // MIT License
   class ShapeEditing extends Test {
@@ -6890,25 +6909,25 @@
           this.m_fixture2 = null;
           this.m_sensor = false;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Set(0.0, 10.0);
           this.m_body = this.m_world.CreateBody(bd);
-          const shape = new b2.PolygonShape();
-          shape.SetAsBox(4.0, 4.0, new b2.Vec2(0.0, 0.0), 0.0);
+          const shape = new b2__namespace.PolygonShape();
+          shape.SetAsBox(4.0, 4.0, new b2__namespace.Vec2(0.0, 0.0), 0.0);
           this.m_fixture1 = this.m_body.CreateFixture(shape, 10.0);
       }
       Keyboard(key) {
           switch (key) {
               case "c":
                   if (this.m_fixture2 === null) {
-                      const shape = new b2.CircleShape();
+                      const shape = new b2__namespace.CircleShape();
                       shape.m_radius = 3.0;
                       shape.m_p.Set(0.5, -4.0);
                       this.m_fixture2 = this.m_body.CreateFixture(shape, 10.0);
@@ -6941,7 +6960,7 @@
           return new ShapeEditing();
       }
   }
-  const testIndex$K = RegisterTest("Examples", "Shape Editing", ShapeEditing.Create);
+  RegisterTest("Examples", "Shape Editing", ShapeEditing.Create);
 
   /*
   Test case for collision/jerking issue.
@@ -6966,20 +6985,20 @@
           const SlopeLength = 2.0;
           const SurfaceFriction = 0.2;
           // Convert to radians
-          const Slope1Incline = -Angle1Degrees * b2.pi / 180.0;
-          const Slope2Incline = Slope1Incline - Angle2Degrees * b2.pi / 180.0;
+          const Slope1Incline = -Angle1Degrees * b2__namespace.pi / 180.0;
+          const Slope2Incline = Slope1Incline - Angle2Degrees * b2__namespace.pi / 180.0;
           //
           this.m_platform_width = PlatformWidth;
           // Horizontal platform
-          const v1 = new b2.Vec2(-PlatformWidth, 0.0);
-          const v2 = new b2.Vec2(0.0, 0.0);
-          const v3 = new b2.Vec2(SlopeLength * Math.cos(Slope1Incline), -SlopeLength * Math.sin(Slope1Incline));
-          const v4 = new b2.Vec2(v3.x + SlopeLength * Math.cos(Slope2Incline), v3.y - SlopeLength * Math.sin(Slope2Incline));
-          const v5 = new b2.Vec2(v4.x, v4.y - 1.0);
+          const v1 = new b2__namespace.Vec2(-PlatformWidth, 0.0);
+          const v2 = new b2__namespace.Vec2(0.0, 0.0);
+          const v3 = new b2__namespace.Vec2(SlopeLength * Math.cos(Slope1Incline), -SlopeLength * Math.sin(Slope1Incline));
+          const v4 = new b2__namespace.Vec2(v3.x + SlopeLength * Math.cos(Slope2Incline), v3.y - SlopeLength * Math.sin(Slope2Incline));
+          const v5 = new b2__namespace.Vec2(v4.x, v4.y - 1.0);
           const vertices = [v5, v4, v3, v2, v1];
-          const shape = new b2.ChainShape();
+          const shape = new b2__namespace.ChainShape();
           shape.CreateLoop(vertices);
-          const fd = new b2.FixtureDef();
+          const fd = new b2__namespace.FixtureDef();
           fd.shape = shape;
           fd.density = 0.0;
           fd.friction = SurfaceFriction;
@@ -6994,25 +7013,25 @@
               const SkiThickness = 0.3;
               const SkiFriction = 0.0;
               const SkiRestitution = 0.15;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const initial_y = BodyHeight / 2 + SkiThickness;
               bd.position.Set(-this.m_platform_width / 2, initial_y);
               const skier = this.m_world.CreateBody(bd);
-              const ski = new b2.PolygonShape();
+              const ski = new b2__namespace.PolygonShape();
               const verts = [];
-              verts.push(new b2.Vec2(-SkiLength / 2 - SkiThickness, -BodyHeight / 2));
-              verts.push(new b2.Vec2(-SkiLength / 2, -BodyHeight / 2 - SkiThickness));
-              verts.push(new b2.Vec2(SkiLength / 2, -BodyHeight / 2 - SkiThickness));
-              verts.push(new b2.Vec2(SkiLength / 2 + SkiThickness, -BodyHeight / 2));
+              verts.push(new b2__namespace.Vec2(-SkiLength / 2 - SkiThickness, -BodyHeight / 2));
+              verts.push(new b2__namespace.Vec2(-SkiLength / 2, -BodyHeight / 2 - SkiThickness));
+              verts.push(new b2__namespace.Vec2(SkiLength / 2, -BodyHeight / 2 - SkiThickness));
+              verts.push(new b2__namespace.Vec2(SkiLength / 2 + SkiThickness, -BodyHeight / 2));
               ski.Set(verts);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.density = 1.0;
               fd.friction = SkiFriction;
               fd.restitution = SkiRestitution;
               fd.shape = ski;
               skier.CreateFixture(fd);
-              skier.SetLinearVelocity(new b2.Vec2(0.5, 0.0));
+              skier.SetLinearVelocity(new b2__namespace.Vec2(0.5, 0.0));
               this.m_skier = skier;
           }
           g_camera.m_center.Set(this.m_platform_width / 2.0, 0.0);
@@ -7042,7 +7061,7 @@
           return new Skier();
       }
   }
-  const testIndex$L = RegisterTest("Bugs", "Skier", Skier.Create);
+  RegisterTest("Bugs", "Skier", Skier.Create);
 
   // MIT License
   class SliderCrank1 extends Test {
@@ -7050,7 +7069,7 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(0.0, 17.0);
               ground = this.m_world.CreateBody(bd);
           }
@@ -7058,47 +7077,47 @@
               let prevBody = ground;
               // Define crank.
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(4.0, 1.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(-8.0, 20.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(-12.0, 20.0));
+                  const rjd = new b2__namespace.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2__namespace.Vec2(-12.0, 20.0));
                   this.m_world.CreateJoint(rjd);
                   prevBody = body;
               }
               // Define connecting rod
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(8.0, 1.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(4.0, 20.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(-4.0, 20.0));
+                  const rjd = new b2__namespace.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2__namespace.Vec2(-4.0, 20.0));
                   this.m_world.CreateJoint(rjd);
                   prevBody = body;
               }
               // Define piston
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(3.0, 3.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.fixedRotation = true;
                   bd.position.Set(12.0, 20.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(12.0, 20.0));
+                  const rjd = new b2__namespace.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2__namespace.Vec2(12.0, 20.0));
                   this.m_world.CreateJoint(rjd);
-                  const pjd = new b2.PrismaticJointDef();
-                  pjd.Initialize(ground, body, new b2.Vec2(12.0, 17.0), new b2.Vec2(1.0, 0.0));
+                  const pjd = new b2__namespace.PrismaticJointDef();
+                  pjd.Initialize(ground, body, new b2__namespace.Vec2(12.0, 17.0), new b2__namespace.Vec2(1.0, 0.0));
                   this.m_world.CreateJoint(pjd);
               }
           }
@@ -7107,7 +7126,7 @@
           return new SliderCrank1();
       }
   }
-  const testIndex$M = RegisterTest("Examples", "Slider Crank 1", SliderCrank1.Create);
+  RegisterTest("Examples", "Slider Crank 1", SliderCrank1.Create);
 
   // MIT License
   // A motor driven slider crank with joint friction.
@@ -7116,26 +7135,26 @@
           super();
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
               let prevBody = ground;
               // Define crank.
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(0.5, 2.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 7.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 5.0));
-                  rjd.motorSpeed = 1.0 * b2.pi;
+                  const rjd = new b2__namespace.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2__namespace.Vec2(0.0, 5.0));
+                  rjd.motorSpeed = 1.0 * b2__namespace.pi;
                   rjd.maxMotorTorque = 10000.0;
                   rjd.enableMotor = true;
                   this.m_joint1 = this.m_world.CreateJoint(rjd);
@@ -7143,44 +7162,44 @@
               }
               // Define follower.
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(0.5, 4.0);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 13.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 9.0));
+                  const rjd = new b2__namespace.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2__namespace.Vec2(0.0, 9.0));
                   rjd.enableMotor = false;
                   this.m_world.CreateJoint(rjd);
                   prevBody = body;
               }
               // Define piston
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(1.5, 1.5);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.fixedRotation = true;
                   bd.position.Set(0.0, 17.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
-                  const rjd = new b2.RevoluteJointDef();
-                  rjd.Initialize(prevBody, body, new b2.Vec2(0.0, 17.0));
+                  const rjd = new b2__namespace.RevoluteJointDef();
+                  rjd.Initialize(prevBody, body, new b2__namespace.Vec2(0.0, 17.0));
                   this.m_world.CreateJoint(rjd);
-                  const pjd = new b2.PrismaticJointDef();
-                  pjd.Initialize(ground, body, new b2.Vec2(0.0, 17.0), new b2.Vec2(0.0, 1.0));
+                  const pjd = new b2__namespace.PrismaticJointDef();
+                  pjd.Initialize(ground, body, new b2__namespace.Vec2(0.0, 17.0), new b2__namespace.Vec2(0.0, 1.0));
                   pjd.maxMotorForce = 1000.0;
                   pjd.enableMotor = true;
                   this.m_joint2 = this.m_world.CreateJoint(pjd);
               }
               // Create a payload
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   shape.SetAsBox(1.5, 1.5);
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.0, 23.0);
                   const body = this.m_world.CreateBody(bd);
                   body.CreateFixture(shape, 2.0);
@@ -7212,41 +7231,41 @@
       }
   }
   SliderCrank2.e_count = 30;
-  const testIndex$N = RegisterTest("Examples", "Slider Crank 2", SliderCrank2.Create);
+  RegisterTest("Examples", "Slider Crank 2", SliderCrank2.Create);
 
   // MIT License
   class TheoJansen extends Test {
       constructor() {
           super();
-          this.m_offset = new b2.Vec2();
+          this.m_offset = new b2__namespace.Vec2();
           this.m_motorOn = false;
           this.m_motorSpeed = 0;
           this.Construct();
       }
       CreateLeg(s, wheelAnchor) {
-          const p1 = new b2.Vec2(5.4 * s, -6.1);
-          const p2 = new b2.Vec2(7.2 * s, -1.2);
-          const p3 = new b2.Vec2(4.3 * s, -1.9);
-          const p4 = new b2.Vec2(3.1 * s, 0.8);
-          const p5 = new b2.Vec2(6.0 * s, 1.5);
-          const p6 = new b2.Vec2(2.5 * s, 3.7);
-          const fd1 = new b2.FixtureDef();
-          const fd2 = new b2.FixtureDef();
+          const p1 = new b2__namespace.Vec2(5.4 * s, -6.1);
+          const p2 = new b2__namespace.Vec2(7.2 * s, -1.2);
+          const p3 = new b2__namespace.Vec2(4.3 * s, -1.9);
+          const p4 = new b2__namespace.Vec2(3.1 * s, 0.8);
+          const p5 = new b2__namespace.Vec2(6.0 * s, 1.5);
+          const p6 = new b2__namespace.Vec2(2.5 * s, 3.7);
+          const fd1 = new b2__namespace.FixtureDef();
+          const fd2 = new b2__namespace.FixtureDef();
           fd1.filter.groupIndex = -1;
           fd2.filter.groupIndex = -1;
           fd1.density = 1.0;
           fd2.density = 1.0;
-          const poly1 = new b2.PolygonShape();
-          const poly2 = new b2.PolygonShape();
+          const poly1 = new b2__namespace.PolygonShape();
+          const poly2 = new b2__namespace.PolygonShape();
           if (s > 0.0) {
               const vertices = new Array();
               vertices[0] = p1;
               vertices[1] = p2;
               vertices[2] = p3;
               poly1.Set(vertices);
-              vertices[0] = b2.Vec2_zero;
-              vertices[1] = b2.Vec2.SubVV(p5, p4, new b2.Vec2());
-              vertices[2] = b2.Vec2.SubVV(p6, p4, new b2.Vec2());
+              vertices[0] = b2__namespace.Vec2_zero;
+              vertices[1] = b2__namespace.Vec2.SubVV(p5, p4, new b2__namespace.Vec2());
+              vertices[2] = b2__namespace.Vec2.SubVV(p6, p4, new b2__namespace.Vec2());
               poly2.Set(vertices);
           }
           else {
@@ -7255,19 +7274,19 @@
               vertices[1] = p3;
               vertices[2] = p2;
               poly1.Set(vertices);
-              vertices[0] = b2.Vec2_zero;
-              vertices[1] = b2.Vec2.SubVV(p6, p4, new b2.Vec2());
-              vertices[2] = b2.Vec2.SubVV(p5, p4, new b2.Vec2());
+              vertices[0] = b2__namespace.Vec2_zero;
+              vertices[1] = b2__namespace.Vec2.SubVV(p6, p4, new b2__namespace.Vec2());
+              vertices[2] = b2__namespace.Vec2.SubVV(p5, p4, new b2__namespace.Vec2());
               poly2.Set(vertices);
           }
           fd1.shape = poly1;
           fd2.shape = poly2;
-          const bd1 = new b2.BodyDef();
-          const bd2 = new b2.BodyDef();
-          bd1.type = b2.BodyType.b2_dynamicBody;
-          bd2.type = b2.BodyType.b2_dynamicBody;
+          const bd1 = new b2__namespace.BodyDef();
+          const bd2 = new b2__namespace.BodyDef();
+          bd1.type = b2__namespace.BodyType.b2_dynamicBody;
+          bd2.type = b2__namespace.BodyType.b2_dynamicBody;
           bd1.position.Copy(this.m_offset);
-          bd2.position.Copy(b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
+          bd2.position.Copy(b2__namespace.Vec2.AddVV(p4, this.m_offset, new b2__namespace.Vec2()));
           bd1.angularDamping = 10.0;
           bd2.angularDamping = 10.0;
           const body1 = this.m_world.CreateBody(bd1);
@@ -7275,28 +7294,28 @@
           body1.CreateFixture(fd1);
           body2.CreateFixture(fd2);
           {
-              const jd = new b2.DistanceJointDef();
+              const jd = new b2__namespace.DistanceJointDef();
               // Using a soft distance constraint can reduce some jitter.
               // It also makes the structure seem a bit more fluid by
               // acting like a suspension system.
               const dampingRatio = 0.5;
               const frequencyHz = 10.0;
-              jd.Initialize(body1, body2, b2.Vec2.AddVV(p2, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(p5, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.Initialize(body1, body2, b2__namespace.Vec2.AddVV(p2, this.m_offset, new b2__namespace.Vec2()), b2__namespace.Vec2.AddVV(p5, this.m_offset, new b2__namespace.Vec2()));
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               this.m_world.CreateJoint(jd);
-              jd.Initialize(body1, body2, b2.Vec2.AddVV(p3, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.Initialize(body1, body2, b2__namespace.Vec2.AddVV(p3, this.m_offset, new b2__namespace.Vec2()), b2__namespace.Vec2.AddVV(p4, this.m_offset, new b2__namespace.Vec2()));
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               this.m_world.CreateJoint(jd);
-              jd.Initialize(body1, this.m_wheel, b2.Vec2.AddVV(p3, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(wheelAnchor, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.Initialize(body1, this.m_wheel, b2__namespace.Vec2.AddVV(p3, this.m_offset, new b2__namespace.Vec2()), b2__namespace.Vec2.AddVV(wheelAnchor, this.m_offset, new b2__namespace.Vec2()));
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               this.m_world.CreateJoint(jd);
-              jd.Initialize(body2, this.m_wheel, b2.Vec2.AddVV(p6, this.m_offset, new b2.Vec2()), b2.Vec2.AddVV(wheelAnchor, this.m_offset, new b2.Vec2()));
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              jd.Initialize(body2, this.m_wheel, b2__namespace.Vec2.AddVV(p6, this.m_offset, new b2__namespace.Vec2()), b2__namespace.Vec2.AddVV(wheelAnchor, this.m_offset, new b2__namespace.Vec2()));
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               this.m_world.CreateJoint(jd);
           }
           {
-              const jd = new b2.RevoluteJointDef();
-              jd.Initialize(body2, this.m_chassis, b2.Vec2.AddVV(p4, this.m_offset, new b2.Vec2()));
+              const jd = new b2__namespace.RevoluteJointDef();
+              jd.Initialize(body2, this.m_chassis, b2__namespace.Vec2.AddVV(p4, this.m_offset, new b2__namespace.Vec2()));
               this.m_world.CreateJoint(jd);
           }
       }
@@ -7304,72 +7323,72 @@
           this.m_offset.Set(0.0, 8.0);
           this.m_motorSpeed = 2.0;
           this.m_motorOn = true;
-          const pivot = new b2.Vec2(0.0, 0.8);
+          const pivot = new b2__namespace.Vec2(0.0, 0.8);
           // Ground
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(50.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-50.0, 0.0), new b2__namespace.Vec2(50.0, 0.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(-50.0, 0.0), new b2.Vec2(-50.0, 10.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-50.0, 0.0), new b2__namespace.Vec2(-50.0, 10.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(50.0, 0.0), new b2.Vec2(50.0, 10.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(50.0, 0.0), new b2__namespace.Vec2(50.0, 10.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Balls
           for (let i = 0; i < 40; ++i) {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 0.25;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-40.0 + 2.0 * i, 0.5);
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(shape, 1.0);
           }
           // Chassis
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(2.5, 1.0);
-              const sd = new b2.FixtureDef();
+              const sd = new b2__namespace.FixtureDef();
               sd.density = 1.0;
               sd.shape = shape;
               sd.filter.groupIndex = -1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Copy(pivot).SelfAdd(this.m_offset);
               this.m_chassis = this.m_world.CreateBody(bd);
               this.m_chassis.CreateFixture(sd);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 1.6;
-              const sd = new b2.FixtureDef();
+              const sd = new b2__namespace.FixtureDef();
               sd.density = 1.0;
               sd.shape = shape;
               sd.filter.groupIndex = -1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Copy(pivot).SelfAdd(this.m_offset);
               this.m_wheel = this.m_world.CreateBody(bd);
               this.m_wheel.CreateFixture(sd);
           }
           {
-              const jd = new b2.RevoluteJointDef();
-              jd.Initialize(this.m_wheel, this.m_chassis, b2.Vec2.AddVV(pivot, this.m_offset, new b2.Vec2()));
+              const jd = new b2__namespace.RevoluteJointDef();
+              jd.Initialize(this.m_wheel, this.m_chassis, b2__namespace.Vec2.AddVV(pivot, this.m_offset, new b2__namespace.Vec2()));
               jd.collideConnected = false;
               jd.motorSpeed = this.m_motorSpeed;
               jd.maxMotorTorque = 400.0;
               jd.enableMotor = this.m_motorOn;
               this.m_motorJoint = this.m_world.CreateJoint(jd);
           }
-          const wheelAnchor = b2.Vec2.AddVV(pivot, new b2.Vec2(0.0, -0.8), new b2.Vec2());
+          const wheelAnchor = b2__namespace.Vec2.AddVV(pivot, new b2__namespace.Vec2(0.0, -0.8), new b2__namespace.Vec2());
           this.CreateLeg(-1.0, wheelAnchor);
           this.CreateLeg(1.0, wheelAnchor);
-          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), 120.0 * b2.pi / 180.0);
+          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), 120.0 * b2__namespace.pi / 180.0);
           this.CreateLeg(-1.0, wheelAnchor);
           this.CreateLeg(1.0, wheelAnchor);
-          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), -120.0 * b2.pi / 180.0);
+          this.m_wheel.SetTransformVec(this.m_wheel.GetPosition(), -120.0 * b2__namespace.pi / 180.0);
           this.CreateLeg(-1.0, wheelAnchor);
           this.CreateLeg(1.0, wheelAnchor);
       }
@@ -7398,7 +7417,7 @@
           return new TheoJansen();
       }
   }
-  const testIndex$O = RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);
+  RegisterTest("Examples", "Theo Jansen", TheoJansen.Create);
 
   // MIT License
   /// This stress tests the dynamic tree broad-phase. This also shows that tile
@@ -7409,21 +7428,21 @@
           this.m_fixtureCount = 0;
           this.m_createTime = 0.0;
           this.m_fixtureCount = 0;
-          const timer = new b2.Timer();
+          const timer = new b2__namespace.Timer();
           {
               const a = 0.5;
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.y = -a;
               const ground = this.m_world.CreateBody(bd);
               {
                   const N = 200;
                   const M = 10;
-                  const position = new b2.Vec2();
+                  const position = new b2__namespace.Vec2();
                   position.y = 0.0;
                   for (let j = 0; j < M; ++j) {
                       position.x = -N * a;
                       for (let i = 0; i < N; ++i) {
-                          const shape = new b2.PolygonShape();
+                          const shape = new b2__namespace.PolygonShape();
                           shape.SetAsBox(a, a, position, 0.0);
                           ground.CreateFixture(shape, 0.0);
                           ++this.m_fixtureCount;
@@ -7454,17 +7473,17 @@
           }
           {
               const a = 0.5;
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(a, a);
-              const x = new b2.Vec2(-7.0, 0.75);
-              const y = new b2.Vec2();
-              const deltaX = new b2.Vec2(0.5625, 1.25);
-              const deltaY = new b2.Vec2(1.125, 0.0);
+              const x = new b2__namespace.Vec2(-7.0, 0.75);
+              const y = new b2__namespace.Vec2();
+              const deltaX = new b2__namespace.Vec2(0.5625, 1.25);
+              const deltaY = new b2__namespace.Vec2(1.125, 0.0);
               for (let i = 0; i < Tiles.e_count; ++i) {
                   y.Copy(x);
                   for (let j = i; j < Tiles.e_count; ++j) {
-                      const bd = new b2.BodyDef();
-                      bd.type = b2.BodyType.b2_dynamicBody;
+                      const bd = new b2__namespace.BodyDef();
+                      bd.type = b2__namespace.BodyType.b2_dynamicBody;
                       bd.position.Copy(y);
                       //if (i === 0 && j === 0)
                       //{
@@ -7506,26 +7525,26 @@
       }
   }
   Tiles.e_count = 20;
-  const testIndex$P = RegisterTest("Benchmark", "Tiles", Tiles.Create);
+  RegisterTest("Benchmark", "Tiles", Tiles.Create);
 
   // MIT License
   class TimeOfImpact extends Test {
       constructor() {
           super();
-          this.m_shapeA = new b2.PolygonShape();
-          this.m_shapeB = new b2.PolygonShape();
+          this.m_shapeA = new b2__namespace.PolygonShape();
+          this.m_shapeB = new b2__namespace.PolygonShape();
           this.m_shapeA.SetAsBox(25.0, 5.0);
           this.m_shapeB.SetAsBox(2.5, 2.5);
       }
       Step(settings) {
           super.Step(settings);
-          const sweepA = new b2.Sweep();
+          const sweepA = new b2__namespace.Sweep();
           sweepA.c0.Set(0.0, 20.0 + 8.0 * Math.cos(Date.now() / 1000)); // (24.0, -60.0);
           sweepA.a0 = 2.95;
           sweepA.c.Copy(sweepA.c0);
           sweepA.a = sweepA.a0;
           sweepA.localCenter.SetZero();
-          const sweepB = new b2.Sweep();
+          const sweepB = new b2__namespace.Sweep();
           sweepB.c0.Set(20.0, 40.0); // (53.474274, -50.252514);
           sweepB.a0 = 0.1; // 513.36676; // - 162.0 * b2.pi;
           sweepB.c.Set(-20.0, 0.0); // (54.595478, -51.083473);
@@ -7533,52 +7552,52 @@
           sweepB.localCenter.SetZero();
           //sweepB.a0 -= 300.0 * b2.pi;
           //sweepB.a -= 300.0 * b2.pi;
-          const input = new b2.TOIInput();
+          const input = new b2__namespace.TOIInput();
           input.proxyA.SetShape(this.m_shapeA, 0);
           input.proxyB.SetShape(this.m_shapeB, 0);
           input.sweepA.Copy(sweepA);
           input.sweepB.Copy(sweepB);
           input.tMax = 1.0;
-          const output = new b2.TOIOutput();
-          b2.TimeOfImpact(output, input);
+          const output = new b2__namespace.TOIOutput();
+          b2__namespace.TimeOfImpact(output, input);
           g_debugDraw.DrawString(5, this.m_textLine, `toi = ${output.t.toFixed(3)}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
-          g_debugDraw.DrawString(5, this.m_textLine, `max toi iters = ${b2.toiMaxIters}, max root iters = ${b2.toiMaxRootIters}`);
+          g_debugDraw.DrawString(5, this.m_textLine, `max toi iters = ${b2__namespace.toiMaxIters}, max root iters = ${b2__namespace.toiMaxRootIters}`);
           this.m_textLine += DRAW_STRING_NEW_LINE;
           const vertices = [];
-          const transformA = new b2.Transform();
+          const transformA = new b2__namespace.Transform();
           sweepA.GetTransform(transformA, 0.0);
           for (let i = 0; i < this.m_shapeA.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformA, this.m_shapeA.m_vertices[i], new b2.Vec2());
+              vertices[i] = b2__namespace.Transform.MulXV(transformA, this.m_shapeA.m_vertices[i], new b2__namespace.Vec2());
           }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeA.m_count, new b2.Color(0.9, 0.9, 0.9));
-          const transformB = new b2.Transform();
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeA.m_count, new b2__namespace.Color(0.9, 0.9, 0.9));
+          const transformB = new b2__namespace.Transform();
           sweepB.GetTransform(transformB, 0.0);
           //b2.Vec2 localPoint(2.0f, -0.1f);
           for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+              vertices[i] = b2__namespace.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2__namespace.Vec2());
           }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.9, 0.5));
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2__namespace.Color(0.5, 0.9, 0.5));
           g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${(0.0).toFixed(1)}`);
           sweepB.GetTransform(transformB, output.t);
           for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+              vertices[i] = b2__namespace.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2__namespace.Vec2());
           }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.7, 0.9));
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2__namespace.Color(0.5, 0.7, 0.9));
           g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${output.t.toFixed(3)}`);
           sweepB.GetTransform(transformB, 1.0);
           for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-              vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+              vertices[i] = b2__namespace.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2__namespace.Vec2());
           }
-          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.9, 0.5, 0.5));
+          g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2__namespace.Color(0.9, 0.5, 0.5));
           g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${(1.0).toFixed(1)}`);
           // #if 0
           for (let t = 0.0; t < 1.0; t += 0.1) {
               sweepB.GetTransform(transformB, t);
               for (let i = 0; i < this.m_shapeB.m_count; ++i) {
-                  vertices[i] = b2.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2.Vec2());
+                  vertices[i] = b2__namespace.Transform.MulXV(transformB, this.m_shapeB.m_vertices[i], new b2__namespace.Vec2());
               }
-              g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2.Color(0.5, 0.5, 0.5));
+              g_debugDraw.DrawPolygon(vertices, this.m_shapeB.m_count, new b2__namespace.Color(0.5, 0.5, 0.5));
               g_debugDraw.DrawStringWorld(transformB.p.x, transformB.p.y, `${t.toFixed(1)}`);
           }
           // #endif
@@ -7587,36 +7606,36 @@
           return new TimeOfImpact();
       }
   }
-  const testIndex$Q = RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);
+  RegisterTest("Collision", "Time of Impact", TimeOfImpact.Create);
 
   // MIT License
   class Tumbler extends Test {
       constructor() {
           super();
           this.m_count = 0;
-          const ground = this.m_world.CreateBody(new b2.BodyDef());
+          const ground = this.m_world.CreateBody(new b2__namespace.BodyDef());
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.allowSleep = false;
               bd.position.Set(0.0, 10.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.5, 10.0, new b2.Vec2(10.0, 0.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.5, 10.0, new b2__namespace.Vec2(10.0, 0.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(0.5, 10.0, new b2.Vec2(-10.0, 0.0), 0.0);
+              shape.SetAsBox(0.5, 10.0, new b2__namespace.Vec2(-10.0, 0.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(10.0, 0.5, new b2.Vec2(0.0, 10.0), 0.0);
+              shape.SetAsBox(10.0, 0.5, new b2__namespace.Vec2(0.0, 10.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(10.0, 0.5, new b2.Vec2(0.0, -10.0), 0.0);
+              shape.SetAsBox(10.0, 0.5, new b2__namespace.Vec2(0.0, -10.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.bodyA = ground;
               jd.bodyB = body;
               jd.localAnchorA.Set(0.0, 10.0);
               jd.localAnchorB.Set(0.0, 0.0);
               jd.referenceAngle = 0.0;
-              jd.motorSpeed = 0.05 * b2.pi;
+              jd.motorSpeed = 0.05 * b2__namespace.pi;
               jd.maxMotorTorque = 1e8;
               jd.enableMotor = true;
               this.m_joint = this.m_world.CreateJoint(jd);
@@ -7626,11 +7645,11 @@
       Step(settings) {
           super.Step(settings);
           if (this.m_count < Tumbler.e_count) {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 10.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.125, 0.125);
               body.CreateFixture(shape, 1.0);
               ++this.m_count;
@@ -7641,7 +7660,7 @@
       }
   }
   Tumbler.e_count = 800;
-  const testIndex$R = RegisterTest("Benchmark", "Tumbler", Tumbler.Create);
+  RegisterTest("Benchmark", "Tumbler", Tumbler.Create);
 
   // MIT License
   // Test distance joints, body destruction, and joint destruction.
@@ -7652,17 +7671,17 @@
           this.m_joints = new Array(8);
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.5);
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(-5.0, 5.0);
               const body0 = this.m_bodies[0] = this.m_world.CreateBody(bd);
               body0.CreateFixture(shape, 5.0);
@@ -7675,88 +7694,88 @@
               bd.position.Set(-5.0, 15.0);
               const body3 = this.m_bodies[3] = this.m_world.CreateBody(bd);
               body3.CreateFixture(shape, 5.0);
-              const jd = new b2.DistanceJointDef();
+              const jd = new b2__namespace.DistanceJointDef();
               let p1, p2, d;
               const frequencyHz = 2.0;
               const dampingRatio = 0.0;
               jd.bodyA = ground;
               jd.bodyB = body0;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(-10.0, 0.0);
               jd.localAnchorB.Set(-0.5, -0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[0] = this.m_world.CreateJoint(jd);
               jd.bodyA = ground;
               jd.bodyB = body1;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(10.0, 0.0);
               jd.localAnchorB.Set(0.5, -0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[1] = this.m_world.CreateJoint(jd);
               jd.bodyA = ground;
               jd.bodyB = body2;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(10.0, 20.0);
               jd.localAnchorB.Set(0.5, 0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[2] = this.m_world.CreateJoint(jd);
               jd.bodyA = ground;
               jd.bodyB = body3;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(-10.0, 20.0);
               jd.localAnchorB.Set(-0.5, 0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[3] = this.m_world.CreateJoint(jd);
               jd.bodyA = body0;
               jd.bodyB = body1;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(0.5, 0.0);
               jd.localAnchorB.Set(-0.5, 0.0);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[4] = this.m_world.CreateJoint(jd);
               jd.bodyA = body1;
               jd.bodyB = body2;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(0.0, 0.5);
               jd.localAnchorB.Set(0.0, -0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[5] = this.m_world.CreateJoint(jd);
               jd.bodyA = body2;
               jd.bodyB = body3;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(-0.5, 0.0);
               jd.localAnchorB.Set(0.5, 0.0);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[6] = this.m_world.CreateJoint(jd);
               jd.bodyA = body3;
               jd.bodyB = body0;
-              b2.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+              b2__namespace.LinearStiffness(jd, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
               jd.localAnchorA.Set(0.0, -0.5);
               jd.localAnchorB.Set(0.0, 0.5);
-              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2.Vec2());
-              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2.Vec2());
-              d = b2.Vec2.SubVV(p2, p1, new b2.Vec2());
+              p1 = jd.bodyA.GetWorldPoint(jd.localAnchorA, new b2__namespace.Vec2());
+              p2 = jd.bodyB.GetWorldPoint(jd.localAnchorB, new b2__namespace.Vec2());
+              d = b2__namespace.Vec2.SubVV(p2, p1, new b2__namespace.Vec2());
               jd.length = d.Length();
               this.m_joints[7] = this.m_world.CreateJoint(jd);
           }
@@ -7802,7 +7821,7 @@
           return new Web();
       }
   }
-  const testIndex$S = RegisterTest("Examples", "Web", Web.Create);
+  RegisterTest("Examples", "Web", Web.Create);
 
   // MIT License
   // Test the wheel joint with motor, spring, and limit options.
@@ -7814,27 +7833,27 @@
           this.m_motorSpeed = 0.0;
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           this.m_enableLimit = true;
           this.m_enableMotor = false;
           this.m_motorSpeed = 10.0;
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_radius = 2.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.dynamicBody;
               bd.position.Set(0.0, 10.0);
               bd.allowSleep = false;
               const body = this.m_world.CreateBody(bd);
               body.CreateFixture(shape, 5.0);
-              const jd = new b2.WheelJointDef();
+              const jd = new b2__namespace.WheelJointDef();
               // Horizontal
-              jd.Initialize(ground, body, bd.position, new b2.Vec2(0.0, 1.0));
+              jd.Initialize(ground, body, bd.position, new b2__namespace.Vec2(0.0, 1.0));
               jd.motorSpeed = this.m_motorSpeed;
               jd.maxMotorTorque = 10000.0;
               jd.enableMotor = this.m_enableMotor;
@@ -7843,7 +7862,7 @@
               jd.enableLimit = this.m_enableLimit;
               const hertz = 1.0;
               const dampingRatio = 0.7;
-              b2.LinearStiffness(jd, hertz, dampingRatio, ground, body);
+              b2__namespace.LinearStiffness(jd, hertz, dampingRatio, ground, body);
               this.m_joint = this.m_world.CreateJoint(jd);
           }
       }
@@ -7862,8 +7881,8 @@
           return new WheelJoint();
       }
   }
-  WheelJoint.Step_s_F = new b2.Vec2();
-  const testIndex$T = RegisterTest("Joints", "Wheel", WheelJoint.Create);
+  WheelJoint.Step_s_F = new b2__namespace.Vec2();
+  RegisterTest("Joints", "Wheel", WheelJoint.Create);
 
   // MIT License
   /// This test shows how a distance joint can be used to stabilize a chain of
@@ -7877,34 +7896,34 @@
   class WreckingBall extends Test {
       constructor() {
           super();
-          this.m_distanceJointDef = new b2.DistanceJointDef();
+          this.m_distanceJointDef = new b2__namespace.DistanceJointDef();
           this.m_distanceJoint = null;
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(0.5, 0.125);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = 20.0;
               fd.friction = 0.2;
               fd.filter.categoryBits = 0x0001;
               fd.filter.maskBits = 0xFFFF & ~0x0002;
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.collideConnected = false;
               const N = 10;
               const y = 15.0;
               this.m_distanceJointDef.localAnchorA.Set(0.0, y);
               let prevBody = ground;
               for (let i = 0; i < N; ++i) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   bd.position.Set(0.5 + 1.0 * i, y);
                   if (i === N - 1) {
                       bd.position.Set(1.0 * i, y);
@@ -7912,9 +7931,9 @@
                   }
                   const body = this.m_world.CreateBody(bd);
                   if (i === N - 1) {
-                      const circleShape = new b2.CircleShape();
+                      const circleShape = new b2__namespace.CircleShape();
                       circleShape.m_radius = 1.5;
-                      const sfd = new b2.FixtureDef();
+                      const sfd = new b2__namespace.FixtureDef();
                       sfd.shape = circleShape;
                       sfd.density = 100.0;
                       sfd.filter.categoryBits = 0x0002;
@@ -7923,7 +7942,7 @@
                   else {
                       body.CreateFixture(fd);
                   }
-                  const anchor = new b2.Vec2(i, y);
+                  const anchor = new b2__namespace.Vec2(i, y);
                   jd.Initialize(prevBody, body, anchor);
                   this.m_world.CreateJoint(jd);
                   prevBody = body;
@@ -7968,7 +7987,7 @@
           return new WreckingBall();
       }
   }
-  const testIndex$U = RegisterTest("Examples", "Wrecking Ball", WreckingBall.Create);
+  RegisterTest("Examples", "Wrecking Ball", WreckingBall.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -7990,18 +8009,18 @@
   class BlobTest extends Test {
       constructor() {
           super();
-          const ground = this.m_world.CreateBody(new b2.BodyDef());
+          const ground = this.m_world.CreateBody(new b2__namespace.BodyDef());
           {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(-40.0, 25.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(-40.0, 25.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(40.0, 0.0), new b2.Vec2(40.0, 25.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(40.0, 0.0), new b2__namespace.Vec2(40.0, 25.0));
               ground.CreateFixture(shape, 0.0);
           }
           {
-              const ajd = new b2.AreaJointDef();
+              const ajd = new b2__namespace.AreaJointDef();
               const cx = 0.0;
               const cy = 10.0;
               const rx = 5.0;
@@ -8010,23 +8029,23 @@
               const bodyRadius = 0.5;
               for (let i = 0; i < nBodies; ++i) {
                   const angle = (i * 2.0 * Math.PI) / nBodies;
-                  const bd = new b2.BodyDef();
+                  const bd = new b2__namespace.BodyDef();
                   //bd.isBullet = true;
                   bd.fixedRotation = true;
                   const x = cx + rx * Math.cos(angle);
                   const y = cy + ry * Math.sin(angle);
                   bd.position.Set(x, y);
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   const body = this.m_world.CreateBody(bd);
-                  const fd = new b2.FixtureDef();
-                  fd.shape = new b2.CircleShape(bodyRadius);
+                  const fd = new b2__namespace.FixtureDef();
+                  fd.shape = new b2__namespace.CircleShape(bodyRadius);
                   fd.density = 1.0;
                   body.CreateFixture(fd);
                   ajd.AddBody(body);
               }
               const frequencyHz = 10.0;
               const dampingRatio = 1.0;
-              b2.LinearStiffness(ajd, frequencyHz, dampingRatio, ajd.bodyA, ajd.bodyB);
+              b2__namespace.LinearStiffness(ajd, frequencyHz, dampingRatio, ajd.bodyA, ajd.bodyB);
               this.m_world.CreateJoint(ajd);
           }
       }
@@ -8037,7 +8056,7 @@
           return new BlobTest();
       }
   }
-  const testIndex$V = RegisterTest("Extras", "Blob Test", BlobTest.Create);
+  RegisterTest("Extras", "Blob Test", BlobTest.Create);
 
   class DominoTower extends Test {
       constructor() {
@@ -8052,13 +8071,13 @@
            */
           let dominoDensity;
           function makeDomino(x, y, horizontal) {
-              const sd = new b2.PolygonShape();
+              const sd = new b2__namespace.PolygonShape();
               sd.SetAsBox(0.5 * DOMINO_WIDTH, 0.5 * DOMINO_HEIGHT);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = sd;
               fd.density = dominoDensity;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               fd.friction = DOMINO_FRICTION;
               fd.restitution = 0.65;
               bd.position.Set(x, y);
@@ -8066,15 +8085,15 @@
               const myBody = world.CreateBody(bd);
               myBody.CreateFixture(fd);
           }
-          const gravity = new b2.Vec2(0, -10);
+          const gravity = new b2__namespace.Vec2(0, -10);
           //world = new b2.World(gravity);
           const world = this.m_world;
           world.SetGravity(gravity);
           // Create the floor
           {
-              const sd = new b2.PolygonShape();
+              const sd = new b2__namespace.PolygonShape();
               sd.SetAsBox(50, 10);
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               bd.position.Set(0, -10);
               const body = world.CreateBody(bd);
               body.CreateFixture(sd, 0);
@@ -8082,12 +8101,12 @@
           {
               dominoDensity = 10;
               // Make bullet
-              const sd = new b2.PolygonShape();
+              const sd = new b2__namespace.PolygonShape();
               sd.SetAsBox(.7, .7);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.density = 35.0;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               fd.shape = sd;
               fd.friction = 0.0;
               fd.restitution = 0.85;
@@ -8095,13 +8114,13 @@
               bd.position.Set(30.0, 5.00);
               let b = world.CreateBody(bd);
               b.CreateFixture(fd);
-              b.SetLinearVelocity(new b2.Vec2(-25.0, -25.0));
+              b.SetLinearVelocity(new b2__namespace.Vec2(-25.0, -25.0));
               b.SetAngularVelocity(6.7);
               fd.density = 25.0;
               bd.position.Set(-30.0, 25.0);
               b = world.CreateBody(bd);
               b.CreateFixture(fd);
-              b.SetLinearVelocity(new b2.Vec2(35.0, -10.0));
+              b.SetLinearVelocity(new b2__namespace.Vec2(35.0, -10.0));
               b.SetAngularVelocity(-8.3);
           }
           {
@@ -8141,7 +8160,7 @@
           return new DominoTower();
       }
   }
-  const testIndex$W = RegisterTest("Extras", "Domino Tower", DominoTower.Create);
+  RegisterTest("Extras", "Domino Tower", DominoTower.Create);
 
   class PyramidTopple extends Test {
       constructor() {
@@ -8150,18 +8169,18 @@
           const HEIGHT = 30;
           const add_domino = (world, pos, flipped) => {
               const mass = 1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Copy(pos);
               const body = world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               if (flipped) {
                   shape.SetAsBox(0.5 * HEIGHT, 0.5 * WIDTH);
               }
               else {
                   shape.SetAsBox(0.5 * WIDTH, 0.5 * HEIGHT);
               }
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.shape = shape;
               fd.density = mass / (WIDTH * HEIGHT);
               fd.friction = 0.6;
@@ -8174,11 +8193,11 @@
           ///b2.timeToSleep = 0.5; // cpSpaceSetSleepTimeThreshold(space, 0.5f);
           ///b2.linearSlop = 0.5; // cpSpaceSetCollisionSlop(space, 0.5f);
           // Add a floor.
-          const bd = new b2.BodyDef();
+          const bd = new b2__namespace.BodyDef();
           const body = world.CreateBody(bd);
-          const shape = new b2.EdgeShape();
-          shape.SetTwoSided(new b2.Vec2(-600, -240), new b2.Vec2(600, -240));
-          const fd = new b2.FixtureDef();
+          const shape = new b2__namespace.EdgeShape();
+          shape.SetTwoSided(new b2__namespace.Vec2(-600, -240), new b2__namespace.Vec2(600, -240));
+          const fd = new b2__namespace.FixtureDef();
           fd.shape = shape;
           fd.friction = 1.0;
           fd.restitution = 1.0;
@@ -8187,17 +8206,17 @@
           const n = 12;
           for (let i = 0; i < n; i++) {
               for (let j = 0; j < (n - i); j++) {
-                  const offset = new b2.Vec2((j - (n - 1 - i) * 0.5) * 1.5 * HEIGHT, (i + 0.5) * (HEIGHT + 2 * WIDTH) - WIDTH - 240);
+                  const offset = new b2__namespace.Vec2((j - (n - 1 - i) * 0.5) * 1.5 * HEIGHT, (i + 0.5) * (HEIGHT + 2 * WIDTH) - WIDTH - 240);
                   add_domino(world, offset, false);
-                  add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0, (HEIGHT + WIDTH) / 2), new b2.Vec2()), true);
+                  add_domino(world, b2__namespace.Vec2.AddVV(offset, new b2__namespace.Vec2(0, (HEIGHT + WIDTH) / 2), new b2__namespace.Vec2()), true);
                   if (j === 0) {
-                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0.5 * (WIDTH - HEIGHT), HEIGHT + WIDTH), new b2.Vec2()), false);
+                      add_domino(world, b2__namespace.Vec2.AddVV(offset, new b2__namespace.Vec2(0.5 * (WIDTH - HEIGHT), HEIGHT + WIDTH), new b2__namespace.Vec2()), false);
                   }
                   if (j !== n - i - 1) {
-                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(HEIGHT * 0.75, (HEIGHT + 3 * WIDTH) / 2), new b2.Vec2()), true);
+                      add_domino(world, b2__namespace.Vec2.AddVV(offset, new b2__namespace.Vec2(HEIGHT * 0.75, (HEIGHT + 3 * WIDTH) / 2), new b2__namespace.Vec2()), true);
                   }
                   else {
-                      add_domino(world, b2.Vec2.AddVV(offset, new b2.Vec2(0.5 * (HEIGHT - WIDTH), HEIGHT + WIDTH), new b2.Vec2()), false);
+                      add_domino(world, b2__namespace.Vec2.AddVV(offset, new b2__namespace.Vec2(0.5 * (HEIGHT - WIDTH), HEIGHT + WIDTH), new b2__namespace.Vec2()), false);
                   }
               }
           }
@@ -8209,7 +8228,7 @@
           return new PyramidTopple();
       }
   }
-  const testIndex$X = RegisterTest("Extras", "Pyramid Topple", PyramidTopple.Create);
+  RegisterTest("Extras", "Pyramid Topple", PyramidTopple.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8232,52 +8251,52 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               const vertices = [];
-              vertices[0] = new b2.Vec2(-30.0, 40.0);
-              vertices[1] = new b2.Vec2(30.0, 40.0);
-              vertices[2] = new b2.Vec2(30.0, 0.0);
-              vertices[3] = new b2.Vec2(-30.0, 0.0);
-              const shape = new b2.ChainShape();
+              vertices[0] = new b2__namespace.Vec2(-30.0, 40.0);
+              vertices[1] = new b2__namespace.Vec2(30.0, 40.0);
+              vertices[2] = new b2__namespace.Vec2(30.0, 0.0);
+              vertices[3] = new b2__namespace.Vec2(-30.0, 0.0);
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(vertices);
               ground.CreateFixture(shape, 0.0);
           }
           // Always on, even if default is off
           this.m_world.SetContinuousPhysics(true);
-          const fd = new b2.FixtureDef();
+          const fd = new b2__namespace.FixtureDef();
           // These values are used for all the parts of the 'basket'
           fd.density = 4.0;
           fd.restitution = 1.4;
           // Create 'basket'
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.bullet = true;
               bd.position.Set(15.0, 5.0);
               const body = this.m_world.CreateBody(bd);
-              const sd_bottom = new b2.PolygonShape();
+              const sd_bottom = new b2__namespace.PolygonShape();
               sd_bottom.SetAsBox(4.5, 0.45);
               fd.shape = sd_bottom;
               body.CreateFixture(fd);
-              const sd_left = new b2.PolygonShape();
-              sd_left.SetAsBox(0.45, 8.1, new b2.Vec2(-4.35, 7.05), 0.2);
+              const sd_left = new b2__namespace.PolygonShape();
+              sd_left.SetAsBox(0.45, 8.1, new b2__namespace.Vec2(-4.35, 7.05), 0.2);
               fd.shape = sd_left;
               body.CreateFixture(fd);
-              const sd_right = new b2.PolygonShape();
-              sd_right.SetAsBox(0.45, 8.1, new b2.Vec2(4.35, 7.05), -0.2);
+              const sd_right = new b2__namespace.PolygonShape();
+              sd_right.SetAsBox(0.45, 8.1, new b2__namespace.Vec2(4.35, 7.05), -0.2);
               fd.shape = sd_right;
               body.CreateFixture(fd);
           }
           // add some small circles for effect
           for (let i = 0; i < 5; i++) {
-              const cd = new b2.CircleShape((Math.random() * 1.0 + 0.5));
+              const cd = new b2__namespace.CircleShape((Math.random() * 1.0 + 0.5));
               fd.shape = cd;
               fd.friction = 0.3;
               fd.density = 1.0;
               fd.restitution = 1.1;
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.bullet = true;
               bd.position.Set((Math.random() * 30.0 - 25.0), (Math.random() * 32.0 + 2.0));
               const body = this.m_world.CreateBody(bd);
@@ -8291,7 +8310,7 @@
           return new TestCCD();
       }
   }
-  const testIndex$Y = RegisterTest("Extras", "Test CCD", TestCCD.Create);
+  RegisterTest("Extras", "Test CCD", TestCCD.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8314,29 +8333,29 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               const vertices = [];
-              vertices[0] = new b2.Vec2(-30.0, 40.0);
-              vertices[1] = new b2.Vec2(30.0, 40.0);
-              vertices[2] = new b2.Vec2(30.0, 0.0);
-              vertices[3] = new b2.Vec2(-30.0, 0.0);
-              const shape = new b2.ChainShape();
+              vertices[0] = new b2__namespace.Vec2(-30.0, 40.0);
+              vertices[1] = new b2__namespace.Vec2(30.0, 40.0);
+              vertices[2] = new b2__namespace.Vec2(30.0, 0.0);
+              vertices[3] = new b2__namespace.Vec2(-30.0, 0.0);
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(vertices);
               ground.CreateFixture(shape, 0.0);
           }
-          const bd = new b2.BodyDef();
-          const fd = new b2.FixtureDef();
-          const jd = new b2.RevoluteJointDef();
+          const bd = new b2__namespace.BodyDef();
+          const fd = new b2__namespace.FixtureDef();
+          const jd = new b2__namespace.RevoluteJointDef();
           // Add 2 ragdolls along the top
           for (let i = 0; i < 2; ++i) {
               const startX = -20.0 + Math.random() * 2.0 + 40.0 * i;
               const startY = 30.0 + Math.random() * 5.0;
               // BODIES
               // Set these to dynamic bodies
-              bd.type = b2.BodyType.b2_dynamicBody;
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               // Head
-              fd.shape = new b2.CircleShape(1.25);
+              fd.shape = new b2__namespace.CircleShape(1.25);
               fd.density = 1.0;
               fd.friction = 0.4;
               fd.restitution = 0.3;
@@ -8345,10 +8364,10 @@
               head.CreateFixture(fd);
               //if (i === 0)
               //{
-              head.ApplyLinearImpulse(new b2.Vec2(Math.random() * 1000.0 - 500.0, Math.random() * 1000.0 - 500.0), head.GetWorldCenter());
+              head.ApplyLinearImpulse(new b2__namespace.Vec2(Math.random() * 1000.0 - 500.0, Math.random() * 1000.0 - 500.0), head.GetWorldCenter());
               //}
               // Torso1
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               fd.shape = shape;
               shape.SetAsBox(1.5, 1.0);
               fd.density = 1.0;
@@ -8426,66 +8445,66 @@
               // JOINTS
               jd.enableLimit = true;
               // Head to shoulders
-              jd.lowerAngle = b2.DegToRad(-40.0);
-              jd.upperAngle = b2.DegToRad(40.0);
-              jd.Initialize(torso1, head, new b2.Vec2(startX, (startY - 1.5)));
+              jd.lowerAngle = b2__namespace.DegToRad(-40.0);
+              jd.upperAngle = b2__namespace.DegToRad(40.0);
+              jd.Initialize(torso1, head, new b2__namespace.Vec2(startX, (startY - 1.5)));
               this.m_world.CreateJoint(jd);
               // Upper arm to shoulders
               // L
-              jd.lowerAngle = b2.DegToRad(-85.0);
-              jd.upperAngle = b2.DegToRad(130.0);
-              jd.Initialize(torso1, upperArmL, new b2.Vec2((startX - 1.8), (startY - 2.0)));
+              jd.lowerAngle = b2__namespace.DegToRad(-85.0);
+              jd.upperAngle = b2__namespace.DegToRad(130.0);
+              jd.Initialize(torso1, upperArmL, new b2__namespace.Vec2((startX - 1.8), (startY - 2.0)));
               this.m_world.CreateJoint(jd);
               // R
-              jd.lowerAngle = b2.DegToRad(-130.0);
-              jd.upperAngle = b2.DegToRad(85.0);
-              jd.Initialize(torso1, upperArmR, new b2.Vec2((startX + 1.8), (startY - 2.0)));
+              jd.lowerAngle = b2__namespace.DegToRad(-130.0);
+              jd.upperAngle = b2__namespace.DegToRad(85.0);
+              jd.Initialize(torso1, upperArmR, new b2__namespace.Vec2((startX + 1.8), (startY - 2.0)));
               this.m_world.CreateJoint(jd);
               // Lower arm to upper arm
               // L
-              jd.lowerAngle = b2.DegToRad(-130.0);
-              jd.upperAngle = b2.DegToRad(10.0);
-              jd.Initialize(upperArmL, lowerArmL, new b2.Vec2((startX - 4.5), (startY - 2.0)));
+              jd.lowerAngle = b2__namespace.DegToRad(-130.0);
+              jd.upperAngle = b2__namespace.DegToRad(10.0);
+              jd.Initialize(upperArmL, lowerArmL, new b2__namespace.Vec2((startX - 4.5), (startY - 2.0)));
               this.m_world.CreateJoint(jd);
               // R
-              jd.lowerAngle = b2.DegToRad(-10.0);
-              jd.upperAngle = b2.DegToRad(130.0);
-              jd.Initialize(upperArmR, lowerArmR, new b2.Vec2((startX + 4.5), (startY - 2.0)));
+              jd.lowerAngle = b2__namespace.DegToRad(-10.0);
+              jd.upperAngle = b2__namespace.DegToRad(130.0);
+              jd.Initialize(upperArmR, lowerArmR, new b2__namespace.Vec2((startX + 4.5), (startY - 2.0)));
               this.m_world.CreateJoint(jd);
               // Shoulders/stomach
-              jd.lowerAngle = b2.DegToRad(-15.0);
-              jd.upperAngle = b2.DegToRad(15.0);
-              jd.Initialize(torso1, torso2, new b2.Vec2(startX, (startY - 3.5)));
+              jd.lowerAngle = b2__namespace.DegToRad(-15.0);
+              jd.upperAngle = b2__namespace.DegToRad(15.0);
+              jd.Initialize(torso1, torso2, new b2__namespace.Vec2(startX, (startY - 3.5)));
               this.m_world.CreateJoint(jd);
               // Stomach/hips
-              jd.Initialize(torso2, torso3, new b2.Vec2(startX, (startY - 5.0)));
+              jd.Initialize(torso2, torso3, new b2__namespace.Vec2(startX, (startY - 5.0)));
               this.m_world.CreateJoint(jd);
               // Torso to upper leg
               // L
-              jd.lowerAngle = b2.DegToRad(-25.0);
-              jd.upperAngle = b2.DegToRad(45.0);
-              jd.Initialize(torso3, upperLegL, new b2.Vec2((startX - 0.8), (startY - 7.2)));
+              jd.lowerAngle = b2__namespace.DegToRad(-25.0);
+              jd.upperAngle = b2__namespace.DegToRad(45.0);
+              jd.Initialize(torso3, upperLegL, new b2__namespace.Vec2((startX - 0.8), (startY - 7.2)));
               this.m_world.CreateJoint(jd);
               // R
-              jd.lowerAngle = b2.DegToRad(-45.0);
-              jd.upperAngle = b2.DegToRad(25.0);
-              jd.Initialize(torso3, upperLegR, new b2.Vec2((startX + 0.8), (startY - 7.2)));
+              jd.lowerAngle = b2__namespace.DegToRad(-45.0);
+              jd.upperAngle = b2__namespace.DegToRad(25.0);
+              jd.Initialize(torso3, upperLegR, new b2__namespace.Vec2((startX + 0.8), (startY - 7.2)));
               this.m_world.CreateJoint(jd);
               // Upper leg to lower leg
               // L
-              jd.lowerAngle = b2.DegToRad(-25.0);
-              jd.upperAngle = b2.DegToRad(115.0);
-              jd.Initialize(upperLegL, lowerLegL, new b2.Vec2((startX - 0.8), (startY - 10.5)));
+              jd.lowerAngle = b2__namespace.DegToRad(-25.0);
+              jd.upperAngle = b2__namespace.DegToRad(115.0);
+              jd.Initialize(upperLegL, lowerLegL, new b2__namespace.Vec2((startX - 0.8), (startY - 10.5)));
               this.m_world.CreateJoint(jd);
               // R
-              jd.lowerAngle = b2.DegToRad(-115.0);
-              jd.upperAngle = b2.DegToRad(25.0);
-              jd.Initialize(upperLegR, lowerLegR, new b2.Vec2((startX + 0.8), (startY - 10.5)));
+              jd.lowerAngle = b2__namespace.DegToRad(-115.0);
+              jd.upperAngle = b2__namespace.DegToRad(25.0);
+              jd.Initialize(upperLegR, lowerLegR, new b2__namespace.Vec2((startX + 0.8), (startY - 10.5)));
               this.m_world.CreateJoint(jd);
           }
           // these are static bodies so set the type accordingly
-          bd.type = b2.BodyType.b2_staticBody;
-          const shape = new b2.PolygonShape();
+          bd.type = b2__namespace.BodyType.b2_staticBody;
+          const shape = new b2__namespace.PolygonShape();
           fd.shape = shape;
           fd.density = 0.0;
           fd.friction = 0.4;
@@ -8513,7 +8532,7 @@
           return new TestRagdoll();
       }
   }
-  const testIndex$Z = RegisterTest("Extras", "Ragdoll", TestRagdoll.Create);
+  RegisterTest("Extras", "Ragdoll", TestRagdoll.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -8536,23 +8555,23 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               const vertices = [];
-              vertices[0] = new b2.Vec2(-30.0, 40.0);
-              vertices[1] = new b2.Vec2(30.0, 40.0);
-              vertices[2] = new b2.Vec2(30.0, 0.0);
-              vertices[3] = new b2.Vec2(-30.0, 0.0);
-              const shape = new b2.ChainShape();
+              vertices[0] = new b2__namespace.Vec2(-30.0, 40.0);
+              vertices[1] = new b2__namespace.Vec2(30.0, 40.0);
+              vertices[2] = new b2__namespace.Vec2(30.0, 0.0);
+              vertices[3] = new b2__namespace.Vec2(-30.0, 0.0);
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(vertices);
               ground.CreateFixture(shape, 0.0);
           }
           // Add bodies
-          const bd = new b2.BodyDef();
-          const fd = new b2.FixtureDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          const fd = new b2__namespace.FixtureDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           //bd.isBullet = true;
-          const polygon = new b2.PolygonShape();
+          const polygon = new b2__namespace.PolygonShape();
           fd.shape = polygon;
           fd.density = 1.0;
           fd.friction = 0.5;
@@ -8572,20 +8591,20 @@
               this.m_world.CreateBody(bd).CreateFixture(fd);
           }
           // Create ramp
-          bd.type = b2.BodyType.b2_staticBody;
+          bd.type = b2__namespace.BodyType.b2_staticBody;
           bd.position.Set(0.0, 0.0);
           const vxs = [
-              new b2.Vec2(-30.0, 0.0),
-              new b2.Vec2(-10.0, 0.0),
-              new b2.Vec2(-30.0, 10.0),
+              new b2__namespace.Vec2(-30.0, 0.0),
+              new b2__namespace.Vec2(-10.0, 0.0),
+              new b2__namespace.Vec2(-30.0, 10.0),
           ];
           polygon.Set(vxs, vxs.length);
           fd.density = 0;
           this.m_world.CreateBody(bd).CreateFixture(fd);
           // Create ball
-          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Set(-25.0, 20.0);
-          fd.shape = new b2.CircleShape(4.0);
+          fd.shape = new b2__namespace.CircleShape(4.0);
           fd.density = 2;
           fd.restitution = 0.2;
           fd.friction = 0.5;
@@ -8598,7 +8617,7 @@
           return new TestStack();
       }
   }
-  const testIndex$_ = RegisterTest("Extras", "Test Stack", TestStack.Create);
+  RegisterTest("Extras", "Test Stack", TestStack.Create);
 
   /*
    * Author: Chris Campbell - www.iforce2d.net
@@ -8667,10 +8686,10 @@
           this.m_maxBackwardSpeed = 0;
           this.m_maxDriveForce = 0;
           this.m_maxLateralImpulse = 0;
-          const bodyDef = new b2.BodyDef();
-          bodyDef.type = b2.BodyType.b2_dynamicBody;
+          const bodyDef = new b2__namespace.BodyDef();
+          bodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           this.m_body = world.CreateBody(bodyDef);
-          const polygonShape = new b2.PolygonShape();
+          const polygonShape = new b2__namespace.PolygonShape();
           polygonShape.SetAsBox(0.5, 1.25);
           const fixture = this.m_body.CreateFixture(polygonShape, 1); //shape, density
           fixture.SetUserData(new CarTireFUD());
@@ -8705,12 +8724,12 @@
           }
       }
       getLateralVelocity() {
-          const currentRightNormal = this.m_body.GetWorldVector(new b2.Vec2(1, 0), new b2.Vec2());
-          return currentRightNormal.SelfMul(b2.Vec2.DotVV(currentRightNormal, this.m_body.GetLinearVelocity()));
+          const currentRightNormal = this.m_body.GetWorldVector(new b2__namespace.Vec2(1, 0), new b2__namespace.Vec2());
+          return currentRightNormal.SelfMul(b2__namespace.Vec2.DotVV(currentRightNormal, this.m_body.GetLinearVelocity()));
       }
       getForwardVelocity() {
-          const currentForwardNormal = this.m_body.GetWorldVector(new b2.Vec2(0, 1), new b2.Vec2());
-          return currentForwardNormal.SelfMul(b2.Vec2.DotVV(currentForwardNormal, this.m_body.GetLinearVelocity()));
+          const currentForwardNormal = this.m_body.GetWorldVector(new b2__namespace.Vec2(0, 1), new b2__namespace.Vec2());
+          return currentForwardNormal.SelfMul(b2__namespace.Vec2.DotVV(currentForwardNormal, this.m_body.GetLinearVelocity()));
       }
       updateFriction() {
           //lateral linear velocity
@@ -8741,8 +8760,8 @@
                   return; //do nothing
           }
           //find current speed in forward direction
-          const currentForwardNormal = this.m_body.GetWorldVector(new b2.Vec2(0, 1), new b2.Vec2());
-          const currentSpeed = b2.Vec2.DotVV(this.getForwardVelocity(), currentForwardNormal);
+          const currentForwardNormal = this.m_body.GetWorldVector(new b2__namespace.Vec2(0, 1), new b2__namespace.Vec2());
+          const currentSpeed = b2__namespace.Vec2.DotVV(this.getForwardVelocity(), currentForwardNormal);
           //apply necessary force
           let force = 0;
           if (desiredSpeed > currentSpeed) {
@@ -8774,24 +8793,24 @@
       constructor(world) {
           this.m_tires = [];
           //create car body
-          const bodyDef = new b2.BodyDef();
-          bodyDef.type = b2.BodyType.b2_dynamicBody;
+          const bodyDef = new b2__namespace.BodyDef();
+          bodyDef.type = b2__namespace.BodyType.b2_dynamicBody;
           this.m_body = world.CreateBody(bodyDef);
           this.m_body.SetAngularDamping(3);
           const vertices = [];
-          vertices[0] = new b2.Vec2(1.5, 0);
-          vertices[1] = new b2.Vec2(3, 2.5);
-          vertices[2] = new b2.Vec2(2.8, 5.5);
-          vertices[3] = new b2.Vec2(1, 10);
-          vertices[4] = new b2.Vec2(-1, 10);
-          vertices[5] = new b2.Vec2(-2.8, 5.5);
-          vertices[6] = new b2.Vec2(-3, 2.5);
-          vertices[7] = new b2.Vec2(-1.5, 0);
-          const polygonShape = new b2.PolygonShape();
+          vertices[0] = new b2__namespace.Vec2(1.5, 0);
+          vertices[1] = new b2__namespace.Vec2(3, 2.5);
+          vertices[2] = new b2__namespace.Vec2(2.8, 5.5);
+          vertices[3] = new b2__namespace.Vec2(1, 10);
+          vertices[4] = new b2__namespace.Vec2(-1, 10);
+          vertices[5] = new b2__namespace.Vec2(-2.8, 5.5);
+          vertices[6] = new b2__namespace.Vec2(-3, 2.5);
+          vertices[7] = new b2__namespace.Vec2(-1.5, 0);
+          const polygonShape = new b2__namespace.PolygonShape();
           polygonShape.Set(vertices, 8);
           this.m_body.CreateFixture(polygonShape, 0.1); //shape, density
           //prepare common joint parameters
-          const jointDef = new b2.RevoluteJointDef();
+          const jointDef = new b2__namespace.RevoluteJointDef();
           jointDef.bodyA = this.m_body;
           jointDef.enableLimit = true;
           jointDef.lowerAngle = 0;
@@ -8855,7 +8874,7 @@
           }
           const angleNow = this.flJoint.GetJointAngle();
           let angleToTurn = desiredAngle - angleNow;
-          angleToTurn = b2.Clamp(angleToTurn, -turnPerTimeStep, turnPerTimeStep);
+          angleToTurn = b2__namespace.Clamp(angleToTurn, -turnPerTimeStep, turnPerTimeStep);
           const newAngle = angleNow + angleToTurn;
           this.flJoint.SetLimits(newAngle, newAngle);
           this.frJoint.SetLimits(newAngle, newAngle);
@@ -8865,20 +8884,20 @@
       constructor() {
           super();
           //this.m_destructionListener = new MyDestructionListener(this);
-          this.m_world.SetGravity(new b2.Vec2(0.0, 0.0));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0.0, 0.0));
           this.m_world.SetDestructionListener(this.m_destructionListener);
           //set up ground areas
           {
-              const bodyDef = new b2.BodyDef();
+              const bodyDef = new b2__namespace.BodyDef();
               this.m_groundBody = this.m_world.CreateBody(bodyDef);
-              const polygonShape = new b2.PolygonShape();
-              const fixtureDef = new b2.FixtureDef();
+              const polygonShape = new b2__namespace.PolygonShape();
+              const fixtureDef = new b2__namespace.FixtureDef();
               fixtureDef.shape = polygonShape;
               fixtureDef.isSensor = true;
-              polygonShape.SetAsBox(9, 7, new b2.Vec2(-10, 15), 20 * DEGTORAD);
+              polygonShape.SetAsBox(9, 7, new b2__namespace.Vec2(-10, 15), 20 * DEGTORAD);
               let groundAreaFixture = this.m_groundBody.CreateFixture(fixtureDef);
               groundAreaFixture.SetUserData(new GroundAreaFUD(0.5, false));
-              polygonShape.SetAsBox(9, 5, new b2.Vec2(5, 20), -40 * DEGTORAD);
+              polygonShape.SetAsBox(9, 5, new b2__namespace.Vec2(5, 20), -40 * DEGTORAD);
               groundAreaFixture = this.m_groundBody.CreateFixture(fixtureDef);
               groundAreaFixture.SetUserData(new GroundAreaFUD(0.2, false));
           }
@@ -8970,7 +8989,7 @@
           return new TopdownCar();
       }
   }
-  const testIndex$$ = RegisterTest("Extras", "Topdown Car", TopdownCar.Create);
+  RegisterTest("Extras", "Topdown Car", TopdownCar.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9004,19 +9023,19 @@
           this.positionController.gainP = 0.5;
           this.positionController.gainI = 0;
           this.positionController.gainD = 1.5;
-          const bd = new b2.BodyDef();
-          const fd = new b2.FixtureDef();
+          const bd = new b2__namespace.BodyDef();
+          const fd = new b2__namespace.FixtureDef();
           // pendulumBody = new p2.Body({
           //     mass: 1,
           //     position: [0, 2 + 0.5 * PENDULUM_LENGTH]
           // });
           // pendulumBody.addShape(new p2.Box({ width: 1, height: PENDULUM_LENGTH }));
           // world.addBody(pendulumBody);
-          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.x = 0;
           bd.position.y = 2 + 0.5 * Segway.PENDULUM_LENGTH;
           this.pendulumBody = this.m_world.CreateBody(bd);
-          const pendulumShape = new b2.PolygonShape();
+          const pendulumShape = new b2__namespace.PolygonShape();
           pendulumShape.SetAsBox(0.5, 0.5 * Segway.PENDULUM_LENGTH);
           fd.shape = pendulumShape;
           fd.density = 1 / (1 * Segway.PENDULUM_LENGTH); // TODO: specify mass
@@ -9028,11 +9047,11 @@
           // });
           // wheelBody.addShape(new p2.Circle({ radius: 0.6 }));
           // world.addBody(wheelBody);
-          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.x = 0;
           bd.position.y = 1;
           this.wheelBody = this.m_world.CreateBody(bd);
-          const wheelShape = new b2.CircleShape();
+          const wheelShape = new b2__namespace.CircleShape();
           wheelShape.m_radius = 0.6;
           fd.shape = wheelShape;
           fd.density = 1 / (Math.PI * 0.6 * 0.6); // TODO: specify mass
@@ -9049,7 +9068,7 @@
           // var m = 40;
           // wheelJoint.motorEquation.maxForce = m;
           // wheelJoint.motorEquation.minForce = -m;
-          const jd = new b2.RevoluteJointDef();
+          const jd = new b2__namespace.RevoluteJointDef();
           jd.Initialize(this.wheelBody, this.pendulumBody, { x: 0, y: 0 });
           jd.localAnchorA.Set(0, 0);
           jd.localAnchorB.Set(0, -0.5 * Segway.PENDULUM_LENGTH);
@@ -9064,11 +9083,11 @@
           // });
           // groundBody.addShape(groundShape);
           // world.addBody(groundBody);
-          bd.type = b2.BodyType.b2_staticBody;
+          bd.type = b2__namespace.BodyType.b2_staticBody;
           bd.position.x = 0;
           bd.position.y = 0;
           this.groundBody = this.m_world.CreateBody(bd);
-          const groundShape = new b2.EdgeShape();
+          const groundShape = new b2__namespace.EdgeShape();
           groundShape.SetTwoSided({ x: -100, y: 0 }, { x: 100, y: 0 });
           fd.shape = groundShape;
           fd.friction = 10;
@@ -9095,11 +9114,11 @@
               this.positionController.step(dt);
               let targetLinAccel = this.positionController.output;
               // targetLinAccel = clamp(targetLinAccel, -10.0, 10.0);
-              targetLinAccel = b2.Clamp(targetLinAccel, -10, 10);
+              targetLinAccel = b2__namespace.Clamp(targetLinAccel, -10, 10);
               // targetAngle = targetLinAccel / world.gravity[1];
               targetAngle = targetLinAccel / this.m_world.GetGravity().y;
               // targetAngle = clamp(targetAngle, -15 * DEGTORAD, 15 * DEGTORAD);
-              targetAngle = b2.Clamp(targetAngle, b2.DegToRad(-15), b2.DegToRad(15));
+              targetAngle = b2__namespace.Clamp(targetAngle, b2__namespace.DegToRad(-15), b2__namespace.DegToRad(15));
           }
           // var currentAngle = pendulumBody.angle;
           let currentAngle = this.pendulumBody.GetAngle();
@@ -9247,15 +9266,15 @@
   //     return Math.min(Math.max(num, min), max);
   // };
   function normalizeAngle(angle) {
-      while (angle > b2.DegToRad(180)) {
-          angle -= b2.DegToRad(360);
+      while (angle > b2__namespace.DegToRad(180)) {
+          angle -= b2__namespace.DegToRad(360);
       }
-      while (angle < b2.DegToRad(-180)) {
-          angle += b2.DegToRad(360);
+      while (angle < b2__namespace.DegToRad(-180)) {
+          angle += b2__namespace.DegToRad(360);
       }
       return angle;
   }
-  const testIndex$10 = RegisterTest("Extras", "Segway", Segway.Create);
+  RegisterTest("Extras", "Segway", Segway.Create);
 
   /*
   * Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
@@ -9278,38 +9297,38 @@
       constructor() {
           super();
           this.m_bodies = new Array();
-          const bc = new b2.BuoyancyController();
+          const bc = new b2__namespace.BuoyancyController();
           this.m_controller = bc;
           bc.normal.Set(0.0, 1.0);
           bc.offset = 20.0;
           bc.density = 2.0;
           bc.linearDrag = 5.0;
           bc.angularDrag = 2.0;
-          const ground = this.m_world.CreateBody(new b2.BodyDef());
+          const ground = this.m_world.CreateBody(new b2__namespace.BodyDef());
           {
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(40.0, 0.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(40.0, 0.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(-40.0, 0.0), new b2.Vec2(-40.0, 25.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(-40.0, 0.0), new b2__namespace.Vec2(-40.0, 25.0));
               ground.CreateFixture(shape, 0.0);
-              shape.SetTwoSided(new b2.Vec2(40.0, 0.0), new b2.Vec2(40.0, 25.0));
+              shape.SetTwoSided(new b2__namespace.Vec2(40.0, 0.0), new b2__namespace.Vec2(40.0, 25.0));
               ground.CreateFixture(shape, 0.0);
           }
           // Spawn in a bunch of crap
           {
               for (let i = 0; i < 5; i++) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   //bd.isBullet = true;
                   bd.position.Set(Math.random() * 40.0 - 20.0, Math.random() * 15.0 + 5.0);
                   bd.angle = Math.random() * Math.PI;
                   const body = this.m_world.CreateBody(bd);
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.density = 1.0;
                   // Override the default friction.
                   fd.friction = 0.3;
                   fd.restitution = 0.1;
-                  const polygon = new b2.PolygonShape();
+                  const polygon = new b2__namespace.PolygonShape();
                   fd.shape = polygon;
                   polygon.SetAsBox(Math.random() * 0.5 + 1.0, Math.random() * 0.5 + 1.0);
                   body.CreateFixture(fd);
@@ -9318,60 +9337,60 @@
           }
           {
               for (let i = 0; i < 5; i++) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   //bd.isBullet = true;
                   bd.position.Set(Math.random() * 40.0 - 20.0, Math.random() * 15.0 + 5.0);
                   bd.angle = Math.random() * Math.PI;
                   const body = this.m_world.CreateBody(bd);
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.density = 1.0;
                   // Override the default friction.
                   fd.friction = 0.3;
                   fd.restitution = 0.1;
-                  fd.shape = new b2.CircleShape(Math.random() * 0.5 + 1.0);
+                  fd.shape = new b2__namespace.CircleShape(Math.random() * 0.5 + 1.0);
                   body.CreateFixture(fd);
                   this.m_bodies.push(body);
               }
           }
           {
               for (let i = 0; i < 15; i++) {
-                  const bd = new b2.BodyDef();
-                  bd.type = b2.BodyType.b2_dynamicBody;
+                  const bd = new b2__namespace.BodyDef();
+                  bd.type = b2__namespace.BodyType.b2_dynamicBody;
                   //bd.isBullet = true;
                   bd.position.Set(Math.random() * 40.0 - 20.0, Math.random() * 15.0 + 5.0);
                   bd.angle = Math.random() * Math.PI;
                   const body = this.m_world.CreateBody(bd);
-                  const fd = new b2.FixtureDef();
+                  const fd = new b2__namespace.FixtureDef();
                   fd.density = 1.0;
                   fd.friction = 0.3;
                   fd.restitution = 0.1;
-                  const polygon = new b2.PolygonShape();
+                  const polygon = new b2__namespace.PolygonShape();
                   fd.shape = polygon;
                   if (Math.random() > 0.66) {
                       polygon.Set([
-                          new b2.Vec2(-1.0 - Math.random() * 1.0, 1.0 + Math.random() * 1.0),
-                          new b2.Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0),
-                          new b2.Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0),
-                          new b2.Vec2(1.0 + Math.random() * 1.0, 1.0 + Math.random() * 1.0),
+                          new b2__namespace.Vec2(-1.0 - Math.random() * 1.0, 1.0 + Math.random() * 1.0),
+                          new b2__namespace.Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0),
+                          new b2__namespace.Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0),
+                          new b2__namespace.Vec2(1.0 + Math.random() * 1.0, 1.0 + Math.random() * 1.0),
                       ]);
                   }
                   else if (Math.random() > 0.5) {
                       const array = [];
-                      array[0] = new b2.Vec2(0.0, 1.0 + Math.random() * 1.0);
-                      array[2] = new b2.Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0);
-                      array[3] = new b2.Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0);
-                      array[1] = new b2.Vec2((array[0].x + array[2].x), (array[0].y + array[2].y));
+                      array[0] = new b2__namespace.Vec2(0.0, 1.0 + Math.random() * 1.0);
+                      array[2] = new b2__namespace.Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0);
+                      array[3] = new b2__namespace.Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0);
+                      array[1] = new b2__namespace.Vec2((array[0].x + array[2].x), (array[0].y + array[2].y));
                       array[1].SelfMul(Math.random() / 2 + 0.8);
-                      array[4] = new b2.Vec2((array[3].x + array[0].x), (array[3].y + array[0].y));
+                      array[4] = new b2__namespace.Vec2((array[3].x + array[0].x), (array[3].y + array[0].y));
                       array[4].SelfMul(Math.random() / 2 + 0.8);
                       polygon.Set(array);
                   }
                   else {
                       polygon.Set([
-                          new b2.Vec2(0.0, 1.0 + Math.random() * 1.0),
-                          new b2.Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0),
-                          new b2.Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0),
+                          new b2__namespace.Vec2(0.0, 1.0 + Math.random() * 1.0),
+                          new b2__namespace.Vec2(-0.5 - Math.random() * 1.0, -1.0 - Math.random() * 1.0),
+                          new b2__namespace.Vec2(0.5 + Math.random() * 1.0, -1.0 - Math.random() * 1.0),
                       ]);
                   }
                   body.CreateFixture(fd);
@@ -9380,27 +9399,27 @@
           }
           //Add some exciting bath toys
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 40.0);
               bd.angle = 0;
               const body = this.m_world.CreateBody(bd);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.density = 3.0;
-              const polygon = new b2.PolygonShape();
+              const polygon = new b2__namespace.PolygonShape();
               fd.shape = polygon;
               polygon.SetAsBox(4.0, 1.0);
               body.CreateFixture(fd);
               this.m_bodies.push(body);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.position.Set(0.0, 30.0);
               const body = this.m_world.CreateBody(bd);
-              const fd = new b2.FixtureDef();
+              const fd = new b2__namespace.FixtureDef();
               fd.density = 2.0;
-              const circle = new b2.CircleShape(0.7);
+              const circle = new b2__namespace.CircleShape(0.7);
               fd.shape = circle;
               circle.m_p.Set(3.0, 0.0);
               body.CreateFixture(fd);
@@ -9411,7 +9430,7 @@
               circle.m_p.Set(0.0, -3.0);
               body.CreateFixture(fd);
               fd.density = 2.0;
-              const polygon = new b2.PolygonShape();
+              const polygon = new b2__namespace.PolygonShape();
               fd.shape = polygon;
               polygon.SetAsBox(3.0, 0.2);
               body.CreateFixture(fd);
@@ -9441,7 +9460,7 @@
           return new BuoyancyTest();
       }
   }
-  const testIndex$11 = RegisterTest("Extras", "Buoyancy Test", BuoyancyTest.Create);
+  RegisterTest("Extras", "Buoyancy Test", BuoyancyTest.Create);
 
   /*
    * Copyright (c) 2014 Google, Inc.
@@ -9469,35 +9488,35 @@
           super();
           this.m_particlesToCreate = 300;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               // Construct a valley out of many polygons to ensure there's no
               // issue with particles falling directly on an ambiguous set of
               // fixture corners.
               const step = 1.0;
               for (let i = -10.0; i < 10.0; i += step) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(i, -10.0),
-                      new b2.Vec2(i + step, -10.0),
-                      new b2.Vec2(0.0, 15.0),
+                      new b2__namespace.Vec2(i, -10.0),
+                      new b2__namespace.Vec2(i + step, -10.0),
+                      new b2__namespace.Vec2(0.0, 15.0),
                   ];
                   shape.Set(vertices, 3);
                   ground.CreateFixture(shape, 0.0);
               }
               for (let i = -10.0; i < 35.0; i += step) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-10.0, i),
-                      new b2.Vec2(-10.0, i + step),
-                      new b2.Vec2(0.0, 15.0),
+                      new b2__namespace.Vec2(-10.0, i),
+                      new b2__namespace.Vec2(-10.0, i + step),
+                      new b2__namespace.Vec2(0.0, 15.0),
                   ];
                   shape.Set(vertices, 3);
                   ground.CreateFixture(shape, 0.0);
                   const vertices2 = [
-                      new b2.Vec2(10.0, i),
-                      new b2.Vec2(10.0, i + step),
-                      new b2.Vec2(0.0, 15.0),
+                      new b2__namespace.Vec2(10.0, i),
+                      new b2__namespace.Vec2(10.0, i + step),
+                      new b2__namespace.Vec2(0.0, 15.0),
                   ];
                   shape.Set(vertices2, 3);
                   ground.CreateFixture(shape, 0.0);
@@ -9507,7 +9526,7 @@
           this.m_particlesToCreate = 300;
           this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
           const particleType = Test.GetParticleParameterValue();
-          if (particleType === b2.ParticleFlag.b2_waterParticle) {
+          if (particleType === b2__namespace.ParticleFlag.b2_waterParticle) {
               this.m_particleSystem.SetDamping(0.2);
           }
       }
@@ -9518,14 +9537,14 @@
           }
           --this.m_particlesToCreate;
           const flags = Test.GetParticleParameterValue();
-          const pd = new b2.ParticleDef();
+          const pd = new b2__namespace.ParticleDef();
           pd.position.Set(0.0, 40.0);
           pd.velocity.Set(0.0, -1.0);
           pd.flags = flags;
-          if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
+          if (flags & (b2__namespace.ParticleFlag.b2_springParticle | b2__namespace.ParticleFlag.b2_elasticParticle)) {
               const count = this.m_particleSystem.GetParticleCount();
               pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
-              pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
+              pd.flags |= b2__namespace.ParticleFlag.b2_reactiveParticle;
           }
           this.m_particleSystem.CreateParticle(pd);
       }
@@ -9533,7 +9552,7 @@
           return new AntiPointy();
       }
   }
-  const testIndex$12 = RegisterTest("Particles", "AntiPointy", AntiPointy.Create);
+  RegisterTest("Particles", "AntiPointy", AntiPointy.Create);
   // #endif
 
   /*
@@ -9557,50 +9576,50 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               // Construct a pathological corner intersection out of many
               // polygons to ensure there's no issue with particle oscillation
               // from many fixture contact impulses at the corner
               // left edge
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-20.0, 30.0),
-                      new b2.Vec2(-20.0, 0.0),
-                      new b2.Vec2(-25.0, 0.0),
-                      new b2.Vec2(-25.0, 30.0),
+                      new b2__namespace.Vec2(-20.0, 30.0),
+                      new b2__namespace.Vec2(-20.0, 0.0),
+                      new b2__namespace.Vec2(-25.0, 0.0),
+                      new b2__namespace.Vec2(-25.0, 30.0),
                   ];
                   shape.Set(vertices);
                   ground.CreateFixture(shape, 0.0);
               }
               const yrange = 30.0, ystep = yrange / 10.0, xrange = 20.0, xstep = xrange / 2.0;
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-25.0, 0.0),
-                      new b2.Vec2(20.0, 15.0),
-                      new b2.Vec2(25.0, 0.0),
+                      new b2__namespace.Vec2(-25.0, 0.0),
+                      new b2__namespace.Vec2(20.0, 15.0),
+                      new b2__namespace.Vec2(25.0, 0.0),
                   ];
                   shape.Set(vertices);
                   ground.CreateFixture(shape, 0.0);
               }
               for (let x = -xrange; x < xrange; x += xstep) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-25.0, 0.0),
-                      new b2.Vec2(x, 15.0),
-                      new b2.Vec2(x + xstep, 15.0),
+                      new b2__namespace.Vec2(-25.0, 0.0),
+                      new b2__namespace.Vec2(x, 15.0),
+                      new b2__namespace.Vec2(x + xstep, 15.0),
                   ];
                   shape.Set(vertices);
                   ground.CreateFixture(shape, 0.0);
               }
               for (let y = 0.0; y < yrange; y += ystep) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(25.0, y),
-                      new b2.Vec2(25.0, y + ystep),
-                      new b2.Vec2(20.0, 15.0),
+                      new b2__namespace.Vec2(25.0, y),
+                      new b2__namespace.Vec2(25.0, y + ystep),
+                      new b2__namespace.Vec2(20.0, 15.0),
                   ];
                   shape.Set(vertices);
                   ground.CreateFixture(shape, 0.0);
@@ -9609,14 +9628,14 @@
           this.m_particleSystem.SetRadius(1.0);
           const particleType = Test.GetParticleParameterValue();
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 35);
               shape.m_radius = 12;
-              const pd = new b2.ParticleGroupDef();
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = particleType;
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
@@ -9625,7 +9644,7 @@
           return new CornerCase();
       }
   }
-  const testIndex$13 = RegisterTest("Particles", "Corner Case", CornerCase.Create);
+  RegisterTest("Particles", "Corner Case", CornerCase.Create);
   // #endif
 
   /*
@@ -9649,14 +9668,14 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               const vertices = [
-                  new b2.Vec2(-2, 0),
-                  new b2.Vec2(2, 0),
-                  new b2.Vec2(2, 4),
-                  new b2.Vec2(-2, 4),
+                  new b2__namespace.Vec2(-2, 0),
+                  new b2__namespace.Vec2(2, 0),
+                  new b2__namespace.Vec2(2, 4),
+                  new b2__namespace.Vec2(-2, 4),
               ];
               shape.CreateLoop(vertices, 4);
               ground.CreateFixture(shape, 0.0);
@@ -9664,13 +9683,13 @@
           this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
           this.m_particleSystem.SetDamping(0.2);
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.8, 1.0, new b2.Vec2(-1.2, 1.01), 0);
-              const pd = new b2.ParticleGroupDef();
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.8, 1.0, new b2__namespace.Vec2(-1.2, 1.01), 0);
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = Test.GetParticleParameterValue();
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
@@ -9682,7 +9701,7 @@
           return new DamBreak();
       }
   }
-  const testIndex$14 = RegisterTest("Particles", "Dam Break", DamBreak.Create);
+  RegisterTest("Particles", "Dam Break", DamBreak.Create);
   // #endif
 
   /*
@@ -9710,48 +9729,48 @@
           this.m_groupFlags = 0;
           this.m_colorIndex = 0;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -2),
-                      new b2.Vec2(4, -2),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
+                      new b2__namespace.Vec2(-4, -2),
+                      new b2__namespace.Vec2(4, -2),
+                      new b2__namespace.Vec2(4, 0),
+                      new b2__namespace.Vec2(-4, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -2),
-                      new b2.Vec2(-2, -2),
-                      new b2.Vec2(-2, 6),
-                      new b2.Vec2(-4, 6),
+                      new b2__namespace.Vec2(-4, -2),
+                      new b2__namespace.Vec2(-2, -2),
+                      new b2__namespace.Vec2(-2, 6),
+                      new b2__namespace.Vec2(-4, 6),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(2, -2),
-                      new b2.Vec2(4, -2),
-                      new b2.Vec2(4, 6),
-                      new b2.Vec2(2, 6),
+                      new b2__namespace.Vec2(2, -2),
+                      new b2__namespace.Vec2(4, -2),
+                      new b2__namespace.Vec2(4, 6),
+                      new b2__namespace.Vec2(2, 6),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, 4),
-                      new b2.Vec2(4, 4),
-                      new b2.Vec2(4, 6),
-                      new b2.Vec2(-4, 6),
+                      new b2__namespace.Vec2(-4, 4),
+                      new b2__namespace.Vec2(4, 4),
+                      new b2__namespace.Vec2(4, 6),
+                      new b2__namespace.Vec2(-4, 6),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -9771,19 +9790,19 @@
       // group flags.
       DetermineParticleParameter() {
           if (this.m_drawing) {
-              if (this.m_groupFlags === (b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup)) {
+              if (this.m_groupFlags === (b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup | b2__namespace.ParticleGroupFlag.b2_solidParticleGroup)) {
                   return DrawingParticles.Parameters.e_parameterRigid;
               }
-              if (this.m_groupFlags === b2.ParticleGroupFlag.b2_rigidParticleGroup && this.m_particleFlags === b2.ParticleFlag.b2_barrierParticle) {
+              if (this.m_groupFlags === b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup && this.m_particleFlags === b2__namespace.ParticleFlag.b2_barrierParticle) {
                   return DrawingParticles.Parameters.e_parameterRigidBarrier;
               }
-              if (this.m_particleFlags === (b2.ParticleFlag.b2_elasticParticle | b2.ParticleFlag.b2_barrierParticle)) {
+              if (this.m_particleFlags === (b2__namespace.ParticleFlag.b2_elasticParticle | b2__namespace.ParticleFlag.b2_barrierParticle)) {
                   return DrawingParticles.Parameters.e_parameterElasticBarrier;
               }
-              if (this.m_particleFlags === (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_barrierParticle)) {
+              if (this.m_particleFlags === (b2__namespace.ParticleFlag.b2_springParticle | b2__namespace.ParticleFlag.b2_barrierParticle)) {
                   return DrawingParticles.Parameters.e_parameterSpringBarrier;
               }
-              if (this.m_particleFlags === (b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_repulsiveParticle)) {
+              if (this.m_particleFlags === (b2__namespace.ParticleFlag.b2_wallParticle | b2__namespace.ParticleFlag.b2_repulsiveParticle)) {
                   return DrawingParticles.Parameters.e_parameterRepulsive;
               }
               return this.m_particleFlags;
@@ -9796,52 +9815,52 @@
           this.m_groupFlags = 0;
           switch (key) {
               case "e":
-                  this.m_particleFlags = b2.ParticleFlag.b2_elasticParticle;
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_elasticParticle;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                   break;
               case "p":
-                  this.m_particleFlags = b2.ParticleFlag.b2_powderParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_powderParticle;
                   break;
               case "r":
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup | b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                   break;
               case "s":
-                  this.m_particleFlags = b2.ParticleFlag.b2_springParticle;
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_springParticle;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                   break;
               case "t":
-                  this.m_particleFlags = b2.ParticleFlag.b2_tensileParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_tensileParticle;
                   break;
               case "v":
-                  this.m_particleFlags = b2.ParticleFlag.b2_viscousParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_viscousParticle;
                   break;
               case "w":
-                  this.m_particleFlags = b2.ParticleFlag.b2_wallParticle;
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_wallParticle;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                   break;
               case "b":
-                  this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_wallParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle | b2__namespace.ParticleFlag.b2_wallParticle;
                   break;
               case "h":
-                  this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle;
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup;
                   break;
               case "n":
-                  this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_elasticParticle;
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle | b2__namespace.ParticleFlag.b2_elasticParticle;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                   break;
               case "m":
-                  this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_springParticle;
-                  this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle | b2__namespace.ParticleFlag.b2_springParticle;
+                  this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                   break;
               case "f":
-                  this.m_particleFlags = b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_repulsiveParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_wallParticle | b2__namespace.ParticleFlag.b2_repulsiveParticle;
                   break;
               case "c":
-                  this.m_particleFlags = b2.ParticleFlag.b2_colorMixingParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_colorMixingParticle;
                   break;
               case "z":
-                  this.m_particleFlags = b2.ParticleFlag.b2_zombieParticle;
+                  this.m_particleFlags = b2__namespace.ParticleFlag.b2_zombieParticle;
                   break;
           }
           Test.SetParticleParameterValue(this.DetermineParticleParameter());
@@ -9849,23 +9868,23 @@
       MouseMove(p) {
           super.MouseMove(p);
           if (this.m_drawing) {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Copy(p);
               shape.m_radius = 0.2;
               ///  b2Transform xf;
               ///  xf.SetIdentity();
-              const xf = b2.Transform.IDENTITY;
+              const xf = b2__namespace.Transform.IDENTITY;
               this.m_particleSystem.DestroyParticlesInShape(shape, xf);
               const joinGroup = this.m_lastGroup && this.m_groupFlags === this.m_lastGroup.GetGroupFlags();
               if (!joinGroup) {
                   this.m_colorIndex = (this.m_colorIndex + 1) % Test.k_ParticleColorsCount;
               }
-              const pd = new b2.ParticleGroupDef();
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.shape = shape;
               pd.flags = this.m_particleFlags;
-              if ((this.m_particleFlags & (b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) ||
-                  (this.m_particleFlags === (b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_barrierParticle))) {
-                  pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
+              if ((this.m_particleFlags & (b2__namespace.ParticleFlag.b2_wallParticle | b2__namespace.ParticleFlag.b2_springParticle | b2__namespace.ParticleFlag.b2_elasticParticle)) ||
+                  (this.m_particleFlags === (b2__namespace.ParticleFlag.b2_wallParticle | b2__namespace.ParticleFlag.b2_barrierParticle))) {
+                  pd.flags |= b2__namespace.ParticleFlag.b2_reactiveParticle;
               }
               pd.groupFlags = this.m_groupFlags;
               pd.color.Copy(Test.k_ParticleColors[this.m_colorIndex]);
@@ -9887,8 +9906,8 @@
       SplitParticleGroups() {
           for (let group = this.m_particleSystem.GetParticleGroupList(); group; group = group.GetNext()) {
               if (group !== this.m_lastGroup &&
-                  (group.GetGroupFlags() & b2.ParticleGroupFlag.b2_rigidParticleGroup) &&
-                  (group.GetAllParticleFlags() & b2.ParticleFlag.b2_zombieParticle)) {
+                  (group.GetGroupFlags() & b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup) &&
+                  (group.GetAllParticleFlags() & b2__namespace.ParticleFlag.b2_zombieParticle)) {
                   // Split a rigid particle group which may be disconnected
                   // by destroying particles.
                   this.m_particleSystem.SplitParticleGroup(group);
@@ -9900,33 +9919,33 @@
           this.m_drawing = (parameterValue & DrawingParticles.Parameters.e_parameterMove) !== DrawingParticles.Parameters.e_parameterMove;
           if (this.m_drawing) {
               switch (parameterValue) {
-                  case b2.ParticleFlag.b2_elasticParticle:
-                  case b2.ParticleFlag.b2_springParticle:
-                  case b2.ParticleFlag.b2_wallParticle:
+                  case b2__namespace.ParticleFlag.b2_elasticParticle:
+                  case b2__namespace.ParticleFlag.b2_springParticle:
+                  case b2__namespace.ParticleFlag.b2_wallParticle:
                       this.m_particleFlags = parameterValue;
-                      this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                      this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                       break;
                   case DrawingParticles.Parameters.e_parameterRigid:
                       // b2_waterParticle is the default particle type in
                       // LiquidFun.
-                      this.m_particleFlags = b2.ParticleFlag.b2_waterParticle;
-                      this.m_groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+                      this.m_particleFlags = b2__namespace.ParticleFlag.b2_waterParticle;
+                      this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup | b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                       break;
                   case DrawingParticles.Parameters.e_parameterRigidBarrier:
-                      this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle;
-                      this.m_groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup;
+                      this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle;
+                      this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup;
                       break;
                   case DrawingParticles.Parameters.e_parameterElasticBarrier:
-                      this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_elasticParticle;
+                      this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle | b2__namespace.ParticleFlag.b2_elasticParticle;
                       this.m_groupFlags = 0;
                       break;
                   case DrawingParticles.Parameters.e_parameterSpringBarrier:
-                      this.m_particleFlags = b2.ParticleFlag.b2_barrierParticle | b2.ParticleFlag.b2_springParticle;
+                      this.m_particleFlags = b2__namespace.ParticleFlag.b2_barrierParticle | b2__namespace.ParticleFlag.b2_springParticle;
                       this.m_groupFlags = 0;
                       break;
                   case DrawingParticles.Parameters.e_parameterRepulsive:
-                      this.m_particleFlags = b2.ParticleFlag.b2_repulsiveParticle | b2.ParticleFlag.b2_wallParticle;
-                      this.m_groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+                      this.m_particleFlags = b2__namespace.ParticleFlag.b2_repulsiveParticle | b2__namespace.ParticleFlag.b2_wallParticle;
+                      this.m_groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
                       break;
                   default:
                       this.m_particleFlags = parameterValue;
@@ -9934,7 +9953,7 @@
                       break;
               }
           }
-          if (this.m_particleSystem.GetAllParticleFlags() & b2.ParticleFlag.b2_zombieParticle) {
+          if (this.m_particleSystem.GetAllParticleFlags() & b2__namespace.ParticleFlag.b2_zombieParticle) {
               this.SplitParticleGroups();
           }
           super.Step(settings);
@@ -9969,7 +9988,7 @@
       e_parameterRepulsive: (1 << 31) | (1 << 5),
   };
   DrawingParticles.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_zombieParticle, ParticleParameter.k_DefaultOptions, "erase"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_zombieParticle, ParticleParameter.k_DefaultOptions, "erase"),
       new ParticleParameterValue(DrawingParticles.Parameters.e_parameterMove, ParticleParameter.k_DefaultOptions, "move"),
       new ParticleParameterValue(DrawingParticles.Parameters.e_parameterRigid, ParticleParameter.k_DefaultOptions, "rigid"),
       new ParticleParameterValue(DrawingParticles.Parameters.e_parameterRigidBarrier, ParticleParameter.k_DefaultOptions, "rigid barrier"),
@@ -9982,7 +10001,7 @@
       new ParticleParameterDefinition(DrawingParticles.k_paramValues),
   ];
   DrawingParticles.k_paramDefCount = DrawingParticles.k_paramDef.length;
-  const testIndex$15 = RegisterTest("Particles", "Drawing Particles", DrawingParticles.Create);
+  RegisterTest("Particles", "Drawing Particles", DrawingParticles.Create);
   // #endif
 
   /*
@@ -10006,37 +10025,37 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
+                      new b2__namespace.Vec2(-4, -1),
+                      new b2__namespace.Vec2(4, -1),
+                      new b2__namespace.Vec2(4, 0),
+                      new b2__namespace.Vec2(-4, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 2),
+                      new b2__namespace.Vec2(-4, -0.1),
+                      new b2__namespace.Vec2(-2, -0.1),
+                      new b2__namespace.Vec2(-2, 2),
+                      new b2__namespace.Vec2(-4, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 2),
-                      new b2.Vec2(2, 2),
+                      new b2__namespace.Vec2(2, -0.1),
+                      new b2__namespace.Vec2(4, -0.1),
+                      new b2__namespace.Vec2(4, 2),
+                      new b2__namespace.Vec2(2, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -10044,33 +10063,33 @@
           }
           this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 3);
               shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_springParticle;
-              pd.groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_springParticle;
+              pd.groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
               pd.shape = shape;
               pd.color.Set(1, 0, 0, 1);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(-1, 3);
               shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_elasticParticle;
-              pd.groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_elasticParticle;
+              pd.groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
               pd.shape = shape;
               pd.color.Set(0, 1, 0, 1);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(1, 0.5);
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_elasticParticle;
-              pd.groupFlags = b2.ParticleGroupFlag.b2_solidParticleGroup;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_elasticParticle;
+              pd.groupFlags = b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
               pd.position.Set(1, 4);
               pd.angle = -0.5;
               pd.angularVelocity = 2.0;
@@ -10079,10 +10098,10 @@
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 8);
               shape.m_radius = 0.5;
               body.CreateFixture(shape, 0.5);
@@ -10095,7 +10114,7 @@
           return new ElasticParticles();
       }
   }
-  const testIndex$16 = RegisterTest("Particles", "Elastic Particles", ElasticParticles.Create);
+  RegisterTest("Particles", "Elastic Particles", ElasticParticles.Create);
   // #endif
 
   // #if B2_ENABLE_PARTICLE
@@ -10106,28 +10125,28 @@
           this.m_particleSystem.SetRadius(0.3 * 2);
           this.m_particleSystem.SetGravityScale(0.4);
           this.m_particleSystem.SetDensity(1.2);
-          const bdg = new b2.BodyDef();
+          const bdg = new b2__namespace.BodyDef();
           const ground = this.m_world.CreateBody(bdg);
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_staticBody; //b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_staticBody; //b2.BodyType.b2_dynamicBody;
           bd.allowSleep = false;
           bd.position.Set(0.0, 0.0);
           const body = this.m_world.CreateBody(bd);
-          const shape = new b2.PolygonShape();
-          shape.SetAsBox(0.5, 10.0, new b2.Vec2(20.0, 0.0), 0.0);
+          const shape = new b2__namespace.PolygonShape();
+          shape.SetAsBox(0.5, 10.0, new b2__namespace.Vec2(20.0, 0.0), 0.0);
           body.CreateFixture(shape, 5.0);
-          shape.SetAsBox(0.5, 10.0, new b2.Vec2(-20.0, 0.0), 0.0);
+          shape.SetAsBox(0.5, 10.0, new b2__namespace.Vec2(-20.0, 0.0), 0.0);
           body.CreateFixture(shape, 5.0);
-          shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, 10.0), Math.PI / 2.0);
+          shape.SetAsBox(0.5, 20.0, new b2__namespace.Vec2(0.0, 10.0), Math.PI / 2.0);
           body.CreateFixture(shape, 5.0);
-          shape.SetAsBox(0.5, 20.0, new b2.Vec2(0.0, -10.0), Math.PI / 2.0);
+          shape.SetAsBox(0.5, 20.0, new b2__namespace.Vec2(0.0, -10.0), Math.PI / 2.0);
           body.CreateFixture(shape, 5.0);
-          bd.type = b2.BodyType.b2_dynamicBody;
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           bd.position.Set(0.0, 0.0);
           this.m_mover = this.m_world.CreateBody(bd);
-          shape.SetAsBox(1.0, 5.0, new b2.Vec2(0.0, 2.0), 0.0);
+          shape.SetAsBox(1.0, 5.0, new b2__namespace.Vec2(0.0, 2.0), 0.0);
           this.m_mover.CreateFixture(shape, 5.0);
-          const jd = new b2.RevoluteJointDef();
+          const jd = new b2__namespace.RevoluteJointDef();
           jd.bodyA = ground;
           jd.bodyB = this.m_mover;
           jd.localAnchorA.Set(0.0, 0.0);
@@ -10137,10 +10156,10 @@
           jd.maxMotorTorque = 1e7;
           jd.enableMotor = true;
           this.m_joint = this.m_world.CreateJoint(jd);
-          const pd = new b2.ParticleGroupDef();
-          pd.flags = b2.ParticleFlag.b2_waterParticle;
-          const shape2 = new b2.PolygonShape();
-          shape2.SetAsBox(9.0, 9.0, new b2.Vec2(0.0, 0.0), 0.0);
+          const pd = new b2__namespace.ParticleGroupDef();
+          pd.flags = b2__namespace.ParticleFlag.b2_waterParticle;
+          const shape2 = new b2__namespace.PolygonShape();
+          shape2.SetAsBox(9.0, 9.0, new b2__namespace.Vec2(0.0, 0.0), 0.0);
           pd.shape = shape2;
           this.m_particleSystem.CreateParticleGroup(pd);
       }
@@ -10153,7 +10172,7 @@
           return new EyeCandy();
       }
   }
-  const testIndex$17 = RegisterTest("Particles", "Eye Candy", EyeCandy.Create);
+  RegisterTest("Particles", "Eye Candy", EyeCandy.Create);
   // #endif
 
   /*
@@ -10208,29 +10227,29 @@
           this.m_particleSystem.SetDestructionByAge(true);
           let ground;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
           }
           // Create the container / trough style sink.
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               const height = Faucet.k_containerHeight + Faucet.k_containerThickness;
-              shape.SetAsBox(Faucet.k_containerWidth - Faucet.k_containerThickness, Faucet.k_containerThickness, new b2.Vec2(0.0, 0.0), 0.0);
+              shape.SetAsBox(Faucet.k_containerWidth - Faucet.k_containerThickness, Faucet.k_containerThickness, new b2__namespace.Vec2(0.0, 0.0), 0.0);
               ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(Faucet.k_containerThickness, height, new b2.Vec2(-Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
+              shape.SetAsBox(Faucet.k_containerThickness, height, new b2__namespace.Vec2(-Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
               ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(Faucet.k_containerThickness, height, new b2.Vec2(Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
+              shape.SetAsBox(Faucet.k_containerThickness, height, new b2__namespace.Vec2(Faucet.k_containerWidth, Faucet.k_containerHeight), 0.0);
               ground.CreateFixture(shape, 0.0);
           }
           // Create ground under the container to catch overflow.
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(Faucet.k_containerWidth * 5.0, Faucet.k_containerThickness, new b2.Vec2(0.0, Faucet.k_containerThickness * -2.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(Faucet.k_containerWidth * 5.0, Faucet.k_containerThickness, new b2__namespace.Vec2(0.0, Faucet.k_containerThickness * -2.0), 0.0);
               ground.CreateFixture(shape, 0.0);
           }
           // Create the faucet spout.
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               const particleDiameter = this.m_particleSystem.GetRadius() * 2.0;
               const faucetLength = Faucet.k_faucetLength * particleDiameter;
               // Dimensions of the faucet in world units.
@@ -10240,11 +10259,11 @@
               // Height from the bottom of the container.
               const height = (Faucet.k_containerHeight * Faucet.k_faucetHeight) +
                   (length * 0.5);
-              shape.SetAsBox(particleDiameter, length, new b2.Vec2(-width, height), 0.0);
+              shape.SetAsBox(particleDiameter, length, new b2__namespace.Vec2(-width, height), 0.0);
               ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(particleDiameter, length, new b2.Vec2(width, height), 0.0);
+              shape.SetAsBox(particleDiameter, length, new b2__namespace.Vec2(width, height), 0.0);
               ground.CreateFixture(shape, 0.0);
-              shape.SetAsBox(width - particleDiameter, particleDiameter, new b2.Vec2(0.0, height + length -
+              shape.SetAsBox(width - particleDiameter, particleDiameter, new b2__namespace.Vec2(0.0, height + length -
                   particleDiameter), 0.0);
               ground.CreateFixture(shape, 0.0);
           }
@@ -10253,10 +10272,10 @@
               const faucetLength = this.m_particleSystem.GetRadius() * 2.0 * Faucet.k_faucetLength;
               this.m_emitter.SetParticleSystem(this.m_particleSystem);
               this.m_emitter.SetCallback(this.m_lifetimeRandomizer);
-              this.m_emitter.SetPosition(new b2.Vec2(Faucet.k_containerWidth * Faucet.k_faucetWidth, Faucet.k_containerHeight * Faucet.k_faucetHeight + (faucetLength * 0.5)));
-              this.m_emitter.SetVelocity(new b2.Vec2(0.0, 0.0));
-              this.m_emitter.SetSize(new b2.Vec2(0.0, faucetLength));
-              this.m_emitter.SetColor(new b2.Color(1, 1, 1, 1));
+              this.m_emitter.SetPosition(new b2__namespace.Vec2(Faucet.k_containerWidth * Faucet.k_faucetWidth, Faucet.k_containerHeight * Faucet.k_faucetHeight + (faucetLength * 0.5)));
+              this.m_emitter.SetVelocity(new b2__namespace.Vec2(0.0, 0.0));
+              this.m_emitter.SetSize(new b2__namespace.Vec2(0.0, faucetLength));
+              this.m_emitter.SetColor(new b2__namespace.Color(1, 1, 1, 1));
               this.m_emitter.SetEmitRate(120.0);
               this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
           }
@@ -10280,12 +10299,12 @@
           this.m_emitter.SetParticleFlags(Test.GetParticleParameterValue());
           // If this is a color mixing particle, add some color.
           ///  b2Color color(1, 1, 1, 1);
-          if (this.m_emitter.GetParticleFlags() & b2.ParticleFlag.b2_colorMixingParticle) {
+          if (this.m_emitter.GetParticleFlags() & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
               // Each second, select a different color.
               this.m_emitter.SetColor(Test.k_ParticleColors[Math.floor(this.m_particleColorOffset) % Test.k_ParticleColorsCount]);
           }
           else {
-              this.m_emitter.SetColor(new b2.Color(1, 1, 1, 1));
+              this.m_emitter.SetColor(new b2__namespace.Color(1, 1, 1, 1));
           }
           // Create the particles.
           this.m_emitter.Step(dt);
@@ -10304,29 +10323,29 @@
           let parameter = 0;
           switch (key) {
               case "w":
-                  parameter = b2.ParticleFlag.b2_waterParticle;
+                  parameter = b2__namespace.ParticleFlag.b2_waterParticle;
                   break;
               case "q":
-                  parameter = b2.ParticleFlag.b2_powderParticle;
+                  parameter = b2__namespace.ParticleFlag.b2_powderParticle;
                   break;
               case "t":
-                  parameter = b2.ParticleFlag.b2_tensileParticle;
+                  parameter = b2__namespace.ParticleFlag.b2_tensileParticle;
                   break;
               case "v":
-                  parameter = b2.ParticleFlag.b2_viscousParticle;
+                  parameter = b2__namespace.ParticleFlag.b2_viscousParticle;
                   break;
               case "c":
-                  parameter = b2.ParticleFlag.b2_colorMixingParticle;
+                  parameter = b2__namespace.ParticleFlag.b2_colorMixingParticle;
                   break;
               case "s":
-                  parameter = b2.ParticleFlag.b2_staticPressureParticle;
+                  parameter = b2__namespace.ParticleFlag.b2_staticPressureParticle;
                   break;
               case "=":
                   ///if (this.m_shift)
                   {
                       let emitRate = this.m_emitter.GetEmitRate();
                       emitRate *= Faucet.k_emitRateChangeFactor;
-                      emitRate = b2.Max(emitRate, Faucet.k_emitRateMin);
+                      emitRate = b2__namespace.Max(emitRate, Faucet.k_emitRateMin);
                       this.m_emitter.SetEmitRate(emitRate);
                   }
                   break;
@@ -10335,7 +10354,7 @@
                   {
                       let emitRate = this.m_emitter.GetEmitRate();
                       emitRate *= 1.0 / Faucet.k_emitRateChangeFactor;
-                      emitRate = b2.Min(emitRate, Faucet.k_emitRateMax);
+                      emitRate = b2__namespace.Min(emitRate, Faucet.k_emitRateMax);
                       this.m_emitter.SetEmitRate(emitRate);
                   }
                   break;
@@ -10419,19 +10438,19 @@
    * Selection of particle types for this test.
    */
   Faucet.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_colorMixingParticle, ParticleParameter.k_DefaultOptions, "color mixing"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_staticPressureParticle, ParticleParameter.k_DefaultOptions, "static pressure"),
   ];
   Faucet.k_paramDef = [
       new ParticleParameterDefinition(Faucet.k_paramValues),
   ];
   Faucet.k_paramDefCount = Faucet.k_paramDef.length;
-  const testIndex$18 = RegisterTest("Particles", "Faucet", Faucet.Create);
+  RegisterTest("Particles", "Faucet", Faucet.Create);
   // #endif
 
   /*
@@ -10514,7 +10533,7 @@
    * Keep track of particle groups in a set, removing them when
    * they're destroyed.
    */
-  class ParticleGroupTracker extends b2.DestructionListener {
+  class ParticleGroupTracker extends b2__namespace.DestructionListener {
       constructor() {
           super(...arguments);
           this.m_particleGroups = [];
@@ -10575,12 +10594,12 @@
   /**
    * Colors of tiles.
    */
-  FrackerSettings.k_playerColor = new b2.Color(1.0, 1.0, 1.0);
-  FrackerSettings.k_playerFrackColor = new b2.Color(1.0, 0.5, 0.5);
-  FrackerSettings.k_wellColor = new b2.Color(0.5, 0.5, 0.5);
-  FrackerSettings.k_oilColor = new b2.Color(1.0, 0.0, 0.0);
-  FrackerSettings.k_waterColor = new b2.Color(0.0, 0.2, 1.0);
-  FrackerSettings.k_frackingFluidColor = new b2.Color(0.8, 0.4, 0.0);
+  FrackerSettings.k_playerColor = new b2__namespace.Color(1.0, 1.0, 1.0);
+  FrackerSettings.k_playerFrackColor = new b2__namespace.Color(1.0, 0.5, 0.5);
+  FrackerSettings.k_wellColor = new b2__namespace.Color(0.5, 0.5, 0.5);
+  FrackerSettings.k_oilColor = new b2__namespace.Color(1.0, 0.0, 0.0);
+  FrackerSettings.k_waterColor = new b2__namespace.Color(0.0, 0.2, 1.0);
+  FrackerSettings.k_frackingFluidColor = new b2__namespace.Color(0.8, 0.4, 0.0);
   /**
    * Default density of each body.
    */
@@ -10704,11 +10723,11 @@
        * Create the player.
        */
       CreatePlayer() {
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_kinematicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_kinematicBody;
           this.m_player = this.m_world.CreateBody(bd);
-          const shape = new b2.PolygonShape();
-          shape.SetAsBox(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight, new b2.Vec2(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight), 0);
+          const shape = new b2__namespace.PolygonShape();
+          shape.SetAsBox(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight, new b2__namespace.Vec2(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight), 0);
           this.m_player.CreateFixture(shape, FrackerSettings.k_density);
           this.m_player.SetTransformVec(Fracker.TileToWorld(FrackerSettings.k_worldWidthTiles / 2, FrackerSettings.k_worldHeightTiles / 2), 0);
       }
@@ -10750,16 +10769,16 @@
        * Create the boundary of the world.
        */
       CreateGround() {
-          const bd = new b2.BodyDef();
+          const bd = new b2__namespace.BodyDef();
           const ground = this.m_world.CreateBody(bd);
-          const shape = new b2.ChainShape();
-          const bottomLeft = new b2.Vec2(), topRight = new b2.Vec2();
+          const shape = new b2__namespace.ChainShape();
+          const bottomLeft = new b2__namespace.Vec2(), topRight = new b2__namespace.Vec2();
           Fracker.GetExtents(bottomLeft, topRight);
           const vertices = [
-              new b2.Vec2(bottomLeft.x, bottomLeft.y),
-              new b2.Vec2(topRight.x, bottomLeft.y),
-              new b2.Vec2(topRight.x, topRight.y),
-              new b2.Vec2(bottomLeft.x, topRight.y),
+              new b2__namespace.Vec2(bottomLeft.x, bottomLeft.y),
+              new b2__namespace.Vec2(topRight.x, bottomLeft.y),
+              new b2__namespace.Vec2(topRight.x, topRight.y),
+              new b2__namespace.Vec2(bottomLeft.x, topRight.y),
           ];
           shape.CreateLoop(vertices, 4);
           ground.CreateFixture(shape, 0.0);
@@ -10769,9 +10788,9 @@
        */
       CreateDirtBlock(x, y) {
           const position = Fracker.TileToWorld(x, y);
-          const bd = new b2.BodyDef();
+          const bd = new b2__namespace.BodyDef();
           const body = this.m_world.CreateBody(bd);
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           shape.SetAsBox(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight, Fracker.CenteredPosition(position), 0);
           body.CreateFixture(shape, FrackerSettings.k_density);
           this.SetBody(x, y, body);
@@ -10782,11 +10801,11 @@
        */
       CreateReservoirBlock(x, y, material) {
           const position = Fracker.TileToWorld(x, y);
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           this.SetMaterial(x, y, material);
           shape.SetAsBox(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight, Fracker.CenteredPosition(position), 0);
-          const pd = new b2.ParticleGroupDef();
-          pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_destructionListenerParticle;
+          const pd = new b2__namespace.ParticleGroupDef();
+          pd.flags = b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_viscousParticle | b2__namespace.ParticleFlag.b2_destructionListenerParticle;
           pd.shape = shape;
           pd.color.Copy(material === Fracker_Material.OIL ?
               FrackerSettings.k_oilColor : FrackerSettings.k_waterColor);
@@ -10819,19 +10838,19 @@
        * Create a fracking fluid emitter.
        */
       CreateFrackingFluidEmitter(position) {
-          const groupDef = new b2.ParticleGroupDef();
+          const groupDef = new b2__namespace.ParticleGroupDef();
           const group = this.m_particleSystem.CreateParticleGroup(groupDef);
           this.m_listener.AddParticleGroup(group);
           const emitter = new RadialEmitter();
           emitter.SetGroup(group);
           emitter.SetParticleSystem(this.m_particleSystem);
           emitter.SetPosition(Fracker.CenteredPosition(position));
-          emitter.SetVelocity(new b2.Vec2(0.0, -FrackerSettings.k_tileHalfHeight));
+          emitter.SetVelocity(new b2__namespace.Vec2(0.0, -FrackerSettings.k_tileHalfHeight));
           emitter.SetSpeed(FrackerSettings.k_tileHalfWidth * 0.1);
-          emitter.SetSize(new b2.Vec2(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight));
+          emitter.SetSize(new b2__namespace.Vec2(FrackerSettings.k_tileHalfWidth, FrackerSettings.k_tileHalfHeight));
           emitter.SetEmitRate(20.0);
           emitter.SetColor(FrackerSettings.k_frackingFluidColor);
-          emitter.SetParticleFlags(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle);
+          emitter.SetParticleFlags(b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_viscousParticle);
           this.m_tracker.Add(emitter, FrackerSettings.k_frackingFluidEmitterLifetime);
           this.m_listener.AddScore(FrackerSettings.k_scorePerFrackingDeployment);
       }
@@ -10843,8 +10862,8 @@
           const currentPlayerX = [0];
           const currentPlayerY = [0];
           Fracker.WorldToTile(playerPosition, currentPlayerX, currentPlayerY);
-          playerX = b2.Clamp(playerX, 0, FrackerSettings.k_worldWidthTiles - 1);
-          playerY = b2.Clamp(playerY, 0, FrackerSettings.k_worldHeightTiles - 1);
+          playerX = b2__namespace.Clamp(playerX, 0, FrackerSettings.k_worldWidthTiles - 1);
+          playerY = b2__namespace.Clamp(playerY, 0, FrackerSettings.k_worldHeightTiles - 1);
           // Only update if the player has moved and isn't attempting to
           // move through the well.
           if (this.GetMaterial(playerX, playerY) !== Fracker_Material.WELL &&
@@ -10875,13 +10894,13 @@
        * coordinates.
        */
       DestroyParticlesInTiles(startX, startY, endX, endY) {
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           const width = endX - startX + 1;
           const height = endY - startY + 1;
           const centerX = startX + width / 2;
           const centerY = startY + height / 2;
           shape.SetAsBox(FrackerSettings.k_tileHalfWidth * width, FrackerSettings.k_tileHalfHeight * height);
-          const killLocation = new b2.Transform();
+          const killLocation = new b2__namespace.Transform();
           killLocation.SetPositionAngle(Fracker.CenteredPosition(Fracker.TileToWorld(centerX, centerY)), 0);
           this.m_particleSystem.DestroyParticlesInShape(shape, killLocation);
       }
@@ -10973,7 +10992,7 @@
               Fracker.WorldToTile(playerPosition, playerX, playerY);
               // Move the player towards the mouse position, preferring to move
               // along the axis with the maximal distance from the cursor.
-              const distance = b2.Vec2.SubVV(p, Fracker.CenteredPosition(playerPosition), new b2.Vec2());
+              const distance = b2__namespace.Vec2.SubVV(p, Fracker.CenteredPosition(playerPosition), new b2__namespace.Vec2());
               const absDistX = Math.abs(distance.x);
               const absDistY = Math.abs(distance.y);
               if (absDistX > absDistY &&
@@ -11034,7 +11053,7 @@
                   const particlePosition = positionBuffer[index + i];
                   // Distance from the well's bottom.
                   ///  const b2Vec2 distance = particlePosition - wellEnd;
-                  const distance = b2.Vec2.SubVV(particlePosition, wellEnd, new b2.Vec2());
+                  const distance = b2__namespace.Vec2.SubVV(particlePosition, wellEnd, new b2__namespace.Vec2());
                   // Distance from either well side wall.
                   const absDistX = Math.abs(distance.x);
                   if (absDistX < FrackerSettings.k_tileWidth &&
@@ -11043,7 +11062,7 @@
                       distance.y < 0.0) {
                       // Suck the particles towards the end of the well.
                       ///  b2Vec2 velocity = wellEnd - particlePosition;
-                      const velocity = b2.Vec2.SubVV(wellEnd, particlePosition, new b2.Vec2());
+                      const velocity = b2__namespace.Vec2.SubVV(wellEnd, particlePosition, new b2__namespace.Vec2());
                       velocity.Normalize();
                       ///  velocityBuffer[i] = velocity * FrackerSettings.k_wellSuckSpeedOutside;
                       velocityBuffer[index + i].Copy(velocity.SelfMul(FrackerSettings.k_wellSuckSpeedOutside));
@@ -11052,7 +11071,7 @@
                       // Suck the particles up the well with a random
                       // x component moving them side to side in the well.
                       const randomX = (Math.random() * FrackerSettings.k_tileHalfWidth) - distance.x;
-                      const velocity = new b2.Vec2(randomX, FrackerSettings.k_tileHeight);
+                      const velocity = new b2__namespace.Vec2(randomX, FrackerSettings.k_tileHeight);
                       velocity.Normalize();
                       ///  velocityBuffer[i] = velocity * FrackerSettings.k_wellSuckSpeedInside;
                       velocityBuffer[index + i].Copy(velocity.SelfMul(FrackerSettings.k_wellSuckSpeedInside));
@@ -11076,7 +11095,7 @@
        * Render the player / fracker.
        */
       DrawPlayer() {
-          this.DrawQuad(this.m_player.GetTransform().p, Fracker.LerpColor(FrackerSettings.k_playerColor, FrackerSettings.k_playerFrackColor, b2.Max(this.m_frackingFluidChargeTime /
+          this.DrawQuad(this.m_player.GetTransform().p, Fracker.LerpColor(FrackerSettings.k_playerColor, FrackerSettings.k_playerFrackColor, b2__namespace.Max(this.m_frackingFluidChargeTime /
               FrackerSettings.k_frackingFluidChargeTime, 0.0)), true);
       }
       /**
@@ -11103,7 +11122,7 @@
        */
       DrawQuad(position, color, fill = false) {
           ///  b2Vec2 verts[4];
-          const verts = b2.Vec2.MakeArray(4);
+          const verts = b2__namespace.Vec2.MakeArray(4);
           const maxX = position.x + FrackerSettings.k_tileWidth;
           const maxY = position.y + FrackerSettings.k_tileHeight;
           verts[0].Set(position.x, maxY);
@@ -11155,7 +11174,7 @@
       static WorldToTile(position, x, y) {
           // Translate relative to the world center and scale based upon the
           // tile size.
-          const bottomLeft = new b2.Vec2();
+          const bottomLeft = new b2__namespace.Vec2();
           Fracker.GetBottomLeft(bottomLeft);
           x[0] = Math.floor(((position.x - bottomLeft.x) /
               FrackerSettings.k_tileWidth) +
@@ -11167,10 +11186,10 @@
       /**
        * Convert a tile position to a point  in world coordinates.
        */
-      static TileToWorld(x, y, out = new b2.Vec2()) {
+      static TileToWorld(x, y, out = new b2__namespace.Vec2()) {
           // Scale based upon the tile size and translate relative to the world
           // center.
-          const bottomLeft = new b2.Vec2();
+          const bottomLeft = new b2__namespace.Vec2();
           Fracker.GetBottomLeft(bottomLeft);
           return out.Set((x * FrackerSettings.k_tileWidth) + bottomLeft.x, (y * FrackerSettings.k_tileHeight) + bottomLeft.y);
       }
@@ -11188,14 +11207,14 @@
       /**
        * Calculate the center of a tile position in world units.
        */
-      static CenteredPosition(position, out = new b2.Vec2()) {
+      static CenteredPosition(position, out = new b2__namespace.Vec2()) {
           return out.Set(position.x + FrackerSettings.k_tileHalfWidth, position.y + FrackerSettings.k_tileHalfHeight);
       }
       /**
        * Interpolate between color a and b using t.
        */
       static LerpColor(a, b, t) {
-          return new b2.Color(Fracker.Lerp(a.r, b.r, t), Fracker.Lerp(a.g, b.g, t), Fracker.Lerp(a.b, b.b, t));
+          return new b2__namespace.Color(Fracker.Lerp(a.r, b.r, t), Fracker.Lerp(a.g, b.g, t), Fracker.Lerp(a.b, b.b, t));
       }
       /**
        * Interpolate between a and b using t.
@@ -11291,7 +11310,7 @@
           }
       }
   }
-  const testIndex$19 = RegisterTest("Particles", "Fracker", Fracker.Create);
+  RegisterTest("Particles", "Fracker", Fracker.Create);
   // #endif
 
   /*
@@ -11317,15 +11336,15 @@
           this.m_useLinearImpulse = false;
           // Create the containing box.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               const box = [
-                  new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
-                  new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
-                  new b2.Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
-                  new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
+                  new b2__namespace.Vec2(Impulse.kBoxLeft, Impulse.kBoxBottom),
+                  new b2__namespace.Vec2(Impulse.kBoxRight, Impulse.kBoxBottom),
+                  new b2__namespace.Vec2(Impulse.kBoxRight, Impulse.kBoxTop),
+                  new b2__namespace.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
               ];
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               shape.CreateLoop(box, box.length);
               ground.CreateFixture(shape, 0.0);
           }
@@ -11333,13 +11352,13 @@
           this.m_particleSystem.SetDamping(0.2);
           // Create the particles.
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.8, 1.0, new b2.Vec2(0.0, 1.01), 0);
-              const pd = new b2.ParticleGroupDef();
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.8, 1.0, new b2__namespace.Vec2(0.0, 1.01), 0);
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = Test.GetParticleParameterValue();
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
@@ -11350,8 +11369,8 @@
           const isInsideBox = Impulse.kBoxLeft <= p.x && p.x <= Impulse.kBoxRight &&
               Impulse.kBoxBottom <= p.y && p.y <= Impulse.kBoxTop;
           if (isInsideBox) {
-              const kBoxCenter = new b2.Vec2(0.5 * (Impulse.kBoxLeft + Impulse.kBoxRight), 0.5 * (Impulse.kBoxBottom + Impulse.kBoxTop));
-              const direction = b2.Vec2.SubVV(p, kBoxCenter, new b2.Vec2());
+              const kBoxCenter = new b2__namespace.Vec2(0.5 * (Impulse.kBoxLeft + Impulse.kBoxRight), 0.5 * (Impulse.kBoxBottom + Impulse.kBoxTop));
+              const direction = b2__namespace.Vec2.SubVV(p, kBoxCenter, new b2__namespace.Vec2());
               direction.Normalize();
               this.ApplyImpulseOrForce(direction);
           }
@@ -11380,13 +11399,13 @@
           if (this.m_useLinearImpulse) {
               const kImpulseMagnitude = 0.005;
               ///  const b2Vec2 impulse = kImpulseMagnitude * direction * (float32)numParticles;
-              const impulse = b2.Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new b2.Vec2());
+              const impulse = b2__namespace.Vec2.MulSV(kImpulseMagnitude * numParticles, direction, new b2__namespace.Vec2());
               particleGroup.ApplyLinearImpulse(impulse);
           }
           else {
               const kForceMagnitude = 1.0;
               ///  const b2Vec2 force = kForceMagnitude * direction * (float32)numParticles;
-              const force = b2.Vec2.MulSV(kForceMagnitude * numParticles, direction, new b2.Vec2());
+              const force = b2__namespace.Vec2.MulSV(kForceMagnitude * numParticles, direction, new b2__namespace.Vec2());
               particleGroup.ApplyForce(force);
           }
       }
@@ -11401,7 +11420,7 @@
   Impulse.kBoxRight = 2;
   Impulse.kBoxBottom = 0;
   Impulse.kBoxTop = 4;
-  const testIndex$1a = RegisterTest("Particles", "Impulse", Impulse.Create);
+  RegisterTest("Particles", "Impulse", Impulse.Create);
   // #endif
 
   /*
@@ -11427,98 +11446,98 @@
           // Setup particle parameters.
           Test.SetParticleParameters(LiquidTimer.k_paramDef, LiquidTimer.k_paramDefCount);
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               const vertices = [
-                  new b2.Vec2(-2, 0),
-                  new b2.Vec2(2, 0),
-                  new b2.Vec2(2, 4),
-                  new b2.Vec2(-2, 4),
+                  new b2__namespace.Vec2(-2, 0),
+                  new b2__namespace.Vec2(2, 0),
+                  new b2__namespace.Vec2(2, 4),
+                  new b2__namespace.Vec2(-2, 4),
               ];
               shape.CreateLoop(vertices, 4);
               ground.CreateFixture(shape, 0.0);
           }
           this.m_particleSystem.SetRadius(0.025);
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(2, 0.4, new b2.Vec2(0, 3.6), 0);
-              const pd = new b2.ParticleGroupDef();
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(2, 0.4, new b2__namespace.Vec2(0, 3.6), 0);
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = Test.GetParticleParameterValue();
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-2, 3.2), new b2.Vec2(-1.2, 3.2));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-2, 3.2), new b2__namespace.Vec2(-1.2, 3.2));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(2, 3.2));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-1.1, 3.2), new b2__namespace.Vec2(2, 3.2));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.2, 3.2), new b2.Vec2(-1.2, 2.8));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-1.2, 3.2), new b2__namespace.Vec2(-1.2, 2.8));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.1, 3.2), new b2.Vec2(-1.1, 2.8));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-1.1, 3.2), new b2__namespace.Vec2(-1.1, 2.8));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.6, 2.4), new b2.Vec2(0.8, 2));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-1.6, 2.4), new b2__namespace.Vec2(0.8, 2));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(1.6, 1.6), new b2.Vec2(-0.8, 1.2));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(1.6, 1.6), new b2__namespace.Vec2(-0.8, 1.2));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-1.2, 0.8), new b2.Vec2(-1.2, 0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-1.2, 0.8), new b2__namespace.Vec2(-1.2, 0));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-0.4, 0.8), new b2.Vec2(-0.4, 0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-0.4, 0.8), new b2__namespace.Vec2(-0.4, 0));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(0.4, 0.8), new b2.Vec2(0.4, 0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(0.4, 0.8), new b2__namespace.Vec2(0.4, 0));
               body.CreateFixture(shape, 0.1);
           }
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(1.2, 0.8), new b2.Vec2(1.2, 0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(1.2, 0.8), new b2__namespace.Vec2(1.2, 0));
               body.CreateFixture(shape, 0.1);
           }
       }
@@ -11530,14 +11549,14 @@
       }
   }
   LiquidTimer.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "tensile + viscous"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "tensile + viscous"),
   ];
   LiquidTimer.k_paramDef = [
       new ParticleParameterDefinition(LiquidTimer.k_paramValues),
       new ParticleParameterDefinition(ParticleParameter.k_particleTypes),
   ];
   LiquidTimer.k_paramDefCount = LiquidTimer.k_paramDef.length;
-  const testIndex$1b = RegisterTest("Particles", "Liquid Timer", LiquidTimer.Create);
+  RegisterTest("Particles", "Liquid Timer", LiquidTimer.Create);
   // #endif
 
   /*
@@ -11576,20 +11595,20 @@
           this.m_temperature = Maxwell.k_temperatureDefault;
           this.m_barrierBody = null;
           this.m_particleGroup = null;
-          this.m_world.SetGravity(new b2.Vec2(0, 0));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0, 0));
           // Create the container.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               const vertices = [
-                  new b2.Vec2(-Maxwell.k_containerHalfWidth, 0),
-                  new b2.Vec2(Maxwell.k_containerHalfWidth, 0),
-                  new b2.Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
-                  new b2.Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
+                  new b2__namespace.Vec2(-Maxwell.k_containerHalfWidth, 0),
+                  new b2__namespace.Vec2(Maxwell.k_containerHalfWidth, 0),
+                  new b2__namespace.Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
+                  new b2__namespace.Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
               ];
               shape.CreateLoop(vertices, 4);
-              const def = new b2.FixtureDef();
+              const def = new b2__namespace.FixtureDef();
               def.shape = shape;
               def.density = 0;
               def.restitution = 1.0;
@@ -11614,11 +11633,11 @@
        */
       EnableBarrier() {
           if (!this.m_barrierBody) {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               this.m_barrierBody = this.m_world.CreateBody(bd);
-              const barrierShape = new b2.PolygonShape();
-              barrierShape.SetAsBox(Maxwell.k_containerHalfWidth, Maxwell.k_barrierHeight, new b2.Vec2(0, this.m_position), 0);
-              const def = new b2.FixtureDef();
+              const barrierShape = new b2__namespace.PolygonShape();
+              barrierShape.SetAsBox(Maxwell.k_containerHalfWidth, Maxwell.k_barrierHeight, new b2__namespace.Vec2(0, this.m_position), 0);
+              const def = new b2__namespace.FixtureDef();
               def.shape = barrierShape;
               def.density = 0;
               def.restitution = 1.0;
@@ -11646,10 +11665,10 @@
           }
           this.m_particleSystem.SetRadius(Maxwell.k_containerHalfWidth / 20.0);
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(this.m_density * Maxwell.k_containerHalfWidth, this.m_density * Maxwell.k_containerHalfHeight, new b2.Vec2(0, Maxwell.k_containerHalfHeight), 0);
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_powderParticle;
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(this.m_density * Maxwell.k_containerHalfWidth, this.m_density * Maxwell.k_containerHalfHeight, new b2__namespace.Vec2(0, Maxwell.k_containerHalfHeight), 0);
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_powderParticle;
               pd.shape = shape;
               this.m_particleGroup = this.m_particleSystem.CreateParticleGroup(pd);
               ///  b2Vec2* velocities =
@@ -11675,12 +11694,12 @@
                   break;
               case "=":
                   // Increase the particle density.
-                  this.m_density = b2.Min(this.m_density * Maxwell.k_densityStep, Maxwell.k_densityMax);
+                  this.m_density = b2__namespace.Min(this.m_density * Maxwell.k_densityStep, Maxwell.k_densityMax);
                   this.Reset();
                   break;
               case "-":
                   // Reduce the particle density.
-                  this.m_density = b2.Max(this.m_density / Maxwell.k_densityStep, Maxwell.k_densityMin);
+                  this.m_density = b2__namespace.Max(this.m_density / Maxwell.k_densityStep, Maxwell.k_densityMin);
                   this.Reset();
                   break;
               case ".":
@@ -11693,12 +11712,12 @@
                   break;
               case ";":
                   // Reduce the temperature (velocity of particles).
-                  this.m_temperature = b2.Max(this.m_temperature - Maxwell.k_temperatureStep, Maxwell.k_temperatureMin);
+                  this.m_temperature = b2__namespace.Max(this.m_temperature - Maxwell.k_temperatureStep, Maxwell.k_temperatureMin);
                   this.Reset();
                   break;
               case "'":
                   // Increase the temperature (velocity of particles).
-                  this.m_temperature = b2.Min(this.m_temperature + Maxwell.k_temperatureStep, Maxwell.k_temperatureMax);
+                  this.m_temperature = b2__namespace.Min(this.m_temperature + Maxwell.k_temperatureStep, Maxwell.k_temperatureMax);
                   this.Reset();
                   break;
               default:
@@ -11778,7 +11797,7 @@
        * Move the divider / barrier.
        */
       MoveDivider(newPosition) {
-          this.m_position = b2.Clamp(newPosition, Maxwell.k_barrierMovementIncrement, Maxwell.k_containerHeight - Maxwell.k_barrierMovementIncrement);
+          this.m_position = b2__namespace.Clamp(newPosition, Maxwell.k_barrierMovementIncrement, Maxwell.k_containerHeight - Maxwell.k_barrierMovementIncrement);
           this.Reset();
       }
       GetDefaultViewZoom() {
@@ -11802,7 +11821,7 @@
   Maxwell.k_temperatureMin = 0.4;
   Maxwell.k_temperatureMax = 10.0;
   Maxwell.k_temperatureDefault = 5.0;
-  const testIndex$1c = RegisterTest("Particles", "Maxwell", Maxwell.Create);
+  RegisterTest("Particles", "Maxwell", Maxwell.Create);
   // #endif
 
   /*
@@ -11834,7 +11853,7 @@
           this.m_particleSystem.SetMaxParticleCount(MultipleParticleSystems.k_maxParticleCount);
           this.m_particleSystem.SetDestructionByAge(true);
           // Create a secondary particle system.
-          const particleSystemDef = new b2.ParticleSystemDef();
+          const particleSystemDef = new b2__namespace.ParticleSystemDef();
           particleSystemDef.radius = this.m_particleSystem.GetRadius();
           particleSystemDef.destroyByAge = true;
           this.m_particleSystem2 = this.m_world.CreateParticleSystem(particleSystemDef);
@@ -11843,23 +11862,23 @@
           Test.SetRestartOnParticleParameterChange(false);
           // Create the ground.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               shape.SetAsBox(5.0, 0.1);
               ground.CreateFixture(shape, 0.0);
           }
           // Create a dynamic body to push around.
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              const center = new b2.Vec2(0.0, 1.2);
+              const shape = new b2__namespace.PolygonShape();
+              const center = new b2__namespace.Vec2(0.0, 1.2);
               shape.SetAsBox(MultipleParticleSystems.k_dynamicBoxSize.x, MultipleParticleSystems.k_dynamicBoxSize.y, center, 0.0);
               body.CreateFixture(shape, 0.0);
               ///  b2MassData massData = { MultipleParticleSystems.k_boxMass, center, 0.0 };
-              const massData = new b2.MassData();
+              const massData = new b2__namespace.MassData();
               massData.mass = MultipleParticleSystems.k_boxMass;
               massData.center.Copy(center);
               massData.I = 0.0;
@@ -11869,9 +11888,9 @@
           for (let i = 0; i < this.m_emitters.length; ++i) {
               const mirrorAlongY = i & 1 ? -1.0 : 1.0;
               const emitter = this.m_emitters[i];
-              emitter.SetPosition(new b2.Vec2(MultipleParticleSystems.k_emitterPosition.x * mirrorAlongY, MultipleParticleSystems.k_emitterPosition.y));
+              emitter.SetPosition(new b2__namespace.Vec2(MultipleParticleSystems.k_emitterPosition.x * mirrorAlongY, MultipleParticleSystems.k_emitterPosition.y));
               emitter.SetSize(MultipleParticleSystems.k_emitterSize);
-              emitter.SetVelocity(new b2.Vec2(MultipleParticleSystems.k_emitterVelocity.x * mirrorAlongY, MultipleParticleSystems.k_emitterVelocity.y));
+              emitter.SetVelocity(new b2__namespace.Vec2(MultipleParticleSystems.k_emitterVelocity.x * mirrorAlongY, MultipleParticleSystems.k_emitterVelocity.y));
               emitter.SetEmitRate(MultipleParticleSystems.k_emitRate);
               emitter.SetColor(i & 1 ? MultipleParticleSystems.k_rightEmitterColor : MultipleParticleSystems.k_leftEmitterColor);
               emitter.SetParticleSystem(i & 1 ? this.m_particleSystem2 : this.m_particleSystem);
@@ -11901,7 +11920,7 @@
   /**
    * Size of the box which is pushed around by particles.
    */
-  MultipleParticleSystems.k_dynamicBoxSize = new b2.Vec2(0.5, 0.5);
+  MultipleParticleSystems.k_dynamicBoxSize = new b2__namespace.Vec2(0.5, 0.5);
   /**
    * Mass of the box.
    */
@@ -11914,26 +11933,26 @@
    * Location of the left emitter (the position of the right one
    * is mirrored along the y-axis).
    */
-  MultipleParticleSystems.k_emitterPosition = new b2.Vec2(-5.0, 4.0);
+  MultipleParticleSystems.k_emitterPosition = new b2__namespace.Vec2(-5.0, 4.0);
   /**
    * Starting velocity of particles from the left emitter (the
    * velocity of particles from the right emitter are mirrored
    * along the y-axis).
    */
-  MultipleParticleSystems.k_emitterVelocity = new b2.Vec2(7.0, -4.0);
+  MultipleParticleSystems.k_emitterVelocity = new b2__namespace.Vec2(7.0, -4.0);
   /**
    * Size of particle emitters.
    */
-  MultipleParticleSystems.k_emitterSize = new b2.Vec2(1.0, 1.0);
+  MultipleParticleSystems.k_emitterSize = new b2__namespace.Vec2(1.0, 1.0);
   /**
    * Color of the left emitter's particles.
    */
-  MultipleParticleSystems.k_leftEmitterColor = new b2.Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
+  MultipleParticleSystems.k_leftEmitterColor = new b2__namespace.Color().SetByteRGBA(0x22, 0x33, 0xff, 0xff);
   /**
    * Color of the right emitter's particles.
    */
-  MultipleParticleSystems.k_rightEmitterColor = new b2.Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
-  const testIndex$1d = RegisterTest("Particles", "Multiple Systems", MultipleParticleSystems.Create);
+  MultipleParticleSystems.k_rightEmitterColor = new b2__namespace.Color().SetByteRGBA(0xff, 0x22, 0x11, 0xff);
+  RegisterTest("Particles", "Multiple Systems", MultipleParticleSystems.Create);
   // #endif
 
   /*
@@ -11954,7 +11973,7 @@
   * 3. This notice may not be removed or altered from any source distribution.
   */
   // Optionally disables particle / fixture and particle / particle contacts.
-  class ParticleContactDisabler extends b2.ContactFilter {
+  class ParticleContactDisabler extends b2__namespace.ContactFilter {
       constructor() {
           super(...arguments);
           this.m_enableFixtureParticleCollisions = true;
@@ -11976,20 +11995,20 @@
           // must also set b2_particleContactFilterParticle and
           // b2_fixtureContactFilterParticle flags for particle group
           this.m_world.SetContactFilter(this.m_contactDisabler);
-          this.m_world.SetGravity(new b2.Vec2(0, 0));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0, 0));
           // Create the container.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
-              const shape = new b2.ChainShape();
+              const shape = new b2__namespace.ChainShape();
               const vertices = [
-                  new b2.Vec2(-ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
-                  new b2.Vec2(ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
-                  new b2.Vec2(ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
-                  new b2.Vec2(-ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+                  new b2__namespace.Vec2(-ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+                  new b2__namespace.Vec2(ParticleCollisionFilter.kBoxSize, -ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+                  new b2__namespace.Vec2(ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
+                  new b2__namespace.Vec2(-ParticleCollisionFilter.kBoxSize, ParticleCollisionFilter.kBoxSize + ParticleCollisionFilter.kOffset),
               ];
               shape.CreateLoop(vertices);
-              const def = new b2.FixtureDef();
+              const def = new b2__namespace.FixtureDef();
               def.shape = shape;
               def.density = 0;
               def.density = 0;
@@ -12000,19 +12019,19 @@
           this.m_particleSystem.SetRadius(0.5);
           {
               // b2PolygonShape shape;
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               // shape.SetAsBox(1.5f, 1.5f, b2Vec2(kBoxSizeHalf, kBoxSizeHalf + kOffset), 0.0f);
-              shape.SetAsBox(1.5, 1.5, new b2.Vec2(ParticleCollisionFilter.kBoxSizeHalf, ParticleCollisionFilter.kBoxSizeHalf + ParticleCollisionFilter.kOffset), 0.0);
+              shape.SetAsBox(1.5, 1.5, new b2__namespace.Vec2(ParticleCollisionFilter.kBoxSizeHalf, ParticleCollisionFilter.kBoxSizeHalf + ParticleCollisionFilter.kOffset), 0.0);
               // b2ParticleGroupDef pd;
-              const pd = new b2.ParticleGroupDef();
+              const pd = new b2__namespace.ParticleGroupDef();
               // pd.shape = &shape;
               pd.shape = shape;
               // pd.flags = b2_powderParticle
               // 		| b2_particleContactFilterParticle
               // 		| b2_fixtureContactFilterParticle;
-              pd.flags = b2.ParticleFlag.b2_powderParticle
-                  | b2.ParticleFlag.b2_particleContactFilterParticle
-                  | b2.ParticleFlag.b2_fixtureContactFilterParticle;
+              pd.flags = b2__namespace.ParticleFlag.b2_powderParticle
+                  | b2__namespace.ParticleFlag.b2_particleContactFilterParticle
+                  | b2__namespace.ParticleFlag.b2_fixtureContactFilterParticle;
               // m_particleGroup =
               // 	m_particleSystem.CreateParticleGroup(pd);
               this.m_particleGroup = this.m_particleSystem.CreateParticleGroup(pd);
@@ -12093,7 +12112,7 @@
   ParticleCollisionFilter.kOffset = 20.0;
   ParticleCollisionFilter.kParticlesContainerSize = ParticleCollisionFilter.kOffset + 0.5;
   ParticleCollisionFilter.kSpeedup = 8.0;
-  const testIndex$1e = RegisterTest("Particles", "Collision Filter", ParticleCollisionFilter.Create);
+  RegisterTest("Particles", "Collision Filter", ParticleCollisionFilter.Create);
   // #endif
 
   /*
@@ -12117,37 +12136,37 @@
       constructor() {
           super(); // base class constructor
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
+                      new b2__namespace.Vec2(-4, -1),
+                      new b2__namespace.Vec2(4, -1),
+                      new b2__namespace.Vec2(4, 0),
+                      new b2__namespace.Vec2(-4, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 2),
+                      new b2__namespace.Vec2(-4, -0.1),
+                      new b2__namespace.Vec2(-2, -0.1),
+                      new b2__namespace.Vec2(-2, 2),
+                      new b2__namespace.Vec2(-4, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 2),
-                      new b2.Vec2(2, 2),
+                      new b2__namespace.Vec2(2, -0.1),
+                      new b2__namespace.Vec2(4, -0.1),
+                      new b2__namespace.Vec2(4, 2),
+                      new b2__namespace.Vec2(2, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -12155,45 +12174,45 @@
           }
           this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 2);
               shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_colorMixingParticle;
               pd.shape = shape;
               pd.color.Set(1, 0, 0, 1);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(-1, 2);
               shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_colorMixingParticle;
               pd.shape = shape;
               pd.color.Set(0, 1, 0, 1);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               const vertices = [
-                  new b2.Vec2(0, 3),
-                  new b2.Vec2(2, 3),
-                  new b2.Vec2(2, 3.5),
-                  new b2.Vec2(0, 3.5),
+                  new b2__namespace.Vec2(0, 3),
+                  new b2__namespace.Vec2(2, 3),
+                  new b2__namespace.Vec2(2, 3.5),
+                  new b2__namespace.Vec2(0, 3.5),
               ];
               shape.Set(vertices, 4);
-              const pd = new b2.ParticleGroupDef();
-              pd.flags = b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_colorMixingParticle;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.flags = b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_colorMixingParticle;
               pd.shape = shape;
               pd.color.Set(0, 0, 1, 1);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 8);
               shape.m_radius = 0.5;
               body.CreateFixture(shape, 0.5);
@@ -12206,7 +12225,7 @@
           return new ParticlesSurfaceTension();
       }
   }
-  const testIndex$1f = RegisterTest("Particles", "Surface Tension", ParticlesSurfaceTension.Create);
+  RegisterTest("Particles", "Surface Tension", ParticlesSurfaceTension.Create);
   // #endif
 
   /*
@@ -12230,37 +12249,37 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
+                      new b2__namespace.Vec2(-4, -1),
+                      new b2__namespace.Vec2(4, -1),
+                      new b2__namespace.Vec2(4, 0),
+                      new b2__namespace.Vec2(-4, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 3),
+                      new b2__namespace.Vec2(-4, -0.1),
+                      new b2__namespace.Vec2(-2, -0.1),
+                      new b2__namespace.Vec2(-2, 2),
+                      new b2__namespace.Vec2(-4, 3),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 3),
-                      new b2.Vec2(2, 2),
+                      new b2__namespace.Vec2(2, -0.1),
+                      new b2__namespace.Vec2(4, -0.1),
+                      new b2__namespace.Vec2(4, 3),
+                      new b2__namespace.Vec2(2, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -12270,22 +12289,22 @@
           const particleType = Test.GetParticleParameterValue();
           this.m_particleSystem.SetDamping(0.2);
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 3);
               shape.m_radius = 2;
-              const pd = new b2.ParticleGroupDef();
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = particleType;
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 8);
               shape.m_radius = 0.5;
               body.CreateFixture(shape, 0.5);
@@ -12298,7 +12317,7 @@
           return new Particles();
       }
   }
-  const testIndex$1g = RegisterTest("Particles", "Particles", Particles.Create);
+  RegisterTest("Particles", "Particles", Particles.Create);
   // #endif
 
   /*
@@ -12325,20 +12344,20 @@
   class Pointy extends Test {
       constructor() {
           super();
-          this.m_killfieldShape = new b2.PolygonShape();
-          this.m_killfieldTransform = new b2.Transform();
+          this.m_killfieldShape = new b2__namespace.PolygonShape();
+          this.m_killfieldTransform = new b2__namespace.Transform();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               // Construct a triangle out of many polygons to ensure there's no
               // issue with particles falling directly on an ambiguous corner
               const xstep = 1.0;
               for (let x = -10.0; x < 10.0; x += xstep) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(x, -10.0),
-                      new b2.Vec2(x + xstep, -10.0),
-                      new b2.Vec2(0.0, 25.0),
+                      new b2__namespace.Vec2(x, -10.0),
+                      new b2__namespace.Vec2(x + xstep, -10.0),
+                      new b2__namespace.Vec2(0.0, 25.0),
                   ];
                   shape.Set(vertices, 3);
                   ground.CreateFixture(shape, 0.0);
@@ -12346,28 +12365,28 @@
           }
           this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
           const particleType = Test.GetParticleParameterValue();
-          if (particleType === b2.ParticleFlag.b2_waterParticle) {
+          if (particleType === b2__namespace.ParticleFlag.b2_waterParticle) {
               this.m_particleSystem.SetDamping(0.2);
           }
           // Create killfield shape and transform
-          this.m_killfieldShape = new b2.PolygonShape();
+          this.m_killfieldShape = new b2__namespace.PolygonShape();
           this.m_killfieldShape.SetAsBox(50.0, 1.0);
           // Put this at the bottom of the world
-          this.m_killfieldTransform = new b2.Transform();
-          const loc = new b2.Vec2(-25, 1);
+          this.m_killfieldTransform = new b2__namespace.Transform();
+          const loc = new b2__namespace.Vec2(-25, 1);
           this.m_killfieldTransform.SetPositionAngle(loc, 0);
       }
       Step(settings) {
           super.Step(settings);
           const flags = Test.GetParticleParameterValue();
-          const pd = new b2.ParticleDef();
+          const pd = new b2__namespace.ParticleDef();
           pd.position.Set(0.0, 33.0);
           pd.velocity.Set(0.0, -1.0);
           pd.flags = flags;
-          if (flags & (b2.ParticleFlag.b2_springParticle | b2.ParticleFlag.b2_elasticParticle)) {
+          if (flags & (b2__namespace.ParticleFlag.b2_springParticle | b2__namespace.ParticleFlag.b2_elasticParticle)) {
               const count = this.m_particleSystem.GetParticleCount();
               pd.velocity.Set(count & 1 ? -1.0 : 1.0, -5.0);
-              pd.flags |= b2.ParticleFlag.b2_reactiveParticle;
+              pd.flags |= b2__namespace.ParticleFlag.b2_reactiveParticle;
           }
           this.m_particleSystem.CreateParticle(pd);
           // kill every particle near the bottom of the screen
@@ -12377,7 +12396,7 @@
           return new Pointy();
       }
   }
-  const testIndex$1h = RegisterTest("Particles", "Pointy", Pointy.Create);
+  RegisterTest("Particles", "Pointy", Pointy.Create);
   // #endif
 
   /*
@@ -12401,27 +12420,27 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               // Construct a ramp out of many polygons to ensure there's no
               // issue with particles moving across vertices
               const xstep = 5.0, ystep = 5.0;
               for (let y = 30.0; y > 0.0; y -= ystep) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-25.0, y),
-                      new b2.Vec2(-25.0, y - ystep),
-                      new b2.Vec2(0.0, 15.0),
+                      new b2__namespace.Vec2(-25.0, y),
+                      new b2__namespace.Vec2(-25.0, y - ystep),
+                      new b2__namespace.Vec2(0.0, 15.0),
                   ];
                   shape.Set(vertices, 3);
                   ground.CreateFixture(shape, 0.0);
               }
               for (let x = -25.0; x < 25.0; x += xstep) {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(x, 0.0),
-                      new b2.Vec2(x + xstep, 0.0),
-                      new b2.Vec2(0.0, 15.0),
+                      new b2__namespace.Vec2(x, 0.0),
+                      new b2__namespace.Vec2(x + xstep, 0.0),
+                      new b2__namespace.Vec2(0.0, 15.0),
                   ];
                   shape.Set(vertices, 3);
                   ground.CreateFixture(shape, 0.0);
@@ -12429,18 +12448,18 @@
           }
           this.m_particleSystem.SetRadius(0.25);
           const particleType = Test.GetParticleParameterValue();
-          if (particleType === b2.ParticleFlag.b2_waterParticle) {
+          if (particleType === b2__namespace.ParticleFlag.b2_waterParticle) {
               this.m_particleSystem.SetDamping(0.2);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(-20, 33);
               shape.m_radius = 3;
-              const pd = new b2.ParticleGroupDef();
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = particleType;
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
@@ -12449,7 +12468,7 @@
           return new Ramp();
       }
   }
-  const testIndex$1i = RegisterTest("Particles", "Ramp", Ramp.Create);
+  RegisterTest("Particles", "Ramp", Ramp.Create);
   // #endif
 
   /*
@@ -12473,37 +12492,37 @@
       constructor() {
           super();
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
+                      new b2__namespace.Vec2(-4, -1),
+                      new b2__namespace.Vec2(4, -1),
+                      new b2__namespace.Vec2(4, 0),
+                      new b2__namespace.Vec2(-4, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 2),
+                      new b2__namespace.Vec2(-4, -0.1),
+                      new b2__namespace.Vec2(-2, -0.1),
+                      new b2__namespace.Vec2(-2, 2),
+                      new b2__namespace.Vec2(-4, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 2),
-                      new b2.Vec2(2, 2),
+                      new b2__namespace.Vec2(2, -0.1),
+                      new b2__namespace.Vec2(4, -0.1),
+                      new b2__namespace.Vec2(4, 2),
+                      new b2__namespace.Vec2(2, 2),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -12511,27 +12530,27 @@
           }
           this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 3);
               shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup | b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
               pd.shape = shape;
               pd.color.SetByteRGBA(255, 0, 0, 255);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(-1, 3);
               shape.m_radius = 0.5;
-              const pd = new b2.ParticleGroupDef();
-              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup | b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
               pd.shape = shape;
               pd.color.SetByteRGBA(0, 255, 0, 255);
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const shape = new b2.PolygonShape();
+              const shape = new b2__namespace.PolygonShape();
               //const vertices = [
               //  new b2.Vec2(0, 3),
               //  new b2.Vec2(2, 3),
@@ -12540,8 +12559,8 @@
               //];
               //shape.Set(vertices, 4);
               shape.SetAsBox(1, 0.5);
-              const pd = new b2.ParticleGroupDef();
-              pd.groupFlags = b2.ParticleGroupFlag.b2_rigidParticleGroup | b2.ParticleGroupFlag.b2_solidParticleGroup;
+              const pd = new b2__namespace.ParticleGroupDef();
+              pd.groupFlags = b2__namespace.ParticleGroupFlag.b2_rigidParticleGroup | b2__namespace.ParticleGroupFlag.b2_solidParticleGroup;
               pd.position.Set(1, 4);
               pd.angle = -0.5;
               pd.angularVelocity = 2.0;
@@ -12550,10 +12569,10 @@
               this.m_particleSystem.CreateParticleGroup(pd);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 8);
               shape.m_radius = 0.5;
               body.CreateFixture(shape, 0.5);
@@ -12566,7 +12585,7 @@
           return new RigidParticles();
       }
   }
-  const testIndex$1j = RegisterTest("Particles", "Rigid Particles", RigidParticles.Create);
+  RegisterTest("Particles", "Rigid Particles", RigidParticles.Create);
   // #endif
 
   /*
@@ -12651,7 +12670,7 @@
    * Class which tracks a set of particles and applies a special
    * effect to them.
    */
-  class SpecialParticleTracker extends b2.DestructionListener {
+  class SpecialParticleTracker extends b2__namespace.DestructionListener {
       /**
        * Register this class as a destruction listener so that it's
        * possible to keep track of special particles.
@@ -12687,7 +12706,7 @@
           // DEBUG: b2.Assert(this.m_particleSystem !== null);
           for (let i = 0; i < numberOfParticles && this.m_particles.length < SandboxParams.k_numberOfSpecialParticles; ++i) {
               const particleIndex = particleIndices[i];
-              this.m_particleSystem.SetParticleFlags(particleIndex, this.m_particleSystem.GetFlagsBuffer()[particleIndex] | b2.ParticleFlag.b2_destructionListenerParticle);
+              this.m_particleSystem.SetParticleFlags(particleIndex, this.m_particleSystem.GetFlagsBuffer()[particleIndex] | b2__namespace.ParticleFlag.b2_destructionListenerParticle);
               this.m_particles.push(this.m_particleSystem.GetParticleHandleFromIndex(particleIndex));
           }
       }
@@ -12701,7 +12720,7 @@
           // Oscillate the shade of color over this.m_colorOscillationPeriod seconds.
           this.m_colorOscillationTime = fmod(this.m_colorOscillationTime + dt, this.m_colorOscillationPeriod);
           const colorCoeff = 2.0 * Math.abs((this.m_colorOscillationTime / this.m_colorOscillationPeriod) - 0.5);
-          const color = new b2.Color().SetByteRGBA(128 + (128.0 * (1.0 - colorCoeff)), 128 + (256.0 * Math.abs(0.5 - colorCoeff)), 128 + (128.0 * colorCoeff), 255);
+          const color = new b2__namespace.Color().SetByteRGBA(128 + (128.0 * (1.0 - colorCoeff)), 128 + (256.0 * Math.abs(0.5 - colorCoeff)), 128 + (128.0 * colorCoeff), 255);
           // Update the color of all special particles.
           for (let i = 0; i < this.m_particles.length; ++i) {
               this.m_particleSystem.GetColorBuffer()[this.m_particles[i].GetIndex()].Copy(color);
@@ -12755,14 +12774,14 @@
           /**
            * Pump force
            */
-          this.m_pumpForce = new b2.Vec2();
+          this.m_pumpForce = new b2__namespace.Vec2();
           /**
            * Pumps and emitters
            */
           this.m_pumps = [];
           this.m_emitters = [];
           // We need some ground for the pumps to slide against
-          const bd = new b2.BodyDef();
+          const bd = new b2__namespace.BodyDef();
           const ground = this.m_world.CreateBody(bd);
           // Reset our pointers
           for (let i = 0; i < SandboxParams.k_maxEmitters; i++) {
@@ -12771,38 +12790,38 @@
           for (let i = 0; i < SandboxParams.k_maxPumps; i++) {
               this.m_pumps[i] = null;
           }
-          this.m_world.SetGravity(new b2.Vec2(0.0, -20));
+          this.m_world.SetGravity(new b2__namespace.Vec2(0.0, -20));
           // Create physical box, no top
           {
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, -10),
-                      new b2.Vec2(40, -10),
-                      new b2.Vec2(40, 0),
-                      new b2.Vec2(-40, 0),
+                      new b2__namespace.Vec2(-40, -10),
+                      new b2__namespace.Vec2(40, -10),
+                      new b2__namespace.Vec2(40, 0),
+                      new b2__namespace.Vec2(-40, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge - 20, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge, 50),
-                      new b2.Vec2(SandboxParams.k_playfieldLeftEdge - 20, 50),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldLeftEdge - 20, -1),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldLeftEdge, -1),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldLeftEdge, 50),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldLeftEdge - 20, 50),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge + 20, -1),
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge + 20, 50),
-                      new b2.Vec2(SandboxParams.k_playfieldRightEdge, 50),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldRightEdge, -1),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldRightEdge + 20, -1),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldRightEdge + 20, 50),
+                      new b2__namespace.Vec2(SandboxParams.k_playfieldRightEdge, 50),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -12813,11 +12832,11 @@
           this.m_pumpTimer = 0;
           this.SetupMaze();
           // Create killfield shape and transform
-          this.m_killFieldShape = new b2.PolygonShape();
+          this.m_killFieldShape = new b2__namespace.PolygonShape();
           this.m_killFieldShape.SetAsBox(SandboxParams.k_playfieldRightEdge - SandboxParams.k_playfieldLeftEdge, 1);
           // Put this at the bottom of the world
-          this.m_killFieldTransform = new b2.Transform();
-          const loc = new b2.Vec2(-20, 1);
+          this.m_killFieldTransform = new b2__namespace.Transform();
+          const loc = new b2__namespace.Vec2(-20, 1);
           this.m_killFieldTransform.SetPositionAngle(loc, 0);
           // Setup particle parameters.
           Test.SetParticleParameters(Sandbox.k_paramDef, Sandbox.k_paramDefCount);
@@ -12860,48 +12879,48 @@
           this.m_faucetEmitterIndex = 0;
           this.m_pumpIndex = 0;
           // Set up some standard shapes/vertices we'll use later.
-          const boxShape = new b2.PolygonShape();
+          const boxShape = new b2__namespace.PolygonShape();
           boxShape.SetAsBox(SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
           ///  b2Vec2 triangle[3];
-          const triangle = b2.Vec2.MakeArray(3);
+          const triangle = b2__namespace.Vec2.MakeArray(3);
           triangle[0].Set(-SandboxParams.k_tileRadius, -SandboxParams.k_tileRadius);
           triangle[1].Set(SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
           triangle[2].Set(SandboxParams.k_tileRadius, -SandboxParams.k_tileRadius);
-          const rightTriangleShape = new b2.PolygonShape();
+          const rightTriangleShape = new b2__namespace.PolygonShape();
           rightTriangleShape.Set(triangle, 3);
           triangle[1].Set(-SandboxParams.k_tileRadius, SandboxParams.k_tileRadius);
-          const leftTriangleShape = new b2.PolygonShape();
+          const leftTriangleShape = new b2__namespace.PolygonShape();
           leftTriangleShape.Set(triangle, 3);
           // Make these just a touch smaller than a tile
-          const circleShape = new b2.CircleShape();
+          const circleShape = new b2__namespace.CircleShape();
           circleShape.m_radius = SandboxParams.k_tileRadius * 0.7;
-          const red = new b2.Color().SetByteRGBA(255, 128, 128, 255);
-          const green = new b2.Color().SetByteRGBA(128, 255, 128, 255);
-          const blue = new b2.Color().SetByteRGBA(128, 128, 255, 255);
+          const red = new b2__namespace.Color().SetByteRGBA(255, 128, 128, 255);
+          const green = new b2__namespace.Color().SetByteRGBA(128, 255, 128, 255);
+          const blue = new b2__namespace.Color().SetByteRGBA(128, 128, 255, 255);
           this.m_pumpForce.Set(SandboxParams.k_pumpForce, 0);
           for (let i = 0; i < SandboxParams.k_tileWidth; i++) {
               for (let j = 0; j < SandboxParams.k_tileHeight; j++) {
                   const item = maze[j * SandboxParams.k_tileWidth + i];
                   // Calculate center of this square
-                  const center = new b2.Vec2(SandboxParams.k_playfieldLeftEdge + SandboxParams.k_tileRadius * 2 * i + SandboxParams.k_tileRadius, SandboxParams.k_playfieldBottomEdge - SandboxParams.k_tileRadius * 2 * j +
+                  const center = new b2__namespace.Vec2(SandboxParams.k_playfieldLeftEdge + SandboxParams.k_tileRadius * 2 * i + SandboxParams.k_tileRadius, SandboxParams.k_playfieldBottomEdge - SandboxParams.k_tileRadius * 2 * j +
                       SandboxParams.k_tileRadius);
                   // Let's add some items
                   switch (item) {
                       case "#":
                           // Block
-                          this.CreateBody(center, boxShape, b2.BodyType.b2_staticBody);
+                          this.CreateBody(center, boxShape, b2__namespace.BodyType.b2_staticBody);
                           break;
                       case "A":
                           // Left-to-right ramp
-                          this.CreateBody(center, leftTriangleShape, b2.BodyType.b2_staticBody);
+                          this.CreateBody(center, leftTriangleShape, b2__namespace.BodyType.b2_staticBody);
                           break;
                       case "/":
                           // Right-to-left ramp
-                          this.CreateBody(center, rightTriangleShape, b2.BodyType.b2_staticBody);
+                          this.CreateBody(center, rightTriangleShape, b2__namespace.BodyType.b2_staticBody);
                           break;
                       case "C":
                           // A circle to play with
-                          this.CreateBody(center, circleShape, b2.BodyType.b2_dynamicBody);
+                          this.CreateBody(center, circleShape, b2__namespace.BodyType.b2_dynamicBody);
                           break;
                       case "p":
                           this.AddPump(center);
@@ -12923,7 +12942,7 @@
           }
       }
       CreateBody(center, shape, type) {
-          const def = new b2.BodyDef();
+          const def = new b2__namespace.BodyDef();
           def.position.Copy(center);
           def.type = type;
           const body = this.m_world.CreateBody(def);
@@ -12933,17 +12952,17 @@
       AddPump(center) {
           // Don't make too many pumps
           // DEBUG: b2.Assert(this.m_pumpIndex < SandboxParams.k_maxPumps);
-          const shape = new b2.PolygonShape();
+          const shape = new b2__namespace.PolygonShape();
           shape.SetAsBox(SandboxParams.k_pumpRadius, SandboxParams.k_pumpRadius);
-          const def = new b2.BodyDef();
+          const def = new b2__namespace.BodyDef();
           def.position.Copy(center);
-          def.type = b2.BodyType.b2_dynamicBody;
+          def.type = b2__namespace.BodyType.b2_dynamicBody;
           def.angle = 0;
           const body = this.m_world.CreateBody(def);
           body.CreateFixture(shape, 5.0);
           // Create a prismatic joint and connect to the ground, and have it
           // slide along the x axis.
-          const prismaticJointDef = new b2.PrismaticJointDef();
+          const prismaticJointDef = new b2__namespace.PrismaticJointDef();
           prismaticJointDef.bodyA = this.m_groundBody;
           prismaticJointDef.bodyB = body;
           prismaticJointDef.collideConnected = false;
@@ -12957,12 +12976,12 @@
       AddFaucetEmitter(center, color) {
           // Don't make too many emitters
           // DEBUG: b2.Assert(this.m_faucetEmitterIndex < SandboxParams.k_maxPumps);
-          const startingVelocity = new b2.Vec2(0, SandboxParams.k_particleExitSpeedY);
+          const startingVelocity = new b2__namespace.Vec2(0, SandboxParams.k_particleExitSpeedY);
           const emitter = new RadialEmitter();
           emitter.SetParticleSystem(this.m_particleSystem);
           emitter.SetPosition(center);
           emitter.SetVelocity(startingVelocity);
-          emitter.SetSize(new b2.Vec2(SandboxParams.k_defaultEmitterSize, 0.0));
+          emitter.SetSize(new b2__namespace.Vec2(SandboxParams.k_defaultEmitterSize, 0.0));
           emitter.SetEmitRate(SandboxParams.k_defaultEmitterRate);
           emitter.SetColor(color);
           this.m_emitters[this.m_faucetEmitterIndex] = emitter;
@@ -12997,16 +13016,16 @@
                   this.m_particleFlags = 0;
                   break;
               case "q":
-                  toggle = b2.ParticleFlag.b2_powderParticle;
+                  toggle = b2__namespace.ParticleFlag.b2_powderParticle;
                   break;
               case "t":
-                  toggle = b2.ParticleFlag.b2_tensileParticle;
+                  toggle = b2__namespace.ParticleFlag.b2_tensileParticle;
                   break;
               case "v":
-                  toggle = b2.ParticleFlag.b2_viscousParticle;
+                  toggle = b2__namespace.ParticleFlag.b2_viscousParticle;
                   break;
               case "w":
-                  toggle = b2.ParticleFlag.b2_wallParticle;
+                  toggle = b2__namespace.ParticleFlag.b2_wallParticle;
                   break;
           }
           if (toggle) {
@@ -13084,21 +13103,21 @@
       }
   }
   Sandbox.k_paramValues = [
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "tensile powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_tensileParticle | b2.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous tensile powder"),
-      new ParticleParameterValue(b2.ParticleFlag.b2_viscousParticle | b2.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile viscous water"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions, "water"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_waterParticle, ParticleParameter.k_DefaultOptions | exports.ParticleParameterOptions.OptionStrictContacts, "water (strict)"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "powder"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_viscousParticle, ParticleParameter.k_DefaultOptions, "viscous"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "tensile powder"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_viscousParticle | b2__namespace.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous powder"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_viscousParticle | b2__namespace.ParticleFlag.b2_tensileParticle | b2__namespace.ParticleFlag.b2_powderParticle, ParticleParameter.k_DefaultOptions, "viscous tensile powder"),
+      new ParticleParameterValue(b2__namespace.ParticleFlag.b2_viscousParticle | b2__namespace.ParticleFlag.b2_tensileParticle, ParticleParameter.k_DefaultOptions, "tensile viscous water"),
   ];
   Sandbox.k_paramDef = [
       new ParticleParameterDefinition(Sandbox.k_paramValues),
   ];
   Sandbox.k_paramDefCount = Sandbox.k_paramDef.length;
-  const testIndex$1k = RegisterTest("Particles", "Sandbox", Sandbox.Create);
+  RegisterTest("Particles", "Sandbox", Sandbox.Create);
   // #endif
 
   /*
@@ -13122,39 +13141,39 @@
       constructor() {
           super();
           // Disable the selection of wall and barrier particles for this test.
-          this.InitializeParticleParameters(b2.ParticleFlag.b2_wallParticle | b2.ParticleFlag.b2_barrierParticle);
+          this.InitializeParticleParameters(b2__namespace.ParticleFlag.b2_wallParticle | b2__namespace.ParticleFlag.b2_barrierParticle);
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               this.m_ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -1),
-                      new b2.Vec2(4, -1),
-                      new b2.Vec2(4, 0),
-                      new b2.Vec2(-4, 0),
+                      new b2__namespace.Vec2(-4, -1),
+                      new b2__namespace.Vec2(4, -1),
+                      new b2__namespace.Vec2(4, 0),
+                      new b2__namespace.Vec2(-4, 0),
                   ];
                   shape.Set(vertices, 4);
                   this.m_ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-4, -0.1),
-                      new b2.Vec2(-2, -0.1),
-                      new b2.Vec2(-2, 2),
-                      new b2.Vec2(-4, 3),
+                      new b2__namespace.Vec2(-4, -0.1),
+                      new b2__namespace.Vec2(-2, -0.1),
+                      new b2__namespace.Vec2(-2, 2),
+                      new b2__namespace.Vec2(-4, 3),
                   ];
                   shape.Set(vertices, 4);
                   this.m_ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(2, -0.1),
-                      new b2.Vec2(4, -0.1),
-                      new b2.Vec2(4, 3),
-                      new b2.Vec2(2, 2),
+                      new b2__namespace.Vec2(2, -0.1),
+                      new b2__namespace.Vec2(4, -0.1),
+                      new b2__namespace.Vec2(4, 3),
+                      new b2__namespace.Vec2(2, 2),
                   ];
                   shape.Set(vertices, 4);
                   this.m_ground.CreateFixture(shape, 0.0);
@@ -13162,53 +13181,53 @@
           }
           this.m_particleSystem.SetRadius(0.035 * 2); // HACK: increase particle radius
           {
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(2, 1, new b2.Vec2(0, 1), 0);
-              const pd = new b2.ParticleGroupDef();
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(2, 1, new b2__namespace.Vec2(0, 1), 0);
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.shape = shape;
               pd.flags = Test.GetParticleParameterValue();
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(0, 0.5);
               shape.m_radius = 0.1;
               body.CreateFixture(shape, 0.1);
               this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.1, 0.1, new b2.Vec2(-1, 0.5), 0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.1, 0.1, new b2__namespace.Vec2(-1, 0.5), 0);
               body.CreateFixture(shape, 0.1);
               this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.1, 0.1, new b2.Vec2(1, 0.5), 0.5);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.1, 0.1, new b2__namespace.Vec2(1, 0.5), 0.5);
               body.CreateFixture(shape, 0.1);
               this.m_particleSystem.DestroyParticlesInShape(shape, body.GetTransform());
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(0, 2), new b2.Vec2(0.1, 2.1));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(0, 2), new b2__namespace.Vec2(0.1, 2.1));
               body.CreateFixture(shape, 1);
               ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
-              const massData = new b2.MassData();
+              const massData = new b2__namespace.MassData();
               massData.mass = 0.1;
               massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
               massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
@@ -13216,14 +13235,14 @@
               body.SetMassData(massData);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(0.3, 2.0), new b2.Vec2(0.4, 2.1));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(0.3, 2.0), new b2__namespace.Vec2(0.4, 2.1));
               body.CreateFixture(shape, 1);
               ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
-              const massData = new b2.MassData();
+              const massData = new b2__namespace.MassData();
               massData.mass = 0.1;
               massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
               massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
@@ -13231,14 +13250,14 @@
               body.SetMassData(massData);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.EdgeShape();
-              shape.SetTwoSided(new b2.Vec2(-0.3, 2.1), new b2.Vec2(-0.2, 2.0));
+              const shape = new b2__namespace.EdgeShape();
+              shape.SetTwoSided(new b2__namespace.Vec2(-0.3, 2.1), new b2__namespace.Vec2(-0.2, 2.0));
               body.CreateFixture(shape, 1);
               ///  b2MassData massData = {0.1f, 0.5f * (shape.m_vertex1 + shape.m_vertex2), 0.0f};
-              const massData = new b2.MassData();
+              const massData = new b2__namespace.MassData();
               massData.mass = 0.1;
               massData.center.x = 0.5 * shape.m_vertex1.x + shape.m_vertex2.x;
               massData.center.y = 0.5 * shape.m_vertex1.y + shape.m_vertex2.y;
@@ -13253,7 +13272,7 @@
           return new Soup();
       }
   }
-  const testIndex$1l = RegisterTest("Particles", "Soup", Soup.Create);
+  RegisterTest("Particles", "Soup", Soup.Create);
   // #endif
 
   /*
@@ -13280,16 +13299,16 @@
           this.m_oscillationOffset = 0.0;
           this.m_particleSystem.SetDamping(1.0);
           // Shape of the stirrer.
-          const shape = new b2.CircleShape();
+          const shape = new b2__namespace.CircleShape();
           shape.m_p.Set(0, 0.7);
           shape.m_radius = 0.4;
           // Create the stirrer.
-          const bd = new b2.BodyDef();
-          bd.type = b2.BodyType.b2_dynamicBody;
+          const bd = new b2__namespace.BodyDef();
+          bd.type = b2__namespace.BodyType.b2_dynamicBody;
           this.m_stirrer = this.m_world.CreateBody(bd);
           this.m_stirrer.CreateFixture(shape, 1.0);
           // Destroy all particles under the stirrer.
-          const xf = new b2.Transform();
+          const xf = new b2__namespace.Transform();
           xf.SetIdentity();
           this.m_particleSystem.DestroyParticlesInShape(shape, xf);
           // By default attach the body to a joint to restrict movement.
@@ -13300,7 +13319,7 @@
           // Create a prismatic joint and connect to the ground, and have it
           // slide along the x axis.
           // Disconnect the body from this joint to have more fun.
-          const prismaticJointDef = new b2.PrismaticJointDef();
+          const prismaticJointDef = new b2__namespace.PrismaticJointDef();
           prismaticJointDef.bodyA = this.m_groundBody;
           prismaticJointDef.bodyB = this.m_stirrer;
           prismaticJointDef.collideConnected = true;
@@ -13369,8 +13388,8 @@
               this.m_oscillationOffset -= k_forceOscillationPeriod;
           }
           // Calculate the force vector.
-          const forceAngle = this.m_oscillationOffset * k_forceOscillationPerSecond * 2.0 * b2.pi;
-          const forceVector = new b2.Vec2(Math.sin(forceAngle), Math.cos(forceAngle)).SelfMul(k_forceMagnitude);
+          const forceAngle = this.m_oscillationOffset * k_forceOscillationPerSecond * 2.0 * b2__namespace.pi;
+          const forceVector = new b2__namespace.Vec2(Math.sin(forceAngle), Math.cos(forceAngle)).SelfMul(k_forceMagnitude);
           // Only apply force to the body when it's within the soup.
           if (this.InSoup(this.m_stirrer.GetPosition()) &&
               this.m_stirrer.GetLinearVelocity().Length() < k_maxSpeed) {
@@ -13382,7 +13401,7 @@
           return new SoupStirrer();
       }
   }
-  const testIndex$1m = RegisterTest("Particles", "Soup Stirrer", SoupStirrer.Create);
+  RegisterTest("Particles", "Soup Stirrer", SoupStirrer.Create);
   // #endif
 
   /*
@@ -13407,13 +13426,13 @@
           this.m_initialLifetime = 0.0;
           this.m_remainingLifetime = 0.0;
           this.m_halfLifetime = 0.0;
-          this.m_origColor = new b2.Color();
+          this.m_origColor = new b2__namespace.Color();
           // Create a circle to house the particles of size size
-          const shape = new b2.CircleShape();
+          const shape = new b2__namespace.CircleShape();
           shape.m_p.Copy(origin);
           shape.m_radius = size;
           // Create particle def of random color.
-          const pd = new b2.ParticleGroupDef();
+          const pd = new b2__namespace.ParticleGroupDef();
           pd.flags = particleFlags;
           pd.shape = shape;
           // this.m_origColor.Set(
@@ -13467,9 +13486,9 @@
           const vel = this.m_particleSystem.GetVelocityBuffer();
           for (let i = bufferIndex; i < bufferIndex + this.m_pg.GetParticleCount(); i++) {
               ///  vel[i] = pos[i] - origin;
-              b2.Vec2.SubVV(pos[i], origin, vel[i]);
+              b2__namespace.Vec2.SubVV(pos[i], origin, vel[i]);
               ///  vel[i] *= speed;
-              b2.Vec2.MulVS(vel[i], speed, vel[i]);
+              b2__namespace.Vec2.MulVS(vel[i], speed, vel[i]);
           }
       }
       Drop() {
@@ -13508,7 +13527,7 @@
           this.m_VFXIndex = 0;
           this.m_VFX = [];
           this.m_contact = false;
-          this.m_contactPoint = new b2.Vec2();
+          this.m_contactPoint = new b2__namespace.Vec2();
           // Set up array of sparks trackers.
           this.m_VFXIndex = 0;
           for (let i = 0; i < Sparky.c_maxVFX; i++) {
@@ -13518,10 +13537,10 @@
           this.m_particleSystem.SetRadius(0.25 * 2); // HACK: increase particle radius
           // Create a list of circles that will spark.
           for (let i = 0; i < Sparky.c_maxCircles; i++) {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.CircleShape();
+              const shape = new b2__namespace.CircleShape();
               shape.m_p.Set(3.0 * RandomFloat(), Sparky.SHAPE_HEIGHT_OFFSET + Sparky.SHAPE_OFFSET * i);
               shape.m_radius = 2;
               const f = body.CreateFixture(shape, 0.5);
@@ -13531,7 +13550,7 @@
               });
           }
           Test.SetRestartOnParticleParameterChange(false);
-          Test.SetParticleParameterValue(b2.ParticleFlag.b2_powderParticle);
+          Test.SetParticleParameterValue(b2__namespace.ParticleFlag.b2_powderParticle);
       }
       BeginContact(contact) {
           super.BeginContact(contact);
@@ -13540,7 +13559,7 @@
           const userB = contact.GetFixtureB().GetUserData();
           if ((userA && userA.spark) ||
               (userB && userB.spark)) {
-              const worldManifold = new b2.WorldManifold();
+              const worldManifold = new b2__namespace.WorldManifold();
               contact.GetWorldManifold(worldManifold);
               // Note that we overwrite any contact; if there are two collisions
               // on the same frame, only the last one showers sparks.
@@ -13592,48 +13611,48 @@
       CreateWalls() {
           // Create the walls of the world.
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               const ground = this.m_world.CreateBody(bd);
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, -10),
-                      new b2.Vec2(40, -10),
-                      new b2.Vec2(40, 0),
-                      new b2.Vec2(-40, 0),
+                      new b2__namespace.Vec2(-40, -10),
+                      new b2__namespace.Vec2(40, -10),
+                      new b2__namespace.Vec2(40, 0),
+                      new b2__namespace.Vec2(-40, 0),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, 40),
-                      new b2.Vec2(40, 40),
-                      new b2.Vec2(40, 50),
-                      new b2.Vec2(-40, 50),
+                      new b2__namespace.Vec2(-40, 40),
+                      new b2__namespace.Vec2(40, 40),
+                      new b2__namespace.Vec2(40, 50),
+                      new b2__namespace.Vec2(-40, 50),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(-40, -10),
-                      new b2.Vec2(-20, -10),
-                      new b2.Vec2(-20, 50),
-                      new b2.Vec2(-40, 50),
+                      new b2__namespace.Vec2(-40, -10),
+                      new b2__namespace.Vec2(-20, -10),
+                      new b2__namespace.Vec2(-20, 50),
+                      new b2__namespace.Vec2(-40, 50),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
               }
               {
-                  const shape = new b2.PolygonShape();
+                  const shape = new b2__namespace.PolygonShape();
                   const vertices = [
-                      new b2.Vec2(20, -10),
-                      new b2.Vec2(40, -10),
-                      new b2.Vec2(40, 50),
-                      new b2.Vec2(20, 50),
+                      new b2__namespace.Vec2(20, -10),
+                      new b2__namespace.Vec2(40, -10),
+                      new b2__namespace.Vec2(40, 50),
+                      new b2__namespace.Vec2(20, 50),
                   ];
                   shape.Set(vertices, 4);
                   ground.CreateFixture(shape, 0.0);
@@ -13648,7 +13667,7 @@
   Sparky.c_maxVFX = 20; ///50;
   Sparky.SHAPE_HEIGHT_OFFSET = 7;
   Sparky.SHAPE_OFFSET = 4.5;
-  const testIndex$1n = RegisterTest("Particles", "Sparky", Sparky.Create);
+  RegisterTest("Particles", "Sparky", Sparky.Create);
   // #endif
 
   /*
@@ -13674,31 +13693,31 @@
           this.m_time = 0;
           let ground = null;
           {
-              const bd = new b2.BodyDef();
+              const bd = new b2__namespace.BodyDef();
               ground = this.m_world.CreateBody(bd);
           }
           {
-              const bd = new b2.BodyDef();
-              bd.type = b2.BodyType.b2_dynamicBody;
+              const bd = new b2__namespace.BodyDef();
+              bd.type = b2__namespace.BodyType.b2_dynamicBody;
               bd.allowSleep = false;
               bd.position.Set(0.0, 1.0);
               const body = this.m_world.CreateBody(bd);
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.05, 1.0, new b2.Vec2(2.0, 0.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.05, 1.0, new b2__namespace.Vec2(2.0, 0.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(0.05, 1.0, new b2.Vec2(-2.0, 0.0), 0.0);
+              shape.SetAsBox(0.05, 1.0, new b2__namespace.Vec2(-2.0, 0.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(2.0, 0.05, new b2.Vec2(0.0, 1.0), 0.0);
+              shape.SetAsBox(2.0, 0.05, new b2__namespace.Vec2(0.0, 1.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              shape.SetAsBox(2.0, 0.05, new b2.Vec2(0.0, -1.0), 0.0);
+              shape.SetAsBox(2.0, 0.05, new b2__namespace.Vec2(0.0, -1.0), 0.0);
               body.CreateFixture(shape, 5.0);
-              const jd = new b2.RevoluteJointDef();
+              const jd = new b2__namespace.RevoluteJointDef();
               jd.bodyA = ground;
               jd.bodyB = body;
               jd.localAnchorA.Set(0.0, 1.0);
               jd.localAnchorB.Set(0.0, 0.0);
               jd.referenceAngle = 0.0;
-              jd.motorSpeed = 0.05 * b2.pi;
+              jd.motorSpeed = 0.05 * b2__namespace.pi;
               jd.maxMotorTorque = 1e7;
               jd.enableMotor = true;
               this.m_joint = this.m_world.CreateJoint(jd);
@@ -13707,13 +13726,13 @@
           const particleType = Test.GetParticleParameterValue();
           this.m_particleSystem.SetDamping(0.2);
           {
-              const pd = new b2.ParticleGroupDef();
+              const pd = new b2__namespace.ParticleGroupDef();
               pd.flags = particleType;
-              const shape = new b2.PolygonShape();
-              shape.SetAsBox(0.9, 0.9, new b2.Vec2(0.0, 1.0), 0.0);
+              const shape = new b2__namespace.PolygonShape();
+              shape.SetAsBox(0.9, 0.9, new b2__namespace.Vec2(0.0, 1.0), 0.0);
               pd.shape = shape;
               const group = this.m_particleSystem.CreateParticleGroup(pd);
-              if (pd.flags & b2.ParticleFlag.b2_colorMixingParticle) {
+              if (pd.flags & b2__namespace.ParticleFlag.b2_colorMixingParticle) {
                   this.ColorParticleGroup(group, 0);
               }
           }
@@ -13724,7 +13743,7 @@
           if (settings.m_hertz > 0) {
               this.m_time += 1 / settings.m_hertz;
           }
-          this.m_joint.SetMotorSpeed(0.05 * Math.cos(this.m_time) * b2.pi);
+          this.m_joint.SetMotorSpeed(0.05 * Math.cos(this.m_time) * b2__namespace.pi);
       }
       GetDefaultViewZoom() {
           return 0.1;
@@ -13733,7 +13752,7 @@
           return new WaveMachine();
       }
   }
-  const testIndex$1o = RegisterTest("Particles", "Wave Machine", WaveMachine.Create);
+  RegisterTest("Particles", "Wave Machine", WaveMachine.Create);
   // #endif
 
   // MIT License
@@ -13748,13 +13767,13 @@
           this.m_ctrl = false;
           this.m_lMouseDown = false;
           this.m_rMouseDown = false;
-          this.m_projection0 = new b2.Vec2();
-          this.m_viewCenter0 = new b2.Vec2();
+          this.m_projection0 = new b2__namespace.Vec2();
+          this.m_viewCenter0 = new b2__namespace.Vec2();
           this.m_demo_mode = false;
           this.m_demo_time = 0;
           this.m_max_demo_time = 1000 * 10;
           this.m_ctx = null;
-          this.m_mouse = new b2.Vec2();
+          this.m_mouse = new b2__namespace.Vec2();
           const fps_div = this.m_fps_div = document.body.appendChild(document.createElement("div"));
           fps_div.style.position = "absolute";
           fps_div.style.left = "0px";
@@ -13789,7 +13808,7 @@
           const title_div = main_div.appendChild(document.createElement("div"));
           title_div.style.textAlign = "center";
           title_div.style.color = "grey";
-          title_div.innerHTML = "Box2D Testbed version " + b2.version.toString();
+          title_div.innerHTML = "Box2D Testbed version " + b2__namespace.version.toString();
           const view_div = main_div.appendChild(document.createElement("div"));
           const canvas_div = this.m_canvas_div = view_div.appendChild(document.createElement("div"));
           canvas_div.style.position = "absolute"; // relative to view_div
@@ -13930,7 +13949,7 @@
           canvas_div.addEventListener("mousemove", (e) => { this.HandleMouseMove(e); });
           canvas_div.addEventListener("mousedown", (e) => { this.HandleMouseDown(e); });
           canvas_div.addEventListener("mouseup", (e) => { this.HandleMouseUp(e); });
-          canvas_div.addEventListener("mousewheel", (e) => { this.HandleMouseWheel(e); });
+          canvas_div.addEventListener("wheel", (e) => { this.HandleWheel(e); });
           canvas_div.addEventListener("touchmove", (e) => { this.HandleTouchMove(e); });
           canvas_div.addEventListener("touchstart", (e) => { this.HandleTouchStart(e); });
           canvas_div.addEventListener("touchend", (e) => { this.HandleTouchEnd(e); });
@@ -13956,11 +13975,11 @@
       ///}
       ZoomCamera(zoom) {
           g_camera.m_zoom *= zoom;
-          g_camera.m_zoom = b2.Clamp(g_camera.m_zoom, 0.02, 20);
+          g_camera.m_zoom = b2__namespace.Clamp(g_camera.m_zoom, 0.02, 20);
       }
       HandleMouseMove(e) {
-          const element = new b2.Vec2(e.clientX, e.clientY);
-          const world = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
+          const element = new b2__namespace.Vec2(e.clientX, e.clientY);
+          const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
           this.m_mouse.Copy(element);
           if (this.m_lMouseDown) {
               if (this.m_test) {
@@ -13969,15 +13988,15 @@
           }
           if (this.m_rMouseDown) {
               // m_center = viewCenter0 - (projection - projection0);
-              const projection = g_camera.ConvertElementToProjection(element, new b2.Vec2());
-              const diff = b2.Vec2.SubVV(projection, this.m_projection0, new b2.Vec2());
-              const center = b2.Vec2.SubVV(this.m_viewCenter0, diff, new b2.Vec2());
+              const projection = g_camera.ConvertElementToProjection(element, new b2__namespace.Vec2());
+              const diff = b2__namespace.Vec2.SubVV(projection, this.m_projection0, new b2__namespace.Vec2());
+              const center = b2__namespace.Vec2.SubVV(this.m_viewCenter0, diff, new b2__namespace.Vec2());
               g_camera.m_center.Copy(center);
           }
       }
       HandleMouseDown(e) {
-          const element = new b2.Vec2(e.clientX, e.clientY);
-          const world = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
+          const element = new b2__namespace.Vec2(e.clientX, e.clientY);
+          const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
           switch (e.which) {
               case 1: // left mouse button
                   this.m_lMouseDown = true;
@@ -13994,15 +14013,15 @@
                   break;
               case 3: // right mouse button
                   this.m_rMouseDown = true;
-                  const projection = g_camera.ConvertElementToProjection(element, new b2.Vec2());
+                  const projection = g_camera.ConvertElementToProjection(element, new b2__namespace.Vec2());
                   this.m_projection0.Copy(projection);
                   this.m_viewCenter0.Copy(g_camera.m_center);
                   break;
           }
       }
       HandleMouseUp(e) {
-          const element = new b2.Vec2(e.clientX, e.clientY);
-          const world = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
+          const element = new b2__namespace.Vec2(e.clientX, e.clientY);
+          const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
           switch (e.which) {
               case 1: // left mouse button
                   this.m_lMouseDown = false;
@@ -14016,16 +14035,16 @@
           }
       }
       HandleTouchMove(e) {
-          const element = new b2.Vec2(e.touches[0].clientX, e.touches[0].clientY);
-          const world = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
+          const element = new b2__namespace.Vec2(e.touches[0].clientX, e.touches[0].clientY);
+          const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
           if (this.m_test) {
               this.m_test.MouseMove(world);
           }
           e.preventDefault();
       }
       HandleTouchStart(e) {
-          const element = new b2.Vec2(e.touches[0].clientX, e.touches[0].clientY);
-          const world = g_camera.ConvertScreenToWorld(element, new b2.Vec2());
+          const element = new b2__namespace.Vec2(e.touches[0].clientX, e.touches[0].clientY);
+          const world = g_camera.ConvertScreenToWorld(element, new b2__namespace.Vec2());
           if (this.m_test) {
               this.m_test.MouseDown(world);
           }
@@ -14037,7 +14056,7 @@
           }
           e.preventDefault();
       }
-      HandleMouseWheel(e) {
+      HandleWheel(e) {
           if (e.deltaY > 0) {
               this.ZoomCamera(1 / 1.1);
           }
@@ -14057,41 +14076,41 @@
               case "ArrowLeft":
                   if (this.m_ctrl) {
                       if (this.m_test) {
-                          this.m_test.ShiftOrigin(new b2.Vec2(2, 0));
+                          this.m_test.ShiftOrigin(new b2__namespace.Vec2(2, 0));
                       }
                   }
                   else {
-                      this.MoveCamera(new b2.Vec2(-0.5, 0));
+                      this.MoveCamera(new b2__namespace.Vec2(-0.5, 0));
                   }
                   break;
               case "ArrowRight":
                   if (this.m_ctrl) {
                       if (this.m_test) {
-                          this.m_test.ShiftOrigin(new b2.Vec2(-2, 0));
+                          this.m_test.ShiftOrigin(new b2__namespace.Vec2(-2, 0));
                       }
                   }
                   else {
-                      this.MoveCamera(new b2.Vec2(0.5, 0));
+                      this.MoveCamera(new b2__namespace.Vec2(0.5, 0));
                   }
                   break;
               case "ArrowDown":
                   if (this.m_ctrl) {
                       if (this.m_test) {
-                          this.m_test.ShiftOrigin(new b2.Vec2(0, 2));
+                          this.m_test.ShiftOrigin(new b2__namespace.Vec2(0, 2));
                       }
                   }
                   else {
-                      this.MoveCamera(new b2.Vec2(0, -0.5));
+                      this.MoveCamera(new b2__namespace.Vec2(0, -0.5));
                   }
                   break;
               case "ArrowUp":
                   if (this.m_ctrl) {
                       if (this.m_test) {
-                          this.m_test.ShiftOrigin(new b2.Vec2(0, -2));
+                          this.m_test.ShiftOrigin(new b2__namespace.Vec2(0, -2));
                       }
                   }
                   else {
-                      this.MoveCamera(new b2.Vec2(0, 0.5));
+                      this.MoveCamera(new b2__namespace.Vec2(0, 0.5));
                   }
                   break;
               case "Home":
@@ -14313,5 +14332,5 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 //# sourceMappingURL=testbed.umd.js.map

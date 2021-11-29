@@ -831,7 +831,7 @@ export class b2WheelJoint extends b2Joint {
     }
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void): void {
+  public override Dump(log: (format: string, ...args: any[]) => void): void {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 
@@ -862,7 +862,7 @@ export class b2WheelJoint extends b2Joint {
   private static Draw_s_lower = new b2Vec2();
   private static Draw_s_upper = new b2Vec2();
   private static Draw_s_perp = new b2Vec2();
-  public Draw(draw: b2Draw): void {
+  public override Draw(draw: b2Draw): void {
     const xfA: Readonly<b2Transform> = this.m_bodyA.GetTransform();
     const xfB: Readonly<b2Transform> = this.m_bodyB.GetTransform();
     const pA = b2Transform.MulXV(xfA, this.m_localAnchorA, b2WheelJoint.Draw_s_pA);

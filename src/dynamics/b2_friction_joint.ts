@@ -293,7 +293,7 @@ export class b2FrictionJoint extends b2Joint {
     return this.m_maxTorque;
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void): void {
+  public override Dump(log: (format: string, ...args: any[]) => void): void {
     const indexA: number = this.m_bodyA.m_islandIndex;
     const indexB: number = this.m_bodyB.m_islandIndex;
 

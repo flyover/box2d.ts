@@ -248,7 +248,7 @@ export class Main {
     canvas_div.addEventListener("mousemove", (e: MouseEvent): void => { this.HandleMouseMove(e); });
     canvas_div.addEventListener("mousedown", (e: MouseEvent): void => { this.HandleMouseDown(e); });
     canvas_div.addEventListener("mouseup", (e: MouseEvent): void => { this.HandleMouseUp(e); });
-    canvas_div.addEventListener("mousewheel", (e: Event): void => { this.HandleMouseWheel(e as MouseWheelEvent); });
+    canvas_div.addEventListener("wheel", (e: WheelEvent): void => { this.HandleWheel(e); });
 
     canvas_div.addEventListener("touchmove", (e: TouchEvent): void => { this.HandleTouchMove(e); });
     canvas_div.addEventListener("touchstart", (e: TouchEvent): void => { this.HandleTouchStart(e); });
@@ -362,7 +362,7 @@ export class Main {
     e.preventDefault();
   }
 
-  public HandleMouseWheel(e: MouseWheelEvent): void {
+  public HandleWheel(e: WheelEvent): void {
     if (e.deltaY > 0) {
       this.ZoomCamera(1 / 1.1);
     } else if (e.deltaY < 0) {

@@ -548,7 +548,7 @@ export class b2GearJoint extends b2Joint {
     this.m_ratio = ratio;
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void) {
+  public override Dump(log: (format: string, ...args: any[]) => void) {
     const indexA = this.m_bodyA.m_islandIndex;
     const indexB = this.m_bodyB.m_islandIndex;
 

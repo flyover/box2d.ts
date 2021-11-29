@@ -132,7 +132,7 @@ export class b2AreaJoint extends b2Joint {
     return this.m_damping;
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void) {
+  public override Dump(log: (format: string, ...args: any[]) => void) {
     log("Area joint dumping is not supported.\n");
   }
 

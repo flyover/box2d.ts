@@ -42,7 +42,7 @@ export class b2PolygonShape extends b2Shape {
     return new b2PolygonShape().Copy(this);
   }
 
-  public Copy(other: b2PolygonShape): b2PolygonShape {
+  public override Copy(other: b2PolygonShape): b2PolygonShape {
     super.Copy(other);
 
     // DEBUG: b2Assert(other instanceof b2PolygonShape);

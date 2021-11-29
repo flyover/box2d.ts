@@ -599,7 +599,7 @@ System.register(["@box2d", "./draw.js", "./fullscreen_ui.js", "./particle_parame
                 new b2.Color().SetByteRGBA(0x00, 0xce, 0xd1, 0xff),
                 new b2.Color().SetByteRGBA(0xff, 0x00, 0xff, 0xff),
                 new b2.Color().SetByteRGBA(0xff, 0xd7, 0x00, 0xff),
-                new b2.Color().SetByteRGBA(0x00, 0xff, 0xff, 0xff),
+                new b2.Color().SetByteRGBA(0x00, 0xff, 0xff, 0xff), // cyan
             ];
             Test.k_ParticleColorsCount = Test.k_ParticleColors.length;
         }

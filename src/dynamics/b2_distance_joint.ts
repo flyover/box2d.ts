@@ -179,7 +179,7 @@ export class b2DistanceJoint extends b2Joint {
     return this.m_damping;
   }
 
-  public Dump(log: (format: string, ...args: any[]) => void) {
+  public override Dump(log: (format: string, ...args: any[]) => void) {
     const indexA: number = this.m_bodyA.m_islandIndex;
     const indexB: number = this.m_bodyB.m_islandIndex;
 
@@ -455,7 +455,7 @@ export class b2DistanceJoint extends b2Joint {
   private static Draw_s_pRest = new b2Vec2();
   private static Draw_s_pMin = new b2Vec2();
   private static Draw_s_pMax = new b2Vec2();
-  public Draw(draw: b2Draw): void {
+  public override Draw(draw: b2Draw): void {
     const xfA: Readonly<b2Transform> = this.m_bodyA.GetTransform();
     const xfB: Readonly<b2Transform> = this.m_bodyB.GetTransform();
     const pA = b2Transform.MulXV(xfA, this.m_localAnchorA, b2DistanceJoint.Draw_s_pA);
