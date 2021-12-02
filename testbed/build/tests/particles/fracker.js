@@ -342,7 +342,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         new b2.Vec2(topRight.x, topRight.y),
                         new b2.Vec2(bottomLeft.x, topRight.y),
                     ];
-                    shape.CreateLoop(vertices, 4);
+                    shape.CreateLoop(vertices);
                     ground.CreateFixture(shape, 0.0);
                 }
                 /**

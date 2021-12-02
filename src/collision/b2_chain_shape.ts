@@ -43,21 +43,19 @@ export class b2ChainShape extends b2Shape {
   /// Create a loop. This automatically adjusts connectivity.
   /// @param vertices an array of vertices, these are copied
   /// @param count the vertex count
-  public CreateLoop(vertices: XY[]): b2ChainShape;
-  public CreateLoop(vertices: XY[], count: number): b2ChainShape;
-  public CreateLoop(vertices: number[]): b2ChainShape;
-  public CreateLoop(...args: any[]): b2ChainShape {
+  public CreateLoop(vertices: XY[]): this;
+  public CreateLoop(vertices: number[]): this;
+  public CreateLoop(...args: any[]): this {
     if (typeof args[0][0] === "number") {
       const vertices: number[] = args[0];
       if (vertices.length % 2 !== 0) { throw new Error(); }
       return this._CreateLoop((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2);
     } else {
       const vertices: XY[] = args[0];
-      const count: number = args[1] || vertices.length;
-      return this._CreateLoop((index: number): XY => vertices[index], count);
+      return this._CreateLoop((index: number): XY => vertices[index], vertices.length);
     }
   }
-  private _CreateLoop(vertices: (index: number) => XY, count: number): b2ChainShape {
+  private _CreateLoop(vertices: (index: number) => XY, count: number): this {
     // DEBUG: b2Assert(count >= 3);
     if (count < 3) {
       return this;
@@ -85,10 +83,9 @@ export class b2ChainShape extends b2Shape {
 	/// @param count the vertex count
 	/// @param prevVertex previous vertex from chain that connects to the start
 	/// @param nextVertex next vertex from chain that connects to the end
-  public CreateChain(vertices: XY[], prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape;
-  public CreateChain(vertices: XY[], count: number, prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape;
-  public CreateChain(vertices: number[], prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape;
-  public CreateChain(...args: any[]): b2ChainShape {
+  public CreateChain(vertices: XY[], prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): this;
+  public CreateChain(vertices: number[], prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): this;
+  public CreateChain(...args: any[]): this {
     if (typeof args[0][0] === "number") {
       const vertices: number[] = args[0];
       const prevVertex: Readonly<XY> = args[1];
@@ -97,13 +94,12 @@ export class b2ChainShape extends b2Shape {
       return this._CreateChain((index: number): XY => ({ x: vertices[index * 2], y: vertices[index * 2 + 1] }), vertices.length / 2, prevVertex, nextVertex);
     } else {
       const vertices: XY[] = args[0];
-      const count: number = args[1] || vertices.length;
-      const prevVertex: Readonly<XY> = args[2];
-      const nextVertex: Readonly<XY> = args[3];
-      return this._CreateChain((index: number): XY => vertices[index], count, prevVertex, nextVertex);
+      const prevVertex: Readonly<XY> = args[1];
+      const nextVertex: Readonly<XY> = args[2];
+      return this._CreateChain((index: number): XY => vertices[index], vertices.length, prevVertex, nextVertex);
     }
   }
-  private _CreateChain(vertices: (index: number) => XY, count: number, prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): b2ChainShape {
+  private _CreateChain(vertices: (index: number) => XY, count: number, prevVertex: Readonly<XY>, nextVertex: Readonly<XY>): this {
     // DEBUG: b2Assert(count >= 2);
     // DEBUG: for (let i: number = 1; i < count; ++i) {
     // DEBUG:   const v1 = vertices[start + i - 1];
@@ -129,7 +125,7 @@ export class b2ChainShape extends b2Shape {
     return new b2ChainShape().Copy(this);
   }
 
-  public override Copy(other: b2ChainShape): b2ChainShape {
+  public override Copy(other: b2ChainShape): this {
     super.Copy(other);
 
     // DEBUG: b2Assert(other instanceof b2ChainShape);

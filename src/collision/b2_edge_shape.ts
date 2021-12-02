@@ -45,7 +45,7 @@ export class b2EdgeShape extends b2Shape {
 	/// across junctions. This also makes the collision one-sided. The edge
 	/// normal points to the right looking from v1 to v2.
 	// void SetOneSided(const b2Vec2& v0, const b2Vec2& v1,const b2Vec2& v2, const b2Vec2& v3);
-  public SetOneSided(v0: XY, v1: XY, v2: XY, v3: XY): b2EdgeShape {
+  public SetOneSided(v0: XY, v1: XY, v2: XY, v3: XY): this {
     this.m_vertex0.Copy(v0);
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
@@ -55,7 +55,7 @@ export class b2EdgeShape extends b2Shape {
   }
 
 	/// Set this as an isolated edge. Collision is two-sided.
-  public SetTwoSided(v1: XY, v2: XY): b2EdgeShape {
+  public SetTwoSided(v1: XY, v2: XY): this {
     this.m_vertex1.Copy(v1);
     this.m_vertex2.Copy(v2);
     this.m_oneSided = false;
@@ -67,7 +67,7 @@ export class b2EdgeShape extends b2Shape {
     return new b2EdgeShape().Copy(this);
   }
 
-  public override Copy(other: b2EdgeShape): b2EdgeShape {
+  public override Copy(other: b2EdgeShape): this {
     super.Copy(other);
 
     // DEBUG: b2Assert(other instanceof b2EdgeShape);

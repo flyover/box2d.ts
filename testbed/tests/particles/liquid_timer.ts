@@ -48,7 +48,7 @@ export class LiquidTimer extends testbed.Test {
         new b2.Vec2(2, 4),
         new b2.Vec2(-2, 4),
       ];
-      shape.CreateLoop(vertices, 4);
+      shape.CreateLoop(vertices);
       ground.CreateFixture(shape, 0.0);
 
     }

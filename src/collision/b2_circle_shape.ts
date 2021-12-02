@@ -43,7 +43,7 @@ export class b2CircleShape extends b2Shape {
     return new b2CircleShape().Copy(this);
   }
 
-  public override Copy(other: b2CircleShape): b2CircleShape {
+  public override Copy(other: b2CircleShape): this {
     super.Copy(other);
 
     // DEBUG: b2Assert(other instanceof b2CircleShape);

@@ -48,7 +48,7 @@ export class Pinball extends testbed.Test {
       vs[4].Set(0.0, -2.0);
 
       const loop = new b2.ChainShape();
-      loop.CreateLoop(vs, 5);
+      loop.CreateLoop(vs);
       const fd = new b2.FixtureDef();
       fd.shape = loop;
       fd.density = 0.0;

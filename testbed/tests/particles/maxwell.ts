@@ -71,7 +71,7 @@ export class Maxwell extends testbed.Test {
         new b2.Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
         new b2.Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
       ];
-      shape.CreateLoop(vertices, 4);
+      shape.CreateLoop(vertices);
       const def = new b2.FixtureDef();
       def.shape = shape;
       def.density = 0;

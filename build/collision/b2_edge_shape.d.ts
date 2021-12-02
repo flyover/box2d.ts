@@ -10,10 +10,10 @@ export declare class b2EdgeShape extends b2Shape {
     readonly m_vertex3: b2Vec2;
     m_oneSided: boolean;
     constructor();
-    SetOneSided(v0: XY, v1: XY, v2: XY, v3: XY): b2EdgeShape;
-    SetTwoSided(v1: XY, v2: XY): b2EdgeShape;
+    SetOneSided(v0: XY, v1: XY, v2: XY, v3: XY): this;
+    SetTwoSided(v1: XY, v2: XY): this;
     Clone(): b2EdgeShape;
-    Copy(other: b2EdgeShape): b2EdgeShape;
+    Copy(other: b2EdgeShape): this;
     GetChildCount(): number;
     TestPoint(xf: b2Transform, p: XY): boolean;
     private static ComputeDistance_s_v1;

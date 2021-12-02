@@ -44,7 +44,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                             new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
                         ];
                         const shape = new b2.ChainShape();
-                        shape.CreateLoop(box, box.length);
+                        shape.CreateLoop(box);
                         ground.CreateFixture(shape, 0.0);
                     }
                     this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius

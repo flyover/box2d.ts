@@ -31,7 +31,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         vs[3].Set(8.0, 6.0);
                         vs[4].Set(0.0, -2.0);
                         const loop = new b2.ChainShape();
-                        loop.CreateLoop(vs, 5);
+                        loop.CreateLoop(vs);
                         const fd = new b2.FixtureDef();
                         fd.shape = loop;
                         fd.density = 0.0;

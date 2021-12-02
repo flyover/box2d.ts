@@ -58,8 +58,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_shape
                     }
                     else {
                         const vertices = args[0];
-                        const count = args[1] || vertices.length;
-                        return this._CreateLoop((index) => vertices[index], count);
+                        return this._CreateLoop((index) => vertices[index], vertices.length);
                     }
                 }
                 _CreateLoop(vertices, count) {
@@ -95,10 +94,9 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_shape
                     }
                     else {
                         const vertices = args[0];
-                        const count = args[1] || vertices.length;
-                        const prevVertex = args[2];
-                        const nextVertex = args[3];
-                        return this._CreateChain((index) => vertices[index], count, prevVertex, nextVertex);
+                        const prevVertex = args[1];
+                        const nextVertex = args[2];
+                        return this._CreateChain((index) => vertices[index], vertices.length, prevVertex, nextVertex);
                     }
                 }
                 _CreateChain(vertices, count, prevVertex, nextVertex) {

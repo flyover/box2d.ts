@@ -52,7 +52,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         vs[2].Set(7.0, 8.0);
                         vs[3].Set(8.0, 7.0);
                         const shape = new b2.ChainShape();
-                        shape.CreateLoop(vs, 4);
+                        shape.CreateLoop(vs);
                         ground.CreateFixture(shape, 0.0);
                     }
                     // Square tiles. This shows that adjacency shapes may
@@ -79,7 +79,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         vs[2].Set(1.0, 5.0);
                         vs[3].Set(-1.0, 5.0);
                         const shape = new b2.ChainShape();
-                        shape.CreateLoop(vs, 4);
+                        shape.CreateLoop(vs);
                         ground.CreateFixture(shape, 0.0);
                     }
                     // Edge loop. Collision should be smooth.
@@ -99,7 +99,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                         vs[8].Set(-6.0, 2.0);
                         vs[9].Set(-6.0, 0.0);
                         const shape = new b2.ChainShape();
-                        shape.CreateLoop(vs, 10);
+                        shape.CreateLoop(vs);
                         ground.CreateFixture(shape, 0.0);
                     }
                     // Square character 1

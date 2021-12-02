@@ -44,7 +44,7 @@ export class Impulse extends testbed.Test {
         new b2.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
       ];
       const shape = new b2.ChainShape();
-      shape.CreateLoop(box, box.length);
+      shape.CreateLoop(box);
       ground.CreateFixture(shape, 0.0);
     }
 

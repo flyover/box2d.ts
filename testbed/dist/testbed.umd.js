@@ -2550,7 +2550,7 @@
               vs[2].Set(7.0, 8.0);
               vs[3].Set(8.0, 7.0);
               const shape = new b2__namespace.ChainShape();
-              shape.CreateLoop(vs, 4);
+              shape.CreateLoop(vs);
               ground.CreateFixture(shape, 0.0);
           }
           // Square tiles. This shows that adjacency shapes may
@@ -2577,7 +2577,7 @@
               vs[2].Set(1.0, 5.0);
               vs[3].Set(-1.0, 5.0);
               const shape = new b2__namespace.ChainShape();
-              shape.CreateLoop(vs, 4);
+              shape.CreateLoop(vs);
               ground.CreateFixture(shape, 0.0);
           }
           // Edge loop. Collision should be smooth.
@@ -2597,7 +2597,7 @@
               vs[8].Set(-6.0, 2.0);
               vs[9].Set(-6.0, 0.0);
               const shape = new b2__namespace.ChainShape();
-              shape.CreateLoop(vs, 10);
+              shape.CreateLoop(vs);
               ground.CreateFixture(shape, 0.0);
           }
           // Square character 1
@@ -5104,7 +5104,7 @@
               vs[3].Set(8.0, 6.0);
               vs[4].Set(0.0, -2.0);
               const loop = new b2__namespace.ChainShape();
-              loop.CreateLoop(vs, 5);
+              loop.CreateLoop(vs);
               const fd = new b2__namespace.FixtureDef();
               fd.shape = loop;
               fd.density = 0.0;
@@ -9677,7 +9677,7 @@
                   new b2__namespace.Vec2(2, 4),
                   new b2__namespace.Vec2(-2, 4),
               ];
-              shape.CreateLoop(vertices, 4);
+              shape.CreateLoop(vertices);
               ground.CreateFixture(shape, 0.0);
           }
           this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
@@ -10780,7 +10780,7 @@
               new b2__namespace.Vec2(topRight.x, topRight.y),
               new b2__namespace.Vec2(bottomLeft.x, topRight.y),
           ];
-          shape.CreateLoop(vertices, 4);
+          shape.CreateLoop(vertices);
           ground.CreateFixture(shape, 0.0);
       }
       /**
@@ -11345,7 +11345,7 @@
                   new b2__namespace.Vec2(Impulse.kBoxLeft, Impulse.kBoxTop),
               ];
               const shape = new b2__namespace.ChainShape();
-              shape.CreateLoop(box, box.length);
+              shape.CreateLoop(box);
               ground.CreateFixture(shape, 0.0);
           }
           this.m_particleSystem.SetRadius(0.025 * 2); // HACK: increase particle radius
@@ -11455,7 +11455,7 @@
                   new b2__namespace.Vec2(2, 4),
                   new b2__namespace.Vec2(-2, 4),
               ];
-              shape.CreateLoop(vertices, 4);
+              shape.CreateLoop(vertices);
               ground.CreateFixture(shape, 0.0);
           }
           this.m_particleSystem.SetRadius(0.025);
@@ -11607,7 +11607,7 @@
                   new b2__namespace.Vec2(Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
                   new b2__namespace.Vec2(-Maxwell.k_containerHalfWidth, Maxwell.k_containerHeight),
               ];
-              shape.CreateLoop(vertices, 4);
+              shape.CreateLoop(vertices);
               const def = new b2__namespace.FixtureDef();
               def.shape = shape;
               def.density = 0;

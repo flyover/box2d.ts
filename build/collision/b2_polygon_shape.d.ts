@@ -10,7 +10,7 @@ export declare class b2PolygonShape extends b2Shape {
     m_count: number;
     constructor();
     Clone(): b2PolygonShape;
-    Copy(other: b2PolygonShape): b2PolygonShape;
+    Copy(other: b2PolygonShape): this;
     GetChildCount(): number;
     private static Set_s_r;
     private static Set_s_v;

@@ -8,7 +8,7 @@ export declare class b2CircleShape extends b2Shape {
     constructor(radius?: number);
     Set(position: XY, radius?: number): this;
     Clone(): b2CircleShape;
-    Copy(other: b2CircleShape): b2CircleShape;
+    Copy(other: b2CircleShape): this;
     GetChildCount(): number;
     private static TestPoint_s_center;
     private static TestPoint_s_d;
