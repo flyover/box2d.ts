@@ -215,8 +215,7 @@ export class b2Body {
     this.m_bulletFlag = b2Maybe(bd.bullet, false);
     this.m_fixedRotationFlag = b2Maybe(bd.fixedRotation, false);
     this.m_autoSleepFlag = b2Maybe(bd.allowSleep, true);
-    // this.m_awakeFlag = b2Maybe(bd.awake, true);
-    if (b2Maybe(bd.awake, false) && b2Maybe(bd.type, b2BodyType.b2_staticBody) !== b2BodyType.b2_staticBody) {
+    if (b2Maybe(bd.awake, true) && b2Maybe(bd.type, b2BodyType.b2_staticBody) !== b2BodyType.b2_staticBody) {
       this.m_awakeFlag = true;
     }
     this.m_enabledFlag = b2Maybe(bd.enabled, true);
