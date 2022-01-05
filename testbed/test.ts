@@ -572,7 +572,7 @@ export class Test extends b2.ContactListener {
     }
   }
 
-  public ShiftOrigin(newOrigin: b2.Vec2): void {
+  public ShiftOrigin(newOrigin: b2.XY): void {
     this.m_world.ShiftOrigin(newOrigin);
   }
 

@@ -29,7 +29,7 @@ export declare class b2WheelJointDef extends b2JointDef implements b2IWheelJoint
     stiffness: number;
     damping: number;
     constructor();
-    Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void;
+    Initialize(bA: b2Body, bB: b2Body, anchor: XY, axis: XY): void;
 }
 export declare class b2WheelJoint extends b2Joint {
     readonly m_localAnchorA: b2Vec2;

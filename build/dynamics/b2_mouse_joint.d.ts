@@ -35,7 +35,7 @@ export declare class b2MouseJoint extends b2Joint {
     readonly m_lalcB: b2Vec2;
     readonly m_K: b2Mat22;
     constructor(def: b2IMouseJointDef);
-    SetTarget(target: b2Vec2): void;
+    SetTarget(target: XY): void;
     GetTarget(): b2Vec2;
     SetMaxForce(maxForce: number): void;
     GetMaxForce(): number;
@@ -54,5 +54,5 @@ export declare class b2MouseJoint extends b2Joint {
     GetReactionForce<T extends XY>(inv_dt: number, out: T): T;
     GetReactionTorque(inv_dt: number): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
-    ShiftOrigin(newOrigin: b2Vec2): void;
+    ShiftOrigin(newOrigin: XY): void;
 }

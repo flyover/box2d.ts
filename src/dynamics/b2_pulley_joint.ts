@@ -63,7 +63,7 @@ export class b2PulleyJointDef extends b2JointDef implements b2IPulleyJointDef {
     this.collideConnected = true;
   }
 
-  public Initialize(bA: b2Body, bB: b2Body, groundA: b2Vec2, groundB: b2Vec2, anchorA: b2Vec2, anchorB: b2Vec2, r: number): void {
+  public Initialize(bA: b2Body, bB: b2Body, groundA: XY, groundB: XY, anchorA: XY, anchorB: XY, r: number): void {
     this.bodyA = bA;
     this.bodyB = bB;
     this.groundAnchorA.Copy(groundA);
@@ -417,7 +417,7 @@ export class b2PulleyJoint extends b2Joint {
     log("  joints[%d] = this.m_world.CreateJoint(jd);\n", this.m_index);
   }
 
-  public override ShiftOrigin(newOrigin: b2Vec2) {
+  public override ShiftOrigin(newOrigin: XY) {
     this.m_groundAnchorA.SelfSub(newOrigin);
     this.m_groundAnchorB.SelfSub(newOrigin);
   }

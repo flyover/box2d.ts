@@ -76,7 +76,7 @@ export class b2PrismaticJointDef extends b2JointDef implements b2IPrismaticJoint
     super(b2JointType.e_prismaticJoint);
   }
 
-  public Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void {
+  public Initialize(bA: b2Body, bB: b2Body, anchor: XY, axis: XY): void {
     this.bodyA = bA;
     this.bodyB = bB;
     this.bodyA.GetLocalPoint(anchor, this.localAnchorA);

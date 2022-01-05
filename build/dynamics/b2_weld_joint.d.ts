@@ -16,7 +16,7 @@ export declare class b2WeldJointDef extends b2JointDef implements b2IWeldJointDe
     stiffness: number;
     damping: number;
     constructor();
-    Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
+    Initialize(bA: b2Body, bB: b2Body, anchor: XY): void;
 }
 export declare class b2WeldJoint extends b2Joint {
     m_stiffness: number;

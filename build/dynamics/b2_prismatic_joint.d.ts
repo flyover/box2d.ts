@@ -27,7 +27,7 @@ export declare class b2PrismaticJointDef extends b2JointDef implements b2IPrisma
     maxMotorForce: number;
     motorSpeed: number;
     constructor();
-    Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2, axis: b2Vec2): void;
+    Initialize(bA: b2Body, bB: b2Body, anchor: XY, axis: XY): void;
 }
 export declare class b2PrismaticJoint extends b2Joint {
     readonly m_localAnchorA: b2Vec2;

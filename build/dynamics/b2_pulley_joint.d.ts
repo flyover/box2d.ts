@@ -21,7 +21,7 @@ export declare class b2PulleyJointDef extends b2JointDef implements b2IPulleyJoi
     lengthB: number;
     ratio: number;
     constructor();
-    Initialize(bA: b2Body, bB: b2Body, groundA: b2Vec2, groundB: b2Vec2, anchorA: b2Vec2, anchorB: b2Vec2, r: number): void;
+    Initialize(bA: b2Body, bB: b2Body, groundA: XY, groundB: XY, anchorA: XY, anchorB: XY, r: number): void;
 }
 export declare class b2PulleyJoint extends b2Joint {
     readonly m_groundAnchorA: b2Vec2;
@@ -76,5 +76,5 @@ export declare class b2PulleyJoint extends b2Joint {
     private static GetCurrentLengthB_s_p;
     GetCurrentLengthB(): number;
     Dump(log: (format: string, ...args: any[]) => void): void;
-    ShiftOrigin(newOrigin: b2Vec2): void;
+    ShiftOrigin(newOrigin: XY): void;
 }

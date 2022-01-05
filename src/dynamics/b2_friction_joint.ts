@@ -46,7 +46,7 @@ export class b2FrictionJointDef extends b2JointDef implements b2IFrictionJointDe
     super(b2JointType.e_frictionJoint);
   }
 
-  public Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void {
+  public Initialize(bA: b2Body, bB: b2Body, anchor: XY): void {
     this.bodyA = bA;
     this.bodyB = bB;
     this.bodyA.GetLocalPoint(anchor, this.localAnchorA);

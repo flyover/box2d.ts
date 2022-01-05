@@ -94,7 +94,7 @@ export class b2MouseJoint extends b2Joint {
     this.m_gamma = 0;
   }
 
-  public SetTarget(target: b2Vec2): void {
+  public SetTarget(target: XY): void {
     if (!this.m_bodyB.IsAwake()) {
       this.m_bodyB.SetAwake(true);
     }
@@ -267,7 +267,7 @@ export class b2MouseJoint extends b2Joint {
     log("Mouse joint dumping is not supported.\n");
   }
 
-  public override ShiftOrigin(newOrigin: b2Vec2) {
+  public override ShiftOrigin(newOrigin: XY) {
     this.m_targetA.SelfSub(newOrigin);
   }
 }

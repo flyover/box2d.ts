@@ -76,7 +76,7 @@ export declare class Test extends b2.ContactListener {
     LaunchBomb(): void;
     LaunchBombAt(position: b2.Vec2, velocity: b2.Vec2): void;
     Step(settings: Settings): void;
-    ShiftOrigin(newOrigin: b2.Vec2): void;
+    ShiftOrigin(newOrigin: b2.XY): void;
     GetDefaultViewZoom(): number;
     static readonly k_ParticleColors: b2.Color[];
     static readonly k_ParticleColorsCount: number;

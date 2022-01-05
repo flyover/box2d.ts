@@ -14,7 +14,7 @@ export declare class b2FrictionJointDef extends b2JointDef implements b2IFrictio
     maxForce: number;
     maxTorque: number;
     constructor();
-    Initialize(bA: b2Body, bB: b2Body, anchor: b2Vec2): void;
+    Initialize(bA: b2Body, bB: b2Body, anchor: XY): void;
 }
 export declare class b2FrictionJoint extends b2Joint {
     readonly m_localAnchorA: b2Vec2;
