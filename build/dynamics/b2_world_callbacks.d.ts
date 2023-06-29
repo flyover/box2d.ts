@@ -38,10 +38,10 @@ export declare class b2QueryCallback {
     ReportParticle(system: b2ParticleSystem, index: number): boolean;
     ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
 }
-export declare type b2QueryCallbackFunction = (fixture: b2Fixture) => boolean;
+export type b2QueryCallbackFunction = (fixture: b2Fixture) => boolean;
 export declare class b2RayCastCallback {
     ReportFixture(fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number): number;
     ReportParticle(system: b2ParticleSystem, index: number, point: b2Vec2, normal: b2Vec2, fraction: number): number;
     ShouldQueryParticleSystem(system: b2ParticleSystem): boolean;
 }
-export declare type b2RayCastCallbackFunction = (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number) => number;
+export type b2RayCastCallbackFunction = (fixture: b2Fixture, point: b2Vec2, normal: b2Vec2, fraction: number) => number;

@@ -83,8 +83,7 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                 Platformer_State[Platformer_State["e_unknown"] = 0] = "e_unknown";
                 Platformer_State[Platformer_State["e_above"] = 1] = "e_above";
                 Platformer_State[Platformer_State["e_below"] = 2] = "e_below";
-            })(Platformer_State || (Platformer_State = {}));
-            exports_1("Platformer_State", Platformer_State);
+            })(Platformer_State || (exports_1("Platformer_State", Platformer_State = {})));
             exports_1("testIndex", testIndex = testbed.RegisterTest("Examples", "Platformer", Platformer.Create));
         }
     };

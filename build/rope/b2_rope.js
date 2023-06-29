@@ -19,8 +19,7 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js", "../common/b2_s
             (function (b2StretchingModel) {
                 b2StretchingModel[b2StretchingModel["b2_pbdStretchingModel"] = 0] = "b2_pbdStretchingModel";
                 b2StretchingModel[b2StretchingModel["b2_xpbdStretchingModel"] = 1] = "b2_xpbdStretchingModel";
-            })(b2StretchingModel || (b2StretchingModel = {}));
-            exports_1("b2StretchingModel", b2StretchingModel);
+            })(b2StretchingModel || (exports_1("b2StretchingModel", b2StretchingModel = {})));
             (function (b2BendingModel) {
                 b2BendingModel[b2BendingModel["b2_springAngleBendingModel"] = 0] = "b2_springAngleBendingModel";
                 b2BendingModel[b2BendingModel["b2_pbdAngleBendingModel"] = 1] = "b2_pbdAngleBendingModel";
@@ -28,8 +27,7 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js", "../common/b2_s
                 b2BendingModel[b2BendingModel["b2_pbdDistanceBendingModel"] = 3] = "b2_pbdDistanceBendingModel";
                 b2BendingModel[b2BendingModel["b2_pbdHeightBendingModel"] = 4] = "b2_pbdHeightBendingModel";
                 b2BendingModel[b2BendingModel["b2_pbdTriangleBendingModel"] = 5] = "b2_pbdTriangleBendingModel";
-            })(b2BendingModel || (b2BendingModel = {}));
-            exports_1("b2BendingModel", b2BendingModel);
+            })(b2BendingModel || (exports_1("b2BendingModel", b2BendingModel = {})));
             ///
             b2RopeTuning = class b2RopeTuning {
                 constructor() {

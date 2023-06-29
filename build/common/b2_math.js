@@ -339,6 +339,10 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
             b2Vec2.s_t3 = new b2Vec2();
             exports_1("b2Vec2_zero", b2Vec2_zero = new b2Vec2(0, 0));
             b2TypedVec2 = class b2TypedVec2 {
+                get x() { return this.data[0]; }
+                set x(value) { this.data[0] = value; }
+                get y() { return this.data[1]; }
+                set y(value) { this.data[1] = value; }
                 constructor(...args) {
                     if (args[0] instanceof Float32Array) {
                         if (args[0].length !== 2) {
@@ -352,10 +356,6 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
                         this.data = new Float32Array([x, y]);
                     }
                 }
-                get x() { return this.data[0]; }
-                set x(value) { this.data[0] = value; }
-                get y() { return this.data[1]; }
-                set y(value) { this.data[1] = value; }
                 Clone() {
                     return new b2TypedVec2(new Float32Array(this.data));
                 }
@@ -505,6 +505,12 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
             exports_1("b2TypedVec2", b2TypedVec2);
             /// A 2D column vector with 3 elements.
             b2Vec3 = class b2Vec3 {
+                get x() { return this.data[0]; }
+                set x(value) { this.data[0] = value; }
+                get y() { return this.data[1]; }
+                set y(value) { this.data[1] = value; }
+                get z() { return this.data[2]; }
+                set z(value) { this.data[2] = value; }
                 constructor(...args) {
                     if (args[0] instanceof Float32Array) {
                         if (args[0].length !== 3) {
@@ -519,12 +525,6 @@ System.register(["./b2_settings.js"], function (exports_1, context_1) {
                         this.data = new Float32Array([x, y, z]);
                     }
                 }
-                get x() { return this.data[0]; }
-                set x(value) { this.data[0] = value; }
-                get y() { return this.data[1]; }
-                set y(value) { this.data[1] = value; }
-                get z() { return this.data[2]; }
-                set z(value) { this.data[2] = value; }
                 Clone() {
                     return new b2Vec3(this.x, this.y, this.z);
                 }

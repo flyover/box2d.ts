@@ -43,17 +43,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
         execute: function () {
             /// A node in the dynamic tree. The client does not interact with this directly.
             b2TreeNode = class b2TreeNode {
-                constructor(id = 0) {
-                    this.m_id = 0;
-                    this.aabb = new b2_collision_js_1.b2AABB();
-                    this._userData = null;
-                    this.parent = null; // or next
-                    this.child1 = null;
-                    this.child2 = null;
-                    this.height = 0; // leaf = 0, free node = -1
-                    this.moved = false;
-                    this.m_id = id;
-                }
                 get userData() {
                     if (this._userData === null) {
                         throw new Error();
@@ -65,6 +54,17 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                         throw new Error();
                     }
                     this._userData = value;
+                }
+                constructor(id = 0) {
+                    this.m_id = 0;
+                    this.aabb = new b2_collision_js_1.b2AABB();
+                    this._userData = null;
+                    this.parent = null; // or next
+                    this.child1 = null;
+                    this.child2 = null;
+                    this.height = 0; // leaf = 0, free node = -1
+                    this.moved = false;
+                    this.m_id = id;
                 }
                 Reset() {
                     this._userData = null;

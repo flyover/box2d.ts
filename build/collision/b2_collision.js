@@ -139,8 +139,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_dista
             (function (b2ContactFeatureType) {
                 b2ContactFeatureType[b2ContactFeatureType["e_vertex"] = 0] = "e_vertex";
                 b2ContactFeatureType[b2ContactFeatureType["e_face"] = 1] = "e_face";
-            })(b2ContactFeatureType || (b2ContactFeatureType = {}));
-            exports_1("b2ContactFeatureType", b2ContactFeatureType);
+            })(b2ContactFeatureType || (exports_1("b2ContactFeatureType", b2ContactFeatureType = {})));
             /// The features that intersect to form the contact point
             /// This must be 4 bytes or less.
             b2ContactFeature = class b2ContactFeature {
@@ -257,8 +256,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_dista
                 b2ManifoldType[b2ManifoldType["e_circles"] = 0] = "e_circles";
                 b2ManifoldType[b2ManifoldType["e_faceA"] = 1] = "e_faceA";
                 b2ManifoldType[b2ManifoldType["e_faceB"] = 2] = "e_faceB";
-            })(b2ManifoldType || (b2ManifoldType = {}));
-            exports_1("b2ManifoldType", b2ManifoldType);
+            })(b2ManifoldType || (exports_1("b2ManifoldType", b2ManifoldType = {})));
             /// A manifold for two touching convex shapes.
             /// Box2D supports multiple types of contact:
             /// - clip point versus plane with radius
@@ -377,8 +375,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "./b2_dista
                 b2PointState[b2PointState["b2_addState"] = 1] = "b2_addState";
                 b2PointState[b2PointState["b2_persistState"] = 2] = "b2_persistState";
                 b2PointState[b2PointState["b2_removeState"] = 3] = "b2_removeState";
-            })(b2PointState || (b2PointState = {}));
-            exports_1("b2PointState", b2PointState);
+            })(b2PointState || (exports_1("b2PointState", b2PointState = {})));
             /// Used for computing contact manifolds.
             b2ClipVertex = class b2ClipVertex {
                 constructor() {

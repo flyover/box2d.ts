@@ -90,8 +90,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                 b2JointType[b2JointType["e_ropeJoint"] = 10] = "e_ropeJoint";
                 b2JointType[b2JointType["e_motorJoint"] = 11] = "e_motorJoint";
                 b2JointType[b2JointType["e_areaJoint"] = 12] = "e_areaJoint";
-            })(b2JointType || (b2JointType = {}));
-            exports_1("b2JointType", b2JointType);
+            })(b2JointType || (exports_1("b2JointType", b2JointType = {})));
             b2Jacobian = class b2Jacobian {
                 constructor() {
                     this.linear = new b2_math_js_1.b2Vec2();
@@ -118,12 +117,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
             /// maintained in each attached body. Each joint has two joint
             /// nodes, one for each attached body.
             b2JointEdge = class b2JointEdge {
-                constructor(joint) {
-                    this._other = null; ///< provides quick access to the other body attached.
-                    this.prev = null; ///< the previous joint edge in the body's joint list
-                    this.next = null; ///< the next joint edge in the body's joint list
-                    this.joint = joint;
-                }
                 get other() {
                     if (this._other === null) {
                         throw new Error();
@@ -135,6 +128,12 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                         throw new Error();
                     }
                     this._other = value;
+                }
+                constructor(joint) {
+                    this._other = null; ///< provides quick access to the other body attached.
+                    this.prev = null; ///< the previous joint edge in the body's joint list
+                    this.next = null; ///< the next joint edge in the body's joint list
+                    this.joint = joint;
                 }
                 Reset() {
                     this._other = null;

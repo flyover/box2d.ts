@@ -54,12 +54,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
         ],
         execute: function () {
             b2ContactEdge = class b2ContactEdge {
-                constructor(contact) {
-                    this._other = null; ///< provides quick access to the other body attached.
-                    this.prev = null; ///< the previous contact edge in the body's contact list
-                    this.next = null; ///< the next contact edge in the body's contact list
-                    this.contact = contact;
-                }
                 get other() {
                     if (this._other === null) {
                         throw new Error();
@@ -71,6 +65,12 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                         throw new Error();
                     }
                     this._other = value;
+                }
+                constructor(contact) {
+                    this._other = null; ///< provides quick access to the other body attached.
+                    this.prev = null; ///< the previous contact edge in the body's contact list
+                    this.next = null; ///< the next contact edge in the body's contact list
+                    this.contact = contact;
                 }
                 Reset() {
                     this._other = null;

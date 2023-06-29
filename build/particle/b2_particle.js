@@ -90,8 +90,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                 /// Call b2ContactFilter when this particle interacts with other
                 /// particles.
                 b2ParticleFlag[b2ParticleFlag["b2_particleContactFilterParticle"] = 131072] = "b2_particleContactFilterParticle";
-            })(b2ParticleFlag || (b2ParticleFlag = {}));
-            exports_1("b2ParticleFlag", b2ParticleFlag);
+            })(b2ParticleFlag || (exports_1("b2ParticleFlag", b2ParticleFlag = {})));
             b2ParticleDef = class b2ParticleDef {
                 constructor() {
                     this.flags = 0;

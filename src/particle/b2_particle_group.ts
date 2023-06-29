@@ -26,6 +26,7 @@ import { b2ParticleFlag } from "./b2_particle.js";
 import { b2ParticleSystem } from "./b2_particle_system.js";
 
 export enum b2ParticleGroupFlag {
+  b2_none = 0,
   /// Prevents overlapping or leaking.
   b2_solidParticleGroup = 1 << 0,
   /// Keeps its shape.

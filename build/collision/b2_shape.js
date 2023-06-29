@@ -45,8 +45,7 @@ System.register(["../common/b2_math.js"], function (exports_1, context_1) {
                 b2ShapeType[b2ShapeType["e_polygonShape"] = 2] = "e_polygonShape";
                 b2ShapeType[b2ShapeType["e_chainShape"] = 3] = "e_chainShape";
                 b2ShapeType[b2ShapeType["e_shapeTypeCount"] = 4] = "e_shapeTypeCount";
-            })(b2ShapeType || (b2ShapeType = {}));
-            exports_1("b2ShapeType", b2ShapeType);
+            })(b2ShapeType || (exports_1("b2ShapeType", b2ShapeType = {})));
             /// A shape is used for collision detection. You can create a shape however you like.
             /// Shapes used for simulation in b2World are created automatically when a b2Fixture
             /// is created. Shapes may encapsulate a one or more child shapes.

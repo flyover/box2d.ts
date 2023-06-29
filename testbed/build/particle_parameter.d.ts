@@ -1,4 +1,5 @@
 export declare enum ParticleParameterOptions {
+    OptionNone = 0,
     OptionStrictContacts = 1,
     OptionDrawShapes = 2,
     OptionDrawParticles = 4,

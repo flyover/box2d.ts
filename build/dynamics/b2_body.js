@@ -47,8 +47,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                 b2BodyType[b2BodyType["b2_dynamicBody"] = 2] = "b2_dynamicBody";
                 // TODO_ERIN
                 // b2_bulletBody = 3
-            })(b2BodyType || (b2BodyType = {}));
-            exports_1("b2BodyType", b2BodyType);
+            })(b2BodyType || (exports_1("b2BodyType", b2BodyType = {})));
             /// A body definition holds all the data needed to construct a rigid body.
             /// You can safely re-use body definitions. Shapes are added to a body after construction.
             b2BodyDef = class b2BodyDef {

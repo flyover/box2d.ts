@@ -175,6 +175,14 @@
   b2Color.GREEN = new b2Color(0, 1, 0);
   b2Color.BLUE = new b2Color(0, 0, 1);
   class b2TypedColor {
+      get r() { return this.data[0]; }
+      set r(value) { this.data[0] = value; }
+      get g() { return this.data[1]; }
+      set g(value) { this.data[1] = value; }
+      get b() { return this.data[2]; }
+      set b(value) { this.data[2] = value; }
+      get a() { return this.data[3]; }
+      set a(value) { this.data[3] = value; }
       constructor(...args) {
           if (args[0] instanceof Float32Array) {
               if (args[0].length !== 4) {
@@ -190,14 +198,6 @@
               this.data = new Float32Array([rr, gg, bb, aa]);
           }
       }
-      get r() { return this.data[0]; }
-      set r(value) { this.data[0] = value; }
-      get g() { return this.data[1]; }
-      set g(value) { this.data[1] = value; }
-      get b() { return this.data[2]; }
-      set b(value) { this.data[2] = value; }
-      get a() { return this.data[3]; }
-      set a(value) { this.data[3] = value; }
       Clone() {
           return new b2TypedColor(new Float32Array(this.data));
       }
@@ -574,6 +574,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "./b2_settings.js";
   /// This is a growable LIFO stack with an initial capacity of N.
   /// If the stack size exceeds the initial capacity, the heap is used
   /// to increase the size of the stack.
@@ -621,6 +622,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "./b2_settings.js";
   const b2_pi_over_180 = b2_pi / 180;
   const b2_180_over_pi = 180 / b2_pi;
   const b2_two_pi = 2 * b2_pi;
@@ -921,6 +923,10 @@
   b2Vec2.s_t3 = new b2Vec2();
   const b2Vec2_zero = new b2Vec2(0, 0);
   class b2TypedVec2 {
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
       constructor(...args) {
           if (args[0] instanceof Float32Array) {
               if (args[0].length !== 2) {
@@ -934,10 +940,6 @@
               this.data = new Float32Array([x, y]);
           }
       }
-      get x() { return this.data[0]; }
-      set x(value) { this.data[0] = value; }
-      get y() { return this.data[1]; }
-      set y(value) { this.data[1] = value; }
       Clone() {
           return new b2TypedVec2(new Float32Array(this.data));
       }
@@ -1086,6 +1088,12 @@
   }
   /// A 2D column vector with 3 elements.
   class b2Vec3 {
+      get x() { return this.data[0]; }
+      set x(value) { this.data[0] = value; }
+      get y() { return this.data[1]; }
+      set y(value) { this.data[1] = value; }
+      get z() { return this.data[2]; }
+      set z(value) { this.data[2] = value; }
       constructor(...args) {
           if (args[0] instanceof Float32Array) {
               if (args[0].length !== 3) {
@@ -1100,12 +1108,6 @@
               this.data = new Float32Array([x, y, z]);
           }
       }
-      get x() { return this.data[0]; }
-      set x(value) { this.data[0] = value; }
-      get y() { return this.data[1]; }
-      set y(value) { this.data[1] = value; }
-      get z() { return this.data[2]; }
-      set z(value) { this.data[2] = value; }
       Clone() {
           return new b2Vec3(this.x, this.y, this.z);
       }
@@ -1790,6 +1792,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// A distance proxy is used by the GJK algorithm.
   /// It encapsulates any shape.
   class b2DistanceProxy {
@@ -2489,6 +2492,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// @file
   /// Structures and functions used for computing contact points, distance
   /// queries, and TOI queries.
@@ -3068,6 +3072,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   function verify(value) {
       if (value === null) {
           throw new Error();
@@ -3076,17 +3081,6 @@
   }
   /// A node in the dynamic tree. The client does not interact with this directly.
   class b2TreeNode {
-      constructor(id = 0) {
-          this.m_id = 0;
-          this.aabb = new b2AABB();
-          this._userData = null;
-          this.parent = null; // or next
-          this.child1 = null;
-          this.child2 = null;
-          this.height = 0; // leaf = 0, free node = -1
-          this.moved = false;
-          this.m_id = id;
-      }
       get userData() {
           if (this._userData === null) {
               throw new Error();
@@ -3098,6 +3092,17 @@
               throw new Error();
           }
           this._userData = value;
+      }
+      constructor(id = 0) {
+          this.m_id = 0;
+          this.aabb = new b2AABB();
+          this._userData = null;
+          this.parent = null; // or next
+          this.child1 = null;
+          this.child2 = null;
+          this.height = 0; // leaf = 0, free node = -1
+          this.moved = false;
+          this.m_id = id;
       }
       Reset() {
           this._userData = null;
@@ -4018,6 +4023,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// This holds the mass data computed for a shape.
   class b2MassData {
       constructor() {
@@ -4079,6 +4085,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// A line segment (edge) shape. These can be connected in chains or loops
   /// to other edge shapes. Edges created independently are two-sided and do
   /// no provide smooth movement across junctions.
@@ -4271,6 +4278,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert, b2_linearSlop } from "../common/b2_settings.js";
   /// A chain shape is a free form sequence of line segments.
   /// The chain has one-sided collision, with the surface normal pointing to the right of the edge.
   /// This provides a counter-clockwise winding like the polygon shape.
@@ -4483,6 +4491,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// A solid circle shape
   class b2CircleShape extends b2Shape {
       constructor(radius = 0) {
@@ -5149,6 +5158,22 @@
   }
 
   // MIT License
+  // Copyright (c) 2019 Erin Catto
+  // Permission is hereby granted, free of charge, to any person obtaining a copy
+  // of this software and associated documentation files (the "Software"), to deal
+  // in the Software without restriction, including without limitation the rights
+  // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  // copies of the Software, and to permit persons to whom the Software is
+  // furnished to do so, subject to the following conditions:
+  // The above copyright notice and this permission notice shall be included in all
+  // copies or substantial portions of the Software.
+  // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  // SOFTWARE.
   // Find the max separation between poly1 and poly2 using edge normals from poly1.
   const b2FindMaxSeparation_s_xf = new b2Transform();
   const b2FindMaxSeparation_s_n = new b2Vec2();
@@ -5355,6 +5380,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert, b2_epsilon_sq } from "../common/b2_settings.js";
   /// A solid convex polygon. It is assumed that the interior of the polygon is to
   /// the left of each edge.
   /// In most cases you should not need many vertices for a convex polygon.
@@ -5887,6 +5913,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   exports.toiTime = 0;
   exports.toiMaxTime = 0;
   exports.toiCalls = 0;
@@ -6305,6 +6332,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   exports.JointType = void 0;
   (function (b2JointType) {
       b2JointType[b2JointType["e_unknownJoint"] = 0] = "e_unknownJoint";
@@ -6346,12 +6374,6 @@
   /// maintained in each attached body. Each joint has two joint
   /// nodes, one for each attached body.
   class b2JointEdge {
-      constructor(joint) {
-          this._other = null; ///< provides quick access to the other body attached.
-          this.prev = null; ///< the previous joint edge in the body's joint list
-          this.next = null; ///< the next joint edge in the body's joint list
-          this.joint = joint;
-      }
       get other() {
           if (this._other === null) {
               throw new Error();
@@ -6363,6 +6385,12 @@
               throw new Error();
           }
           this._other = value;
+      }
+      constructor(joint) {
+          this._other = null; ///< provides quick access to the other body attached.
+          this.prev = null; ///< the previous joint edge in the body's joint list
+          this.next = null; ///< the next joint edge in the body's joint list
+          this.joint = joint;
       }
       Reset() {
           this._other = null;
@@ -7119,6 +7147,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// This holds contact filtering data.
   class b2Filter {
       constructor() {
@@ -7209,6 +7238,7 @@
   /// Fixtures are created via b2Body::CreateFixture.
   /// @warning you cannot reuse fixtures.
   class b2Fixture {
+      get m_proxyCount() { return this.m_proxies.length; }
       constructor(body, def) {
           this.m_density = 0;
           this.m_next = null;
@@ -7229,7 +7259,6 @@
           this.m_isSensor = b2Maybe(def.isSensor, false);
           this.m_density = b2Maybe(def.density, 0);
       }
-      get m_proxyCount() { return this.m_proxies.length; }
       Reset() {
           // The proxies must be destroyed before calling this.
           // DEBUG: b2Assert(this.m_proxyCount === 0);
@@ -7432,6 +7461,8 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
+  // DEBUG: import { b2IsValid } from "../common/b2_math.js";
   // #endif
   /// The body type.
   /// static: zero mass, zero velocity, may be manually moved
@@ -8371,12 +8402,6 @@
       return threshold1 < threshold2 ? threshold1 : threshold2;
   }
   class b2ContactEdge {
-      constructor(contact) {
-          this._other = null; ///< provides quick access to the other body attached.
-          this.prev = null; ///< the previous contact edge in the body's contact list
-          this.next = null; ///< the next contact edge in the body's contact list
-          this.contact = contact;
-      }
       get other() {
           if (this._other === null) {
               throw new Error();
@@ -8388,6 +8413,12 @@
               throw new Error();
           }
           this._other = value;
+      }
+      constructor(contact) {
+          this._other = null; ///< provides quick access to the other body attached.
+          this.prev = null; ///< the previous contact edge in the body's contact list
+          this.next = null; ///< the next contact edge in the body's contact list
+          this.contact = contact;
       }
       Reset() {
           this._other = null;
@@ -9055,6 +9086,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   // Delegate of b2World.
   class b2ContactManager {
       constructor() {
@@ -9353,6 +9385,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   // Solver debugging is normally disabled because the block solver sometimes has to deal with a poorly conditioned effective mass matrix.
   // #define B2_DEBUG_SOLVER 0
   exports.blockSolve = false;
@@ -10471,6 +10504,8 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
+  // DEBUG: import { b2IsValid } from "../common/b2_math.js";
   /// Gear joint definition. This definition requires two existing
   /// revolute or prismatic joints (any combination will work).
   class b2GearJointDef extends b2JointDef {
@@ -10910,6 +10945,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /*
   Position Correction Notes
   =========================
@@ -11391,6 +11427,8 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
+  // DEBUG: import { b2IsValid } from "../common/b2_math.js";
   class b2MotorJointDef extends b2JointDef {
       constructor() {
           super(exports.JointType.e_motorJoint);
@@ -11661,6 +11699,8 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert, b2_epsilon } from "../common/b2_settings.js";
+  // DEBUG: import { b2IsValid } from "../common/b2_math.js";
   /// Mouse joint definition. This requires a world target point,
   /// tuning parameters, and the time step.
   class b2MouseJointDef extends b2JointDef {
@@ -12543,6 +12583,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert, b2_epsilon } from "../common/b2_settings.js";
   const b2_minPulleyLength = 2;
   /// Pulley joint definition. This requires two ground anchors,
   /// two dynamic body anchor points, and a pulley ratio.
@@ -13663,6 +13704,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /// Wheel joint definition. This requires defining a line of
   /// motion using an axis and an anchor point. The definition uses local
   /// anchor points and a local axis so that the initial configuration
@@ -14361,6 +14403,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_PARTICLE
   /**
    * The particle type. Can be combined with the | operator.
    */
@@ -14457,8 +14500,11 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_PARTICLE
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   exports.ParticleGroupFlag = void 0;
   (function (b2ParticleGroupFlag) {
+      b2ParticleGroupFlag[b2ParticleGroupFlag["b2_none"] = 0] = "b2_none";
       /// Prevents overlapping or leaking.
       b2ParticleGroupFlag[b2ParticleGroupFlag["b2_solidParticleGroup"] = 1] = "b2_solidParticleGroup";
       /// Keeps its shape.
@@ -14665,13 +14711,13 @@
   // #if B2_ENABLE_PARTICLE
   // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   class b2StackQueue {
+      get m_capacity() { return this.m_buffer.length; }
       constructor(capacity) {
           this.m_buffer = [];
           this.m_front = 0;
           this.m_back = 0;
           this.m_buffer.fill(null, 0, capacity);
       }
-      get m_capacity() { return this.m_buffer.length; }
       Push(item) {
           if (this.m_back >= this.m_capacity) {
               for (let i = this.m_front; i < this.m_back; i++) {
@@ -14719,6 +14765,8 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_PARTICLE
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   /**
    * A field representing the nearest generator from each point.
    */
@@ -14931,6 +14979,8 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_PARTICLE
+  // DEBUG: import { b2Assert, b2_maxParticleIndex } from "../common/b2_settings.js";
   function std_iter_swap(array, a, b) {
       const tmp = array[a];
       array[a] = array[b];
@@ -15372,6 +15422,14 @@
       }
   }
   class b2ParticleSystem {
+      static computeTag(x, y) {
+          ///return ((uint32)(y + yOffset) << yShift) + (uint32)(xScale * x + xOffset);
+          return ((((y + b2ParticleSystem.yOffset) >>> 0) << b2ParticleSystem.yShift) + ((b2ParticleSystem.xScale * x + b2ParticleSystem.xOffset) >>> 0)) >>> 0;
+      }
+      static computeRelativeTag(tag, x, y) {
+          ///return tag + (y << yShift) + (x << xShift);
+          return (tag + (y << b2ParticleSystem.yShift) + (x << b2ParticleSystem.xShift)) >>> 0;
+      }
       constructor(def, world) {
           this.m_paused = false;
           this.m_timestamp = 0;
@@ -15484,14 +15542,6 @@
           this.m_def = def.Clone();
           this.m_world = world;
           this.SetDestructionByAge(this.m_def.destroyByAge);
-      }
-      static computeTag(x, y) {
-          ///return ((uint32)(y + yOffset) << yShift) + (uint32)(xScale * x + xOffset);
-          return ((((y + b2ParticleSystem.yOffset) >>> 0) << b2ParticleSystem.yShift) + ((b2ParticleSystem.xScale * x + b2ParticleSystem.xOffset) >>> 0)) >>> 0;
-      }
-      static computeRelativeTag(tag, x, y) {
-          ///return tag + (y << yShift) + (x << xShift);
-          return (tag + (y << b2ParticleSystem.yShift) + (x << b2ParticleSystem.xShift)) >>> 0;
       }
       Drop() {
           while (this.m_groupList) {
@@ -19660,6 +19710,7 @@
   * misrepresented as being the original software.
   * 3. This notice may not be removed or altered from any source distribution.
   */
+  // DEBUG: import { b2Assert } from "../common/b2_settings.js";
   // #endif
   /// The world class manages all physics entities, dynamic simulation,
   /// and asynchronous queries. The world also contains efficient memory
@@ -21041,6 +21092,22 @@
   b2World.SolveTOI_s_toi_output = new b2TOIOutput();
 
   // MIT License
+  // Copyright (c) 2019 Erin Catto
+  // Permission is hereby granted, free of charge, to any person obtaining a copy
+  // of this software and associated documentation files (the "Software"), to deal
+  // in the Software without restriction, including without limitation the rights
+  // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  // copies of the Software, and to permit persons to whom the Software is
+  // furnished to do so, subject to the following conditions:
+  // The above copyright notice and this permission notice shall be included in all
+  // copies or substantial portions of the Software.
+  // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  // SOFTWARE.
   exports.StretchingModel = void 0;
   (function (b2StretchingModel) {
       b2StretchingModel[b2StretchingModel["b2_pbdStretchingModel"] = 0] = "b2_pbdStretchingModel";
@@ -21937,6 +22004,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_CONTROLLER
   /**
    * Calculates buoyancy forces for fluids in the form of a half
    * plane.
@@ -22071,6 +22139,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_CONTROLLER
   /**
    * Applies a force every frame
    */
@@ -22114,6 +22183,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_CONTROLLER
   /**
    * Applies a force every frame
    */
@@ -22155,6 +22225,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_CONTROLLER
   /**
    * Applies simplified gravity between every pair of bodies
    */
@@ -22249,6 +22320,7 @@
    * misrepresented as being the original software.
    * 3. This notice may not be removed or altered from any source distribution.
    */
+  // #if B2_ENABLE_CONTROLLER
   /**
    * Applies top down linear damping to the controlled bodies
    * The damping is calculated by multiplying velocity by a matrix
@@ -22579,8 +22651,6 @@
   exports.version = b2_version;
   exports.xpbdAngleBendingModel = xpbdAngleBendingModel;
   exports.xpbdStretchingModel = xpbdStretchingModel;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
 //# sourceMappingURL=box2d.umd.js.map

@@ -30,6 +30,7 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js"], function (expo
         ],
         execute: function () {
             (function (b2ParticleGroupFlag) {
+                b2ParticleGroupFlag[b2ParticleGroupFlag["b2_none"] = 0] = "b2_none";
                 /// Prevents overlapping or leaking.
                 b2ParticleGroupFlag[b2ParticleGroupFlag["b2_solidParticleGroup"] = 1] = "b2_solidParticleGroup";
                 /// Keeps its shape.
@@ -41,8 +42,7 @@ System.register(["../common/b2_math.js", "../common/b2_draw.js"], function (expo
                 /// Updates depth data on next simulation step.
                 b2ParticleGroupFlag[b2ParticleGroupFlag["b2_particleGroupNeedsUpdateDepth"] = 16] = "b2_particleGroupNeedsUpdateDepth";
                 b2ParticleGroupFlag[b2ParticleGroupFlag["b2_particleGroupInternalMask"] = 24] = "b2_particleGroupInternalMask";
-            })(b2ParticleGroupFlag || (b2ParticleGroupFlag = {}));
-            exports_1("b2ParticleGroupFlag", b2ParticleGroupFlag);
+            })(b2ParticleGroupFlag || (exports_1("b2ParticleGroupFlag", b2ParticleGroupFlag = {})));
             b2ParticleGroupDef = class b2ParticleGroupDef {
                 constructor() {
                     this.flags = 0;

@@ -27,6 +27,7 @@ System.register(["@box2d"], function (exports_1, context_1) {
         ],
         execute: function () {
             (function (ParticleParameterOptions) {
+                ParticleParameterOptions[ParticleParameterOptions["OptionNone"] = 0] = "OptionNone";
                 ParticleParameterOptions[ParticleParameterOptions["OptionStrictContacts"] = 1] = "OptionStrictContacts";
                 ParticleParameterOptions[ParticleParameterOptions["OptionDrawShapes"] = 2] = "OptionDrawShapes";
                 ParticleParameterOptions[ParticleParameterOptions["OptionDrawParticles"] = 4] = "OptionDrawParticles";
@@ -39,8 +40,7 @@ System.register(["@box2d"], function (exports_1, context_1) {
                 ParticleParameterOptions[ParticleParameterOptions["OptionDrawCOMs"] = 512] = "OptionDrawCOMs";
                 ParticleParameterOptions[ParticleParameterOptions["OptionDrawStats"] = 1024] = "OptionDrawStats";
                 ParticleParameterOptions[ParticleParameterOptions["OptionDrawProfile"] = 2048] = "OptionDrawProfile";
-            })(ParticleParameterOptions || (ParticleParameterOptions = {}));
-            exports_1("ParticleParameterOptions", ParticleParameterOptions);
+            })(ParticleParameterOptions || (exports_1("ParticleParameterOptions", ParticleParameterOptions = {})));
             ParticleParameterValue = class ParticleParameterValue {
                 constructor(...args) {
                     /**

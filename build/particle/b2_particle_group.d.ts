@@ -4,6 +4,7 @@ import { b2Shape } from "../collision/b2_shape.js";
 import { b2ParticleFlag } from "./b2_particle.js";
 import { b2ParticleSystem } from "./b2_particle_system.js";
 export declare enum b2ParticleGroupFlag {
+    b2_none = 0,
     b2_solidParticleGroup = 1,
     b2_rigidParticleGroup = 2,
     b2_particleGroupCanBeEmpty = 4,

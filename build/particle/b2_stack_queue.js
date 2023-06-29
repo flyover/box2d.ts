@@ -25,13 +25,13 @@ System.register([], function (exports_1, context_1) {
             // #if B2_ENABLE_PARTICLE
             // DEBUG: import { b2Assert } from "../common/b2_settings.js";
             b2StackQueue = class b2StackQueue {
+                get m_capacity() { return this.m_buffer.length; }
                 constructor(capacity) {
                     this.m_buffer = [];
                     this.m_front = 0;
                     this.m_back = 0;
                     this.m_buffer.fill(null, 0, capacity);
                 }
-                get m_capacity() { return this.m_buffer.length; }
                 Push(item) {
                     if (this.m_back >= this.m_capacity) {
                         for (let i = this.m_front; i < this.m_back; i++) {

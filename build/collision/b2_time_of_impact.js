@@ -262,8 +262,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                 b2TOIOutputState[b2TOIOutputState["e_overlapped"] = 2] = "e_overlapped";
                 b2TOIOutputState[b2TOIOutputState["e_touching"] = 3] = "e_touching";
                 b2TOIOutputState[b2TOIOutputState["e_separated"] = 4] = "e_separated";
-            })(b2TOIOutputState || (b2TOIOutputState = {}));
-            exports_1("b2TOIOutputState", b2TOIOutputState);
+            })(b2TOIOutputState || (exports_1("b2TOIOutputState", b2TOIOutputState = {})));
             b2TOIOutput = class b2TOIOutput {
                 constructor() {
                     this.state = b2TOIOutputState.e_unknown;
@@ -276,8 +275,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                 b2SeparationFunctionType[b2SeparationFunctionType["e_points"] = 0] = "e_points";
                 b2SeparationFunctionType[b2SeparationFunctionType["e_faceA"] = 1] = "e_faceA";
                 b2SeparationFunctionType[b2SeparationFunctionType["e_faceB"] = 2] = "e_faceB";
-            })(b2SeparationFunctionType || (b2SeparationFunctionType = {}));
-            exports_1("b2SeparationFunctionType", b2SeparationFunctionType);
+            })(b2SeparationFunctionType || (exports_1("b2SeparationFunctionType", b2SeparationFunctionType = {})));
             b2SeparationFunction = class b2SeparationFunction {
                 constructor() {
                     this.m_sweepA = new b2_math_js_1.b2Sweep();

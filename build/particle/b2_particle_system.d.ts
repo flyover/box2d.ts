@@ -29,7 +29,7 @@ export declare class b2GrowableBuffer<T> {
     RemoveIf(pred: (t: T) => boolean): void;
     Unique(pred: (a: T, b: T) => boolean): void;
 }
-export declare type b2ParticleIndex = number;
+export type b2ParticleIndex = number;
 export declare class b2FixtureParticleQueryCallback extends b2QueryCallback {
     m_system: b2ParticleSystem;
     constructor(system: b2ParticleSystem);
@@ -868,7 +868,7 @@ export declare class b2ParticleSystem {
     /**
      * All particle types that require creating triads
      */
-    static readonly k_triadFlags: b2ParticleFlag;
+    static readonly k_triadFlags = b2ParticleFlag.b2_elasticParticle;
     /**
      * All particle types that do not produce dynamic pressure
      */
@@ -876,7 +876,7 @@ export declare class b2ParticleSystem {
     /**
      * All particle types that apply extra damping force with bodies
      */
-    static readonly k_extraDampingFlags: b2ParticleFlag;
+    static readonly k_extraDampingFlags = b2ParticleFlag.b2_staticPressureParticle;
     static readonly k_barrierWallFlags: number;
     FreeBuffer<T>(b: T[] | null, capacity: number): void;
     FreeUserOverridableBuffer<T>(b: b2ParticleSystem_UserOverridableBuffer<T>): void;

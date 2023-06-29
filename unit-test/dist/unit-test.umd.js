@@ -4,8 +4,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.unit_test = {}, global.b2));
 })(this, (function (exports, b2) { 'use strict';
 
-  function _interopNamespace(e) {
-    if (e && e.__esModule) return e;
+  function _interopNamespaceDefault(e) {
     var n = Object.create(null);
     if (e) {
       Object.keys(e).forEach(function (k) {
@@ -18,11 +17,11 @@
         }
       });
     }
-    n["default"] = e;
+    n.default = e;
     return Object.freeze(n);
   }
 
-  var b2__namespace = /*#__PURE__*/_interopNamespace(b2);
+  var b2__namespace = /*#__PURE__*/_interopNamespaceDefault(b2);
 
   // MIT License
   // Copyright (c) 2019 Erin Catto
@@ -117,8 +116,6 @@
   }
 
   exports.main = main;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
 //# sourceMappingURL=unit-test.umd.js.map

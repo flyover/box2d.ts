@@ -157,6 +157,14 @@ System.register([], function (exports_1, context_1) {
             b2Color.GREEN = new b2Color(0, 1, 0);
             b2Color.BLUE = new b2Color(0, 0, 1);
             b2TypedColor = class b2TypedColor {
+                get r() { return this.data[0]; }
+                set r(value) { this.data[0] = value; }
+                get g() { return this.data[1]; }
+                set g(value) { this.data[1] = value; }
+                get b() { return this.data[2]; }
+                set b(value) { this.data[2] = value; }
+                get a() { return this.data[3]; }
+                set a(value) { this.data[3] = value; }
                 constructor(...args) {
                     if (args[0] instanceof Float32Array) {
                         if (args[0].length !== 4) {
@@ -172,14 +180,6 @@ System.register([], function (exports_1, context_1) {
                         this.data = new Float32Array([rr, gg, bb, aa]);
                     }
                 }
-                get r() { return this.data[0]; }
-                set r(value) { this.data[0] = value; }
-                get g() { return this.data[1]; }
-                set g(value) { this.data[1] = value; }
-                get b() { return this.data[2]; }
-                set b(value) { this.data[2] = value; }
-                get a() { return this.data[3]; }
-                set a(value) { this.data[3] = value; }
                 Clone() {
                     return new b2TypedColor(new Float32Array(this.data));
                 }
@@ -294,8 +294,7 @@ System.register([], function (exports_1, context_1) {
                 b2DrawFlags[b2DrawFlags["e_controllerBit"] = 64] = "e_controllerBit";
                 // #endif
                 b2DrawFlags[b2DrawFlags["e_all"] = 63] = "e_all";
-            })(b2DrawFlags || (b2DrawFlags = {}));
-            exports_1("b2DrawFlags", b2DrawFlags);
+            })(b2DrawFlags || (exports_1("b2DrawFlags", b2DrawFlags = {})));
             /// Implement and register this class with a b2World to provide debug drawing of physics
             /// entities in your game.
             b2Draw = class b2Draw {

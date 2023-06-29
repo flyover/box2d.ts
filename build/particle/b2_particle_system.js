@@ -505,6 +505,14 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
             };
             exports_1("b2ParticleSystemDef", b2ParticleSystemDef);
             b2ParticleSystem = class b2ParticleSystem {
+                static computeTag(x, y) {
+                    ///return ((uint32)(y + yOffset) << yShift) + (uint32)(xScale * x + xOffset);
+                    return ((((y + b2ParticleSystem.yOffset) >>> 0) << b2ParticleSystem.yShift) + ((b2ParticleSystem.xScale * x + b2ParticleSystem.xOffset) >>> 0)) >>> 0;
+                }
+                static computeRelativeTag(tag, x, y) {
+                    ///return tag + (y << yShift) + (x << xShift);
+                    return (tag + (y << b2ParticleSystem.yShift) + (x << b2ParticleSystem.xShift)) >>> 0;
+                }
                 constructor(def, world) {
                     this.m_paused = false;
                     this.m_timestamp = 0;
@@ -617,14 +625,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../common/
                     this.m_def = def.Clone();
                     this.m_world = world;
                     this.SetDestructionByAge(this.m_def.destroyByAge);
-                }
-                static computeTag(x, y) {
-                    ///return ((uint32)(y + yOffset) << yShift) + (uint32)(xScale * x + xOffset);
-                    return ((((y + b2ParticleSystem.yOffset) >>> 0) << b2ParticleSystem.yShift) + ((b2ParticleSystem.xScale * x + b2ParticleSystem.xOffset) >>> 0)) >>> 0;
-                }
-                static computeRelativeTag(tag, x, y) {
-                    ///return tag + (y << yShift) + (x << xShift);
-                    return (tag + (y << b2ParticleSystem.yShift) + (x << b2ParticleSystem.xShift)) >>> 0;
                 }
                 Drop() {
                     while (this.m_groupList) {

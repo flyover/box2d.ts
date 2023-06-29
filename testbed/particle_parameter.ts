@@ -21,6 +21,7 @@
 import * as b2 from "@box2d";
 
 export enum ParticleParameterOptions {
+  OptionNone = 0,
   OptionStrictContacts = 1 << 0,
   OptionDrawShapes = 1 << 1,
   OptionDrawParticles = 1 << 2,

@@ -797,13 +797,16 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                 Fracker_Material[Fracker_Material["WATER"] = 4] = "WATER";
                 Fracker_Material[Fracker_Material["WELL"] = 5] = "WELL";
                 Fracker_Material[Fracker_Material["PUMP"] = 6] = "PUMP";
-            })(Fracker_Material || (Fracker_Material = {}));
-            exports_1("Fracker_Material", Fracker_Material);
+            })(Fracker_Material || (exports_1("Fracker_Material", Fracker_Material = {})));
             /**
              * Keep track of particle groups which are drawn up the well and
              * tracks the score of the game.
              */
             Fracker_DestructionListener = class Fracker_DestructionListener extends ParticleGroupTracker {
+                /**
+                 * Initialize the score.
+                 */
+                __ctor__() { }
                 /**
                  * Initialize the particle system and world, setting this class
                  * as a destruction listener for the world.
@@ -818,10 +821,6 @@ System.register(["@box2d", "@testbed"], function (exports_1, context_1) {
                     this.m_previousListener = world.m_destructionListener;
                     this.m_world.SetDestructionListener(this);
                 }
-                /**
-                 * Initialize the score.
-                 */
-                __ctor__() { }
                 __dtor__() {
                     if (this.m_world) {
                         this.m_world.SetDestructionListener(this.m_previousListener);

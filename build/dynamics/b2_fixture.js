@@ -128,6 +128,7 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
             /// Fixtures are created via b2Body::CreateFixture.
             /// @warning you cannot reuse fixtures.
             b2Fixture = class b2Fixture {
+                get m_proxyCount() { return this.m_proxies.length; }
                 constructor(body, def) {
                     this.m_density = 0;
                     this.m_next = null;
@@ -148,7 +149,6 @@ System.register(["../common/b2_settings.js", "../common/b2_math.js", "../collisi
                     this.m_isSensor = b2_settings_js_1.b2Maybe(def.isSensor, false);
                     this.m_density = b2_settings_js_1.b2Maybe(def.density, 0);
                 }
-                get m_proxyCount() { return this.m_proxies.length; }
                 Reset() {
                     // The proxies must be destroyed before calling this.
                     // DEBUG: b2Assert(this.m_proxyCount === 0);

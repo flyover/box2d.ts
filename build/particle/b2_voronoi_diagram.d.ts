@@ -37,7 +37,7 @@ export declare class b2VoronoiDiagram {
  *
  * Receive tags for generators associated with a node.
  */
-export declare type b2VoronoiDiagram_NodeCallback = (a: number, b: number, c: number) => void;
+export type b2VoronoiDiagram_NodeCallback = (a: number, b: number, c: number) => void;
 export declare class b2VoronoiDiagram_Generator {
     center: b2Vec2;
     tag: number;
